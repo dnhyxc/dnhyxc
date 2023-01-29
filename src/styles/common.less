@@ -1,0 +1,58 @@
+@import "@/styles/color.less";
+
+// 页面公共布局
+.layoutStyles() {
+  box-sizing: border-box;
+  height: calc(100vh - 70px);
+  padding-right: 10px;
+  color: @text-color-primary;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+// 双击不选中文字
+.clickNoSelectText {
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  -khtml-user-select: none;
+  user-select: none;
+}
+
+.ellipsisMore(@count) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  /* autoprefixer: off */
+  -webkit-box-orient: vertical;
+  /* autoprefixer: on */
+  -webkit-line-clamp: @count;
+  line-clamp: @count;
+  vertical-align: middle;
+}
+
+.ellipsis() {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.webkitScrollbarStyle(@bg, @fc) {
+  /*整个滚动条*/
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+    background-color: @bg;
+  }
+
+  /*定义滚动条轨道*/
+  ::-webkit-scrollbar-track {
+    height: 6px;
+  }
+
+  /*定义滑块*/
+  ::-webkit-scrollbar-thumb {
+    background-color: @fc;
+    border-radius: 5px;
+  }
+}
