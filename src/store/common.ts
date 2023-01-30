@@ -14,6 +14,7 @@ export const useCommonStore = defineStore('common', {
       crumbsPath: MENULIST[0].path,
     },
     activePath: '',
+    backPath: '/',
   }),
 
   actions: {
@@ -27,12 +28,22 @@ export const useCommonStore = defineStore('common', {
       this.activePath = path;
     },
 
+    // 设置登录返回的路径
+    setBackPath(path: string) {
+      this.backPath = path;
+    },
+
     // 清空面包屑
     clearCrumbsInfo() {
       this.crumbsInfo = {
         crumbsName: '',
         crumbsPath: '',
       };
+    },
+
+    // 清空返回路径
+    clearBackPath() {
+      this.backPath = '/';
     },
   },
 });

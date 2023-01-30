@@ -1,5 +1,5 @@
 import { createRouter, RouteRecordRaw, createWebHashHistory } from 'vue-router';
-// import { useUserStore } from '@/store/user';
+import { useCommonStore } from '@/store/common';
 // import { AUTH_CONFIG } from '@/constant';
 
 const routes: Array<RouteRecordRaw> = [
@@ -158,40 +158,46 @@ const router = createRouter({
 });
 
 // 全局守卫：登录拦截 本地没有存token,请重新登录
-// router.beforeEach(async (to, from, next) => {
-//   const userStore = useUserStore();
+router.beforeEach(async (to, from, next) => {
+  if (to.path === '/login') {
+    const commonStore = useCommonStore();
+    console.log(from.path, 'from.path');
 
-//   // 判断有没有登录
-//   if (!userStore.token) {
-//     if (to.name === 'login') {
-//       next();
-//     } else {
-//       router.push('/login');
-//     }
-//     // 如果不是超级管理员，禁止访问后台账户管理
-//   } else {
-//     if (userStore.auth === AUTH_CONFIG.SUPER) {
-//       next();
-//     } else {
-//       if (to.name === 'users' || to.name === 'account' || to.name === 'home') {
-//         if (userStore.auth === AUTH_CONFIG.ADMIN) {
-//           if (to.name !== 'home') {
-//             router.push('/home');
-//           } else {
-//             next();
-//           }
-//         } else {
-//           router.push('/article');
-//         }
-//       } else {
-//         if (userStore.bindAccount?.length) {
-//           to.name === 'bind' ? router.push('/article') : next();
-//         } else {
-//           to.name === 'bind' ? next() : router.push('/bind');
-//         }
-//       }
-//     }
-//   }
-// });
+    commonStore.setBackPath(from.path);
+  }
+
+  // 判断有没有登录
+  // if (!userStore.token) {
+  //   if (to.name === 'login') {
+  //     next();
+  //   } else {
+  //     router.push('/login');
+  //   }
+  //   // 如果不是超级管理员，禁止访问后台账户管理
+  // } else {
+  //   if (userStore.auth === AUTH_CONFIG.SUPER) {
+  //     next();
+  //   } else {
+  //     if (to.name === 'users' || to.name === 'account' || to.name === 'home') {
+  //       if (userStore.auth === AUTH_CONFIG.ADMIN) {
+  //         if (to.name !== 'home') {
+  //           router.push('/home');
+  //         } else {
+  //           next();
+  //         }
+  //       } else {
+  //         router.push('/article');
+  //       }
+  //     } else {
+  //       if (userStore.bindAccount?.length) {
+  //         to.name === 'bind' ? router.push('/article') : next();
+  //       } else {
+  //         to.name === 'bind' ? next() : router.push('/bind');
+  //       }
+  //     }
+  //   }
+  // }
+  next();
+});
 
 export default router;

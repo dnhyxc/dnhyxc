@@ -16,7 +16,7 @@ const createWindow = () => {
       contextIsolation: false,
       nodeIntegration: true,
     },
-    icon: path.join(__dirname, '../dist/favicon.ico') || path.join(__dirname, '../public/favicon.ico'),
+    icon: path.join(__dirname, '../public/favicon.ico'),
   });
 
   // if (process.platform === 'darwin') {
@@ -25,6 +25,7 @@ const createWindow = () => {
 
   if (process.env.NODE_ENV !== 'development') {
     win.loadFile(path.join(__dirname, '../dist/index.html'));
+    // win.loadURL('http://43.143.114.71/');
     // 新建托盘
     tray = new Tray(path.join(__dirname, '../dist/favicon.ico'));
   } else {
@@ -101,6 +102,11 @@ const createWindow = () => {
 app
   .whenReady()
   .then(() => {
+    if (process.env.NODE_ENV !== 'development') {
+      // 生产模式禁止使用Shift+Ctrl+I唤起控制台
+      globalShortcut.register('Shift+Ctrl+I', () => {});
+    }
+
     globalShortcut.register('Alt+CommandOrControl+I', () => {
       console.log('alt + ctrl + I');
     });
@@ -110,13 +116,6 @@ app
       win?.isVisible() ? win?.hide() : win?.show();
       win?.isVisible() ? win?.setSkipTaskbar(false) : win?.setSkipTaskbar(true);
     });
-
-    if (process.env.NODE_ENV !== 'development') {
-      // 快捷键 Alt+Shift+Q 显示隐藏
-      globalShortcut.register('Shift+Ctrl+I', () => {
-        return null;
-      });
-    }
   })
   .then(createWindow);
 

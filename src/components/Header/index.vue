@@ -7,17 +7,19 @@
 <template>
   <div class="header-wrap">
     <div class="left">
-      <el-tooltip class="box-item" effect="light" content="后退" placement="bottom">
+      <el-tooltip effect="light" content="后退" placement="bottom">
         <i class="font iconfont icon-arrow-left-bold" @click="goBack" />
       </el-tooltip>
-      <el-tooltip class="box-item" effect="light" content="前进" placement="bottom">
+      <el-tooltip effect="light" content="前进" placement="bottom">
         <i class="font iconfont icon-arrow-right-bold" @click="goForward" />
       </el-tooltip>
       <div class="title">{{ commonStore.crumbsInfo.crumbsName }}</div>
     </div>
     <div class="right">
       <div class="search-wrap">
-        <i v-if="!showSearch" class="font iconfont icon-sousuo2" @click="onClickSearch" />
+        <el-tooltip v-if="!showSearch" effect="light" content="搜索" placement="bottom">
+          <i class="font iconfont icon-sousuo2" @click="onClickSearch" />
+        </el-tooltip>
         <el-input
           v-if="showSearch"
           ref="searchRef"
@@ -32,25 +34,29 @@
           </template>
         </el-input>
       </div>
-      <div class="bell">
-        <span class="msg-count">99+</span>
-        <i class="bell-font iconfont icon-notification" />
-      </div>
+      <el-tooltip effect="light" content="消息" placement="bottom">
+        <div class="bell">
+          <span class="msg-count">99+</span>
+          <i class="bell-font iconfont icon-notification" />
+        </div>
+      </el-tooltip>
       <div class="setting">
-        <i class="font iconfont icon-shezhi" @click="toSetting" />
+        <el-tooltip effect="light" content="设置" placement="bottom">
+          <i class="font iconfont icon-shezhi" @click="toSetting" />
+        </el-tooltip>
       </div>
-      <div
-        v-for="svg in ACTION_SVGS"
-        :key="svg.title"
-        class="icon"
-        :title="svg.title === '最大化' ? (toggle ? '还原' : svg.title) : svg.title"
-        @click="onClick(svg)"
-      >
-        <div
-          :class="`icon-text iconfont ${
-            svg.title === '最大化' ? (toggle ? 'icon-3zuidahua-3' : 'icon-3zuidahua-1') : svg.icon
-          }`"
-        />
+      <div v-for="svg in ACTION_SVGS" :key="svg.title" class="icon" @click="onClick(svg)">
+        <el-tooltip
+          effect="light"
+          :content="svg.title === '最大化' ? (toggle ? '还原' : svg.title) : svg.title"
+          placement="bottom"
+        >
+          <div
+            :class="`icon-text iconfont ${
+              svg.title === '最大化' ? (toggle ? 'icon-3zuidahua-3' : 'icon-3zuidahua-1') : svg.icon
+            }`"
+          />
+        </el-tooltip>
       </div>
     </div>
   </div>
@@ -217,6 +223,7 @@ const onEnter = () => {
       display: flex;
       align-items: center;
       -webkit-app-region: no-drag;
+      margin-left: 15px;
       .msg-count {
         position: absolute;
         top: -6px;
@@ -224,11 +231,11 @@ const onEnter = () => {
         font-size: 13px;
         color: @font-danger;
         font-weight: 700;
+        cursor: pointer;
       }
       .bell-font {
         font-size: 19px;
         cursor: pointer;
-        margin-left: 15px;
         color: @font-3;
       }
     }
