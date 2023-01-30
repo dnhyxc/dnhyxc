@@ -28,17 +28,18 @@ import LeftMenu from '@/components/LeftMenu/index.vue';
   flex-direction: column;
   height: 100vh;
   box-sizing: border-box;
+  background-color: @menu-weak;
 
   .el-main {
     box-sizing: border-box;
     height: 100%;
     padding: 0;
-    background-color: @background;
   }
 
   .content {
     box-sizing: border-box;
     flex: 1;
+    padding: 0 15px;
   }
 }
 </style>

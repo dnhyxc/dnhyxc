@@ -4,9 +4,11 @@
   "version": "0.0.0",
   "main": "dist-electron/index.js",
   "homepage": ".",
+  "author": "dnhyxc",
+  "description": "a web app of electron",
   "scripts": {
     "dev": "chcp 65001 && cross-env NODE_ENV=development vite",
-    "build": "vue-tsc --noEmit && cross-env NODE_ENV=production && vite build && electron-builder",
+    "build": "rimraf dist release && vue-tsc --noEmit && cross-env NODE_ENV=production && vite build && electron-builder",
     "preview": "vite preview",
     "eslint": "eslint --ext .js,.vue --ignore-path .gitignore --fix src",
     "prettier": "prettier --write",
@@ -20,6 +22,7 @@
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-vue": "^9.8.0",
+    "pinia": "^2.0.29",
     "prettier": "^2.8.1",
     "vue": "^3.2.45",
     "vue-router": "^4.1.6"
@@ -74,12 +77,14 @@
       "dist-electron"
     ],
     "mac": {
+      "icon": "./dist/favicon.ico",
       "artifactName": "${productName}_${version}.${ext}",
       "target": [
         "dmg"
       ]
     },
     "win": {
+      "icon": "./dist/favicon.ico",
       "target": [
         {
           "target": "nsis",
