@@ -17,9 +17,19 @@
     "test": "npx eslint ./src  --ext ts,vue,js --fix"
   },
   "lint-staged": {
-    "*.{js,ts}": [
-      "npm run eslint",
-      "npm run prettier"
+    "*.{js,ts,tsx,jsx,vue}": [
+      "eslint --fix",
+      "prettier --write",
+      "git add"
+    ],
+    "{!(package)*.json,*.code-snippets,.!(browserslist)*rc}": [
+      "prettier --write--parser json"
+    ],
+    "package.json": [
+      "prettier --write"
+    ],
+    "*.md": [
+      "prettier --write"
     ]
   },
   "dependencies": {
