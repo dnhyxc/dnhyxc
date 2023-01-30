@@ -16,6 +16,12 @@
     "prepare": "husky install",
     "test": "npx eslint ./src  --ext ts,vue,js --fix"
   },
+  "lint-staged": {
+    "*.{js,ts}": [
+      "npm run eslint",
+      "npm run prettier"
+    ]
+  },
   "dependencies": {
     "element-plus": "^2.2.28",
     "eslint": "^8.0.1",
