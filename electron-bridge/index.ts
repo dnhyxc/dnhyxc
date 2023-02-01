@@ -27,11 +27,15 @@ const createWindow = () => {
     win.loadFile(path.join(__dirname, '../dist/index.html'));
     // win.loadURL('http://43.143.114.71/');
     // 新建托盘
-    tray = new Tray(path.join(__dirname, '../dist/favicon.ico'));
+    tray = new Tray(
+      path.join(__dirname, process.platform === 'darwin' ? '../dist/favicon.ico' : '../dist/favicon-win.ico'),
+    );
   } else {
     win.webContents.openDevTools();
     // 新建托盘
-    tray = new Tray(path.join(__dirname, '../public/favicon.ico'));
+    tray = new Tray(
+      path.join(__dirname, process.platform === 'darwin' ? '../public/favicon.ico' : '../public/favicon-win.ico'),
+    );
     win.loadURL(process.env.VITE_DEV_SERVER_URL!);
   }
 
@@ -40,12 +44,12 @@ const createWindow = () => {
   });
 
   // 登录窗口最小化
-  ipcMain.on('window-min', function () {
+  ipcMain.on('window-min', () => {
     win?.minimize();
   });
 
   // 登录窗口最大化
-  ipcMain.on('window-max', function () {
+  ipcMain.on('window-max', () => {
     if (win?.isMaximized()) {
       win.restore();
     } else {
@@ -54,7 +58,7 @@ const createWindow = () => {
   });
 
   // 关闭窗口
-  ipcMain.on('window-close', function () {
+  ipcMain.on('window-close', () => {
     win?.hide();
   });
 
@@ -79,8 +83,7 @@ const createWindow = () => {
 
   // 载入托盘菜单
   tray?.setContextMenu(contextMenu);
-
-  // 点击触发
+  // 点击托盘显示隐藏图标（该配置对mac无效）
   tray?.on('click', () => {
     // 双击通知区图标实现应用的显示或隐藏
     win?.isVisible() ? win?.hide() : win?.show();
@@ -129,5 +132,9 @@ app.on('window-all-closed', () => {
 app.on('activate', () => {
   if (win === null) {
     createWindow();
+  }
+  // 兼容mac点击托盘图标无法显示的问题
+  if (win && process.platform === 'darwin') {
+    win?.show();
   }
 });

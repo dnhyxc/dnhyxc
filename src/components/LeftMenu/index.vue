@@ -5,7 +5,7 @@
  * index.vue
 -->
 <template>
-  <div class="left-menu-wrap">
+  <div :class="`${checkOS() === 'mac' && 'mac-left-menu-wrap'} left-menu-wrap`">
     <div>
       <div class="icon-wrap">
         <img :src="PAGEICON" class="page-icon" />
@@ -53,6 +53,7 @@ import { MENULIST, PAGESVG } from '@/constant';
 import PAGEICON from '@/assets/svg/page_icon.svg';
 import { MenuListParams } from '@/typings/common';
 import { commonStore } from '@/store';
+import { checkOS } from '@/utils';
 
 const router = useRouter();
 const route = useRoute();
@@ -152,6 +153,19 @@ const onLogout = () => {
       .dropdown-text {
         font-size: 13px;
       }
+    }
+  }
+}
+
+.mac-left-menu-wrap {
+  margin-top: 28px;
+  margin-bottom: 28px;
+  height: calc(100vh - 56px);
+  padding: 0 10px;
+
+  .icon-wrap {
+    .page-icon {
+      margin-bottom: 10px;
     }
   }
 }

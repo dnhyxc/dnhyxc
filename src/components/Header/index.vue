@@ -5,7 +5,7 @@
  * index.vue
 -->
 <template>
-  <div class="header-wrap">
+  <div :class="`${checkOS() === 'mac' && 'mac-header-wrap'} header-wrap`">
     <div class="left">
       <el-tooltip effect="light" content="后退" placement="bottom">
         <i class="font iconfont icon-arrow-left-bold" @click="goBack" />
@@ -45,18 +45,20 @@
           <i class="font iconfont icon-shezhi" @click="toSetting" />
         </el-tooltip>
       </div>
-      <div v-for="svg in ACTION_SVGS" :key="svg.title" class="icon" @click="onClick(svg)">
-        <el-tooltip
-          effect="light"
-          :content="svg.title === '最大化' ? (toggle ? '还原' : svg.title) : svg.title"
-          placement="bottom"
-        >
-          <div
-            :class="`icon-text iconfont ${
-              svg.title === '最大化' ? (toggle ? 'icon-3zuidahua-3' : 'icon-3zuidahua-1') : svg.icon
-            }`"
-          />
-        </el-tooltip>
+      <div v-if="checkOS() !== 'mac'">
+        <div v-for="svg in ACTION_SVGS" :key="svg.title" class="icon" @click="onClick(svg)">
+          <el-tooltip
+            effect="light"
+            :content="svg.title === '最大化' ? (toggle ? '还原' : svg.title) : svg.title"
+            placement="bottom"
+          >
+            <div
+              :class="`icon-text iconfont ${
+                svg.title === '最大化' ? (toggle ? 'icon-3zuidahua-3' : 'icon-3zuidahua-1') : svg.icon
+              }`"
+            />
+          </el-tooltip>
+        </div>
       </div>
     </div>
   </div>
@@ -70,6 +72,7 @@ import { ElMessage } from 'element-plus';
 import { Search } from '@element-plus/icons-vue';
 import { ACTION_SVGS, MENULIST } from '@/constant';
 import { commonStore } from '@/store';
+import { checkOS } from '@/utils';
 
 const router = useRouter();
 const route = useRoute();
@@ -260,5 +263,9 @@ const onEnter = () => {
       }
     }
   }
+}
+
+.mac-header-wrap {
+  padding: 22px 12px 12px 10px;
 }
 </style>
