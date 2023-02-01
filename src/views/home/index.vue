@@ -5,10 +5,14 @@
  * index.vue
 -->
 <template>
-  <div class="home-wrap">文章列表</div>
+  <div class="home-wrap">
+    <Carousel />
+  </div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import Carousel from '@/components/Carousel/index.vue';
+</script>
 
 <style scoped lang="less">
 @import '@/styles/index.less';
