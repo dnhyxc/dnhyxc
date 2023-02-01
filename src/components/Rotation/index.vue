@@ -170,7 +170,6 @@ onMounted(() => {
 
     .inner {
       height: 100%;
-      border: 1px solid red;
       .img {
         width: 60%;
         height: 230px;
@@ -243,8 +242,9 @@ onMounted(() => {
       opacity: 1;
     }
     #left {
-      transform: translateX(-100px);
-      z-index: 1;
+      position: absolute;
+      left: 0;
+      z-index: 99;
       opacity: 0;
     }
     #right {

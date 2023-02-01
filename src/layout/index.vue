@@ -34,6 +34,7 @@ import LeftMenu from '@/components/LeftMenu/index.vue';
     box-sizing: border-box;
     height: 100%;
     padding: 0;
+    width: calc(100% - 62px);
   }
 
   .content {
