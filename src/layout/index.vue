@@ -6,7 +6,7 @@
       </el-aside>
       <el-main class="el-main">
         <Header />
-        <div class="content">
+        <div :class="`${checkOS() === 'mac' && 'mac-content'} content`">
           <RouterView />
         </div>
       </el-main>
@@ -17,6 +17,7 @@
 <script setup lang="ts">
 import Header from '@/components/Header/index.vue';
 import LeftMenu from '@/components/LeftMenu/index.vue';
+import { checkOS } from '@/utils';
 </script>
 
 <style lang="less" scoped>
@@ -36,13 +37,16 @@ import LeftMenu from '@/components/LeftMenu/index.vue';
     height: 100%;
     width: 100%;
     padding: 0;
-    width: calc(100% - 62px);
   }
   .content {
     box-sizing: border-box;
     height: calc(100vh - 65px);
     width: 100%;
-    padding: 0 12px;
+    padding: 0 10px;
+  }
+
+  .mac-content {
+    height: calc(100vh - 74px);
   }
 }
 </style>
