@@ -123,6 +123,7 @@ app
   })
   .then(createWindow);
 
+// 退出
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit();

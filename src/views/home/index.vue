@@ -9,14 +9,48 @@
     <div class="carousel-wrap">
       <Carousel />
     </div>
-    <div class="list-wrap">
-      <div class="list-item">文章列表</div>
-    </div>
+    <Scrollbar :data-source="dataSource" :on-fetch-data="onFetchData" :is-pull-up-load="isPullUpLoad" class="scrollbar">
+      <template #default="{ data }">
+        <div :class="`${data.index === 0 && 'first-card'} card-wrap`">
+          <div class="left">
+            <el-image class="img" :src="IMG1" fit="cover" />
+          </div>
+          <div class="right">
+            {{ data.i % 5 === 0 ? 'scroll up 👆🏻' : `I am item ${data.index} ` }}
+          </div>
+        </div>
+      </template>
+    </Scrollbar>
   </div>
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue';
 import Carousel from '@/components/Carousel/index.vue';
+import Scrollbar from '@/components/Scrollbar/index.vue';
+import IMG1 from '@/assets/images/1.jpg';
+
+const isPullUpLoad = ref<boolean>(false);
+const dataSource = ref<number>(30);
+
+const onFetchData = async () => {
+  try {
+    const newData: any = await ajaxGet(/* url */);
+    if (dataSource.value > 20) return;
+    dataSource.value += newData;
+  } catch (err) {
+    // handle err
+    console.log(err);
+  }
+};
+
+const ajaxGet = async (/* url */) => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(20);
+    }, 1000);
+  });
+};
 </script>
 
 <style scoped lang="less">
@@ -28,13 +62,44 @@ import Carousel from '@/components/Carousel/index.vue';
   justify-content: flex-start;
   box-sizing: border-box;
   height: 100%;
-  .list-wrap {
-    height: calc(100% - 240px);
-    overflow: auto;
 
-    .list-item {
-      height: 2000px;
+  .carousel-wrap {
+    margin-bottom: 5px;
+  }
+
+  .scrollbar {
+    & > :first-child {
+      border-top: 1px solid @card-border;
     }
   }
+
+  .card-wrap {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    box-sizing: border-box;
+    width: 100%;
+    height: 135px;
+    padding: 10px;
+    background-color: @menu-weak;
+    border: 1px solid @card-border;
+    border-top: none;
+    .left {
+      width: 215px;
+      height: 100%;
+      box-sizing: border-box;
+      .img {
+        width: auto;
+        height: 100%;
+      }
+    }
+    .right {
+      flex: 1;
+      border: 1px solid red;
+    }
+  }
+  // .first-card {
+  //   border-top: 1px solid @card-border;
+  // }
 }
 </style>

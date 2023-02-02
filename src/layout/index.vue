@@ -29,7 +29,6 @@ import LeftMenu from '@/components/LeftMenu/index.vue';
   height: 100vh;
   box-sizing: border-box;
   background-color: @menu-weak;
-
   .el-main {
     display: flex;
     flex-direction: column;
@@ -39,7 +38,6 @@ import LeftMenu from '@/components/LeftMenu/index.vue';
     padding: 0;
     width: calc(100% - 62px);
   }
-
   .content {
     box-sizing: border-box;
     height: calc(100vh - 65px);
