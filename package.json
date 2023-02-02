@@ -100,7 +100,7 @@
       ]
     },
     "win": {
-      "icon": "./dist/favicon.ico",
+      "icon": "./dist/win/favicon.ico",
       "target": [
         {
           "target": "nsis",

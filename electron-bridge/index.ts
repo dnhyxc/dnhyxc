@@ -16,25 +16,21 @@ const createWindow = () => {
       contextIsolation: false,
       nodeIntegration: true,
     },
-    icon: path.join(__dirname, '../public/favicon.ico'),
+    icon: path.join(__dirname, process.platform === 'darwin' ? '../public/mac/favicon.ico' : '../public/favicon.ico'),
   });
-
-  // if (process.platform === 'darwin') {
-  //   app.dock.setIcon(path.join(__dirname, '../dist/favicon.jpg'));
-  // }
 
   if (process.env.NODE_ENV !== 'development') {
     win.loadFile(path.join(__dirname, '../dist/index.html'));
     // win.loadURL('http://43.143.114.71/');
     // 新建托盘
     tray = new Tray(
-      path.join(__dirname, process.platform === 'darwin' ? '../dist/favicon.ico' : '../dist/favicon-win.ico'),
+      path.join(__dirname, process.platform === 'darwin' ? '../dist/mac/favicon.ico' : '../dist/favicon.ico'),
     );
   } else {
     win.webContents.openDevTools();
     // 新建托盘
     tray = new Tray(
-      path.join(__dirname, process.platform === 'darwin' ? '../public/favicon.ico' : '../public/favicon-win.ico'),
+      path.join(__dirname, process.platform === 'darwin' ? '../public/mac/favicon.ico' : '../public/favicon.ico'),
     );
     win.loadURL(process.env.VITE_DEV_SERVER_URL!);
   }
@@ -60,6 +56,11 @@ const createWindow = () => {
   // 关闭窗口
   ipcMain.on('window-close', () => {
     win?.hide();
+  });
+
+  // 窗口置顶
+  ipcMain.on('win-show', (_, status) => {
+    win?.setAlwaysOnTop(status);
   });
 
   // 托盘名称

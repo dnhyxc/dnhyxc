@@ -45,7 +45,12 @@
           <i class="font iconfont icon-shezhi" @click="toSetting" />
         </el-tooltip>
       </div>
-      <div v-if="checkOS() !== 'mac'">
+      <div class="sticky">
+        <el-tooltip effect="light" content="置顶" placement="bottom">
+          <i :class="`${stickyStatus && 'active'} font iconfont icon-pin1`" @click="onSticky" />
+        </el-tooltip>
+      </div>
+      <div v-if="checkOS() !== 'mac'" class="page-actions">
         <div v-for="svg in ACTION_SVGS" :key="svg.title" class="icon" @click="onClick(svg)">
           <el-tooltip
             effect="light"
@@ -81,6 +86,7 @@ const toggle = ref<boolean>(false);
 const showSearch = ref<boolean>(false);
 const search = ref<string>('');
 const searchRef = ref<HTMLInputElement | null>(null);
+const stickyStatus = ref<boolean>(false);
 
 // 监听路由变化，设置当前选中菜单
 watchEffect(() => {
@@ -116,6 +122,12 @@ const onClick = (item: { title: string; svg: string }) => {
   if (item.title === '关闭') {
     ipcRenderer.send('window-close');
   }
+};
+
+// 置顶
+const onSticky = () => {
+  stickyStatus.value = !stickyStatus.value;
+  ipcRenderer.send('win-show', stickyStatus.value);
 };
 
 // 渲染进程监听窗口是否最大化
@@ -167,14 +179,12 @@ const onEnter = () => {
   align-items: center;
   justify-content: space-between;
   height: 30px;
-  padding: 15px;
+  padding: 10px 15px;
   -webkit-app-region: drag;
-
   .left {
     display: flex;
     align-items: center;
     justify-content: flex-start;
-
     .font {
       margin-right: 20px;
       cursor: pointer;
@@ -186,7 +196,6 @@ const onEnter = () => {
         font-weight: 700;
       }
     }
-
     .title {
       font-size: 18px;
       font-weight: 700;
@@ -195,13 +204,12 @@ const onEnter = () => {
   .right {
     display: flex;
     align-items: center;
-
     .search-wrap {
       display: flex;
       align-items: center;
       -webkit-app-region: no-drag;
       .font {
-        font-size: 16px;
+        font-size: 15px;
         cursor: pointer;
         -webkit-app-region: no-drag;
         color: @font-3;
@@ -237,9 +245,25 @@ const onEnter = () => {
         cursor: pointer;
       }
       .bell-font {
-        font-size: 19px;
+        font-size: 17px;
         cursor: pointer;
         color: @font-3;
+      }
+    }
+    .sticky {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      -webkit-app-region: no-drag;
+      .font {
+        font-size: 16px;
+        cursor: pointer;
+        margin-left: 15px;
+        margin-top: 2px;
+        color: @font-3;
+      }
+      .active {
+        color: @sub-2-blue;
       }
     }
     .setting {
@@ -248,11 +272,17 @@ const onEnter = () => {
       justify-content: center;
       -webkit-app-region: no-drag;
       .font {
-        font-size: 20px;
+        font-size: 19px;
         cursor: pointer;
         margin-left: 15px;
         color: @font-3;
       }
+    }
+    .page-actions {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      width: 100%;
     }
     .icon {
       -webkit-app-region: no-drag;
@@ -264,7 +294,6 @@ const onEnter = () => {
     }
   }
 }
-
 .mac-header-wrap {
   padding: 22px 12px 12px 10px;
 }

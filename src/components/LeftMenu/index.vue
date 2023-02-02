@@ -101,8 +101,8 @@ const onLogout = () => {
   width: 60px;
   height: 100vh;
   padding: 12px 10px;
-  overflow: auto;
   border-right: 1px solid @menu-light;
+  overflow: auto;
 
   .icon-wrap {
     display: flex;

@@ -1,8 +1,8 @@
 @font-face {
   font-family: "iconfont"; /* Project id 3511354 */
-  src: url('iconfont.woff2?t=1675060187289') format('woff2'),
-       url('iconfont.woff?t=1675060187289') format('woff'),
-       url('iconfont.ttf?t=1675060187289') format('truetype');
+  src: url('iconfont.woff2?t=1675327642528') format('woff2'),
+       url('iconfont.woff?t=1675327642528') format('woff'),
+       url('iconfont.ttf?t=1675327642528') format('truetype');
 }
 
 .iconfont {
@@ -13,8 +13,12 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-.icon-biaoqianlabel23:before {
-  content: "\e8df";
+.icon-home:before {
+  content: "\e69d";
+}
+
+.icon-pin1:before {
+  content: "\e9f3";
 }
 
 .icon-biaoqianku:before {
@@ -25,24 +29,8 @@
   content: "\e61f";
 }
 
-.icon-biaoqian1:before {
-  content: "\e898";
-}
-
-.icon-a-ziyuan6:before {
-  content: "\e621";
-}
-
-.icon-biaoqianlabel24:before {
-  content: "\e61e";
-}
-
 .icon-zhanghu:before {
   content: "\e60f";
-}
-
-.icon-icon:before {
-  content: "\e65e";
 }
 
 .icon-shouye1:before {
@@ -139,10 +127,6 @@
 
 .icon-3zuidahua-3:before {
   content: "\e693";
-}
-
-.icon-yanfaguanli-liuyangguanli:before {
-  content: "\e63e";
 }
 
 .icon-lieri:before {

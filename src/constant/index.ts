@@ -73,13 +73,13 @@ export const ACTION_SVGS = [
 export const SETTING_MENU = [
   {
     name: '个人资料',
-    key: 'account',
-    path: '/account',
+    key: 'profile',
+    path: '/profile',
   },
   {
     name: '账号设置',
-    key: 'profile',
-    path: '/profile',
+    key: 'account',
+    path: '/account',
   },
 ];
 

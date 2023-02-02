@@ -31,16 +31,20 @@ import LeftMenu from '@/components/LeftMenu/index.vue';
   background-color: @menu-weak;
 
   .el-main {
+    display: flex;
+    flex-direction: column;
     box-sizing: border-box;
     height: 100%;
+    width: 100%;
     padding: 0;
     width: calc(100% - 62px);
   }
 
   .content {
     box-sizing: border-box;
-    flex: 1;
-    padding: 0 15px;
+    height: calc(100vh - 65px);
+    width: 100%;
+    padding: 0 12px;
   }
 }
 </style>
