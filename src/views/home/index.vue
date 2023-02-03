@@ -12,11 +12,10 @@
     <Scrollbar :data-source="dataSource" :on-fetch-data="onFetchData" :is-pull-up-load="isPullUpLoad" class="scrollbar">
       <template #default="{ data }">
         <div :class="`${data.index === 0 && 'first-card'} card-wrap`">
-          <div class="left">
-            <el-image class="img" :src="IMG1" fit="cover" />
-          </div>
-          <div class="right">
-            {{ data.i % 5 === 0 ? 'scroll up 👆🏻' : `I am item ${data.index} ` }}
+          <div class="card">
+            <div class="card-top">
+              <img class="img" :src="IMG1" />
+            </div>
           </div>
         </div>
       </template>
@@ -67,35 +66,34 @@ const ajaxGet = async (/* url */) => {
     margin-bottom: 5px;
   }
 
-  .scrollbar {
-    & > :first-child {
-      border-top: 1px solid @card-border;
-    }
-  }
-
   .card-wrap {
     display: flex;
-    justify-content: flex-start;
+    justify-content: space-between;
     align-items: center;
-    box-sizing: border-box;
-    width: 100%;
-    height: 135px;
-    padding: 10px;
-    background-color: @menu-weak;
+    flex-wrap: wrap;
     border: 1px solid @card-border;
-    border-top: none;
-    .left {
-      width: 218px;
-      height: 100%;
-      box-sizing: border-box;
-      .img {
-        width: auto;
+    // border: 1px solid @menu-light;
+    // background-color: @card-border;
+    border-radius: 5px;
+    .card {
+      position: relative;
+      width: 100%;
+      padding: 10px 10px 3px 10px;
+      .card-top {
+        width: 100%;
         height: 100%;
-        border-radius: 5px;
+        .img {
+          height: 100%;
+          width: 100%;
+          object-fit: cover;
+          border-radius: 5px;
+        }
       }
-    }
-    .right {
-      flex: 1;
+
+      .card-bottom {
+        position: absolute;
+        bottom: 0;
+      }
     }
   }
 }

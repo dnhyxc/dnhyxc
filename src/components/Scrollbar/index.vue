@@ -88,15 +88,23 @@ const onLoadData = async () => {
   overflow: hidden;
 
   .pullup-content {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
     .pullup-list-item {
-      padding-bottom: 1px;
       border-radius: 5px;
       list-style: none;
+      width: calc(50% - 5px);
+      margin-bottom: 10px;
+
+      &:nth-child(odd) {
+        margin-right: 10px;
+      }
     }
     .pullup-tips {
       padding: 18px 0 8px 0;
       text-align: center;
-      color: #999;
+      color: @font-4;
     }
   }
 }

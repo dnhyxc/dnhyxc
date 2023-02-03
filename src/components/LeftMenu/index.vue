@@ -101,7 +101,8 @@ const onLogout = () => {
   width: 60px;
   height: 100vh;
   padding: 12px 10px;
-  border-right: 1px solid @menu-light;
+  border-right: 1px solid @card-border;
+  // border-right: 1px solid @menu-light;
   overflow: auto;
 
   .icon-wrap {
