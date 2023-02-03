@@ -1,9 +1,14 @@
-import { app, BrowserWindow, ipcMain, Tray, Menu, globalShortcut } from 'electron';
+import { app, BrowserWindow, ipcMain, Tray, globalShortcut } from 'electron';
 import path from 'path';
+import { createContextMenu } from './tray-menu';
 
 let win: BrowserWindow | null = null;
 
 let tray: Tray | null = null;
+
+const isDev: boolean = process.env.NODE_ENV === 'development';
+
+const isMac: boolean = process.platform === 'darwin';
 
 const createWindow = () => {
   win = new BrowserWindow({
@@ -16,28 +21,15 @@ const createWindow = () => {
       contextIsolation: false,
       nodeIntegration: true,
     },
-    icon: path.join(__dirname, process.platform === 'darwin' ? '../public/mac/favicon.ico' : '../public/favicon.ico'),
+    icon: path.join(__dirname, '../public/icon@2.png'),
   });
 
-  if (process.env.NODE_ENV !== 'development') {
-    win.loadFile(path.join(__dirname, '../dist/index.html'));
-    // win.loadURL('http://43.143.114.71/');
-    // 新建托盘
-    tray = new Tray(
-      path.join(__dirname, process.platform === 'darwin' ? '../dist/mac/favicon.ico' : '../dist/favicon.ico'),
-    );
-  } else {
+  // 载入vue项目地址
+  win.loadURL(isDev ? 'http://127.0.0.1:9216/' : 'http://127.0.0.1:9216/');
+
+  if (isDev) {
     win.webContents.openDevTools();
-    // 新建托盘
-    tray = new Tray(
-      path.join(__dirname, process.platform === 'darwin' ? '../public/mac/favicon.ico' : '../public/favicon.ico'),
-    );
-    win.loadURL(process.env.VITE_DEV_SERVER_URL!);
   }
-
-  win.on('closed', () => {
-    win = null;
-  });
 
   // 登录窗口最小化
   ipcMain.on('window-min', () => {
@@ -66,29 +58,21 @@ const createWindow = () => {
   // 托盘名称
   tray?.setToolTip('dnhyxc');
 
-  // 托盘菜单
-  const contextMenu = Menu.buildFromTemplate([
-    {
-      label: '显示',
-      click: () => {
-        win?.show();
-      },
-    },
-    {
-      label: '退出',
-      click: () => {
-        win?.destroy();
-      },
-    },
-  ]);
+  // 设置托盘图标
+  tray = new Tray(path.join(__dirname, isDev ? '../public/icon@2.png' : '../dist/icon@2.png'));
 
   // 载入托盘菜单
-  tray?.setContextMenu(contextMenu);
-  // 点击托盘显示隐藏图标（该配置对mac无效）
+  tray?.setContextMenu(createContextMenu(win));
+
   tray?.on('click', () => {
     // 双击通知区图标实现应用的显示或隐藏
     win?.isVisible() ? win?.hide() : win?.show();
+    // 让窗口不在任务栏中显示.
     win?.isVisible() ? win?.setSkipTaskbar(false) : win?.setSkipTaskbar(true);
+  });
+
+  win.on('closed', () => {
+    win = null;
   });
 
   // 监听窗口最大化事件
@@ -106,7 +90,7 @@ const createWindow = () => {
 app
   .whenReady()
   .then(() => {
-    if (process.env.NODE_ENV !== 'development') {
+    if (!isDev) {
       // 生产模式禁止使用Shift+Ctrl+I唤起控制台
       globalShortcut.register('Shift+Ctrl+I', () => {});
     }
@@ -136,7 +120,7 @@ app.on('activate', () => {
     createWindow();
   }
   // 兼容mac点击托盘图标无法显示的问题
-  if (win && process.platform === 'darwin') {
+  if (win && isMac) {
     win?.show();
   }
 });

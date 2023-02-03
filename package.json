@@ -96,7 +96,7 @@
       "dist-electron"
     ],
     "mac": {
-      "icon": "./dist/favicon.ico",
+      "icon": "./dist/mac/favicon.ico",
       "artifactName": "${productName}_${version}.${ext}",
       "target": [
         "dmg"
