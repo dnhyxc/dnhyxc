@@ -26,6 +26,9 @@ import CYWL_IMG from '@/assets/images/cywl.jpg';
 .carousel-wrap {
   height: 230px;
   margin-bottom: 10px;
+  border: 1px solid @card-border;
+  padding: 10px;
+  border-radius: 5px;
   .carousel {
     .carousel-item {
       box-sizing: border-box;

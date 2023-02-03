@@ -86,7 +86,6 @@ const onLoadData = async () => {
 .pullup-wrapper {
   height: calc(100% - 240px);
   overflow: hidden;
-
   .pullup-content {
     display: flex;
     justify-content: space-between;
@@ -94,15 +93,16 @@ const onLoadData = async () => {
     .pullup-list-item {
       border-radius: 5px;
       list-style: none;
-      width: calc(50% - 5px);
-      margin-bottom: 10px;
-
-      &:nth-child(odd) {
-        margin-right: 10px;
+      width: calc(33.33333% - 5px);
+      margin-right: 6px;
+      margin-bottom: 8px;
+      &:nth-child(3n + 3) {
+        margin-right: 0;
       }
     }
     .pullup-tips {
-      padding: 18px 0 8px 0;
+      padding: 4px;
+      width: 100%;
       text-align: center;
       color: @font-4;
     }
