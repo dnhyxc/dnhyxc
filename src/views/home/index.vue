@@ -85,21 +85,18 @@ const ajaxGet = async (/* url */) => {
     border: 1px solid @card-border;
     border-top: none;
     .left {
-      width: 215px;
+      width: 218px;
       height: 100%;
       box-sizing: border-box;
       .img {
         width: auto;
         height: 100%;
+        border-radius: 5px;
       }
     }
     .right {
       flex: 1;
-      border: 1px solid red;
     }
   }
-  // .first-card {
-  //   border-top: 1px solid @card-border;
-  // }
 }
 </style>

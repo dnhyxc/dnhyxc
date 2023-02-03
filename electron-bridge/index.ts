@@ -1,10 +1,14 @@
 import path from 'path';
-import { app, BrowserWindow, ipcMain, Tray, Menu } from 'electron';
+import { app, BrowserWindow, ipcMain, Tray } from 'electron';
 import { setShortcutKeys } from './shortcut-keys';
+import { createContextMenu, getIconPath } from './tray-menu';
 
 let win: BrowserWindow | null = null;
 
 let tray: Tray | null = null;
+
+// 控制是否退出
+let willQuitApp = false;
 
 const isDev: boolean = process.env.NODE_ENV === 'development';
 
@@ -21,12 +25,12 @@ const createWindow = () => {
       contextIsolation: false,
       nodeIntegration: true,
     },
-    icon: path.join(__dirname, isMac ? '../public/Template.png' : '../public/icon@2.png'),
+    icon: path.join(__dirname, getIconPath({ isDev, isMac })),
   });
 
   // 设置mac扩展坞图标
   if (isMac) {
-    app.dock.setIcon(path.join(__dirname, '../public/mac/Template.png'));
+    app.dock.setIcon(path.join(__dirname, isDev ? '../public/mac/Template.png' : '../dist/Template.png'));
   }
 
   if (!isDev) {
@@ -43,21 +47,16 @@ const createWindow = () => {
   });
 
   win?.on('close', (event) => {
-    // 回收BrowserWindow对象
-    if (win?.isMinimized()) {
-      win = null;
-    } else {
-      if (isMac) {
-        // 回收BrowserWindow对象
-        event.preventDefault();
-        win?.hide();
-      } else {
-        win?.hide();
-        // 让窗口不在任务栏中显示.
-        win?.setSkipTaskbar(true);
-        event.preventDefault();
-      }
+    if (!willQuitApp) {
+      event.preventDefault();
+      win?.hide();
+      win?.setSkipTaskbar(true);
     }
+  });
+
+  // 只有显式调用quit才退出系统，区分MAC系统程序坞退出和点击X关闭退出
+  app.on('before-quit', () => {
+    willQuitApp = true;
   });
 
   // 监听窗口最大化事件
@@ -99,25 +98,11 @@ ipcMain.on('win-show', (_, status) => {
 app
   .whenReady()
   .then(createWindow)
-  .then(() => setShortcutKeys({ isDev, win }))
+  .then(() => setShortcutKeys({ isDev, win, isMac }))
   .then(() => {
-    tray = new Tray(path.join(__dirname, '../public/Template.png'));
+    tray = new Tray(path.join(__dirname, getIconPath({ isDev, isMac })));
     if (!isMac) {
-      const contextMenu = Menu.buildFromTemplate([
-        {
-          label: '显示',
-          click: () => {
-            win?.show();
-          },
-        },
-        {
-          label: '退出',
-          click: () => {
-            win?.destroy();
-          },
-        },
-      ]);
-      tray?.setContextMenu(contextMenu);
+      tray?.setContextMenu(createContextMenu(win));
     } else {
       tray?.on('mouse-up', () => {
         win?.show();

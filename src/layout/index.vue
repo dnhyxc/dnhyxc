@@ -1,7 +1,7 @@
 <template>
   <div class="wrap">
     <el-container>
-      <el-aside width="60px">
+      <el-aside :width="`${checkOS() === 'mac' ? '68px' : '60px'} `">
         <LeftMenu />
       </el-aside>
       <el-main class="el-main">

@@ -94,7 +94,7 @@ const onLoadData = async () => {
       list-style: none;
     }
     .pullup-tips {
-      padding: 20px 0 5px 0;
+      padding: 18px 0 8px 0;
       text-align: center;
       color: #999;
     }

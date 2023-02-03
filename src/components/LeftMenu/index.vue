@@ -24,7 +24,7 @@
     </div>
     <div class="setting">
       <el-dropdown>
-        <el-avatar shape="square" :size="38" fit="cover" :src="PAGESVG" class="avatar" />
+        <el-avatar shape="square" :size="checkOS() === 'mac' ? 45 : 38" fit="cover" :src="PAGESVG" class="avatar" />
         <template #dropdown>
           <el-dropdown-menu>
             <el-dropdown-item @click="toPersonal">
@@ -158,14 +158,20 @@ const onLogout = () => {
 }
 
 .mac-left-menu-wrap {
-  margin-top: 28px;
-  margin-bottom: 10px;
-  height: calc(100vh - 38px);
-  padding: 0 10px;
+  padding: 28px 10px 10px;
+  width: 68px;
 
   .icon-wrap {
     .page-icon {
+      width: 38px;
+      height: 38px;
       margin-bottom: 10px;
+    }
+  }
+
+  .menu-list {
+    .font {
+      font-size: 32px;
     }
   }
 }

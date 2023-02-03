@@ -3,12 +3,21 @@ import { globalShortcut, BrowserWindow } from 'electron';
 
 interface IParams {
   isDev: boolean;
+  isMac: boolean;
   win: BrowserWindow | null;
 }
 
-export const setShortcutKeys = ({ isDev, win }: IParams) => {
+export const setShortcutKeys = ({ isDev, win, isMac }: IParams) => {
   // 生产模式禁止使用Shift+Ctrl+I唤起控制台
-  !isDev && globalShortcut.register('Shift+Ctrl+I', () => {});
+  if (!isDev) {
+    globalShortcut.register('Shift+Ctrl+I', () => {});
+  }
+
+  if (isDev && isMac) {
+    globalShortcut.register('Shift+Ctrl+I', () => {
+      win?.webContents.openDevTools();
+    });
+  }
 
   globalShortcut.register('Alt+CommandOrControl+I', () => {
     console.log('alt + ctrl + I');
