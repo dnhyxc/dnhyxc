@@ -19,3 +19,11 @@ export const createContextMenu = (win: BrowserWindow | null) => {
 
   return contextMenu;
 };
+
+export const getIconPath = ({ isDev, isMac }) => {
+  if (isDev) {
+    return isMac ? '../public/Template.png' : '../public/icon@2.png';
+  } else {
+    return isMac ? '../dist/Template.png' : '../dist/icon@2.png';
+  }
+};

@@ -1,6 +1,5 @@
-import { app, BrowserWindow, ipcMain, Tray } from 'electron';
 import path from 'path';
-import { createContextMenu } from './tray-menu';
+import { app, BrowserWindow, ipcMain, Tray, Menu } from 'electron';
 import { setShortcutKeys } from './shortcut-keys';
 
 let win: BrowserWindow | null = null;
@@ -22,58 +21,43 @@ const createWindow = () => {
       contextIsolation: false,
       nodeIntegration: true,
     },
-    icon: path.join(__dirname, '../public/icon@2.png'),
+    icon: path.join(__dirname, isMac ? '../public/Template.png' : '../public/icon@2.png'),
   });
 
-  // 载入vue项目地址
-  win.loadURL(isDev ? 'http://127.0.0.1:9216/' : path.join(__dirname, '../dist/index.html'));
-
-  if (isDev) {
-    win.webContents.openDevTools();
+  // 设置mac扩展坞图标
+  if (isMac) {
+    app.dock.setIcon(path.join(__dirname, '../public/mac/Template.png'));
   }
 
-  // 窗口最小化
-  ipcMain.on('window-min', () => {
-    win?.minimize();
-  });
+  if (!isDev) {
+    win?.loadFile(path.join(__dirname, '../dist/index.html'));
+  } else {
+    win?.webContents.openDevTools();
+    win?.loadURL(process.env.VITE_DEV_SERVER_URL!);
+  }
 
-  // 窗口最大化
-  ipcMain.on('window-max', () => {
-    if (win?.isMaximized()) {
-      win.restore();
-    } else {
-      win?.maximize();
-    }
-  });
-
-  // 关闭窗口
-  ipcMain.on('window-close', () => {
-    win?.hide();
-  });
-
-  // 窗口置顶
-  ipcMain.on('win-show', (_, status) => {
-    win?.setAlwaysOnTop(status);
-  });
-
-  // 设置托盘图标
-  tray = new Tray(path.join(__dirname, isDev ? '../public/icon@2.png' : '../dist/icon@2.png'));
-
-  // 托盘名称
-  tray?.setToolTip('dnhyxc');
-
-  // 载入托盘菜单
-  tray?.setContextMenu(createContextMenu(win));
-
-  tray?.on('click', () => {
-    // 双击通知区图标实现应用的显示或隐藏
-    win?.isVisible() ? win?.hide() : win?.show();
-    // 让窗口不在任务栏中显示.
-    win?.isVisible() ? win?.setSkipTaskbar(false) : win?.setSkipTaskbar(true);
-  });
-
-  win.on('closed', () => {
+  // 关闭按钮处理 - Mac是点击最小化
+  win?.on('closed', () => {
     win = null;
+    tray = null;
+  });
+
+  win?.on('close', (event) => {
+    // 回收BrowserWindow对象
+    if (win?.isMinimized()) {
+      win = null;
+    } else {
+      if (isMac) {
+        // 回收BrowserWindow对象
+        event.preventDefault();
+        win?.hide();
+      } else {
+        win?.hide();
+        // 让窗口不在任务栏中显示.
+        win?.setSkipTaskbar(true);
+        event.preventDefault();
+      }
+    }
   });
 
   // 监听窗口最大化事件
@@ -87,15 +71,63 @@ const createWindow = () => {
   });
 };
 
+// 窗口最小化
+ipcMain.on('window-min', () => {
+  win?.minimize();
+});
+
+// 窗口最大化
+ipcMain.on('window-max', () => {
+  if (win?.isMaximized()) {
+    win.restore();
+  } else {
+    win?.maximize();
+  }
+});
+
+// 关闭窗口
+ipcMain.on('window-close', () => {
+  win?.hide();
+});
+
+// 窗口置顶
+ipcMain.on('win-show', (_, status) => {
+  win?.setAlwaysOnTop(status);
+});
+
 // 在Electron完成初始化时被触发
 app
   .whenReady()
   .then(createWindow)
-  .then(() => setShortcutKeys({ isDev, win }));
+  .then(() => setShortcutKeys({ isDev, win }))
+  .then(() => {
+    tray = new Tray(path.join(__dirname, '../public/Template.png'));
+    if (!isMac) {
+      const contextMenu = Menu.buildFromTemplate([
+        {
+          label: '显示',
+          click: () => {
+            win?.show();
+          },
+        },
+        {
+          label: '退出',
+          click: () => {
+            win?.destroy();
+          },
+        },
+      ]);
+      tray?.setContextMenu(contextMenu);
+    } else {
+      tray?.on('mouse-up', () => {
+        win?.show();
+      });
+    }
+  });
 
 // 退出
 app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
+  if (!isMac) {
     app.quit();
   }
 });
@@ -105,7 +137,7 @@ app.on('activate', () => {
   if (win === null) {
     createWindow();
   }
-  // 兼容mac点击拓展坞图标无法显示的问题
+  // 点击拓展坞显示应用窗口
   if (win && isMac) {
     win?.show();
   }
