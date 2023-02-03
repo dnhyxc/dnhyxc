@@ -30,7 +30,7 @@ const createWindow = () => {
 
   // 设置mac扩展坞图标
   if (isMac) {
-    app.dock.setIcon(path.join(__dirname, isDev ? '../public/mac/Template.png' : '../dist/Template.png'));
+    app.dock.setIcon(path.join(__dirname, isDev ? '../public/mac/favicon.ico' : '../dist/mac/favicon.ico'));
   }
 
   if (!isDev) {
