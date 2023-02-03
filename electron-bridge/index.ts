@@ -1,5 +1,5 @@
 import path from 'path';
-import { app, BrowserWindow, ipcMain, Tray, nativeTheme } from 'electron';
+import { app, BrowserWindow, ipcMain, Tray } from 'electron';
 import { setShortcutKeys } from './shortcut-keys';
 import { createContextMenu, getIconPath } from './tray-menu';
 
