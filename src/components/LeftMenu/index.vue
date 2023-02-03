@@ -158,7 +158,7 @@ const onLogout = () => {
 }
 
 .mac-left-menu-wrap {
-  padding: 28px 10px 10px;
+  padding: 28px 0 10px;
   width: 68px;
 
   .icon-wrap {

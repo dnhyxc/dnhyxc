@@ -45,7 +45,7 @@ import { checkOS } from '@/utils';
     padding: 0 10px;
   }
   .mac-content {
-    height: calc(100vh - 74px);
+    height: calc(100vh - 60px);
   }
 }
 </style>

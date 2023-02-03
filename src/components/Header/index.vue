@@ -295,6 +295,6 @@ const onEnter = () => {
   }
 }
 .mac-header-wrap {
-  padding: 22px 12px 12px 10px;
+  padding: 10 12px;
 }
 </style>
