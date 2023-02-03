@@ -1,6 +1,7 @@
-import { app, BrowserWindow, ipcMain, Tray, globalShortcut } from 'electron';
+import { app, BrowserWindow, ipcMain, Tray } from 'electron';
 import path from 'path';
 import { createContextMenu } from './tray-menu';
+import { setShortcutKeys } from './shortcut-keys';
 
 let win: BrowserWindow | null = null;
 
@@ -25,18 +26,18 @@ const createWindow = () => {
   });
 
   // 载入vue项目地址
-  win.loadURL(isDev ? 'http://127.0.0.1:9216/' : 'http://127.0.0.1:9216/');
+  win.loadURL(isDev ? 'http://127.0.0.1:9216/' : path.join(__dirname, '../dist/index.html'));
 
   if (isDev) {
     win.webContents.openDevTools();
   }
 
-  // 登录窗口最小化
+  // 窗口最小化
   ipcMain.on('window-min', () => {
     win?.minimize();
   });
 
-  // 登录窗口最大化
+  // 窗口最大化
   ipcMain.on('window-max', () => {
     if (win?.isMaximized()) {
       win.restore();
@@ -55,11 +56,11 @@ const createWindow = () => {
     win?.setAlwaysOnTop(status);
   });
 
-  // 托盘名称
-  tray?.setToolTip('dnhyxc');
-
   // 设置托盘图标
   tray = new Tray(path.join(__dirname, isDev ? '../public/icon@2.png' : '../dist/icon@2.png'));
+
+  // 托盘名称
+  tray?.setToolTip('dnhyxc');
 
   // 载入托盘菜单
   tray?.setContextMenu(createContextMenu(win));
@@ -89,23 +90,8 @@ const createWindow = () => {
 // 在Electron完成初始化时被触发
 app
   .whenReady()
-  .then(() => {
-    if (!isDev) {
-      // 生产模式禁止使用Shift+Ctrl+I唤起控制台
-      globalShortcut.register('Shift+Ctrl+I', () => {});
-    }
-
-    globalShortcut.register('Alt+CommandOrControl+I', () => {
-      console.log('alt + ctrl + I');
-    });
-
-    // 快捷键 Alt+Shift+Q 显示隐藏
-    globalShortcut.register('Alt+Shift+Q', () => {
-      win?.isVisible() ? win?.hide() : win?.show();
-      win?.isVisible() ? win?.setSkipTaskbar(false) : win?.setSkipTaskbar(true);
-    });
-  })
-  .then(createWindow);
+  .then(createWindow)
+  .then(() => setShortcutKeys({ isDev, win }));
 
 // 退出
 app.on('window-all-closed', () => {
@@ -119,7 +105,7 @@ app.on('activate', () => {
   if (win === null) {
     createWindow();
   }
-  // 兼容mac点击托盘图标无法显示的问题
+  // 兼容mac点击拓展坞图标无法显示的问题
   if (win && isMac) {
     win?.show();
   }
