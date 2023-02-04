@@ -5,10 +5,14 @@
  * index.vue
 -->
 <template>
-  <div class="classify-wap">文章分类</div>
+  <div class="classify-wap">文章分类{{ route.query?.name }}</div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { useRoute } from 'vue-router';
+
+const route = useRoute();
+</script>
 
 <style scoped lang="less">
 @import '@/styles/index.less';

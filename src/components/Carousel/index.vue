@@ -7,7 +7,7 @@
 <template>
   <div class="carousel-wrap">
     <el-carousel loop :interval="3000" trigger="click" type="card" height="210px" class="carousel">
-      <el-carousel-item v-for="item in 6" :key="item">
+      <el-carousel-item v-for="item in 6" :key="item" @click="toDetail(item)">
         <div class="carousel-item">
           <img :src="CYWL_IMG" alt="" class="img" />
         </div>
@@ -17,7 +17,15 @@
 </template>
 
 <script setup lang="ts">
+import { useRouter } from 'vue-router';
 import CYWL_IMG from '@/assets/images/cywl.jpg';
+
+const router = useRouter();
+
+// 去详情页
+const toDetail = (id: number) => {
+  router.push(`/detail/${id}`);
+};
 </script>
 
 <style scoped lang="less">

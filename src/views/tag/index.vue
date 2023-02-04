@@ -5,10 +5,14 @@
  * index.vue
 -->
 <template>
-  <div class="tag-wrap">文章标签</div>
+  <div class="tag-wrap">文章标签{{ route.query?.name }}</div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { useRoute } from 'vue-router';
+
+const route = useRoute();
+</script>
 
 <style scoped lang="less">
 @import '@/styles/index.less';
