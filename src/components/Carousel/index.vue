@@ -43,14 +43,15 @@ import CYWL_IMG from '@/assets/images/cywl.jpg';
     }
   }
 
-  // :deep {
-  //   // 更改轮播图小圆点样式
-  //   .el-carousel__indicators--outside {
-  //     position: absolute;
-  //     bottom: 0;
-  //     left: 50%;
-  //     transform: translateX(-50%);
-  //   }
-  // }
+  :deep {
+    // 更改轮播图小圆点样式
+    .el-carousel__indicators--outside {
+      .is-active {
+        button {
+          background-color: @theme-blue;
+        }
+      }
+    }
+  }
 }
 </style>

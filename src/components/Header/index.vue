@@ -5,7 +5,7 @@
  * index.vue
 -->
 <template>
-  <div :class="`${checkOS() === 'mac' && 'mac-header-wrap'} header-wrap`">
+  <div :class="`${checkOS() === 'mac' && 'mac-header-wrap'} header-wrap`" @dblclick="onDblclick">
     <div class="left">
       <el-tooltip effect="light" content="后退" placement="bottom">
         <i class="font iconfont icon-arrow-left-bold" @click="goBack" />
@@ -90,13 +90,19 @@ const stickyStatus = ref<boolean>(false);
 
 // 监听路由变化，设置当前选中菜单
 watchEffect(() => {
-  const menu = MENULIST.find((i) => i.path === route.path);
+  const menu = MENULIST.find((i) => route.path.includes(i.path));
   commonStore.setCrumbsInfo({
     crumbsName: menu?.name || '设置',
     crumbsPath: route.path,
   });
   commonStore.setActivePath(route.path);
 });
+
+// 双击放大窗口
+const onDblclick = () => {
+  toggle.value = !toggle.value;
+  ipcRenderer.send('window-max');
+};
 
 // 后退
 const goBack = () => {

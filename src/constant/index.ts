@@ -49,6 +49,16 @@ export const MENULIST = [
     icon: 'icon-yonghuID',
     active: 'icon-yonghuziliao',
   },
+  {
+    name: '我的主页',
+    key: 'personal',
+    path: '/personal',
+  },
+  {
+    name: '文章详情',
+    key: 'detail',
+    path: '/detail',
+  },
 ];
 
 export const ACTION_SVGS = [
@@ -82,5 +92,23 @@ export const SETTING_MENU = [
     path: '/account',
   },
 ];
+
+// 二次确认弹窗配置
+export const MSG_CONFIG = {
+  confirmButtonText: '确定',
+  cancelButtonText: '取消',
+  type: 'warning',
+  center: true,
+  draggable: true,
+  showClose: false,
+  customStyle: { width: 'auto', padding: '0 30px 20px 30px' },
+};
+
+// 首页展示的文章类型
+export const ATRICLE_TYPE = {
+  1: '推荐文章',
+  2: '最新文章',
+  3: '最热文章',
+};
 
 export { MINSVG, RESTORESVG, MAXSVG, CLOSESVG, HOMESVG, PAGESVG };

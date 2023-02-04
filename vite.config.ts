@@ -13,7 +13,7 @@ export default defineConfig({
   plugins: [
     vue(),
     electron({
-      entry: 'electron-bridge/index.ts',
+      entry: 'app/index.ts',
     }),
     electronRender(),
     AutoImport({
