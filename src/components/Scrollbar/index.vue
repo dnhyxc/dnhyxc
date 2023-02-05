@@ -92,7 +92,7 @@ const onLoadData = async () => {
     .pullup-list-item {
       border-radius: 5px;
       list-style: none;
-      width: calc(33.33333% - 5px);
+      width: calc(33.33333% - 4px);
       margin-right: 6px;
       margin-bottom: 6px;
       &:nth-child(3n + 3) {

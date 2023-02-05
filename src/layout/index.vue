@@ -40,9 +40,9 @@ import { checkOS } from '@/utils';
   }
   .content {
     box-sizing: border-box;
-    height: calc(100vh - 65px);
-    width: 99.9%;
-    padding: 0 10px;
+    height: calc(100vh - 62px);
+    width: 100%;
+    padding: 0 10px 0 8px;
   }
   .mac-content {
     height: calc(100vh - 60px);
