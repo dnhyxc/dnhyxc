@@ -42,7 +42,7 @@ import { checkOS } from '@/utils';
     box-sizing: border-box;
     height: calc(100vh - 62px);
     width: 100%;
-    padding: 0 10px 0 8px;
+    padding: 0 11px 0 9px;
   }
   .mac-content {
     height: calc(100vh - 60px);

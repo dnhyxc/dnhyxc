@@ -10,7 +10,7 @@
       <div class="icon-wrap">
         <img :src="PAGEICON" class="page-icon" />
       </div>
-      <div v-for="menu in MENULIST" :key="menu.key" class="menu-list" @click="onSelectMenu(menu)">
+      <div v-for="menu in menuList" :key="menu.key" class="menu-list" @click="onSelectMenu(menu)">
         <el-tooltip class="box-item" effect="light" :content="menu.name" placement="right">
           <i
             :class="`${
@@ -47,7 +47,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { MENULIST, PAGESVG } from '@/constant';
 import PAGEICON from '@/assets/svg/page_icon.svg';
@@ -59,6 +59,11 @@ const router = useRouter();
 const route = useRoute();
 
 const activeMenu = ref<MenuListParams>(MENULIST[0]);
+
+// 计算菜单
+const menuList = computed(() => {
+  return MENULIST.filter((i) => i.show);
+});
 
 // 选中菜单
 const onSelectMenu = (menu: MenuListParams) => {
@@ -140,6 +145,7 @@ const onLogout = () => {
     align-items: center;
     justify-content: center;
     margin-top: 20px;
+
     .avatar {
       color: @sub-2-blue;
       cursor: pointer;
@@ -150,6 +156,7 @@ const onLogout = () => {
       align-items: center;
 
       .clickNoSelectText();
+
       .dropdown-text {
         font-size: 13px;
       }

@@ -13,6 +13,7 @@ export const MENULIST = [
     path: '/home',
     icon: 'icon-shouye',
     active: 'icon-icon',
+    show: true,
   },
   {
     name: '文章分类',
@@ -20,6 +21,7 @@ export const MENULIST = [
     path: '/classify',
     icon: 'icon-fenlei1',
     active: 'icon-fenlei4',
+    show: true,
   },
   {
     name: '文章标签',
@@ -27,6 +29,7 @@ export const MENULIST = [
     path: '/tag',
     icon: 'icon-biaoqianku',
     active: 'icon-24gf-tags',
+    show: true,
   },
   {
     name: '时间轴线',
@@ -34,6 +37,7 @@ export const MENULIST = [
     path: '/timeline',
     icon: 'icon-timeAxis',
     active: 'icon-a-Frame174',
+    show: true,
   },
   {
     name: '发布文章',
@@ -41,6 +45,7 @@ export const MENULIST = [
     path: '/create',
     icon: 'icon-fankuitianxie',
     active: 'icon-xieboke',
+    show: true,
   },
   {
     name: '关于博主',
@@ -48,16 +53,19 @@ export const MENULIST = [
     path: '/author',
     icon: 'icon-yonghuID',
     active: 'icon-yonghuziliao',
+    show: true,
   },
   {
     name: '我的主页',
     key: 'personal',
     path: '/personal',
+    show: false,
   },
   {
     name: '文章详情',
     key: 'detail',
     path: '/detail',
+    show: false,
   },
 ];
 
