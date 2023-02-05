@@ -55,7 +55,7 @@
 import { useRouter } from 'vue-router';
 import { ref, reactive } from 'vue';
 import type { FormInstance } from 'element-plus';
-import { commonStore } from '@/store';
+import { commonStore, loginStore } from '@/store';
 
 const router = useRouter();
 
@@ -74,7 +74,8 @@ const onLogin = (formEl: FormInstance | undefined) => {
   if (!formEl) return;
   formEl.validate(async (valid) => {
     if (valid) {
-      console.log('登录', commonStore.backPath);
+      console.log('登录', loginForm, commonStore.backPath);
+      await loginStore.onLogin(loginForm);
       router.push(commonStore.backPath);
     } else {
       console.log('error submit!');
@@ -88,8 +89,8 @@ const onRegister = (formEl: FormInstance | undefined) => {
   if (!formEl) return;
   formEl.validate(async (valid) => {
     if (valid) {
-      console.log('注册');
-      router.push(commonStore.backPath);
+      console.log('注册', loginForm);
+      loginStore.onRegister(loginForm);
     } else {
       console.log('error submit!');
       return false;

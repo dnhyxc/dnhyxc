@@ -38,11 +38,11 @@ export default defineConfig({
       host: 'localhost',
     },
     proxy: {
-      '/admin': {
+      '/api': {
         target: 'http://localhost:9112',
         changeOrigin: true, // 允许跨域
       },
-      '/api': {
+      '/admin': {
         target: 'http://localhost:9112',
         changeOrigin: true, // 允许跨域
       },
