@@ -14,6 +14,9 @@ const isDev: boolean = process.env.NODE_ENV === 'development';
 
 const isMac: boolean = process.platform === 'darwin';
 
+// 屏蔽警告
+process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = 'true';
+
 const createWindow = () => {
   win = new BrowserWindow({
     width: 1080,

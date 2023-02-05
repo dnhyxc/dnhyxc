@@ -13,12 +13,6 @@ import '@/assets/iconfont/iconfont.css';
 
 import './style.less';
 
-// 注册下拉加载插件
-BScroll.use(Pullup);
-
-// 注册鼠标滚动插件
-BScroll.use(MouseWheel);
-
 // 创建vue实例
 const app = createApp(App);
 
@@ -28,13 +22,14 @@ app.use(router);
 // 挂载pinia
 app.use(store);
 
-// 国际化配置
-app.use(ElementPlus, {
-  locale: zhCn,
-});
-
 // element-plus 全局配置
-app.use(ElementPlus, { size: 'default', zIndex: 3000 });
+app.use(ElementPlus, { locale: zhCn, size: 'default', zIndex: 3000 });
 
 // 挂载实例
 app.mount('#app');
+
+// 注册下拉加载插件
+BScroll.use(Pullup);
+
+// 注册鼠标滚动插件
+BScroll.use(MouseWheel);

@@ -111,4 +111,7 @@ export const ATRICLE_TYPE = {
   3: '最热文章',
 };
 
+// URL host
+export const GATEWAY_HOST = '';
+
 export { MINSVG, RESTORESVG, MAXSVG, CLOSESVG, HOMESVG, PAGESVG };

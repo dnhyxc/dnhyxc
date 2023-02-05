@@ -9,8 +9,12 @@
     <div class="carousel-content">
       <Carousel />
       <div class="search-btns">
-        <el-button type="success" link @click="searchNewArticles">最新文章</el-button>
-        <el-button type="warning" link @click="searchHotArticles">最热文章</el-button>
+        <el-button type="success" link :class="searchType === 2 && 'active'" @click="searchNewArticles"
+          >最新文章</el-button
+        >
+        <el-button type="warning" link :class="searchType === 3 && 'active'" @click="searchHotArticles"
+          >最热文章</el-button
+        >
       </div>
       <div class="recommend">{{ ATRICLE_TYPE[searchType] }}</div>
     </div>
@@ -79,6 +83,10 @@ const searchHotArticles = () => {
       position: absolute;
       left: 11px;
       bottom: 16px;
+
+      .active {
+        color: @active;
+      }
     }
     .recommend {
       position: absolute;
