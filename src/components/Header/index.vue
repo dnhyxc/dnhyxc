@@ -30,7 +30,9 @@
           @keyup.enter="onEnter"
         >
           <template #suffix>
-            <el-icon class="el-input__icon" @click="onEnter"><Search /></el-icon>
+            <el-icon class="el-input__icon" @click="onEnter">
+              <Search />
+            </el-icon>
           </template>
         </el-input>
       </div>
@@ -181,10 +183,12 @@ const onEnter = () => {
   height: 30px;
   padding: 10px 15px;
   -webkit-app-region: drag;
+
   .left {
     display: flex;
     align-items: center;
     justify-content: flex-start;
+
     .font {
       margin-right: 20px;
       cursor: pointer;
@@ -196,24 +200,29 @@ const onEnter = () => {
         font-weight: 700;
       }
     }
+
     .title {
       font-size: 18px;
       font-weight: 700;
     }
   }
+
   .right {
     display: flex;
     align-items: center;
+
     .search-wrap {
       display: flex;
       align-items: center;
       -webkit-app-region: no-drag;
+
       .font {
         font-size: 15px;
         cursor: pointer;
         -webkit-app-region: no-drag;
         color: @font-3;
       }
+
       .search-inp {
         width: 180px;
         margin-left: 15px;
@@ -229,12 +238,14 @@ const onEnter = () => {
         }
       }
     }
+
     .bell {
       position: relative;
       display: flex;
       align-items: center;
       -webkit-app-region: no-drag;
       margin-left: 15px;
+
       .msg-count {
         position: absolute;
         top: -6px;
@@ -244,17 +255,20 @@ const onEnter = () => {
         font-weight: 700;
         cursor: pointer;
       }
+
       .bell-font {
         font-size: 17px;
         cursor: pointer;
         color: @font-3;
       }
     }
+
     .sticky {
       display: flex;
       align-items: center;
       justify-content: center;
       -webkit-app-region: no-drag;
+
       .font {
         font-size: 16px;
         cursor: pointer;
@@ -262,15 +276,18 @@ const onEnter = () => {
         margin-top: 2px;
         color: @font-3;
       }
+
       .active {
         color: @sub-2-blue;
       }
     }
+
     .setting {
       display: flex;
       align-items: center;
       justify-content: center;
       -webkit-app-region: no-drag;
+
       .font {
         font-size: 19px;
         cursor: pointer;
@@ -278,15 +295,18 @@ const onEnter = () => {
         color: @font-3;
       }
     }
+
     .page-actions {
       display: flex;
       justify-content: flex-start;
       align-items: center;
       width: 100%;
     }
+
     .icon {
       -webkit-app-region: no-drag;
       cursor: pointer;
+
       .icon-text {
         margin-left: 15px;
         font-size: 16px;
@@ -294,6 +314,7 @@ const onEnter = () => {
     }
   }
 }
+
 .mac-header-wrap {
   padding: 22px 12px 12px 10px;
 }
