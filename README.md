@@ -7,3 +7,9 @@
 ```
 electron_mirror=https://cdn.npm.taobao.org/dist/electron/
 ```
+
+### 快捷键
+
+页面刷新：Ctrl + r。
+
+开启 DevTools：Shift + Ctrl + D + N + H。

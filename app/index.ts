@@ -107,6 +107,9 @@ app
     tray = new Tray(path.join(__dirname, getIconPath({ isDev, isMac })));
     if (!isMac) {
       tray?.setContextMenu(createContextMenu(win));
+      tray?.on('click', () => {
+        win?.show();
+      });
     } else {
       tray?.on('mouse-up', () => {
         win?.show();

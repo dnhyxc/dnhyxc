@@ -22,11 +22,6 @@ export const registerShortcut = ({ isDev, win, isMac }: IParams) => {
     });
   }
 
-  // 页面刷新
-  globalShortcut.register('Shift+Alt+R', () => {
-    window.location?.reload();
-  });
-
   globalShortcut.register('Alt+CommandOrControl+I', () => {
     console.log('alt + ctrl + I');
   });
@@ -42,5 +37,4 @@ export const registerShortcut = ({ isDev, win, isMac }: IParams) => {
 export const unRegisterShortcut = () => {
   // 注销所有快捷键
   globalShortcut.unregisterAll();
-  console.log('aaaa');
 };
