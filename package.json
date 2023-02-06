@@ -1,7 +1,7 @@
 {
   "name": "dnhyxc",
   "private": true,
-  "version": "0.0.1",
+  "version": "0.0.10",
   "main": "dist-electron/index.js",
   "author": "dnhyxc",
   "description": "a web app of electron",

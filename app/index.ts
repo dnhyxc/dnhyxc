@@ -27,6 +27,7 @@ const createWindow = () => {
     webPreferences: {
       contextIsolation: false,
       nodeIntegration: true,
+      partition: String(+new Date()), // 防止加载线上项目地址缓存在磁盘中
     },
     icon: path.join(__dirname, getIconPath({ isDev, isMac })),
   });
@@ -38,7 +39,7 @@ const createWindow = () => {
 
   if (!isDev) {
     // win?.loadFile(path.join(__dirname, '../dist/index.html'));
-    win?.loadURL('http://43.143.114.71');
+    win?.loadURL('http://43.143.114.71:80');
   } else {
     win?.webContents.openDevTools();
     win?.loadURL(process.env.VITE_DEV_SERVER_URL!);

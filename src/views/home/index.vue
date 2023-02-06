@@ -18,7 +18,7 @@
       </div>
       <div class="recommend">{{ ATRICLE_TYPE[searchType] }}</div>
     </div>
-    <Scrollbar :data-source="dataSource" :on-fetch-data="onFetchData" :is-pull-up-load="isPullUpLoad" class="scrollbar">
+    <Scrollbar ref="scRef" class="scrollbar" :data-source="dataSource" :on-fetch-data="onFetchData">
       <template #default="{ data }">
         <Card :data="data" />
       </template>
@@ -33,9 +33,13 @@ import Carousel from '@/components/Carousel/index.vue';
 import Scrollbar from '@/components/Scrollbar/index.vue';
 import Card from '@/components/Card/index.vue';
 
-const isPullUpLoad = ref<boolean>(false);
+interface ScrollbarParams {
+  onScrollTo: (to: number, time?: number) => void;
+}
+
 const dataSource = ref<number>(20);
 const searchType = ref<number>(1); // 1：推荐，2：最新，3：最热
+const scRef = ref<ScrollbarParams>({ onScrollTo: () => {} });
 
 // 请求数据
 const onFetchData = async () => {
