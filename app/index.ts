@@ -1,7 +1,7 @@
 import path from 'path';
 import { app, BrowserWindow, ipcMain, Tray } from 'electron';
-import { setShortcutKeys } from './shortcut-keys';
-import { createContextMenu, getIconPath } from './tray-menu';
+import { registerShortcut, unRegisterShortcut } from './shortcut';
+import { createContextMenu, getIconPath } from './tray';
 
 let win: BrowserWindow | null = null;
 
@@ -37,7 +37,8 @@ const createWindow = () => {
   }
 
   if (!isDev) {
-    win?.loadFile(path.join(__dirname, '../dist/index.html'));
+    // win?.loadFile(path.join(__dirname, '../dist/index.html'));
+    win?.loadURL('http://43.143.114.71');
   } else {
     win?.webContents.openDevTools();
     win?.loadURL(process.env.VITE_DEV_SERVER_URL!);
@@ -101,7 +102,7 @@ ipcMain.on('win-show', (_, status) => {
 app
   .whenReady()
   .then(createWindow)
-  .then(() => setShortcutKeys({ isDev, win, isMac }))
+  .then(() => registerShortcut({ isDev, win, isMac }))
   .then(() => {
     tray = new Tray(path.join(__dirname, getIconPath({ isDev, isMac })));
     if (!isMac) {
@@ -129,4 +130,9 @@ app.on('activate', () => {
   if (win && isMac) {
     win?.show();
   }
+});
+
+// 应用关闭时，注销所有快捷键
+app.on('will-quit', () => {
+  unRegisterShortcut();
 });

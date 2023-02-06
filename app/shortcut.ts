@@ -7,10 +7,13 @@ interface IParams {
   win: BrowserWindow | null;
 }
 
-export const setShortcutKeys = ({ isDev, win, isMac }: IParams) => {
+export const registerShortcut = ({ isDev, win, isMac }: IParams) => {
   // 生产模式禁止使用Shift+Ctrl+I唤起控制台
   if (!isDev) {
     globalShortcut.register('Shift+Ctrl+I', () => {});
+    globalShortcut.register('Shift+Ctrl+D+N+H', () => {
+      win?.webContents.openDevTools();
+    });
   }
 
   if (isDev && isMac) {
@@ -18,6 +21,11 @@ export const setShortcutKeys = ({ isDev, win, isMac }: IParams) => {
       win?.webContents.openDevTools();
     });
   }
+
+  // 页面刷新
+  globalShortcut.register('Shift+Alt+R', () => {
+    window.location?.reload();
+  });
 
   globalShortcut.register('Alt+CommandOrControl+I', () => {
     console.log('alt + ctrl + I');
@@ -28,4 +36,11 @@ export const setShortcutKeys = ({ isDev, win, isMac }: IParams) => {
     win?.isVisible() ? win?.hide() : win?.show();
     win?.isVisible() ? win?.setSkipTaskbar(false) : win?.setSkipTaskbar(true);
   });
+};
+
+// 注销所有快捷键
+export const unRegisterShortcut = () => {
+  // 注销所有快捷键
+  globalShortcut.unregisterAll();
+  console.log('aaaa');
 };
