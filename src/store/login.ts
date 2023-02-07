@@ -1,17 +1,23 @@
 import { defineStore } from 'pinia';
-import { LoginParams, UserLoginParams } from '@/typings/common';
+import { Router } from 'vue-router';
+import { ElMessage } from 'element-plus';
+import { LoginParams, UserLoginParams, UserInfoParams } from '@/typings/common';
+import { commonStore } from '@/store';
 import * as Service from '@/server';
 import { normalizeResult, encrypt, locSetItem, locGetItem, locRemoveItem } from '@/utils';
-import { ElMessage } from 'element-plus';
+
+interface IProps {
+  token: string | undefined | null;
+  userInfo: UserInfoParams;
+}
 
 export const useLoginStore = defineStore('login', {
-  state: () => ({
+  state: (): IProps => ({
     token: locGetItem('token'),
-    userId: locGetItem('userId'),
-    username: locGetItem('username'),
-    auth: Number(locGetItem('auth')) || null, // 管理员权限
-    userInfo: { id: '', username: '' },
+    userInfo: JSON.parse(locGetItem('userInfo')!), // 当前登录人用户信息
   }),
+
+  getters: {},
 
   actions: {
     // 账号注册
@@ -37,7 +43,7 @@ export const useLoginStore = defineStore('login', {
     },
 
     // 登录
-    async onLogin(data: LoginParams) {
+    async onLogin(data: LoginParams, router?: Router) {
       try {
         // 密码加密传到后端
         const password = encrypt(data.password);
@@ -48,15 +54,13 @@ export const useLoginStore = defineStore('login', {
           }),
         );
         if (res.success) {
-          const { token, userId, username, auth } = res.data;
+          const { token, ...userInfo } = res.data;
           this.token = token;
-          this.userId = userId;
-          this.username = username;
-          this.auth = auth;
+          this.userInfo = userInfo as UserInfoParams;
           locSetItem('token', token!);
-          locSetItem('userId', userId!);
-          locSetItem('username', username!);
-          locSetItem('auth', JSON.stringify(auth!));
+          locSetItem('userInfo', JSON.stringify(userInfo));
+          // 登陆成功后返回到上一页面
+          router?.push(commonStore.backPath);
         } else {
           ElMessage.error(res.message);
         }
@@ -66,22 +70,28 @@ export const useLoginStore = defineStore('login', {
       }
     },
 
+    // 重置密码
+    async onResetPwd(params: LoginParams, router?: Router) {
+      const res = normalizeResult<UserInfoParams>(
+        await Service.resetPassword({ ...params, password: encrypt(params.password) }),
+      );
+      // 重置成功后直接登录
+      if (res.success) {
+        await this.onLogin(params, router);
+      } else {
+        ElMessage.error(res.message);
+      }
+    },
+
     // 获取用户信息
-    // async getUserInfo() {
-    //   try {
-    //     const res = normalizeResult<UserInfoParams>(
-    //       await Service.getUserInfo({
-    //         userId: this.userId!,
-    //       }),
-    //     );
-    //     if (res.success) {
-    //       this.userInfo = res.data;
-    //     }
-    //     return res.data;
-    //   } catch (error) {
-    //     throw error;
-    //   }
-    // },
+    async getUserInfo() {
+      try {
+        const res = normalizeResult<UserInfoParams>(await Service.getUserInfo());
+        return res.data;
+      } catch (error) {
+        throw error;
+      }
+    },
 
     // 验证token是否过期
     // async verifyToken() {
@@ -99,13 +109,9 @@ export const useLoginStore = defineStore('login', {
     // 退出登录
     onLogout() {
       this.token = '';
-      this.userId = '';
-      this.username = '';
-      this.auth = 0;
+      this.userInfo = {};
       locRemoveItem('token');
-      locRemoveItem('userId');
-      locRemoveItem('username');
-      locRemoveItem('auth');
+      locRemoveItem('userInfo');
     },
   },
 });
