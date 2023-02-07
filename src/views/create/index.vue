@@ -5,15 +5,15 @@
  * index.vue
 -->
 <template>
-  <div class="create-wrap">发布文章{{ route.query?.id }}</div>
+  <div class="edit-wrap">
+    <Editor mackdown="dnhyxc" />
+  </div>
 </template>
 
 <script setup lang="ts">
-import { useRoute } from 'vue-router';
-
-const route = useRoute();
+import Editor from '@/components/Editor/index.vue';
 </script>
 
-<style scoped lang="less">
+<style lang="less" scoped>
 @import '@/styles/index.less';
 </style>
