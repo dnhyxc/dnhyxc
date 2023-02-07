@@ -52,7 +52,7 @@ import { useRouter, useRoute } from 'vue-router';
 import { MENULIST, PAGESVG } from '@/constant';
 import PAGEICON from '@/assets/svg/page_icon.svg';
 import { MenuListParams } from '@/typings/common';
-import { commonStore } from '@/store';
+import { commonStore, loginStore } from '@/store';
 import { checkOS } from '@/utils';
 
 const router = useRouter();
@@ -91,6 +91,7 @@ const onLogout = () => {
     crumbsName: MENULIST[0].name,
     crumbsPath: MENULIST[0].path,
   });
+  loginStore.onLogout();
   router.push('/login');
 };
 </script>

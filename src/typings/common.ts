@@ -47,8 +47,8 @@ export interface registerRes {
 
 // 用户信息
 export interface UserInfoParams {
-  id: string;
-  username: string;
+  userId?: string;
+  username?: string;
   token?: string;
   job?: string;
   motto?: string;
