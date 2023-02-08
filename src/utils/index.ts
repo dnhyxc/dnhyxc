@@ -1,12 +1,12 @@
 import { ElMessageBox } from 'element-plus';
 import type { ElMessageBoxOptions } from 'element-plus';
 import moment from 'moment';
+import { MSG_CONFIG } from '@/constant';
+import { usePlugins } from './plugins';
 import { normalizeResult } from './result';
 import { decrypt, encrypt } from './crypto';
 import request from './request';
 import { locSetItem, locGetItem, locRemoveItem, ssnGetItem, ssnSetItem, ssnRemoveItem } from './storage';
-
-import { MSG_CONFIG } from '@/constant';
 
 // 判断系统类型
 export const checkOS = () => {
@@ -74,4 +74,5 @@ export {
   ssnSetItem,
   ssnRemoveItem,
   formatGapTime,
+  usePlugins,
 };

@@ -37,9 +37,9 @@ interface ScrollbarParams {
   onScrollTo: (to: number, time?: number) => void;
 }
 
+const scRef = ref<ScrollbarParams>({ onScrollTo: () => {} });
 const dataSource = ref<number>(20);
 const searchType = ref<number>(1); // 1：推荐，2：最新，3：最热
-const scRef = ref<ScrollbarParams>({ onScrollTo: () => {} });
 
 // 请求数据
 const onFetchData = async () => {

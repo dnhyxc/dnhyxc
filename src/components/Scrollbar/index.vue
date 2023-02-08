@@ -6,19 +6,22 @@
 -->
 <template>
   <div ref="scrollRef" class="pullup-wrapper">
-    <div class="pullup-content">
-      <div v-for="(i, index) of dataSource" :key="i" class="pullup-list-item">
-        <slot :data="{ i, index }"></slot>
-      </div>
-      <div class="pullup-tips">
-        <div v-if="!isPullUpLoad" class="before-trigger">
-          <span class="pullup-txt">{{ triggerText }}</span>
+    <slot name="scroll"></slot>
+    <slot v-if="showList" name="list">
+      <div class="pullup-content">
+        <div v-for="(i, index) of dataSource" :key="i" class="pullup-list-item">
+          <slot :data="{ i, index }"></slot>
         </div>
-        <div v-else class="after-trigger">
-          <span class="pullup-txt">{{ loadText }}</span>
+        <div v-if="showList" class="pullup-tips">
+          <div v-if="!isPullUpLoad" class="before-trigger">
+            <span class="pullup-txt">{{ triggerText }}</span>
+          </div>
+          <div v-else class="after-trigger">
+            <span class="pullup-txt">{{ loadText }}</span>
+          </div>
         </div>
       </div>
-    </div>
+    </slot>
     <div v-show="showToTop" class="to-top" @click="onScrollTop">
       <i class="to-icon iconfont icon-huojian"></i>
     </div>
@@ -34,8 +37,9 @@ const scrollRef = ref<HTMLDivElement | null>(null);
 const isPullUpLoad = ref<boolean>(false);
 
 interface IProps {
-  dataSource: any; // 数据源
-  onFetchData: Function; // 请求数据的方法
+  dataSource?: any; // 数据源
+  onFetchData?: Function; // 请求数据的方法
+  showList?: boolean; // 是否显示列表
   showToTop?: boolean; // 是否显示滚动到顶部
   loadText?: string; // loading 文案
   triggerText?: string; // 所有数据加载完毕时的文案
@@ -45,6 +49,7 @@ const props = withDefaults(defineProps<IProps>(), {
   dataSource: () => [],
   onFetchData: () => {},
   showToTop: true,
+  showList: true,
   loadText: 'Loading...',
   triggerText: '没有更多了',
 });

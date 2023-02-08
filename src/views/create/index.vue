@@ -6,7 +6,7 @@
 -->
 <template>
   <div class="edit-wrap">
-    <Editor mackdown="dnhyxc" />
+    <Editor mackdown="" />
   </div>
 </template>
 

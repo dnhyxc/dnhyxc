@@ -23,9 +23,12 @@ withDefaults(defineProps<IProps>(), {
 <style scoped lang="less">
 @import '@/styles/index.less';
 
-:deep {
-  .vuepress-markdown-body {
-    padding: 30px;
+.preview-wrap {
+  :deep {
+    .vuepress-markdown-body {
+      padding: 28px;
+      background-color: transparent;
+    }
   }
 }
 </style>
