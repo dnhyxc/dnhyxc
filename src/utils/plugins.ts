@@ -1,6 +1,7 @@
 import BScroll from '@better-scroll/core';
 // 支持鼠标滚动插件
 import MouseWheel from '@better-scroll/mouse-wheel';
+import ScrollBar from '@better-scroll/scroll-bar';
 // 下拉加载插件
 import Pullup from '@better-scroll/pull-up';
 // 富文本编辑器
@@ -32,6 +33,9 @@ export const usePlugins = <T>(app: T | any) => {
 
   // 注册鼠标滚动插件
   BScroll.use(MouseWheel);
+
+  // 自定义滚动条
+  BScroll.use(ScrollBar);
 
   // 挂载 v-md-deitor 编辑器
   app.use(VueMarkdownEditor);

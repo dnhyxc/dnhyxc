@@ -37,11 +37,13 @@ const toDetail = (id: number) => {
   border: 1px solid @card-border;
   padding: 10px;
   border-radius: 5px;
+
   .carousel {
     .carousel-item {
       box-sizing: border-box;
       height: 100%;
       border-radius: 5px;
+
       .img {
         width: 100%;
         height: 210px;
@@ -52,6 +54,7 @@ const toDetail = (id: number) => {
   }
 
   :deep {
+
     // 更改轮播图小圆点样式
     .el-carousel__indicators--outside {
       .is-active {

@@ -22,7 +22,10 @@
         </div>
       </div>
     </slot>
-    <div v-show="showToTop" class="to-top" @click="onScrollTop">
+    <div ref="scrollbar" class="custom-horizontal-scrollbar">
+      <div class="custom-horizontal-indicator"></div>
+    </div>
+    <div v-show="showToTop && toTop" class="to-top" @click="onScrollTop">
       <i class="to-icon iconfont icon-huojian"></i>
     </div>
   </div>
@@ -45,13 +48,19 @@ interface IProps {
   triggerText?: string; // 所有数据加载完毕时的文案
 }
 
+const toTop = ref<boolean>(false)
+// 自定义滚动条
+const scrollbar = ref<HTMLDivElement | null>(null)
+
 const props = withDefaults(defineProps<IProps>(), {
-  dataSource: () => [],
-  onFetchData: () => {},
+  scrollY: true,
   showToTop: true,
   showList: true,
+  scrollbar: true,
   loadText: 'Loading...',
   triggerText: '没有更多了',
+  dataSource: () => [],
+  onFetchData: () => { },
 });
 
 onMounted(() => {
@@ -78,9 +87,22 @@ const initScroll = () => {
       bounce: false, // 关闭回弹效果
     });
   }
+  // 监听滚动加载事件
   BSC.on('pullingUp', onLoadData);
+  // 监听滚动事件
+  BSC?.on('scroll', onScroll)
 };
 
+// 滚动事件
+const onScroll = (pos: { x: number; y: number; }) => {
+  if (pos.y <= -500) {
+    toTop.value = true
+  } else {
+    toTop.value = false
+  }
+}
+
+// 滚动加载事件
 const onLoadData = async () => {
   isPullUpLoad.value = true;
   await props.onFetchData();
@@ -113,19 +135,23 @@ defineExpose({
   position: relative;
   height: calc(100% - 240px);
   overflow: hidden;
+
   .pullup-content {
     display: flex;
     flex-wrap: wrap;
+
     .pullup-list-item {
       border-radius: 5px;
       list-style: none;
       width: calc(33.33333% - 4px);
       margin-right: 6px;
       margin-bottom: 6px;
+
       &:nth-child(3n + 3) {
         margin-right: 0;
       }
     }
+
     .pullup-tips {
       padding: 6px 0 2px 0;
       width: 100%;
@@ -133,6 +159,7 @@ defineExpose({
       color: @font-4;
     }
   }
+
   .to-top {
     position: absolute;
     right: 12px;
@@ -142,6 +169,7 @@ defineExpose({
     padding: 10px 5px 0 5px;
     border-radius: 8px;
     cursor: pointer;
+
     .to-icon {
       font-size: 30px;
       color: @active;
