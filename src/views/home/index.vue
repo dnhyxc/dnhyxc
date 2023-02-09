@@ -18,34 +18,49 @@
       </div>
       <div class="recommend">{{ ATRICLE_TYPE[searchType] }}</div>
     </div>
-    <Scrollbar ref="scRef" class="scrollbar" :data-source="dataSource" :on-fetch-data="onFetchData">
-      <template #default="{ data }">
-        <Card :data="data" />
-      </template>
-    </Scrollbar>
+    <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
+      <div
+        v-infinite-scroll="onFetchData"
+        :infinite-scroll-delay="300"
+        :infinite-scroll-disabled="disabled"
+        :infinite-scroll-distance="2"
+        class="pullup-content"
+      >
+        <div v-for="i of dataSource" :key="i" class="pullup-list-item">
+          <Card :data="i" />
+        </div>
+        <ToTopIcon :on-scroll-to="onScrollTo" />
+      </div>
+      <div v-if="loading" class="loading">Loading...</div>
+      <div v-if="noMore" class="no-more">没有更多了～～～</div>
+    </el-scrollbar>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { ATRICLE_TYPE } from '@/constant';
+import { scrollTo } from '@/utils';
 import Carousel from '@/components/Carousel/index.vue';
-import Scrollbar from '@/components/Scrollbar/index.vue';
 import Card from '@/components/Card/index.vue';
+import ToTopIcon from '@/components/ToTopIcon/index.vue';
 
-interface ScrollbarParams {
-  onScrollTo: (to: number, time?: number) => void;
-}
-
-const scRef = ref<ScrollbarParams>({ onScrollTo: () => {} });
-const dataSource = ref<number>(20);
+const dataSource = ref<any>(20);
 const searchType = ref<number>(1); // 1：推荐，2：最新，3：最热
+const scrollRef = ref<any>(null);
+const loading = ref<boolean>(false);
+const noMore = computed(() => dataSource.value > 31);
+const disabled = computed(() => loading.value || noMore.value);
 
 // 请求数据
 const onFetchData = async () => {
+  console.log('正在加载更多');
+
   try {
+    loading.value = true;
     const newData: any = await ajaxGet(/* url */);
-    if (dataSource.value > 61) return;
+    loading.value = false;
+    if (dataSource.value > 31) return;
     dataSource.value += newData;
   } catch (err) {
     // handle err
@@ -69,6 +84,11 @@ const searchNewArticles = () => {
 // 搜索最热文章
 const searchHotArticles = () => {
   searchType.value = 3;
+};
+
+// 置顶
+const onScrollTo = () => {
+  scrollTo(scrollRef, 0);
 };
 </script>
 
@@ -98,6 +118,34 @@ const searchHotArticles = () => {
       bottom: 16px;
       color: @active;
     }
+  }
+  :deep {
+    .scrollbar-wrapper {
+      box-sizing: border-box;
+      height: 100%;
+      .pullup-content {
+        display: flex;
+        flex-wrap: wrap;
+        .pullup-list-item {
+          border-radius: 5px;
+          list-style: none;
+          width: calc(33.33333% - 4px);
+          margin-right: 6px;
+          margin-bottom: 6px;
+          &:nth-child(3n + 3) {
+            margin-right: 0;
+          }
+        }
+      }
+    }
+  }
+
+  .loading,
+  .no-more {
+    text-align: center;
+    padding-top: 6px;
+    padding-bottom: 3px;
+    color: @font-4;
   }
 }
 </style>

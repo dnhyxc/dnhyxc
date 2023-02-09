@@ -28,14 +28,14 @@ import '@kangc/v-md-editor/lib/style/preview.css';
 import '@kangc/v-md-editor/lib/plugins/copy-code/copy-code.css';
 
 export const usePlugins = <T>(app: T | any) => {
+  // 自定义滚动条
+  BScroll.use(ScrollBar);
+
   // 注册下拉加载插件
   BScroll.use(Pullup);
 
   // 注册鼠标滚动插件
   BScroll.use(MouseWheel);
-
-  // 自定义滚动条
-  BScroll.use(ScrollBar);
 
   // 挂载 v-md-deitor 编辑器
   app.use(VueMarkdownEditor);

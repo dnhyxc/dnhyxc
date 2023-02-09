@@ -25,15 +25,23 @@ declare module '@vue/runtime-core' {
     ElInput: typeof import('element-plus/es')['ElInput']
     ElMain: typeof import('element-plus/es')['ElMain']
     ElPopover: typeof import('element-plus/es')['ElPopover']
+    ElScrollbar: typeof import('element-plus/es')['ElScrollbar']
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
     Header: typeof import('./src/components/Header/index.vue')['default']
     LeftMenu: typeof import('./src/components/LeftMenu/index.vue')['default']
     Multibar: typeof import('./src/components/Multibar/index.vue')['default']
     Preview: typeof import('./src/components/Preview/index.vue')['default']
+    Pullup: typeof import('./src/components/Pullup/index.vue')['default']
     Rotation: typeof import('./src/components/Rotation/index.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    Scroll: typeof import('./src/components/Scroll/index.vue')['default']
     Scrollbar: typeof import('./src/components/Scrollbar/index.vue')['default']
+    ScrollToIcon: typeof import('./src/components/ScrollToIcon/index.vue')['default']
     Toc: typeof import('./src/components/Toc/index.vue')['default']
+    ToTopIcon: typeof import('./src/components/ToTopIcon/index.vue')['default']
+  }
+  export interface ComponentCustomProperties {
+    vInfiniteScroll: typeof import('element-plus/es')['ElInfiniteScroll']
   }
 }

@@ -5,7 +5,7 @@
  * index.vue
 -->
 <template>
-  <div class="card-wrap" @click="toDetail(data.i)">
+  <div class="card-wrap" @click="toDetail(data)">
     <div class="card">
       <div class="card-top">
         <img class="img" :src="IMG1" />
@@ -19,11 +19,11 @@
         <slot>
           <div class="header">
             <div class="title">
-              {{ data.i + '我的酒馆作者作者作者作者作者作者作者作者作者作者作者作者作者作者作者' + data.index }}
+              {{ data + '我的酒馆作者作者作者作者作者作者作者作者作者作者作者作者作者作者作者' }}
             </div>
             <div class="actions">
-              <span class="edit" @click="(e) => toEdit(e, data.i)">编辑</span>
-              <span class="del" @click="(e) => onReomve(e, data.i)">下架</span>
+              <span class="edit" @click="(e) => toEdit(e, data)">编辑</span>
+              <span class="del" @click="(e) => onReomve(e, data)">下架</span>
             </div>
           </div>
           <div class="art-info">

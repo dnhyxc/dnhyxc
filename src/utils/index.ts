@@ -61,6 +61,55 @@ const formatGapTime = (date: number) => {
   }
 };
 
+// 滚动到某位置
+const cubic = (value: number) => Math.pow(value, 3);
+const easeInOutCubic = (value: number) => (value < 0.5 ? cubic(value * 2) / 2 : 1 - cubic((1 - value) * 2) / 2);
+
+export const scrollToTop = (ref: any, time: number = 500, position: number = 0) => {
+  // el-scrollbar 容器
+  const el = ref.value?.wrapRef as HTMLDivElement;
+  const beginTime = Date.now();
+  const beginValue = el.scrollTop;
+  const rAF = window.requestAnimationFrame || ((func) => setTimeout(func, 16));
+  const frameFunc = () => {
+    const progress = (Date.now() - beginTime) / time;
+    if (progress < 1) {
+      el.scrollTop = beginValue * (1 - easeInOutCubic(progress));
+      rAF(frameFunc);
+    } else {
+      el.scrollTop = position;
+    }
+  };
+  rAF(frameFunc);
+};
+
+export const scrollTo = (ref: any, position: number) => {
+  // el-scrollbar 容器
+  const el = ref.value?.wrapRef as HTMLDivElement;
+  // 使用requestAnimationFrame，如果没有则使用setTimeOut
+  if (!window.requestAnimationFrame) {
+    window.requestAnimationFrame = (callback) => {
+      return setTimeout(callback, 20);
+    };
+  }
+  // 获取当前元素滚动的距离
+  let scrollTopDistance = el.scrollTop;
+  const smoothScroll = () => {
+    // 如果你要滚到顶部，那么position传过来的就是0，下面这个distance肯定就是负值。
+    const distance = position - scrollTopDistance;
+    // 每次滚动的距离要不一样，制造一个缓冲效果
+    scrollTopDistance = scrollTopDistance + distance / 5;
+    // 判断条件
+    if (Math.abs(distance) < 1) {
+      el.scrollTop = position;
+    } else {
+      el.scrollTop = scrollTopDistance;
+      requestAnimationFrame(smoothScroll);
+    }
+  };
+  requestAnimationFrame(smoothScroll);
+};
+
 export {
   request,
   normalizeResult,

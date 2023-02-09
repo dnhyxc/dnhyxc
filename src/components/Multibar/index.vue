@@ -46,15 +46,20 @@
   display: flex;
   justify-content: space-between;
   .action {
+    flex: 1;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 50px;
     height: 50px;
-    border-radius: 50px;
+    border-radius: 5px;
+    margin-right: 10px;
     box-shadow: @shadow-mack;
-    cursor: pointer;
     color: @font-3;
+    cursor: pointer;
+
+    &:last-child {
+      margin-right: 0;
+    }
 
     &:hover {
       color: @theme-blue;

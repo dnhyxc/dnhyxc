@@ -75,24 +75,25 @@ watchEffect(() => {
 
 .container {
   background-color: @fff;
-
   :deep {
+    .v-md-editor {
+      border-radius: 5px;
+      box-shadow: @shadow-mack;
+    }
     .v-md-textarea-editor pre,
     .v-md-textarea-editor textarea {
       background-color: @fff;
+      border-bottom-left-radius: 5px;
     }
     .vuepress-markdown-body:not(.custom) {
       padding: 16px 20px;
     }
-
     .v-md-editor__toolbar-left {
       min-width: 200px;
     }
-
     .v-md-editor__toolbar-right {
       min-width: 125px;
     }
-
     .v-md-editor__toolbar-item-create {
       color: @theme-blue;
       font-size: 14px;

@@ -6,9 +6,19 @@
 -->
 <template>
   <div ref="tocRef" class="toc-wrap">
-    <div class="title">目录</div>
+    <div class="title">
+      <span>目录</span>
+      <i
+        :class="`font iconfont ${scrollTop > 0 ? 'icon-shuangjiantou-shang' : 'icon-shuangjiantou-xia'}`"
+        @click="onScrollTo"
+      />
+    </div>
     <div class="content">
-      <div v-for="i in 100" :key="i" class="item">{{ 'content' + i }}</div>
+      <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
+        <div class="item-wrap">
+          <div v-for="i in 100" :key="i" class="item">{{ 'content' + i }}</div>
+        </div>
+      </el-scrollbar>
     </div>
     <!-- <div
       v-for="(anchor, index) in (detailStore.tocTitles as any)"
@@ -22,40 +32,87 @@
   </div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { ref, onMounted, onUnmounted } from 'vue';
+import { scrollTo } from '@/utils';
+
+const scrollRef = ref<any>(null);
+const scrollTop = ref<number>(0);
+
+onMounted(() => {
+  // 监听滚动条滚动事件
+  scrollRef.value?.wrapRef?.addEventListener('scroll', onScroll);
+});
+
+onUnmounted(() => {
+  // 卸载滚动条滚动事件
+  scrollRef.value?.wrapRef.removeEventListener('scroll', onScroll);
+});
+
+// 滚动事件
+const onScroll = (e: any) => {
+  scrollTop.value = e.target.scrollTop;
+};
+
+// 滚动到某位置
+const onScrollTo = () => {
+  const bottom = scrollRef.value?.wrapRef?.firstElementChild?.offsetHeight;
+  scrollTo(scrollRef, scrollTop.value > 0 ? 0 : bottom);
+};
+</script>
 
 <style scoped lang="less">
 @import '@/styles/index.less';
 
 .toc-wrap {
   box-sizing: border-box;
-  height: auto;
   height: calc(100vh - 122px);
   border-radius: 5px;
-  padding: 0 10px;
+  padding-left: 10px;
   overflow: hidden;
   box-shadow: @shadow-mack;
 
   .title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     padding: 15px 0 15px;
+    margin-right: 10px;
     font-size: 18px;
     font-weight: 700;
     border-bottom: 1px solid @card-border;
+
+    .font {
+      font-size: 20px;
+      font-weight: 700;
+      cursor: pointer;
+    }
   }
 
   .content {
     box-sizing: border-box;
     height: calc(100vh - 185px);
-    overflow: auto;
-    &::-webkit-scrollbar {
-      display: none;
+
+    .item {
+      margin-right: 10px;
+      &::before {
+        position: absolute;
+        left: -11px;
+        top: 50%;
+        transform: translateY(-50%);
+        content: '';
+        height: 65%;
+        width: 5px;
+        background-color: @theme-blue;
+        border-top-right-radius: 5px;
+        border-bottom-right-radius: 5px;
+      }
     }
   }
 
   .toc-item {
     position: relative;
     width: 100%;
-
     &::before {
       position: absolute;
       left: -11px;

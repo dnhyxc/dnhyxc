@@ -1,30 +1,13 @@
 <!--
- * 滚动组件
+ * 滚动条组件
  * @author: dnhyxc
- * @since: 2023-02-02
+ * @since: 2023-02-09
  * index.vue
 -->
 <template>
   <div ref="scrollRef" class="pullup-wrapper">
     <slot name="scroll"></slot>
-    <slot v-if="showList" name="list">
-      <div class="pullup-content">
-        <div v-for="(i, index) of dataSource" :key="i" class="pullup-list-item">
-          <slot :data="{ i, index }"></slot>
-        </div>
-        <div v-if="showList" class="pullup-tips">
-          <div v-if="!isPullUpLoad" class="before-trigger">
-            <span class="pullup-txt">{{ triggerText }}</span>
-          </div>
-          <div v-else class="after-trigger">
-            <span class="pullup-txt">{{ loadText }}</span>
-          </div>
-        </div>
-      </div>
-    </slot>
-    <div ref="scrollbar" class="custom-horizontal-scrollbar">
-      <div class="custom-horizontal-indicator"></div>
-    </div>
+    <slot name="pullup" :is-pull-up-load="isPullUpLoad"></slot>
     <div v-show="showToTop && toTop" class="to-top" @click="onScrollTop">
       <i class="to-icon iconfont icon-huojian"></i>
     </div>
@@ -40,27 +23,23 @@ const scrollRef = ref<HTMLDivElement | null>(null);
 const isPullUpLoad = ref<boolean>(false);
 
 interface IProps {
-  dataSource?: any; // 数据源
-  onFetchData?: Function; // 请求数据的方法
-  showList?: boolean; // 是否显示列表
+  height?: string;
+  dataSource?: any[];
+  onFetchData?: Function;
   showToTop?: boolean; // 是否显示滚动到顶部
   loadText?: string; // loading 文案
   triggerText?: string; // 所有数据加载完毕时的文案
 }
 
-const toTop = ref<boolean>(false)
-// 自定义滚动条
-const scrollbar = ref<HTMLDivElement | null>(null)
+const toTop = ref<boolean>(false);
 
 const props = withDefaults(defineProps<IProps>(), {
-  scrollY: true,
+  height: 'cala(100vh - 62px)',
   showToTop: true,
-  showList: true,
-  scrollbar: true,
   loadText: 'Loading...',
   triggerText: '没有更多了',
   dataSource: () => [],
-  onFetchData: () => { },
+  onFetchData: () => {},
 });
 
 onMounted(() => {
@@ -71,36 +50,38 @@ onMounted(() => {
 const initScroll = () => {
   if (scrollRef.value) {
     BSC = new BScroll(scrollRef.value, {
-      /**
-       *  1. probeType 为 0，在任何时候都不派发 scroll 事件，
-       *  2. probeType 为 1，仅仅当手指按在滚动区域上，每隔 momentumLimitTime 毫秒派发一次 scroll 事件，
-       *  3. probeType 为 2，仅仅当手指按在滚动区域上，一直派发 scroll 事件，
-       *  4. probeType 为 3，任何时候都派发 scroll 事件，包括调用 scrollTo 或者触发 momentum 滚动动画
-       */
-      probeType: 2,
-      // 可以控制下拉加载的阈值 threshold: 0，1，2 等
-      pullUpLoad: {
-        threshold: 1,
+      pullUpLoad: { threshold: 1 },
+      click: true,
+      scrollbar: {
+        interactive: true,
+        scrollbarTrackClickable: true,
+        fadeOutTime: 1000,
       },
+      // 是否派发 scroll 事件，3：当手指按在滚动区域上，一直派发 scroll 事件
+      probeType: 3,
+      // 可以控制下拉加载的阈值 threshold: 0，1，2 等
+      // pullUpLoad: {
+      //   threshold: 0,
+      // },
       mouseWheel: true, // 鼠标滚动配置
       momentumLimitDistance: 200,
       bounce: false, // 关闭回弹效果
     });
   }
   // 监听滚动加载事件
-  BSC.on('pullingUp', onLoadData);
+  BSC?.on('pullingUp', onLoadData);
   // 监听滚动事件
-  BSC?.on('scroll', onScroll)
+  BSC?.on('scroll', onScroll);
 };
 
 // 滚动事件
-const onScroll = (pos: { x: number; y: number; }) => {
+const onScroll = (pos: { x: number; y: number }) => {
   if (pos.y <= -500) {
-    toTop.value = true
+    toTop.value = true;
   } else {
-    toTop.value = false
+    toTop.value = false;
   }
-}
+};
 
 // 滚动加载事件
 const onLoadData = async () => {
@@ -111,12 +92,6 @@ const onLoadData = async () => {
   isPullUpLoad.value = false;
 };
 
-// 滚动到某位置（toY：纵向滚动距离，time：滚动动画时长）
-const onScrollTo = (toY: number, time: number = 300) => {
-  // scrollTo(0, -60, 300, undefined, extraTransform) 参数
-  BSC.scrollTo(0, toY, time);
-};
-
 // 滚动到顶部
 const onScrollTop = () => {
   BSC.scrollTo(0, 0, 300);
@@ -124,7 +99,7 @@ const onScrollTop = () => {
 
 // 向外暴露onScrollTo
 defineExpose({
-  onScrollTo,
+  onScrollTop,
 });
 </script>
 
@@ -133,47 +108,8 @@ defineExpose({
 
 .pullup-wrapper {
   position: relative;
-  height: calc(100% - 240px);
+  height: v-bind(height);
   overflow: hidden;
-
-  .pullup-content {
-    display: flex;
-    flex-wrap: wrap;
-
-    .pullup-list-item {
-      border-radius: 5px;
-      list-style: none;
-      width: calc(33.33333% - 4px);
-      margin-right: 6px;
-      margin-bottom: 6px;
-
-      &:nth-child(3n + 3) {
-        margin-right: 0;
-      }
-    }
-
-    .pullup-tips {
-      padding: 6px 0 2px 0;
-      width: 100%;
-      text-align: center;
-      color: @font-4;
-    }
-  }
-
-  .to-top {
-    position: absolute;
-    right: 12px;
-    bottom: 12px;
-    background-color: rgba(225, 225, 225, 0.8);
-    box-shadow: 0 0 10px @theme-blue;
-    padding: 10px 5px 0 5px;
-    border-radius: 8px;
-    cursor: pointer;
-
-    .to-icon {
-      font-size: 30px;
-      color: @active;
-    }
-  }
+  border: 1px solid red;
 }
 </style>
