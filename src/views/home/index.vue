@@ -15,7 +15,8 @@
       <div class="recommend">{{ ATRICLE_TYPE[searchType] }}</div>
     </div>
     <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
-      <div v-infinite-scroll="onFetchData" :infinite-scroll-delay="300" :infinite-scroll-disabled="disabled"
+      <div
+v-infinite-scroll="onFetchData" :infinite-scroll-delay="300" :infinite-scroll-disabled="disabled"
         :infinite-scroll-distance="2" class="pullup-content">
         <div v-for="i of dataSource" :key="i" class="pullup-list-item">
           <Card :data="i" />

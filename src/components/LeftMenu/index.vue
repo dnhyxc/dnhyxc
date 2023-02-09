@@ -12,7 +12,8 @@
       </div>
       <div v-for="menu in menuList" :key="menu.key" class="menu-list" @click="onSelectMenu(menu)">
         <el-tooltip class="box-item" effect="light" :content="menu.name" placement="right">
-          <i :class="`${((activeMenu.path === menu.path && route.path.includes(menu.path)) ||
+          <i
+:class="`${((activeMenu.path === menu.path && route.path.includes(menu.path)) ||
             commonStore.activePath === menu.path) &&
           'active'
           } font iconfont ${menu.icon}`" />

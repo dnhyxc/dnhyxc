@@ -8,7 +8,8 @@
   <div ref="tocRef" class="toc-wrap">
     <div class="title">
       <span>目录</span>
-      <i :class="`font iconfont ${scrollTop > 0 ? 'icon-shuangjiantou-shang' : 'icon-shuangjiantou-xia'}`"
+      <i
+:class="`font iconfont ${scrollTop > 0 ? 'icon-shuangjiantou-shang' : 'icon-shuangjiantou-xia'}`"
         @click="onScrollTo" />
     </div>
     <div class="content">
