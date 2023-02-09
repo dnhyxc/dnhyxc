@@ -51,6 +51,13 @@ const toDetail = (id: number) => {
         border-radius: 5px;
       }
     }
+
+    // :deep {
+    //   .is-active {
+    //     box-shadow: 0 0 5px #ccc;
+    //     border-radius: 5px;
+    //   }
+    // }
   }
 
   :deep {
@@ -58,6 +65,8 @@ const toDetail = (id: number) => {
     // 更改轮播图小圆点样式
     .el-carousel__indicators--outside {
       .is-active {
+        // box-shadow: none;
+
         button {
           background-color: @theme-blue;
         }

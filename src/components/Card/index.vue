@@ -28,9 +28,7 @@
           </div>
           <div class="art-info">
             <div class="create-info">
-              <span class="author" @click="toPersonal"
-                >作者作者作者作者作者作者作者作者作者作者作者作者作者作者作者</span
-              >
+              <span class="author" @click="toPersonal">作者作者作者作者作者作者作者作者作者作者作者作者作者作者作者</span>
               <span class="date">2023-09-02 02:09</span>
             </div>
             <div class="tags">
@@ -120,24 +118,28 @@ const toTag = (e: Event, name: string) => {
   flex-wrap: wrap;
   border: 1px solid @card-border;
   border-radius: 5px;
+
   .card {
     position: relative;
     width: 100%;
     padding: 10px 10px 3px 10px;
     cursor: pointer;
     overflow: hidden;
+
     &:hover {
       .img {
         transform: scale(1.3);
         transition: all 0.3s;
       }
     }
+
     .card-top {
       position: relative;
       width: 100%;
       height: 100%;
       border-radius: 5px;
       overflow: hidden;
+
       .img {
         display: block;
         position: relative;
@@ -147,6 +149,7 @@ const toTag = (e: Event, name: string) => {
         border-radius: 5px;
         transition: all 0.3s;
       }
+
       .info {
         display: flex;
         align-items: center;
@@ -162,6 +165,7 @@ const toTag = (e: Event, name: string) => {
         background-color: rgba(0, 0, 0, 0.28);
         color: @fff;
         overflow: hidden;
+
         .desc {
           display: table-cell;
           vertical-align: middle;
@@ -170,29 +174,36 @@ const toTag = (e: Event, name: string) => {
         }
       }
     }
+
     .card-bottom {
       padding: 9px 0 5px 0;
+
       .header {
         display: flex;
         justify-content: space-between;
         align-items: center;
+
         .title {
           flex: 1;
           margin-right: 5px;
           font-size: 16px;
           .ellipsisMore(1);
         }
+
         .actions {
           display: flex;
           align-items: center;
           font-size: 14px;
+
           .edit {
             margin-right: 10px;
             color: @theme-blue;
           }
+
           .del {
             color: @font-danger;
           }
+
           .edit,
           .del {
             &:hover {
@@ -201,13 +212,16 @@ const toTag = (e: Event, name: string) => {
           }
         }
       }
+
       .art-info {
         display: flex;
         flex-direction: column;
+
         .create-info {
           display: flex;
           justify-content: space-between;
           align-items: center;
+
           .author,
           .date {
             max-width: 50%;
@@ -215,17 +229,21 @@ const toTag = (e: Event, name: string) => {
             color: @font-2;
             .ellipsisMore(1);
           }
+
           .author {
             margin-right: 5px;
+
             &:hover {
               color: @theme-blue;
             }
           }
         }
+
         .tags {
           display: flex;
           justify-content: space-between;
           align-items: center;
+
           .classify,
           .tag {
             max-width: 50%;
@@ -238,6 +256,7 @@ const toTag = (e: Event, name: string) => {
               color: @theme-blue;
             }
           }
+
           .classify {
             margin-right: 5px;
           }

@@ -9,23 +9,14 @@
     <div class="carousel-content">
       <Carousel />
       <div class="search-btns">
-        <el-button type="success" link :class="searchType === 2 && 'active'" @click="searchNewArticles"
-          >最新文章</el-button
-        >
-        <el-button type="warning" link :class="searchType === 3 && 'active'" @click="searchHotArticles"
-          >最热文章</el-button
-        >
+        <el-button type="success" link :class="searchType === 2 && 'active'" @click="searchNewArticles">最新文章</el-button>
+        <el-button type="warning" link :class="searchType === 3 && 'active'" @click="searchHotArticles">最热文章</el-button>
       </div>
       <div class="recommend">{{ ATRICLE_TYPE[searchType] }}</div>
     </div>
     <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
-      <div
-        v-infinite-scroll="onFetchData"
-        :infinite-scroll-delay="300"
-        :infinite-scroll-disabled="disabled"
-        :infinite-scroll-distance="2"
-        class="pullup-content"
-      >
+      <div v-infinite-scroll="onFetchData" :infinite-scroll-delay="300" :infinite-scroll-disabled="disabled"
+        :infinite-scroll-distance="2" class="pullup-content">
         <div v-for="i of dataSource" :key="i" class="pullup-list-item">
           <Card :data="i" />
         </div>
@@ -41,16 +32,21 @@
 import { ref, computed } from 'vue';
 import { ATRICLE_TYPE } from '@/constant';
 import { scrollTo } from '@/utils';
+import { useScrollDown } from '@/hooks'
 import Carousel from '@/components/Carousel/index.vue';
 import Card from '@/components/Card/index.vue';
 import ToTopIcon from '@/components/ToTopIcon/index.vue';
 
 const dataSource = ref<any>(20);
 const searchType = ref<number>(1); // 1：推荐，2：最新，3：最热
-const scrollRef = ref<any>(null);
 const loading = ref<boolean>(false);
+const scrollRef = ref<any>(null); // 滚动条ref
+const scrollTop = ref<number>(0); // 滚动距离
+
 const noMore = computed(() => dataSource.value > 31);
 const disabled = computed(() => loading.value || noMore.value);
+
+useScrollDown(scrollRef, scrollTop);
 
 // 请求数据
 const onFetchData = async () => {
@@ -101,8 +97,10 @@ const onScrollTo = () => {
   justify-content: flex-start;
   box-sizing: border-box;
   height: 100%;
+
   .carousel-content {
     position: relative;
+
     .search-btns {
       position: absolute;
       left: 11px;
@@ -112,6 +110,7 @@ const onScrollTo = () => {
         color: @active;
       }
     }
+
     .recommend {
       position: absolute;
       right: 11px;
@@ -119,19 +118,23 @@ const onScrollTo = () => {
       color: @active;
     }
   }
+
   :deep {
     .scrollbar-wrapper {
       box-sizing: border-box;
       height: 100%;
+
       .pullup-content {
         display: flex;
         flex-wrap: wrap;
+
         .pullup-list-item {
           border-radius: 5px;
           list-style: none;
           width: calc(33.33333% - 4px);
           margin-right: 6px;
           margin-bottom: 6px;
+
           &:nth-child(3n + 3) {
             margin-right: 0;
           }

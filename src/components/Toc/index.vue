@@ -8,10 +8,8 @@
   <div ref="tocRef" class="toc-wrap">
     <div class="title">
       <span>目录</span>
-      <i
-        :class="`font iconfont ${scrollTop > 0 ? 'icon-shuangjiantou-shang' : 'icon-shuangjiantou-xia'}`"
-        @click="onScrollTo"
-      />
+      <i :class="`font iconfont ${scrollTop > 0 ? 'icon-shuangjiantou-shang' : 'icon-shuangjiantou-xia'}`"
+        @click="onScrollTo" />
     </div>
     <div class="content">
       <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
@@ -33,26 +31,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref } from 'vue';
 import { scrollTo } from '@/utils';
+import { useScrollDown } from '@/hooks'
 
 const scrollRef = ref<any>(null);
 const scrollTop = ref<number>(0);
 
-onMounted(() => {
-  // 监听滚动条滚动事件
-  scrollRef.value?.wrapRef?.addEventListener('scroll', onScroll);
-});
-
-onUnmounted(() => {
-  // 卸载滚动条滚动事件
-  scrollRef.value?.wrapRef.removeEventListener('scroll', onScroll);
-});
-
-// 滚动事件
-const onScroll = (e: any) => {
-  scrollTop.value = e.target.scrollTop;
-};
+useScrollDown(scrollRef, scrollTop)
 
 // 滚动到某位置
 const onScrollTo = () => {
@@ -95,6 +81,7 @@ const onScrollTo = () => {
 
     .item {
       margin-right: 10px;
+
       &::before {
         position: absolute;
         left: -11px;
@@ -113,6 +100,7 @@ const onScrollTo = () => {
   .toc-item {
     position: relative;
     width: 100%;
+
     &::before {
       position: absolute;
       left: -11px;
