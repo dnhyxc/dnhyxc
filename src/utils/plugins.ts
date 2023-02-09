@@ -1,9 +1,3 @@
-import BScroll from '@better-scroll/core';
-// 支持鼠标滚动插件
-import MouseWheel from '@better-scroll/mouse-wheel';
-import ScrollBar from '@better-scroll/scroll-bar';
-// 下拉加载插件
-import Pullup from '@better-scroll/pull-up';
 // 富文本编辑器
 import vuepressTheme from '@kangc/v-md-editor/lib/theme/vuepress.js';
 import VueMarkdownEditor from '@kangc/v-md-editor';
@@ -28,15 +22,6 @@ import '@kangc/v-md-editor/lib/style/preview.css';
 import '@kangc/v-md-editor/lib/plugins/copy-code/copy-code.css';
 
 export const usePlugins = <T>(app: T | any) => {
-  // 自定义滚动条
-  BScroll.use(ScrollBar);
-
-  // 注册下拉加载插件
-  BScroll.use(Pullup);
-
-  // 注册鼠标滚动插件
-  BScroll.use(MouseWheel);
-
   // 挂载 v-md-deitor 编辑器
   app.use(VueMarkdownEditor);
 
@@ -67,9 +52,6 @@ export const usePlugins = <T>(app: T | any) => {
 };
 
 export {
-  BScroll,
-  MouseWheel,
-  Pullup,
   vuepressTheme,
   VueMarkdownEditor,
   createEmojiPlugin,
