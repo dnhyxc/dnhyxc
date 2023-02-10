@@ -8,7 +8,8 @@
         <Header />
         <div :class="`${checkOS() === 'mac' && 'mac-content'} content`">
           <RouterView v-slot="{ Component }">
-            <KeepAlive>
+            <!-- 定义缓存组件：注意include="Create"，Create 组件内部必须声明组件名称 -->
+            <KeepAlive include="Create">
               <component :is="Component" />
             </KeepAlive>
           </RouterView>
@@ -22,11 +23,6 @@
 import Header from '@/components/Header/index.vue';
 import LeftMenu from '@/components/LeftMenu/index.vue';
 import { checkOS } from '@/utils';
-import { useRoute } from 'vue-router';
-
-const route = useRoute();
-
-console.log(route.name);
 </script>
 
 <style lang="less" scoped>
