@@ -35,5 +35,6 @@ module.exports = {
     'vue/multi-word-component-names': 0,
     'no-useless-catch': 0,
     'prettier/prettier': 0,
+    'vue/no-mutating-props': 0,
   },
 };

@@ -9,8 +9,9 @@
     <div class="title">
       <span>目录</span>
       <i
-:class="`font iconfont ${scrollTop > 0 ? 'icon-shuangjiantou-shang' : 'icon-shuangjiantou-xia'}`"
-        @click="onScrollTo" />
+        :class="`font iconfont ${scrollTop > 0 ? 'icon-shuangjiantou-shang' : 'icon-shuangjiantou-xia'}`"
+        @click="onScrollTo"
+      />
     </div>
     <div class="content">
       <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
@@ -32,14 +33,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
 import { scrollTo } from '@/utils';
-import { useScrollDown } from '@/hooks'
+import { useScroller } from '@/hooks';
 
-const scrollRef = ref<any>(null);
-const scrollTop = ref<number>(0);
-
-useScrollDown(scrollRef, scrollTop)
+const { scrollRef, scrollTop } = useScroller();
 
 // 滚动到某位置
 const onScrollTo = () => {

@@ -78,3 +78,14 @@ export interface Params {
   pageSize: number;
   userId?: string;
 }
+
+// 发布文章参数
+export interface CreateArticleParams {
+  title?: string;
+  content?: string;
+  classify?: string;
+  tag?: string;
+  coverImage?: string;
+  abstract?: string;
+  createTime?: number;
+}

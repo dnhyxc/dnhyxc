@@ -1,6 +1,5 @@
 import { useRouter } from 'vue-router';
-import { toRaw, onMounted, onUnmounted } from 'vue';
-import type { Ref } from 'vue';
+import { toRaw, onMounted, onUnmounted, ref } from 'vue';
 
 const router = useRouter();
 
@@ -9,7 +8,10 @@ export const useGetRoutePath = () => {
 };
 
 // 监听滚动条事件hooks
-export const useScrollDown = (scrollRef: Ref, scrollTop: Ref<number>) => {
+export const useScroller = () => {
+  const scrollRef = ref<any>();
+  const scrollTop = ref<number>(0);
+
   onMounted(() => {
     // 监听滚动条滚动事件
     scrollRef.value?.wrapRef?.addEventListener('scroll', onScroll);
@@ -24,4 +26,6 @@ export const useScrollDown = (scrollRef: Ref, scrollTop: Ref<number>) => {
   const onScroll = (e: any) => {
     scrollTop.value = e.target.scrollTop;
   };
+
+  return { scrollRef, scrollTop };
 };

@@ -122,4 +122,128 @@ export const ATRICLE_TYPE = {
 // URL host
 export const GATEWAY_HOST = '';
 
+// 文章分类
+export const ARTICLE_CLASSIFY = [
+  '前端',
+  '后端',
+  '架构',
+  '数据库',
+  '设计模式',
+  '数据结构',
+  '算法',
+  '开发工具',
+  '代码人生',
+  '前端框架',
+  '计算机',
+  '网络协议',
+  '可视化',
+  '移动端',
+  '阅读',
+  '其它',
+];
+
+// 文章标签
+export const ARTICLE_TAG = [
+  {
+    label: '前端',
+    key: '1',
+  },
+  {
+    label: '后端',
+    key: '2',
+  },
+  {
+    label: 'JavaScript',
+    key: '3',
+  },
+  {
+    label: 'Node.js',
+    key: '4',
+  },
+  {
+    label: 'TypeScript',
+    key: '5',
+  },
+  {
+    label: '前端框架',
+    key: '6',
+  },
+  {
+    label: 'React',
+    key: '7',
+  },
+  {
+    label: 'Vue',
+    key: '8',
+  },
+  {
+    label: 'Preact',
+    key: '9',
+  },
+  {
+    label: 'Webpack',
+    key: '10',
+  },
+  {
+    label: 'Koa.js',
+    key: '11',
+  },
+  {
+    label: '面试',
+    key: '12',
+  },
+  {
+    label: 'Java',
+    key: '13',
+  },
+  {
+    label: '架构',
+    key: '14',
+  },
+  {
+    label: 'CSS',
+    key: '15',
+  },
+  {
+    label: 'HTML',
+    key: '16',
+  },
+  {
+    label: '数据结构',
+    key: '17',
+  },
+  {
+    label: '算法',
+    key: '18',
+  },
+  {
+    label: 'GitHub',
+    key: '19',
+  },
+  {
+    label: 'Git',
+    key: '20',
+  },
+  {
+    label: '设计模式',
+    key: '21',
+  },
+  {
+    label: '数据库',
+    key: '22',
+  },
+  {
+    label: '项目部署',
+    key: '23',
+  },
+  {
+    label: 'Docker',
+    key: '24',
+  },
+  {
+    label: 'Nginx',
+    key: '25',
+  },
+];
+
 export { MINSVG, RESTORESVG, MAXSVG, CLOSESVG, HOMESVG, PAGESVG };

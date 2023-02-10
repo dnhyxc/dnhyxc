@@ -10,7 +10,7 @@
       <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
         <Preview v-if="mackdown" :mackdown="mackdown" class="preview-content" />
       </el-scrollbar>
-      <ToTopIcon :on-scroll-to="onScrollTo" />
+      <ToTopIcon v-if="scrollTop >= 500" :on-scroll-to="onScrollTo" />
     </div>
     <div class="right">
       <Multibar class="action-list" />
@@ -22,6 +22,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useRoute } from 'vue-router';
+import { useScroller } from '@/hooks';
 import { scrollTo } from '@/utils';
 import Preview from '@/components/Preview/index.vue';
 import Multibar from '@/components/Multibar/index.vue';
@@ -30,8 +31,10 @@ import ToTopIcon from '@/components/ToTopIcon/index.vue';
 
 const route = useRoute();
 
-const scrollRef = ref<any>(null);
 const mackdown = ref<string | undefined>(route.params.id as string);
+
+// scrollRef：el-scrollbar ref，scrollTop：滚动距离
+const { scrollRef, scrollTop } = useScroller();
 
 // 置顶
 const onScrollTo = () => {
