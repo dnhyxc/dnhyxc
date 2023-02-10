@@ -13,3 +13,13 @@ electron_mirror=https://cdn.npm.taobao.org/dist/electron/
 页面刷新：Ctrl + r。
 
 开启 DevTools：Shift + Ctrl + D + N + H。
+
+### keep-alive
+
+https://blog.csdn.net/m0_46309087/article/details/109403655 keep-alive
+
+### vue-cropper
+
+https://juejin.cn/post/7032295846658097159
+https://juejin.cn/post/7189548709456773179
+https://blog.csdn.net/qq_41107231/article/details/109725839

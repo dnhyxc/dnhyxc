@@ -7,7 +7,11 @@
       <el-main class="el-main">
         <Header />
         <div :class="`${checkOS() === 'mac' && 'mac-content'} content`">
-          <RouterView />
+          <RouterView v-slot="{ Component }">
+            <KeepAlive>
+              <component :is="Component" />
+            </KeepAlive>
+          </RouterView>
         </div>
       </el-main>
     </el-container>
@@ -18,6 +22,11 @@
 import Header from '@/components/Header/index.vue';
 import LeftMenu from '@/components/LeftMenu/index.vue';
 import { checkOS } from '@/utils';
+import { useRoute } from 'vue-router';
+
+const route = useRoute();
+
+console.log(route.name);
 </script>
 
 <style lang="less" scoped>
