@@ -246,4 +246,7 @@ export const ARTICLE_TAG = [
   },
 ];
 
+// 允许上传的文件类型
+export const FILE_TYPE = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif'];
+
 export { MINSVG, RESTORESVG, MAXSVG, CLOSESVG, HOMESVG, PAGESVG };

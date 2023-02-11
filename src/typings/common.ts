@@ -85,7 +85,7 @@ export interface CreateArticleParams {
   content?: string;
   classify?: string;
   tag?: string;
-  coverImage?: string;
-  abstract?: string;
   createTime?: number;
+  coverImg?: string;
+  abstract?: string;
 }

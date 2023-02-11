@@ -11,7 +11,7 @@
         <h3 :id="titleId" :class="titleClass">发布文章</h3>
       </template>
       <div class="content">
-        <el-form ref="formRef" :model="createArticleForm" class="form-wrap">
+        <el-form ref="formRef" label-width="50px" :model="createArticleForm" class="form-wrap">
           <el-form-item
             prop="title"
             label="标题"
@@ -78,6 +78,11 @@
               class="el-date-picker"
             />
           </el-form-item>
+          <el-form-item prop="cover" label="封面" class="form-item-cover">
+            <div class="cover-wrap">
+              <UploadCropper :get-cover-image="getCoverImage" />
+            </div>
+          </el-form-item>
           <el-form-item
             prop="abstract"
             label="摘要"
@@ -112,19 +117,24 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue';
+import type { FormInstance } from 'element-plus';
 import { CreateArticleParams } from '@/typings/common';
 import { ARTICLE_CLASSIFY, ARTICLE_TAG } from '@/constant';
+import { createStore } from '@/store';
+import UploadCropper from '@/components/UploadCropper/index.vue';
 
 interface IProps {
   modelValue: boolean;
   mackdown: string;
 }
 
+const formRef = ref<FormInstance>();
 const createArticleForm = ref<CreateArticleParams>({
   title: '',
   classify: '',
   tag: '',
-  createTime: 0,
+  createTime: new Date().valueOf(),
+  coverImg: '',
   abstract: '',
 });
 
@@ -145,6 +155,11 @@ const visible = computed({
   },
 });
 
+// 获取上传组件中的coverImage
+const getCoverImage = (url: string) => {
+  createArticleForm.value.coverImg = url;
+};
+
 // 取消
 const onCancel = () => {
   emit('update:modelValue', false);
@@ -152,9 +167,21 @@ const onCancel = () => {
 
 // 确认
 const onSubmit = () => {
-  console.log(props.mackdown, 'onSubmit>>>>>mackdown');
-
-  emit('update:modelValue', false);
+  if (!formRef.value) return;
+  formRef.value.validate(async (valid) => {
+    if (valid) {
+      const params = {
+        ...createArticleForm.value,
+        content: props.mackdown,
+      };
+      console.log(params, 'params');
+      await createStore.createArticle(params);
+      // emit('update:modelValue', false);
+    } else {
+      console.log(createArticleForm.value, 'error submit!');
+      return false;
+    }
+  });
 };
 </script>
 
@@ -163,25 +190,34 @@ const onSubmit = () => {
 
 .drawer-wrap {
   .content {
-    padding: 10px;
-  }
+    :deep {
+      .el-drawer {
+        min-width: 350px;
+      }
 
-  :deep {
-    .el-drawer {
-      min-width: 350px;
-    }
+      .el-date-picker {
+        display: flex;
+        width: 100%;
 
-    .el-date-picker {
-      display: flex;
-      width: 100%;
+        .el-input__wrapper {
+          flex: 1;
+        }
+      }
 
-      .el-input__wrapper {
+      .el-select {
         flex: 1;
       }
     }
 
-    .el-select {
-      flex: 1;
+    .form-item-cover {
+      display: flex;
+      .cover-wrap {
+        flex: 1;
+        display: flex;
+        align-content: center;
+        justify-content: center;
+        height: 140px;
+      }
     }
   }
   .footer {
