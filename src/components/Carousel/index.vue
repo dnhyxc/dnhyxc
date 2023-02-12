@@ -34,8 +34,8 @@ const toDetail = (id: number) => {
 .carousel-wrap {
   height: 230px;
   margin-bottom: 10px;
-  border: 1px solid @card-border;
-  padding: 10px;
+  // border: 1px solid @card-border;
+  padding: 0 0 10px 0;
   border-radius: 5px;
 
   .carousel {
@@ -52,20 +52,19 @@ const toDetail = (id: number) => {
       }
     }
 
-    // :deep {
-    //   .is-active {
-    //     box-shadow: 0 0 5px #ccc;
-    //     border-radius: 5px;
-    //   }
-    // }
+    :deep {
+      .is-active {
+        box-shadow: 0 0 5px @card-border;
+        border-radius: 5px;
+      }
+    }
   }
 
   :deep {
-
     // 更改轮播图小圆点样式
     .el-carousel__indicators--outside {
       .is-active {
-        // box-shadow: none;
+        box-shadow: none;
 
         button {
           background-color: @theme-blue;

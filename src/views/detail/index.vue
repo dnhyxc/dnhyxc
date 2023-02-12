@@ -56,7 +56,7 @@ const onScrollTo = () => {
     justify-content: center;
     box-sizing: border-box;
     margin-right: 10px;
-    height: calc(100vh - 62px);
+    .pageHeight();
     border-radius: 5px;
     box-shadow: @shadow-mack;
     :deep {

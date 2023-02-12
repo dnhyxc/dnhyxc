@@ -7,6 +7,9 @@
 <template>
   <div :class="`${checkOS() === 'mac' && 'mac-header-wrap'} header-wrap`" @dblclick="onDblclick">
     <div class="left">
+      <div class="icon-wrap">
+        <img :src="PAGEICON" class="page-icon" />
+      </div>
       <el-tooltip effect="light" content="后退" placement="bottom">
         <i class="font iconfont icon-arrow-left-bold" @click="goBack" />
       </el-tooltip>
@@ -78,6 +81,7 @@ import { Search } from '@element-plus/icons-vue';
 import { ACTION_SVGS, MENULIST } from '@/constant';
 import { commonStore } from '@/store';
 import { checkOS } from '@/utils';
+import PAGEICON from '@/assets/svg/page_icon.svg';
 
 const router = useRouter();
 const route = useRoute();
@@ -184,13 +188,25 @@ const onEnter = () => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 30px;
+  height: 35px;
   padding: 10px 15px;
   -webkit-app-region: drag;
   .left {
     display: flex;
     align-items: center;
     justify-content: flex-start;
+    .icon-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      .page-icon {
+        width: 32px;
+        height: 32px;
+        margin-bottom: 2px;
+        margin-right: 20px;
+      }
+    }
     .font {
       margin-right: 20px;
       cursor: pointer;

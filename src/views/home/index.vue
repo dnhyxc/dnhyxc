@@ -138,9 +138,9 @@ const onScrollTo = () => {
         .pullup-list-item {
           border-radius: 5px;
           list-style: none;
-          width: calc(33.33333% - 4px);
-          margin-right: 6px;
-          margin-bottom: 6px;
+          width: calc(33.33333% - 8px);
+          margin-right: 12px;
+          margin-bottom: 11px;
 
           &:nth-child(3n + 3) {
             margin-right: 0;
@@ -153,8 +153,8 @@ const onScrollTo = () => {
   .loading,
   .no-more {
     text-align: center;
-    padding-top: 6px;
-    padding-bottom: 3px;
+    padding-top: 5px;
+    padding-bottom: 5px;
     color: @font-4;
   }
 }

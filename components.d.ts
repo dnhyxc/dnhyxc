@@ -9,8 +9,6 @@ declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     Card: typeof import('./src/components/Card/index.vue')['default']
     Carousel: typeof import('./src/components/Carousel/index.vue')['default']
-    Cropper: typeof import('./src/components/Cropper/index.vue')['default']
-    CropperUpload: typeof import('./src/components/CropperUpload/index.vue')['default']
     Editor: typeof import('./src/components/Editor/index.vue')['default']
     ElAside: typeof import('element-plus/es')['ElAside']
     ElAvatar: typeof import('element-plus/es')['ElAvatar']

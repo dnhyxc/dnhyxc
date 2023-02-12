@@ -7,9 +7,6 @@
 <template>
   <div :class="`${checkOS() === 'mac' && 'mac-left-menu-wrap'} left-menu-wrap`">
     <div>
-      <div class="icon-wrap">
-        <img :src="PAGEICON" class="page-icon" />
-      </div>
       <div v-for="menu in menuList" :key="menu.key" class="menu-list" @click="onSelectMenu(menu)">
         <el-tooltip class="box-item" effect="light" :content="menu.name" placement="right">
           <i
@@ -50,7 +47,6 @@
 import { ref, computed } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { MENULIST, PAGESVG } from '@/constant';
-import PAGEICON from '@/assets/svg/page_icon.svg';
 import { MenuListParams } from '@/typings/common';
 import { commonStore, loginStore } from '@/store';
 import { checkOS } from '@/utils';
@@ -105,22 +101,10 @@ const onLogout = () => {
   flex-direction: column;
   box-sizing: border-box;
   width: 60px;
-  height: 100vh;
-  padding: 12px 10px;
-  border-right: 1px solid @card-border;
+  .pageHeight();
+  padding-left: 1px;
+  border-radius: 5px;
   overflow: auto;
-
-  .icon-wrap {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    .page-icon {
-      width: 32px;
-      height: 32px;
-      margin-bottom: 20px;
-    }
-  }
 
   .menu-list {
     box-sizing: border-box;

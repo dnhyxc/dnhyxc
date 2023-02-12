@@ -28,7 +28,9 @@
           </div>
           <div class="art-info">
             <div class="create-info">
-              <span class="author" @click="toPersonal">作者作者作者作者作者作者作者作者作者作者作者作者作者作者作者</span>
+              <span class="author" @click="toPersonal"
+                >作者作者作者作者作者作者作者作者作者作者作者作者作者作者作者</span
+              >
               <span class="date">2023-09-02 02:09</span>
             </div>
             <div class="tags">
@@ -116,13 +118,11 @@ const toTag = (e: Event, name: string) => {
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  border: 1px solid @card-border;
   border-radius: 5px;
 
   .card {
     position: relative;
     width: 100%;
-    padding: 10px 10px 3px 10px;
     cursor: pointer;
     overflow: hidden;
 
@@ -137,7 +137,8 @@ const toTag = (e: Event, name: string) => {
       position: relative;
       width: 100%;
       height: 100%;
-      border-radius: 5px;
+      border-top-left-radius: 5px;
+      border-top-right-radius: 5px;
       overflow: hidden;
 
       .img {
@@ -146,7 +147,8 @@ const toTag = (e: Event, name: string) => {
         height: 100%;
         width: 100%;
         object-fit: cover;
-        border-radius: 5px;
+        border-top-left-radius: 5px;
+        border-top-right-radius: 5px;
         transition: all 0.3s;
       }
 
@@ -176,8 +178,10 @@ const toTag = (e: Event, name: string) => {
     }
 
     .card-bottom {
-      padding: 9px 0 5px 0;
-
+      padding: 8px 10px;
+      background-color: @card-bg;
+      border-bottom-left-radius: 5px;
+      border-bottom-right-radius: 5px;
       .header {
         display: flex;
         justify-content: space-between;
