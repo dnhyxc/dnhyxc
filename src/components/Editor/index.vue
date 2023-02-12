@@ -47,7 +47,7 @@ interface IProps {
 
 const props = withDefaults(defineProps<IProps>(), {
   articleId: '',
-  height: 'calc(100vh - 62px)',
+  height: 'calc(100vh - 75px)',
   mackdown: '',
   onSaveMackdown: () => {},
   onEditChange: () => {},

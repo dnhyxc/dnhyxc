@@ -29,8 +29,8 @@ const onScroll = () => {
 
 .to-top {
   position: absolute;
-  right: 12px;
-  bottom: 12px;
+  right: 10px;
+  bottom: 10px;
   background-color: rgba(225, 225, 225, 0.8);
   box-shadow: 0 0 10px @theme-blue;
   padding: 10px 5px 0 5px;
