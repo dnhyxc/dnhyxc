@@ -37,6 +37,7 @@ declare module '@vue/runtime-core' {
     LeftMenu: typeof import('./src/components/LeftMenu/index.vue')['default']
     Multibar: typeof import('./src/components/Multibar/index.vue')['default']
     Preview: typeof import('./src/components/Preview/index.vue')['default']
+    Reel: typeof import('./src/components/Reel/index.vue')['default']
     Roll: typeof import('./src/components/Roll/index.vue')['default']
     Rotation: typeof import('./src/components/Rotation/index.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']

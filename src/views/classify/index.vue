@@ -6,12 +6,12 @@
 -->
 <template>
   <div class="classify-wap">
-    <Roll :on-check-classify="onCheckClassify" :data-source="[]" />
+    <Reel :on-check-classify="onCheckClassify" :data-source="[]" />
   </div>
 </template>
 
 <script setup lang="ts">
-import Roll from '@/components/Roll/index.vue';
+import Reel from '@/components/Reel/index.vue';
 
 // 点击卡片事件
 const onCheckClassify = (id: number) => {
