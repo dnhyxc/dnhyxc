@@ -57,6 +57,8 @@ import { checkOS } from '@/utils';
     .right {
       flex: 1;
       border-radius: 5px;
+      // box-shadow: 0 0 10px @menu-weak;
+      // padding: 10px;
     }
   }
   .mac-content {

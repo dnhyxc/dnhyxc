@@ -5,15 +5,28 @@
  * index.vue
 -->
 <template>
-  <div class="classify-wap">文章分类{{ route.query?.name }}</div>
+  <div class="classify-wap">
+    <Roll :on-check-classify="onCheckClassify" :data-source="[]" />
+  </div>
 </template>
 
 <script setup lang="ts">
-import { useRoute } from 'vue-router';
+import Roll from '@/components/Roll/index.vue';
 
-const route = useRoute();
+// 点击卡片事件
+const onCheckClassify = (id: number) => {
+  console.log(id, 'id');
+};
 </script>
 
 <style scoped lang="less">
 @import '@/styles/index.less';
+
+.classify-wap {
+  height: 100%;
+  width: 100%;
+  border-radius: 5px;
+  overflow: hidden;
+  box-sizing: border-box;
+}
 </style>

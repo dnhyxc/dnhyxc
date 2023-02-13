@@ -6,7 +6,7 @@
 -->
 <template>
   <div :class="`${checkOS() === 'mac' && 'mac-left-menu-wrap'} left-menu-wrap`">
-    <div>
+    <el-scrollbar ref="scrollRef">
       <div v-for="menu in menuList" :key="menu.key" class="menu-list" @click="onSelectMenu(menu)">
         <el-tooltip class="box-item" effect="light" :content="menu.name" placement="right">
           <i
@@ -18,7 +18,7 @@
           />
         </el-tooltip>
       </div>
-    </div>
+    </el-scrollbar>
     <div class="setting">
       <el-dropdown>
         <el-avatar shape="square" :size="checkOS() === 'mac' ? 45 : 38" fit="cover" :src="PAGESVG" class="avatar" />

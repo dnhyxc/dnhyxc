@@ -72,7 +72,7 @@ const onScrollTo = () => {
       }
     }
     .preview-content {
-      height: 1500px;
+      height: 100px;
     }
   }
   .right {
