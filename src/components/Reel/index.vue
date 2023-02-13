@@ -49,16 +49,18 @@ const onSwill = () => {
 };
 
 // 滚轮事件
-const wheelEvent = (event: WheelEvent) => {
-  event.preventDefault();
+const wheelEvent = (e: WheelEvent) => {
+  e.preventDefault();
   const startLeft = Math.ceil(scrollRef.value?.wrapRef?.scrollLeft);
-  moveInfo.scrollWidth = startLeft + Math.ceil(event.deltaY);
+  // 如果滚动距离小于0，则将值赋值成0
+  moveInfo.scrollWidth = startLeft + Math.ceil(e.deltaY) < 0 ? 0 : startLeft + Math.ceil(e.deltaY);
   scrollRef.value?.setScrollLeft(moveInfo.scrollWidth);
 };
 
 // 监听鼠标按下事件
 const onMouseDown = () => {
   scrollWrap.value?.addEventListener('mousedown', (e: MouseEvent) => {
+    e.preventDefault();
     const { clientX } = e;
     moveInfo.x = clientX;
     scrollWrap.value?.addEventListener('mousemove', onMouseMove);
@@ -67,6 +69,7 @@ const onMouseDown = () => {
 
 // 监听鼠标滑动事件
 const onMouseMove = (e: MouseEvent) => {
+  e.preventDefault();
   const scrollWrapWidth = Math.ceil(scrollWrap.value?.offsetWidth);
   const startLeft = Math.ceil(scrollRef.value?.wrapRef?.scrollLeft);
   const cardListWidth = Math.ceil(scrollRef.value?.wrapRef?.scrollWidth);
@@ -78,13 +81,15 @@ const onMouseMove = (e: MouseEvent) => {
     scrollRef.value?.setScrollLeft(moveInfo.scrollWidth);
   } else {
     if (startLeft <= 0) return;
-    moveInfo.scrollWidth = startLeft - (clientX - moveInfo.x);
+    // 如果滚动距离小于0，则将值赋值成0
+    moveInfo.scrollWidth = startLeft - (clientX - moveInfo.x) < 0 ? 0 : startLeft - (clientX - moveInfo.x);
     scrollRef.value?.setScrollLeft(moveInfo.scrollWidth);
   }
 };
 
 // 鼠标弹起及离开时间
 const mouseAction = (e: MouseEvent) => {
+  e.preventDefault();
   scrollWrap.value?.removeEventListener('mousemove', onMouseMove);
 };
 
@@ -117,6 +122,7 @@ const onClick = (id: number) => {
 
   .card-list {
     box-sizing: border-box;
+    width: 100%;
     height: 150px;
     border-radius: 5px;
     white-space: nowrap;
@@ -126,7 +132,7 @@ const onClick = (id: number) => {
     .card {
       box-sizing: border-box;
       display: inline-block;
-      width: 220px;
+      width: calc((100vw - 118px) / 4);
       height: 100%;
       margin-right: 12px;
       box-shadow: @shadow-mack;
@@ -136,6 +142,16 @@ const onClick = (id: number) => {
       .clickNoSelectText();
       &:last-child {
         margin-right: 0;
+      }
+    }
+  }
+}
+
+@media screen and (min-width: 1082px) {
+  .scroll {
+    .card-list {
+      .card {
+        width: 241px;
       }
     }
   }
