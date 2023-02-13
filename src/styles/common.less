@@ -1,5 +1,28 @@
 @import '@/styles/color.less';
 
+// 全局 el-scrollbar 样式
+.scrollbar-wrapper(@mr:12px) {
+  box-sizing: border-box;
+  height: 100%;
+
+  .pullup-content {
+    display: flex;
+    flex-wrap: wrap;
+
+    .pullup-list-item {
+      border-radius: 5px;
+      list-style: none;
+      width: calc(33.3333333% - 8px);
+      margin-right: @mr;
+      margin-bottom: 11px;
+
+      &:nth-child(3n + 3) {
+        margin-right: 0;
+      }
+    }
+  }
+}
+
 // 全局页面父元素高度
 .pageHeight() {
   height: calc(100vh - 75px);

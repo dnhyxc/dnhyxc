@@ -79,6 +79,11 @@ const ajaxGet = async (/* url */) => {
   });
 };
 
+// 置顶
+const onScrollTo = () => {
+  scrollTo(scrollRef, 0);
+};
+
 // 搜索最新文章
 const searchNewArticles = () => {
   searchType.value = 2;
@@ -87,11 +92,6 @@ const searchNewArticles = () => {
 // 搜索最热文章
 const searchHotArticles = () => {
   searchType.value = 3;
-};
-
-// 置顶
-const onScrollTo = () => {
-  scrollTo(scrollRef, 0);
 };
 </script>
 
@@ -127,27 +127,28 @@ const onScrollTo = () => {
   }
 
   :deep {
-    .scrollbar-wrapper {
-      box-sizing: border-box;
-      height: 100%;
+    .scrollbar-wrapper();
+    // .scrollbar-wrapper {
+    //   box-sizing: border-box;
+    //   height: 100%;
 
-      .pullup-content {
-        display: flex;
-        flex-wrap: wrap;
+    //   .pullup-content {
+    //     display: flex;
+    //     flex-wrap: wrap;
 
-        .pullup-list-item {
-          border-radius: 5px;
-          list-style: none;
-          width: calc(33.33333% - 8px);
-          margin-right: 12px;
-          margin-bottom: 11px;
+    //     .pullup-list-item {
+    //       border-radius: 5px;
+    //       list-style: none;
+    //       width: calc(33.333333% - 8px);
+    //       margin-right: 12px;
+    //       margin-bottom: 11px;
 
-          &:nth-child(3n + 3) {
-            margin-right: 0;
-          }
-        }
-      }
-    }
+    //       &:nth-child(3n + 3) {
+    //         margin-right: 0;
+    //       }
+    //     }
+    //   }
+    // }
   }
 
   .loading,
