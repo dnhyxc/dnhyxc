@@ -43,6 +43,7 @@ declare module '@vue/runtime-core' {
     RouterView: typeof import('vue-router')['RouterView']
     Toc: typeof import('./src/components/Toc/index.vue')['default']
     ToTopIcon: typeof import('./src/components/ToTopIcon/index.vue')['default']
+    Upload: typeof import('./src/components/Upload/index.vue')['default']
     UploadCropper: typeof import('./src/components/UploadCropper/index.vue')['default']
   }
   export interface ComponentCustomProperties {

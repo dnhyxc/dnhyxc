@@ -12,96 +12,61 @@
       </template>
       <div class="content">
         <el-form ref="formRef" label-width="50px" :model="createArticleForm" class="form-wrap">
-          <el-form-item
-            prop="title"
-            label="标题"
-            :rules="[
-              {
-                required: true,
-                message: '请输入文章标题',
-                trigger: 'blur',
-              },
-            ]"
-            class="form-item"
-          >
+          <el-form-item prop="title" label="标题" :rules="[
+            {
+              required: true,
+              message: '请输入文章标题',
+              trigger: 'blur',
+            },
+          ]" class="form-item">
             <el-input v-model="createArticleForm.title" placeholder="请输入文章标题" />
           </el-form-item>
-          <el-form-item
-            prop="classify"
-            label="分类"
-            :rules="[
-              {
-                required: true,
-                message: '请输入文章分类',
-                trigger: 'blur',
-              },
-            ]"
-            class="form-item"
-          >
+          <el-form-item prop="classify" label="分类" :rules="[
+            {
+              required: true,
+              message: '请输入文章分类',
+              trigger: 'blur',
+            },
+          ]" class="form-item">
             <el-select v-model="createArticleForm.classify" clearable placeholder="请输入文章分类">
               <el-option v-for="item in ARTICLE_CLASSIFY" :key="item" :label="item" :value="item" />
             </el-select>
           </el-form-item>
-          <el-form-item
-            prop="tag"
-            label="标签"
-            :rules="[
-              {
-                required: true,
-                message: '请输入文章标签',
-                trigger: 'blur',
-              },
-            ]"
-            class="form-item"
-          >
+          <el-form-item prop="tag" label="标签" :rules="[
+            {
+              required: true,
+              message: '请输入文章标签',
+              trigger: 'blur',
+            },
+          ]" class="form-item">
             <el-select v-model="createArticleForm.tag" clearable placeholder="请输入文章标签">
               <el-option v-for="item in ARTICLE_TAG" :key="item.key" :label="item.label" :value="item.label" />
             </el-select>
           </el-form-item>
-          <el-form-item
-            prop="createTime"
-            label="时间"
-            :rules="[
-              {
-                required: true,
-                message: '请选择发文时间',
-                trigger: 'blur',
-              },
-            ]"
-            class="form-item"
-          >
-            <el-date-picker
-              v-model="createArticleForm.createTime"
-              type="datetime"
-              placeholder="请选择发文时间"
-              :default-time="new Date()"
-              class="el-date-picker"
-            />
+          <el-form-item prop="createTime" label="时间" :rules="[
+            {
+              required: true,
+              message: '请选择发文时间',
+              trigger: 'blur',
+            },
+          ]" class="form-item">
+            <el-date-picker v-model="createArticleForm.createTime" type="datetime" placeholder="请选择发文时间"
+              :default-time="new Date()" class="el-date-picker" />
           </el-form-item>
           <el-form-item prop="cover" label="封面" class="form-item-cover">
             <div class="cover-wrap">
-              <UploadCropper :get-cover-image="getCoverImage" />
+              <Upload :get-cover-image="getCoverImage" />
             </div>
           </el-form-item>
-          <el-form-item
-            prop="abstract"
-            label="摘要"
-            :rules="[
-              {
-                required: true,
-                message: '请输入文章摘要',
-                trigger: 'blur',
-              },
-            ]"
-            class="form-item"
-          >
-            <el-input
-              v-model="createArticleForm.abstract"
-              :autosize="{ minRows: 5, maxRows: 8 }"
-              type="textarea"
-              maxlength="300"
-              placeholder="请输入文章摘要"
-            />
+          <el-form-item prop="abstract" label="摘要" :rules="[
+            {
+              required: true,
+              message: '请输入文章摘要',
+              trigger: 'blur',
+            },
+          ]" class="form-item">
+            <el-input v-model="createArticleForm.abstract" :autosize="{ minRows: 5, maxRows: 8 }" type="textarea"
+              maxlength="300" placeholder="请输入文章摘要" />
           </el-form-item>
         </el-form>
       </div>
@@ -121,7 +86,7 @@ import type { FormInstance } from 'element-plus';
 import { CreateArticleParams } from '@/typings/common';
 import { ARTICLE_CLASSIFY, ARTICLE_TAG } from '@/constant';
 import { createStore } from '@/store';
-import UploadCropper from '@/components/UploadCropper/index.vue';
+import Upload from '@/components/Upload/index.vue';
 
 interface IProps {
   modelValue: boolean;
@@ -211,6 +176,7 @@ const onSubmit = () => {
 
     .form-item-cover {
       display: flex;
+
       .cover-wrap {
         flex: 1;
         display: flex;
@@ -220,6 +186,7 @@ const onSubmit = () => {
       }
     }
   }
+
   .footer {
     display: flex;
     justify-content: flex-end;

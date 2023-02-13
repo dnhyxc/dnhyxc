@@ -7,22 +7,22 @@
 <template>
   <div class="classify-wap">
     <Reel :on-check-classify="onCheckClassify" :data-source="[]" />
-    <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
-      <div
-        v-infinite-scroll="onFetchData"
-        :infinite-scroll-delay="300"
-        :infinite-scroll-disabled="disabled"
-        :infinite-scroll-distance="2"
-        class="pullup-content"
-      >
-        <div v-for="i of dataSource" :key="i" class="pullup-list-item">
-          <Card :data="i" />
-        </div>
-        <ToTopIcon v-if="scrollTop >= 500" :on-scroll-to="onScrollTo" />
+    <div class="content">
+      <div class="current">
+        分类一
       </div>
-      <div v-if="loading" class="loading">Loading...</div>
-      <div v-if="noMore" class="no-more">没有更多了～～～</div>
-    </el-scrollbar>
+      <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
+        <div v-infinite-scroll="onFetchData" :infinite-scroll-delay="300" :infinite-scroll-disabled="disabled"
+          :infinite-scroll-distance="2" class="pullup-content">
+          <div v-for="i of dataSource" :key="i" class="pullup-list-item">
+            <Card :data="i" />
+          </div>
+          <ToTopIcon v-if="scrollTop >= 500" :on-scroll-to="onScrollTo" />
+        </div>
+        <div v-if="loading" class="loading">Loading...</div>
+        <div v-if="noMore" class="no-more">没有更多了～～～</div>
+      </el-scrollbar>
+    </div>
   </div>
 </template>
 
@@ -81,14 +81,30 @@ const onCheckClassify = (id: number) => {
 @import '@/styles/index.less';
 
 .classify-wap {
+  display: flex;
+  flex-direction: column;
   height: 100%;
   width: 100%;
   border-radius: 5px;
   overflow: hidden;
   box-sizing: border-box;
 
+  .content {
+    height: calc(100% - 155px);
+
+    .current {
+      font-size: 16px;
+      color: @active;
+      margin: 0 0 10px;
+    }
+  }
+
   :deep {
     .scrollbar-wrapper(11px);
+
+    .scrollbar-wrapper {
+      height: calc(100% - 30px);
+    }
   }
 
   .loading,
