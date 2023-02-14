@@ -13,13 +13,11 @@
         @click="onScrollTo"
       />
     </div>
-    <div class="content">
-      <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
-        <div class="item-wrap">
-          <div v-for="i in 100" :key="i" class="item">{{ 'content' + i }}</div>
-        </div>
-      </el-scrollbar>
-    </div>
+    <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
+      <div class="item-wrap">
+        <div v-for="i in 100" :key="i" class="item">{{ 'content' + i }}</div>
+      </div>
+    </el-scrollbar>
     <!-- <div
       v-for="(anchor, index) in (detailStore.tocTitles as any)"
       :key="index"
@@ -49,10 +47,13 @@ const onScrollTo = () => {
 @import '@/styles/index.less';
 
 .toc-wrap {
+  display: flex;
+  flex-direction: column;
   box-sizing: border-box;
   height: calc(100vh - 135px);
   border-radius: 5px;
   padding-left: 10px;
+  padding-bottom: 10px;
   overflow: hidden;
   box-shadow: @shadow-mack;
 
@@ -62,9 +63,11 @@ const onScrollTo = () => {
     align-items: center;
     padding: 15px 0 15px;
     margin-right: 10px;
+    margin-bottom: 10px;
     font-size: 18px;
     font-weight: 700;
     border-bottom: 1px solid @card-border;
+    border-radius: 5px;
 
     .font {
       font-size: 20px;
@@ -73,25 +76,9 @@ const onScrollTo = () => {
     }
   }
 
-  .content {
-    box-sizing: border-box;
-    height: calc(100vh - 191px);
-
-    .item {
-      margin-right: 10px;
-
-      &::before {
-        position: absolute;
-        left: -11px;
-        top: 50%;
-        transform: translateY(-50%);
-        content: '';
-        height: 65%;
-        width: 5px;
-        background-color: @theme-blue;
-        border-top-right-radius: 5px;
-        border-bottom-right-radius: 5px;
-      }
+  :deep {
+    .scrollbar-wrapper {
+      flex: 1;
     }
   }
 

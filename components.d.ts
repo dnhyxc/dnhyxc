@@ -9,6 +9,7 @@ declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     Card: typeof import('./src/components/Card/index.vue')['default']
     Carousel: typeof import('./src/components/Carousel/index.vue')['default']
+    Cloud: typeof import('./src/components/Cloud/index.vue')['default']
     Editor: typeof import('./src/components/Editor/index.vue')['default']
     ElAside: typeof import('element-plus/es')['ElAside']
     ElAvatar: typeof import('element-plus/es')['ElAvatar']
@@ -45,6 +46,7 @@ declare module '@vue/runtime-core' {
     ToTopIcon: typeof import('./src/components/ToTopIcon/index.vue')['default']
     Upload: typeof import('./src/components/Upload/index.vue')['default']
     UploadCropper: typeof import('./src/components/UploadCropper/index.vue')['default']
+    WordCloud: typeof import('./src/components/WordCloud/index.vue')['default']
   }
   export interface ComponentCustomProperties {
     vInfiniteScroll: typeof import('element-plus/es')['ElInfiniteScroll']
