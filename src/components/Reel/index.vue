@@ -32,7 +32,7 @@ const scrollRef = ref<any>(null);
 
 const props = withDefaults(defineProps<IProps>(), {
   dataSource: () => [],
-  onCheckClassify: () => {},
+  onCheckClassify: () => { },
   width: 'calc(100vw - 80px)',
 });
 
