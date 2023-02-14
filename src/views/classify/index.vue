@@ -8,17 +8,19 @@
   <div class="classify-wap">
     <Reel :on-check-classify="onCheckClassify" :data-source="[]" />
     <div class="content">
-      <div class="current">
-        分类一
-      </div>
+      <div class="current">分类一</div>
       <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
         <div
-v-infinite-scroll="onFetchData" :infinite-scroll-delay="300" :infinite-scroll-disabled="disabled"
-          :infinite-scroll-distance="2" class="pullup-content">
+          v-infinite-scroll="onFetchData"
+          :infinite-scroll-delay="300"
+          :infinite-scroll-disabled="disabled"
+          :infinite-scroll-distance="2"
+          class="pullup-content"
+        >
           <div v-for="i of dataSource" :key="i" class="pullup-list-item">
             <Card :data="i" />
           </div>
-          <ToTopIcon v-if="scrollTop >= 500" :on-scroll-to="onScrollTo" />
+          <ToTopIcon v-if="scrollTop >= 500" :on-scroll-to="onScrollTo" class="to-top" />
         </div>
         <div v-if="loading" class="loading">Loading...</div>
         <div v-if="noMore" class="no-more">没有更多了～～～</div>
@@ -91,7 +93,7 @@ const onCheckClassify = (id: number) => {
   box-sizing: border-box;
 
   .content {
-    height: calc(100% - 155px);
+    height: calc(100% - 150px);
 
     .current {
       font-size: 16px;
@@ -101,17 +103,20 @@ const onCheckClassify = (id: number) => {
   }
 
   :deep {
-    .scrollbar-wrapper(11px);
+    .scrollbar-wrapper(12px);
 
     .scrollbar-wrapper {
-      height: calc(100% - 30px);
+      height: calc(100% - 34px);
     }
+  }
+
+  .to-top {
+    bottom: 44px;
   }
 
   .loading,
   .no-more {
     text-align: center;
-    padding-top: 2px;
     color: @font-4;
   }
 }

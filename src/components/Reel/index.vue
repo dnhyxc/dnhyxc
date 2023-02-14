@@ -33,7 +33,7 @@ const scrollRef = ref<any>(null);
 const props = withDefaults(defineProps<IProps>(), {
   dataSource: () => [],
   onCheckClassify: () => {},
-  width: 'calc(100vw - 82px)',
+  width: 'calc(100vw - 80px)',
 });
 
 onMounted(() => {
@@ -132,7 +132,7 @@ const onClick = (id: number) => {
     .card {
       box-sizing: border-box;
       display: inline-block;
-      width: calc((100vw - 118px) / 4);
+      width: calc((100vw - 116px) / 4);
       height: 100%;
       margin-right: 12px;
       box-shadow: @shadow-mack;
