@@ -50,7 +50,7 @@ const onScrollTo = () => {
 
 .toc-wrap {
   box-sizing: border-box;
-  height: calc(100vh - 122px);
+  height: calc(100vh - 135px);
   border-radius: 5px;
   padding-left: 10px;
   overflow: hidden;
@@ -75,7 +75,7 @@ const onScrollTo = () => {
 
   .content {
     box-sizing: border-box;
-    height: calc(100vh - 185px);
+    height: calc(100vh - 191px);
 
     .item {
       margin-right: 10px;

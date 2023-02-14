@@ -8,7 +8,11 @@
   <div class="classify-wap">
     <Reel :on-check-classify="onCheckClassify" :data-source="[]" />
     <div class="content">
-      <div class="current">分类一</div>
+      <div class="current">
+        <i class="left-line iconfont icon-fenlei2" />
+        <span class="text">分类一JAVASCRIPT</span>
+        <span class="line" />
+      </div>
       <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
         <div
           v-infinite-scroll="onFetchData"
@@ -96,9 +100,33 @@ const onCheckClassify = (id: number) => {
     height: calc(100% - 150px);
 
     .current {
-      font-size: 16px;
-      color: @active;
-      margin: 0 0 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 0 11px;
+
+      .left-line {
+        display: inline-block;
+        font-size: 20px;
+        margin-bottom: 2px;
+        margin-right: 10px;
+        color: @theme-blue;
+      }
+
+      .text {
+        display: inline-block;
+        font-size: 18px;
+        font-weight: 700;
+        color: @active;
+        padding-right: 10px;
+      }
+
+      .line {
+        display: inline-block;
+        flex: 1;
+        border-radius: 3px;
+        border: 5px double @card-border;
+      }
     }
   }
 
@@ -111,7 +139,7 @@ const onCheckClassify = (id: number) => {
   }
 
   .to-top {
-    bottom: 44px;
+    bottom: 47px;
   }
 
   .loading,

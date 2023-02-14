@@ -139,7 +139,9 @@ const onClick = (id: number) => {
       background-image: @card-lg;
       border-radius: 5px;
       -webkit-user-drag: none;
+      cursor: pointer;
       .clickNoSelectText();
+
       &:last-child {
         margin-right: 0;
       }

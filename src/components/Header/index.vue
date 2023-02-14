@@ -8,7 +8,8 @@
   <div :class="`${checkOS() === 'mac' && 'mac-header-wrap'} header-wrap`" @dblclick="onDblclick">
     <div class="left">
       <div class="icon-wrap">
-        <img :src="PAGEICON" class="page-icon" />
+        <!-- <img :src="PAGEICON" class="page-icon" /> -->
+        <i class="page-icon iconfont icon-haidao_" />
       </div>
       <el-tooltip effect="light" content="后退" placement="bottom">
         <i class="font iconfont icon-arrow-left-bold" @click="goBack" />
@@ -81,7 +82,7 @@ import { Search } from '@element-plus/icons-vue';
 import { ACTION_SVGS, MENULIST } from '@/constant';
 import { commonStore } from '@/store';
 import { checkOS } from '@/utils';
-import PAGEICON from '@/assets/svg/page_icon.svg';
+// import PAGEICON from '@/assets/svg/page_icon.svg';
 
 const router = useRouter();
 const route = useRoute();
@@ -189,7 +190,7 @@ const onEnter = () => {
   align-items: center;
   justify-content: space-between;
   height: 35px;
-  padding: 10px 15px;
+  padding: 10px 18px 10px 12px;
   -webkit-app-region: drag;
   .left {
     display: flex;
@@ -201,10 +202,16 @@ const onEnter = () => {
       justify-content: center;
 
       .page-icon {
-        width: 32px;
-        height: 32px;
+        display: inline-block;
+        min-height: 40px;
+        line-height: 40px;
+        font-size: 35px;
         margin-bottom: 2px;
         margin-right: 20px;
+        color: @sub-2-blue;
+        cursor: pointer;
+        -webkit-app-region: no-drag;
+        .textLg();
       }
     }
     .font {

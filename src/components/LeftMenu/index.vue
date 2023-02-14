@@ -14,7 +14,7 @@
               ((activeMenu.path === menu.path && route.path.includes(menu.path)) ||
                 commonStore.activePath === menu.path) &&
               'active'
-            } font iconfont ${menu.icon}`"
+            } ${menu.key} font iconfont ${menu.icon}`"
           />
         </el-tooltip>
       </div>
@@ -115,13 +115,18 @@ const onLogout = () => {
     height: 60px;
 
     .font {
+      display: block;
       font-size: 26px;
+      line-height: 32px;
+      font-weight: 700;
       color: @sub-2-blue;
       cursor: pointer;
+      .textLg();
     }
 
     .active {
       color: @active;
+      .textLgActive();
     }
   }
 

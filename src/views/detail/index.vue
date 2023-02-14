@@ -77,7 +77,7 @@ const onScrollTo = () => {
   }
   .right {
     width: 260px;
-    height: calc(100vh - 62px);
+    height: calc(100vh - 75px);
     box-sizing: border-box;
     border-radius: 5px;
     .action-list {
