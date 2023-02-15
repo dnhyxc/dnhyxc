@@ -18,16 +18,41 @@
       class="word-cloud-wrap"
     />
     <div class="tag-list">
-      <div class="title">文章标签列表</div>
+      <div class="title">
+        <span>文章标签列表</span>
+        <i
+          :class="`font iconfont ${scrollTop > 0 ? 'icon-shuangjiantou-shang' : 'icon-shuangjiantou-xia'}`"
+          @click="onScrollTo"
+        />
+      </div>
       <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
-        <div v-for="i in 100" :key="i" class="tag">tag - {{ i }}</div>
+        <div v-for="i in 100" :key="i" :class="`${currentTag === i && 'active'} tag`" @click="onCheckTag(i)">
+          tag - {{ i }}
+        </div>
       </el-scrollbar>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue';
+import { scrollTo } from '@/utils';
+import { useScroller } from '@/hooks';
 import WordCloud from '@/components/WordCloud/index.vue';
+const { scrollRef, scrollTop } = useScroller();
+
+const currentTag = ref<number>();
+
+// 滚动到某位置
+const onScrollTo = () => {
+  const bottom = scrollRef.value?.wrapRef?.firstElementChild?.offsetHeight;
+  scrollTo(scrollRef, scrollTop.value > 0 ? 0 : bottom);
+};
+
+// 选中标签
+const onCheckTag = (tag: number) => {
+  currentTag.value = tag;
+};
 </script>
 
 <style scoped lang="less">
@@ -53,7 +78,7 @@ import WordCloud from '@/components/WordCloud/index.vue';
     flex-direction: column;
     box-sizing: border-box;
     margin-left: 10px;
-    padding: 10px 0 10px 13px;
+    padding: 10px 0;
     width: 220px;
     box-shadow: @shadow-mack;
     border-radius: 5px;
@@ -65,6 +90,8 @@ import WordCloud from '@/components/WordCloud/index.vue';
     }
 
     .title {
+      display: flex;
+      justify-content: space-between;
       font-size: 18px;
       color: @active;
       border-bottom: 1px solid @card-border;
@@ -73,10 +100,38 @@ import WordCloud from '@/components/WordCloud/index.vue';
       padding-bottom: 9px;
       border-radius: 5px;
       .textLg();
+
+      .font {
+        font-size: 18px;
+        cursor: pointer;
+      }
     }
 
     .tag {
+      position: relative;
       margin-right: 13px;
+      padding: 3px 0 3px 13px;
+      cursor: pointer;
+
+      &:hover {
+        color: @active;
+      }
+    }
+
+    .active {
+      color: @active;
+      &::before {
+        position: absolute;
+        top: 50%;
+        left: 0;
+        transform: translateY(-50%);
+        content: '';
+        width: 4px;
+        height: 60%;
+        border-top-right-radius: 5px;
+        border-bottom-right-radius: 5px;
+        background-color: @active;
+      }
     }
   }
 }
