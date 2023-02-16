@@ -16,16 +16,21 @@
           <div class="date">2023-02-10</div>
           <div class="timeline-card">
             <div class="title">title</div>
-            <div class="desc">desc</div>
+            <div class="desc">
+              撒旦好看就撒回到家喀什肯德基哈是可见的哈萨克就的话咯技术的喀什的就卡刷道具卡是的接口和阿大撒
+              看来撒就大撒加快了的静安寺看多久啊是考虑到就啊看拉萨就打开拉萨就的克拉斯的简历咖世家
+            </div>
             <div class="tags">
               <div class="author">作者</div>
-              <div class="classify">分类</div>
-              <div class="tag">标签</div>
+              <div class="right">
+                <div class="classify">分类</div>
+                <div class="tag">标签</div>
+              </div>
             </div>
-            <div class="action">
-              <div class="like">点赞</div>
-              <div class="comment">评论</div>
-              <div class="read-count">阅读数</div>
+            <div class="actions">
+              <div class="action like">点赞</div>
+              <div class="action comment">评论</div>
+              <div class="action read-count">阅读数</div>
             </div>
           </div>
         </div>
@@ -110,6 +115,56 @@ import Card from '@/components/Card/index.vue';
           font-size: 18px;
           font-weight: 700;
           margin-bottom: 10px;
+        }
+
+        .timeline-card {
+          box-sizing: border-box;
+
+          .title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 10px;
+          }
+
+          .desc {
+            .ellipsisMore(2);
+            margin-bottom: 10px;
+          }
+
+          .tags {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+
+            .author {
+              flex: 1;
+              .ellipsisMore(1);
+            }
+
+            .right {
+              display: flex;
+              justify-content: space-between;
+              margin-left: 20px;
+
+              .classify,
+              .tag {
+                color: @000;
+              }
+
+              .tag {
+                margin-left: 10px;
+              }
+            }
+          }
+
+          .actions {
+            display: flex;
+            justify-content: flex-start;
+
+            .action {
+              margin-right: 15px;
+            }
+          }
         }
       }
     }
