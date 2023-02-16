@@ -7,33 +7,25 @@
 <template>
   <div class="timeline-wrap">
     <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
-      <!-- <el-timeline class="el-timeline">
-        <el-timeline-item timestamp="2018/4/12" placement="top" type="primary">
-          <el-card>
-            <h4>Update Github template</h4>
-            <p>Tom committed 2018/4/12 20:46</p>
-          </el-card>
-        </el-timeline-item>
-        <el-timeline-item timestamp="2018/4/3" placement="top">
-          <el-card>
-            <h4>Update Github template</h4>
-            <p>Tom committed 2018/4/3 20:46</p>
-          </el-card>
-        </el-timeline-item>
-        <el-timeline-item timestamp="2018/4/2" placement="top">
-          <el-card>
-            <h4>Update Github template</h4>
-            <p>Tom committed 2018/4/2 20:46</p>
-          </el-card>
-        </el-timeline-item>
-      </el-timeline> -->
       <Timeline />
     </el-scrollbar>
+    <ToTopIcon v-if="scrollTop >= 500" class="to-top" :on-scroll-to="onScrollTo" />
   </div>
 </template>
 
 <script setup lang="ts">
+import { useScroller } from '@/hooks';
+import { scrollTo } from '@/utils';
 import Timeline from '@/components/Timeline/index.vue';
+import ToTopIcon from '@/components/ToTopIcon/index.vue';
+
+// scrollRef：el-scrollbar ref，scrollTop：滚动距离
+const { scrollRef, scrollTop } = useScroller();
+
+// 置顶
+const onScrollTo = () => {
+  scrollTo(scrollRef, 0);
+};
 </script>
 
 <style scoped lang="less">
@@ -47,6 +39,11 @@ import Timeline from '@/components/Timeline/index.vue';
     .el-timeline {
       margin: 0 10px;
     }
+  }
+
+  .to-top {
+    right: 40px;
+    bottom: 40px;
   }
 }
 </style>

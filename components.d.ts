@@ -47,6 +47,7 @@ declare module '@vue/runtime-core' {
     RouterView: typeof import('vue-router')['RouterView']
     ScrollList: typeof import('./src/components/ScrollList/index.vue')['default']
     Timeline: typeof import('./src/components/Timeline/index.vue')['default']
+    TimelineCard: typeof import('./src/components/Timeline/TimelineCard/index.vue')['default']
     Toc: typeof import('./src/components/Toc/index.vue')['default']
     ToTopIcon: typeof import('./src/components/ToTopIcon/index.vue')['default']
     Upload: typeof import('./src/components/Upload/index.vue')['default']

@@ -95,6 +95,7 @@ const onCheckTag = (tag: number) => {
       font-size: 18px;
       color: @active;
       border-bottom: 1px solid @card-border;
+      margin-left: 13px;
       margin-right: 13px;
       margin-bottom: 6px;
       padding-bottom: 9px;

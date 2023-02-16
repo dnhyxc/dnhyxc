@@ -8,31 +8,13 @@
   <div class="timeline">
     <div class="timeline-item">
       <div class="card">
-        <div class="card-item">
+        <div class="card-item" @click="(e) => onClickCard(e, 'card')">
           <div class="date">2023-02-09</div>
-          <Card />
+          <TimelineCard />
         </div>
         <div class="card-item">
           <div class="date">2023-02-10</div>
-          <div class="timeline-card">
-            <div class="title">title</div>
-            <div class="desc">
-              撒旦好看就撒回到家喀什肯德基哈是可见的哈萨克就的话咯技术的喀什的就卡刷道具卡是的接口和阿大撒
-              看来撒就大撒加快了的静安寺看多久啊是考虑到就啊看拉萨就打开拉萨就的克拉斯的简历咖世家
-            </div>
-            <div class="tags">
-              <div class="author">作者</div>
-              <div class="right">
-                <div class="classify">分类</div>
-                <div class="tag">标签</div>
-              </div>
-            </div>
-            <div class="actions">
-              <div class="action like">点赞</div>
-              <div class="action comment">评论</div>
-              <div class="action read-count">阅读数</div>
-            </div>
-          </div>
+          <TimelineCard />
         </div>
       </div>
       <div class="year">2023</div>
@@ -41,7 +23,7 @@
       <div class="card">
         <div class="card-item">
           <div class="date">2023-02-10</div>
-          <Card />
+          <TimelineCard />
         </div>
       </div>
       <div class="year">2022</div>
@@ -50,7 +32,7 @@
       <div class="card">
         <div class="card-item">
           <div class="date">2023-02-10</div>
-          <Card />
+          <TimelineCard />
         </div>
       </div>
       <div class="year">2021</div>
@@ -59,7 +41,7 @@
       <div class="card">
         <div class="card-item">
           <div class="date">2023-02-10</div>
-          <Card />
+          <TimelineCard />
         </div>
       </div>
       <div class="year">2020</div>
@@ -68,11 +50,11 @@
       <div class="card">
         <div class="card-item">
           <div class="date">2023-02-10</div>
-          <Card />
+          <TimelineCard />
         </div>
         <div class="card-item">
           <div class="date">2023-02-10</div>
-          <Card />
+          <TimelineCard />
         </div>
       </div>
       <div class="year">2019</div>
@@ -81,7 +63,12 @@
 </template>
 
 <script setup lang="ts">
-import Card from '@/components/Card/index.vue';
+import TimelineCard from './TimelineCard/index.vue';
+
+const onClickCard = (e: Event, item: any) => {
+  e.stopPropagation();
+  console.log(item, 'item');
+};
 </script>
 
 <style scoped lang="less">
@@ -106,6 +93,7 @@ import Card from '@/components/Card/index.vue';
         border-radius: 5px;
         background-image: @card-lg;
         padding: 10px;
+        cursor: pointer;
 
         &:last-child {
           margin-bottom: 0;
@@ -116,61 +104,11 @@ import Card from '@/components/Card/index.vue';
           font-weight: 700;
           margin-bottom: 10px;
         }
-
-        .timeline-card {
-          box-sizing: border-box;
-
-          .title {
-            font-size: 16px;
-            font-weight: 700;
-            margin-bottom: 10px;
-          }
-
-          .desc {
-            .ellipsisMore(2);
-            margin-bottom: 10px;
-          }
-
-          .tags {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-
-            .author {
-              flex: 1;
-              .ellipsisMore(1);
-            }
-
-            .right {
-              display: flex;
-              justify-content: space-between;
-              margin-left: 20px;
-
-              .classify,
-              .tag {
-                color: @000;
-              }
-
-              .tag {
-                margin-left: 10px;
-              }
-            }
-          }
-
-          .actions {
-            display: flex;
-            justify-content: flex-start;
-
-            .action {
-              margin-right: 15px;
-            }
-          }
-        }
       }
     }
 
     &:nth-child(odd) {
-      padding: 0 50px 50px 20px;
+      padding: 0 50px 30px 20px;
 
       &::after {
         position: absolute;
@@ -226,7 +164,7 @@ import Card from '@/components/Card/index.vue';
     }
 
     &:nth-child(even) {
-      padding: 0 20px 50px 50px;
+      padding: 0 20px 30px 50px;
       margin-left: 50%;
 
       &::before {
