@@ -61,17 +61,15 @@
       <div class="content">
         <el-tabs type="border-card" class="el-tabs">
           <el-tab-pane v-for="tab in AUTHOR_TABS" :key="tab.value" :label="tab.name">
-            <LineCard v-for="data in dataSource" :key="data.id" :data="data" class="author-line-card">
-              <template #image>
-                <div class="img-wrap">
-                  <img
-                    class="img"
-                    src="https://pic1.zhimg.com/80/v2-c2b64233c64c7703f4b84f8d839d0078_1440w.webp?source=1940ef5c"
-                    alt=""
-                  />
-                </div>
-              </template>
-            </LineCard>
+            <div class="list-wrap">
+              <LineCard
+                v-for="data in dataSource"
+                :key="data.id"
+                :data="data"
+                class="author-line-card"
+                @click="(e) => onClickCard(e, data.id!)"
+              />
+            </div>
           </el-tab-pane>
         </el-tabs>
       </div>
@@ -81,9 +79,12 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 import { HEAD_IMG, AUTHOR_TABS } from '@/constant';
-import LineCard from '@/components/LineCard/index.vue';
 import { TimelineArticles } from '@/typings/common';
+import LineCard from '@/components/LineCard/index.vue';
+
+const router = useRouter();
 
 const dataSource = ref<TimelineArticles[]>([
   {
@@ -132,6 +133,12 @@ const dataSource = ref<TimelineArticles[]>([
 
 const viewMore = ref<boolean>(false);
 
+// 点击卡片
+const onClickCard = (e: Event, id: string) => {
+  e.stopPropagation();
+  router.push(`/detail/${id}`);
+};
+
 // 查看更多信息
 const onShowMore = () => {
   viewMore.value = !viewMore.value;
@@ -155,6 +162,7 @@ const onShowMore = () => {
     .img-wrap {
       width: 100%;
       height: 200px;
+
       .cover-img {
         width: 100%;
         height: 100%;
@@ -178,6 +186,8 @@ const onShowMore = () => {
         border-radius: 5px;
         padding: 5px;
         background-image: @card-lg;
+        box-shadow: 0 0 10px @shadow-color;
+
         .head-img {
           display: block;
           width: 100%;
@@ -256,19 +266,42 @@ const onShowMore = () => {
       border: 1px solid @card-border;
       border-radius: 5px;
 
-      .author-line-card {
-        .img-wrap {
-          box-sizing: border-box;
-          display: flex;
-          width: 20%;
+      .list-wrap {
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
 
-          .img {
-            display: block;
-            width: 100%;
-            height: auto;
-            max-height: 85px;
-            object-fit: cover;
-            border-radius: 5px;
+        .author-line-card {
+          width: calc(50% - 5px);
+          padding: 10px 10px;
+          box-shadow: 0 0 5px @shadow-color;
+          background-image: @card-lg;
+          margin-bottom: 10px;
+          border-radius: 5px;
+          margin-right: 10px;
+
+          :deep {
+            .art-info {
+              flex: 1;
+            }
+          }
+
+          &:nth-child(even) {
+            margin-right: 0;
+          }
+
+          .img-wrap {
+            box-sizing: border-box;
+            display: flex;
+            width: 150px;
+
+            .img {
+              display: block;
+              width: 100%;
+              height: auto;
+              object-fit: cover;
+              border-radius: 5px;
+            }
           }
         }
       }

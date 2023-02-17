@@ -9,7 +9,7 @@
     <div v-for="item in dataSource" :key="item.date" class="timeline-item">
       <div class="year">{{ item.date }}</div>
       <div class="card">
-        <div v-for="card in item.articles" :key="card.id" class="card-item" @click="(e) => onClickCard(e, card.id)">
+        <div v-for="card in item.articles" :key="card.id" class="card-item" @click="(e) => onClickCard(e, card.id!)">
           <div class="date">{{ formatDate(card.createTime!) }}</div>
           <LineCard :data="card" />
         </div>
@@ -19,9 +19,12 @@
 </template>
 
 <script setup lang="ts">
+import { useRouter } from 'vue-router';
 import { formatDate } from '@/utils';
 import { TimelineResult } from '@/typings/common';
 import LineCard from '@/components/LineCard/index.vue';
+
+const router = useRouter();
 
 interface IProps {
   dataSource: TimelineResult[];
@@ -33,9 +36,10 @@ const props = withDefaults(defineProps<IProps>(), {
 
 console.log(props, 'props');
 
-const onClickCard = (e: Event, item: any) => {
+const onClickCard = (e: Event, id: string) => {
   e.stopPropagation();
-  console.log(item, 'item');
+  console.log(id, 'item');
+  router.push(`/detail/${id}`);
 };
 </script>
 

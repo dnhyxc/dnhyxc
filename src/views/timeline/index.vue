@@ -50,7 +50,7 @@ const dataSource = ref<TimelineResult[]>([
         id: '63e3187be2d6bf53efaa6a3c',
         classify: '架构',
         tag: '前端框架',
-        abstract: '项目搭建',
+        abstract: '项目搭建项目搭建项目搭建项目搭建项目搭建项目搭建项目搭建项目搭建项目搭建项目搭建项目搭建',
         authorId: '63e24c3be2d6bf53efaa69a9',
         authorName: 'dnhyxc',
         isLike: false,

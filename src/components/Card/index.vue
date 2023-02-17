@@ -179,7 +179,8 @@ const toTag = (e: Event, name: string) => {
 
     .card-bottom {
       padding: 8px 10px;
-      background-color: @card-bg;
+      // background-color: @card-bg;
+      background-image: @card-lg;
       border-bottom-left-radius: 5px;
       border-bottom-right-radius: 5px;
       .header {

@@ -6,7 +6,13 @@
 -->
 <template>
   <div class="timeline-card">
-    <div class="title">{{ data.title }}</div>
+    <div class="title">
+      <div class="left">{{ data.title }}</div>
+      <div class="right">
+        <span class="edit" @click="(e) => toEdit(e, data)">编辑</span>
+        <span class="del" @click="(e) => onReomve(e, data)">下架</span>
+      </div>
+    </div>
     <div class="content">
       <div class="art-info">
         <div class="desc">
@@ -15,8 +21,12 @@
         <div class="tags">
           <div class="author" @click="(e) => toPersonal(e, 'author')">{{ data.authorName }}</div>
           <div class="right">
-            <div class="classify" @click="(e) => toClassify(e, 'classify')">{{ data.classify }}</div>
-            <div class="tag" @click="(e) => toTag(e, 'tag')">{{ data.tag }}</div>
+            <el-tooltip class="box-item" effect="light" :content="`分类：${data.classify}`" placement="bottom">
+              <div class="classify" @click="(e) => toClassify(e, 'classify')">{{ data.classify }}</div>
+            </el-tooltip>
+            <el-tooltip class="box-item" effect="light" :content="`标签：${data.tag}`" placement="bottom">
+              <div class="tag" @click="(e) => toTag(e, 'tag')">{{ data.tag }}dsadsa</div>
+            </el-tooltip>
           </div>
         </div>
         <div class="actions">
@@ -34,15 +44,13 @@
           </div>
         </div>
       </div>
-      <slot name="image">
-        <div class="img-wrap">
-          <img
-            class="img"
-            src="https://pic1.zhimg.com/80/v2-c2b64233c64c7703f4b84f8d839d0078_1440w.webp?source=1940ef5c"
-            alt=""
-          />
-        </div>
-      </slot>
+      <div class="img-wrap">
+        <img
+          class="img"
+          src="https://pic1.zhimg.com/80/v2-c2b64233c64c7703f4b84f8d839d0078_1440w.webp?source=1940ef5c"
+          alt=""
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -57,6 +65,18 @@ interface IProps {
 const props = withDefaults(defineProps<IProps>(), {});
 
 console.log(props, 'props');
+
+// 编辑
+const toEdit = (e: Event, item: any) => {
+  e.stopPropagation();
+  console.log(item, '编辑');
+};
+
+// 删除
+const onReomve = (e: Event, item: any) => {
+  e.stopPropagation();
+  console.log(item, '编辑');
+};
 
 // 去作者主页
 const toPersonal = (e: Event, item: any) => {
@@ -98,18 +118,48 @@ const onComment = (e: Event, item: any) => {
   cursor: pointer;
 
   .title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     font-size: 16px;
-    font-weight: 700;
     margin-bottom: 5px;
     color: @font-1;
+
+    .left {
+      font-weight: 700;
+      .ellipsisMore(1);
+    }
+
+    .right {
+      display: flex;
+      align-items: center;
+      font-size: 14px;
+
+      .edit {
+        margin-right: 10px;
+        color: @theme-blue;
+      }
+
+      .del {
+        color: @font-danger;
+      }
+
+      .edit,
+      .del {
+        &:hover {
+          color: @active;
+        }
+      }
+    }
   }
 
   .content {
+    flex: 1;
     display: flex;
     justify-content: space-between;
 
     .art-info {
-      flex: 0.6;
+      flex: 1;
       margin-right: 10px;
       .desc {
         .ellipsisMore(1);
@@ -125,8 +175,10 @@ const onComment = (e: Event, item: any) => {
         font-size: 14px;
 
         .author {
-          flex: 1;
+          flex: 0.5;
           .ellipsisMore(1);
+          margin-right: 15px;
+          min-width: 100px;
           cursor: pointer;
           &:hover {
             color: @sub-2-blue;
@@ -134,12 +186,18 @@ const onComment = (e: Event, item: any) => {
         }
 
         .right {
+          flex: 0.5;
           display: flex;
-          justify-content: space-between;
-          margin-left: 20px;
+          justify-content: flex-end;
 
           .classify,
           .tag {
+            background-image: @card-lg;
+            box-shadow: 0 0 3px @shadow-color;
+            padding: 2px 3px 0 3px;
+            border-radius: 5px;
+            min-width: 28px;
+            .ellipsisMore(1);
             cursor: pointer;
 
             &:hover {
@@ -196,10 +254,10 @@ const onComment = (e: Event, item: any) => {
     }
 
     .img-wrap {
-      flex: 0.4;
       box-sizing: border-box;
       display: flex;
       width: 20%;
+      min-width: 135px;
 
       .img {
         display: block;
