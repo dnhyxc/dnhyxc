@@ -6,38 +6,58 @@
 -->
 <template>
   <div class="timeline-card">
-    <div class="title">Electron</div>
+    <div class="title">{{ data.title }}</div>
     <div class="content">
       <div class="art-info">
         <div class="desc">
-          撒旦好看就撒回到家喀什肯德基哈是可见的哈萨克就的话咯技术的喀什的就卡刷道具卡是的接口和阿大撒
-          看来撒就大撒加快了的静安寺看多久啊是考虑到就啊看拉萨就打开拉萨就的克拉斯的简历咖世家
+          {{ data.abstract }}
         </div>
         <div class="tags">
-          <div class="author" @click="(e) => toPersonal(e, 'author')">作者</div>
+          <div class="author" @click="(e) => toPersonal(e, 'author')">{{ data.authorName }}</div>
           <div class="right">
-            <div class="classify" @click="(e) => toClassify(e, 'classify')">分类</div>
-            <div class="tag" @click="(e) => toTag(e, 'tag')">标签</div>
+            <div class="classify" @click="(e) => toClassify(e, 'classify')">{{ data.classify }}</div>
+            <div class="tag" @click="(e) => toTag(e, 'tag')">{{ data.tag }}</div>
           </div>
         </div>
         <div class="actions">
-          <div class="action like" @click="(e) => onLike(e, '点赞')">点赞</div>
-          <div class="action comment" @click="(e) => onComment(e, '评论')">评论</div>
-          <div class="action read-count">阅读数</div>
+          <div class="action like" @click="(e) => onLike(e, '点赞')">
+            <i :class="`font like-icon iconfont ${data.isLike ? 'icon-24gf-thumbsUp2' : 'icon-24gl-thumbsUp2'}`" />
+            <span>{{ data.likeCount || '点赞' }}</span>
+          </div>
+          <div class="action comment" @click="(e) => onComment(e, '评论')">
+            <i class="font comment-icon iconfont icon-pinglun" />
+            <span>{{ data.replyCount || '评论' }}</span>
+          </div>
+          <div class="action read-count">
+            <i class="font read-icon iconfont icon-yanjing" />
+            <span class="text">{{ data.readCount || '阅读' }}</span>
+          </div>
         </div>
       </div>
-      <div class="img-wrap">
-        <img
-          class="img"
-          src="https://pic1.zhimg.com/80/v2-c2b64233c64c7703f4b84f8d839d0078_1440w.webp?source=1940ef5c"
-          alt=""
-        />
-      </div>
+      <slot name="image">
+        <div class="img-wrap">
+          <img
+            class="img"
+            src="https://pic1.zhimg.com/80/v2-c2b64233c64c7703f4b84f8d839d0078_1440w.webp?source=1940ef5c"
+            alt=""
+          />
+        </div>
+      </slot>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { TimelineArticles } from '@/typings/common';
+
+interface IProps {
+  data: TimelineArticles;
+}
+
+const props = withDefaults(defineProps<IProps>(), {});
+
+console.log(props, 'props');
+
 // 去作者主页
 const toPersonal = (e: Event, item: any) => {
   e.stopPropagation();
@@ -109,7 +129,7 @@ const onComment = (e: Event, item: any) => {
           .ellipsisMore(1);
           cursor: pointer;
           &:hover {
-            color: @theme-blue;
+            color: @sub-2-blue;
           }
         }
 
@@ -123,7 +143,7 @@ const onComment = (e: Event, item: any) => {
             cursor: pointer;
 
             &:hover {
-              color: @theme-blue;
+              color: @sub-2-blue;
             }
           }
 
@@ -139,14 +159,37 @@ const onComment = (e: Event, item: any) => {
         font-size: 14px;
 
         .action {
+          display: flex;
+          align-items: center;
           margin-right: 15px;
+
+          .font {
+            font-size: 15px;
+            margin-right: 5px;
+          }
+
+          .like-icon {
+            margin-bottom: 2px;
+          }
+
+          .comment-icon {
+            font-size: 16px;
+          }
+
+          .read-icon {
+            font-size: 18px;
+          }
+
+          .text {
+            margin-top: 2px;
+          }
         }
 
         .like,
         .comment {
           cursor: pointer;
           &:hover {
-            color: @theme-blue;
+            color: @sub-2-blue;
           }
         }
       }
@@ -161,6 +204,8 @@ const onComment = (e: Event, item: any) => {
       .img {
         display: block;
         width: 100%;
+        height: auto;
+        max-height: 85px;
         object-fit: cover;
         border-radius: 5px;
       }

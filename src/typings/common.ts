@@ -89,3 +89,28 @@ export interface CreateArticleParams {
   coverImg?: string;
   abstract?: string;
 }
+
+// 时间轴参数
+export interface TimelineArticles {
+  id?: string;
+  title?: string;
+  abstract?: string;
+  createTime?: number;
+  authorId?: string;
+  authorName?: string;
+  coverImage?: string;
+  isLike?: boolean;
+  tag?: string;
+  classify?: string;
+  likeCount?: number;
+  replyCount?: number;
+  readCount?: number;
+  commentCount?: number;
+}
+
+// 时间轴返回参数
+export interface TimelineResult {
+  date: string;
+  articles: TimelineArticles[];
+  count: number;
+}

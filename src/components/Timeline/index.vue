@@ -6,64 +6,32 @@
 -->
 <template>
   <div class="timeline">
-    <div class="timeline-item">
+    <div v-for="item in dataSource" :key="item.date" class="timeline-item">
+      <div class="year">{{ item.date }}</div>
       <div class="card">
-        <div class="card-item" @click="(e) => onClickCard(e, 'card')">
-          <div class="date">2023-02-09</div>
-          <TimelineCard />
-        </div>
-        <div class="card-item">
-          <div class="date">2023-02-10</div>
-          <TimelineCard />
+        <div v-for="card in item.articles" :key="card.id" class="card-item" @click="(e) => onClickCard(e, card.id)">
+          <div class="date">{{ formatDate(card.createTime!) }}</div>
+          <LineCard :data="card" />
         </div>
       </div>
-      <div class="year">2023</div>
-    </div>
-    <div class="timeline-item">
-      <div class="card">
-        <div class="card-item">
-          <div class="date">2023-02-10</div>
-          <TimelineCard />
-        </div>
-      </div>
-      <div class="year">2022</div>
-    </div>
-    <div class="timeline-item">
-      <div class="card">
-        <div class="card-item">
-          <div class="date">2023-02-10</div>
-          <TimelineCard />
-        </div>
-      </div>
-      <div class="year">2021</div>
-    </div>
-    <div class="timeline-item">
-      <div class="card">
-        <div class="card-item">
-          <div class="date">2023-02-10</div>
-          <TimelineCard />
-        </div>
-      </div>
-      <div class="year">2020</div>
-    </div>
-    <div class="timeline-item">
-      <div class="card">
-        <div class="card-item">
-          <div class="date">2023-02-10</div>
-          <TimelineCard />
-        </div>
-        <div class="card-item">
-          <div class="date">2023-02-10</div>
-          <TimelineCard />
-        </div>
-      </div>
-      <div class="year">2019</div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import TimelineCard from './TimelineCard/index.vue';
+import { formatDate } from '@/utils';
+import { TimelineResult } from '@/typings/common';
+import LineCard from '@/components/LineCard/index.vue';
+
+interface IProps {
+  dataSource: TimelineResult[];
+}
+
+const props = withDefaults(defineProps<IProps>(), {
+  dataSource: () => [],
+});
+
+console.log(props, 'props');
 
 const onClickCard = (e: Event, item: any) => {
   e.stopPropagation();
@@ -91,7 +59,6 @@ const onClickCard = (e: Event, item: any) => {
       .card-item {
         margin-bottom: 10px;
         border-radius: 5px;
-        background-image: @card-lg;
         padding: 10px;
         cursor: pointer;
 
@@ -141,14 +108,18 @@ const onClickCard = (e: Event, item: any) => {
       .card {
         position: relative;
 
+        .card-item {
+          background-image: @card-odd-lg;
+        }
+
         &::before {
           position: absolute;
           top: 15px;
-          right: -12px;
+          right: -13px;
           content: '';
           width: 0;
           height: 0;
-          border-left: 12px solid @shadow-color;
+          border-left: 12px solid @blue-1;
           border-top: 12px solid transparent;
           border-bottom: 12px solid transparent;
         }
@@ -198,14 +169,18 @@ const onClickCard = (e: Event, item: any) => {
       .card {
         position: relative;
 
+        .card-item {
+          background-image: @card-lg;
+        }
+
         &::before {
           position: absolute;
           top: 15px;
-          left: -12px;
+          left: -13px;
           content: '';
           width: 0;
           height: 0;
-          border-right: 12px solid @shadow-color;
+          border-right: 12px solid @pink-1;
           border-top: 12px solid transparent;
           border-bottom: 12px solid transparent;
         }
