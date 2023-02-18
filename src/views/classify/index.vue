@@ -108,7 +108,6 @@ const onCheckClassify = (id: number) => {
       .left-line {
         display: inline-block;
         font-size: 20px;
-        margin-bottom: 2px;
         margin-right: 10px;
         color: @theme-blue;
       }

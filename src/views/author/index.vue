@@ -155,7 +155,7 @@ const onShowMore = () => {
   .cover {
     width: 100%;
     height: auto;
-    background-image: linear-gradient(135deg, #e9defa 10%, #ace0f9 100%);
+    background-image: @head-lg;
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
     padding-bottom: 12px;
@@ -266,6 +266,22 @@ const onShowMore = () => {
       border: 1px solid @card-border;
       border-radius: 5px;
 
+      :deep {
+        .el-tabs__content {
+          padding: 10px;
+        }
+
+        .el-tabs__header,
+        .el-tabs__nav-wrap {
+          border-top-left-radius: 5px;
+          border-top-right-radius: 5px;
+        }
+
+        .el-tabs__header {
+          border-bottom: 1px solid @card-border;
+        }
+      }
+
       .list-wrap {
         display: flex;
         justify-content: space-between;
@@ -286,8 +302,17 @@ const onShowMore = () => {
             }
           }
 
+          &:nth-child(odd) {
+            &:last-child {
+              margin-bottom: 0;
+            }
+          }
+
           &:nth-child(even) {
             margin-right: 0;
+            &:last-child {
+              margin-bottom: 0;
+            }
           }
 
           .img-wrap {
