@@ -6,25 +6,22 @@
 -->
 <template>
   <div :class="`${checkOS() === 'mac' && 'mac-left-menu-wrap'} left-menu-wrap`">
-    <div>
-      <div class="icon-wrap">
-        <img :src="PAGEICON" class="page-icon" />
-      </div>
-      <div v-for="menu in MENULIST" :key="menu.key" class="menu-list" @click="onSelectMenu(menu)">
+    <el-scrollbar ref="scrollRef">
+      <div v-for="menu in menuList" :key="menu.key" class="menu-list" @click="onSelectMenu(menu)">
         <el-tooltip class="box-item" effect="light" :content="menu.name" placement="right">
           <i
             :class="`${
               ((activeMenu.path === menu.path && route.path.includes(menu.path)) ||
                 commonStore.activePath === menu.path) &&
               'active'
-            } font iconfont ${menu.icon}`"
+            } ${menu.key} font iconfont ${menu.icon}`"
           />
         </el-tooltip>
       </div>
-    </div>
+    </el-scrollbar>
     <div class="setting">
       <el-dropdown>
-        <el-avatar shape="square" :size="38" fit="cover" :src="PAGESVG" class="avatar" />
+        <el-avatar shape="square" :size="checkOS() === 'mac' ? 45 : 38" fit="cover" :src="PAGESVG" class="avatar" />
         <template #dropdown>
           <el-dropdown-menu>
             <el-dropdown-item @click="toPersonal">
@@ -47,18 +44,22 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { MENULIST, PAGESVG } from '@/constant';
-import PAGEICON from '@/assets/svg/page_icon.svg';
 import { MenuListParams } from '@/typings/common';
-import { commonStore } from '@/store';
+import { commonStore, loginStore } from '@/store';
 import { checkOS } from '@/utils';
 
 const router = useRouter();
 const route = useRoute();
 
 const activeMenu = ref<MenuListParams>(MENULIST[0]);
+
+// 计算菜单
+const menuList = computed(() => {
+  return MENULIST.filter((i) => i.show);
+});
 
 // 选中菜单
 const onSelectMenu = (menu: MenuListParams) => {
@@ -86,6 +87,7 @@ const onLogout = () => {
     crumbsName: MENULIST[0].name,
     crumbsPath: MENULIST[0].path,
   });
+  loginStore.onLogout();
   router.push('/login');
 };
 </script>
@@ -99,22 +101,10 @@ const onLogout = () => {
   flex-direction: column;
   box-sizing: border-box;
   width: 60px;
-  height: 100vh;
-  padding: 12px 10px;
-  border-right: 1px solid @menu-light;
+  .pageHeight();
+  padding-left: 1px;
+  border-radius: 5px;
   overflow: auto;
-
-  .icon-wrap {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    .page-icon {
-      width: 32px;
-      height: 32px;
-      margin-bottom: 20px;
-    }
-  }
 
   .menu-list {
     box-sizing: border-box;
@@ -125,13 +115,18 @@ const onLogout = () => {
     height: 60px;
 
     .font {
+      display: block;
       font-size: 26px;
+      line-height: 32px;
+      font-weight: 700;
       color: @sub-2-blue;
       cursor: pointer;
+      .textLg();
     }
 
     .active {
       color: @active;
+      .textLgActive();
     }
   }
 
@@ -140,6 +135,7 @@ const onLogout = () => {
     align-items: center;
     justify-content: center;
     margin-top: 20px;
+
     .avatar {
       color: @sub-2-blue;
       cursor: pointer;
@@ -150,6 +146,7 @@ const onLogout = () => {
       align-items: center;
 
       .clickNoSelectText();
+
       .dropdown-text {
         font-size: 13px;
       }
@@ -158,14 +155,20 @@ const onLogout = () => {
 }
 
 .mac-left-menu-wrap {
-  margin-top: 28px;
-  margin-bottom: 28px;
-  height: calc(100vh - 56px);
-  padding: 0 10px;
+  padding: 28px 0 10px;
+  width: 68px;
 
   .icon-wrap {
     .page-icon {
+      width: 38px;
+      height: 38px;
       margin-bottom: 10px;
+    }
+  }
+
+  .menu-list {
+    .font {
+      font-size: 32px;
     }
   }
 }

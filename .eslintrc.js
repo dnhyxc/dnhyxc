@@ -34,5 +34,7 @@ module.exports = {
     ], // vue template模板元素第一行最多5个属性
     'vue/multi-word-component-names': 0,
     'no-useless-catch': 0,
+    'prettier/prettier': 0,
+    'vue/no-mutating-props': 0,
   },
 };

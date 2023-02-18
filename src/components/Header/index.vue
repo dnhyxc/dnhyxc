@@ -5,8 +5,12 @@
  * index.vue
 -->
 <template>
-  <div :class="`${checkOS() === 'mac' && 'mac-header-wrap'} header-wrap`">
+  <div :class="`${checkOS() === 'mac' && 'mac-header-wrap'} header-wrap`" @dblclick="onDblclick">
     <div class="left">
+      <div class="icon-wrap">
+        <!-- <img :src="PAGEICON" class="page-icon" /> -->
+        <i class="page-icon iconfont icon-haidao_" />
+      </div>
       <el-tooltip effect="light" content="后退" placement="bottom">
         <i class="font iconfont icon-arrow-left-bold" @click="goBack" />
       </el-tooltip>
@@ -80,6 +84,7 @@ import { Search } from '@element-plus/icons-vue';
 import { ACTION_SVGS, MENULIST } from '@/constant';
 import { commonStore } from '@/store';
 import { checkOS } from '@/utils';
+// import PAGEICON from '@/assets/svg/page_icon.svg';
 
 const router = useRouter();
 const route = useRoute();
@@ -92,13 +97,19 @@ const stickyStatus = ref<boolean>(false);
 
 // 监听路由变化，设置当前选中菜单
 watchEffect(() => {
-  const menu = MENULIST.find((i) => i.path === route.path);
+  const menu = MENULIST.find((i) => route.path.includes(i.path));
   commonStore.setCrumbsInfo({
     crumbsName: menu?.name || '设置',
     crumbsPath: route.path,
   });
   commonStore.setActivePath(route.path);
 });
+
+// 双击放大窗口
+const onDblclick = () => {
+  toggle.value = !toggle.value;
+  ipcRenderer.send('window-max');
+};
 
 // 后退
 const goBack = () => {
@@ -180,15 +191,32 @@ const onEnter = () => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 30px;
-  padding: 10px 15px;
+  height: 35px;
+  padding: 10px 18px 10px 12px;
   -webkit-app-region: drag;
 
   .left {
     display: flex;
     align-items: center;
     justify-content: flex-start;
+    .icon-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
 
+      .page-icon {
+        display: inline-block;
+        min-height: 40px;
+        line-height: 40px;
+        font-size: 35px;
+        margin-bottom: 2px;
+        margin-right: 20px;
+        color: @sub-2-blue;
+        cursor: pointer;
+        -webkit-app-region: no-drag;
+        .textLg();
+      }
+    }
     .font {
       margin-right: 20px;
       cursor: pointer;
@@ -316,6 +344,6 @@ const onEnter = () => {
 }
 
 .mac-header-wrap {
-  padding: 22px 12px 12px 10px;
+  padding: 10 12px;
 }
 </style>

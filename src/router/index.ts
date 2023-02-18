@@ -1,4 +1,4 @@
-import { createRouter, RouteRecordRaw, createWebHashHistory } from 'vue-router';
+import { createRouter, RouteRecordRaw, createWebHistory } from 'vue-router';
 import { useCommonStore } from '@/store/common';
 // import { AUTH_CONFIG } from '@/constant';
 
@@ -146,7 +146,7 @@ const routes: Array<RouteRecordRaw> = [
 
 const router = createRouter({
   // electron 只支持 hash router，使用 history router 会出现找不到对应路由得情况
-  history: createWebHashHistory(),
+  history: createWebHistory(),
   scrollBehavior: (to, from, savePosition) => {
     if (savePosition) {
       return savePosition;

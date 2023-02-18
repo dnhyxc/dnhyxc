@@ -46,7 +46,7 @@ const onClick = (menu: MenuListParams) => {
   display: flex;
   justify-content: flex-start;
   flex-direction: column;
-  height: calc(100vh - 60px);
+  height: calc(100vh - 75px);
 
   .el-main {
     display: flex;
