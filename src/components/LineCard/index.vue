@@ -9,8 +9,8 @@
     <div class="title">
       <div class="left">{{ data.title }}</div>
       <div class="right">
-        <span class="edit" @click="(e) => toEdit(e, data)">编辑</span>
-        <span class="del" @click="(e) => onReomve(e, data)">下架</span>
+        <span class="edit" @click="(e) => toEdit(e, data.id!)">编辑</span>
+        <span class="del" @click="(e) => onReomve(e, data.id!)">下架</span>
       </div>
     </div>
     <div class="content">
@@ -22,19 +22,19 @@
           <div class="author" @click="(e) => toPersonal(e, 'author')">{{ data.authorName }}</div>
           <div class="right">
             <el-tooltip class="box-item" effect="light" :content="`分类：${data.classify}`" placement="bottom">
-              <div class="classify" @click="(e) => toClassify(e, 'classify')">{{ data.classify }}</div>
+              <div class="classify" @click="(e) => toClassify(e, data.classify!)">{{ data.classify }}</div>
             </el-tooltip>
             <el-tooltip class="box-item" effect="light" :content="`标签：${data.tag}`" placement="bottom">
-              <div class="tag" @click="(e) => toTag(e, 'tag')">{{ data.tag }}dsadsa</div>
+              <div class="tag" @click="(e) => toTag(e, data.tag!)">{{ data.tag }}dsadsa</div>
             </el-tooltip>
           </div>
         </div>
         <div class="actions">
-          <div class="action like" @click="(e) => onLike(e, '点赞')">
+          <div class="action like" @click="(e) => onLike(e, data.id!)">
             <i :class="`font like-icon iconfont ${data.isLike ? 'icon-24gf-thumbsUp2' : 'icon-24gl-thumbsUp2'}`" />
             <span>{{ data.likeCount || '点赞' }}</span>
           </div>
-          <div class="action comment" @click="(e) => onComment(e, '评论')">
+          <div class="action comment" @click="(e) => onComment(e, data.id!)">
             <i class="font comment-icon iconfont icon-pinglun" />
             <span>{{ data.replyCount || '评论' }}</span>
           </div>
@@ -56,7 +56,10 @@
 </template>
 
 <script setup lang="ts">
+import { useRouter } from 'vue-router';
 import { TimelineArticles } from '@/typings/common';
+
+const router = useRouter();
 
 interface IProps {
   data: TimelineArticles;
@@ -67,45 +70,46 @@ const props = withDefaults(defineProps<IProps>(), {});
 console.log(props, 'props');
 
 // 编辑
-const toEdit = (e: Event, item: any) => {
+const toEdit = (e: Event, id: string) => {
   e.stopPropagation();
-  console.log(item, '编辑');
+  console.log(id, '编辑');
+  router.push(`/create?id=${id}`);
 };
 
 // 删除
-const onReomve = (e: Event, item: any) => {
+const onReomve = (e: Event, id: string) => {
   e.stopPropagation();
-  console.log(item, '编辑');
+  console.log(id, '编辑');
 };
 
 // 去作者主页
-const toPersonal = (e: Event, item: any) => {
+const toPersonal = (e: Event, id: string) => {
   e.stopPropagation();
-  console.log(item, 'item');
+  console.log(id, 'item');
 };
 
 // 去分类页
-const toClassify = (e: Event, item: any) => {
+const toClassify = (e: Event, classify: string) => {
   e.stopPropagation();
-  console.log(item, 'toClassify');
+  console.log(classify, 'toClassify');
 };
 
 // 去标签
-const toTag = (e: Event, item: any) => {
+const toTag = (e: Event, tag: string) => {
   e.stopPropagation();
-  console.log(item, 'toTag');
+  console.log(tag, 'toTag');
 };
 
 // 点赞
-const onLike = (e: Event, item: any) => {
+const onLike = (e: Event, id: string) => {
   e.stopPropagation();
-  console.log(item, 'onLike');
+  console.log(id, 'onLike');
 };
 
 // 评论
-const onComment = (e: Event, item: any) => {
+const onComment = (e: Event, id: string) => {
   e.stopPropagation();
-  console.log(item, 'onComment');
+  console.log(id, 'onComment');
 };
 </script>
 
@@ -192,7 +196,7 @@ const onComment = (e: Event, item: any) => {
 
           .classify,
           .tag {
-            background-image: @card-lg;
+            background-image: @bg-lg-2;
             box-shadow: 0 0 3px @shadow-color;
             padding: 2px 3px 0 3px;
             border-radius: 5px;

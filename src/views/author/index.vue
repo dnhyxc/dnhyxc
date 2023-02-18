@@ -155,7 +155,7 @@ const onShowMore = () => {
   .cover {
     width: 100%;
     height: auto;
-    background-image: @head-lg;
+    background-image: @bg-lg-2;
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
     padding-bottom: 12px;
@@ -291,7 +291,7 @@ const onShowMore = () => {
           width: calc(50% - 5px);
           padding: 10px 10px;
           box-shadow: 0 0 5px @shadow-color;
-          background-image: @card-lg;
+          background-image: @bg-lg-2;
           margin-bottom: 10px;
           border-radius: 5px;
           margin-right: 10px;

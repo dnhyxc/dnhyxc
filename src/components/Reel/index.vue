@@ -32,7 +32,7 @@ const scrollRef = ref<any>(null);
 
 const props = withDefaults(defineProps<IProps>(), {
   dataSource: () => [],
-  onCheckClassify: () => { },
+  onCheckClassify: () => {},
   width: 'calc(100vw - 80px)',
 });
 
@@ -136,7 +136,7 @@ const onClick = (id: number) => {
       height: 100%;
       margin-right: 12px;
       box-shadow: @shadow-mack;
-      background-image: @card-lg;
+      background-image: @bg-lg;
       border-radius: 5px;
       -webkit-user-drag: none;
       cursor: pointer;
