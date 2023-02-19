@@ -5,7 +5,11 @@
  * index.vue
 -->
 <template>
-  <div class="profile-wrap">个人资料</div>
+  <div class="profile-wrap">
+    <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
+      <div class="user-info">个人资料</div>
+    </el-scrollbar>
+  </div>
 </template>
 
 <script setup lang="ts"></script>

@@ -5,7 +5,9 @@
  * index.vue
 -->
 <template>
-  <div class="account-wrap">账号设置</div>
+  <div class="account-wrap">
+    <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper"> 账号设置 </el-scrollbar>
+  </div>
 </template>
 
 <script setup lang="ts"></script>
