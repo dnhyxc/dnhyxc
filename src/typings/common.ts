@@ -5,6 +5,8 @@ export interface MenuListParams {
   path: string;
   icon?: string;
   active?: string;
+  fillIcon?: string;
+  show?: boolean;
 }
 
 // user store 属性声明

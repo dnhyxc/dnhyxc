@@ -37,6 +37,7 @@ import { checkOS } from '@/utils';
   height: 100vh;
   box-sizing: border-box;
   background-color: @theme;
+  overflow: hidden;
   // background-color: @menu-weak;
   .el-main {
     display: flex;

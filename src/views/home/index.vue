@@ -52,7 +52,7 @@ const loading = ref<boolean>(false);
 
 const { scrollRef, scrollTop } = useScroller();
 
-const noMore = computed(() => dataSource.value > 31);
+const noMore = computed(() => dataSource.value > 100);
 const disabled = computed(() => loading.value || noMore.value);
 
 // 请求数据
@@ -63,7 +63,7 @@ const onFetchData = async () => {
     loading.value = true;
     const newData: any = await ajaxGet(/* url */);
     loading.value = false;
-    if (dataSource.value > 31) return;
+    if (dataSource.value > 100) return;
     dataSource.value += newData;
   } catch (err) {
     // handle err
@@ -128,27 +128,6 @@ const searchHotArticles = () => {
 
   :deep {
     .scrollbar-wrapper();
-    // .scrollbar-wrapper {
-    //   box-sizing: border-box;
-    //   height: 100%;
-
-    //   .pullup-content {
-    //     display: flex;
-    //     flex-wrap: wrap;
-
-    //     .pullup-list-item {
-    //       border-radius: 5px;
-    //       list-style: none;
-    //       width: calc(33.333333% - 8px);
-    //       margin-right: 12px;
-    //       margin-bottom: 11px;
-
-    //       &:nth-child(3n + 3) {
-    //         margin-right: 0;
-    //       }
-    //     }
-    //   }
-    // }
   }
 
   .loading,

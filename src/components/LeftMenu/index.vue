@@ -44,7 +44,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, watchEffect } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { MENULIST, HEAD_IMG } from '@/constant';
 import { MenuListParams } from '@/typings/common';
@@ -59,6 +59,16 @@ const activeMenu = ref<MenuListParams>(MENULIST[0]);
 // 计算菜单
 const menuList = computed(() => {
   return MENULIST.filter((i) => i.show);
+});
+
+// 监听路由变化
+watchEffect(() => {
+  if (route.path.includes('/tag/list')) {
+    const menu = MENULIST.find((i) => route.path.includes(i.path));
+    if (menu) {
+      activeMenu.value = menu;
+    }
+  }
 });
 
 // 选中菜单
