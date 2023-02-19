@@ -98,6 +98,7 @@ const toClassify = (e: Event, classify: string) => {
 const toTag = (e: Event, tag: string) => {
   e.stopPropagation();
   console.log(tag, 'toTag');
+  router.push(`/tag/list?tag=${tag}`);
 };
 
 // 点赞

@@ -113,7 +113,7 @@ const onClickCard = (e: Event, id: string) => {
         position: relative;
 
         .card-item {
-          background-image: @card-odd-lg;
+          background-image: @bg-lg-2;
         }
 
         &::before {
@@ -123,7 +123,7 @@ const onClickCard = (e: Event, id: string) => {
           content: '';
           width: 0;
           height: 0;
-          border-left: 12px solid @blue-1;
+          border-left: 12px solid @card-border;
           border-top: 12px solid transparent;
           border-bottom: 12px solid transparent;
         }
@@ -174,7 +174,7 @@ const onClickCard = (e: Event, id: string) => {
         position: relative;
 
         .card-item {
-          background-image: @card-lg;
+          background-image: @bg-lg--2;
         }
 
         &::before {
@@ -184,7 +184,7 @@ const onClickCard = (e: Event, id: string) => {
           content: '';
           width: 0;
           height: 0;
-          border-right: 12px solid @pink-1;
+          border-right: 12px solid @card-border;
           border-top: 12px solid transparent;
           border-bottom: 12px solid transparent;
         }

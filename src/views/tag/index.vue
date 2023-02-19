@@ -16,6 +16,7 @@
         { value: 6, name: 'vite' },
       ]"
       class="word-cloud-wrap"
+      :callback="onCheckTag"
     />
     <div class="tag-list">
       <div class="title">
@@ -26,22 +27,38 @@
         />
       </div>
       <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
-        <div v-for="i in 100" :key="i" :class="`${currentTag === i && 'active'} tag`" @click="onCheckTag(i)">
-          tag - {{ i }}
+        <div
+          v-for="i in [
+            { value: 1, name: 'Vue3' },
+            { value: 2, name: 'Electron' },
+            { value: 3, name: 'React' },
+            { value: 4, name: 'webpack' },
+            { value: 5, name: 'node' },
+            { value: 6, name: 'vite' },
+          ]"
+          :key="i.name"
+          :class="`${currentTag === i.name && 'active'} tag`"
+          @click="onCheckTag(i.name)"
+        >
+          tag - {{ i.name }}
         </div>
       </el-scrollbar>
     </div>
   </div>
+  <RouterView />
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 import { scrollTo } from '@/utils';
 import { useScroller } from '@/hooks';
 import WordCloud from '@/components/WordCloud/index.vue';
+
+const router = useRouter();
 const { scrollRef, scrollTop } = useScroller();
 
-const currentTag = ref<number>();
+const currentTag = ref<string>();
 
 // 滚动到某位置
 const onScrollTo = () => {
@@ -50,8 +67,12 @@ const onScrollTo = () => {
 };
 
 // 选中标签
-const onCheckTag = (tag: number) => {
+const onCheckTag = (tag: string) => {
+  console.log(tag, 'tag');
+
   currentTag.value = tag;
+
+  router.push(`/tag/list?tag=${tag}`);
 };
 </script>
 

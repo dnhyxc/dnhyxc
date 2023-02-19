@@ -7,7 +7,7 @@
 <template>
   <div :class="`${checkOS() === 'mac' && 'mac-left-menu-wrap'} left-menu-wrap`">
     <el-scrollbar ref="scrollRef">
-      <div v-for="menu in menuList" :key="menu.key" class="menu-list" @click="onSelectMenu(menu)">
+      <div v-for="menu in menuList" :key="menu.key" class="menu-list" @click="(e) => onSelectMenu(e, menu)">
         <el-tooltip class="box-item" effect="light" :content="menu.name" placement="right">
           <i
             :class="`${
@@ -21,7 +21,7 @@
     </el-scrollbar>
     <div class="setting">
       <el-dropdown>
-        <el-avatar shape="square" :size="checkOS() === 'mac' ? 45 : 38" fit="cover" :src="PAGESVG" class="avatar" />
+        <el-avatar shape="square" :size="checkOS() === 'mac' ? 45 : 38" fit="cover" :src="HEAD_IMG" class="avatar" />
         <template #dropdown>
           <el-dropdown-menu>
             <el-dropdown-item @click="toPersonal">
@@ -46,7 +46,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
-import { MENULIST, PAGESVG } from '@/constant';
+import { MENULIST, HEAD_IMG } from '@/constant';
 import { MenuListParams } from '@/typings/common';
 import { commonStore, loginStore } from '@/store';
 import { checkOS } from '@/utils';
@@ -62,7 +62,8 @@ const menuList = computed(() => {
 });
 
 // 选中菜单
-const onSelectMenu = (menu: MenuListParams) => {
+const onSelectMenu = (e: Event, menu: MenuListParams) => {
+  e.stopPropagation();
   activeMenu.value = menu;
   commonStore.setCrumbsInfo({
     crumbsName: menu.name,
@@ -137,7 +138,6 @@ const onLogout = () => {
     margin-top: 20px;
 
     .avatar {
-      color: @sub-2-blue;
       cursor: pointer;
     }
 

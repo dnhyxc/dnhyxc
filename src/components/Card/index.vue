@@ -103,10 +103,10 @@ const toClassify = (e: Event, name: string) => {
   router.push(`/classify?name=${name}`);
 };
 
-// 去标签页
+// 去标签列表
 const toTag = (e: Event, name: string) => {
   e.stopPropagation();
-  router.push(`/tag?name=${name}`);
+  router.push(`/tag/list?tag=${name}`);
 };
 </script>
 

@@ -23,5 +23,3 @@ declare module '@kangc/v-md-editor/lib/plugins/align';
 declare module '@kangc/v-md-editor/lib/plugins/copy-code/index';
 
 declare module '@kangc/v-md-editor/lib/plugins/copy-code/preview';
-
-declare module 'vue-cropper';

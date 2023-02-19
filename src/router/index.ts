@@ -43,6 +43,16 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import('@/views/tag/index.vue'),
       },
       {
+        path: '/tag/list',
+        name: 'tagList',
+        meta: {
+          title: '标签列表',
+          keepAlive: true,
+          requireAuth: true,
+        },
+        component: () => import('@/views/tag/articles/index.vue'),
+      },
+      {
         path: '/timeline',
         name: 'timeline',
         meta: {

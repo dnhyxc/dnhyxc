@@ -19,9 +19,9 @@ import { BIRD_BASE64 } from '@/constant';
 
 interface IProps {
   data: { name: string; value: number }[];
+  callback: (name: string) => void;
   title?: string;
   styles?: any;
-  callback?: Function;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
@@ -31,7 +31,6 @@ const props = withDefaults(defineProps<IProps>(), {
     with: '100%',
     height: '100%',
   },
-  callback: () => { },
 });
 
 // 图表元素
