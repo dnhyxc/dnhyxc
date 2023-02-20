@@ -9,16 +9,19 @@
     <div class="user-info">
       <div class="cover">
         <div class="img-wrap">
-          <img
-            src="https://pic2.zhimg.com/80/v2-ff0d35d4dcad8e7e1623ef1c294651c1_1440w.webp"
-            alt=""
-            class="cover-img"
-          />
+          <img :src="coverUrl" alt="" class="cover-img" />
+          <div class="upload-cover-wrap">
+            <Upload :get-cover-image="getCoverUrl" :preview="false" :show-img="false">
+              <el-button type="primary" link class="action">
+                <i class="font iconfont icon-19shuxie3x" />
+                编辑封面图
+              </el-button>
+            </Upload>
+          </div>
         </div>
         <div class="author-info">
           <div class="head-img-wrap">
-            <!-- <img :src="HEAD_IMG" alt="" class="head-img" /> -->
-            <Upload :get-cover-image="getCoverImage" :default-url="profileForm.headUrl" />
+            <Upload :get-cover-image="getHeadUrl" :default-url="profileForm.headUrl" />
           </div>
           <div class="username">dnhyxc</div>
         </div>
@@ -95,6 +98,7 @@ const formRef = ref<FormInstance>();
 const { headUrl } = loginStore.userInfo;
 
 console.log(loginStore?.userInfo, headUrl, 'headUrl');
+const coverUrl = ref<string>('https://pic2.zhimg.com/80/v2-ff0d35d4dcad8e7e1623ef1c294651c1_1440w.webp');
 
 const profileForm = reactive<{
   username: string;
@@ -110,9 +114,15 @@ const profileForm = reactive<{
   headUrl: headUrl || HEAD_IMG,
 });
 
-// 获取上传的头像图片
-const getCoverImage = (url: string) => {
+// 获取上传的封面图片
+const getCoverUrl = (url: string) => {
   console.log(url, 'url');
+  coverUrl.value = url;
+};
+
+// 获取上传的头像图片
+const getHeadUrl = (url: string) => {
+  console.log(url, '获取上传的头像图片');
   profileForm.headUrl = url;
 };
 
@@ -166,6 +176,7 @@ const onEnter = () => {
       border-bottom-left-radius: 5px;
       border-bottom-right-radius: 5px;
       .img-wrap {
+        position: relative;
         box-sizing: border-box;
         width: 100%;
         height: 200px;
@@ -175,6 +186,30 @@ const onEnter = () => {
           border-top-left-radius: 5px;
           border-top-right-radius: 5px;
           .imgStyle();
+        }
+
+        .upload-cover-wrap {
+          position: absolute;
+          top: 10px;
+          right: 10px;
+
+          .action {
+            display: flex;
+            align-items: center;
+            color: rgba(225, 225, 225, 0.85);
+            padding: 6px;
+            font-size: 16px;
+
+            &:hover {
+              color: @theme-blue;
+              .textLg();
+            }
+
+            .font {
+              margin-right: 5px;
+              margin-bottom: 3px;
+            }
+          }
         }
       }
 

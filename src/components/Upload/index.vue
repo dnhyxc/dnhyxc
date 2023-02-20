@@ -12,21 +12,23 @@
       </div>
     </el-dialog>
     <el-upload
-      v-if="!imageUrl"
+      v-if="!imageUrl || !showImg"
       class="uploader"
       :show-file-list="false"
       :on-preview="handlePreview"
       :before-upload="beforeUpload"
       :http-request="onUpload"
     >
-      <el-icon class="uploader-icon"><Plus /></el-icon>
+      <slot>
+        <el-icon class="uploader-icon"><Plus /></el-icon>
+      </slot>
     </el-upload>
     <div v-if="imageUrl" class="preview">
       <div v-if="preview" class="mack">
         <i class="view iconfont icon-browse" @click="onPreview" />
         <i class="del iconfont icon-shanchu" @click="onDelImage" />
       </div>
-      <img :src="imageUrl" class="cover-img" />
+      <img v-if="showImg" :src="imageUrl" class="cover-img" />
     </div>
   </div>
 </template>
@@ -42,11 +44,13 @@ interface IProps {
   getCoverImage: (url: string) => void;
   preview?: boolean;
   defaultUrl?: string;
+  showImg?: boolean;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
   preview: true,
   defaultUrl: '',
+  showImg: true,
 });
 
 const imageUrl = ref<string>(props?.defaultUrl);
@@ -56,7 +60,9 @@ const dialogVisible = ref<boolean>(false);
 watch(imageUrl, (newVal, oldVal) => {
   console.log(newVal, oldVal);
   if (newVal) {
-    props.getCoverImage(newVal);
+    console.log(newVal, 'newVal>>>>watch');
+
+    // props.getCoverImage(newVal);
   }
 });
 
@@ -83,6 +89,7 @@ const onUpload = (event: any) => {
   const reader = new FileReader();
   reader.onload = (e: Event) => {
     imageUrl.value = (e.target as FileReader).result as string;
+    props.getCoverImage((e.target as FileReader).result as string);
   };
   reader.readAsDataURL(event.file);
 };
@@ -96,6 +103,7 @@ const onPreview = () => {
 // 清除图片
 const onDelImage = () => {
   imageUrl.value = '';
+  props.getCoverImage('');
 };
 </script>
 
