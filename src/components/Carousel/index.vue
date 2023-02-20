@@ -47,8 +47,8 @@ const toDetail = (id: number) => {
       .img {
         width: 100%;
         height: 210px;
-        object-fit: cover;
         border-radius: 5px;
+        .imgStyle();
       }
     }
 

@@ -166,9 +166,9 @@ const onShowMore = () => {
       .cover-img {
         width: 100%;
         height: 100%;
-        object-fit: cover;
         border-top-left-radius: 5px;
         border-top-right-radius: 5px;
+        .imgStyle();
       }
     }
 
@@ -192,8 +192,8 @@ const onShowMore = () => {
           display: block;
           width: 100%;
           height: 100%;
-          object-fit: cover;
           border-radius: 5px;
+          .imgStyle();
         }
       }
 
@@ -330,8 +330,8 @@ const onShowMore = () => {
               display: block;
               width: 100%;
               height: auto;
-              object-fit: cover;
               border-radius: 5px;
+              .imgStyle();
             }
           }
         }

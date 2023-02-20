@@ -14,7 +14,15 @@ interface IProps {
 export const useLoginStore = defineStore('login', {
   state: (): IProps => ({
     token: locGetItem('token'),
-    userInfo: JSON.parse(locGetItem('userInfo')!), // 当前登录人用户信息
+    userInfo: JSON.parse(locGetItem('userInfo')!) || {
+      userId: '',
+      username: '',
+      job: '',
+      motto: '',
+      introduce: '',
+      headUrl: '',
+      mainCover: '',
+    }, // 当前登录人用户信息
   }),
 
   getters: {},

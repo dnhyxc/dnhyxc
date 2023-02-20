@@ -269,8 +269,8 @@ const onComment = (e: Event, id: string) => {
         width: 100%;
         height: auto;
         max-height: 85px;
-        object-fit: cover;
         border-radius: 5px;
+        .imgStyle();
       }
     }
   }

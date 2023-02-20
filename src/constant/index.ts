@@ -106,6 +106,11 @@ export const SETTING_MENU = [
     key: 'account',
     path: '/account',
   },
+  {
+    name: '主题设置',
+    key: 'theme',
+    path: '/theme',
+  },
 ];
 
 // 二次确认弹窗配置

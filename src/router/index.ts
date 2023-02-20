@@ -122,6 +122,16 @@ const routes: Array<RouteRecordRaw> = [
             },
             component: () => import('@/views/setting/account/index.vue'),
           },
+          {
+            path: '/theme',
+            name: 'theme',
+            meta: {
+              title: '主题设置',
+              keepAlive: true,
+              requireAuth: true,
+            },
+            component: () => import('@/views/setting/theme/index.vue'),
+          },
         ],
         redirect: { name: 'profile' },
       },

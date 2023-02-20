@@ -1,5 +1,16 @@
 @import '@/styles/color.less';
 
+// 图片显示方式
+.imgStyle(@time: 0.3s, @position1: top left, @position2: bottom right) {
+  object-fit: cover;
+  object-position: @position1;
+  transition: all @time ease-in-out;
+
+  &:hover {
+    object-position: @position2;
+  }
+}
+
 .textLg() {
   @supports (-webkit-background-clip: text) or (background-clip: text) {
     background-image: linear-gradient(

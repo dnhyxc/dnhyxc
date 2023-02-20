@@ -38,7 +38,7 @@ import { checkOS } from '@/utils';
   box-sizing: border-box;
   background-color: @theme;
   overflow: hidden;
-  // background-color: @menu-weak;
+
   .el-main {
     display: flex;
     flex-direction: column;
@@ -58,8 +58,6 @@ import { checkOS } from '@/utils';
     .right {
       flex: 1;
       border-radius: 5px;
-      // box-shadow: 0 0 10px @menu-weak;
-      // padding: 10px;
     }
   }
   .mac-content {

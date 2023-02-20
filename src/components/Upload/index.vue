@@ -22,7 +22,7 @@
       <el-icon class="uploader-icon"><Plus /></el-icon>
     </el-upload>
     <div v-if="imageUrl" class="preview">
-      <div class="mack">
+      <div v-if="preview" class="mack">
         <i class="view iconfont icon-browse" @click="onPreview" />
         <i class="del iconfont icon-shanchu" @click="onDelImage" />
       </div>
@@ -40,17 +40,24 @@ import { FILE_TYPE } from '@/constant';
 
 interface IProps {
   getCoverImage: (url: string) => void;
+  preview?: boolean;
+  defaultUrl?: string;
 }
 
-const imageUrl = ref<string>('');
-const dialogVisible = ref<boolean>(false);
+const props = withDefaults(defineProps<IProps>(), {
+  preview: true,
+  defaultUrl: '',
+});
 
-const props = defineProps<IProps>();
+const imageUrl = ref<string>(props?.defaultUrl);
+const dialogVisible = ref<boolean>(false);
 
 // 监听imageUrl，实时传递给父元素
 watch(imageUrl, (newVal, oldVal) => {
   console.log(newVal, oldVal);
-  props.getCoverImage(newVal);
+  if (newVal) {
+    props.getCoverImage(newVal);
+  }
 });
 
 const handlePreview: UploadProps['onPreview'] = (file) => {
@@ -100,6 +107,8 @@ const onDelImage = () => {
   display: flex;
   align-items: center;
   box-sizing: border-box;
+  height: 100%;
+
   .uploader {
     flex: 1;
     display: flex;
@@ -110,12 +119,13 @@ const onDelImage = () => {
     :deep {
       .el-upload {
         width: 100%;
+        height: 100%;
       }
     }
     .uploader-icon {
       font-size: 20px;
       width: 100%;
-      height: 140px;
+      height: 100%;
       color: @font-4;
       text-align: center;
       box-sizing: border-box;
@@ -164,15 +174,17 @@ const onDelImage = () => {
     .cover-img {
       display: block;
       width: 100%;
-      object-fit: cover;
-      height: auto;
-      max-height: 140px;
+      height: 100%;
       border-radius: 4px;
+      .imgStyle();
     }
 
     &:hover {
       .mack {
         display: flex;
+      }
+      .cover-img {
+        object-position: bottom right;
       }
     }
   }
