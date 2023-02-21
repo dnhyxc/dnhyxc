@@ -19,21 +19,26 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
+import { ref, watchEffect } from 'vue';
+import { useRouter } from 'vue-router';
 import { SETTING_MENU } from '@/constant';
+import { ssnSetItem, ssnGetItem } from '@/utils';
 import { MenuListParams } from '@/typings/common';
 
-const activeMenu = ref<MenuListParams>(SETTING_MENU[0]);
+const activeMenu = ref<MenuListParams>(
+  (ssnGetItem('__SETTING_MENU__') && JSON.parse(ssnGetItem('__SETTING_MENU__')!)) || SETTING_MENU[0],
+);
 
 const router = useRouter();
-const route = useRoute();
+
+watchEffect(() => {
+  router.push(activeMenu.value.path);
+});
 
 // 点击菜单
 const onClick = (menu: MenuListParams) => {
   activeMenu.value = menu;
-  if (route.path === menu.path) return;
-  router.push(menu.path);
+  ssnSetItem('__SETTING_MENU__', JSON.stringify(menu));
 };
 </script>
 
