@@ -41,6 +41,7 @@ declare module '@vue/runtime-core' {
     Multibar: typeof import('./src/components/Multibar/index.vue')['default']
     Preview: typeof import('./src/components/Preview/index.vue')['default']
     Reel: typeof import('./src/components/Reel/index.vue')['default']
+    ResetForm: typeof import('./src/components/ResetForm/index.vue')['default']
     Rotation: typeof import('./src/components/Rotation/index.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']

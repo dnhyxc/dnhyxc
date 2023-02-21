@@ -22,6 +22,10 @@ export const useLoginStore = defineStore('login', {
       introduce: '',
       headUrl: '',
       mainCover: '',
+      juejin: 'https://juejin.cn/user/4265760848885368',
+      zhihu: '',
+      github: '',
+      blog: '',
     }, // 当前登录人用户信息
   }),
 

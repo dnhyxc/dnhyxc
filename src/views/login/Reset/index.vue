@@ -157,16 +157,5 @@ const toLogin = () => {
       }
     }
   }
-
-  .reset-wrap {
-    display: flex;
-    justify-content: flex-end;
-    padding: 0 50px;
-    margin-top: 10px;
-
-    .action {
-      color: @theme-blue;
-    }
-  }
 }
 </style>
