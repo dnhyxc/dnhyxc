@@ -48,66 +48,45 @@
       />
     </el-form-item>
     <el-form-item class="form-item action-list">
-      <slot name="footer">
-        <el-button type="primary" size="large" class="action" @click="onResetPwd(formRef)">重置并登录</el-button>
-        <el-button class="action" size="large" @click="toLogin()">返回登录</el-button>
-      </slot>
+      <div class="actions">
+        <slot :data="{ formRef, resetForm }" name="footer"></slot>
+      </div>
     </el-form-item>
   </el-form>
 </template>
 
 <script setup lang="ts">
-import { useRouter } from 'vue-router';
 import { ref, reactive } from 'vue';
 import { FormInstance } from 'element-plus';
-import { commonStore, loginStore } from '@/store';
+import { ResetFormParams } from '@/typings/common';
 
-const router = useRouter();
+interface IProps {
+  onEnter?: (values: ResetFormParams) => void;
+}
+
+const props = withDefaults(defineProps<IProps>(), {
+  onEnter: () => {},
+});
 
 const formRef = ref<FormInstance>();
 
-const resetForm = reactive<{
-  username: string;
-  newPwd: string;
-  confirmPwd: string;
-}>({
+const resetForm = reactive<ResetFormParams>({
   username: '',
   newPwd: '',
   confirmPwd: '',
 });
 
-const emit = defineEmits(['switchDom']);
-
-// 确定重置密码
-const onResetPwd = (formEl: FormInstance | undefined) => {
-  if (!formEl) return;
-  formEl.validate(async (valid) => {
+const onEnter = () => {
+  if (!formRef.value) return;
+  formRef.value.validate(async (valid) => {
     if (valid) {
-      console.log('重置密码并登录', resetForm, commonStore.backPath);
-      loginStore.onResetPwd({ username: resetForm.username, password: resetForm.confirmPwd }, router);
+      props.onEnter && props.onEnter(resetForm);
+      // router.push(commonStore.backPath);
     } else {
-      console.log('error submit!');
+      console.log(resetForm, 'error submit!');
       return false;
     }
   });
-};
-
-const onEnter = () => {
-  // if (!formRef.value) return;
-  // formRef.value.validate(async (valid) => {
-  //   if (valid) {
-  //     console.log(commonStore, '登录', commonStore.backPath);
-  //     router.push(commonStore.backPath);
-  //   } else {
-  //     console.log(resetForm, 'error submit!');
-  //     return false;
-  //   }
-  // });
-};
-
-// 却换到登录注册组件
-const toLogin = () => {
-  emit('switchDom', 'Login');
 };
 </script>
 
@@ -126,13 +105,19 @@ const toLogin = () => {
   }
 
   .action-list {
-    display: flex;
-    justify-content: space-between;
     margin-bottom: 0;
     margin-top: 10px;
 
-    .action {
-      flex: 1;
+    .actions {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+
+      :deep {
+        .action {
+          flex: 1;
+        }
+      }
     }
   }
 }

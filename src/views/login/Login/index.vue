@@ -100,16 +100,15 @@ const onLogin = (formEl: FormInstance | undefined) => {
 
 // 登陆注册回车事件
 const onEnter = () => {
-  // if (!formRef.value) return;
-  // formRef.value.validate(async (valid) => {
-  //   if (valid) {
-  //     console.log(commonStore, '登录', commonStore.backPath);
-  //     router.push(commonStore.backPath);
-  //   } else {
-  //     console.log(loginForm, 'error submit!');
-  //     return false;
-  //   }
-  // });
+  if (!formRef.value) return;
+  formRef.value.validate(async (valid) => {
+    if (valid) {
+      await loginStore.onLogin(loginForm, router);
+    } else {
+      console.log(loginForm, 'error submit!');
+      return false;
+    }
+  });
 };
 
 // 返回首页

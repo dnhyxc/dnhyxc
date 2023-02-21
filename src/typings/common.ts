@@ -116,3 +116,16 @@ export interface TimelineResult {
   articles: TimelineArticles[];
   count: number;
 }
+
+// 重置密码表单参数
+export interface ResetFormParams {
+  username: string;
+  newPwd: string;
+  confirmPwd: string;
+}
+
+// 重置密码表单参数
+export interface FormData<T> {
+  formRef: T;
+  resetForm: ResetFormParams;
+}
