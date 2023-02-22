@@ -32,7 +32,7 @@
     <div class="pwd-item item">
       <span class="label">修改密码</span>
       <div class="reset-wrap">
-        <i class="edit-font font iconfont icon-sign-review" @click="onReset('pwd')">&nbsp;重置密码</i>
+        <i class="edit-font reset-font font iconfont icon-zhongzhi" @click="onReset('pwd')">&nbsp;重置密码</i>
       </div>
     </div>
     <div class="logout-item item">
@@ -41,7 +41,7 @@
         <i class="edit-font font iconfont icon-tuichu1" @click="onReset('logout')">&nbsp;注销</i>
       </div>
     </div>
-    <el-dialog v-model="visible" title="重置密码" width="500">
+    <el-dialog v-model="visible" :title="resetType === 'pwd' ? '重置密码' : '账号注销'" width="500">
       <ResetForm :on-enter="onResetEnter" :need-pwd="resetType === 'pwd'" :data-source="dataSource">
         <template #footer="formData">
           <el-button
@@ -218,6 +218,10 @@ const onCancelResetPwd = (Form: FormData<FormInstance>) => {
       display: flex;
       align-items: flex-start;
 
+      .edit-font {
+        font-size: 15px;
+      }
+
       &:hover {
         .edit-font {
           display: inline-block;
@@ -273,6 +277,10 @@ const onCancelResetPwd = (Form: FormData<FormInstance>) => {
         &:hover {
           color: @active;
         }
+      }
+
+      .reset-font {
+        font-size: 15px;
       }
     }
   }
