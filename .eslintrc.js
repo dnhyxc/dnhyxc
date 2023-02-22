@@ -36,5 +36,6 @@ module.exports = {
     'no-useless-catch': 0,
     'prettier/prettier': 0,
     'vue/no-mutating-props': 0,
+    'vue/no-deprecated-v-on-native-modifier': 0,
   },
 };

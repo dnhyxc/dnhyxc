@@ -17,8 +17,9 @@
           v-show="!accountForm[i.type] && currentEdit !== i.type"
           class="font iconfont icon-yongyan"
           @click="onEdit(i.type)"
-          >&nbsp;填写</i
         >
+          &nbsp;填写
+        </i>
         <div v-show="currentEdit === i.type" class="edit-content">
           <el-input v-model="accountForm[i.type]" :placeholder="i.placeholder" @keyup.enter="onEnter(i.type)" />
           <div class="actions">
@@ -40,64 +41,33 @@
         <i class="edit-font font iconfont icon-tuichu1" @click="onReset('logout')">&nbsp;注销</i>
       </div>
     </div>
-    <el-dialog v-model="visible" title="Tips" width="500">
-      <el-form ref="formRef" :model="resetForm" class="form-wrap">
-        <el-form-item
-          prop="username"
-          :rules="[
-            {
-              required: true,
-              message: '用户名不能为空',
-              trigger: 'blur',
-            },
-          ]"
-          class="form-item"
-        >
-          <el-input v-model="resetForm.username" size="large" placeholder="请输入用户名" />
-        </el-form-item>
-        <el-form-item
-          prop="newPwd"
-          :rules="{
-            required: true,
-            message: '新密码不能为空',
-            trigger: 'blur',
-          }"
-          class="form-item"
-        >
-          <el-input v-model="resetForm.newPwd" size="large" placeholder="请输入新密码" show-password />
-        </el-form-item>
-        <el-form-item
-          prop="confirmPwd"
-          :rules="{
-            required: true,
-            message: '确认密码不能为空',
-            trigger: 'blur',
-          }"
-          class="form-item"
-        >
-          <el-input
-            v-model="resetForm.confirmPwd"
+    <el-dialog v-model="visible" title="重置密码" width="500">
+      <ResetForm :on-enter="onResetEnter" :need-pwd="resetType === 'pwd'" :data-source="dataSource">
+        <template #footer="formData">
+          <el-button
+            type="primary"
             size="large"
-            placeholder="请输入确认密码"
-            show-password
-            @keyup.enter="onResetEnter"
-          />
-        </el-form-item>
-        <el-form-item class="form-item action-list">
-          <el-button type="primary" size="large" class="action" @click="onResetPwd(formRef)">重置并登录</el-button>
-          <el-button class="action" size="large" @click="toLogin()">返回登录</el-button>
-        </el-form-item>
-      </el-form>
+            class="action"
+            @click="onResetPwd(formData.data as FormData<FormInstance>)"
+          >
+            {{ resetType === 'pwd' ? '重置' : '注销' }}
+          </el-button>
+          <el-button class="action" size="large" @click="onCancelResetPwd(formData.data as FormData<FormInstance>)">
+            取消
+          </el-button>
+        </template>
+      </ResetForm>
     </el-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue';
-import { ElMessage, FormInstance } from 'element-plus';
-import { Message } from '@/utils';
+import { reactive, ref, Ref } from 'vue';
+import { FormInstance } from 'element-plus';
 import { SETTING_TYPE } from '@/constant';
 import { loginStore } from '@/store';
+import { FormData, ResetFormParams } from '@/typings/common';
+import ResetForm from '@/components/ResetForm/index.vue';
 
 const { juejin = '', zhihu = '', github = '', blog = '' } = loginStore.userInfo;
 
@@ -113,22 +83,21 @@ const accountForm = reactive<{
   blog,
 });
 
-const formRef = ref<FormInstance>();
-
-const resetForm = reactive<{
-  username: string;
-  newPwd: string;
-  confirmPwd: string;
-}>({
-  username: '',
+// 注销、重置密码表单初始化数据
+const dataSource = reactive<ResetFormParams>({
+  username: 'dnhyxc',
   newPwd: '',
   confirmPwd: '',
 });
+
 // 当前正在编辑的 item（掘金、知乎...）
 const currentEdit = ref<string>('');
 
 // 密码修改、注销弹窗状态
 const visible = ref<boolean>(false);
+
+// 标记是重置密码还是注销
+const resetType = ref<string>('');
 
 // 编辑
 const onEdit = (type: string) => {
@@ -156,53 +125,53 @@ const onCancel = (type: string) => {
 // 密码修改/账号注销
 const onReset = (type: string) => {
   console.log(type);
+  resetType.value = type;
   visible.value = true;
-  if (type === 'logout') {
-    Message('确定下架该文章吗', '下架文章')
-      .then(() => {
-        ElMessage({
-          type: 'success',
-          message: '删除成功',
-        });
-      })
-      .catch(() => {
-        ElMessage({
-          type: 'error',
-          message: '删除失败',
-        });
-      });
-  }
 };
 
 // 确定重置密码
-const onResetPwd = (formEl: FormInstance | undefined) => {
-  if (!formEl) return;
-  formEl.validate(async (valid) => {
+const onResetPwd = (Form: FormData<FormInstance>) => {
+  if (!Form.formRef) return;
+  Form.formRef.validate(async (valid) => {
     if (valid) {
-      console.log('重置密码并登录', resetForm);
-      loginStore.onResetPwd({ username: resetForm.username, password: resetForm.confirmPwd });
+      if (resetType.value === 'pwd') {
+        // 重置密码
+        console.log('重置密码并登录', Form.resetForm);
+        const { username, confirmPwd } = Form.resetForm;
+        await loginStore.onResetPwd({ username, password: confirmPwd! });
+        Form.formRef.resetFields();
+        Form.resetForm = { username: '', confirmPwd: '', newPwd: '' };
+        // 成功时关闭弹窗
+        visible.value = false;
+      } else {
+        // 注销账号
+        console.log('注销》》》》》账号', Form.resetForm);
+        Form.formRef.resetFields();
+        Form.resetForm = { username: '', confirmPwd: '', newPwd: '' };
+        // 成功时关闭弹窗
+        visible.value = false;
+      }
     } else {
-      console.log('error submit!');
       return false;
     }
   });
 };
 
-const onResetEnter = () => {
-  // if (!formRef.value) return;
-  // formRef.value.validate(async (valid) => {
-  //   if (valid) {
-  //     console.log(commonStore, '登录', commonStore.backPath);
-  //     router.push(commonStore.backPath);
-  //   } else {
-  //     console.log(resetForm, 'error submit!');
-  //     return false;
-  //   }
-  // });
+// 重置密码、注销回车事件
+const onResetEnter = (formRef: Ref<FormInstance>, resetForm: ResetFormParams) => {
+  console.log(formRef, resetForm, 'onResetEnter>>>values');
+  // 成功时关闭弹窗
+  formRef.value.resetFields();
+  setTimeout(() => {
+    visible.value = false;
+  }, 50);
 };
 
-// 却换到登录注册组件
-const toLogin = () => {
+// 取消重置密码
+const onCancelResetPwd = (Form: FormData<FormInstance>) => {
+  Form.formRef.resetFields();
+  Form.resetForm = { username: '', confirmPwd: '', newPwd: '' };
+  visible.value = false;
 };
 </script>
 

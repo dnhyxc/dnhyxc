@@ -5,37 +5,46 @@
  * index.vue
 -->
 <template>
-  <el-form ref="formRef" :model="resetForm" class="form-wrap">
+  <!-- @submit.native.prevent 阻止表单提交刷新页面 -->
+  <el-form ref="formRef" :model="resetForm" class="form-wrap" @submit.native.prevent>
     <el-form-item
       prop="username"
       :rules="[
         {
           required: true,
           message: '用户名不能为空',
-          trigger: 'blur',
+          trigger: 'change',
         },
       ]"
       class="form-item"
     >
-      <el-input v-model="resetForm.username" size="large" placeholder="请输入用户名" />
+      <el-input v-model="resetForm.username" size="large" placeholder="请输入用户名" @keyup.enter="onEnter" />
     </el-form-item>
     <el-form-item
+      v-if="needPwd"
       prop="newPwd"
       :rules="{
         required: true,
         message: '新密码不能为空',
-        trigger: 'blur',
+        trigger: 'change',
       }"
       class="form-item"
     >
-      <el-input v-model="resetForm.newPwd" size="large" placeholder="请输入新密码" show-password />
+      <el-input
+        v-model="resetForm.newPwd"
+        size="large"
+        placeholder="请输入新密码"
+        show-password
+        @keyup.enter="onEnter"
+      />
     </el-form-item>
     <el-form-item
+      v-if="needPwd"
       prop="confirmPwd"
       :rules="{
         required: true,
         message: '确认密码不能为空',
-        trigger: 'blur',
+        trigger: 'change',
       }"
       class="form-item"
     >
@@ -61,29 +70,31 @@ import { FormInstance } from 'element-plus';
 import { ResetFormParams } from '@/typings/common';
 
 interface IProps {
-  onEnter?: (values: ResetFormParams) => void;
+  dataSource?: ResetFormParams;
+  needPwd?: boolean;
+  onEnter?: (formRef: any, resetForm: ResetFormParams) => void;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
+  dataSource: () => ({
+    username: '',
+    newPwd: '',
+    confirmPwd: '',
+  }),
+  needPwd: true,
   onEnter: () => {},
 });
 
 const formRef = ref<FormInstance>();
 
-const resetForm = reactive<ResetFormParams>({
-  username: '',
-  newPwd: '',
-  confirmPwd: '',
-});
+const resetForm = reactive<ResetFormParams>(props.dataSource);
 
 const onEnter = () => {
   if (!formRef.value) return;
   formRef.value.validate(async (valid) => {
     if (valid) {
-      props.onEnter && props.onEnter(resetForm);
-      // router.push(commonStore.backPath);
+      props.onEnter && props.onEnter(formRef, resetForm);
     } else {
-      console.log(resetForm, 'error submit!');
       return false;
     }
   });

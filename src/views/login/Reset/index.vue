@@ -23,9 +23,10 @@
 </template>
 
 <script setup lang="ts">
+import { Ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { FormInstance } from 'element-plus';
-import { FormData } from '@/typings/common';
+import { FormData, ResetFormParams } from '@/typings/common';
 import { commonStore, loginStore } from '@/store';
 import ResetForm from '@/components/ResetForm/index.vue';
 
@@ -39,16 +40,16 @@ const onResetPwd = (Form: FormData<FormInstance>) => {
   Form.formRef.validate(async (valid: any) => {
     if (valid) {
       console.log('重置密码并登录', Form.resetForm, commonStore.backPath);
-      loginStore.onResetPwd({ username: Form.resetForm.username, password: Form.resetForm.confirmPwd }, router);
+      loginStore.onResetPwd({ username: Form.resetForm.username, password: Form.resetForm.confirmPwd! }, router);
     } else {
-      console.log('error submit!');
       return false;
     }
   });
 };
 
-const onEnter = (values: any) => {
-  console.log(values);
+const onEnter = (formRef: Ref<FormInstance>, resetForm: ResetFormParams) => {
+  console.log(formRef.value, 'formRef');
+  console.log(resetForm, 'resetForm');
 };
 
 // 却换到登录注册组件

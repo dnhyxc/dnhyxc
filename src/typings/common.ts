@@ -120,8 +120,8 @@ export interface TimelineResult {
 // 重置密码表单参数
 export interface ResetFormParams {
   username: string;
-  newPwd: string;
-  confirmPwd: string;
+  newPwd?: string;
+  confirmPwd?: string;
 }
 
 // 重置密码表单参数
