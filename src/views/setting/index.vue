@@ -20,7 +20,7 @@
 
 <script setup lang="ts">
 import { ref, watchEffect } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 import { SETTING_MENU } from '@/constant';
 import { ssnSetItem, ssnGetItem } from '@/utils';
 import { MenuListParams } from '@/typings/common';
@@ -30,9 +30,13 @@ const activeMenu = ref<MenuListParams>(
 );
 
 const router = useRouter();
+const route = useRoute();
 
 watchEffect(() => {
-  router.push(activeMenu.value.path);
+  console.log(route.path, '>>>>>>');
+  if (route.path === '/profile' || route.path === '/account' || route.path === '/theme') {
+    router.push(activeMenu.value.path);
+  }
 });
 
 // 点击菜单
