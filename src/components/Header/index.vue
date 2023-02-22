@@ -82,7 +82,6 @@ import { Search } from '@element-plus/icons-vue';
 import { ACTION_SVGS, MENULIST } from '@/constant';
 import { commonStore } from '@/store';
 import { checkOS } from '@/utils';
-// import PAGEICON from '@/assets/svg/page_icon.svg';
 
 const router = useRouter();
 const route = useRoute();

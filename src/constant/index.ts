@@ -111,6 +111,11 @@ export const SETTING_MENU = [
     key: 'theme',
     path: '/theme',
   },
+  {
+    name: '系统设置',
+    key: 'system',
+    path: '/system',
+  },
 ];
 
 // 二次确认弹窗配置
@@ -339,6 +344,20 @@ export const SETTING_TYPE = [
   { label: '个人知乎', type: 'zhihu', placeholder: '请填写个人知乎网址' },
   { label: '个人github', type: 'github', placeholder: '请填写个人github网址' },
   { label: '其它网址', type: 'blog', placeholder: '请填写其它网址' },
+];
+
+// 快捷键控制
+export const SHORTCUTS = [
+  {
+    label: '窗口控制',
+    value: 1,
+    key: 'window',
+  },
+  {
+    label: '窗口控制',
+    value: 1,
+    key: 'window',
+  },
 ];
 
 export const BIRD_BASE64 =

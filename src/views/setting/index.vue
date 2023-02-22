@@ -22,19 +22,16 @@
 import { ref, watchEffect } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { SETTING_MENU } from '@/constant';
-import { ssnSetItem, ssnGetItem } from '@/utils';
 import { MenuListParams } from '@/typings/common';
 
-const activeMenu = ref<MenuListParams>(
-  (ssnGetItem('__SETTING_MENU__') && JSON.parse(ssnGetItem('__SETTING_MENU__')!)) || SETTING_MENU[0],
-);
+const activeMenu = ref<MenuListParams>(SETTING_MENU[0]);
 
 const router = useRouter();
 const route = useRoute();
 
 watchEffect(() => {
-  console.log(route.path, '>>>>>>');
-  if (route.path === '/profile' || route.path === '/account' || route.path === '/theme') {
+  // 判断是否是个人资料、账号设置、主题设置、系统设置页
+  if (SETTING_MENU.find((i) => i.path === route.path)) {
     router.push(activeMenu.value.path);
   }
 });
@@ -42,7 +39,6 @@ watchEffect(() => {
 // 点击菜单
 const onClick = (menu: MenuListParams) => {
   activeMenu.value = menu;
-  ssnSetItem('__SETTING_MENU__', JSON.stringify(menu));
 };
 </script>
 
@@ -67,7 +63,7 @@ const onClick = (menu: MenuListParams) => {
 
     .menu-item {
       box-sizing: border-box;
-      padding: 6px 10px;
+      padding: 6px 15px;
       cursor: pointer;
 
       .clickNoSelectText();
