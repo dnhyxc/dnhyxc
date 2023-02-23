@@ -1,5 +1,5 @@
 import path from 'path';
-import { app, BrowserWindow, ipcMain, Tray } from 'electron';
+import { app, BrowserWindow, ipcMain, Tray, dialog } from 'electron';
 import { registerShortcut, unRegisterShortcut } from './shortcut';
 import { createContextMenu, getIconPath } from './tray';
 
@@ -97,6 +97,15 @@ ipcMain.on('window-close', () => {
 // 窗口置顶
 ipcMain.on('win-show', (_, status) => {
   win?.setAlwaysOnTop(status);
+});
+
+// 监听渲染进程发起的打开文件夹指令，properties: ['openDirectory']：用户执行只能选择文件夹
+ipcMain.on('openDialog', (event) => {
+  dialog.showOpenDialog({ properties: ['openDirectory'] }).then((result) => {
+    if (result.filePaths.length > 0) {
+      event.sender.send('selectedItem', result.filePaths);
+    }
+  });
 });
 
 // 在Electron完成初始化时被触发

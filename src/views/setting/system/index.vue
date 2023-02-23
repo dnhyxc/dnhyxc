@@ -22,19 +22,17 @@
     </div>
     <div class="file-config">
       <div class="label">文件存储</div>
-      <div class="list">
-        <div v-for="item in fileConfig" :key="item.label" class="item">
-          <span class="name">{{ item.label }}</span>
-          <div class="key-info">
-            <span class="key">
-              {{ item.path }}
-            </span>
-            <i class="btn font iconfont icon-12bianji3x" @click="onChangePath">&nbsp;更改目录</i>
-          </div>
+      <div v-for="item in fileConfig" :key="item.label" class="file-item">
+        <span class="name">{{ item.label }}</span>
+        <div class="key-info">
+          <span class="key">
+            {{ item.path }}
+          </span>
+          <i class="btn font iconfont icon-12bianji3x" @click="onChangePath(item)">&nbsp;更改目录</i>
         </div>
       </div>
     </div>
-    <el-dialog v-model="visible" title="设置快捷键" width="380"  center :show-close="false">
+    <el-dialog v-model="visible" title="设置快捷键" width="380" center :show-close="false">
       <div class="inp-wrap">
         <el-input
           v-model="shortcut"
@@ -52,6 +50,7 @@
 </template>
 
 <script setup lang="ts">
+import { ipcRenderer } from 'electron';
 import { ref, Directive, DirectiveBinding, nextTick } from 'vue';
 import { STSTEM_CONFIG } from '@/constant';
 import { setShortcutKey } from '@/utils';
@@ -75,6 +74,8 @@ const shortcutList = ref<typeof STSTEM_CONFIG.shortcut>(STSTEM_CONFIG.shortcut);
 const fileConfig = ref<typeof STSTEM_CONFIG.fileConfig>(STSTEM_CONFIG.fileConfig);
 // 当前需要修改的快捷键
 const currentEditShortcut = ref<string>('');
+// 选择的需要修改的存储位置
+const currentEditFileConfig = ref<string>('');
 // 显示弹窗时的回填的快捷键
 const shortcut = ref<string>('');
 
@@ -85,9 +86,21 @@ const showDialog = (item: (typeof STSTEM_CONFIG.shortcut)[0]) => {
   currentEditShortcut.value = item.label;
 };
 
+// 监听主进程发送过来的选择的文件夹信息
+ipcRenderer.on('selectedItem', (e, filePath) => {
+  fileConfig.value = STSTEM_CONFIG.fileConfig.map((i) => {
+    if (i.label === currentEditFileConfig.value) {
+      i.path = filePath[0];
+    }
+    return i;
+  });
+});
+
 // 更换我呢见存储路径事件
-const onChangePath = () => {
-  console.log('更改目录');
+const onChangePath = async (item: (typeof STSTEM_CONFIG.fileConfig)[0]) => {
+  currentEditFileConfig.value = item.label;
+  // 与主进程通信，唤起文件夹选择弹窗
+  ipcRenderer.send('openDialog');
 };
 
 // 增加快捷键
@@ -158,48 +171,54 @@ const handleKeydown = (e: KeyboardEvent) => {
         justify-content: flex-start;
         align-items: center;
         width: 50%;
-        padding: 10px 0 10px 50px;
+        padding: 10px 0 10px 66px;
+      }
+    }
 
-        .name {
-          min-width: 80px;
-          text-align: justify;
-          text-align-last: justify;
-          margin-right: 20px;
-        }
+    .name {
+      min-width: 80px;
+      text-align: justify;
+      text-align-last: justify;
+      margin-right: 20px;
+    }
 
-        .key-info {
-          display: flex;
-          align-items: center;
+    .key-info {
+      display: flex;
+      align-items: center;
 
-          .key {
-            box-sizing: border-box;
-            background-color: @tab-color;
-            padding: 3px 15px 2px;
-            border-radius: 5px;
-            margin-right: 10px;
-            border: 1px solid @card-border;
-          }
+      .key {
+        box-sizing: border-box;
+        background-color: @tab-color;
+        padding: 3px 15px 2px;
+        border-radius: 5px;
+        margin-right: 10px;
+        border: 1px solid @card-border;
+      }
 
-          .font {
-            color: @theme-blue;
-            cursor: pointer;
+      .font {
+        color: @theme-blue;
+        cursor: pointer;
 
-            &:hover {
-              color: @active;
-            }
-          }
-
-          .btn {
-            color: @theme-blue;
-            cursor: pointer;
-            .clickNoSelectText();
-
-            &:hover {
-              color: @active;
-            }
-          }
+        &:hover {
+          color: @active;
         }
       }
+
+      .btn {
+        color: @theme-blue;
+        cursor: pointer;
+        .clickNoSelectText();
+
+        &:hover {
+          color: @active;
+        }
+      }
+    }
+
+    .file-item {
+      display: flex;
+      align-items: center;
+      padding: 10px 0 10px 50px;
     }
   }
 
