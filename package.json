@@ -37,6 +37,7 @@
     "crypto-js": "^4.1.1",
     "echarts": "^5.3.3",
     "echarts-wordcloud": "^2.1.0-beta",
+    "electron-store": "^8.1.0",
     "element-plus": "^2.2.28",
     "highlight.js": "^11.7.0",
     "isomorphic-fetch": "^3.0.0",

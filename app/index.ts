@@ -1,5 +1,6 @@
 import path from 'path';
 import { app, BrowserWindow, ipcMain, Tray, dialog } from 'electron';
+import Store from 'electron-store';
 import { registerShortcut, unRegisterShortcut } from './shortcut';
 import { createContextMenu, getIconPath } from './tray';
 
@@ -16,6 +17,9 @@ const isMac: boolean = process.platform === 'darwin';
 
 // 屏蔽警告
 process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = 'true';
+
+// 注册electron-store
+Store.initRenderer();
 
 const createWindow = () => {
   win = new BrowserWindow({
@@ -106,6 +110,11 @@ ipcMain.on('openDialog', (event) => {
       event.sender.send('selectedItem', result.filePaths);
     }
   });
+});
+
+// 监听渲染进程请求获取electron的用户目录
+ipcMain.on('get-app-path', (event) => {
+  event.sender.send('got-app-path', app.getAppPath());
 });
 
 // 在Electron完成初始化时被触发

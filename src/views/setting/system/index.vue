@@ -51,9 +51,14 @@
 
 <script setup lang="ts">
 import { ipcRenderer } from 'electron';
-import { ref, Directive, DirectiveBinding, nextTick } from 'vue';
+import Store from 'electron-store';
+import { ref, Directive, DirectiveBinding, nextTick, onMounted } from 'vue';
 import { STSTEM_CONFIG } from '@/constant';
 import { setShortcutKey } from '@/utils';
+
+const store = new Store();
+
+console.log(store, 'store');
 
 // 局部自动获取焦点指令
 const vFocus: Directive = (el, binding: DirectiveBinding) => {
@@ -78,6 +83,15 @@ const currentEditShortcut = ref<string>('');
 const currentEditFileConfig = ref<string>('');
 // 显示弹窗时的回填的快捷键
 const shortcut = ref<string>('');
+
+onMounted(() => {
+  // 获取electron应用的用户目录
+  ipcRenderer.send('get-app-path');
+});
+
+ipcRenderer.on('got-app-path', (e, path) => {
+  console.log(path, 'path');
+});
 
 // 点击编辑显示弹窗
 const showDialog = (item: (typeof STSTEM_CONFIG.shortcut)[0]) => {
