@@ -1,5 +1,5 @@
 import { createApp } from 'vue';
-import { usePlugins } from '@/utils';
+import { usePlugins, mountDirectives } from '@/utils';
 import router from '@/router';
 import store from '@/store/initStore';
 import App from './App.vue';
@@ -18,6 +18,9 @@ app.use(store);
 
 // 挂在第三方插件
 usePlugins(app);
+
+// 全局自定义获取焦点指令
+mountDirectives(app);
 
 // 挂载实例
 app.mount('#app');

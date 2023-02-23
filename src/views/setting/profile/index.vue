@@ -39,7 +39,13 @@
           ]"
           class="form-item"
         >
-          <el-input v-model="profileForm.username" size="large" placeholder="请输入用户名" @keyup.enter="onEnter" />
+          <el-input
+            v-model="profileForm.username"
+            v-focus
+            size="large"
+            placeholder="请输入用户名"
+            @keyup.enter="onEnter"
+          />
         </el-form-item>
         <el-form-item
           label="职位"

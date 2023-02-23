@@ -21,7 +21,7 @@
           &nbsp;填写
         </i>
         <div v-show="currentEdit === i.type" class="edit-content">
-          <el-input v-model="accountForm[i.type]" :placeholder="i.placeholder" @keyup.enter="onEnter(i.type)" />
+          <el-input v-model="accountForm[i.type]" v-focus :placeholder="i.placeholder" @keyup.enter="onEnter(i.type)" />
           <div class="actions">
             <el-button type="primary" class="action" @click="onOk(i.type)">确定</el-button>
             <el-button class="action" @click="onCancel(i.type)">取消</el-button>
@@ -62,12 +62,23 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, Ref } from 'vue';
+import { reactive, ref, Ref, Directive, nextTick } from 'vue';
 import { FormInstance } from 'element-plus';
 import { SETTING_TYPE } from '@/constant';
 import { loginStore } from '@/store';
 import { FormData, ResetFormParams } from '@/typings/common';
 import ResetForm from '@/components/ResetForm/index.vue';
+
+// 局部自动获取焦点指令
+const vFocus: Directive = (el) => {
+  nextTick(() => {
+    if (el.tagName.toLocaleLowerCase() === 'input') {
+      el.focus();
+    } else if (el.getElementsByTagName('input')) {
+      el.getElementsByTagName('input')[0].focus();
+    }
+  });
+};
 
 const { juejin = '', zhihu = '', github = '', blog = '' } = loginStore.userInfo;
 

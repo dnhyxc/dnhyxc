@@ -15,7 +15,7 @@
 import { ref, onMounted, nextTick, onUnmounted, watch, computed } from 'vue';
 import * as echarts from 'echarts';
 import 'echarts-wordcloud';
-import { BIRD_BASE64 } from '@/constant';
+import { SEA_BASE64 } from '@/constant';
 
 interface IProps {
   data: { name: string; value: number }[];
@@ -145,7 +145,7 @@ const drawChart = () => {
   };
 
   // 放在 public 的img资源使用绝对路径引入有效，或先 import 引入图片资源，再赋值也有效。
-  maskImage.src = BIRD_BASE64; // 小鸟
+  maskImage.src = SEA_BASE64; // 海岛
 };
 
 // 重新设置图表的尺寸

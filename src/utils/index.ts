@@ -1,11 +1,12 @@
 import { ElMessageBox } from 'element-plus';
 import type { ElMessageBoxOptions } from 'element-plus';
 import moment from 'moment';
-import { MSG_CONFIG } from '@/constant';
+import { MSG_CONFIG, CODE_CONTROL } from '@/constant';
 import { usePlugins } from './plugins';
 import { normalizeResult } from './result';
 import { decrypt, encrypt } from './crypto';
 import request from './request';
+import { mountDirectives } from './directive';
 import { locSetItem, locGetItem, locRemoveItem, ssnGetItem, ssnSetItem, ssnRemoveItem } from './storage';
 
 // 判断系统类型
@@ -83,6 +84,7 @@ export const scrollToTop = (ref: any, time: number = 500, position: number = 0) 
   rAF(frameFunc);
 };
 
+// 滚动到某位置
 export const scrollTo = (ref: any, position: number) => {
   // el-scrollbar 容器
   const el = ref.value?.wrapRef as HTMLDivElement;
@@ -110,6 +112,33 @@ export const scrollTo = (ref: any, position: number) => {
   requestAnimationFrame(smoothScroll);
 };
 
+// 处理键盘快捷键输入
+export const setShortcutKey = (e: KeyboardEvent, addHotkey: Function) => {
+  const { altKey, ctrlKey, shiftKey, key, code } = e;
+  if (!CODE_CONTROL.includes(key)) {
+    let controlKey = '';
+    [
+      { key: shiftKey, text: 'Shift' },
+      { key: ctrlKey, text: 'Ctrl' },
+      { key: altKey, text: 'Alt' },
+    ].forEach((curKey) => {
+      if (curKey.key) {
+        if (controlKey) controlKey += ' + ';
+        controlKey += curKey.text;
+      }
+    });
+    if (key) {
+      if (controlKey) controlKey += ' + ';
+      controlKey += key.toUpperCase();
+    }
+
+    addHotkey({
+      text: controlKey,
+      controlKey: { altKey, ctrlKey, shiftKey, key, code },
+    });
+  }
+};
+
 export {
   request,
   normalizeResult,
@@ -124,4 +153,5 @@ export {
   ssnRemoveItem,
   formatGapTime,
   usePlugins,
+  mountDirectives,
 };
