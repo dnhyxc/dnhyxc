@@ -362,7 +362,7 @@ export const STSTEM_CONFIG = {
     {
       label: '最小化',
       value: 3,
-      shortcut: 'Shift + Alt + F',
+      shortcut: 'Shift + Alt + R',
     },
     {
       label: '退出',
@@ -373,9 +373,18 @@ export const STSTEM_CONFIG = {
   fileConfig: [
     {
       label: '文件存储路径',
-      path: 'D:\\',
+      value: 5,
+      path: '',
     },
   ],
+};
+
+// 快捷键key值
+export const SHORTCUT_KEYS = {
+  1: 'OPEN_SHORTCUT',
+  2: 'FULL_SHORTCUT',
+  3: 'MINIMIZE_SHORTCUT',
+  4: 'OUT_SHORTCUT',
 };
 
 // 阻止按下这些键设置为快捷键
