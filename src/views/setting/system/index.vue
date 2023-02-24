@@ -23,12 +23,24 @@
     <div class="file-config">
       <div class="label">文件存储</div>
       <div v-for="item in fileConfig" :key="item.label" class="file-item">
-        <span class="name">{{ item.label }}</span>
+        <span class="name config-name">{{ item.label }}</span>
         <div class="key-info">
           <span class="key">
             {{ item.path }}
           </span>
           <i class="btn font iconfont icon-12bianji3x" @click="onChangePath(item)">&nbsp;更改目录</i>
+        </div>
+      </div>
+    </div>
+    <div class="close-config">
+      <div class="label">应用关闭</div>
+      <div class="file-item">
+        <span class="name config-name">关闭主面板</span>
+        <div class="key-info">
+          <el-radio-group v-model="closeStatus">
+            <el-radio :label="1" class="radio-close">最小化到托盘，不退出程序</el-radio>
+            <el-radio :label="2" class="radio-close">退出程序</el-radio>
+          </el-radio-group>
         </div>
       </div>
     </div>
@@ -71,6 +83,8 @@ const currentEditShortcut = ref<number>(0);
 const currentEditFileConfig = ref<number>(5);
 // 显示弹窗时的回填的快捷键
 const shortcut = ref<string>('');
+// 面板关闭设置
+const closeStatus = ref<number>(1);
 
 // 局部自动获取焦点指令
 const vFocus: Directive = (el, binding: DirectiveBinding) => {
@@ -190,7 +204,8 @@ const handleKeydown = (e: KeyboardEvent) => {
   border-radius: 5px;
 
   .shortcuts,
-  .file-config {
+  .file-config,
+  .close-config {
     border-bottom: 1px solid @card-border;
     padding: 20px 0;
     width: 80%;
@@ -220,6 +235,10 @@ const handleKeydown = (e: KeyboardEvent) => {
       text-align: justify;
       text-align-last: justify;
       margin-right: 20px;
+    }
+
+    .config-name {
+      min-width: 100px;
     }
 
     .key-info {
@@ -258,7 +277,7 @@ const handleKeydown = (e: KeyboardEvent) => {
     .file-item {
       display: flex;
       align-items: center;
-      padding: 10px 0 10px 50px;
+      padding: 10px 0 10px 45px;
     }
   }
 
@@ -282,6 +301,15 @@ const handleKeydown = (e: KeyboardEvent) => {
 
     .el-dialog__body {
       padding: 10px 20px 20px;
+    }
+
+    .radio-close {
+      background-color: @tab-color;
+      border-radius: 5px;
+      border: 1px solid @card-border;
+      height: 30px;
+      line-height: 30px;
+      padding: 0 15px;
     }
   }
 }
