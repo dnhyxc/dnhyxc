@@ -9,7 +9,6 @@ declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     Card: typeof import('./src/components/Card/index.vue')['default']
     Carousel: typeof import('./src/components/Carousel/index.vue')['default']
-    Demo: typeof import('./src/components/ShortcutKeyInput/demo.vue')['default']
     Editor: typeof import('./src/components/Editor/index.vue')['default']
     ElAside: typeof import('element-plus/es')['ElAside']
     ElAvatar: typeof import('element-plus/es')['ElAvatar']
@@ -46,7 +45,6 @@ declare module '@vue/runtime-core' {
     Rotation: typeof import('./src/components/Rotation/index.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
-    ShortcutKeyInput: typeof import('./src/components/ShortcutKeyInput/index.vue')['default']
     Timeline: typeof import('./src/components/Timeline/index.vue')['default']
     Toc: typeof import('./src/components/Toc/index.vue')['default']
     ToTopIcon: typeof import('./src/components/ToTopIcon/index.vue')['default']
