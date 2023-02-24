@@ -98,6 +98,8 @@ onMounted(() => {
   ipcRenderer.on('selectedItem', (e, filePath) => {
     // 将新更改的文件存储路径存到本地磁盘中
     store.set('FILE_STORE_PATH', filePath[0]);
+    // 通知主进程重新注册快捷键
+    ipcRenderer.send('restore-register-shortcut');
     setFileConfig(filePath[0]);
   });
 
@@ -162,6 +164,8 @@ const handleKeydown = (e: KeyboardEvent) => {
     // 获取当前正在设置的快捷键的key
     const key = SHORTCUT_KEYS[currentEditShortcut.value];
     store.set(key, shortcut.value);
+    // 通知主进程重新注册快捷键
+    ipcRenderer.send('restore-register-shortcut');
     visible.value = false;
     ElMessage.success('快捷键设置成功');
   }

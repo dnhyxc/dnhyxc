@@ -134,6 +134,15 @@ app
         win?.show();
       });
     }
+  })
+  .then(() => {
+    // 监听渲染进程快捷键修改，重新注册快捷键
+    ipcMain.on('restore-register-shortcut', (event) => {
+      // 重新注册前先取消之前的注册，防止多次注册
+      unRegisterShortcut();
+      // 重新注册快捷键
+      registerShortcut({ isDev, win, isMac });
+    });
   });
 
 // 退出
