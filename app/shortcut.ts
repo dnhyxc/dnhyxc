@@ -1,22 +1,15 @@
 // 快捷键配置
-import { globalShortcut, BrowserWindow } from 'electron';
+import { globalShortcut, BrowserWindow, App } from 'electron';
 import Store from 'electron-store';
 
 interface IParams {
   isDev: boolean;
   isMac: boolean;
   win: BrowserWindow | null;
+  app?: App;
 }
 
-// // 快捷键key值
-// const SHORTCUT_KEYS = {
-//   1: 'OPEN_SHORTCUT',
-//   2: 'FULL_SHORTCUT',
-//   3: 'MINIMIZE_SHORTCUT',
-//   4: 'OUT_SHORTCUT',
-// };
-
-export const registerShortcut = ({ isDev, win, isMac }: IParams) => {
+export const registerShortcut = ({ isDev, win, isMac, app }: IParams) => {
   const store = new Store();
 
   // 生产模式禁止使用Shift+Ctrl+I唤起控制台
@@ -41,6 +34,27 @@ export const registerShortcut = ({ isDev, win, isMac }: IParams) => {
   globalShortcut.register((store.get('OPEN_SHORTCUT') as string) || 'Alt+Shift+Q', () => {
     win?.isVisible() ? win?.hide() : win?.show();
     win?.isVisible() ? win?.setSkipTaskbar(false) : win?.setSkipTaskbar(true);
+  });
+
+  // 全屏/还原
+  globalShortcut.register((store.get('FULL_SHORTCUT') as string) || 'Shift+Alt+F', () => {
+    if (win?.isMaximized()) {
+      win.restore();
+    } else {
+      win?.maximize();
+    }
+  });
+
+  // 最小化
+  globalShortcut.register((store.get('MINIMIZE_SHORTCUT') as string) || 'Shift+Alt+R', () => {
+    win?.minimize();
+  });
+
+  // 退出
+  globalShortcut.register((store.get('OUT_SHORTCUT') as string) || 'Shift+Alt+T', () => {
+    if (!isMac) {
+      app?.quit();
+    }
   });
 };
 

@@ -355,7 +355,7 @@ export const STSTEM_CONFIG = {
       shortcut: 'Shift + Alt + Q',
     },
     {
-      label: '最大化',
+      label: '全屏/还原',
       value: 2,
       shortcut: 'Shift + Alt + F',
     },

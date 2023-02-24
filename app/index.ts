@@ -121,7 +121,7 @@ ipcMain.on('get-app-path', (event) => {
 app
   .whenReady()
   .then(createWindow)
-  .then(() => registerShortcut({ isDev, win, isMac }))
+  .then(() => registerShortcut({ isDev, win, isMac, app }))
   .then(() => {
     tray = new Tray(path.join(__dirname, getIconPath({ isDev, isMac })));
     if (!isMac) {
@@ -141,7 +141,7 @@ app
       // 重新注册前先取消之前的注册，防止多次注册
       unRegisterShortcut();
       // 重新注册快捷键
-      registerShortcut({ isDev, win, isMac });
+      registerShortcut({ isDev, win, isMac, app });
     });
   });
 
