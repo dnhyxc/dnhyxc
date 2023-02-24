@@ -103,7 +103,7 @@ onMounted(() => {
 
   const FILE_STORE_PATH = store.get('FILE_STORE_PATH');
   if (FILE_STORE_PATH) {
-    setFileConfig(FILE_STORE_PATH);
+    setFileConfig(FILE_STORE_PATH as string);
   } else {
     // 获取electron应用的用户目录
     ipcRenderer.send('get-app-path');
@@ -118,7 +118,7 @@ onMounted(() => {
     const key = SHORTCUT_KEYS[i.value];
     const shortcutKey = store.get(key);
     if (shortcutKey) {
-      i.shortcut = shortcutKey;
+      i.shortcut = shortcutKey as string;
     }
     return i;
   });
