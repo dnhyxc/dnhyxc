@@ -26,7 +26,7 @@ export const checkOS = () => {
 
 // 二次确认弹窗
 export const Message = (title: string = '确定下架该文章吗？', content: string = '下架文章') => {
-  return ElMessageBox.confirm(title, content, MSG_CONFIG as ElMessageBoxOptions);
+  return ElMessageBox.confirm(title, content, MSG_CONFIG() as ElMessageBoxOptions);
 };
 
 // 格式化时间

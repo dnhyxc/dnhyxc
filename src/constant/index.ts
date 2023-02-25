@@ -119,15 +119,16 @@ export const SETTING_MENU = [
 ];
 
 // 二次确认弹窗配置
-export const MSG_CONFIG = {
+export const MSG_CONFIG = () => ({
   confirmButtonText: '确定',
   cancelButtonText: '取消',
   type: 'warning',
   center: true,
   draggable: true,
   showClose: false,
+  customClass: 'MSG_CONFIG',
   customStyle: { width: 'auto', padding: '0 30px 20px 30px' },
-};
+});
 
 // 首页展示的文章类型
 export const ATRICLE_TYPE = {

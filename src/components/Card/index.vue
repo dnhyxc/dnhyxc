@@ -21,10 +21,6 @@
             <div class="title">
               {{ data + '我的酒馆作者作者作者作者作者作者作者作者作者作者作者作者作者作者作者' }}
             </div>
-            <div class="actions">
-              <span class="edit" @click="(e) => toEdit(e, data)">编辑</span>
-              <span class="del" @click="(e) => onReomve(e, data)">下架</span>
-            </div>
           </div>
           <div class="art-info">
             <div class="create-info">
@@ -36,6 +32,28 @@
             <div class="tags">
               <span class="classify" @click="(e) => toClassify(e, 'electron')">分类分类分类分类分类分类分类</span>
               <span class="tag" @click="(e) => toTag(e, 'electron')">标签标签标签</span>
+            </div>
+            <div class="actions">
+              <div class="action-icons">
+                <div class="action like" @click="(e) => onLike(e, data)">
+                  <i
+                    :class="`font like-icon iconfont ${data.isLike ? 'icon-24gf-thumbsUp2' : 'icon-24gl-thumbsUp2'}`"
+                  />
+                  <span>{{ data.likeCount || '点赞' }}</span>
+                </div>
+                <div class="action comment" @click="(e) => onComment(e, data)">
+                  <i class="font comment-icon iconfont icon-pinglun" />
+                  <span>{{ data.replyCount || '评论' }}</span>
+                </div>
+                <div class="action read-count">
+                  <i class="font read-icon iconfont icon-yanjing" />
+                  <span class="text">{{ data.readCount || '阅读' }}</span>
+                </div>
+              </div>
+              <div class="action art-action">
+                <span class="edit" @click="(e) => toEdit(e, data)">编辑</span>
+                <span class="del" @click="(e) => onReomve(e, data)">下架</span>
+              </div>
             </div>
           </div>
         </slot>
@@ -60,6 +78,18 @@ withDefaults(defineProps<IProps>(), {
   data: {},
 });
 
+// 点赞
+const onLike = (e: Event, id: string) => {
+  e.stopPropagation();
+  console.log(id, 'onLike');
+};
+
+// 评论
+const onComment = (e: Event, id: string) => {
+  e.stopPropagation();
+  console.log(id, 'onComment');
+};
+
 // 编辑
 const toEdit = (e: Event, id: string) => {
   e.stopPropagation();
@@ -71,7 +101,7 @@ const toEdit = (e: Event, id: string) => {
 const onReomve = async (e: Event, id: string) => {
   e.stopPropagation();
   console.log(id, 'id');
-  Message('确定下架该文章吗', '下架文章')
+  Message('确定要下架该文章吗', '下架文章')
     .then(() => {
       ElMessage({
         type: 'success',
@@ -182,43 +212,18 @@ const toTag = (e: Event, name: string) => {
       background-blend-mode: multiply, multiply;
       border-bottom-left-radius: 5px;
       border-bottom-right-radius: 5px;
-      .bgMoveColor(135deg);
+      .bgMoveColor(29deg);
       background-size: 200% 200%;
       animation: bgmove 10s infinite;
       .bgKeyframes(bgmove);
 
       .header {
         display: flex;
-        justify-content: space-between;
         align-items: center;
 
         .title {
-          flex: 1;
-          margin-right: 5px;
           font-size: 16px;
           .ellipsisMore(1);
-        }
-
-        .actions {
-          display: flex;
-          align-items: center;
-          font-size: 14px;
-
-          .edit {
-            margin-right: 10px;
-            color: @theme-blue;
-          }
-
-          .del {
-            color: @font-danger;
-          }
-
-          .edit,
-          .del {
-            &:hover {
-              color: @active;
-            }
-          }
         }
       }
 
@@ -269,6 +274,72 @@ const toTag = (e: Event, name: string) => {
 
           .classify {
             margin-right: 5px;
+          }
+        }
+
+        .actions {
+          display: flex;
+          justify-content: space-between;
+          font-size: 13px;
+          margin-top: 8px;
+          color: @font-2;
+
+          .action-icons {
+            display: flex;
+            align-items: center;
+          }
+
+          .action {
+            display: flex;
+            align-items: center;
+            margin-right: 15px;
+
+            .font {
+              font-size: 15px;
+              margin-right: 5px;
+            }
+
+            .like-icon {
+              margin-bottom: 2px;
+            }
+
+            .comment-icon {
+              font-size: 16px;
+            }
+
+            .read-icon {
+              font-size: 18px;
+            }
+
+            .edit {
+              margin-right: 10px;
+              color: @theme-blue;
+              font-size: 14px;
+            }
+
+            .del {
+              color: @font-danger;
+              font-size: 14px;
+            }
+
+            .edit,
+            .del {
+              &:hover {
+                color: @active;
+              }
+            }
+
+            &:last-child {
+              margin-right: 0;
+            }
+          }
+
+          .like,
+          .comment {
+            cursor: pointer;
+            &:hover {
+              color: @sub-2-blue;
+            }
           }
         }
       }
