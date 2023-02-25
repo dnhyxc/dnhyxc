@@ -136,11 +136,13 @@ const onClick = (id: number) => {
       height: 100%;
       margin-right: 12px;
       box-shadow: @shadow-mack;
-      background-image: @bg-lg;
+      // background-image: @bg-lg;
       border-radius: 5px;
       -webkit-user-drag: none;
       cursor: pointer;
       .clickNoSelectText();
+      .bgMoveColor(135deg);
+      .bgKeyframes(bgmove);
 
       &:last-child {
         margin-right: 0;

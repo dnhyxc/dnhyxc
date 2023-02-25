@@ -212,10 +212,7 @@ const toTag = (e: Event, name: string) => {
       background-blend-mode: multiply, multiply;
       border-bottom-left-radius: 5px;
       border-bottom-right-radius: 5px;
-      .bgMoveColor(29deg);
-      background-size: 200% 200%;
-      animation: bgmove 10s infinite;
-      .bgKeyframes(bgmove);
+      background-image: @card-lg-2;
 
       .header {
         display: flex;
