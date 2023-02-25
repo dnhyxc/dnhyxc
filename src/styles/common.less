@@ -124,3 +124,22 @@
     border-radius: 5px;
   }
 }
+
+.bgMoveColor(@pos:29deg) {
+  background: linear-gradient(@pos, #e9defa, #fbfcdb, #a8edea, #e0c3fc, #d1e8f3);
+}
+
+// 动态背景动画
+.bgKeyframes (@name: bgMove) {
+  @keyframes @name {
+    0% {
+      background-position: 0% 0%;
+    }
+    50% {
+      background-position: 100% 100%;
+    }
+    100% {
+      background-position: 0% 0%;
+    }
+  }
+}

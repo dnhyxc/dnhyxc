@@ -178,11 +178,15 @@ const toTag = (e: Event, name: string) => {
 
     .card-bottom {
       padding: 8px 10px;
-      background-image: @card-lg-2;
       box-shadow: 0 0 2px @shadow-color inset;
       background-blend-mode: multiply, multiply;
       border-bottom-left-radius: 5px;
       border-bottom-right-radius: 5px;
+      .bgMoveColor(135deg);
+      background-size: 200% 200%;
+      animation: bgmove 10s infinite;
+      .bgKeyframes(bgmove);
+
       .header {
         display: flex;
         justify-content: space-between;
@@ -226,6 +230,7 @@ const toTag = (e: Event, name: string) => {
           display: flex;
           justify-content: space-between;
           align-items: center;
+          margin: 8px 0;
 
           .author,
           .date {

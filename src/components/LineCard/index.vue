@@ -199,7 +199,7 @@ const onComment = (e: Event, id: string) => {
           .tag {
             background-image: @bg-lg-2;
             box-shadow: 0 0 3px @shadow-color;
-            padding: 2px 3px 0 3px;
+            padding: 1px 5px 3px;
             border-radius: 5px;
             min-width: 28px;
             .ellipsisMore(1);
