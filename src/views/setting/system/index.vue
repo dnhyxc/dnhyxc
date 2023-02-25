@@ -64,8 +64,8 @@
 <script setup lang="ts">
 import { ipcRenderer } from 'electron';
 import Store from 'electron-store';
-import { ref, Directive, DirectiveBinding, nextTick, onMounted } from 'vue';
-import { STSTEM_CONFIG, SHORTCUT_KEYS } from '@/constant';
+import { ref, Directive, DirectiveBinding, nextTick, onMounted, watch } from 'vue';
+import { STSTEM_CONFIG, SHORTCUT_KEYS, CLOSE_CONFIG } from '@/constant';
 import { setShortcutKey } from '@/utils';
 import { ElMessage } from 'element-plus';
 
@@ -138,6 +138,14 @@ onMounted(() => {
     }
     return i;
   });
+
+  // 初始化应用关闭默认值
+  closeStatus.value = (store.get(CLOSE_CONFIG) as number) || 1;
+});
+
+// 监听关闭面板状态
+watch(closeStatus, (newVal) => {
+  store.set(CLOSE_CONFIG, newVal);
 });
 
 // 点击编辑显示弹窗

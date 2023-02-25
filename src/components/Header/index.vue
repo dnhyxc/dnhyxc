@@ -8,7 +8,6 @@
   <div :class="`${checkOS() === 'mac' && 'mac-header-wrap'} header-wrap`" @dblclick="onDblclick">
     <div class="left">
       <div class="icon-wrap">
-        <!-- <img :src="PAGEICON" class="page-icon" /> -->
         <i class="page-icon iconfont icon-haidao_" />
       </div>
       <el-tooltip effect="light" content="后退" placement="bottom">
@@ -70,27 +69,51 @@
         </div>
       </div>
     </div>
+    <el-dialog v-model="closeVisible" title="关闭应用" width="380">
+      <div class="dl-content">
+        <div class="actions">
+          <el-button link class="radio-close" @click.prevent="onAppClose(1)">
+            <i class="font iconfont icon-3zuidahua-3" />
+            最小化到托盘，不退出程序
+          </el-button>
+          <el-button link class="radio-close" @click.prevent="onAppClose(2)">
+            <i class="font out-icon iconfont icon-tuichu1" />
+            退出程序
+          </el-button>
+        </div>
+        <div class="close-info">
+          <el-checkbox v-model="remindStatus">
+            <span class="info-text">不在提醒</span>
+          </el-checkbox>
+        </div>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, watchEffect, nextTick } from 'vue';
+import Store from 'electron-store';
+import { ref, watchEffect, nextTick, onUnmounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { ipcRenderer } from 'electron';
 import { ElMessage } from 'element-plus';
 import { Search } from '@element-plus/icons-vue';
-import { ACTION_SVGS, MENULIST } from '@/constant';
+import { ACTION_SVGS, MENULIST, CLOSE_CONFIG, CLOSE_PROMPT } from '@/constant';
 import { commonStore } from '@/store';
 import { checkOS } from '@/utils';
 
 const router = useRouter();
 const route = useRoute();
+const store = new Store();
 
 const toggle = ref<boolean>(false);
 const showSearch = ref<boolean>(false);
 const search = ref<string>('');
 const searchRef = ref<HTMLInputElement | null>(null);
 const stickyStatus = ref<boolean>(false);
+const closeVisible = ref<boolean>(false);
+const remindStatus = ref<boolean>((store.get(CLOSE_PROMPT) as boolean) || false);
+const timerRef = ref<ReturnType<typeof setTimeout> | null>();
 
 // 监听路由变化，设置当前选中菜单
 watchEffect(() => {
@@ -100,6 +123,18 @@ watchEffect(() => {
     crumbsPath: route.path,
   });
   commonStore.setActivePath(route.path);
+
+  // 监听不再提示的勾选状态，实时设置store
+  if (remindStatus.value !== (store.get(CLOSE_PROMPT) as boolean)) {
+    store.set(CLOSE_PROMPT, remindStatus.value);
+  }
+});
+
+// 清除副作用
+onUnmounted(() => {
+  if (timerRef.value) {
+    clearTimeout(timerRef.value);
+  }
 });
 
 // 双击放大窗口
@@ -130,8 +165,33 @@ const onClick = (item: { title: string; svg: string }) => {
   }
 
   if (item.title === '关闭') {
-    ipcRenderer.send('window-close');
+    const closeConfig = store.get(CLOSE_CONFIG);
+    const closePrompt = store.get(CLOSE_PROMPT);
+    if (!closePrompt) {
+      closeVisible.value = true;
+      return;
+    }
+    closePrompt && closeConfig === 1 && ipcRenderer.send('window-close');
+    closePrompt && closeConfig === 2 && ipcRenderer.send('window-out');
   }
+};
+
+// 最小化程序
+const onAppClose = (type: number) => {
+  closeVisible.value = false;
+  store.set(CLOSE_CONFIG, type);
+  if (timerRef.value) {
+    clearTimeout(timerRef.value);
+    timerRef.value = null;
+  }
+  // 设置一定的延时等待弹窗先关闭，再关闭程序
+  timerRef.value = setTimeout(() => {
+    if (type === 1) {
+      ipcRenderer.send('window-close');
+    } else {
+      ipcRenderer.send('window-out');
+    }
+  }, 100);
 };
 
 // 置顶
@@ -175,9 +235,7 @@ const onEnter = () => {
       message: '请输入搜索内容',
       type: 'warning',
     });
-    return;
   }
-  console.log(search.value, 'sousuoneirong');
 };
 </script>
 
@@ -253,6 +311,7 @@ const onEnter = () => {
         :deep {
           .el-input__wrapper {
             background-color: @menu-weak;
+            border-radius: 30px;
           }
         }
       }
@@ -319,6 +378,46 @@ const onEnter = () => {
         margin-left: 15px;
         font-size: 16px;
       }
+    }
+  }
+
+  .dl-content {
+    .actions {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      padding-left: 20px;
+    }
+    .radio-close {
+      padding: 0;
+      margin-left: 0;
+      margin-top: 20px;
+      font-size: 16px;
+
+      .font {
+        margin-right: 10px;
+        color: @theme-blue;
+      }
+
+      .out-icon {
+        color: @font-warning;
+      }
+    }
+
+    .close-info {
+      display: flex;
+      margin-top: 15px;
+
+      .info-text {
+        display: inline-block;
+        margin-top: 2px;
+      }
+    }
+  }
+
+  :deep {
+    .el-dialog__body {
+      padding: 0 20px 15px 20px;
     }
   }
 }

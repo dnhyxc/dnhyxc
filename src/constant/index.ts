@@ -107,14 +107,14 @@ export const SETTING_MENU = [
     path: '/account',
   },
   {
-    name: '主题设置',
-    key: 'theme',
-    path: '/theme',
-  },
-  {
     name: '系统设置',
     key: 'system',
     path: '/system',
+  },
+  {
+    name: '主题设置',
+    key: 'theme',
+    path: '/theme',
   },
 ];
 
@@ -386,6 +386,12 @@ export const SHORTCUT_KEYS = {
   3: 'MINIMIZE_SHORTCUT',
   4: 'OUT_SHORTCUT',
 };
+
+// 系统设置关闭应用store存储key
+export const CLOSE_CONFIG = 'CLOSE_CONFIG';
+
+// 系统设置不再提示store存储key
+export const CLOSE_PROMPT = 'CLOSE_PROMPT';
 
 // 阻止按下这些键设置为快捷键
 export const CODE_CONTROL = [

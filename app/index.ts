@@ -98,6 +98,13 @@ ipcMain.on('window-close', () => {
   win?.hide();
 });
 
+// 退出程序
+ipcMain.on('window-out', () => {
+  if (!isMac) {
+    app.quit();
+  }
+});
+
 // 窗口置顶
 ipcMain.on('win-show', (_, status) => {
   win?.setAlwaysOnTop(status);
