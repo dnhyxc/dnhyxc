@@ -1,5 +1,7 @@
 /// <reference types="vite/client" />
 
+declare module 'qrcode';
+
 declare module 'element-plus/dist/locale/zh-cn.mjs';
 
 declare module '@kangc/v-md-editor';

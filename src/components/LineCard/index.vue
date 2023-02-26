@@ -127,7 +127,7 @@ const onComment = (e: Event, id: string) => {
     justify-content: space-between;
     align-items: center;
     font-size: 16px;
-    margin-bottom: 5px;
+    margin-bottom: 10px;
     color: @font-1;
 
     .left {

@@ -8,7 +8,6 @@ import createLineNumbertPlugin from '@kangc/v-md-editor/lib/plugins/line-number/
 // 内容定位
 import createAlignPlugin from '@kangc/v-md-editor/lib/plugins/align';
 import createCopyCodePlugin from '@kangc/v-md-editor/lib/plugins/copy-code/index';
-import createCopyCodePreview from '@kangc/v-md-editor/lib/plugins/copy-code/preview';
 import createHighlightLinesPlugin from '@kangc/v-md-editor/lib/plugins/highlight-lines/index';
 import Prism from 'prismjs';
 
@@ -40,7 +39,7 @@ export const usePlugins = <T>(app: T | any) => {
   });
 
   // 为预览组件增加复制功能
-  VMdPreview.use(createCopyCodePreview());
+  VMdPreview.use(createCopyCodePlugin());
 
   // 表情（注意：plugin use 必须放在 Theme 之后，否则不生效）
   VueMarkdownEditor.use(createEmojiPlugin());
@@ -57,5 +56,4 @@ export {
   createLineNumbertPlugin,
   createAlignPlugin,
   createCopyCodePlugin,
-  createCopyCodePreview,
 };

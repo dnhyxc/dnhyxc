@@ -124,7 +124,11 @@ const onCheckClassify = (id: number) => {
         display: inline-block;
         flex: 1;
         border-radius: 3px;
-        border: 5px double @card-border;
+        height: 10px;
+        .clickNoSelectText();
+        .bgMoveColor(135deg);
+        .bgKeyframes(bgmove);
+        box-shadow: 0 0 3px @shadow-color;
       }
     }
   }

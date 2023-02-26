@@ -6,6 +6,7 @@ import { usePlugins } from './plugins';
 import { normalizeResult } from './result';
 import { decrypt, encrypt } from './crypto';
 import request from './request';
+import { shareQQ, shareQZon, shareSinaWeiBo } from './share';
 import { mountDirectives } from './directive';
 import { locSetItem, locGetItem, locRemoveItem, ssnGetItem, ssnSetItem, ssnRemoveItem } from './storage';
 
@@ -154,4 +155,7 @@ export {
   formatGapTime,
   usePlugins,
   mountDirectives,
+  shareQQ,
+  shareQZon,
+  shareSinaWeiBo,
 };

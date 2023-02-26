@@ -193,7 +193,7 @@ const toTag = (e: Event, name: string) => {
         padding: 5px;
         border-bottom-left-radius: 5px;
         border-bottom-right-radius: 5px;
-        background-color: rgba(0, 0, 0, 0.28);
+        // background-color: rgba(0, 0, 0, 0.28);
         color: @fff;
         overflow: hidden;
 
@@ -202,6 +202,8 @@ const toTag = (e: Event, name: string) => {
           vertical-align: middle;
           .ellipsisMore(3);
           font-size: 14px;
+          backdrop-filter: blur(2px);
+          padding: 0 5px 2px 5px;
         }
       }
     }

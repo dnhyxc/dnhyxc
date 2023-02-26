@@ -44,6 +44,7 @@
     "moment": "^2.29.4",
     "pinia": "^2.0.29",
     "prismjs": "^1.29.0",
+    "qrcode": "^1.5.1",
     "query-string": "^7.1.1",
     "vue": "^3.2.45",
     "vue-router": "^4.1.6"

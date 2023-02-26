@@ -43,6 +43,7 @@ declare module '@vue/runtime-core' {
     LineCard: typeof import('./src/components/LineCard/index.vue')['default']
     Multibar: typeof import('./src/components/Multibar/index.vue')['default']
     Preview: typeof import('./src/components/Preview/index.vue')['default']
+    Qrcode: typeof import('./src/components/Qrcode/index.vue')['default']
     Reel: typeof import('./src/components/Reel/index.vue')['default']
     ResetForm: typeof import('./src/components/ResetForm/index.vue')['default']
     Rotation: typeof import('./src/components/Rotation/index.vue')['default']

@@ -11,7 +11,7 @@
         <h3 :id="titleId" :class="titleClass">发布文章</h3>
       </template>
       <div class="content">
-        <el-form ref="formRef" label-width="50px" :model="createArticleForm" class="form-wrap">
+        <el-form ref="formRef" label-width="52px" :model="createArticleForm" class="form-wrap">
           <el-form-item
             prop="title"
             label="标题"

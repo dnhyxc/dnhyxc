@@ -430,6 +430,7 @@ const onClickCard = (e: Event, id: string) => {
     .title {
       display: flex;
       justify-content: space-between;
+      align-items: center;
       font-size: 18px;
       color: @active;
       border-bottom: 1px solid @card-border;
