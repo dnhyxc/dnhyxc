@@ -3,8 +3,6 @@ import vuepressTheme from '@kangc/v-md-editor/lib/theme/vuepress.js';
 import VueMarkdownEditor from '@kangc/v-md-editor';
 import createEmojiPlugin from '@kangc/v-md-editor/lib/plugins/emoji/index';
 import VMdPreview from '@kangc/v-md-editor/lib/preview';
-// 数学公式处理插件（该插件需要现在index.html中采用cdn引入）
-import createKatexPlugin from '@kangc/v-md-editor/lib/plugins/katex/cdn';
 // 代码行号
 import createLineNumbertPlugin from '@kangc/v-md-editor/lib/plugins/line-number/index';
 // 内容定位
@@ -46,7 +44,6 @@ export const usePlugins = <T>(app: T | any) => {
 
   // 表情（注意：plugin use 必须放在 Theme 之后，否则不生效）
   VueMarkdownEditor.use(createEmojiPlugin());
-  VueMarkdownEditor.use(createKatexPlugin());
   VueMarkdownEditor.use(createLineNumbertPlugin());
   VueMarkdownEditor.use(createAlignPlugin());
   VueMarkdownEditor.use(createCopyCodePlugin());
@@ -57,7 +54,6 @@ export {
   VueMarkdownEditor,
   createEmojiPlugin,
   VMdPreview,
-  createKatexPlugin,
   createLineNumbertPlugin,
   createAlignPlugin,
   createCopyCodePlugin,
