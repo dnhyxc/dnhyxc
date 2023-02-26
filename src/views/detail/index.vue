@@ -31,7 +31,9 @@ import ToTopIcon from '@/components/ToTopIcon/index.vue';
 
 const route = useRoute();
 
-const mackdown = ref<string | undefined>(route.params.id as string);
+console.log(route.params.id as string);
+
+const mackdown = ref<string | undefined>('```js\nconst log = function(){\n  log(ssssss)\n}\n```');
 
 // scrollRef：el-scrollbar ref，scrollTop：滚动距离
 const { scrollRef, scrollTop } = useScroller();

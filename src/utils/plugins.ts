@@ -11,9 +11,10 @@ import createLineNumbertPlugin from '@kangc/v-md-editor/lib/plugins/line-number/
 import createAlignPlugin from '@kangc/v-md-editor/lib/plugins/align';
 import createCopyCodePlugin from '@kangc/v-md-editor/lib/plugins/copy-code/index';
 import createCopyCodePreview from '@kangc/v-md-editor/lib/plugins/copy-code/preview';
+import createHighlightLinesPlugin from '@kangc/v-md-editor/lib/plugins/highlight-lines/index';
 import Prism from 'prismjs';
-import hljs from 'highlight.js';
 
+import '@kangc/v-md-editor/lib/plugins/highlight-lines/highlight-lines.css';
 import '@kangc/v-md-editor/lib/style/base-editor.css';
 import '@kangc/v-md-editor/lib/theme/style/vuepress.css';
 import '@kangc/v-md-editor/lib/plugins/emoji/emoji.css';
@@ -31,12 +32,12 @@ export const usePlugins = <T>(app: T | any) => {
   // 编辑mackdown配置
   VueMarkdownEditor.use(vuepressTheme, {
     Prism,
-    Hljs: hljs,
   });
+
+  VueMarkdownEditor.use(createHighlightLinesPlugin());
 
   // 预览mackdown配置
   VMdPreview.use(vuepressTheme, {
-    Hljs: hljs,
     Prism,
   });
 
