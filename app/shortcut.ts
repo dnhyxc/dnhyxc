@@ -31,7 +31,7 @@ export const registerShortcut = ({ isDev, win, isMac, app }: IParams) => {
   });
 
   // 快捷键 Alt+Shift+Q 显示隐藏
-  globalShortcut.register((store.get('OPEN_SHORTCUT') as string) || 'Alt+Shift+Q', () => {
+  globalShortcut.register((store.get('OPEN_SHORTCUT') as string) || 'Shift+Alt+Q', () => {
     // 判断窗口是否失去焦点，如果失去了焦点，则不触发hide，直接显示窗口
     if (!win?.isFocused()) {
       win?.show();
