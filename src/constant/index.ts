@@ -347,30 +347,37 @@ export const SETTING_TYPE = [
   { label: '其它网址', type: 'blog', placeholder: '请填写其它网址' },
 ];
 
+// 原始快捷键默认值
+export const INIT_SHOTCUT_KEYS = [
+  {
+    label: '唤起应用',
+    value: 1,
+    shortcut: 'Shift + Alt + Q',
+    key: 'OPEN_SHORTCUT',
+  },
+  {
+    label: '全屏/还原',
+    value: 2,
+    shortcut: 'Shift + Alt + R',
+    key: 'FULL_SHORTCUT',
+  },
+  {
+    label: '最小化',
+    value: 3,
+    shortcut: 'Shift + Alt + M',
+    key: 'MINIMIZE_SHORTCUT',
+  },
+  {
+    label: '退出',
+    value: 4,
+    shortcut: 'Shift + Alt + T',
+    key: 'OUT_SHORTCUT',
+  },
+];
+
 // 快捷键控制
 export const STSTEM_CONFIG = {
-  shortcut: [
-    {
-      label: '唤起应用',
-      value: 1,
-      shortcut: 'Shift + Alt + Q',
-    },
-    {
-      label: '全屏/还原',
-      value: 2,
-      shortcut: 'Shift + Alt + F',
-    },
-    {
-      label: '最小化',
-      value: 3,
-      shortcut: 'Shift + Alt + R',
-    },
-    {
-      label: '退出',
-      value: 4,
-      shortcut: 'Shift + Alt + T',
-    },
-  ],
+  shortcut: JSON.parse(JSON.stringify(INIT_SHOTCUT_KEYS)) as typeof INIT_SHOTCUT_KEYS,
   fileConfig: [
     {
       label: '文件存储路径',

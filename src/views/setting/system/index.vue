@@ -7,7 +7,10 @@
 <template>
   <div class="system-wrap">
     <div class="shortcuts">
-      <div class="label">快捷键</div>
+      <div class="label label-shortcut">
+        快捷键
+        <span class="restore-btn" @click="onRestoreShortcutKeys">恢复默认设置</span>
+      </div>
       <div class="list">
         <div v-for="item in shortcutList" :key="item.value" class="item">
           <span class="name">{{ item.label }}</span>
@@ -65,7 +68,7 @@
 import { ipcRenderer } from 'electron';
 import Store from 'electron-store';
 import { ref, Directive, DirectiveBinding, nextTick, onMounted, watch } from 'vue';
-import { STSTEM_CONFIG, SHORTCUT_KEYS, CLOSE_CONFIG } from '@/constant';
+import { STSTEM_CONFIG, SHORTCUT_KEYS, CLOSE_CONFIG, INIT_SHOTCUT_KEYS } from '@/constant';
 import { setShortcutKey } from '@/utils';
 import { ElMessage } from 'element-plus';
 
@@ -130,9 +133,8 @@ onMounted(() => {
   }
 
   // 初始化快捷键
-  shortcutList.value = STSTEM_CONFIG.shortcut.map((i) => {
-    const key = SHORTCUT_KEYS[i.value];
-    const shortcutKey = store.get(key);
+  shortcutList.value = STSTEM_CONFIG.shortcut.map((i: (typeof STSTEM_CONFIG.shortcut)[0]) => {
+    const shortcutKey = store.get(i.key);
     if (shortcutKey) {
       i.shortcut = shortcutKey as string;
     }
@@ -176,6 +178,16 @@ const addHotkey = (data: {
     }
     return i;
   });
+};
+
+// 重置快捷键设置
+const onRestoreShortcutKeys = () => {
+  INIT_SHOTCUT_KEYS.forEach((i) => {
+    store.set(i.key, i.shortcut);
+  });
+  // 通知主进程重新注册快捷键
+  ipcRenderer.send('restore-register-shortcut');
+  shortcutList.value = INIT_SHOTCUT_KEYS;
 };
 
 // 监听键盘按下事件
@@ -222,6 +234,23 @@ const handleKeydown = (e: KeyboardEvent) => {
       font-size: 16px;
       font-weight: 700;
       margin-bottom: 15px;
+    }
+
+    .label-shortcut {
+      display: flex;
+      align-items: center;
+      .restore-btn {
+        margin-left: 10px;
+        font-size: 14px;
+        font-weight: 400;
+        color: @theme-blue;
+        cursor: pointer;
+        .clickNoSelectText();
+
+        &:hover {
+          color: @active;
+        }
+      }
     }
 
     .list {
