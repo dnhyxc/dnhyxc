@@ -25,6 +25,7 @@ export default defineConfig({
     }),
     ElementPlus(),
     visualizer({
+      filename: 'report.html',
       open: true,
       gzipSize: true,
       brotliSize: true,
