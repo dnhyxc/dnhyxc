@@ -93,7 +93,7 @@
 
 <script setup lang="ts">
 import Store from 'electron-store';
-import { ref, watchEffect, nextTick, onUnmounted } from 'vue';
+import { ref, watchEffect, nextTick, onUnmounted, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { ipcRenderer } from 'electron';
 import { ElMessage } from 'element-plus';
@@ -128,6 +128,13 @@ watchEffect(() => {
   if (remindStatus.value !== (store.get(CLOSE_PROMPT) as boolean)) {
     store.set(CLOSE_PROMPT, remindStatus.value);
   }
+});
+
+onMounted(() => {
+  // 渲染进程监听窗口是否最大化
+  ipcRenderer.on('mainWin-max', (_, status) => {
+    toggle.value = status;
+  });
 });
 
 // 清除副作用
@@ -199,11 +206,6 @@ const onSticky = () => {
   stickyStatus.value = !stickyStatus.value;
   ipcRenderer.send('win-show', stickyStatus.value);
 };
-
-// 渲染进程监听窗口是否最大化
-ipcRenderer.on('mainWin-max', (_, status) => {
-  toggle.value = status;
-});
 
 // 点击去设置页
 const toSetting = () => {

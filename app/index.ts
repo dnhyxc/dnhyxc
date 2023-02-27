@@ -77,6 +77,11 @@ const createWindow = () => {
   win?.on('unmaximize', () => {
     win?.webContents.send('mainWin-max', false);
   });
+
+  // 监听页面是否刷新，页面刷新时，取消窗口置顶
+  win?.webContents.addListener('did-start-loading', () => {
+    win?.setAlwaysOnTop(false);
+  });
 };
 
 // 窗口最小化
