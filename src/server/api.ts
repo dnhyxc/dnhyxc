@@ -1,3 +1,6 @@
+// 上传文件
+export const UPLOAD = '/api/upload';
+
 /* ==========用户信息相关========== */
 // 登录
 export const LOGIN = '/api/login';
