@@ -83,6 +83,7 @@ export interface Params {
 
 // 发布文章参数
 export interface CreateArticleParams {
+  authorId?: string;
   title?: string;
   content?: string;
   classify?: string;
@@ -90,6 +91,52 @@ export interface CreateArticleParams {
   createTime?: number;
   coverImg?: string;
   abstract?: string;
+}
+
+// 创建收藏集返回值
+export interface AddCollectionRes {
+  id: string;
+  name?: string;
+  createTime?: number;
+  count?: number;
+  status?: number;
+  desc?: string;
+  articleIds?: string[];
+}
+
+// 获取文章列表参数
+export interface GetArticleListParams {
+  pageNo: number;
+  pageSize: number;
+  filter?: any;
+  userId?: string;
+}
+
+// 文章列表返回数据
+export interface ArticleItem extends AddCollectionRes {
+  abstract: string;
+  authorId: string;
+  authorName: string;
+  classify: string;
+  content?: string;
+  coverImage: string;
+  createTime: number;
+  id: string;
+  isLike: boolean;
+  likeCount: number;
+  replyCount: number;
+  readCount: number;
+  tag: string;
+  title: string;
+  commentCount?: number;
+  isDelete?: boolean;
+}
+
+// 文章列表返回值
+export interface ArticleListResult {
+  list: ArticleItem[];
+  total: number;
+  count: number;
 }
 
 // 时间轴参数

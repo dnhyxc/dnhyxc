@@ -20,63 +20,53 @@
     </div>
     <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
       <div
+        v-if="isMounted"
         v-infinite-scroll="onFetchData"
         :infinite-scroll-delay="300"
         :infinite-scroll-disabled="disabled"
         :infinite-scroll-distance="2"
         class="pullup-content"
       >
-        <div v-for="i of dataSource" :key="i" class="pullup-list-item">
+        <div v-for="i of articleStore.articleList" :key="i.id" class="pullup-list-item">
           <Card :data="i" />
         </div>
         <ToTopIcon v-if="scrollTop >= 500" :on-scroll-to="onScrollTo" />
       </div>
-      <div v-if="loading" class="loading">Loading...</div>
+      <div v-if="articleStore.loading" class="loading">Loading...</div>
       <div v-if="noMore" class="no-more">没有更多了～～～</div>
     </el-scrollbar>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted, watchEffect } from 'vue';
 import { ATRICLE_TYPE } from '@/constant';
 import { scrollTo } from '@/utils';
 import { useScroller } from '@/hooks';
+import { articleStore } from '@/store';
 import Carousel from '@/components/Carousel/index.vue';
 import Card from '@/components/Card/index.vue';
 import ToTopIcon from '@/components/ToTopIcon/index.vue';
 
-const dataSource = ref<any>(20);
 const searchType = ref<number>(1); // 1：推荐，2：最新，3：最热
-const loading = ref<boolean>(false);
 
 const { scrollRef, scrollTop } = useScroller();
+const isMounted = ref<boolean>(false);
+const noMore = computed(() => articleStore.articleList.length >= articleStore.total);
+const disabled = computed(() => articleStore.loading || noMore.value);
 
-const noMore = computed(() => dataSource.value > 100);
-const disabled = computed(() => loading.value || noMore.value);
+onMounted(() => {
+  isMounted.value = true;
+  onFetchData();
+});
+
+watchEffect(() => {
+  console.log(articleStore.articleList, 'articleStore');
+});
 
 // 请求数据
 const onFetchData = async () => {
-  console.log('正在加载更多');
-
-  try {
-    loading.value = true;
-    const newData: any = await ajaxGet(/* url */);
-    loading.value = false;
-    if (dataSource.value > 100) return;
-    dataSource.value += newData;
-  } catch (err) {
-    // handle err
-    console.log(err);
-  }
-};
-
-const ajaxGet = async (/* url */) => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(20);
-    }, 1000);
-  });
+  await articleStore.getArticleList();
 };
 
 // 置顶

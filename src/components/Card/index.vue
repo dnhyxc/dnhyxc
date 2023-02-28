@@ -5,13 +5,13 @@
  * index.vue
 -->
 <template>
-  <div class="card-wrap" @click="toDetail(data)">
+  <div class="card-wrap" @click="toDetail(data.id)">
     <div class="card">
       <div class="card-top">
-        <img class="img" :src="IMG1" />
+        <img class="img" :src="data.coverImage || IMG1" />
         <div class="info">
           <div class="desc">
-            我希望有个如你一般的人，如山间清爽的风，如古城温暖的光，从清晨到夜晚，由山野到书房，等待，不怕岁月蹉跎，不怕路途遥远，只要最后是你就好！
+            {{ data.abstract }}
           </div>
         </div>
       </div>
@@ -19,29 +19,27 @@
         <slot>
           <div class="header">
             <div class="title">
-              {{ data + '我的酒馆作者作者作者作者作者作者作者作者作者作者作者作者作者作者作者' }}
+              {{ data.title }}
             </div>
           </div>
           <div class="art-info">
             <div class="create-info">
-              <span class="author" @click="toPersonal"
-                >作者作者作者作者作者作者作者作者作者作者作者作者作者作者作者</span
-              >
-              <span class="date">2023-09-02 02:09</span>
+              <span class="author" @click="toPersonal">{{ data.authorName }}</span>
+              <span class="date">{{ data.createTime ? formatDate(data.createTime) : '-' }}</span>
             </div>
             <div class="tags">
-              <span class="classify" @click="(e) => toClassify(e, 'electron')">分类分类分类分类分类分类分类</span>
-              <span class="tag" @click="(e) => toTag(e, 'electron')">标签标签标签</span>
+              <span class="classify" @click="(e) => toClassify(e, 'electron')">{{ data.classify }}</span>
+              <span class="tag" @click="(e) => toTag(e, 'electron')">{{ data.tag }}</span>
             </div>
             <div class="actions">
               <div class="action-icons">
-                <div class="action like" @click="(e) => onLike(e, data)">
+                <div class="action like" @click="(e) => onLike(e, data.id)">
                   <i
                     :class="`font like-icon iconfont ${data.isLike ? 'icon-24gf-thumbsUp2' : 'icon-24gl-thumbsUp2'}`"
                   />
                   <span>{{ data.likeCount || '点赞' }}</span>
                 </div>
-                <div class="action comment" @click="(e) => onComment(e, data)">
+                <div class="action comment" @click="(e) => onComment(e, data.id)">
                   <i class="font comment-icon iconfont icon-pinglun" />
                   <span>{{ data.replyCount || '评论' }}</span>
                 </div>
@@ -51,8 +49,8 @@
                 </div>
               </div>
               <div class="action art-action">
-                <span class="edit" @click="(e) => toEdit(e, data)">编辑</span>
-                <span class="del" @click="(e) => onReomve(e, data)">下架</span>
+                <span class="edit" @click="(e) => toEdit(e, data.id)">编辑</span>
+                <span class="del" @click="(e) => onReomve(e, data.id)">下架</span>
               </div>
             </div>
           </div>
@@ -65,18 +63,17 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
 import { ElMessage } from 'element-plus';
-import { Message } from '@/utils';
+import { Message, formatDate } from '@/utils';
+import { ArticleItem } from '@/typings/common';
 import IMG1 from '@/assets/images/1.jpg';
 
 const router = useRouter();
 
 interface IProps {
-  data: any;
+  data: ArticleItem;
 }
 
-withDefaults(defineProps<IProps>(), {
-  data: {},
-});
+withDefaults(defineProps<IProps>(), {});
 
 // 点赞
 const onLike = (e: Event, id: string) => {

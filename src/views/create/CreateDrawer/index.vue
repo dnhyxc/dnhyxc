@@ -117,11 +117,14 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue';
+import { useRouter } from 'vue-router';
 import type { FormInstance } from 'element-plus';
 import { CreateArticleParams } from '@/typings/common';
 import { ARTICLE_CLASSIFY, ARTICLE_TAG } from '@/constant';
 import { createStore } from '@/store';
 import Upload from '@/components/Upload/index.vue';
+
+const router = useRouter();
 
 interface IProps {
   modelValue: boolean;
@@ -175,8 +178,8 @@ const onSubmit = () => {
         content: props.mackdown,
       };
       console.log(params, 'params');
-      await createStore.createArticle(params);
-      // emit('update:modelValue', false);
+      await createStore.createArticle(params, router);
+      onCancel();
     } else {
       console.log(createArticleForm.value, 'error submit!');
       return false;

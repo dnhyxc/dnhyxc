@@ -1,5 +1,5 @@
 import { post, put } from '@/utils/request';
-import { LoginParams, CreateArticleParams } from '@/typings/common';
+import { LoginParams, CreateArticleParams, GetArticleListParams } from '@/typings/common';
 import { loginStore } from '@/store';
 import * as API from './api';
 
@@ -47,6 +47,12 @@ export const getUserInfo = async () => {
 
 // 新建文章
 export const createArticle = async (params: CreateArticleParams) => {
-  const res = await post(API.CREATE_ARTICLE, copeParams(params));
+  const res = await post(API.CREATE_ARTICLE, params);
+  return res;
+};
+
+// 获取文章列表
+export const getArticleList = async (params: GetArticleListParams) => {
+  const res = await post(API.ARTICLE_LIST, copeParams(params));
   return res;
 };
