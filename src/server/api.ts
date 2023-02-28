@@ -22,7 +22,7 @@ export const UPDATE_ARTICLE = '/api/updateArticle';
 export const ARTICLE_LIST = '/api/articleList';
 // 获取文章详情
 export const ARTICLE_DETAIL = '/api/articleDetail';
-// 获取文章详情
+// 删除文章
 export const DELETE_ARTICLE = '/api/deleteArticle';
 // 文章搜索
 export const SEARCH_ARTICLE = '/api/searchArticle';

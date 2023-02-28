@@ -39,7 +39,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watchEffect } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { ATRICLE_TYPE } from '@/constant';
 import { scrollTo } from '@/utils';
 import { useScroller } from '@/hooks';
@@ -60,8 +60,8 @@ onMounted(() => {
   onFetchData();
 });
 
-watchEffect(() => {
-  console.log(articleStore.articleList, 'articleStore');
+onUnmounted(() => {
+  articleStore.clearArticleList();
 });
 
 // 请求数据

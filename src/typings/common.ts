@@ -114,20 +114,20 @@ export interface GetArticleListParams {
 
 // 文章列表返回数据
 export interface ArticleItem extends AddCollectionRes {
-  abstract: string;
-  authorId: string;
-  authorName: string;
-  classify: string;
+  abstract?: string;
+  authorId?: string;
+  authorName?: string;
+  classify?: string;
   content?: string;
-  coverImage: string;
-  createTime: number;
+  coverImage?: string;
+  createTime?: number;
   id: string;
-  isLike: boolean;
-  likeCount: number;
-  replyCount: number;
-  readCount: number;
-  tag: string;
-  title: string;
+  isLike?: boolean;
+  likeCount?: number;
+  replyCount?: number;
+  readCount?: number;
+  tag?: string;
+  title?: string;
   commentCount?: number;
   isDelete?: boolean;
 }

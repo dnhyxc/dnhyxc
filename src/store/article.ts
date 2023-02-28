@@ -9,6 +9,7 @@ interface IProps {
   pageNo: number;
   pageSize: number;
   articleList: ArticleItem[];
+  articleDetail: ArticleItem;
   total: number;
 }
 
@@ -20,6 +21,9 @@ export const useArticleStore = defineStore('article', {
     pageSize: 20,
     articleList: [],
     total: 0,
+    articleDetail: {
+      id: '',
+    },
   }),
 
   actions: {
@@ -41,6 +45,31 @@ export const useArticleStore = defineStore('article', {
       } else {
         ElMessage.error(res.message);
       }
+    },
+
+    // 获取文章详情
+    async getArticleDetail(id: string) {
+      if (!id) {
+        ElMessage.error('哎呀！文章不翼而飞了！');
+        return;
+      }
+      this.loading = true;
+      const res = normalizeResult<ArticleItem>(await Service.getArticleDetail(id));
+      this.loading = false;
+      if (res.success) {
+        console.log(res, 'res');
+        this.articleDetail = res.data;
+        return res.data;
+      } else {
+        ElMessage.error(res.message);
+      }
+    },
+
+    // 清楚文章列表数据
+    clearArticleList() {
+      this.articleList = [];
+      this.total = 0;
+      this.pageNo = 0;
     },
   },
 });

@@ -8,7 +8,11 @@
   <div class="detail-wrap">
     <div class="content">
       <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
-        <Preview v-if="mackdown" :mackdown="mackdown" class="preview-content" />
+        <Preview
+          v-if="articleStore.articleDetail.content"
+          :mackdown="articleStore.articleDetail.content"
+          class="preview-content"
+        />
       </el-scrollbar>
       <ToTopIcon v-if="scrollTop >= 500" :on-scroll-to="onScrollTo" />
     </div>
@@ -20,10 +24,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { onMounted, onUnmounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { useScroller } from '@/hooks';
 import { scrollTo } from '@/utils';
+import { articleStore } from '@/store';
 import Preview from '@/components/Preview/index.vue';
 import Multibar from '@/components/Multibar/index.vue';
 import Toc from '@/components/Toc/index.vue';
@@ -31,12 +36,17 @@ import ToTopIcon from '@/components/ToTopIcon/index.vue';
 
 const route = useRoute();
 
-console.log(route.params.id as string);
-
-const mackdown = ref<string | undefined>('```js\nconst log = function(){\n  log(ssssss)\n}\n```');
-
 // scrollRef：el-scrollbar ref，scrollTop：滚动距离
 const { scrollRef, scrollTop } = useScroller();
+
+onMounted(async () => {
+  await articleStore.getArticleDetail(route.params.id as string);
+});
+
+// 组件卸载前，清楚store中的详情信息
+onUnmounted(() => {
+  articleStore.articleDetail = { id: '' };
+});
 
 // 置顶
 const onScrollTo = () => {
@@ -51,6 +61,7 @@ const onScrollTo = () => {
   display: flex;
   justify-content: center;
   box-sizing: border-box;
+
   .content {
     position: relative;
     flex: 1;
@@ -61,20 +72,19 @@ const onScrollTo = () => {
     .pageHeight();
     border-radius: 5px;
     box-shadow: @shadow-mack;
+
     :deep {
       .el-scrollbar {
-        width: 100%;
         border-radius: 5px;
       }
       .scrollbar-wrapper {
         box-sizing: border-box;
         height: 100%;
-        width: 100%;
         border-radius: 5px;
       }
     }
     .preview-content {
-      height: 100px;
+      max-width: calc(100vw - 352px);
     }
   }
   .right {
