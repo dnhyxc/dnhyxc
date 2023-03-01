@@ -2,15 +2,16 @@ import { defineStore } from 'pinia';
 import { ElMessage } from 'element-plus';
 import * as Service from '@/server';
 import { normalizeResult } from '@/utils';
-import { ArticleListResult, ArticleItem } from '@/typings/common';
+import { ArticleListResult, ArticleItem, AnotherParams } from '@/typings/common';
 
 interface IProps {
   loading: boolean;
   pageNo: number;
   pageSize: number;
-  articleList: ArticleItem[];
-  articleDetail: ArticleItem;
-  total: number;
+  articleList: ArticleItem[]; // 文章列表数据（首页、分类页等）
+  total: number; // 文章列表总数
+  articleDetail: ArticleItem; // 文章详情
+  anotherArticleList: ArticleItem[]; // 详情上下篇文章列表
 }
 
 export const useArticleStore = defineStore('article', {
@@ -24,6 +25,7 @@ export const useArticleStore = defineStore('article', {
     articleDetail: {
       id: '',
     },
+    anotherArticleList: [],
   }),
 
   actions: {
@@ -70,6 +72,30 @@ export const useArticleStore = defineStore('article', {
       this.articleList = [];
       this.total = 0;
       this.pageNo = 0;
+    },
+
+    // 获取上一篇文章
+    async getPrevArticle(params: AnotherParams) {
+      const res = normalizeResult<ArticleItem>(await Service.getPrevArticle(params));
+      return res.data;
+    },
+
+    // 获取下一篇文章
+    async getNextArticle(params: AnotherParams) {
+      const res = normalizeResult<ArticleItem>(await Service.getNextArticle(params));
+      return res.data;
+    },
+
+    // 获取上下篇文章
+    async getAnotherArticles(params: AnotherParams) {
+      if (!params.id) return ElMessage.error('哦豁！文章不翼而飞了');
+      this.loading = true;
+      const res = await Promise.all([this.getPrevArticle(params), this.getNextArticle(params)]);
+      this.loading = false;
+      if (res?.length) {
+        this.anotherArticleList = res;
+        console.log(res, 'anotherArticleList');
+      }
     },
   },
 });

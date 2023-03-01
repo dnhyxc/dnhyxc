@@ -7,6 +7,7 @@ export {}
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
+    AnotherArticle: typeof import('./src/components/AnotherArticle/index.vue')['default']
     Card: typeof import('./src/components/Card/index.vue')['default']
     Carousel: typeof import('./src/components/Carousel/index.vue')['default']
     Editor: typeof import('./src/components/Editor/index.vue')['default']
@@ -39,6 +40,7 @@ declare module '@vue/runtime-core' {
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
     ElUpload: typeof import('element-plus/es')['ElUpload']
     Header: typeof import('./src/components/Header/index.vue')['default']
+    'Index.': typeof import('./src/components/AnotherArticle/index..vue')['default']
     LeftMenu: typeof import('./src/components/LeftMenu/index.vue')['default']
     LineCard: typeof import('./src/components/LineCard/index.vue')['default']
     Multibar: typeof import('./src/components/Multibar/index.vue')['default']

@@ -13,6 +13,7 @@
           :mackdown="articleStore.articleDetail.content"
           class="preview-content"
         />
+        <AnotherArticle v-if="articleStore.articleDetail.content" :id="route.params.id as string" />
       </el-scrollbar>
       <ToTopIcon v-if="scrollTop >= 500" :on-scroll-to="onScrollTo" />
     </div>
@@ -33,6 +34,7 @@ import Preview from '@/components/Preview/index.vue';
 import Multibar from '@/components/Multibar/index.vue';
 import Toc from '@/components/Toc/index.vue';
 import ToTopIcon from '@/components/ToTopIcon/index.vue';
+import AnotherArticle from '@/components/AnotherArticle/index.vue';
 
 const route = useRoute();
 

@@ -189,3 +189,12 @@ export interface TocTitlesParams {
   lineIndex: string | null;
   indent: number;
 }
+
+// 上下页参数定义
+export interface AnotherParams {
+  id?: string;
+  userId?: string;
+  from?: string;
+  accessUserId?: string;
+  selectKey?: string;
+}

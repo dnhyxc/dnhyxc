@@ -1,5 +1,5 @@
 import { post, put } from '@/utils/request';
-import { LoginParams, CreateArticleParams, GetArticleListParams } from '@/typings/common';
+import { LoginParams, CreateArticleParams, GetArticleListParams, AnotherParams } from '@/typings/common';
 import { loginStore } from '@/store';
 import * as API from './api';
 
@@ -66,5 +66,17 @@ export const getArticleList = async (params: GetArticleListParams) => {
 // 获取文章详情
 export const getArticleDetail = async (id: string) => {
   const res = await post(API.ARTICLE_DETAIL, { id });
+  return res;
+};
+
+// 获取上一篇文章
+export const getPrevArticle = async (params: AnotherParams) => {
+  const res = await post(API.GET_PREV_ARTICLE, params);
+  return res;
+};
+
+// 获取下一篇文章
+export const getNextArticle = async (params: AnotherParams) => {
+  const res = await post(API.GET_NEXT_ARTICLE, copeParams(params));
   return res;
 };
