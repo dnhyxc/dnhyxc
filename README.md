@@ -19,7 +19,3 @@ electron_mirror=https://cdn.npm.taobao.org/dist/electron/
 - openDirectory：允许选择文件夹。
 
 - res.filePaths[0]：选择的文件夹路径。
-
-### 关闭二次确认
-
-https://blog.csdn.net/qq_43140890/article/details/111035794

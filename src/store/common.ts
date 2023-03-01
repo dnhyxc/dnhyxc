@@ -1,25 +1,34 @@
+import type { Ref } from 'vue';
 import { defineStore } from 'pinia';
 import { MENULIST } from '@/constant';
+import { CrumbsInfo, TocTitlesParams } from '@/typings/common';
 
-interface crumbsInfo {
-  crumbsName: string;
-  crumbsPath: string;
+interface IProps {
+  crumbsInfo: CrumbsInfo; // 头部展示面包屑
+  activePath: string; // 路由当前路径
+  backPath: string; // 路由返回路径
+  tocTitles: TocTitlesParams[]; // 文章目录
+  previewRef: Ref<HTMLDivElement> | null; // 详情预览组件DOM
+  detailScrollRef: any; // 详情滚动DOM
 }
 
 // 公共store
 export const useCommonStore = defineStore('common', {
-  state: () => ({
+  state: (): IProps => ({
     crumbsInfo: {
       crumbsName: MENULIST[0].name,
       crumbsPath: MENULIST[0].path,
     },
     activePath: '',
     backPath: '/',
+    tocTitles: [],
+    previewRef: null,
+    detailScrollRef: null,
   }),
 
   actions: {
     // 设置面包屑
-    setCrumbsInfo(info: crumbsInfo) {
+    setCrumbsInfo(info: CrumbsInfo) {
       this.crumbsInfo = { ...this.crumbsInfo, ...info };
     },
 

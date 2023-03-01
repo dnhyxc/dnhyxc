@@ -176,3 +176,16 @@ export interface FormData<T> {
   formRef: T;
   resetForm: ResetFormParams;
 }
+
+// header 面包屑
+export interface CrumbsInfo {
+  crumbsName: string;
+  crumbsPath: string;
+}
+
+// 文章目录
+export interface TocTitlesParams {
+  title: string;
+  lineIndex: string | null;
+  indent: number;
+}

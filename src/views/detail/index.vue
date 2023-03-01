@@ -5,7 +5,7 @@
  * index.vue
 -->
 <template>
-  <div class="detail-wrap">
+  <div id="__DETAIL__" v-loading="articleStore.loading" class="detail-wrap">
     <div class="content">
       <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
         <Preview
@@ -24,11 +24,11 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, onUnmounted } from 'vue';
+import { onMounted, onUnmounted, nextTick } from 'vue';
 import { useRoute } from 'vue-router';
 import { useScroller } from '@/hooks';
 import { scrollTo } from '@/utils';
-import { articleStore } from '@/store';
+import { articleStore, commonStore } from '@/store';
 import Preview from '@/components/Preview/index.vue';
 import Multibar from '@/components/Multibar/index.vue';
 import Toc from '@/components/Toc/index.vue';
@@ -40,6 +40,9 @@ const route = useRoute();
 const { scrollRef, scrollTop } = useScroller();
 
 onMounted(async () => {
+  nextTick(() => {
+    commonStore.detailScrollRef = scrollRef.value;
+  });
   await articleStore.getArticleDetail(route.params.id as string);
 });
 
@@ -76,6 +79,7 @@ const onScrollTo = () => {
     :deep {
       .el-scrollbar {
         border-radius: 5px;
+        width: 100%;
       }
       .scrollbar-wrapper {
         box-sizing: border-box;
