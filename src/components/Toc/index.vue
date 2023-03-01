@@ -18,7 +18,7 @@
         <div
           v-for="(anchor, index) in commonStore.tocTitles"
           :key="index"
-          :style="{ padding: `3px 0 3px ${anchor.indent * 20 + 15}px`, margin: '10px 0' }"
+          :style="{ padding: `3px 10px 3px ${anchor.indent * 20 + 15}px`, margin: '10px 0' }"
           :class="`${checkTocTitle === anchor.title + index && 'toc-item'} item`"
           @click="handleAnchorClick(anchor, index)"
         >
@@ -60,7 +60,8 @@ onUnmounted(() => {
 // 监听详情md预览组件滚动事件
 const onDetailScroll = (e: any) => {
   const scale = e.target.scrollTop / commonStore.detailScrollRef?.wrapRef?.scrollHeight;
-  scrollTo(scrollRef, scale * scrollRef.value?.wrapRef?.scrollHeight);
+  const el = scrollRef.value?.wrapRef as HTMLDivElement;
+  el.scrollTop = (scale * scrollRef.value?.wrapRef?.scrollHeight) as number;
 };
 
 // 选中某标题
