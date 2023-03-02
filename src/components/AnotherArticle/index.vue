@@ -9,29 +9,31 @@
     v-if="articleStore.anotherArticleList[0]?.id || articleStore.anotherArticleList[1]?.id"
     class="another-article-wrap"
   >
-    <div
-      v-for="(i, index) in articleStore.anotherArticleList"
-      :key="i.id || index"
-      :class="`${index > 0 ? 'next-article' : 'prev-article'}`"
-      @click="toDetail(i?.id)"
-    >
-      <div v-if="index === 0 && i?.id" class="icon">
-        <i class="font iconfont icon-arrow-left-bold" />
-      </div>
-      <div v-if="i?.id" class="item">
-        <div class="title">{{ i?.title }}</div>
-        <div class="abstract">{{ i?.abstract }}</div>
-        <div class="info">
-          <span :title="i?.authorName">
-            {{ i?.authorName!.length > 20 ? `${i?.authorName?.slice(0, 19)}...` : i?.authorName }}
-          </span>
-          <span>{{ ` · ${i?.tag} · ` }}</span>
-          <span>{{ `${i?.classify} · ` }}</span>
-          <span>{{ formatGapTime(i?.createTime!) }}</span>
+    <div class="list">
+      <div
+        v-for="(i, index) in articleStore.anotherArticleList"
+        :key="i.id || index"
+        :class="`${index > 0 ? 'next-article' : 'prev-article'}`"
+        @click="toDetail(i?.id)"
+      >
+        <div v-if="index === 0 && i?.id" class="icon">
+          <i class="font iconfont icon-arrow-left-bold" />
         </div>
-      </div>
-      <div v-if="index > 0 && i?.id" class="icon">
-        <i class="font iconfont icon-arrow-right-bold" />
+        <div v-if="i?.id" class="item">
+          <div class="title">{{ i?.title }}</div>
+          <div class="abstract">{{ i?.abstract }}</div>
+          <div class="info">
+            <span :title="i?.authorName">
+              {{ i?.authorName!.length > 20 ? `${i?.authorName?.slice(0, 19)}...` : i?.authorName }}
+            </span>
+            <span>{{ ` · ${i?.tag} · ` }}</span>
+            <span>{{ `${i?.classify} · ` }}</span>
+            <span>{{ formatGapTime(i?.createTime!) }}</span>
+          </div>
+        </div>
+        <div v-if="index > 0 && i?.id" class="icon">
+          <i class="font iconfont icon-arrow-right-bold" />
+        </div>
       </div>
     </div>
   </div>
@@ -90,13 +92,18 @@ const toDetail = (id: string) => {
 }
 
 .another-article-wrap {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: @fff;
-  margin-bottom: 10px;
-  border-radius: 5px;
-  padding: 10px 16px;
+  padding: 10px;
+
+  .list {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    padding: 10px 16px;
+    border: 1px solid @card-border;
+    background-color: rgba(255, 255, 255, 0.35);
+  }
 
   .prev-article {
     .articleItem();
