@@ -12,12 +12,14 @@ interface IProps {
   total: number; // 文章列表总数
   articleDetail: ArticleItem; // 文章详情
   anotherArticleList: ArticleItem[]; // 详情上下篇文章列表
+  anotherLoading: boolean;
 }
 
 export const useArticleStore = defineStore('article', {
   state: (): IProps => ({
     // 首页、标签列表、分类列表文章列表数据
     loading: false,
+    anotherLoading: false,
     pageNo: 0,
     pageSize: 20,
     articleList: [],
@@ -57,7 +59,6 @@ export const useArticleStore = defineStore('article', {
       }
       this.loading = true;
       const res = normalizeResult<ArticleItem>(await Service.getArticleDetail(id));
-      this.loading = false;
       if (res.success) {
         console.log(res, 'res');
         this.articleDetail = res.data;
@@ -89,7 +90,6 @@ export const useArticleStore = defineStore('article', {
     // 获取上下篇文章
     async getAnotherArticles(params: AnotherParams) {
       if (!params.id) return ElMessage.error('哦豁！文章不翼而飞了');
-      this.loading = true;
       const res = await Promise.all([this.getPrevArticle(params), this.getNextArticle(params)]);
       this.loading = false;
       if (res?.length) {

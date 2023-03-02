@@ -5,7 +5,7 @@
  * index.vue
 -->
 <template>
-  <div id="__DETAIL__" v-loading="articleStore.loading" class="detail-wrap">
+  <Loading :loading="articleStore.loading" class="detail-wrap">
     <div class="content">
       <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
         <Preview
@@ -13,7 +13,7 @@
           :mackdown="articleStore.articleDetail.content"
           class="preview-content"
         />
-        <AnotherArticle v-if="articleStore.articleDetail.content" :id="route.params.id as string" />
+        <AnotherArticle v-if="articleStore.articleDetail.content" :id="(route.params.id as string)" />
       </el-scrollbar>
       <ToTopIcon v-if="scrollTop >= 500" :on-scroll-to="onScrollTo" />
     </div>
@@ -21,7 +21,7 @@
       <Multibar class="action-list" />
       <Toc />
     </div>
-  </div>
+  </Loading>
 </template>
 
 <script setup lang="ts">
@@ -35,6 +35,7 @@ import Multibar from '@/components/Multibar/index.vue';
 import Toc from '@/components/Toc/index.vue';
 import ToTopIcon from '@/components/ToTopIcon/index.vue';
 import AnotherArticle from '@/components/AnotherArticle/index.vue';
+import Loading from '@/components/Loading/index.vue';
 
 const route = useRoute();
 

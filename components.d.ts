@@ -43,6 +43,7 @@ declare module '@vue/runtime-core' {
     'Index.': typeof import('./src/components/AnotherArticle/index..vue')['default']
     LeftMenu: typeof import('./src/components/LeftMenu/index.vue')['default']
     LineCard: typeof import('./src/components/LineCard/index.vue')['default']
+    Loading: typeof import('./src/components/Loading/index.vue')['default']
     Multibar: typeof import('./src/components/Multibar/index.vue')['default']
     Preview: typeof import('./src/components/Preview/index.vue')['default']
     Qrcode: typeof import('./src/components/Qrcode/index.vue')['default']

@@ -38,10 +38,12 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue';
+import { onMounted, inject } from 'vue';
 import { useRouter } from 'vue-router';
 import { articleStore } from '@/store';
 import { formatGapTime } from '@/utils';
+
+const reload = inject<Function>('reload');
 
 interface IProps {
   id: string;
@@ -57,9 +59,10 @@ onMounted(() => {
 
 // 跳转详情
 const toDetail = (id: string) => {
-  console.log(id, 'id');
-
   router.push(`/detail/${id}`);
+  setTimeout(() => {
+    reload && reload();
+  }, 100);
 };
 </script>
 

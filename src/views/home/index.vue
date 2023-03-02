@@ -5,37 +5,39 @@
  * index.vue
 -->
 <template>
-  <div class="home-wrap">
-    <div class="carousel-content">
-      <Carousel />
-      <div class="search-btns">
-        <el-button type="success" link :class="searchType === 2 && 'active'" @click="searchNewArticles"
-          >最新文章</el-button
-        >
-        <el-button type="warning" link :class="searchType === 3 && 'active'" @click="searchHotArticles"
-          >最热文章</el-button
-        >
-      </div>
-      <div class="recommend">{{ ATRICLE_TYPE[searchType] }}</div>
-    </div>
-    <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
-      <div
-        v-if="isMounted"
-        v-infinite-scroll="onFetchData"
-        :infinite-scroll-delay="300"
-        :infinite-scroll-disabled="disabled"
-        :infinite-scroll-distance="2"
-        class="pullup-content"
-      >
-        <div v-for="i of articleStore.articleList" :key="i.id" class="pullup-list-item">
-          <Card :data="i" />
+  <Loading :loading="articleStore.loading" class="home-wrap">
+    <template #default>
+      <div class="carousel-content">
+        <Carousel />
+        <div class="search-btns">
+          <el-button type="success" link :class="searchType === 2 && 'active'" @click="searchNewArticles">
+            最新文章
+          </el-button>
+          <el-button type="warning" link :class="searchType === 3 && 'active'" @click="searchHotArticles">
+            最热文章
+          </el-button>
         </div>
-        <ToTopIcon v-if="scrollTop >= 500" :on-scroll-to="onScrollTo" />
+        <div class="recommend">{{ ATRICLE_TYPE[searchType] }}</div>
       </div>
-      <div v-if="articleStore.loading" class="loading">Loading...</div>
-      <div v-if="noMore" class="no-more">没有更多了～～～</div>
-    </el-scrollbar>
-  </div>
+      <el-scrollbar ref="scrollRef" v-loading="articleStore.loading" wrap-class="scrollbar-wrapper">
+        <div
+          v-if="isMounted"
+          v-infinite-scroll="onFetchData"
+          :infinite-scroll-delay="300"
+          :infinite-scroll-disabled="disabled"
+          :infinite-scroll-distance="2"
+          class="pullup-content"
+        >
+          <div v-for="i of articleStore.articleList" :key="i.id" class="pullup-list-item">
+            <Card :data="i" />
+          </div>
+          <ToTopIcon v-if="scrollTop >= 500" :on-scroll-to="onScrollTo" />
+        </div>
+        <div v-if="articleStore.loading" class="loading">Loading...</div>
+        <div v-if="noMore" class="no-more">没有更多了～～～</div>
+      </el-scrollbar>
+    </template>
+  </Loading>
 </template>
 
 <script setup lang="ts">
