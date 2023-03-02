@@ -13,13 +13,17 @@
           :mackdown="articleStore.articleDetail.content"
           class="preview-content"
         />
-        <AnotherArticle v-if="articleStore.articleDetail.content" :id="(route.params.id as string)" />
       </el-scrollbar>
       <ToTopIcon v-if="scrollTop >= 500" :on-scroll-to="onScrollTo" />
     </div>
     <div class="right">
       <Multibar class="action-list" />
-      <Toc />
+      <Toc class="toc-list" />
+      <AnotherArticle
+        v-if="articleStore.articleDetail.content"
+        :id="(route.params.id as string)"
+        class="another-list"
+      />
     </div>
   </Loading>
 </template>
@@ -95,12 +99,21 @@ const onScrollTo = () => {
     }
   }
   .right {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
     width: 260px;
-    height: calc(100vh - 75px);
     box-sizing: border-box;
     border-radius: 5px;
+    max-height: calc(100vh - 75px);
+
     .action-list {
       margin-bottom: 10px;
+    }
+
+    .toc-list {
+      box-sizing: border-box;
+      flex: 1;
     }
   }
 }

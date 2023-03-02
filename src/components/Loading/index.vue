@@ -10,6 +10,7 @@
     element-loading-text="正在努力加载中 . . ."
     :element-loading-spinner="LOADING_SVG"
     element-loading-svg-view-box="-10, -10, 50, 50"
+    element-loading-background="rgba(249, 255, 249, 0.8)"
     class="loading-wrap"
   >
     <slot></slot>

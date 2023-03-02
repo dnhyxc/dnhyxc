@@ -95,22 +95,22 @@ const onScrollTo = () => {
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
-  height: calc(100vh - 135px);
+  // height: calc(100vh - 345px);
   border-radius: 5px;
-  padding-bottom: 10px;
   overflow: hidden;
   box-shadow: @shadow-mack;
+  padding-bottom: 10px;
 
   .title {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px 0 15px;
-    margin: 0 10px 10px 10px;
+    padding: 10px;
     font-size: 18px;
     font-weight: 700;
     border-bottom: 1px solid @card-border;
-    border-radius: 5px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
 
     .font {
       font-size: 20px;
@@ -122,7 +122,7 @@ const onScrollTo = () => {
   :deep {
     .scrollbar-wrapper {
       box-sizing: border-box;
-      flex: 1;
+      height: 100%;
     }
   }
 

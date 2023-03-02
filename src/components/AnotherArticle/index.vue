@@ -9,30 +9,26 @@
     v-if="articleStore.anotherArticleList[0]?.id || articleStore.anotherArticleList[1]?.id"
     class="another-article-wrap"
   >
-    <div class="list">
-      <div
-        v-for="(i, index) in articleStore.anotherArticleList"
-        :key="i.id || index"
-        :class="`${index > 0 ? 'next-article' : 'prev-article'}`"
-        @click="toDetail(i?.id)"
-      >
-        <div v-if="index === 0 && i?.id" class="icon">
-          <i class="font iconfont icon-arrow-left-bold" />
-        </div>
-        <div v-if="i?.id" class="item">
-          <div class="title">{{ i?.title }}</div>
-          <div class="abstract">{{ i?.abstract }}</div>
-          <div class="info">
-            <span :title="i?.authorName">
-              {{ i?.authorName!.length > 20 ? `${i?.authorName?.slice(0, 19)}...` : i?.authorName }}
+    <div v-for="(i, index) in articleStore.anotherArticleList" :key="i.id || index" class="list">
+      <div v-show="i?.id" class="article" @click="toDetail(i?.id)">
+        <div class="item">
+          <div class="prev">
+            <span class="left">
+              {{ index === 0 ? '上一篇' : '下一篇' }}
             </span>
-            <span>{{ ` · ${i?.tag} · ` }}</span>
-            <span>{{ `${i?.classify} · ` }}</span>
-            <span>{{ formatGapTime(i?.createTime!) }}</span>
+            <span class="right">
+              <i v-if="index === 0 && i?.id" class="font-top iconfont icon-shuangjiantouzuo" />
+              <i v-if="index > 0 && i?.id" class="font iconfont icon-shuangjiantouyou" />
+            </span>
           </div>
-        </div>
-        <div v-if="index > 0 && i?.id" class="icon">
-          <i class="font iconfont icon-arrow-right-bold" />
+          <div class="header">
+            <span class="title">{{ i?.title }}</span>
+            <span class="date">{{ formatGapTime(i?.createTime!) }}</span>
+          </div>
+          <div class="tag-list">
+            <span class="classify" @click.stop="onJump(i?.classify!, 'classify')">分类：{{ i?.classify }}</span>
+            <span class="tag" @click.stop="onJump(i?.tag!, 'tag')">标签：{{ i?.tag }}</span>
+          </div>
         </div>
       </div>
     </div>
@@ -66,80 +62,104 @@ const toDetail = (id: string) => {
     reload && reload();
   }, 100);
 };
+
+// 去分类或者标签列表
+const onJump = (name: string, type: string) => {
+  if (type === 'tag') {
+    router.push(`/tag/list?tagName=${name}`);
+  } else {
+    router.push(`/classify?classifyName=${name}`);
+  }
+};
 </script>
 
 <style scoped lang="less">
 @import '@/styles/index.less';
 
-.articleItem() {
-  width: 49%;
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  cursor: pointer;
-
-  .title {
-    font-size: 16px;
-    font-weight: 600;
-    .ellipsisMore(1);
-  }
-
-  .abstract,
-  .info {
-    width: 100%;
-    .ellipsisMore(1);
-  }
-}
-
 .another-article-wrap {
-  padding: 10px;
-
   .list {
     display: flex;
+    flex-direction: column;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 10px;
+    padding: 0 10px;
     border-radius: 5px;
-    padding: 10px 16px;
-    border: 1px solid @card-border;
-    background-color: rgba(255, 255, 255, 0.35);
-  }
 
-  .prev-article {
-    .articleItem();
+    .article {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      width: 100%;
+      border-radius: 5px;
+      box-shadow: @shadow-mack;
 
-    .item {
-      width: 90%;
-
-      .title,
-      .abstract,
-      .info {
-        text-align: left;
+      &:hover {
+        background-image: @card-lg-2;
       }
-    }
 
-    .icon {
-      margin-right: 10px;
-    }
-  }
-
-  .next-article {
-    .articleItem();
-    justify-content: flex-end;
-
-    .item {
-      width: 90%;
-
-      .title,
-      .abstract,
-      .info {
-        text-align: right;
+      &:last-child {
+        margin-top: 10px;
+        padding: 10px;
       }
-    }
 
-    .icon {
-      text-align: right;
-      margin-left: 10px;
+      .item {
+        flex: 1;
+        margin-right: 10px;
+        cursor: pointer;
+
+        .prev {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 10px;
+          color: @font-4;
+
+          .right {
+            transform: rotate(90deg);
+          }
+        }
+
+        .header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+
+          .title {
+            flex: 0.7;
+            .ellipsisMore(1);
+          }
+
+          .date {
+            flex: 0.3;
+            .ellipsisMore(1);
+            text-align: right;
+          }
+        }
+
+        .tag-list {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-top: 5px;
+          font-size: 14px;
+          color: @theme-blue;
+
+          .classify,
+          .tag {
+            flex: 1;
+            .ellipsisMore(1);
+
+            &:hover {
+              color: @active;
+            }
+          }
+
+          .tag {
+            text-align: right;
+          }
+        }
+      }
     }
   }
 }
