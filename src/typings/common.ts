@@ -119,6 +119,7 @@ export interface ArticleItem extends AddCollectionRes {
   authorName?: string;
   classify?: string;
   content?: string;
+  headUrl?: string;
   coverImage?: string;
   createTime?: number;
   id: string;

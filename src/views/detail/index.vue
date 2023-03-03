@@ -8,6 +8,7 @@
   <Loading :loading="articleStore.loading" class="detail-wrap">
     <div class="content">
       <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
+        <PageHeader />
         <Preview
           v-if="articleStore.articleDetail.content"
           :mackdown="articleStore.articleDetail.content"
@@ -35,6 +36,7 @@ import { useRoute } from 'vue-router';
 import { useScroller } from '@/hooks';
 import { scrollTo } from '@/utils';
 import { articleStore, commonStore } from '@/store';
+import PageHeader from '@/components/PreviewHeader/index.vue';
 import Preview from '@/components/Preview/index.vue';
 import Multibar from '@/components/Multibar/index.vue';
 import Toc from '@/components/Toc/index.vue';

@@ -91,6 +91,7 @@ const onJump = (name: string, type: string) => {
       align-items: center;
       padding: 10px;
       width: 100%;
+      margin-bottom: 10px;
       border-radius: 5px;
       box-shadow: @shadow-mack;
 
@@ -99,7 +100,6 @@ const onJump = (name: string, type: string) => {
       }
 
       &:last-child {
-        margin-top: 10px;
         padding: 10px;
       }
 
@@ -159,6 +159,12 @@ const onJump = (name: string, type: string) => {
             text-align: right;
           }
         }
+      }
+    }
+
+    &:last-child {
+      .article {
+        margin-bottom: 0;
       }
     }
   }
