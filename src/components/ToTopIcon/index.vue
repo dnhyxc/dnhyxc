@@ -41,6 +41,7 @@ const onScroll = () => {
   .to-icon {
     font-size: 30px;
     color: @active;
+    .textLg();
   }
 }
 </style>

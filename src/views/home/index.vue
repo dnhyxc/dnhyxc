@@ -19,7 +19,7 @@
         </div>
         <div class="recommend">{{ ATRICLE_TYPE[searchType] }}</div>
       </div>
-      <el-scrollbar ref="scrollRef" v-loading="articleStore.loading" wrap-class="scrollbar-wrapper">
+      <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
         <div
           v-if="isMounted"
           v-infinite-scroll="onFetchData"
