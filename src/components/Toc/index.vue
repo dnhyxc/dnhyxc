@@ -5,7 +5,7 @@
  * index.vue
 -->
 <template>
-  <div ref="tocRef" class="toc-wrap">
+  <div v-if="commonStore?.tocTitles?.length > 0" ref="tocRef" class="toc-wrap">
     <div class="title">
       <span>目录</span>
       <i

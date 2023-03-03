@@ -31,7 +31,7 @@ const onScroll = () => {
   position: absolute;
   right: 10px;
   bottom: 10px;
-  // background-color: rgba(225, 225, 225, 0.1);
+  background-color: rgba(249, 255, 249, 0.9);
   box-shadow: 0 0 10px @theme-blue;
   padding: 5px;
   border-radius: 8px;
@@ -41,6 +41,11 @@ const onScroll = () => {
   .to-icon {
     font-size: 30px;
     color: @active;
+    .textLg();
+
+    &:hover {
+      color: @active;
+    }
   }
 }
 </style>
