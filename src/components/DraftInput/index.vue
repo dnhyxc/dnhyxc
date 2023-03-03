@@ -1,0 +1,262 @@
+<!--
+ * 评论输入组件
+ * @author: dnhyxc
+ * @since: 2023-03-03
+ * index.vue
+-->
+<template>
+  <div id="DRAFT_INPUT" class="DraftInput">
+    <div v-if="showAvatar" id="COMMENTS" class="comments">评论</div>
+    <div id="CONTENT" class="content">
+      <div v-if="showAvatar" id="AVATAR" class="avatar" @click="onJump">
+        <img id="IMAGE" :src="loginStore.userInfo.headUrl || HEAD_IMG" alt="头像" class="image" />
+      </div>
+      <div id="INPUT" class="input">
+        <div id="TEXTAREA_WRAP" class="textAreaWrap">
+          <el-input
+            id="TEXTAREA_WRAP"
+            ref="inputRef"
+            v-model="keyword"
+            :autosize="{ minRows: 3, maxRows: 10 }"
+            type="textarea"
+            :placeholder="
+              selectComment?.content
+                ? `回复 ${selectComment?.content}...`
+                : '请输入评论（Enter换行，Ctrl + Enter 发送）'
+            "
+            class="textArea"
+            @focus="onFocus"
+            @change="onCommentChange"
+          />
+        </div>
+        <div v-if="showIcon || !showAvatar" id="EMOJI_WRAP" class="emojiWrap">
+          <div id="ICONFONT" class="iconfontWrap">
+            <span id="BIAOQING_XUE" class="iconfont">
+              <i id="BIAOQING_XUE" class="font iconfont icon-smile">&nbsp;表情</i>
+            </span>
+            <span id="BIAOQING_XUE" class="iconfont">
+              <i id="CHARUTUPIAN" class="font iconfont icon-charutupian">&nbsp;图片</i>
+            </span>
+          </div>
+          <div id="ACTION">
+            <el-button id="BTN" type="primary" :disabled="!keyword.trim()" @click.stop="submitComment">
+              发表评论
+            </el-button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, onMounted, nextTick, onUnmounted } from 'vue';
+import { loginStore } from '@/store';
+import { HEAD_IMG } from '@/constant';
+import { CommentParams } from '@/typings/common';
+
+interface IProps {
+  getCommentList: Function;
+  showAvatar?: boolean;
+  selectComment?: CommentParams;
+  isThreeTier?: boolean;
+  focus?: boolean;
+  onReplay?: Function;
+  onJump?: Function;
+  onHideInput?: Function;
+}
+
+const props = defineProps<IProps>();
+
+console.log(props, 'props');
+
+const inputRef = ref<HTMLDivElement | null>(null);
+const keyword = ref<string>('');
+const showIcon = ref<boolean>(false);
+
+onMounted(() => {
+  nextTick(() => {
+    window.addEventListener('click', onClickNode);
+    window.addEventListener('keydown', onKeyDown);
+  });
+});
+
+onUnmounted(() => {
+  window.removeEventListener('click', onClickNode);
+  window.removeEventListener('keydown', onKeyDown);
+});
+
+// window点击事件，判断点击的元素是否存在id，如果不存在则隐藏相关按钮或输入框
+const onClickNode = (e: any) => {
+  console.log(e.target.id, 'spspspsp');
+
+  if (!e.target.id) {
+    // showIcon.value = false;
+    // 隐藏回复评论的输入框
+    props?.onHideInput && props?.onHideInput();
+  }
+};
+
+// 监听是否是ctrl+enter组合键
+const onKeyDown = (event: KeyboardEvent) => {
+  if (event.ctrlKey && event.keyCode === 13) {
+    inputRef?.value?.blur();
+    submitComment();
+  }
+};
+
+// 跳转
+const onJump = () => {
+  props.onJump && props.onJump();
+};
+
+// 输入框失去焦点
+const onFocus = () => {
+  console.log('-----onFocus');
+  showIcon.value = false;
+};
+
+// 输入框onchange事件
+const onCommentChange = (word: string) => {
+  console.log(word, 'keyword');
+  keyword.value = word;
+};
+
+// 发布评论
+const submitComment = async () => {
+  console.log('发布评论>>>submitComment');
+  props?.onReplay && props?.onReplay({}, true);
+  keyword.value = '';
+  showIcon.value = false;
+
+  // if (!keyword.trim()) return;
+  // if (!getUserInfo) {
+  //   getAlertStatus && getAlertStatus(true);
+  //   onReplay && onReplay({}, true);
+  //   setKeyword('');
+  //   setShowIcon(false);
+  //   return;
+  // }
+  // const params = {
+  //   userId: getUserInfo?.userId,
+  //   username: getUserInfo?.username,
+  //   articleId: id || '',
+  //   date: new Date().valueOf(),
+  //   content: keyword,
+  //   commentId: selectComment?.commentId,
+  //   fromUsername: selectComment?.username,
+  //   fromUserId: selectComment?.userId,
+  //   formContent: selectComment?.content,
+  //   fromCommentId: selectComment?.commentId,
+  // };
+
+  // if (!isThreeTier) {
+  //   delete params.fromUsername;
+  //   delete params.fromUserId;
+  //   delete params.formContent;
+  //   delete params.fromCommentId;
+  // }
+
+  // const res = normalizeResult<ReplayCommentResult>(await Service.releaseComment(params));
+
+  // onReplay && onReplay({}, true);
+  // setKeyword('');
+  // setShowIcon(false);
+
+  // if (res.success) {
+  //   getCommentList && getCommentList();
+  // }
+
+  // if (!res.success && res.code === 409) {
+  //   getAlertStatus && getAlertStatus(true);
+  // }
+
+  // if (!res.success && res.code !== 409 && res.code !== 401) {
+  //   error(res.message);
+  // }
+};
+</script>
+
+<style scoped lang="less">
+@import '@/styles/index.less';
+
+.DraftInput {
+  width: 100%;
+  height: 100%;
+
+  .comments {
+    padding-top: 20px;
+    font-size: 18px;
+    font-weight: 600;
+  }
+
+  .content {
+    display: flex;
+    padding-top: 20px;
+
+    .avatar {
+      margin-right: 20px;
+      width: 50px;
+      height: 50px;
+
+      .image {
+        height: 100%;
+        width: 100%;
+        border-radius: 50px;
+        .imgStyle();
+      }
+    }
+  }
+
+  .input {
+    flex: 1;
+
+    .textAreaWrap {
+      width: 100%;
+
+      .textArea {
+        border: none;
+        border-radius: 5px;
+        background-color: @background;
+
+        &:focus {
+          background-color: @fff;
+        }
+      }
+    }
+
+    .emojiWrap {
+      display: flex;
+      justify-content: space-between;
+      position: relative;
+      margin-top: 10px;
+      width: 100%;
+
+      .iconfontWrap {
+        display: flex;
+
+        & > span:first-child {
+          margin-right: 20px;
+        }
+      }
+
+      .iconfont {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        font-size: 16px;
+      }
+
+      #ACTION {
+        position: absolute;
+        right: 0;
+      }
+
+      .enter {
+        margin-right: 15px;
+        color: @font-3;
+      }
+    }
+  }
+}
+</style>

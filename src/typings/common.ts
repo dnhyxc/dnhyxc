@@ -198,3 +198,31 @@ export interface AnotherParams {
   accessUserId?: string;
   selectKey?: string;
 }
+
+/**
+ * 第一层区别方式
+ *  - id: 0，formContent: ''
+ *
+ * 第二层：
+ *  - id: 第一层comment，formContent: ''
+ *
+ * 第三层：
+ *  - id: 第二层comment，fromContent: 第二层回复内容
+ */
+export interface CommentParams {
+  commentId?: string;
+  articleId: string;
+  userId: string;
+  username: string;
+  date: number;
+  content?: string;
+  fromUserId?: string;
+  likeCount?: number;
+  replyCount?: number;
+  headUrl?: string;
+  fromUsername?: string;
+  formContent?: string;
+  replyList?: CommentParams[];
+  fromCommentId?: string;
+  isLike?: boolean;
+}

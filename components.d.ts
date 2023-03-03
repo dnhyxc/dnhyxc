@@ -10,6 +10,8 @@ declare module '@vue/runtime-core' {
     AnotherArticle: typeof import('./src/components/AnotherArticle/index.vue')['default']
     Card: typeof import('./src/components/Card/index.vue')['default']
     Carousel: typeof import('./src/components/Carousel/index.vue')['default']
+    Comment: typeof import('./src/components/Comment/index.vue')['default']
+    DraftInput: typeof import('./src/components/DraftInput/index.vue')['default']
     Editor: typeof import('./src/components/Editor/index.vue')['default']
     ElAside: typeof import('element-plus/es')['ElAside']
     ElAvatar: typeof import('element-plus/es')['ElAvatar']
