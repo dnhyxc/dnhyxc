@@ -196,11 +196,14 @@ const submitComment = async () => {
 
     .avatar {
       margin-right: 20px;
+      width: 50px;
+      height: 50px;
 
       .image {
-        width: 50px;
-        height: 50px;
+        height: 100%;
+        width: 100%;
         border-radius: 50px;
+        .imgStyle();
       }
     }
   }
@@ -246,7 +249,7 @@ const submitComment = async () => {
 
       #ACTION {
         position: absolute;
-        right: 10px;
+        right: 0;
       }
 
       .enter {
