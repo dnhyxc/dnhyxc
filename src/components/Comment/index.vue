@@ -7,21 +7,31 @@
 <template>
   <div ref="commentRef" class="Comments">
     <div class="draftInputWrap">
-      <DraftInput :get-comment-list="getCommentList" :on-jump="() => toPersonal('authorId')" :focus="false" />
+      <DraftInput
+        :get-comment-list="getCommentList"
+        :on-jump="() => toPersonal('authorId')"
+        :focus="false"
+        :article-id="id"
+      />
     </div>
-    <div v-if="comments.length > 0" class="title">
+    <div v-if="articleStore?.commentList?.length > 0" class="title">
       全部评论
       <span class="replyCount">{{ getCommentCount }}</span>
     </div>
-    <div v-for="i in comments" v-show="comments?.length > 0" :key="i.commentId" class="commentWrap">
-      <div class="avatar" @click.stop="toPersonal(i.userId)">
-        <img :src="i.headUrl || HEAD_IMG" alt="头像" class="image" />
+    <div
+      v-for="i in articleStore?.commentList"
+      v-show="articleStore?.commentList?.length > 0"
+      :key="i.commentId"
+      class="commentWrap"
+    >
+      <div class="avatar" @click.stop="toPersonal(i?.userId!)">
+        <Image :url="i.headUrl || HEAD_IMG" :transition-img="HEAD_IMG" class="image" />
       </div>
       <div class="commentContent">
         <div class="commentMain">
           <div class="userInfo">
             <span class="name">{{ i.username }}</span>
-            <span class="date">{{ formatGapTime(i.date) }}</span>
+            <span class="date">{{ formatGapTime(i?.date!) }}</span>
           </div>
           <div class="desc">{{ i.content }}</div>
           <div class="action">
@@ -65,13 +75,14 @@
               :on-replay="onReplay"
               :get-comment-list="getCommentList"
               :on-hide-input="onHideInput"
+              :article-id="id"
             />
           </div>
         </div>
         <div v-if="i.replyList && i.replyList.length > 0" class="commentChild">
           <div v-for="j in checkReplyList(i.replyList, i.commentId!)" :key="j.commentId" class="commentChildItem">
-            <div class="avatar" @click.stop="toPersonal(j.userId)">
-              <img :src="j.headUrl || HEAD_IMG" alt="头像" class="image" />
+            <div class="avatar" @click.stop="toPersonal(j?.userId!)">
+              <Image :url="j.headUrl || HEAD_IMG" :transition-img="HEAD_IMG" class="image" />
             </div>
             <div class="commentChildItemContent">
               <div class="userInfo">
@@ -130,6 +141,7 @@
                   :on-replay="onReplay"
                   :get-comment-list="getCommentList"
                   :on-hide-input="onHideInput"
+                  :article-id="id"
                 />
               </div>
             </div>
@@ -149,124 +161,24 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, watchEffect, ref, computed } from 'vue';
+import { onMounted, ref, computed } from 'vue';
 import { CommentParams } from '@/typings/common';
 import { HEAD_IMG } from '@/constant';
-import { loginStore } from '@/store';
+import { loginStore, articleStore } from '@/store';
 import { formatGapTime } from '@/utils';
+import Image from '@/components/Image/index.vue';
 import DraftInput from '@/components/DraftInput/index.vue';
-
-const dataCommom = [
-  {
-    articleId: '63fdab2ae2d6bf53efaa6db7',
-    userId: '63e24c3be2d6bf53efaa69a9',
-    username: 'dnhyxc',
-    date: 1677828789164,
-    content: '111',
-    headUrl: HEAD_IMG,
-    replyList: [
-      {
-        userId: '63e24c3be2d6bf53efaa69a9',
-        username: 'dnhyxc',
-        date: 1677828791924,
-        content: 'dasda',
-        likeCount: 1,
-        isLike: true,
-        headUrl: HEAD_IMG,
-        commentId: '6401a2b6e2d6bf53efaa6ed5',
-      },
-      {
-        userId: '63e24c3be2d6bf53efaa69a9',
-        username: 'dnhyxc',
-        date: 1677828795435,
-        fromUserId: '63e24c3be2d6bf53efaa69a9',
-        fromUsername: 'dnhyxc',
-        formContent: 'dasda',
-        content: 'dasda ',
-        isLike: false,
-        fromCommentId: '6401a2b6e2d6bf53efaa6ed5',
-        headUrl: HEAD_IMG,
-        commentId: '6401a2bae2d6bf53efaa6eee',
-      },
-    ],
-    isLike: false,
-    commentId: '6401a2b4e2d6bf53efaa6ecb',
-  },
-  {
-    articleId: '63fdab2ae2d6bf53efaa6db7',
-    userId: '63e24c3be2d6bf53efaa69a9',
-    username: 'dnhyxc',
-    date: 1677828799214,
-    content: 'dasda \n',
-    headUrl: HEAD_IMG,
-    replyList: [
-      {
-        userId: '63e24c3be2d6bf53efaa69a9',
-        username: 'dnhyxc',
-        date: 1677828804255,
-        content: 'dasdas',
-        isLike: false,
-        headUrl: HEAD_IMG,
-        commentId: '6401a2c3e2d6bf53efaa6f15',
-      },
-      {
-        userId: '63e24c3be2d6bf53efaa69a9',
-        username: 'dnhyxc',
-        date: 1677828806775,
-        fromUserId: '63e24c3be2d6bf53efaa69a9',
-        fromUsername: 'dnhyxc',
-        formContent: 'dasdas',
-        content: 'das ',
-        isLike: false,
-        fromCommentId: '6401a2c3e2d6bf53efaa6f15',
-        headUrl: HEAD_IMG,
-        commentId: '6401a2c5e2d6bf53efaa6f24',
-      },
-      {
-        userId: '63e24c3be2d6bf53efaa69a9',
-        username: 'dnhyxc',
-        date: 1677828808815,
-        content: 'dasdas',
-        isLike: false,
-        headUrl: HEAD_IMG,
-        commentId: '6401a2c7e2d6bf53efaa6f34',
-      },
-      {
-        userId: '63e24c3be2d6bf53efaa69a9',
-        username: 'dnhyxc',
-        date: 1677828811246,
-        content: 'dasdas',
-        isLike: false,
-        headUrl: HEAD_IMG,
-        commentId: '6401a2cae2d6bf53efaa6f45',
-      },
-    ],
-    isLike: false,
-    commentId: '6401a2bee2d6bf53efaa6efb',
-  },
-  {
-    articleId: '63fdab2ae2d6bf53efaa6db7',
-    userId: '63e24c3be2d6bf53efaa69a9',
-    username: 'dnhyxc',
-    date: 1677828801434,
-    content: '222',
-    headUrl: HEAD_IMG,
-    replyList: [],
-    isLike: false,
-    commentId: '6401a2c0e2d6bf53efaa6f08',
-  },
-];
+import { ElMessage } from 'element-plus';
 
 interface IProps {
+  id: string;
   authorId: string;
   getCommentLength?: Function;
 }
 
-defineProps<IProps>();
+const props = defineProps<IProps>();
 
 const commentRef = ref<HTMLDivElement | null>(null);
-// 评论列表
-const comments = ref<CommentParams[]>(dataCommom as any);
 // 选中的评论
 const selectComment = ref<CommentParams>();
 // 显示更多评论状态
@@ -274,13 +186,12 @@ const viewMoreComments = ref<string[]>([]);
 
 // 初始化获取评论
 const getCommentList = () => {
-  console.log('获取评论列表');
+  if (!props.id) return ElMessage.error('文章不翼而飞了，评论也随之不知所踪');
+  articleStore.getCommentList(props.id);
 };
 
 onMounted(() => {
-  watchEffect(() => {
-    getCommentList();
-  });
+  getCommentList();
 });
 
 // 计算评论数
@@ -295,7 +206,7 @@ const getCount = (comments: CommentParams[]) => {
 
 // 计算评论数
 const getCommentCount = computed(() => {
-  return getCount(comments.value);
+  return getCount(articleStore?.commentList);
 });
 
 // 去个人主页
@@ -415,11 +326,19 @@ const onViewMoreReply = (commentId: string) => {
         width: 50px;
         height: 50px;
         border-radius: 50px;
+        cursor: pointer;
+
+        :deep {
+          .image-item {
+            border-radius: 50px;
+          }
+        }
       }
     }
 
     .iconWrap {
       margin-right: 25px;
+      font-size: 14px;
 
       &:hover {
         color: @active;
@@ -559,6 +478,7 @@ const onViewMoreReply = (commentId: string) => {
           justify-content: flex-start;
           align-items: center;
           cursor: pointer;
+          font-size: 14px;
           .clickNoSelectText();
 
           .viewText {

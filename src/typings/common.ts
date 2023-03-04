@@ -211,11 +211,11 @@ export interface AnotherParams {
  *  - id: 第二层comment，fromContent: 第二层回复内容
  */
 export interface CommentParams {
+  articleId?: string;
+  username?: string;
+  date?: number;
   commentId?: string;
-  articleId: string;
-  userId: string;
-  username: string;
-  date: number;
+  userId?: string;
   content?: string;
   fromUserId?: string;
   likeCount?: number;

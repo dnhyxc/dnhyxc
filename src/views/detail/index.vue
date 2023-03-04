@@ -14,7 +14,11 @@
           :mackdown="articleStore.articleDetail.content"
           class="preview-content"
         />
-        <Comment v-if="articleStore.articleDetail.authorId" :author-id="articleStore.articleDetail.authorId!" />
+        <Comment
+          v-if="articleStore.articleDetail.authorId"
+          :id="(route.params.id as string)"
+          :author-id="articleStore.articleDetail.authorId!"
+        />
       </el-scrollbar>
       <ToTopIcon v-if="scrollTop >= 500" :on-scroll-to="onScrollTo" />
     </div>
@@ -60,6 +64,8 @@ onMounted(async () => {
 // 组件卸载前，清楚store中的详情信息
 onUnmounted(() => {
   articleStore.articleDetail = { id: '' };
+  articleStore.commentList = [];
+  articleStore.anotherArticleList = [];
 });
 
 // 置顶

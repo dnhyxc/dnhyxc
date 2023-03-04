@@ -43,10 +43,14 @@ export const ADVANCED_SEARCH = '/api/advancedSearch';
 
 // 获取上一篇文章
 export const GET_PREV_ARTICLE = '/api/getPrevArticle';
-
 // 获取下一篇文章
 export const GET_NEXT_ARTICLE = '/api/getNextArticle';
+
+// 获取评论
+export const GET_COMMENT_LIST = '/api/getCommentList';
 
 /* ==========文章操作相关========== */
 // 文章点赞
 export const LIKE_ARTICLE = '/api/likeArticle';
+// 发布评论
+export const COMMENTS = '/api/comments';

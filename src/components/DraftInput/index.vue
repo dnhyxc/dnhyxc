@@ -51,11 +51,12 @@
 
 <script setup lang="ts">
 import { ref, onMounted, nextTick, onUnmounted } from 'vue';
-import { loginStore } from '@/store';
+import { loginStore, articleStore } from '@/store';
 import { HEAD_IMG } from '@/constant';
 import { CommentParams } from '@/typings/common';
 
 interface IProps {
+  articleId: string;
   getCommentList: Function;
   showAvatar?: boolean;
   selectComment?: CommentParams;
@@ -112,68 +113,50 @@ const onJump = () => {
 
 // 输入框失去焦点
 const onFocus = () => {
-  console.log('-----onFocus');
   showIcon.value = false;
 };
 
 // 输入框onchange事件
 const onCommentChange = (word: string) => {
   console.log(word, 'keyword');
-  keyword.value = word;
+  keyword.value = word.trim();
 };
 
 // 发布评论
 const submitComment = async () => {
-  console.log('发布评论>>>submitComment');
+  const { userId, username } = loginStore?.userInfo;
+
+  if (!keyword.value.trim()) return;
+  const params = {
+    userId,
+    username,
+    articleId: props?.articleId || '',
+    date: new Date().valueOf(),
+    content: keyword.value,
+    commentId: props?.selectComment?.commentId,
+    fromUsername: props?.selectComment?.username,
+    fromUserId: props?.selectComment?.userId,
+    formContent: props?.selectComment?.content,
+    fromCommentId: props?.selectComment?.commentId,
+  };
+
+  if (!props?.isThreeTier) {
+    delete params.fromUsername;
+    delete params.fromUserId;
+    delete params.formContent;
+    delete params.fromCommentId;
+  }
+
+  // 评论接口
+  const res = await articleStore?.releaseComment(params);
+
   props?.onReplay && props?.onReplay({}, true);
   keyword.value = '';
   showIcon.value = false;
 
-  // if (!keyword.trim()) return;
-  // if (!getUserInfo) {
-  //   getAlertStatus && getAlertStatus(true);
-  //   onReplay && onReplay({}, true);
-  //   setKeyword('');
-  //   setShowIcon(false);
-  //   return;
-  // }
-  // const params = {
-  //   userId: getUserInfo?.userId,
-  //   username: getUserInfo?.username,
-  //   articleId: id || '',
-  //   date: new Date().valueOf(),
-  //   content: keyword,
-  //   commentId: selectComment?.commentId,
-  //   fromUsername: selectComment?.username,
-  //   fromUserId: selectComment?.userId,
-  //   formContent: selectComment?.content,
-  //   fromCommentId: selectComment?.commentId,
-  // };
-
-  // if (!isThreeTier) {
-  //   delete params.fromUsername;
-  //   delete params.fromUserId;
-  //   delete params.formContent;
-  //   delete params.fromCommentId;
-  // }
-
-  // const res = normalizeResult<ReplayCommentResult>(await Service.releaseComment(params));
-
-  // onReplay && onReplay({}, true);
-  // setKeyword('');
-  // setShowIcon(false);
-
-  // if (res.success) {
-  //   getCommentList && getCommentList();
-  // }
-
-  // if (!res.success && res.code === 409) {
-  //   getAlertStatus && getAlertStatus(true);
-  // }
-
-  // if (!res.success && res.code !== 409 && res.code !== 401) {
-  //   error(res.message);
-  // }
+  if (res?.success) {
+    props?.getCommentList && props?.getCommentList();
+  }
 };
 </script>
 

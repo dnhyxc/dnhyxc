@@ -2,7 +2,8 @@ import { defineStore } from 'pinia';
 import { ElMessage } from 'element-plus';
 import * as Service from '@/server';
 import { normalizeResult } from '@/utils';
-import { ArticleListResult, ArticleItem, AnotherParams } from '@/typings/common';
+import { useCheckUserId } from '@/hooks';
+import { ArticleListResult, ArticleItem, AnotherParams, CommentParams } from '@/typings/common';
 
 interface IProps {
   loading: boolean;
@@ -12,14 +13,13 @@ interface IProps {
   total: number; // 文章列表总数
   articleDetail: ArticleItem; // 文章详情
   anotherArticleList: ArticleItem[]; // 详情上下篇文章列表
-  anotherLoading: boolean;
+  commentList: CommentParams[]; // 评论列表
 }
 
 export const useArticleStore = defineStore('article', {
   state: (): IProps => ({
     // 首页、标签列表、分类列表文章列表数据
     loading: false,
-    anotherLoading: false,
     pageNo: 0,
     pageSize: 20,
     articleList: [],
@@ -28,6 +28,7 @@ export const useArticleStore = defineStore('article', {
       id: '',
     },
     anotherArticleList: [],
+    commentList: [],
   }),
 
   actions: {
@@ -96,6 +97,39 @@ export const useArticleStore = defineStore('article', {
         this.anotherArticleList = res;
         console.log(res, 'anotherArticleList');
       }
+    },
+
+    // 获取文章评论
+    async getCommentList(id: string) {
+      // 检验是否有userId，如果没有禁止发送请求
+      // if (!useCheckUserId()) return;
+      if (!id) return ElMessage.error('哦豁！文章不翼而飞了，评论也不知所踪');
+      const res = normalizeResult<CommentParams[]>(await Service.getCommentList(id));
+      if (res?.success) {
+        this.commentList = res.data;
+      } else {
+        ElMessage.error(res.message);
+      }
+    },
+
+    // 发布文章评论
+    async releaseComment(params: CommentParams) {
+      // 检验是否有userId，如果没有禁止发送请求
+      if (!useCheckUserId()) return;
+      const res = normalizeResult<{ commentId: string }>(await Service.releaseComment(params));
+      if (res?.success) {
+        ElMessage.success(res.message);
+        return res;
+      } else {
+        ElMessage.error(res.message);
+      }
+    },
+
+    // 清除详情缓存
+    onClearList() {
+      this.articleDetail = { id: '' };
+      this.commentList = [];
+      this.anotherArticleList = [];
     },
   },
 });
