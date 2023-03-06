@@ -50,7 +50,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, nextTick, onUnmounted } from 'vue';
+import { ref, onMounted, nextTick, onUnmounted, watchEffect } from 'vue';
 import { loginStore, articleStore } from '@/store';
 import { HEAD_IMG } from '@/constant';
 import { CommentParams } from '@/typings/common';
@@ -67,7 +67,13 @@ interface IProps {
   onHideInput?: Function;
 }
 
-const props = defineProps<IProps>();
+const props = withDefaults(defineProps<IProps>(), {
+  focus: false,
+  selectComment: () => ({}),
+  onReplay: () => {},
+  onJump: () => {},
+  onHideInput: () => {},
+});
 
 console.log(props, 'props');
 
@@ -80,6 +86,15 @@ onMounted(() => {
     window.addEventListener('click', onClickNode);
     window.addEventListener('keydown', onKeyDown);
   });
+
+  // 监听props.focus为true的情况，设置输入框自动获取焦点
+  watchEffect(() => {
+    if (props.focus) {
+      nextTick(() => {
+        inputRef.value?.focus();
+      });
+    }
+  });
 });
 
 onUnmounted(() => {
@@ -89,8 +104,6 @@ onUnmounted(() => {
 
 // window点击事件，判断点击的元素是否存在id，如果不存在则隐藏相关按钮或输入框
 const onClickNode = (e: any) => {
-  console.log(e.target.id, 'spspspsp');
-
   if (!e.target.id) {
     // showIcon.value = false;
     // 隐藏回复评论的输入框
@@ -118,7 +131,6 @@ const onFocus = () => {
 
 // 输入框onchange事件
 const onCommentChange = (word: string) => {
-  console.log(word, 'keyword');
   keyword.value = word.trim();
 };
 

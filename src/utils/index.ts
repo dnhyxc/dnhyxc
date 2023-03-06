@@ -8,6 +8,7 @@ import { decrypt, encrypt } from './crypto';
 import request from './request';
 import { shareQQ, shareQZon, shareSinaWeiBo } from './share';
 import { mountDirectives } from './directive';
+import EventBus from './eventBus';
 import { locSetItem, locGetItem, locRemoveItem, ssnGetItem, ssnSetItem, ssnRemoveItem } from './storage';
 
 // 判断系统类型
@@ -158,4 +159,5 @@ export {
   shareQQ,
   shareQZon,
   shareSinaWeiBo,
+  EventBus,
 };

@@ -69,6 +69,7 @@
             </div>
             <DraftInput
               v-if="selectComment?.commentId === i.commentId"
+              :focus="selectComment?.commentId === i.commentId"
               :show-avatar="false"
               class="draftContent"
               :select-comment="selectComment"
@@ -134,6 +135,7 @@
                 </div>
                 <DraftInput
                   v-if="selectComment?.commentId === j.commentId"
+                  :focus="selectComment?.commentId === j.commentId"
                   :show-avatar="false"
                   class="draftContent"
                   :select-comment="selectComment"

@@ -6,7 +6,7 @@
 -->
 <template>
   <div class="image-wrap-style" @click="onClickImg">
-    <img v-if="url" :src="loaded ? loadUrl : transitionImg" alt="" class="image-item" />
+    <img v-if="url" :src="loaded ? loadUrl : transitionImg" alt="" class="image-item" @error="onError" />
     <div v-else class="loading-img">
       <div class="loading">loading...</div>
     </div>
@@ -41,8 +41,8 @@ onMounted(() => {
 
 // 初始化图片
 const loadImage = () => {
-  let timer: any = null;
-  const img = new window.Image();
+  let timer: ReturnType<typeof setTimeout> | null = null;
+  const img = new Image();
   if (img.complete) {
     loaded.value = true;
     loadUrl.value = props.transitionImg;
@@ -59,9 +59,15 @@ const loadImage = () => {
   img.src = props.url;
 };
 
+// 图片加载失败事件
+const onError = () => {
+  console.log(loadUrl.value, 'loadUrl.value>>>>>onError');
+  loadUrl.value = props.transitionImg;
+};
+
 // 点击图片
 const onClickImg = () => {
-  console.log('dianjitupian');
+  props?.onClick && props?.onClick();
 };
 </script>
 

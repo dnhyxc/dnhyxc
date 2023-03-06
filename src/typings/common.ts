@@ -227,3 +227,11 @@ export interface CommentParams {
   fromCommentId?: string;
   isLike?: boolean;
 }
+
+// 事件总线类型
+export interface Events {
+  events: Object;
+  emit: <T>(eventName: string, data: T) => void;
+  on: (eventName: string, fn: Function) => void;
+  off: (eventName: string, fn: Function) => void;
+}
