@@ -42,7 +42,7 @@ export const MENULIST = [
     icon: 'icon-timeAxis',
     fillIcon: 'icon-icon_shijian-mian',
     active: 'icon-a-Frame174',
-    show: true,
+    show: false,
   },
   {
     name: '发布文章',
@@ -51,7 +51,7 @@ export const MENULIST = [
     icon: 'icon-fankuitianxie',
     fillIcon: 'icon-sign-review-full',
     active: 'icon-xieboke',
-    show: true,
+    show: false,
   },
   {
     name: '关于博主',
@@ -72,7 +72,7 @@ export const MENULIST = [
     name: '文章详情',
     key: 'detail',
     path: '/detail',
-    show: false,
+    show: true,
   },
 ];
 
@@ -100,21 +100,25 @@ export const SETTING_MENU = [
     name: '个人资料',
     key: 'profile',
     path: '/profile',
+    show: false,
   },
   {
     name: '账号设置',
     key: 'account',
     path: '/account',
+    show: false,
   },
   {
     name: '系统设置',
     key: 'system',
     path: '/system',
+    show: true,
   },
   {
     name: '主题设置',
     key: 'theme',
     path: '/theme',
+    show: false,
   },
 ];
 

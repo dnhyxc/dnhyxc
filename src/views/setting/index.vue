@@ -2,7 +2,7 @@
   <div class="setting-wrap">
     <div class="menu">
       <div
-        v-for="menu in SETTING_MENU"
+        v-for="menu in menuList"
         :key="menu.key"
         :class="`${menu.path === activeMenu.path && 'active'} menu-item`"
         @click="onClick(menu)"
@@ -19,12 +19,19 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watchEffect } from 'vue';
+import { ref, watchEffect, computed } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { SETTING_MENU } from '@/constant';
+import { loginStore } from '@/store';
 import { MenuListParams } from '@/typings/common';
 
-const activeMenu = ref<MenuListParams>(SETTING_MENU[0]);
+const menuList = computed(() => {
+  const { token } = loginStore;
+  const res = token ? SETTING_MENU : SETTING_MENU.filter((i) => i.show);
+  return res;
+});
+
+const activeMenu = ref<MenuListParams>(menuList.value[0]);
 
 const router = useRouter();
 const route = useRoute();

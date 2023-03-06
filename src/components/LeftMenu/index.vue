@@ -20,7 +20,7 @@
       </div>
     </el-scrollbar>
     <div class="setting">
-      <el-dropdown>
+      <el-dropdown v-if="loginStore?.userInfo?.userId">
         <el-avatar shape="square" :size="checkOS() === 'mac' ? 45 : 38" fit="cover" :src="HEAD_IMG" class="avatar" />
         <template #dropdown>
           <el-dropdown-menu>
@@ -39,6 +39,9 @@
           </el-dropdown-menu>
         </template>
       </el-dropdown>
+      <div v-else class="login-btn">
+        <div class="login" @click="onLogin">登录</div>
+      </div>
     </div>
   </div>
 </template>
@@ -58,7 +61,9 @@ const activeMenu = ref<MenuListParams>(MENULIST[0]);
 
 // 计算菜单
 const menuList = computed(() => {
-  return MENULIST.filter((i) => i.show);
+  const { token } = loginStore;
+  const list = token ? MENULIST : MENULIST.filter((i) => i.show);
+  return list;
 });
 
 // 监听路由变化
@@ -90,6 +95,11 @@ const toPersonal = () => {
     crumbsPath: '/personal',
   });
   router.push('/personal');
+};
+
+// 登录
+const onLogin = () => {
+  router.push('/login');
 };
 
 // 退出登录
@@ -146,6 +156,22 @@ const onLogout = () => {
     align-items: center;
     justify-content: center;
     margin-top: 20px;
+
+    .login-btn {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 38px;
+      height: 38px;
+      border-radius: 5px;
+      .clickNoSelectText();
+      .bgMoveColor(135deg);
+      .bgKeyframes(bgmove);
+      font-size: 14px;
+      cursor: pointer;
+      color: @theme-blue;
+      box-shadow: 0 0 2px @shadow-color inset;
+    }
 
     .avatar {
       cursor: pointer;
