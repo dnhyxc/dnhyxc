@@ -39,7 +39,7 @@ export const register = async (params: LoginParams) => {
   }
 };
 
-//
+// 重置密码
 export const resetPassword = async (params: { username: string; password: string }) => {
   const res = await put(API.RESET_PASSWORD, params);
   return res;
@@ -81,13 +81,13 @@ export const getNextArticle = async (params: AnotherParams) => {
   return res;
 };
 
-// 获取下一篇文章
+// 获取评论
 export const getCommentList = async (id: string) => {
   const res = await post(API.GET_COMMENT_LIST, copeParams({ id }));
   return res;
 };
 
-// 获取下一篇文章
+// 发布评论
 export const releaseComment = async (params: CommentParams) => {
   const res = await post(API.COMMENTS, params);
   return res;
@@ -102,5 +102,11 @@ export const giveCommentLike = async (params: { commentId: string; fromCommentId
 // 删除评论
 export const deleteComment = async (params: { commentId: string; fromCommentId?: string }) => {
   const res = await post(API.DELETE_COMMENT, params);
+  return res;
+};
+
+// 文章点赞
+export const likeArticle = async (params: { id: string; authorId?: string | null | undefined }) => {
+  const res = await post(API.LIKE_ARTICLE, copeParams(params));
   return res;
 };

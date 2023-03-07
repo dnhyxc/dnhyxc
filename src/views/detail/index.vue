@@ -28,6 +28,7 @@
     </div>
     <div class="right">
       <Multibar
+        :id="(route.params.id as string)"
         class="action-list"
         :scroll-height="articleInfoRef?.offsetHeight"
         :on-scroll-to="() => onScrollTo(articleInfoRef?.offsetHeight)"

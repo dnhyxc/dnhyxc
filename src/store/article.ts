@@ -16,6 +16,7 @@ interface IProps {
   articleDetail: ArticleItem; // 文章详情
   anotherArticleList: ArticleItem[]; // 详情上下篇文章列表
   commentList: CommentParams[]; // 评论列表
+  detailArtLikeCount: number; // 详情文章点赞数量
 }
 
 export const useArticleStore = defineStore('article', {
@@ -32,6 +33,7 @@ export const useArticleStore = defineStore('article', {
     },
     anotherArticleList: [],
     commentList: [],
+    detailArtLikeCount: 0,
   }),
 
   actions: {
@@ -64,7 +66,7 @@ export const useArticleStore = defineStore('article', {
       this.loading = true;
       const res = normalizeResult<ArticleItem>(await Service.getArticleDetail(id));
       if (res.success) {
-        console.log(res, 'res');
+        this.detailArtLikeCount = res.data?.likeCount!;
         this.articleDetail = res.data;
         return res.data;
       } else {
@@ -213,11 +215,30 @@ export const useArticleStore = defineStore('article', {
         });
     },
 
+    // 文章点赞
+    async likeArticle({ id, authorId }: { id: string; authorId?: string }) {
+      const res = normalizeResult<{ id: string; isLike: boolean }>(await Service.likeArticle({ id, authorId }));
+      if (!res.success) {
+        ElMessage.error(res.message);
+      } else {
+        // 点赞后将原本的点赞数自动加减 1
+        if (res.data.isLike) {
+          this.detailArtLikeCount += 1;
+          this.articleDetail.isLike = true;
+        } else {
+          this.detailArtLikeCount -= 1;
+          this.articleDetail.isLike = false;
+        }
+        return res.data;
+      }
+    },
+
     // 清除详情缓存
     onClearList() {
       this.articleDetail = { id: '' };
       this.commentList = [];
       this.anotherArticleList = [];
+      this.detailArtLikeCount = 0;
     },
   },
 });

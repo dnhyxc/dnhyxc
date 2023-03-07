@@ -47,7 +47,7 @@
 
                 <i
                   id="ON_REPLAY"
-                  :class="`font iconWrap iconfont icon-comment ${
+                  :class="`font iconWrap iconfont icon-pinglun ${
                     selectComment?.commentId === i.commentId && 'cancelReplay'
                   }`"
                   @click="onReplay(i, selectComment?.commentId === i.commentId)"
@@ -111,7 +111,7 @@
                     </i>
                     <i
                       id="ON_REPLAY"
-                      :class="`font iconWrap iconfont icon-comment ${
+                      :class="`font iconWrap iconfont icon-pinglun ${
                         selectComment?.commentId === j.commentId && 'cancelReplay'
                       }`"
                       @click="onReplay(j, selectComment?.commentId === j.commentId)"
@@ -276,7 +276,7 @@ const onViewMoreReply = (commentId: string) => {
   }
 
   .title {
-    font-size: 18px;
+    font-size: 20px;
     font-weight: 600;
     padding: 40px 20px 0 0;
   }
@@ -291,17 +291,17 @@ const onViewMoreReply = (commentId: string) => {
     padding-top: 30px;
 
     .avatar {
-      margin-right: 20px;
+      margin-right: 15px;
 
       .image {
-        width: 50px;
-        height: 50px;
-        border-radius: 50px;
+        width: 55px;
+        height: 55px;
+        border-radius: 55px;
         cursor: pointer;
 
         :deep {
           .image-item {
-            border-radius: 50px;
+            border-radius: 55px;
           }
         }
       }
@@ -309,7 +309,7 @@ const onViewMoreReply = (commentId: string) => {
 
     .iconWrap {
       margin-right: 25px;
-      font-size: 14px;
+      font-size: 15px;
 
       &:hover {
         color: @active;
@@ -341,10 +341,10 @@ const onViewMoreReply = (commentId: string) => {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 10px;
+        margin-bottom: 6px;
 
         .name {
-          font-size: 16px;
+          font-size: 17px;
           font-weight: 600;
 
           .isAuthor {
@@ -430,12 +430,12 @@ const onViewMoreReply = (commentId: string) => {
           }
 
           .avatar {
-            width: 35px;
-            height: 35px;
+            width: 45px;
+            height: 45px;
 
             .image {
-              width: 35px;
-              height: 35px;
+              width: 45px;
+              height: 45px;
             }
           }
 

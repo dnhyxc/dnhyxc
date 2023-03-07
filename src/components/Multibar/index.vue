@@ -6,11 +6,19 @@
 -->
 <template>
   <div class="multibar-wrap">
-    <div class="action like-wrap">
-      <i class="like-font iconfont icon-24gf-thumbsUp2" />
+    <div class="action like-wrap" @click="likeArticle">
+      <i :class="`like-font iconfont ${articleStore?.articleDetail?.isLike && 'is-like'} icon-24gf-thumbsUp2`" />
+      <span v-if="articleStore?.detailArtLikeCount > 0" class="count">{{
+        articleStore?.detailArtLikeCount > 999
+          ? `${String(articleStore?.detailArtLikeCount).slice(0, 3)}+`
+          : articleStore?.detailArtLikeCount
+      }}</span>
     </div>
     <div class="action comment-wrap" @click="toComment">
       <i class="comment-font iconfont icon-pinglun1" />
+      <span v-if="commentCount > 0" class="count">{{
+        commentCount > 999 ? `${String(commentCount).slice(0, 3)}+` : commentCount
+      }}</span>
     </div>
     <div class="action collect-wrap">
       <i class="collect-font iconfont icon-31shoucangxuanzhong" />
@@ -57,13 +65,23 @@
 <script setup lang="ts">
 import { HEAD_IMG } from '@/constant';
 import { shareQQ, shareSinaWeiBo } from '@/utils';
+import { articleStore } from '@/store';
+import { useCommentCount } from '@/hooks';
 import Qrcode from '@/components/Qrcode/index.vue';
 
 interface IProps {
+  id: string;
   onScrollTo: Function;
 }
 
 const props = defineProps<IProps>();
+
+const commentCount = useCommentCount;
+
+// 文章点赞
+const likeArticle = async () => {
+  await articleStore?.likeArticle({ id: props.id });
+};
 
 // 滚动到评论
 const toComment = () => {
@@ -78,6 +96,7 @@ const toComment = () => {
   display: flex;
   justify-content: space-between;
   .action {
+    position: relative;
     flex: 1;
     display: flex;
     align-items: center;
@@ -89,6 +108,13 @@ const toComment = () => {
     color: @font-3;
     cursor: pointer;
 
+    .count {
+      position: absolute;
+      top: 5px;
+      right: 10px;
+      font-size: 12px;
+    }
+
     &:last-child {
       margin-right: 0;
     }
@@ -99,6 +125,10 @@ const toComment = () => {
 
     .like-font {
       font-size: 20px;
+    }
+
+    .is-like {
+      color: @theme-blue;
     }
 
     .comment-font {
