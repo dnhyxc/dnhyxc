@@ -1,12 +1,14 @@
 import { defineStore } from 'pinia';
 import { ElMessage } from 'element-plus';
 import * as Service from '@/server';
-import { normalizeResult } from '@/utils';
+import { normalizeResult, Message } from '@/utils';
 import { useCheckUserId } from '@/hooks';
-import { ArticleListResult, ArticleItem, AnotherParams, CommentParams } from '@/typings/common';
+import { ArticleListResult, ArticleItem, AnotherParams, CommentParams, ReplayComment } from '@/typings/common';
+import { loginStore } from '.';
 
 interface IProps {
   loading: boolean;
+  likeLoading: boolean;
   pageNo: number;
   pageSize: number;
   articleList: ArticleItem[]; // 文章列表数据（首页、分类页等）
@@ -20,6 +22,7 @@ export const useArticleStore = defineStore('article', {
   state: (): IProps => ({
     // 首页、标签列表、分类列表文章列表数据
     loading: false,
+    likeLoading: false,
     pageNo: 0,
     pageSize: 20,
     articleList: [],
@@ -113,16 +116,101 @@ export const useArticleStore = defineStore('article', {
     },
 
     // 发布文章评论
-    async releaseComment(params: CommentParams) {
+    async releaseComment(data: ReplayComment) {
       // 检验是否有userId，如果没有禁止发送请求
       if (!useCheckUserId()) return;
+
+      const params = {
+        userId: loginStore?.userInfo?.userId,
+        username: loginStore?.userInfo?.username,
+        articleId: data?.articleId || '',
+        date: new Date().valueOf(),
+        content: data.keyword,
+        commentId: data?.selectComment?.commentId,
+        fromUsername: data?.selectComment?.username,
+        fromUserId: data?.selectComment?.userId,
+        formContent: data?.selectComment?.content,
+        fromCommentId: data?.selectComment?.commentId,
+      };
+
+      if (!data?.isThreeTier) {
+        delete params.fromUsername;
+        delete params.fromUserId;
+        delete params.formContent;
+        delete params.fromCommentId;
+      }
+
       const res = normalizeResult<{ commentId: string }>(await Service.releaseComment(params));
+
       if (res?.success) {
         ElMessage.success(res.message);
         return res;
       } else {
         ElMessage.error(res.message);
       }
+    },
+
+    // 评论点赞
+    async onGiveLikeToComment(data: { commentId: string; isThreeTier?: boolean; getCommentList?: Function }) {
+      // 检验是否有userId，如果没有禁止发送请求
+      if (!useCheckUserId()) return;
+      const params = data.isThreeTier
+        ? {
+            commentId: data.commentId!,
+            fromCommentId: data.commentId!,
+            userId: loginStore?.userInfo?.userId,
+          }
+        : {
+            commentId: data.commentId!,
+            userId: loginStore?.userInfo?.userId,
+          };
+      this.likeLoading = true;
+      const res = normalizeResult<{ status: number }>(await Service.giveCommentLike(params));
+      this.likeLoading = false;
+      if (res.success) {
+        data.getCommentList && data.getCommentList();
+      } else {
+        ElMessage.error(res.message);
+        return res;
+      }
+    },
+
+    // 删除评论
+    async deleteComment({
+      comment,
+      articleId,
+      isThreeTier,
+      getCommentList,
+    }: {
+      comment: CommentParams;
+      articleId: string | undefined;
+      isThreeTier?: boolean;
+      getCommentList?: Function;
+    }) {
+      const params = isThreeTier
+        ? {
+            commentId: comment.commentId!,
+            fromCommentId: comment.commentId!,
+            articleId,
+          }
+        : {
+            commentId: comment.commentId!,
+            articleId,
+          };
+
+      Message('确定要下架该文章吗', '下架文章')
+        .then(async () => {
+          const res = normalizeResult<{ status: number }>(await Service.deleteComment(params));
+          if (res.success) {
+            ElMessage.success('删除成功');
+            getCommentList && getCommentList();
+          } else {
+            ElMessage.error(res.message);
+          }
+        })
+        .catch(() => {
+          ElMessage.error('删除失败');
+        });
     },
 
     // 清除详情缓存

@@ -8,22 +8,30 @@
   <Loading :loading="articleStore.loading" class="detail-wrap">
     <div class="content">
       <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
-        <PageHeader />
-        <Preview
-          v-if="articleStore.articleDetail.content"
-          :mackdown="articleStore.articleDetail.content"
-          class="preview-content"
-        />
+        <div ref="articleInfoRef" class="articleInfo">
+          <PageHeader />
+          <Preview
+            v-if="articleStore.articleDetail.content"
+            :mackdown="articleStore.articleDetail.content"
+            class="preview-content"
+          />
+        </div>
         <Comment
           v-if="articleStore.articleDetail.authorId"
           :id="(route.params.id as string)"
           :author-id="articleStore.articleDetail.authorId!"
+          :focus="focus"
+          @update-focus="updateFocus"
         />
       </el-scrollbar>
       <ToTopIcon v-if="scrollTop >= 500" :on-scroll-to="onScrollTo" />
     </div>
     <div class="right">
-      <Multibar class="action-list" />
+      <Multibar
+        class="action-list"
+        :scroll-height="articleInfoRef?.offsetHeight"
+        :on-scroll-to="() => onScrollTo(articleInfoRef?.offsetHeight)"
+      />
       <Toc class="toc-list" />
       <AnotherArticle
         v-if="articleStore.articleDetail.content"
@@ -35,7 +43,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, onUnmounted, nextTick } from 'vue';
+import { onMounted, onUnmounted, nextTick, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { useScroller } from '@/hooks';
 import { scrollTo } from '@/utils';
@@ -50,6 +58,11 @@ import Comment from '@/components/Comment/index.vue';
 import Loading from '@/components/Loading/index.vue';
 
 const route = useRoute();
+
+const articleInfoRef = ref<HTMLDivElement | null>(null);
+
+// 评论输入框焦点控制变量
+const focus = ref<boolean>(false);
 
 // scrollRef：el-scrollbar ref，scrollTop：滚动距离
 const { scrollRef, scrollTop } = useScroller();
@@ -68,9 +81,18 @@ onUnmounted(() => {
   articleStore.anotherArticleList = [];
 });
 
+// 更改输入框焦点状态
+const updateFocus = (value: boolean) => {
+  focus.value = value;
+};
+
 // 置顶
-const onScrollTo = () => {
-  scrollTo(scrollRef, 0);
+const onScrollTo = (height?: number) => {
+  // height 有值说明是点击评论滑动到评论区域，默认使最外层输入框获取焦点
+  if (height) {
+    focus.value = true;
+  }
+  scrollTo(scrollRef, height || 0);
 };
 </script>
 

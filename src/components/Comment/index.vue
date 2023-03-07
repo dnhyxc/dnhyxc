@@ -5,13 +5,14 @@
  * index.vue
 -->
 <template>
-  <div ref="commentRef" class="Comments">
+  <div ref="commentsRef" class="Comments">
     <div class="draftInputWrap">
       <DraftInput
         :get-comment-list="getCommentList"
         :on-jump="() => toPersonal('authorId')"
-        :focus="false"
+        :focus="focus"
         :article-id="id"
+        :on-hide-input="onHideInput"
       />
     </div>
     <div v-if="articleStore?.commentList?.length > 0" class="title">
@@ -38,9 +39,7 @@
             <div class="actionContent">
               <div class="likeAndReplay">
                 <i
-                  :class="`font iconWrap iconfont ${i.isLike ? 'icon-24gf-thumbsUp2' : 'icon-24gl-thumbsUp2'} ${
-                    i.isLike && 'isLike'
-                  }`"
+                  :class="`font iconWrap iconfont ${i.isLike ? 'is-like icon-24gf-thumbsUp2' : 'icon-24gl-thumbsUp2'}`"
                   @click="onGiveLike(i)"
                 >
                   <span class="icon-text">{{ i.likeCount! > 0 ? i.likeCount : '点赞' }}</span>
@@ -103,8 +102,8 @@
                 <div class="actionContent">
                   <div class="likeAndReplay">
                     <i
-                      :class="`font iconWrap iconfont ${j.isLike ? 'icon-24gf-thumbsUp2' : 'icon-24gl-thumbsUp2'} ${
-                        j.isLike && 'isLike'
+                      :class="`font iconWrap iconfont ${
+                        j.isLike ? 'is-like icon-24gf-thumbsUp2' : 'icon-24gl-thumbsUp2'
                       }`"
                       @click.stop="onGiveLike(j, true)"
                     >
@@ -117,9 +116,9 @@
                       }`"
                       @click="onReplay(j, selectComment?.commentId === j.commentId)"
                     >
-                      <span v-if="selectComment?.commentId === j.commentId" class="cancelReplay icon-text"
-                        >取消回复</span
-                      >
+                      <span v-if="selectComment?.commentId === j.commentId" class="cancelReplay icon-text">
+                        取消回复
+                      </span>
                       <span v-else id="ON_REPLAY" class="icon-text">{{ j.replyList?.length || '回复' }}</span>
                     </i>
                   </div>
@@ -153,7 +152,7 @@
             class="viewMore"
             @click.stop="onViewMoreReply(i.commentId!)"
           >
-            <span class="viewText"> 查看更多（{{ i.replyList && i.replyList.length - 2 }}条）回复 </span>
+            <span class="viewText">查看更多（{{ i.replyList && i.replyList.length - 2 }}条）回复</span>
             <i class="font iconWrap iconfont icon-xiajiantou" @click.stop="onViewMoreReply(i.commentId!)" />
           </div>
         </div>
@@ -176,25 +175,29 @@ interface IProps {
   id: string;
   authorId: string;
   getCommentLength?: Function;
+  focus?: boolean;
 }
 
 const props = defineProps<IProps>();
 
-const commentRef = ref<HTMLDivElement | null>(null);
+const emit = defineEmits(['updateFocus']);
+
 // 选中的评论
 const selectComment = ref<CommentParams>();
 // 显示更多评论状态
 const viewMoreComments = ref<string[]>([]);
+
+const commentsRef = ref<HTMLDivElement | null>(null);
+
+onMounted(() => {
+  getCommentList();
+});
 
 // 初始化获取评论
 const getCommentList = () => {
   if (!props.id) return ElMessage.error('文章不翼而飞了，评论也随之不知所踪');
   articleStore.getCommentList(props.id);
 };
-
-onMounted(() => {
-  getCommentList();
-});
 
 // 计算评论数
 const getCount = (comments: CommentParams[]) => {
@@ -226,57 +229,23 @@ const onReplay = (comment: CommentParams, status: boolean) => {
 };
 
 // 点赞接口
-const onGiveLike = async (comment: CommentParams, isThreeTier?: boolean) => {
-  console.log(comment, 'comment', 'isThreeTier');
-
-  // if (loading) return;
-  // if (!getUserInfo) {
-  //   setAlertStatus && setAlertStatus(true);
-  //   return;
-  // }
-  // const params = isThreeTier
-  //   ? {
-  //       commentId: comment.commentId!,
-  //       fromCommentId: comment.commentId!,
-  //       userId: getUserInfo?.userId,
-  //     }
-  //   : {
-  //       commentId: comment.commentId!,
-  //       userId: getUserInfo?.userId,
-  //     };
-  // setLoading(true);
-  // const res = normalizeResult<GiveLikeResult>(await Service.giveLike(params));
-  // setLoading(false);
-  // if (res.success) {
-  //   getCommentList && getCommentList();
-  // }
-  // if (!res.success && res.code === 409) {
-  //   setAlertStatus && setAlertStatus(true);
-  // }
-  // if (!res.success && res.code !== 409 && res.code !== 401) {
-  //   error(res.message);
-  // }
+const onGiveLike = (comment: CommentParams, isThreeTier?: boolean) => {
+  if (articleStore?.likeLoading) return;
+  articleStore?.onGiveLikeToComment({
+    isThreeTier,
+    commentId: comment?.commentId!,
+    getCommentList,
+  });
 };
 
 // 删除评论
 const onDeleteComment = (comment: CommentParams, isThreeTier?: boolean) => {
-  console.log(comment, 'comment', isThreeTier, 'isThreeTier');
-
-  // const params = isThreeTier
-  //   ? {
-  //       commentId: comment.commentId!,
-  //       fromCommentId: comment.commentId!,
-  //       articleId: id,
-  //     }
-  //   : {
-  //       commentId: comment.commentId!,
-  //       articleId: id,
-  //     };
-  // Modal.confirm(modalConfig(params));
+  articleStore?.deleteComment({ comment, articleId: props?.id, isThreeTier, getCommentList });
 };
 
 // 隐藏回复输入框
 const onHideInput = () => {
+  emit('updateFocus', false);
   selectComment.value = {} as CommentParams;
 };
 
@@ -353,7 +322,7 @@ const onViewMoreReply = (commentId: string) => {
       }
     }
 
-    .isLike {
+    .is-like {
       color: @active;
     }
 

@@ -41,7 +41,7 @@
                 </div>
                 <div class="action comment" @click="(e) => onComment(e, data.id)">
                   <i class="font comment-icon iconfont icon-pinglun" />
-                  <span>{{ data.replyCount || '评论' }}</span>
+                  <span>{{ data.commentCount || '评论' }}</span>
                 </div>
                 <div class="action read-count">
                   <i class="font read-icon iconfont icon-yanjing" />

@@ -75,8 +75,6 @@ const props = withDefaults(defineProps<IProps>(), {
   onHideInput: () => {},
 });
 
-console.log(props, 'props');
-
 const inputRef = ref<HTMLDivElement | null>(null);
 const keyword = ref<string>('');
 const showIcon = ref<boolean>(false);
@@ -105,7 +103,6 @@ onUnmounted(() => {
 // window点击事件，判断点击的元素是否存在id，如果不存在则隐藏相关按钮或输入框
 const onClickNode = (e: any) => {
   if (!e.target.id) {
-    // showIcon.value = false;
     // 隐藏回复评论的输入框
     props?.onHideInput && props?.onHideInput();
   }
@@ -136,36 +133,17 @@ const onCommentChange = (word: string) => {
 
 // 发布评论
 const submitComment = async () => {
-  const { userId, username } = loginStore?.userInfo;
-
   if (!keyword.value.trim()) return;
-  const params = {
-    userId,
-    username,
-    articleId: props?.articleId || '',
-    date: new Date().valueOf(),
-    content: keyword.value,
-    commentId: props?.selectComment?.commentId,
-    fromUsername: props?.selectComment?.username,
-    fromUserId: props?.selectComment?.userId,
-    formContent: props?.selectComment?.content,
-    fromCommentId: props?.selectComment?.commentId,
-  };
-
-  if (!props?.isThreeTier) {
-    delete params.fromUsername;
-    delete params.fromUserId;
-    delete params.formContent;
-    delete params.fromCommentId;
-  }
-
   // 评论接口
-  const res = await articleStore?.releaseComment(params);
-
+  const res = await articleStore?.releaseComment({
+    keyword: keyword.value,
+    selectComment: props?.selectComment,
+    articleId: props?.articleId || '',
+    isThreeTier: props?.isThreeTier,
+  });
   props?.onReplay && props?.onReplay({}, true);
   keyword.value = '';
   showIcon.value = false;
-
   if (res?.success) {
     props?.getCommentList && props?.getCommentList();
   }

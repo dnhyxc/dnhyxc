@@ -9,7 +9,7 @@
     <div class="action like-wrap">
       <i class="like-font iconfont icon-24gf-thumbsUp2" />
     </div>
-    <div class="action comment-wrap">
+    <div class="action comment-wrap" @click="toComment">
       <i class="comment-font iconfont icon-pinglun1" />
     </div>
     <div class="action collect-wrap">
@@ -58,6 +58,17 @@
 import { HEAD_IMG } from '@/constant';
 import { shareQQ, shareSinaWeiBo } from '@/utils';
 import Qrcode from '@/components/Qrcode/index.vue';
+
+interface IProps {
+  onScrollTo: Function;
+}
+
+const props = defineProps<IProps>();
+
+// 滚动到评论
+const toComment = () => {
+  props.onScrollTo();
+};
 </script>
 
 <style scoped lang="less">

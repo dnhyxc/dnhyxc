@@ -54,3 +54,7 @@ export const GET_COMMENT_LIST = '/api/getCommentList';
 export const LIKE_ARTICLE = '/api/likeArticle';
 // 发布评论
 export const COMMENTS = '/api/comments';
+// 评论点赞
+export const GIVE_COMMENT_LIKE = '/api/giveLike';
+// 评论点赞
+export const DELETE_COMMENT = '/api/deleteComment';

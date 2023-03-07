@@ -83,12 +83,24 @@ export const getNextArticle = async (params: AnotherParams) => {
 
 // 获取下一篇文章
 export const getCommentList = async (id: string) => {
-  const res = await post(API.GET_COMMENT_LIST, { id });
+  const res = await post(API.GET_COMMENT_LIST, copeParams({ id }));
   return res;
 };
 
 // 获取下一篇文章
 export const releaseComment = async (params: CommentParams) => {
   const res = await post(API.COMMENTS, params);
+  return res;
+};
+
+// 评论点赞
+export const giveCommentLike = async (params: { commentId: string; fromCommentId?: string }) => {
+  const res = await post(API.GIVE_COMMENT_LIKE, params);
+  return res;
+};
+
+// 删除评论
+export const deleteComment = async (params: { commentId: string; fromCommentId?: string }) => {
+  const res = await post(API.DELETE_COMMENT, params);
   return res;
 };

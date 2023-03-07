@@ -118,7 +118,6 @@ const onBackHome = () => {
 
 // 点击忘记密码切换组件
 const onForgetPwd = () => {
-  console.log('忘记密码');
   emit('switchDom', 'Reset');
 };
 </script>

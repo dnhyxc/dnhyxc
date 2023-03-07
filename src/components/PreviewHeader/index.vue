@@ -110,7 +110,7 @@ const toSetting = (authorId: string | undefined) => {
       }
 
       .read-count {
-        margin-left: 15px;
+        margin: 0 15px;
       }
     }
   }

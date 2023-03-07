@@ -228,6 +228,14 @@ export interface CommentParams {
   isLike?: boolean;
 }
 
+// 回复评论参数
+export interface ReplayComment {
+  articleId: string;
+  keyword: string;
+  selectComment: CommentParams;
+  isThreeTier?: boolean;
+}
+
 // 事件总线类型
 export interface Events {
   events: Object;
