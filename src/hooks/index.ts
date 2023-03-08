@@ -37,7 +37,11 @@ export const useScroller = () => {
 export const useCheckUserId = () => {
   const { userInfo } = loginStore;
   if (!userInfo?.userId) {
-    ElMessage.warning('请先登录后再试');
+    ElMessage({
+      message: '请先登录后再操作哦！',
+      type: 'warning',
+      offset: 80,
+    });
     return false;
   }
   return true;

@@ -312,7 +312,7 @@ const onViewMoreReply = (commentId: string) => {
       font-size: 15px;
 
       &:hover {
-        color: @active;
+        color: @theme-blue;
       }
       cursor: pointer;
       .clickNoSelectText();
@@ -323,7 +323,7 @@ const onViewMoreReply = (commentId: string) => {
     }
 
     .is-like {
-      color: @active;
+      color: @theme-blue;
     }
 
     .commentContent {
@@ -400,12 +400,16 @@ const onViewMoreReply = (commentId: string) => {
           }
         }
 
+        .deleteComment {
+          color: @font-danger;
+        }
+
         .draftContent {
           padding-left: 0;
         }
 
         .cancelReplay {
-          color: @active;
+          color: @theme-blue;
         }
       }
 

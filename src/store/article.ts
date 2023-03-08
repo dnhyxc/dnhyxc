@@ -60,7 +60,7 @@ export const useArticleStore = defineStore('article', {
     // 获取文章详情
     async getArticleDetail(id: string) {
       if (!id) {
-        ElMessage.error('哎呀！文章不翼而飞了！');
+        ElMessage.error('哦豁！文章不翼而飞了！');
         return;
       }
       this.loading = true;
@@ -108,7 +108,7 @@ export const useArticleStore = defineStore('article', {
     async getCommentList(id: string) {
       // 检验是否有userId，如果没有禁止发送请求
       // if (!useCheckUserId()) return;
-      if (!id) return ElMessage.error('哦豁！文章不翼而飞了，评论也不知所踪');
+      if (!id) return ElMessage.error('哦豁！文章不翼而飞了，评论也随着不知所踪');
       const res = normalizeResult<CommentParams[]>(await Service.getCommentList(id));
       if (res?.success) {
         this.commentList = res.data;
@@ -189,6 +189,9 @@ export const useArticleStore = defineStore('article', {
       isThreeTier?: boolean;
       getCommentList?: Function;
     }) {
+      // 检验是否有userId，如果没有禁止发送请求
+      if (!useCheckUserId()) return;
+
       const params = isThreeTier
         ? {
             commentId: comment.commentId!,
@@ -200,23 +203,21 @@ export const useArticleStore = defineStore('article', {
             articleId,
           };
 
-      Message('确定要下架该文章吗', '下架文章')
-        .then(async () => {
-          const res = normalizeResult<{ status: number }>(await Service.deleteComment(params));
-          if (res.success) {
-            ElMessage.success('删除成功');
-            getCommentList && getCommentList();
-          } else {
-            ElMessage.error(res.message);
-          }
-        })
-        .catch(() => {
-          ElMessage.error('删除失败');
-        });
+      Message('确定要删除该评论吗', '删除评论').then(async () => {
+        const res = normalizeResult<{ status: number }>(await Service.deleteComment(params));
+        if (res.success) {
+          ElMessage.success('删除成功');
+          getCommentList && getCommentList();
+        } else {
+          ElMessage.error(res.message);
+        }
+      });
     },
 
     // 文章点赞
     async likeArticle({ id, authorId }: { id: string; authorId?: string }) {
+      // 检验是否有userId，如果没有禁止发送请求
+      if (!useCheckUserId()) return;
       const res = normalizeResult<{ id: string; isLike: boolean }>(await Service.likeArticle({ id, authorId }));
       if (!res.success) {
         ElMessage.error(res.message);
