@@ -49,14 +49,12 @@ import { collectStore } from '@/store';
 import Loading from '@/components/Loading/index.vue';
 
 interface IProps {
+  articleId: string;
   collectVisible: boolean;
   buildVisible?: boolean;
 }
 
-const props = withDefaults(defineProps<IProps>(), {
-  collectVisible: false,
-  buildVisible: false,
-});
+const props = defineProps<IProps>();
 
 const emit = defineEmits(['update:collectVisible', 'update:buildVisible']);
 
@@ -124,8 +122,9 @@ const onCancel = () => {
 };
 
 // 确定
-const onSubmit = () => {
+const onSubmit = async () => {
   console.log(collectStore.checkedCollectIds, 'onSubmit');
+  await collectStore?.collectArticles(props.articleId);
   emit('update:collectVisible', false);
 };
 </script>

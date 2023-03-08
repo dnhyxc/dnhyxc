@@ -24,10 +24,18 @@ export const useCreateStore = defineStore('create', {
           }),
         );
         if (res.success) {
-          ElMessage.success(res.message);
+          ElMessage({
+            message: res.message,
+            type: 'success',
+            offset: 80,
+          });
           router?.push('/home');
         } else {
-          ElMessage.error(res.message);
+          ElMessage({
+            message: res.message,
+            type: 'error',
+            offset: 80,
+          });
         }
       } catch (error) {
         throw error;

@@ -12,6 +12,7 @@ interface IProps {
   collectList: AddCollectionRes[]; // 收藏集列表数据
   total: number; // 收藏集列表总数
   checkedCollectIds: string[];
+  collectStatus: boolean;
 }
 
 export const useCollectStore = defineStore('collect', {
@@ -22,6 +23,7 @@ export const useCollectStore = defineStore('collect', {
     collectList: [],
     loading: false,
     checkedCollectIds: [],
+    collectStatus: false,
   }),
 
   actions: {
@@ -33,11 +35,19 @@ export const useCollectStore = defineStore('collect', {
         await Service.createCollection({ ...params, status: Number(params.status) }),
       );
       if (res.success) {
-        ElMessage.success(res.message);
+        ElMessage({
+          message: res.message,
+          type: 'success',
+          offset: 80,
+        });
         this.checkedCollectIds = [res.data.id];
         return res;
       } else {
-        ElMessage.error(res.message);
+        ElMessage({
+          message: res.message,
+          type: 'error',
+          offset: 80,
+        });
       }
     },
 
@@ -59,7 +69,58 @@ export const useCollectStore = defineStore('collect', {
         this.collectList = [...this.collectList, ...res.data.list];
         this.total = res.data.total;
       } else {
-        ElMessage.error(res.message);
+        ElMessage({
+          message: res.message,
+          type: 'error',
+          offset: 80,
+        });
+      }
+    },
+
+    // 收藏文章
+    async collectArticles(articleId: string) {
+      if (!useCheckUserId()) return;
+      const res = normalizeResult<string>(
+        await Service.collectArticles({
+          ids: this.checkedCollectIds,
+          articleId,
+        }),
+      );
+      if (res.success) {
+        this.collectStatus = true;
+        ElMessage({
+          message: res.message,
+          type: 'success',
+          offset: 80,
+        });
+      } else {
+        ElMessage({
+          message: res.message,
+          type: 'error',
+          offset: 80,
+        });
+      }
+    },
+
+    // 获取文章收藏状态
+    async getCollectStatus(articleId: string) {
+      if (!useCheckUserId()) return;
+      const res = normalizeResult<{ collected: boolean }>(await Service.checkCollectionStatus(articleId));
+      if (res.success) {
+        this.collectStatus = res.data.collected;
+      }
+    },
+
+    // 取消收藏
+    async cancelCollected(articleId: string) {
+      const res = normalizeResult<number>(await Service.cancelCollected(articleId));
+      if (res.success) {
+        this.collectStatus = false;
+        ElMessage({
+          message: res.message,
+          type: 'success',
+          offset: 80,
+        });
       }
     },
 

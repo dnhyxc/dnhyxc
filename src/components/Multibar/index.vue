@@ -21,7 +21,7 @@
       }}</span>
     </div>
     <div class="action collect-wrap" @click="onCollect">
-      <i class="collect-font iconfont icon-31shoucangxuanzhong" />
+      <i :class="`collect-font iconfont ${collectStore?.collectStatus && 'active-collect'} icon-31shoucangxuanzhong`" />
     </div>
     <el-popover placement="top-start" :width="130" trigger="hover" popper-style="min-width: 130px">
       <template #default>
@@ -59,20 +59,21 @@
         </div>
       </template>
     </el-popover>
-    <CollectModel v-model:collect-visible="collectVisible" v-model:build-visible="buildVisible" />
+    <CollectModel v-model:collect-visible="collectVisible" v-model:build-visible="buildVisible" :article-id="id" />
     <AddCollectModel v-model:collect-visible="collectVisible" v-model:build-visible="buildVisible" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { HEAD_IMG } from '@/constant';
 import { shareQQ, shareSinaWeiBo } from '@/utils';
-import { articleStore } from '@/store';
+import { articleStore, collectStore, loginStore } from '@/store';
 import { useCommentCount } from '@/hooks';
 import Qrcode from '@/components/Qrcode/index.vue';
 import CollectModel from '@/components/CollectModel/index.vue';
 import AddCollectModel from '@/components/AddCollectModel/index.vue';
+import { ElMessage } from 'element-plus';
 
 interface IProps {
   id: string;
@@ -89,6 +90,11 @@ const buildVisible = ref<boolean>(false);
 
 const commentCount = useCommentCount;
 
+onMounted(() => {
+  // 获取收藏状态
+  collectStore?.getCollectStatus(props.id);
+});
+
 // 文章点赞
 const likeArticle = async () => {
   await articleStore?.likeArticle({ id: props.id });
@@ -101,7 +107,13 @@ const toComment = () => {
 
 // 收藏
 const onCollect = () => {
-  collectVisible.value = true;
+  if (!loginStore?.userInfo?.userId) return ElMessage.warning('请先登录后再操作哦！');
+  // 如果当前文章收藏状态为true，则取消收藏，否则就唤起收藏弹窗
+  if (collectStore?.collectStatus) {
+    collectStore?.cancelCollected(props.id);
+  } else {
+    collectVisible.value = true;
+  }
 };
 </script>
 
@@ -154,6 +166,10 @@ const onCollect = () => {
 
     .collect-font {
       font-size: 25px;
+    }
+
+    .active-collect {
+      color: @theme-blue;
     }
 
     .share-font {

@@ -53,7 +53,11 @@ export const useArticleStore = defineStore('article', {
         this.articleList = [...this.articleList, ...res.data.list];
         this.total = res.data.total;
       } else {
-        ElMessage.error(res.message);
+        ElMessage({
+          message: res.message,
+          type: 'error',
+          offset: 80,
+        });
       }
     },
 
@@ -70,7 +74,11 @@ export const useArticleStore = defineStore('article', {
         this.articleDetail = res.data;
         return res.data;
       } else {
-        ElMessage.error(res.message);
+        ElMessage({
+          message: res.message,
+          type: 'error',
+          offset: 80,
+        });
       }
     },
 
@@ -95,12 +103,18 @@ export const useArticleStore = defineStore('article', {
 
     // 获取上下篇文章
     async getAnotherArticles(params: AnotherParams) {
-      if (!params.id) return ElMessage.error('哦豁！文章不翼而飞了');
+      if (!params.id) {
+        ElMessage({
+          message: '哦豁！文章不翼而飞了',
+          type: 'error',
+          offset: 80,
+        });
+        return;
+      }
       const res = await Promise.all([this.getPrevArticle(params), this.getNextArticle(params)]);
       this.loading = false;
       if (res?.length) {
         this.anotherArticleList = res;
-        console.log(res, 'anotherArticleList');
       }
     },
 
@@ -108,12 +122,23 @@ export const useArticleStore = defineStore('article', {
     async getCommentList(id: string) {
       // 检验是否有userId，如果没有禁止发送请求
       // if (!useCheckUserId()) return;
-      if (!id) return ElMessage.error('哦豁！文章不翼而飞了，评论也随着不知所踪');
+      if (!id) {
+        ElMessage({
+          message: '哦豁！文章不翼而飞了，评论也随着不知所踪',
+          type: 'error',
+          offset: 80,
+        });
+        return;
+      }
       const res = normalizeResult<CommentParams[]>(await Service.getCommentList(id));
       if (res?.success) {
         this.commentList = res.data;
       } else {
-        ElMessage.error(res.message);
+        ElMessage({
+          message: res.message,
+          type: 'error',
+          offset: 80,
+        });
       }
     },
 
@@ -145,10 +170,18 @@ export const useArticleStore = defineStore('article', {
       const res = normalizeResult<{ commentId: string }>(await Service.releaseComment(params));
 
       if (res?.success) {
-        ElMessage.success(res.message);
+        ElMessage({
+          message: res.message,
+          type: 'success',
+          offset: 80,
+        });
         return res;
       } else {
-        ElMessage.error(res.message);
+        ElMessage({
+          message: res.message,
+          type: 'error',
+          offset: 80,
+        });
       }
     },
 
@@ -172,7 +205,11 @@ export const useArticleStore = defineStore('article', {
       if (res.success) {
         data.getCommentList && data.getCommentList();
       } else {
-        ElMessage.error(res.message);
+        ElMessage({
+          message: res.message,
+          type: 'error',
+          offset: 80,
+        });
         return res;
       }
     },
@@ -206,10 +243,18 @@ export const useArticleStore = defineStore('article', {
       Message('确定要删除该评论吗', '删除评论').then(async () => {
         const res = normalizeResult<{ status: number }>(await Service.deleteComment(params));
         if (res.success) {
-          ElMessage.success('删除成功');
+          ElMessage({
+            message: res.message,
+            type: 'success',
+            offset: 80,
+          });
           getCommentList && getCommentList();
         } else {
-          ElMessage.error(res.message);
+          ElMessage({
+            message: res.message,
+            type: 'error',
+            offset: 80,
+          });
         }
       });
     },

@@ -62,3 +62,9 @@ export const DELETE_COMMENT = '/api/deleteComment';
 export const CREATE_COLLECTION = '/api/createCollection';
 // 获取收藏集列表
 export const GET_COLLECTION_LIST = '/api/getCollectionList';
+// 收藏文章
+export const COLLECT_ARTICLES = '/api/collectArticles';
+// 获取收藏状态
+export const CHECK_COLLECTION_STATUS = '/api/checkCollectionStatus';
+// 取消收藏
+export const CANCEL_COLLECTED = '/api/cancelCollected';

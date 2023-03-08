@@ -44,9 +44,17 @@ export const useLoginStore = defineStore('login', {
           }),
         );
         if (res.success) {
-          ElMessage.success(res.message);
+          ElMessage({
+            message: res.message,
+            type: 'success',
+            offset: 80,
+          });
         } else {
-          ElMessage.error(res.message);
+          ElMessage({
+            message: res.message,
+            type: 'error',
+            offset: 80,
+          });
         }
         return res;
       } catch (error) {
@@ -74,7 +82,11 @@ export const useLoginStore = defineStore('login', {
           // 登陆成功后返回到上一页面
           router?.push(commonStore.backPath);
         } else {
-          ElMessage.error(res.message);
+          ElMessage({
+            message: res.message,
+            type: 'error',
+            offset: 80,
+          });
         }
         return res;
       } catch (error) {
@@ -91,7 +103,11 @@ export const useLoginStore = defineStore('login', {
       if (res.success) {
         await this.onLogin(params, router);
       } else {
-        ElMessage.error(res.message);
+        ElMessage({
+          message: res.message,
+          type: 'error',
+          offset: 80,
+        });
       }
     },
 
@@ -104,19 +120,6 @@ export const useLoginStore = defineStore('login', {
         throw error;
       }
     },
-
-    // 验证token是否过期
-    // async verifyToken() {
-    //   try {
-    //     const res = normalizeResult<number>(await Service.verify());
-    //     if (!res.success) {
-    //       ElMessage.warning(res.message);
-    //       this.onLogout();
-    //     }
-    //   } catch (error) {
-    //     throw error;
-    //   }
-    // },
 
     // 退出登录
     onLogout() {

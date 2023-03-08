@@ -122,3 +122,21 @@ export const getCollectionList = async (params: { pageNo: number; pageSize: numb
   const res = await post(API.GET_COLLECTION_LIST, copeParams(params));
   return res;
 };
+
+// 收藏文章
+export const collectArticles = async (params: { ids: string[]; articleId: string }) => {
+  const res = await post(API.COLLECT_ARTICLES, copeParams(params));
+  return res;
+};
+
+// 获取文章收藏状态
+export const checkCollectionStatus = async (articleId: string) => {
+  const res = await post(API.CHECK_COLLECTION_STATUS, copeParams({ articleId }));
+  return res;
+};
+
+// 取消收藏
+export const cancelCollected = async (articleId: string) => {
+  const res = await post(API.CANCEL_COLLECTED, copeParams({ articleId }));
+  return res;
+};
