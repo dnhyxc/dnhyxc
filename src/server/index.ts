@@ -110,3 +110,15 @@ export const likeArticle = async (params: { id: string; authorId?: string | null
   const res = await post(API.LIKE_ARTICLE, copeParams(params));
   return res;
 };
+
+// 新建收藏集
+export const createCollection = async (params: { name: string; desc: string; status: number }) => {
+  const res = await post(API.CREATE_COLLECTION, copeParams(params));
+  return res;
+};
+
+// 获取收藏集列表
+export const getCollectionList = async (params: { pageNo: number; pageSize: number }) => {
+  const res = await post(API.GET_COLLECTION_LIST, copeParams(params));
+  return res;
+};

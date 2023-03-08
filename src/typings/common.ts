@@ -243,3 +243,9 @@ export interface Events {
   on: (eventName: string, fn: Function) => void;
   off: (eventName: string, fn: Function) => void;
 }
+
+// 创建收藏集返回值
+export interface CollectListRes {
+  total: number;
+  list: AddCollectionRes[];
+}

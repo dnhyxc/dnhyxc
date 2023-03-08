@@ -7,6 +7,7 @@ export {}
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
+    AddCollectModel: typeof import('./src/components/AddCollectModel/index.vue')['default']
     AnotherArticle: typeof import('./src/components/AnotherArticle/index.vue')['default']
     BuildCollectModel: typeof import('./src/components/BuildCollectModel/index.vue')['default']
     Card: typeof import('./src/components/Card/index.vue')['default']

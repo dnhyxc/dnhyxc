@@ -60,7 +60,7 @@
       </template>
     </el-popover>
     <CollectModel v-model:collect-visible="collectVisible" v-model:build-visible="buildVisible" />
-    <BuildCollectModel v-model:collect-visible="collectVisible" v-model:build-visible="buildVisible" />
+    <AddCollectModel v-model:collect-visible="collectVisible" v-model:build-visible="buildVisible" />
   </div>
 </template>
 
@@ -72,7 +72,7 @@ import { articleStore } from '@/store';
 import { useCommentCount } from '@/hooks';
 import Qrcode from '@/components/Qrcode/index.vue';
 import CollectModel from '@/components/CollectModel/index.vue';
-import BuildCollectModel from '@/components/BuildCollectModel/index.vue';
+import AddCollectModel from '@/components/AddCollectModel/index.vue';
 
 interface IProps {
   id: string;

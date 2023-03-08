@@ -13,19 +13,21 @@
           <span class="info">（创建或选择你想添加的收藏集）</span>
         </div>
       </template>
-      <div class="content">
-        <div v-for="i in dataList" :key="i.id" class="collect-list">
-          <div class="left" @click.stop="onCheckedItem(i.id)">
-            <div class="collect-name">{{ i.name }} <i v-if="i.status === 2" class="iconfont icon-lock" /></div>
-            <div class="collect-info">{{ i.articleIds?.length }} 篇文章</div>
+      <Loading :loading="collectStore?.loading" class="content">
+        <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
+          <div v-for="i in collectStore?.collectList" :key="i.id" class="collect-list">
+            <div class="left" @click.stop="onCheckedItem(i.id)">
+              <div class="collect-name">{{ i.name }} <i v-if="i.status === 2" class="iconfont icon-lock" /></div>
+              <div class="collect-info">{{ i.articleIds?.length }} 篇文章</div>
+            </div>
+            <div class="right">
+              <el-checkbox-group v-model="collectStore.checkedCollectIds" size="large">
+                <el-checkbox :label="i.id" />
+              </el-checkbox-group>
+            </div>
           </div>
-          <div class="right">
-            <el-checkbox-group v-model="checkedItem" size="large">
-              <el-checkbox :label="i.id" />
-            </el-checkbox-group>
-          </div>
-        </div>
-      </div>
+        </el-scrollbar>
+      </Loading>
       <template #footer>
         <div class="footer">
           <span class="build" @click="onBuildCollect">
@@ -42,37 +44,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
-
-const dataList = [
-  {
-    name: 'test1',
-    desc: 'test1test1test1test1',
-    status: 2,
-    createTime: 1678256151471,
-    articleIds: ['63fdab2ae2d6bf53efaa6db7'],
-    userId: '63e24c3be2d6bf53efaa69a9',
-    id: '64082810e2d6bf53efaa7287',
-  },
-  {
-    name: 'test2',
-    desc: 'test2test2test2test2',
-    status: 1,
-    createTime: 1678256151471,
-    articleIds: ['63fdab2ae2d6bf53efaa6db7'],
-    userId: '63e24c3be2d6bf53efaa69a9',
-    id: '64082810e2d6bf53efaa7288',
-  },
-  {
-    name: 'test3',
-    desc: 'test3test3test3test3test3',
-    status: 2,
-    createTime: 1678256151471,
-    articleIds: ['63fdab2ae2d6bf53efaa6db7'],
-    userId: '63e24c3be2d6bf53efaa69a9',
-    id: '64082810e2d6bf53efaa7289',
-  },
-];
+import { computed, ref, watch, onMounted, onUnmounted } from 'vue';
+import { collectStore } from '@/store';
+import Loading from '@/components/Loading/index.vue';
 
 interface IProps {
   collectVisible: boolean;
@@ -97,25 +71,43 @@ const visible = computed({
 });
 
 // 选中的收藏集
-const checkedItem = ref<string[]>([]);
+const isMounted = ref<boolean>(false);
 
-// 当窗口隐藏时，清除选中收藏集
+onMounted(() => {
+  isMounted.value = true;
+});
+
+// 清除收藏集列表相关数据
+onUnmounted(() => {
+  collectStore?.clearCollectList();
+});
+
 watch(
   () => props.collectVisible,
   (newVal) => {
     if (!newVal) {
-      checkedItem.value = [];
+      // 窗口隐藏时，清除收藏集相关数据
+      collectStore?.clearCollectList();
+    } else {
+      // 当窗口显示时，请求收藏集列表
+      onFetchData();
     }
   },
 );
 
+// 请求数据
+const onFetchData = async () => {
+  console.log('加载收藏集》》》》getCollectList');
+  await collectStore.getCollectList();
+};
+
 // 选择需要加入的收藏夹
 const onCheckedItem = (id: string) => {
-  const res = checkedItem.value.find((i) => i === id);
+  const res = collectStore?.checkedCollectIds.find((i) => i === id);
   if (res) {
-    checkedItem.value = checkedItem.value.filter((i) => i !== id);
+    collectStore.checkedCollectIds = collectStore.checkedCollectIds.filter((i) => i !== id);
   } else {
-    checkedItem.value = [...checkedItem.value, id];
+    collectStore.checkedCollectIds = [...collectStore.checkedCollectIds, id];
   }
 };
 
@@ -127,13 +119,13 @@ const onBuildCollect = () => {
 
 // 取消
 const onCancel = () => {
-  console.log(checkedItem.value, 'onCancel');
+  console.log(collectStore.checkedCollectIds, 'onCancel');
   emit('update:collectVisible', false);
 };
 
 // 确定
 const onSubmit = () => {
-  console.log(checkedItem.value, 'onSubmit');
+  console.log(collectStore.checkedCollectIds, 'onSubmit');
   emit('update:collectVisible', false);
 };
 </script>
@@ -157,11 +149,22 @@ const onSubmit = () => {
   }
 
   .content {
+    min-height: 130px;
+    max-height: 300px;
+
+    :deep {
+      .scrollbar-wrapper {
+        min-height: 130px;
+        max-height: 300px;
+      }
+    }
+
     .collect-list {
       display: flex;
       justify-content: space-between;
       align-items: center;
       padding: 10px 5px;
+      margin-right: 5px;
       border-bottom: 1px solid @card-border;
       cursor: pointer;
       .clickNoSelectText();
@@ -211,6 +214,12 @@ const onSubmit = () => {
       .icon-add {
         font-size: 14px;
       }
+    }
+  }
+
+  :deep {
+    .el-dialog__body {
+      padding: 15px 10px 15px 15px;
     }
   }
 }

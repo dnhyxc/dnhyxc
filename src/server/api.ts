@@ -58,3 +58,7 @@ export const COMMENTS = '/api/comments';
 export const GIVE_COMMENT_LIKE = '/api/giveLike';
 // 评论点赞
 export const DELETE_COMMENT = '/api/deleteComment';
+// 创建收藏集
+export const CREATE_COLLECTION = '/api/createCollection';
+// 获取收藏集列表
+export const GET_COLLECTION_LIST = '/api/getCollectionList';
