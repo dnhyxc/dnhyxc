@@ -20,7 +20,7 @@
         commentCount > 999 ? `${String(commentCount).slice(0, 3)}+` : commentCount
       }}</span>
     </div>
-    <div class="action collect-wrap">
+    <div class="action collect-wrap" @click="onCollect">
       <i class="collect-font iconfont icon-31shoucangxuanzhong" />
     </div>
     <el-popover placement="top-start" :width="130" trigger="hover" popper-style="min-width: 130px">
@@ -59,15 +59,20 @@
         </div>
       </template>
     </el-popover>
+    <CollectModel v-model:collect-visible="collectVisible" v-model:build-visible="buildVisible" />
+    <BuildCollectModel v-model:collect-visible="collectVisible" v-model:build-visible="buildVisible" />
   </div>
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue';
 import { HEAD_IMG } from '@/constant';
 import { shareQQ, shareSinaWeiBo } from '@/utils';
 import { articleStore } from '@/store';
 import { useCommentCount } from '@/hooks';
 import Qrcode from '@/components/Qrcode/index.vue';
+import CollectModel from '@/components/CollectModel/index.vue';
+import BuildCollectModel from '@/components/BuildCollectModel/index.vue';
 
 interface IProps {
   id: string;
@@ -75,6 +80,12 @@ interface IProps {
 }
 
 const props = defineProps<IProps>();
+
+// 收藏集弹窗显隐状态
+const collectVisible = ref<boolean>(false);
+
+// 创建收藏集弹窗显隐状态
+const buildVisible = ref<boolean>(false);
 
 const commentCount = useCommentCount;
 
@@ -86,6 +97,11 @@ const likeArticle = async () => {
 // 滚动到评论
 const toComment = () => {
   props.onScrollTo();
+};
+
+// 收藏
+const onCollect = () => {
+  collectVisible.value = true;
 };
 </script>
 

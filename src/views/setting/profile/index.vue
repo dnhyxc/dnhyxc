@@ -40,7 +40,7 @@
           class="form-item"
         >
           <el-input
-            v-model="profileForm.username"
+            v-model.trim="profileForm.username"
             v-focus
             size="large"
             placeholder="请输入用户名"
@@ -55,7 +55,7 @@
           }"
           class="form-item"
         >
-          <el-input v-model="profileForm.job" size="large" placeholder="请输入职位" @keyup.enter="onEnter" />
+          <el-input v-model.trim="profileForm.job" size="large" placeholder="请输入职位" @keyup.enter="onEnter" />
         </el-form-item>
         <el-form-item
           label="座右铭"
@@ -65,7 +65,7 @@
           }"
           class="form-item"
         >
-          <el-input v-model="profileForm.motto" size="large" placeholder="请输入座右铭" @keyup.enter="onEnter" />
+          <el-input v-model.trim="profileForm.motto" size="large" placeholder="请输入座右铭" @keyup.enter="onEnter" />
         </el-form-item>
         <el-form-item
           label="个人介绍"
@@ -76,7 +76,7 @@
           class="form-item"
         >
           <el-input
-            v-model="profileForm.introduce"
+            v-model.trim="profileForm.introduce"
             type="textarea"
             :autosize="{ minRows: 3, maxRows: 5 }"
             placeholder="请输入个人介绍"

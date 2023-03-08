@@ -18,7 +18,7 @@
       ]"
       class="form-item"
     >
-      <el-input v-model="resetForm.username" size="large" placeholder="请输入用户名" @keyup.enter="onEnter" />
+      <el-input v-model.trim="resetForm.username" size="large" placeholder="请输入用户名" @keyup.enter="onEnter" />
     </el-form-item>
     <el-form-item
       v-if="needPwd"
@@ -31,7 +31,7 @@
       class="form-item"
     >
       <el-input
-        v-model="resetForm.newPwd"
+        v-model.trim="resetForm.newPwd"
         size="large"
         placeholder="请输入新密码"
         show-password
@@ -49,7 +49,7 @@
       class="form-item"
     >
       <el-input
-        v-model="resetForm.confirmPwd"
+        v-model.trim="resetForm.confirmPwd"
         size="large"
         placeholder="请输入确认密码"
         show-password

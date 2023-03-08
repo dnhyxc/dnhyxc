@@ -21,7 +21,7 @@
           &nbsp;填写
         </i>
         <div v-show="currentEdit === i.type" class="edit-content">
-          <el-input v-model="accountForm[i.type]" v-focus :placeholder="i.placeholder" @keyup.enter="onEnter(i.type)" />
+          <el-input v-model.trim="accountForm[i.type]" v-focus :placeholder="i.placeholder" @keyup.enter="onEnter(i.type)" />
           <div class="actions">
             <el-button type="primary" class="action" @click="onOk(i.type)">确定</el-button>
             <el-button class="action" @click="onCancel(i.type)">取消</el-button>

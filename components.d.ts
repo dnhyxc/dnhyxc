@@ -8,8 +8,10 @@ export {}
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     AnotherArticle: typeof import('./src/components/AnotherArticle/index.vue')['default']
+    BuildCollectModel: typeof import('./src/components/BuildCollectModel/index.vue')['default']
     Card: typeof import('./src/components/Card/index.vue')['default']
     Carousel: typeof import('./src/components/Carousel/index.vue')['default']
+    CollectModel: typeof import('./src/components/CollectModel/index.vue')['default']
     Comment: typeof import('./src/components/Comment/index.vue')['default']
     DraftInput: typeof import('./src/components/DraftInput/index.vue')['default']
     Editor: typeof import('./src/components/Editor/index.vue')['default']
@@ -19,6 +21,7 @@ declare module '@vue/runtime-core' {
     ElCarousel: typeof import('element-plus/es')['ElCarousel']
     ElCarouselItem: typeof import('element-plus/es')['ElCarouselItem']
     ElCheckbox: typeof import('element-plus/es')['ElCheckbox']
+    ElCheckboxGroup: typeof import('element-plus/es')['ElCheckboxGroup']
     ElContainer: typeof import('element-plus/es')['ElContainer']
     ElDatePicker: typeof import('element-plus/es')['ElDatePicker']
     ElDialog: typeof import('element-plus/es')['ElDialog']

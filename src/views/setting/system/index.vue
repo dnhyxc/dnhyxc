@@ -50,7 +50,7 @@
     <el-dialog v-model="visible" title="设置快捷键" width="380" center :show-close="false">
       <div class="inp-wrap">
         <el-input
-          v-model="shortcut"
+          v-model.trim="shortcut"
           v-focus
           size="large"
           placeholder="请输入快捷键"
