@@ -34,9 +34,11 @@ export const useScroller = () => {
 };
 
 // 判断是否存在userId的hooks
-export const useCheckUserId = () => {
+export const useCheckUserId = (needMsg: boolean = true) => {
   const { userInfo } = loginStore;
-  if (!userInfo?.userId) {
+  if (!userInfo?.userId && needMsg) {
+    console.log(needMsg, 'needMsg');
+
     ElMessage({
       message: '请先登录后再操作哦！',
       type: 'warning',

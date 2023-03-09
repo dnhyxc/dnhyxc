@@ -2,7 +2,7 @@
   <div class="container">
     <!-- 上传图片菜单默认为禁用状态 设置 disabled-menus 为空数组可以开启 -->
     <v-md-editor
-      v-model="createStore.mackdown"
+      v-model.trim="createStore.mackdown"
       placeholder="编辑内容"
       autofocus
       :height="height"
@@ -15,7 +15,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, watchEffect } from 'vue';
+import { reactive, watchEffect, onActivated, onDeactivated } from 'vue';
 import { ElMessage } from 'element-plus';
 import { createStore } from '@/store';
 
@@ -59,14 +59,27 @@ watchEffect(() => {
   }
 });
 
+onActivated(() => {
+  console.log('组件显示');
+});
+
+onDeactivated(() => {
+  console.log('组件隐藏');
+});
+
 // 自定义工具栏配置
 const toolbar = reactive<Toolbar>({
   create: {
-    text: props.articleId ? '更新文章' : '发布文章',
-    title: props.articleId ? '更新文章' : '发布文章',
+    text: '发布',
+    title: '发布',
     action(editor) {
       if (!createStore?.mackdown) {
-        ElMessage.warning('嘿！一个字都没写休想发布');
+        ElMessage({
+          message: '嘿！一个字都没写休想发布',
+          type: 'warning',
+          offset: 80,
+        });
+        return;
       }
       props.onPublish && props.onPublish();
     },

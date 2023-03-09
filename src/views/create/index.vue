@@ -12,14 +12,20 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onActivated } from 'vue';
 import { useRoute } from 'vue-router';
 import Editor from '@/components/Editor/index.vue';
 import CreateDrawer from './CreateDrawer/index.vue';
+import { articleStore } from '@/store';
 
 const route = useRoute();
 
 const visible = ref<boolean>(false); // 权限设置弹窗的状态
+
+onActivated(() => {
+  if (!route.query.id) return;
+  articleStore?.getArticleDetail(route.query.id as string, true);
+});
 
 // 点击编辑器header发布文章按钮
 const onPublish = () => {

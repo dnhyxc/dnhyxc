@@ -4,7 +4,7 @@ import * as Service from '@/server';
 import { normalizeResult, Message } from '@/utils';
 import { useCheckUserId } from '@/hooks';
 import { ArticleListResult, ArticleItem, AnotherParams, CommentParams, ReplayComment } from '@/typings/common';
-import { loginStore, createStore } from '@/store';
+import { createStore, loginStore } from '@/store';
 
 interface IProps {
   loading: boolean;
@@ -62,7 +62,7 @@ export const useArticleStore = defineStore('article', {
     },
 
     // 获取文章详情
-    async getArticleDetail(id: string) {
+    async getArticleDetail(id: string, store?: true) {
       if (!id) {
         ElMessage.error('哦豁！文章不翼而飞了！');
         return;
@@ -72,7 +72,13 @@ export const useArticleStore = defineStore('article', {
       if (res.success) {
         this.detailArtLikeCount = res.data?.likeCount!;
         this.articleDetail = res.data;
-        createStore.mackdown = res.data.content!;
+        // store 为 true，则说明是编辑，需要缓存编辑内容
+        if (store) {
+          createStore.mackdown = res.data.content!;
+          // 如果是创建页调用获取详情的接口，则需要清除文章详情的缓存。防止再次进入详情时文章目录出现错乱
+          this.articleDetail = { id: '' };
+          this.detailArtLikeCount = 0;
+        }
         return res.data;
       } else {
         ElMessage({

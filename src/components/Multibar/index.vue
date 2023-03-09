@@ -112,7 +112,13 @@ const toComment = () => {
 
 // 收藏
 const onCollect = () => {
-  if (!loginStore?.userInfo?.userId) return ElMessage.warning('请先登录后再操作哦！');
+  if (!loginStore?.userInfo?.userId) {
+    return ElMessage({
+      message: '请先登录后再操作哦！',
+      type: 'warning',
+      offset: 80,
+    });
+  }
   // 如果当前文章收藏状态为true，则取消收藏，否则就唤起收藏弹窗
   if (collectStore?.collectStatus) {
     collectStore?.cancelCollected(props.id);

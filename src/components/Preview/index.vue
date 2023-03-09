@@ -45,6 +45,7 @@ onMounted(() => {
 
 // 组件卸载时，清除tocTitles，以防存在下次进入详情页时，目录存在缓存
 onUnmounted(() => {
+  previewRef.value = null;
   commonStore.tocTitles = [];
 });
 </script>

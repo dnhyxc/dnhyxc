@@ -108,7 +108,7 @@ export const useCollectStore = defineStore('collect', {
 
     // 获取文章收藏状态
     async getCollectStatus(articleId: string) {
-      if (!useCheckUserId()) return;
+      if (!useCheckUserId(false)) return;
       const res = normalizeResult<{ collected: boolean }>(await Service.checkCollectionStatus(articleId));
       if (res.success) {
         this.collectStatus = res.data.collected;

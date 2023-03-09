@@ -43,7 +43,7 @@
 
 <script setup lang="ts">
 import { useRouter, useRoute } from 'vue-router';
-import { articleStore, loginStore } from '@/store';
+import { articleStore, loginStore, createStore } from '@/store';
 import { formatDate } from '@/utils';
 import { HEAD_IMG } from '@/constant';
 import Image from '@/components/Image/index.vue';
@@ -53,13 +53,13 @@ const route = useRoute();
 
 // 编辑文章
 const onEditArticle = () => {
+  // 点击编辑时，设置创建页初始值(这里设置一遍，用于解决创建也因为接口相应导致mackdown赋值延迟的问题)
+  createStore.mackdown = articleStore?.articleDetail?.content!;
   router.push(`/create?id=${route.params.id}`);
 };
 
 // 去我的主页
 const toSetting = (authorId: string | undefined) => {
-  console.log(authorId, 'authorId');
-
   router.push(`/personal?id=${authorId}`);
 };
 </script>
