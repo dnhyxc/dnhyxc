@@ -15,17 +15,27 @@
       </template>
       <Loading :loading="collectStore?.loading" class="content">
         <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
-          <div v-for="i in collectStore?.collectList" :key="i.id" class="collect-list">
-            <div class="left" @click.stop="onCheckedItem(i.id)">
-              <div class="collect-name">{{ i.name }} <i v-if="i.status === 2" class="iconfont icon-lock" /></div>
-              <div class="collect-info">{{ i.articleIds?.length }} 篇文章</div>
-            </div>
-            <div class="right">
-              <el-checkbox-group v-model="collectStore.checkedCollectIds" size="large">
-                <el-checkbox :label="i.id" />
-              </el-checkbox-group>
+          <div
+            v-if="isMounted"
+            v-infinite-scroll="onFetchData"
+            :infinite-scroll-delay="300"
+            :infinite-scroll-disabled="disabled"
+            :infinite-scroll-distance="2"
+          >
+            <div v-for="i in collectStore?.collectList" :key="i.id" class="collect-list">
+              <div class="left" @click.stop="onCheckedItem(i.id)">
+                <div class="collect-name">{{ i.name }} <i v-if="i.status === 2" class="iconfont icon-lock" /></div>
+                <div class="collect-info">{{ i.articleIds?.length }} 篇文章</div>
+              </div>
+              <div class="right">
+                <el-checkbox-group v-model="collectStore.checkedCollectIds" size="large">
+                  <el-checkbox :label="i.id" />
+                </el-checkbox-group>
+              </div>
             </div>
           </div>
+          <!-- <div v-if="collectStore.loading" class="loading">Loading...</div> -->
+          <div v-if="noMore" class="no-more">没有更多了～～～</div>
         </el-scrollbar>
       </Loading>
       <template #footer>
@@ -70,6 +80,8 @@ const visible = computed({
 
 // 选中的收藏集
 const isMounted = ref<boolean>(false);
+const noMore = computed(() => collectStore?.collectList.length >= collectStore?.total);
+const disabled = computed(() => collectStore?.loading || noMore.value);
 
 onMounted(() => {
   isMounted.value = true;
@@ -220,6 +232,13 @@ const onSubmit = async () => {
     .el-dialog__body {
       padding: 15px 10px 15px 15px;
     }
+  }
+
+  .loading,
+  .no-more {
+    text-align: center;
+    color: @font-4;
+    padding-top: 15px;
   }
 }
 </style>

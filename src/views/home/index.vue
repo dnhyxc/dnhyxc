@@ -33,7 +33,6 @@
           </div>
           <ToTopIcon v-if="scrollTop >= 500" :on-scroll-to="onScrollTo" />
         </div>
-        <div v-if="articleStore.loading" class="loading">Loading...</div>
         <div v-if="noMore" class="no-more">没有更多了～～～</div>
       </el-scrollbar>
     </template>
