@@ -4,7 +4,7 @@ import * as Service from '@/server';
 import { normalizeResult, Message } from '@/utils';
 import { useCheckUserId } from '@/hooks';
 import { ArticleListResult, ArticleItem, AnotherParams, CommentParams, ReplayComment } from '@/typings/common';
-import { loginStore } from '.';
+import { loginStore, createStore } from '@/store';
 
 interface IProps {
   loading: boolean;
@@ -72,6 +72,7 @@ export const useArticleStore = defineStore('article', {
       if (res.success) {
         this.detailArtLikeCount = res.data?.likeCount!;
         this.articleDetail = res.data;
+        createStore.mackdown = res.data.content!;
         return res.data;
       } else {
         ElMessage({

@@ -19,7 +19,6 @@
               {
                 required: true,
                 message: '请输入文章标题',
-                trigger: 'blur',
               },
             ]"
             class="form-item"
@@ -33,14 +32,23 @@
               {
                 required: true,
                 message: '请输入文章分类',
-                trigger: 'blur',
               },
             ]"
             class="form-item"
           >
-            <el-select v-model="createArticleForm.classify" clearable placeholder="请输入文章分类">
-              <el-option v-for="item in ARTICLE_CLASSIFY" :key="item" :label="item" :value="item" />
-            </el-select>
+            <div class="classify">
+              <el-input v-model="createArticleForm.classify" placeholder="请输入文章分类" />
+              <el-dropdown max-height="200px" trigger="click" @command="onClassifyCommand">
+                <el-button type="primary">选择&nbsp;<i class="iconfont icon-xiajiantou" /></el-button>
+                <template #dropdown>
+                  <el-dropdown-menu>
+                    <el-dropdown-item v-for="item in ARTICLE_CLASSIFY" :key="item" :command="item">
+                      {{ item }}
+                    </el-dropdown-item>
+                  </el-dropdown-menu>
+                </template>
+              </el-dropdown>
+            </div>
           </el-form-item>
           <el-form-item
             prop="tag"
@@ -49,14 +57,23 @@
               {
                 required: true,
                 message: '请输入文章标签',
-                trigger: 'blur',
               },
             ]"
             class="form-item"
           >
-            <el-select v-model="createArticleForm.tag" clearable placeholder="请输入文章标签">
-              <el-option v-for="item in ARTICLE_TAG" :key="item.key" :label="item.label" :value="item.label" />
-            </el-select>
+            <div class="classify">
+              <el-input v-model="createArticleForm.tag" placeholder="请输入文章标签" />
+              <el-dropdown max-height="200px" trigger="click" @command="onTagCommand">
+                <el-button type="primary">选择&nbsp;<i class="iconfont icon-xiajiantou" /></el-button>
+                <template #dropdown>
+                  <el-dropdown-menu>
+                    <el-dropdown-item v-for="item in ARTICLE_TAG" :key="item.key" :command="item">
+                      {{ item.label }}
+                    </el-dropdown-item>
+                  </el-dropdown-menu>
+                </template>
+              </el-dropdown>
+            </div>
           </el-form-item>
           <el-form-item
             prop="createTime"
@@ -65,7 +82,6 @@
               {
                 required: true,
                 message: '请选择发文时间',
-                trigger: 'blur',
               },
             ]"
             class="form-item"
@@ -90,7 +106,6 @@
               {
                 required: true,
                 message: '请输入文章摘要',
-                trigger: 'blur',
               },
             ]"
             class="form-item"
@@ -128,7 +143,6 @@ const router = useRouter();
 
 interface IProps {
   modelValue: boolean;
-  mackdown: string;
 }
 
 const formRef = ref<FormInstance>();
@@ -143,7 +157,6 @@ const createArticleForm = ref<CreateArticleParams>({
 
 const props = withDefaults(defineProps<IProps>(), {
   modelValue: false,
-  mackdown: '',
 });
 
 const emit = defineEmits(['update:modelValue']);
@@ -158,6 +171,16 @@ const visible = computed({
   },
 });
 
+// 选择分类
+const onClassifyCommand = (classify: string) => {
+  createArticleForm.value.classify = classify;
+};
+
+// 选择标签
+const onTagCommand = (item: { label: string; key: string }) => {
+  createArticleForm.value.tag = item.label;
+};
+
 // 获取上传组件中的coverImage
 const getCoverImage = (url: string) => {
   createArticleForm.value.coverImg = url;
@@ -165,6 +188,8 @@ const getCoverImage = (url: string) => {
 
 // 取消
 const onCancel = () => {
+  createStore.mackdown = '';
+  formRef.value?.resetFields();
   emit('update:modelValue', false);
 };
 
@@ -175,13 +200,11 @@ const onSubmit = () => {
     if (valid) {
       const params = {
         ...createArticleForm.value,
-        content: props.mackdown,
+        content: createStore?.mackdown,
       };
-      console.log(params, 'params');
       await createStore.createArticle(params, router);
       onCancel();
     } else {
-      console.log(createArticleForm.value, 'error submit!');
       return false;
     }
   });
@@ -221,6 +244,27 @@ const onSubmit = () => {
         align-content: center;
         justify-content: center;
         height: 140px;
+      }
+    }
+
+    .classify {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      .icon-xiajiantou {
+        font-size: 14px;
+      }
+
+      :deep {
+        .el-input__wrapper {
+          border-top-right-radius: 0;
+          border-bottom-right-radius: 0;
+        }
+        .el-button {
+          border-top-left-radius: 0;
+          border-bottom-left-radius: 0;
+        }
       }
     }
   }

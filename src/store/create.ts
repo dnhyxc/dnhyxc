@@ -7,8 +7,14 @@ import { normalizeResult } from '@/utils';
 import { useCheckUserId } from '@/hooks';
 import { loginStore } from '@/store';
 
+interface IProps {
+  mackdown: string;
+}
+
 export const useCreateStore = defineStore('create', {
-  state: () => ({}),
+  state: (): IProps => ({
+    mackdown: '',
+  }),
 
   actions: {
     // 创建文章
@@ -28,6 +34,7 @@ export const useCreateStore = defineStore('create', {
             message: res.message,
             type: 'success',
             offset: 80,
+            duration: 2000,
           });
           router?.push('/home');
         } else {
@@ -35,11 +42,17 @@ export const useCreateStore = defineStore('create', {
             message: res.message,
             type: 'error',
             offset: 80,
+            duration: 2000,
           });
         }
       } catch (error) {
         throw error;
       }
+    },
+
+    // 清除编辑内容
+    clearCreateInfo() {
+      this.mackdown = '';
     },
   },
 });

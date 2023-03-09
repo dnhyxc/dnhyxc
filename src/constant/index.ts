@@ -266,6 +266,10 @@ export const ARTICLE_TAG = [
     label: 'Nginx',
     key: '25',
   },
+  {
+    label: '其它',
+    key: '26',
+  },
 ];
 
 // 博主主页tab类型

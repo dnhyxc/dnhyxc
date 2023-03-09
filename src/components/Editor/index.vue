@@ -2,7 +2,7 @@
   <div class="container">
     <!-- 上传图片菜单默认为禁用状态 设置 disabled-menus 为空数组可以开启 -->
     <v-md-editor
-      v-model="mackdown"
+      v-model="createStore.mackdown"
       placeholder="编辑内容"
       autofocus
       :height="height"
@@ -15,8 +15,9 @@
 </template>
 
 <script setup lang="ts">
+import { reactive, watchEffect } from 'vue';
 import { ElMessage } from 'element-plus';
-import { ref, reactive, watchEffect } from 'vue';
+import { createStore } from '@/store';
 
 interface ToolbarItem {
   action?: (editor: any) => void;
@@ -39,22 +40,24 @@ interface Toolbar {
 interface IProps {
   articleId?: string;
   height?: string;
-  mackdown?: string;
   onSaveMackdown?: (html: string) => void;
   onEditChange?: (html: string) => void;
-  onPublish?: (html: string) => void;
+  onPublish?: () => void;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
   articleId: '',
   height: 'calc(100vh - 75px)',
-  mackdown: '',
   onSaveMackdown: () => {},
   onEditChange: () => {},
   onPublish: () => {},
 });
 
-const mackdown = ref<string>('');
+watchEffect(() => {
+  if (!props.articleId) {
+    createStore.mackdown = '';
+  }
+});
 
 // 自定义工具栏配置
 const toolbar = reactive<Toolbar>({
@@ -62,19 +65,12 @@ const toolbar = reactive<Toolbar>({
     text: props.articleId ? '更新文章' : '发布文章',
     title: props.articleId ? '更新文章' : '发布文章',
     action(editor) {
-      if (!mackdown.value) {
+      if (!createStore?.mackdown) {
         ElMessage.warning('嘿！一个字都没写休想发布');
-        return;
       }
-      props.onPublish && props.onPublish(mackdown.value);
+      props.onPublish && props.onPublish();
     },
   },
-});
-
-watchEffect(() => {
-  if (props.mackdown) {
-    mackdown.value = props.mackdown;
-  }
 });
 
 // 上传图片事件
