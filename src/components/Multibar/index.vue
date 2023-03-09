@@ -22,6 +22,11 @@
     </div>
     <div class="action collect-wrap" @click="onCollect">
       <i :class="`collect-font iconfont ${collectStore?.collectStatus && 'active-collect'} icon-31shoucangxuanzhong`" />
+      <span v-if="articleStore?.articleDetail?.collectCount! > 0" class="count">{{
+        articleStore?.articleDetail?.collectCount! > 999
+          ? `${String(articleStore?.articleDetail?.collectCount).slice(0, 3)}+`
+          : articleStore?.articleDetail?.collectCount
+      }}</span>
     </div>
     <el-popover placement="top-start" :width="130" trigger="hover" popper-style="min-width: 130px">
       <template #default>

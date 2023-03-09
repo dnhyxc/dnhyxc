@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import { ElMessage } from 'element-plus';
 import { CollectListRes, AddCollectionRes } from '@/typings/common';
+import { articleStore } from '@/store';
 import * as Service from '@/server';
 import { normalizeResult } from '@/utils';
 import { useCheckUserId } from '@/hooks';
@@ -87,6 +88,9 @@ export const useCollectStore = defineStore('collect', {
         }),
       );
       if (res.success) {
+        if (articleStore?.articleDetail?.collectCount !== undefined) {
+          articleStore.articleDetail.collectCount += 1;
+        }
         this.collectStatus = true;
         ElMessage({
           message: res.message,
@@ -115,6 +119,9 @@ export const useCollectStore = defineStore('collect', {
     async cancelCollected(articleId: string) {
       const res = normalizeResult<number>(await Service.cancelCollected(articleId));
       if (res.success) {
+        if (articleStore?.articleDetail?.collectCount) {
+          articleStore.articleDetail.collectCount -= 1;
+        }
         this.collectStatus = false;
         ElMessage({
           message: res.message,
