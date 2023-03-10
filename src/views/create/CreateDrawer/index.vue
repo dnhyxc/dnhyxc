@@ -11,7 +11,7 @@
         <h3 :id="titleId" :class="titleClass">{{ articleId ? '更新文章' : '发布文章' }}</h3>
       </template>
       <div class="content">
-        <el-form ref="formRef" label-width="52px" :model="createArticleForm" class="form-wrap">
+        <el-form ref="formRef" label-width="52px" :model="createStore?.createInfo" class="form-wrap">
           <el-form-item
             prop="title"
             label="标题"
@@ -24,7 +24,7 @@
             ]"
             class="form-item"
           >
-            <el-input v-model="createArticleForm.title" placeholder="请输入文章标题" />
+            <el-input v-model="createStore.createInfo.title" placeholder="请输入文章标题" />
           </el-form-item>
           <el-form-item
             prop="classify"
@@ -39,7 +39,7 @@
             class="form-item"
           >
             <div class="classify">
-              <el-input v-model="createArticleForm.classify" placeholder="请输入文章分类" />
+              <el-input v-model="createStore.createInfo.classify" placeholder="请输入文章分类" />
               <el-dropdown max-height="200px" trigger="click" @command="onClassifyCommand">
                 <el-button type="primary">选择&nbsp;<i class="iconfont icon-xiajiantou" /></el-button>
                 <template #dropdown>
@@ -65,7 +65,7 @@
             class="form-item"
           >
             <div class="classify">
-              <el-input v-model="createArticleForm.tag" placeholder="请输入文章标签" />
+              <el-input v-model="createStore.createInfo.tag" placeholder="请输入文章标签" />
               <el-dropdown max-height="200px" trigger="click" @command="onTagCommand">
                 <el-button type="primary">选择&nbsp;<i class="iconfont icon-xiajiantou" /></el-button>
                 <template #dropdown>
@@ -91,10 +91,9 @@
             class="form-item"
           >
             <el-date-picker
-              v-model="createArticleForm.createTime"
+              v-model="createStore.createInfo.createTime"
               type="datetime"
               placeholder="请选择发文时间"
-              :default-time="new Date()"
               class="el-date-picker"
             />
           </el-form-item>
@@ -116,7 +115,7 @@
             class="form-item"
           >
             <el-input
-              v-model="createArticleForm.abstract"
+              v-model="createStore.createInfo.abstract"
               :autosize="{ minRows: 5, maxRows: 8 }"
               type="textarea"
               maxlength="300"
@@ -136,10 +135,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watchEffect, onDeactivated } from 'vue';
+import { ref, computed, onDeactivated } from 'vue';
 import { useRouter } from 'vue-router';
 import type { FormInstance } from 'element-plus';
-import { CreateArticleParams } from '@/typings/common';
 import { ARTICLE_CLASSIFY, ARTICLE_TAG } from '@/constant';
 import { createStore } from '@/store';
 import Upload from '@/components/Upload/index.vue';
@@ -160,15 +158,6 @@ const emit = defineEmits(['update:modelValue']);
 
 const formRef = ref<FormInstance>();
 
-const createArticleForm = ref<CreateArticleParams>({
-  title: '',
-  classify: '',
-  tag: '',
-  createTime: new Date().valueOf(),
-  coverImg: '',
-  abstract: '',
-});
-
 // 计算v-model传过来的参数，防止出现值是可读的，无法修改的警告
 const visible = computed({
   get() {
@@ -179,34 +168,27 @@ const visible = computed({
   },
 });
 
-// 监听 createStore?.createInfo，初始化表单默认值
-watchEffect(() => {
-  if (Object.values(createStore?.createInfo).length) {
-    createArticleForm.value = {
-      ...createStore?.createInfo,
-    };
-  }
-});
-
 // 组件弃用时清除 createStore 中的 createInfo 属性，并且重置表单数据
 onDeactivated(() => {
   formRef.value?.resetFields();
-  createStore.createInfo = {};
+  createStore.createInfo = {
+    createTime: new Date().valueOf(),
+  };
 });
 
 // 选择分类
 const onClassifyCommand = (classify: string) => {
-  createArticleForm.value.classify = classify;
+  createStore.createInfo.classify = classify;
 };
 
 // 选择标签
 const onTagCommand = (item: { label: string; key: string }) => {
-  createArticleForm.value.tag = item.label;
+  createStore.createInfo.tag = item.label;
 };
 
 // 获取上传组件中的coverImage
 const getCoverImage = (url: string) => {
-  createArticleForm.value.coverImg = url;
+  createStore.createInfo.coverImg = url;
 };
 
 // 取消
@@ -221,11 +203,14 @@ const onSubmit = () => {
   if (!formRef.value) return;
   formRef.value.validate(async (valid) => {
     if (valid) {
-      const params = {
-        ...createArticleForm.value,
-        content: createStore?.createInfo?.content,
-      };
-      await createStore.createArticle(params, router);
+      await createStore.createArticle(
+        {
+          ...createStore?.createInfo,
+          articleId: createStore?.createInfo?.id,
+          createTime: createStore?.createInfo?.createTime?.valueOf(),
+        },
+        router,
+      );
       onCancel();
     } else {
       return false;

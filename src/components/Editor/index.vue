@@ -7,7 +7,7 @@
       autofocus
       :height="height"
       :disabled-menus="[]"
-      left-toolbar="undo redo | h bold italic | quote code | strikethrough hr | emoji link image | ul ol table | create"
+      left-toolbar="undo redo | h bold italic | quote code | strikethrough hr | emoji link image | ul ol table | clear | create"
       :toolbar="toolbar"
       @upload-image="onUploadImage"
     />
@@ -35,6 +35,13 @@ interface Toolbar {
     action?: (editor?: any) => void;
     menus?: ToolbarItem[];
   };
+  clear?: {
+    title?: string;
+    text?: string;
+    icon?: string;
+    action?: (editor?: any) => void;
+    menus?: ToolbarItem[];
+  };
 }
 
 interface IProps {
@@ -43,6 +50,7 @@ interface IProps {
   onSaveMackdown?: (html: string) => void;
   onEditChange?: (html: string) => void;
   onPublish?: () => void;
+  onClear?: () => void;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
@@ -51,12 +59,14 @@ const props = withDefaults(defineProps<IProps>(), {
   onSaveMackdown: () => {},
   onEditChange: () => {},
   onPublish: () => {},
+  onClear: () => {},
 });
 
 watchEffect(() => {
   if (!props.articleId) {
-    // createStore.mackdown = '';
-    createStore.createInfo = {};
+    createStore.createInfo = {
+      createTime: new Date().valueOf(),
+    };
   }
 });
 
@@ -83,6 +93,13 @@ const toolbar = reactive<Toolbar>({
         return;
       }
       props.onPublish && props.onPublish();
+    },
+  },
+  clear: {
+    text: '清空',
+    title: '清空',
+    action(editor) {
+      props.onClear && props.onClear();
     },
   },
 });
@@ -127,6 +144,11 @@ const onUploadImage = (event: Event, insertImage: Function, files: File) => {
     }
     .v-md-editor__toolbar-item-create {
       color: @theme-blue;
+      font-size: 14px;
+      line-height: 30px;
+    }
+    .v-md-editor__toolbar-item-clear {
+      color: @font-warning;
       font-size: 14px;
       line-height: 30px;
     }

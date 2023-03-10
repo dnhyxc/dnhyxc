@@ -74,8 +74,17 @@ export const useArticleStore = defineStore('article', {
         this.articleDetail = res.data;
         // store 为 true，则说明是编辑，需要缓存编辑内容
         if (store) {
-          // createStore.mackdown = res.data.content!;
-          createStore.createInfo = { ...res.data };
+          createStore.createInfo = {
+            authorId: res.data.authorId,
+            title: res.data.title,
+            content: res.data.content,
+            classify: res.data.classify,
+            tag: res.data.tag,
+            createTime: res.data.createTime,
+            coverImg: res.data.coverImage,
+            abstract: res.data.abstract,
+            articleId: res.data.id,
+          };
           // 如果是创建页调用获取详情的接口，则需要清除文章详情的缓存。防止再次进入详情时文章目录出现错乱
           this.articleDetail = { id: '' };
           this.detailArtLikeCount = 0;

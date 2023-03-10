@@ -6,19 +6,20 @@
 -->
 <template>
   <div class="edit-wrap">
-    <Editor :on-publish="onPublish" :article-id="(route?.query?.id as string)" />
+    <Editor :on-publish="onPublish" :on-clear="onClear" :article-id="(route?.query?.id as string)" />
     <CreateDrawer v-model="visible" :article-id="(route?.query?.id as string)" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onActivated } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import Editor from '@/components/Editor/index.vue';
 import CreateDrawer from './CreateDrawer/index.vue';
-import { articleStore } from '@/store';
+import { articleStore, createStore } from '@/store';
 
 const route = useRoute();
+const router = useRouter();
 
 const visible = ref<boolean>(false); // 权限设置弹窗的状态
 
@@ -30,6 +31,13 @@ onActivated(() => {
 // 点击编辑器header发布文章按钮
 const onPublish = () => {
   visible.value = true;
+};
+
+// 清空编辑内容
+const onClear = () => {
+  // 手动去除query articleId 参数
+  router.push('/create');
+  createStore?.clearCreateInfo();
 };
 </script>
 

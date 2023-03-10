@@ -91,6 +91,7 @@ export interface CreateArticleParams {
   createTime?: number;
   coverImg?: string;
   abstract?: string;
+  articleId?: string;
 }
 
 // 创建收藏集返回值
