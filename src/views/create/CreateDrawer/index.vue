@@ -99,7 +99,7 @@
           </el-form-item>
           <el-form-item prop="cover" label="封面" class="form-item-cover">
             <div class="cover-wrap">
-              <Upload :get-cover-image="getCoverImage" />
+              <Upload />
             </div>
           </el-form-item>
           <el-form-item
@@ -171,9 +171,6 @@ const visible = computed({
 // 组件弃用时清除 createStore 中的 createInfo 属性，并且重置表单数据
 onDeactivated(() => {
   formRef.value?.resetFields();
-  createStore.createInfo = {
-    createTime: new Date().valueOf(),
-  };
 });
 
 // 选择分类
@@ -186,14 +183,11 @@ const onTagCommand = (item: { label: string; key: string }) => {
   createStore.createInfo.tag = item.label;
 };
 
-// 获取上传组件中的coverImage
-const getCoverImage = (url: string) => {
-  createStore.createInfo.coverImg = url;
-};
-
 // 取消
 const onCancel = () => {
-  createStore.createInfo = {};
+  createStore.createInfo = {
+    createTime: new Date().valueOf(),
+  };
   formRef.value?.resetFields();
   emit('update:modelValue', false);
 };
@@ -206,7 +200,7 @@ const onSubmit = () => {
       await createStore.createArticle(
         {
           ...createStore?.createInfo,
-          articleId: createStore?.createInfo?.id,
+          articleId: createStore?.createInfo?.articleId,
           createTime: createStore?.createInfo?.createTime?.valueOf(),
         },
         router,

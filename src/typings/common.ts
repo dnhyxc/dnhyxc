@@ -89,7 +89,7 @@ export interface CreateArticleParams {
   classify?: string;
   tag?: string;
   createTime?: number;
-  coverImg?: string;
+  coverImage?: string;
   abstract?: string;
   articleId?: string;
 }

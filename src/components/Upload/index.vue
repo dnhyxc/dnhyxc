@@ -34,14 +34,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ref } from 'vue';
 import { ElMessage } from 'element-plus';
 import { Plus } from '@element-plus/icons-vue';
 import type { UploadProps } from 'element-plus';
+import { uploadStore } from '@/store';
 import { FILE_TYPE } from '@/constant';
 
 interface IProps {
-  getCoverImage: (url: string) => void;
+  getCoverImage?: (url: string) => void;
   preview?: boolean;
   defaultUrl?: string;
   showImg?: boolean;
@@ -51,24 +52,13 @@ const props = withDefaults(defineProps<IProps>(), {
   preview: true,
   defaultUrl: '',
   showImg: true,
+  getCoverImage: () => {},
 });
 
 const imageUrl = ref<string>(props?.defaultUrl);
 const dialogVisible = ref<boolean>(false);
 
-// 监听imageUrl，实时传递给父元素
-watch(imageUrl, (newVal, oldVal) => {
-  console.log(newVal, oldVal);
-  if (newVal) {
-    console.log(newVal, 'newVal>>>>watch');
-
-    // props.getCoverImage(newVal);
-  }
-});
-
 const handlePreview: UploadProps['onPreview'] = (file) => {
-  console.log(file, 'uploadFile');
-
   imageUrl.value = file.url!;
 };
 
@@ -84,19 +74,18 @@ const beforeUpload: UploadProps['beforeUpload'] = (rawFile) => {
 };
 
 // 自定义上传
-const onUpload = (event: any) => {
-  console.log(event.file.path, 'file');
+const onUpload = async (event: any) => {
   const reader = new FileReader();
   reader.onload = (e: Event) => {
     imageUrl.value = (e.target as FileReader).result as string;
     props.getCoverImage((e.target as FileReader).result as string);
   };
   reader.readAsDataURL(event.file);
+  await uploadStore.uploadFile(event.file);
 };
 
 // 预览图片
 const onPreview = () => {
-  console.log(imageUrl.value, 'onPreview');
   dialogVisible.value = true;
 };
 

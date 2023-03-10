@@ -3,6 +3,7 @@ import { useLoginStore } from './login';
 import { useCreateStore } from './create';
 import { useArticleStore } from './article';
 import { useCollectStore } from './collect';
+import { useUploadStore } from './upload';
 
 // 公共store
 export const commonStore = useCommonStore();
@@ -18,3 +19,6 @@ export const articleStore = useArticleStore();
 
 // 收藏列表
 export const collectStore = useCollectStore();
+
+// 文件上传
+export const uploadStore = useUploadStore();

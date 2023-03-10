@@ -163,7 +163,6 @@ const toTag = (e: Event, name: string) => {
     .card-top {
       position: relative;
       width: 100%;
-      height: 100%;
       border-top-left-radius: 5px;
       border-top-right-radius: 5px;
       overflow: hidden;
@@ -171,7 +170,6 @@ const toTag = (e: Event, name: string) => {
       .img {
         display: block;
         position: relative;
-        height: 100%;
         width: 100%;
         border-top-left-radius: 5px;
         border-top-right-radius: 5px;

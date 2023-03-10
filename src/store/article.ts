@@ -81,7 +81,7 @@ export const useArticleStore = defineStore('article', {
             classify: res.data.classify,
             tag: res.data.tag,
             createTime: res.data.createTime,
-            coverImg: res.data.coverImage,
+            coverImage: res.data.coverImage,
             abstract: res.data.abstract,
             articleId: res.data.id,
           };

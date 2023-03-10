@@ -3,12 +3,6 @@ import { LoginParams, CreateArticleParams, GetArticleListParams, AnotherParams, 
 import { loginStore } from '@/store';
 import * as API from './api';
 
-// 自定义文件上传路径
-export const uploadFile = async (params?: any) => {
-  const res = await post(API.UPLOAD, params);
-  return res;
-};
-
 // 处理请求参数，为请求自动加上userId
 const copeParams = <T>(params?: T) => {
   const { userInfo } = loginStore;
@@ -17,6 +11,12 @@ const copeParams = <T>(params?: T) => {
     userId: userInfo?.userId,
   };
   return data;
+};
+
+// 自定义文件上传路径
+export const uploadFile = async (params?: any) => {
+  const res = await post(API.UPLOAD, params);
+  return res;
 };
 
 // 登录
