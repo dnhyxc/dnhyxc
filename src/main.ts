@@ -19,8 +19,6 @@ app.use(store);
 // 挂在第三方插件
 usePlugins(app);
 
-app.use(window['vue-cropper'].default);
-
 // 全局自定义获取焦点指令
 mountDirectives(app);
 
