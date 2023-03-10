@@ -7,7 +7,7 @@
 <template>
   <div class="edit-wrap">
     <Editor :on-publish="onPublish" :article-id="(route?.query?.id as string)" />
-    <CreateDrawer v-model="visible" />
+    <CreateDrawer v-model="visible" :article-id="(route?.query?.id as string)" />
   </div>
 </template>
 

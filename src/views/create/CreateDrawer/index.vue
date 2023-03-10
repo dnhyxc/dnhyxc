@@ -8,7 +8,7 @@
   <div class="drawer-wrap">
     <el-drawer v-model="visible" size="350" :show-close="false">
       <template #header="{ titleId, titleClass }">
-        <h3 :id="titleId" :class="titleClass">发布文章</h3>
+        <h3 :id="titleId" :class="titleClass">{{ articleId ? '更新文章' : '发布文章' }}</h3>
       </template>
       <div class="content">
         <el-form ref="formRef" label-width="52px" :model="createArticleForm" class="form-wrap">
@@ -19,6 +19,7 @@
               {
                 required: true,
                 message: '请输入文章标题',
+                trigger: 'change',
               },
             ]"
             class="form-item"
@@ -32,6 +33,7 @@
               {
                 required: true,
                 message: '请输入文章分类',
+                trigger: 'change',
               },
             ]"
             class="form-item"
@@ -57,6 +59,7 @@
               {
                 required: true,
                 message: '请输入文章标签',
+                trigger: 'change',
               },
             ]"
             class="form-item"
@@ -82,6 +85,7 @@
               {
                 required: true,
                 message: '请选择发文时间',
+                trigger: 'change',
               },
             ]"
             class="form-item"
@@ -106,6 +110,7 @@
               {
                 required: true,
                 message: '请输入文章摘要',
+                trigger: 'change',
               },
             ]"
             class="form-item"
@@ -131,7 +136,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, watchEffect, onDeactivated } from 'vue';
 import { useRouter } from 'vue-router';
 import type { FormInstance } from 'element-plus';
 import { CreateArticleParams } from '@/typings/common';
@@ -143,9 +148,18 @@ const router = useRouter();
 
 interface IProps {
   modelValue: boolean;
+  articleId?: string;
 }
 
+const props = withDefaults(defineProps<IProps>(), {
+  modelValue: false,
+  articleId: '',
+});
+
+const emit = defineEmits(['update:modelValue']);
+
 const formRef = ref<FormInstance>();
+
 const createArticleForm = ref<CreateArticleParams>({
   title: '',
   classify: '',
@@ -155,12 +169,6 @@ const createArticleForm = ref<CreateArticleParams>({
   abstract: '',
 });
 
-const props = withDefaults(defineProps<IProps>(), {
-  modelValue: false,
-});
-
-const emit = defineEmits(['update:modelValue']);
-
 // 计算v-model传过来的参数，防止出现值是可读的，无法修改的警告
 const visible = computed({
   get() {
@@ -169,6 +177,21 @@ const visible = computed({
   set(visible: boolean) {
     emit('update:modelValue', visible);
   },
+});
+
+// 监听 createStore?.createInfo，初始化表单默认值
+watchEffect(() => {
+  if (Object.values(createStore?.createInfo).length) {
+    createArticleForm.value = {
+      ...createStore?.createInfo,
+    };
+  }
+});
+
+// 组件弃用时清除 createStore 中的 createInfo 属性，并且重置表单数据
+onDeactivated(() => {
+  formRef.value?.resetFields();
+  createStore.createInfo = {};
 });
 
 // 选择分类
@@ -188,7 +211,7 @@ const getCoverImage = (url: string) => {
 
 // 取消
 const onCancel = () => {
-  createStore.mackdown = '';
+  createStore.createInfo = {};
   formRef.value?.resetFields();
   emit('update:modelValue', false);
 };
@@ -200,7 +223,7 @@ const onSubmit = () => {
     if (valid) {
       const params = {
         ...createArticleForm.value,
-        content: createStore?.mackdown,
+        content: createStore?.createInfo?.content,
       };
       await createStore.createArticle(params, router);
       onCancel();

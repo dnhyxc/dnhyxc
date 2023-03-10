@@ -16,8 +16,7 @@ const routes: Array<RouteRecordRaw> = [
         name: 'home',
         meta: {
           title: '文章列表',
-          keepAlive: true,
-          requireAuth: true,
+          keepAlive: false,
         },
         component: () => import('@/views/home/index.vue'),
       },
@@ -26,8 +25,7 @@ const routes: Array<RouteRecordRaw> = [
         name: 'classify',
         meta: {
           title: '文章分类',
-          keepAlive: true,
-          requireAuth: true,
+          keepAlive: false,
         },
         component: () => import('@/views/classify/index.vue'),
       },
@@ -36,8 +34,7 @@ const routes: Array<RouteRecordRaw> = [
         name: 'tag',
         meta: {
           title: '文章标签',
-          keepAlive: true,
-          requireAuth: true,
+          keepAlive: false,
         },
         component: () => import('@/views/tag/index.vue'),
       },
@@ -46,8 +43,7 @@ const routes: Array<RouteRecordRaw> = [
         name: 'tagList',
         meta: {
           title: '标签列表',
-          keepAlive: true,
-          requireAuth: true,
+          keepAlive: false,
         },
         component: () => import('@/views/tag/articles/index.vue'),
       },
@@ -56,8 +52,7 @@ const routes: Array<RouteRecordRaw> = [
         name: 'timeline',
         meta: {
           title: '时间轴线',
-          keepAlive: true,
-          requireAuth: true,
+          keepAlive: false,
           auth: true,
         },
         component: () => import('@/views/timeline/index.vue'),
@@ -68,7 +63,6 @@ const routes: Array<RouteRecordRaw> = [
         meta: {
           title: '发布文章',
           keepAlive: true,
-          requireAuth: true,
           auth: true,
         },
         component: () => import('@/views/create/index.vue'),
@@ -78,8 +72,7 @@ const routes: Array<RouteRecordRaw> = [
         name: 'author',
         meta: {
           title: '关于博主',
-          keepAlive: true,
-          requireAuth: true,
+          keepAlive: false,
         },
         component: () => import('@/views/author/index.vue'),
       },
@@ -88,8 +81,7 @@ const routes: Array<RouteRecordRaw> = [
         name: 'personal',
         meta: {
           title: '我的主页',
-          keepAlive: true,
-          requireAuth: false,
+          keepAlive: false,
           auth: true,
         },
         component: () => import('@/views/personal/index.vue'),
@@ -99,8 +91,7 @@ const routes: Array<RouteRecordRaw> = [
         name: 'setting',
         meta: {
           title: '账号设置',
-          keepAlive: true,
-          requireAuth: false,
+          keepAlive: false,
           auth: true,
         },
         component: () => import('@/views/setting/index.vue'),
@@ -110,8 +101,7 @@ const routes: Array<RouteRecordRaw> = [
             name: 'profile',
             meta: {
               title: '个人资料',
-              keepAlive: true,
-              requireAuth: true,
+              keepAlive: false,
               auth: true,
             },
             component: () => import('@/views/setting/profile/index.vue'),
@@ -121,8 +111,7 @@ const routes: Array<RouteRecordRaw> = [
             name: 'account',
             meta: {
               title: '账号设置',
-              keepAlive: true,
-              requireAuth: true,
+              keepAlive: false,
               auth: true,
             },
             component: () => import('@/views/setting/account/index.vue'),
@@ -132,8 +121,7 @@ const routes: Array<RouteRecordRaw> = [
             name: 'theme',
             meta: {
               title: '主题设置',
-              keepAlive: true,
-              requireAuth: true,
+              keepAlive: false,
               auth: true,
             },
             component: () => import('@/views/setting/theme/index.vue'),
@@ -143,8 +131,7 @@ const routes: Array<RouteRecordRaw> = [
             name: 'system',
             meta: {
               title: '系统设置',
-              keepAlive: true,
-              requireAuth: true,
+              keepAlive: false,
             },
             component: () => import('@/views/setting/system/index.vue'),
           },
@@ -156,8 +143,7 @@ const routes: Array<RouteRecordRaw> = [
         name: 'detail',
         meta: {
           title: '文章详情',
-          keepAlive: true,
-          requireAuth: false,
+          keepAlive: false,
         },
         component: () => import('@/views/detail/index.vue'),
       },
@@ -169,8 +155,7 @@ const routes: Array<RouteRecordRaw> = [
     name: 'login',
     meta: {
       title: '登录',
-      keepAlive: true,
-      requireAuth: false,
+      keepAlive: false,
     },
     component: () => import('@/views/login/index.vue'),
   },

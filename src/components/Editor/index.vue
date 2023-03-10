@@ -2,7 +2,7 @@
   <div class="container">
     <!-- 上传图片菜单默认为禁用状态 设置 disabled-menus 为空数组可以开启 -->
     <v-md-editor
-      v-model.trim="createStore.mackdown"
+      v-model.trim="createStore.createInfo.content"
       placeholder="编辑内容"
       autofocus
       :height="height"
@@ -55,7 +55,8 @@ const props = withDefaults(defineProps<IProps>(), {
 
 watchEffect(() => {
   if (!props.articleId) {
-    createStore.mackdown = '';
+    // createStore.mackdown = '';
+    createStore.createInfo = {};
   }
 });
 
@@ -73,7 +74,7 @@ const toolbar = reactive<Toolbar>({
     text: '发布',
     title: '发布',
     action(editor) {
-      if (!createStore?.mackdown) {
+      if (!createStore?.createInfo?.content) {
         ElMessage({
           message: '嘿！一个字都没写休想发布',
           type: 'warning',

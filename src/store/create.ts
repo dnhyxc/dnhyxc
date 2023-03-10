@@ -8,12 +8,14 @@ import { useCheckUserId } from '@/hooks';
 import { loginStore } from '@/store';
 
 interface IProps {
-  mackdown: string;
+  // mackdown: string;
+  createInfo: CreateArticleParams;
 }
 
 export const useCreateStore = defineStore('create', {
   state: (): IProps => ({
-    mackdown: '',
+    // mackdown: '',
+    createInfo: {},
   }),
 
   actions: {
@@ -52,7 +54,8 @@ export const useCreateStore = defineStore('create', {
 
     // 清除编辑内容
     clearCreateInfo() {
-      this.mackdown = '';
+      // this.mackdown = '';
+      this.createInfo = {};
     },
   },
 });
