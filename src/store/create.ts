@@ -15,6 +15,14 @@ export const useCreateStore = defineStore('create', {
   state: (): IProps => ({
     createInfo: {
       createTime: new Date().valueOf(),
+      authorId: '',
+      title: '',
+      content: '',
+      classify: '',
+      tag: '',
+      coverImage: '',
+      abstract: '',
+      articleId: '',
     },
   }),
 
@@ -53,9 +61,17 @@ export const useCreateStore = defineStore('create', {
     },
 
     // 清除编辑内容
-    clearCreateInfo() {
+    clearCreateInfo(clearAll?: boolean) {
       this.createInfo = {
         createTime: new Date().valueOf(),
+        authorId: '',
+        title: '',
+        content: clearAll ? '' : this.createInfo.content,
+        classify: '',
+        tag: '',
+        coverImage: '',
+        abstract: '',
+        articleId: '',
       };
     },
   },

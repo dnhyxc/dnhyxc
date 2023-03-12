@@ -6,13 +6,13 @@
 -->
 <template>
   <div class="upload-wrap">
-    <el-dialog v-model="dialogVisible" title="图片预览" width="50%">
+    <!-- <el-dialog v-model="dialogVisible" title="图片预览" width="50%">
       <div class="preview-dialog">
         <img :src="imageUrl" alt="" class="prew-img" />
       </div>
-    </el-dialog>
+    </el-dialog> -->
     <el-upload
-      v-if="!imageUrl || !showImg"
+      v-if="(!imageUrl && !defaultUrl) || !showImg"
       class="uploader"
       :show-file-list="false"
       :on-preview="handlePreview"
@@ -23,23 +23,55 @@
         <el-icon class="uploader-icon"><Plus /></el-icon>
       </slot>
     </el-upload>
-    <div v-if="imageUrl" class="preview">
+    <div v-if="imageUrl || defaultUrl" class="preview">
       <div v-if="preview" class="mack">
         <i class="view iconfont icon-browse" @click="onPreview" />
         <i class="del iconfont icon-shanchu" @click="onDelImage" />
       </div>
-      <img v-if="showImg" :src="imageUrl" class="cover-img" />
+      <img v-if="showImg" :src="imageUrl || defaultUrl" class="cover-img" />
     </div>
+    <el-dialog v-model="dialogVisible" title="图片剪裁" class="crop-dialog" width="490px">
+      <div class="cropper-content">
+        <div class="cropper" style="text-align: center">
+          <VueCropper
+            v-if="dialogVisible"
+            ref="cropper"
+            :img="imageUrl"
+            :output-size="option.outputSize"
+            :output-type="option.outputType"
+            :info="true"
+            :full="option.full"
+            :can-move-box="option.canMoveBox"
+            :original="option.original"
+            :auto-crop="option.autoCrop"
+            :fixed="option.fixed"
+            :fixed-number="option.fixedNumber"
+            :center-box="option.centerBox"
+            :info-true="option.infoTrue"
+            :fixed-box="option.fixedBox"
+            :auto-crop-width="option.autoCropWidth"
+            :auto-crop-height="option.autoCropHeight"
+          />
+        </div>
+      </div>
+      <div class="footer">
+        <el-button @click="onFinish">完成</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, reactive, onDeactivated } from 'vue';
 import { ElMessage } from 'element-plus';
 import { Plus } from '@element-plus/icons-vue';
 import type { UploadProps } from 'element-plus';
-import { uploadStore } from '@/store';
+import { createStore, uploadStore } from '@/store';
 import { FILE_TYPE } from '@/constant';
+import 'vue-cropper/dist/index.css';
+
+// 组件中使用
+import { VueCropper } from 'vue-cropper';
 
 interface IProps {
   getCoverImage?: (url: string) => void;
@@ -48,6 +80,40 @@ interface IProps {
   showImg?: boolean;
 }
 
+const cropper = ref();
+
+const option = reactive({
+  img: 'https://pic1.zhimg.com/80/v2-366c0aeae2b4050fa2fcbfc09c74aad4_720w.jpg', // 裁剪图片的地址
+  info: true, // 裁剪框的大小信息
+  outputSize: 1, // 裁剪生成图片的质量
+  outputType: 'png', // 裁剪生成图片的格式
+  canScale: false, // 图片是否允许滚轮缩放
+  autoCrop: true, // 是否默认生成截图框
+  canMoveBox: true, // 截图框能否拖动
+  autoCropWidth: 500, // 默认生成截图框宽度
+  autoCropHeight: 300, // 默认生成截图框高度
+  fixedBox: false, // 固定截图框大小 不允许改变
+  fixed: true, // 是否开启截图框宽高固定比例
+  fixedNumber: [600, 338], // 截图框的宽高比例
+  full: false, // 是否输出原图比例的截图
+  original: false, // 上传图片按照原始比例渲染
+  centerBox: true, // 截图框是否被限制在图片里面
+  infoTrue: true, // true 为展示真实输出图片宽高 false 展示看到的截图框宽高
+});
+
+const onFinish = () => {
+  cropper.value?.getCropBlob(async (blob: any) => {
+    const reader = new FileReader();
+    reader.onload = (e: Event) => {
+      imageUrl.value = (e.target as FileReader).result as string;
+      props.getCoverImage && props.getCoverImage((e.target as FileReader).result as string);
+    };
+    reader.readAsDataURL(blob);
+    await uploadStore.uploadFile(blob);
+    dialogVisible.value = false;
+  });
+};
+
 const props = withDefaults(defineProps<IProps>(), {
   preview: true,
   defaultUrl: '',
@@ -55,8 +121,13 @@ const props = withDefaults(defineProps<IProps>(), {
   getCoverImage: () => {},
 });
 
-const imageUrl = ref<string>(props?.defaultUrl);
+const imageUrl = ref<string>('');
 const dialogVisible = ref<boolean>(false);
+
+// 组件弃用时，清除上传的图片
+onDeactivated(() => {
+  imageUrl.value = '';
+});
 
 const handlePreview: UploadProps['onPreview'] = (file) => {
   imageUrl.value = file.url!;
@@ -74,14 +145,15 @@ const beforeUpload: UploadProps['beforeUpload'] = (rawFile) => {
 };
 
 // 自定义上传
-const onUpload = async (event: any) => {
+const onUpload = async (event: { file: Blob }) => {
   const reader = new FileReader();
   reader.onload = (e: Event) => {
+    dialogVisible.value = true;
     imageUrl.value = (e.target as FileReader).result as string;
-    props.getCoverImage((e.target as FileReader).result as string);
+    props.getCoverImage && props.getCoverImage((e.target as FileReader).result as string);
   };
+
   reader.readAsDataURL(event.file);
-  await uploadStore.uploadFile(event.file);
 };
 
 // 预览图片
@@ -93,6 +165,7 @@ const onPreview = () => {
 const onDelImage = () => {
   imageUrl.value = '';
   props.getCoverImage('');
+  createStore.createInfo.coverImage = '';
 };
 </script>
 
@@ -105,6 +178,10 @@ const onDelImage = () => {
   align-items: center;
   box-sizing: border-box;
   height: 100%;
+
+  .cropper {
+    height: 300px;
+  }
 
   .uploader {
     flex: 1;

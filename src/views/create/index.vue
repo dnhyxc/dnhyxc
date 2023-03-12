@@ -37,7 +37,7 @@ const onPublish = () => {
 const onClear = () => {
   // 手动去除query articleId 参数
   router.push('/create');
-  createStore?.clearCreateInfo();
+  createStore?.clearCreateInfo(true);
 };
 </script>
 

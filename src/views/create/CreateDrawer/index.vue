@@ -99,7 +99,7 @@
           </el-form-item>
           <el-form-item prop="cover" label="封面" class="form-item-cover">
             <div class="cover-wrap">
-              <Upload />
+              <Upload v-model:default-url="createStore.createInfo.coverImage" />
             </div>
           </el-form-item>
           <el-form-item
@@ -170,6 +170,7 @@ const visible = computed({
 
 // 组件弃用时清除 createStore 中的 createInfo 属性，并且重置表单数据
 onDeactivated(() => {
+  createStore.clearCreateInfo();
   formRef.value?.resetFields();
 });
 
@@ -185,9 +186,7 @@ const onTagCommand = (item: { label: string; key: string }) => {
 
 // 取消
 const onCancel = () => {
-  createStore.createInfo = {
-    createTime: new Date().valueOf(),
-  };
+  createStore.clearCreateInfo();
   formRef.value?.resetFields();
   emit('update:modelValue', false);
 };

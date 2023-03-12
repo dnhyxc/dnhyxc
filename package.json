@@ -47,6 +47,7 @@
     "qrcode": "^1.5.1",
     "query-string": "^7.1.1",
     "vue": "^3.2.45",
+    "vue-cropper": "^1.0.6",
     "vue-router": "^4.1.6"
   },
   "devDependencies": {
