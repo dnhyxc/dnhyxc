@@ -54,7 +54,10 @@ const route = useRoute();
 // 编辑文章
 const onEditArticle = () => {
   // 点击编辑时，设置创建页初始值(这里设置一遍，用于解决创建也因为接口相应导致mackdown赋值延迟的问题)
-  createStore.mackdown = articleStore?.articleDetail?.content!;
+  createStore.createInfo = {
+    ...createStore.createInfo,
+    content: articleStore?.articleDetail?.content!,
+  };
   router.push(`/create?id=${route.params.id}`);
 };
 
