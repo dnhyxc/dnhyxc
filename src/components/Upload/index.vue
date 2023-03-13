@@ -25,6 +25,7 @@
     <div v-if="imageUrl || defaultUrl" class="preview">
       <div v-if="preview" class="mack">
         <i v-if="imageUrl" class="shot iconfont icon-line-screenshotpingmujietu-01" @click="onRestoreShot" />
+        <i class="download iconfont icon-xiazai1" @click="(e) => onDownload(e, imageUrl || defaultUrl)" />
         <i class="view iconfont icon-browse" @click="onPreview" />
         <i class="del iconfont icon-shanchu" @click="onDelImage" />
       </div>
@@ -187,11 +188,16 @@ const onRotate = () => {
 };
 
 // 下载
-const onDownload = () => {
-  cropper.value.getCropBlob((blob: Blob) => {
-    const url = window.URL.createObjectURL(blob);
-    ipcRenderer.send('download', url);
-  });
+const onDownload = async (e: Event, loadUrl?: string) => {
+  if (loadUrl) {
+    ipcRenderer.send('download', loadUrl);
+  } else {
+    cropper.value.getCropBlob((blob: Blob) => {
+      const url = window.URL.createObjectURL(blob);
+      ipcRenderer.send('download', url);
+    });
+  }
+
   // 设置一次性监听，防止重复触发
   ipcRenderer.once('download-file', (e, res: string) => {
     ElMessage({
@@ -314,13 +320,19 @@ const onDelImage = () => {
       color: @fff;
       display: none;
 
-      .shot,
-      .view,
-      .del {
+      .view {
         font-size: 22px;
         cursor: pointer;
       }
 
+      .shot,
+      .download,
+      .del {
+        font-size: 20px;
+        cursor: pointer;
+      }
+
+      .download,
       .shot,
       .view {
         margin-right: 20px;
