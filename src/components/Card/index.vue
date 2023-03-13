@@ -33,13 +33,13 @@
             </div>
             <div class="actions">
               <div class="action-icons">
-                <div class="action like" @click="(e) => onLike(e, data.id)">
+                <div class="action like" @click.stop="onLike(data.id)">
                   <i
                     :class="`font like-icon iconfont ${data.isLike ? 'icon-24gf-thumbsUp2' : 'icon-24gl-thumbsUp2'}`"
                   />
                   <span>{{ data.likeCount || '点赞' }}</span>
                 </div>
-                <div class="action comment" @click="(e) => onComment(e, data.id)">
+                <div class="action comment" @click.stop="onComment(data.id)">
                   <i class="font comment-icon iconfont icon-pinglun" />
                   <span>{{ data.commentCount || '评论' }}</span>
                 </div>
@@ -49,7 +49,7 @@
                 </div>
               </div>
               <div v-if="loginStore?.userInfo?.userId === data.authorId" class="action art-action">
-                <span class="edit" @click="(e) => toEdit(e, data.id)">编辑</span>
+                <span class="edit" @click.stop="toEdit(data.id)">编辑</span>
                 <span class="del" @click="(e) => onReomve(e, data.id)">下架</span>
               </div>
             </div>
@@ -77,21 +77,17 @@ interface IProps {
 withDefaults(defineProps<IProps>(), {});
 
 // 点赞
-const onLike = (e: Event, id: string) => {
-  e.stopPropagation();
+const onLike = (id: string) => {
   console.log(id, 'onLike');
 };
 
 // 评论
-const onComment = (e: Event, id: string) => {
-  e.stopPropagation();
+const onComment = (id: string) => {
   console.log(id, 'onComment');
 };
 
 // 编辑
-const toEdit = (e: Event, id: string) => {
-  e.stopPropagation();
-  console.log(id, 'id');
+const toEdit = (id: string) => {
   router.push(`/create?id=${id}`);
 };
 
