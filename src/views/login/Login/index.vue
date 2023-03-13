@@ -19,7 +19,7 @@
         ]"
         class="form-item"
       >
-        <el-input v-model="loginForm.username" size="large" placeholder="请输入用户名" />
+        <el-input v-model="loginForm.username" size="large" placeholder="请输入用户名" @keyup.enter="onEnter" />
       </el-form-item>
       <el-form-item
         prop="password"

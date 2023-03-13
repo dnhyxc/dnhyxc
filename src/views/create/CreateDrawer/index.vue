@@ -186,7 +186,7 @@ const onTagCommand = (item: { label: string; key: string }) => {
 
 // 取消
 const onCancel = () => {
-  createStore.clearCreateInfo();
+  createStore.clearCreateInfo(true);
   formRef.value?.resetFields();
   emit('update:modelValue', false);
 };

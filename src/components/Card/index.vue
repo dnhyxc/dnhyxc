@@ -48,7 +48,7 @@
                   <span class="text">{{ data.readCount || '阅读' }}</span>
                 </div>
               </div>
-              <div class="action art-action">
+              <div v-if="loginStore?.userInfo?.userId === data.authorId" class="action art-action">
                 <span class="edit" @click="(e) => toEdit(e, data.id)">编辑</span>
                 <span class="del" @click="(e) => onReomve(e, data.id)">下架</span>
               </div>
@@ -66,6 +66,7 @@ import { ElMessage } from 'element-plus';
 import { Message, formatDate } from '@/utils';
 import { ArticleItem } from '@/typings/common';
 import IMG1 from '@/assets/images/1.jpg';
+import { loginStore } from '@/store';
 
 const router = useRouter();
 

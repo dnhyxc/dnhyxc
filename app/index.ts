@@ -129,6 +129,18 @@ ipcMain.on('get-app-path', (event) => {
   event.sender.send('got-app-path', app.getAppPath());
 });
 
+// 监听渲染进程发出的download事件
+ipcMain.on('download', (event, url) => {
+  win?.webContents.downloadURL(url); // 触发 will-download 事件
+  win?.webContents.session.on('will-download', (event, item, webContents) => {
+    item.once('done', (event, state) => {
+      if (state === 'completed') {
+        win?.webContents.send('download-file', true);
+      }
+    });
+  });
+});
+
 // 在Electron完成初始化时被触发
 app
   .whenReady()

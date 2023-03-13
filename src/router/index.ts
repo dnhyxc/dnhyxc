@@ -1,5 +1,8 @@
 import { createRouter, RouteRecordRaw, createWebHistory } from 'vue-router';
+import { ElMessage } from 'element-plus';
 import { useCommonStore } from '@/store/common';
+import { locGetItem } from '@/utils';
+import { WITH_AUTH_ROUTES } from '@/constant';
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -182,9 +185,19 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
   if (to.path === '/login') {
     const commonStore = useCommonStore();
-    console.log(from.path, 'from.path');
     commonStore.setBackPath(from.path);
   }
+
+  if (WITH_AUTH_ROUTES.includes(to.path) && !locGetItem('token')) {
+    ElMessage({
+      message: '请先登录后再操作哦！',
+      type: 'warning',
+      offset: 80,
+      duration: 2000,
+    });
+    router.push(from.path);
+  }
+
   next();
 });
 

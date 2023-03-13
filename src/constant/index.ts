@@ -122,6 +122,9 @@ export const SETTING_MENU = [
   },
 ];
 
+// 需要登陆权限的路由
+export const WITH_AUTH_ROUTES = ['/create', '/timeline', '/personal'];
+
 // 二次确认弹窗配置
 export const MSG_CONFIG = () => ({
   confirmButtonText: '确定',
