@@ -168,10 +168,12 @@ const visible = computed({
   },
 });
 
-// 组件弃用时清除 createStore 中的 createInfo 属性，并且重置表单数据
+// 组件弃用时，如果有文章 id 则清除 createStore 中的 createInfo 属性，并且重置表单数据
 onDeactivated(() => {
-  createStore.clearCreateInfo();
-  formRef.value?.resetFields();
+  if (createStore?.createInfo?.articleId) {
+    createStore.clearCreateInfo(true);
+    formRef.value?.resetFields();
+  }
 });
 
 // 选择分类
@@ -186,8 +188,6 @@ const onTagCommand = (item: { label: string; key: string }) => {
 
 // 取消
 const onCancel = () => {
-  createStore.clearCreateInfo(true);
-  formRef.value?.resetFields();
   emit('update:modelValue', false);
 };
 
@@ -204,7 +204,9 @@ const onSubmit = () => {
         },
         router,
       );
-      onCancel();
+      createStore.clearCreateInfo(true);
+      formRef.value?.resetFields();
+      emit('update:modelValue', false);
     } else {
       return false;
     }

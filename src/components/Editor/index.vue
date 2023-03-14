@@ -15,7 +15,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, watchEffect, onActivated, onDeactivated } from 'vue';
+import { reactive, onActivated, onDeactivated } from 'vue';
 import { ElMessage } from 'element-plus';
 import { createStore } from '@/store';
 
@@ -60,14 +60,6 @@ const props = withDefaults(defineProps<IProps>(), {
   onEditChange: () => {},
   onPublish: () => {},
   onClear: () => {},
-});
-
-watchEffect(() => {
-  if (!props.articleId) {
-    createStore.createInfo = {
-      createTime: new Date().valueOf(),
-    };
-  }
 });
 
 onActivated(() => {

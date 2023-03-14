@@ -23,6 +23,7 @@ const router = useRouter();
 
 const visible = ref<boolean>(false); // 权限设置弹窗的状态
 
+// 组件启用时，如果有文章id，则请求文章详情
 onActivated(() => {
   if (!route.query.id) return;
   articleStore?.getArticleDetail(route.query.id as string, true);
