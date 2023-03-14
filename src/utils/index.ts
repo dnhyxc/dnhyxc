@@ -141,31 +141,6 @@ export const setShortcutKey = (e: KeyboardEvent, addHotkey: Function) => {
   }
 };
 
-export const url2Base64 = (url: string, type = 'image/jpeg') => {
-  return new Promise((resolve, reject) => {
-    const img = new Image();
-    const canvas = document.createElement('canvas');
-    img.crossOrigin = '*';
-    img.onload = function () {
-      const width = img.width;
-      const height = img.height;
-      canvas.width = width;
-      canvas.height = height;
-
-      const ctx = canvas.getContext('2d');
-      ctx!.fillStyle = 'white';
-      ctx!.fillRect(0, 0, canvas.width, canvas.height);
-      ctx!.drawImage(img, 0, 0, width, height);
-      const base64 = canvas.toDataURL(type);
-      resolve(base64);
-    };
-    img.onerror = function () {
-      reject(new Error('图片加载失败'));
-    };
-    img.src = url;
-  });
-};
-
 export const getImgInfo = (url: string) => {
   return new Promise((resolve, reject) => {
     const img = new Image();
@@ -183,6 +158,30 @@ export const getImgInfo = (url: string) => {
     };
     img.src = url;
   });
+};
+
+// 设置头像base64
+export const url2Base64 = (src: string, callback: Function) => {
+  const image = new Image();
+  // 处理缓存
+  image.src = src + '?v=' + Math.random();
+  // 支持跨域图片
+  image.crossOrigin = '*';
+  image.onload = function () {
+    const base64 = image2Base64(image);
+    callback && callback(base64);
+  };
+};
+
+// 将网络图片转换成base64格式
+export const image2Base64 = (image: any) => {
+  const canvas = document.createElement('canvas');
+  canvas.width = image.width;
+  canvas.height = image.height;
+  const ctx = canvas.getContext('2d');
+  ctx?.drawImage(image, 0, 0, image.width, image.height);
+  // 可选其他值 image/jpeg
+  return canvas.toDataURL('image/png');
 };
 
 export {

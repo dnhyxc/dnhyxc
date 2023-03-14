@@ -11,7 +11,7 @@
         <div class="img-wrap">
           <img :src="coverUrl" alt="" class="cover-img" />
           <div class="upload-cover-wrap">
-            <Upload :get-cover-image="getCoverUrl" :preview="false" :show-img="false">
+            <Upload :get-cover-image="getCoverUrl" :preview="false" :show-img="false" :fixed-number="[800, 200]">
               <el-button type="primary" link class="action">
                 <i class="font iconfont icon-19shuxie3x" />
                 编辑封面图
@@ -103,7 +103,6 @@ const formRef = ref<FormInstance>();
 // 从pania中获取头像url,如果没有,则设置默认值
 const { headUrl } = loginStore.userInfo;
 
-console.log(loginStore?.userInfo, headUrl, 'headUrl');
 const coverUrl = ref<string>('https://pic2.zhimg.com/80/v2-ff0d35d4dcad8e7e1623ef1c294651c1_1440w.webp');
 
 const profileForm = reactive<{
@@ -122,13 +121,11 @@ const profileForm = reactive<{
 
 // 获取上传的封面图片
 const getCoverUrl = (url: string) => {
-  console.log(url, 'url');
   coverUrl.value = url;
 };
 
 // 获取上传的头像图片
 const getHeadUrl = (url: string) => {
-  console.log(url, '获取上传的头像图片');
   profileForm.headUrl = url;
 };
 

@@ -8,11 +8,11 @@
   <div class="upload-wrap">
     <el-dialog v-model="previewVisible" title="图片预览" width="600px">
       <div class="preview-dialog">
-        <img :src="imageUrl || defaultUrl" alt="" class="prew-img" />
+        <img :src="uploadStore.uploadPath" alt="" class="prew-img" />
       </div>
     </el-dialog>
     <el-upload
-      v-if="(!imageUrl && !defaultUrl) || !showImg"
+      v-if="!uploadStore.uploadPath || !showImg"
       class="uploader"
       :show-file-list="false"
       :before-upload="beforeUpload"
@@ -22,21 +22,25 @@
         <el-icon class="uploader-icon"><Plus /></el-icon>
       </slot>
     </el-upload>
-    <div v-if="imageUrl || defaultUrl" class="preview">
+    <div v-if="uploadStore.uploadPath" class="preview">
       <div v-if="preview" class="mack">
-        <i v-if="imageUrl" class="shot iconfont icon-line-screenshotpingmujietu-01" @click="onRestoreShot" />
-        <i class="download iconfont icon-xiazai1" @click="(e) => onDownload(e, imageUrl || defaultUrl)" />
+        <i
+          v-if="uploadStore.uploadPath"
+          class="shot iconfont icon-line-screenshotpingmujietu-01"
+          @click="onRestoreShot"
+        />
+        <i class="download iconfont icon-xiazai1" @click="(e) => onDownload(e, uploadStore.uploadPath)" />
         <i class="view iconfont icon-browse" @click="onPreview" />
         <i class="del iconfont icon-shanchu" @click="onDelImage" />
       </div>
-      <img v-if="showImg" :src="imageUrl || defaultUrl" class="cover-img" />
+      <img v-if="showImg && uploadStore.uploadPath" :src="uploadStore.uploadPath" class="cover-img" />
     </div>
     <el-dialog v-model="shotVisible" title="图片剪裁" class="crop-dialog" width="600px">
       <div ref="cropperContent" class="cropper-content">
-        <div v-if="shotVisible && (imageUrl || defaultUrl)" class="cropper">
+        <div v-if="shotVisible && uploadStore.uploadPath" class="cropper">
           <VueCropper
             ref="cropper"
-            :img="imageUrl || defaultUrl"
+            :img="uploadStore.uploadPath"
             :output-size="option.outputSize"
             :output-type="option.outputType"
             :info="option.info"
@@ -82,20 +86,17 @@ import 'vue-cropper/dist/index.css';
 interface IProps {
   getCoverImage?: (url: string) => void;
   preview?: boolean;
-  defaultUrl?: string;
   showImg?: boolean;
   fixedNumber?: number[];
 }
 
 const props = withDefaults(defineProps<IProps>(), {
   preview: true,
-  defaultUrl: '',
   showImg: true,
   getCoverImage: () => {},
   fixedNumber: () => [600, 338],
 });
 
-const imageUrl = ref<string>('');
 const sourceUrl = ref<string>(''); // 上传的原图url
 const previewVisible = ref<boolean>(false);
 const shotVisible = ref<boolean>(false);
@@ -129,7 +130,8 @@ const option = reactive({
 
 // 组件弃用时，清除上传的图片
 onDeactivated(() => {
-  imageUrl.value = '';
+  uploadStore.clearFilePath();
+  sourceUrl.value = '';
 });
 
 // 上传校验
@@ -150,7 +152,7 @@ const onUpload = (event: { file: Blob }) => {
   reader.onload = async (e: Event) => {
     shotVisible.value = true;
     sourceUrl.value = (e.target as FileReader).result as string;
-    imageUrl.value = (e.target as FileReader).result as string;
+    uploadStore.uploadPath = (e.target as FileReader).result as string;
     // 获取上传的图片宽高
     const imgInfo = (await getImgInfo((e.target as FileReader).result as string)) as { width: number; height: number };
     // 设置截图框的宽高
@@ -219,7 +221,7 @@ const onFinish = () => {
   cropper.value?.getCropBlob(async (blob: any) => {
     const reader = new FileReader();
     reader.onload = (e: Event) => {
-      imageUrl.value = (e.target as FileReader).result as string;
+      uploadStore.uploadPath = (e.target as FileReader).result as string;
       props.getCoverImage && props.getCoverImage((e.target as FileReader).result as string);
       shotVisible.value = false;
     };
@@ -231,7 +233,10 @@ const onFinish = () => {
 // 重新截图
 const onRestoreShot = async () => {
   // 重新截图时，将原图赋值给截图输入框
-  imageUrl.value = sourceUrl.value;
+  console.log(sourceUrl.value, 'sourceUrl.value');
+  if (sourceUrl.value) {
+    uploadStore.uploadPath = sourceUrl.value;
+  }
   shotVisible.value = true;
 };
 
@@ -242,7 +247,7 @@ const onPreview = () => {
 
 // 清除图片
 const onDelImage = () => {
-  imageUrl.value = '';
+  uploadStore.clearFilePath();
   props.getCoverImage('');
   createStore.createInfo.coverImage = '';
 };

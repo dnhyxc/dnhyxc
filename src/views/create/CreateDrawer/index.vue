@@ -99,7 +99,7 @@
           </el-form-item>
           <el-form-item prop="cover" label="封面" class="form-item-cover">
             <div class="cover-wrap">
-              <Upload v-model:default-url="createStore.createInfo.coverImage" />
+              <Upload />
             </div>
           </el-form-item>
           <el-form-item
@@ -139,7 +139,7 @@ import { ref, computed, onDeactivated } from 'vue';
 import { useRouter } from 'vue-router';
 import type { FormInstance } from 'element-plus';
 import { ARTICLE_CLASSIFY, ARTICLE_TAG } from '@/constant';
-import { createStore } from '@/store';
+import { createStore, uploadStore } from '@/store';
 import Upload from '@/components/Upload/index.vue';
 
 const router = useRouter();
@@ -199,6 +199,7 @@ const onSubmit = () => {
       await createStore.createArticle(
         {
           ...createStore?.createInfo,
+          coverImage: uploadStore.uploadPath || createStore?.createInfo?.coverImage,
           articleId: createStore?.createInfo?.articleId,
           createTime: createStore?.createInfo?.createTime?.valueOf(),
         },

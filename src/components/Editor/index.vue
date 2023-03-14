@@ -15,7 +15,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, onActivated, onDeactivated } from 'vue';
+import { reactive } from 'vue';
 import { ElMessage } from 'element-plus';
 import { createStore } from '@/store';
 
@@ -60,14 +60,6 @@ const props = withDefaults(defineProps<IProps>(), {
   onEditChange: () => {},
   onPublish: () => {},
   onClear: () => {},
-});
-
-onActivated(() => {
-  console.log('组件显示');
-});
-
-onDeactivated(() => {
-  console.log('组件隐藏');
 });
 
 // 自定义工具栏配置
