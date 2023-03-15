@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { ElMessage } from 'element-plus';
 import * as Service from '@/server';
-import { normalizeResult, Message, url2Base64 } from '@/utils';
+import { normalizeResult, Message } from '@/utils';
 import { useCheckUserId } from '@/hooks';
 import { ArticleListResult, ArticleItem, AnotherParams, CommentParams, ReplayComment } from '@/typings/common';
 import { createStore, loginStore, uploadStore } from '@/store';
@@ -87,14 +87,8 @@ export const useArticleStore = defineStore('article', {
           };
 
           if (res.data.coverImage) {
-            url2Base64(res.data.coverImage!, (url: string) => {
-              console.log(url, 'url');
-              // 设置上传组件预览图片默认值
-              uploadStore.uploadPath = url;
-            });
+            uploadStore.uploadPath = res.data.coverImage;
           }
-          uploadStore.uploadPath = res.data.coverImage;
-
           // 如果是创建页调用获取详情的接口，则需要清除文章详情的缓存。防止再次进入详情时文章目录出现错乱
           this.articleDetail = { id: '' };
           this.detailArtLikeCount = 0;

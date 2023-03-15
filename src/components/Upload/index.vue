@@ -24,16 +24,12 @@
     </el-upload>
     <div v-if="uploadStore.uploadPath" class="preview">
       <div v-if="preview" class="mack">
-        <i
-          v-if="uploadStore.uploadPath"
-          class="shot iconfont icon-line-screenshotpingmujietu-01"
-          @click="onRestoreShot"
-        />
+        <i v-if="sourceUrl" class="shot iconfont icon-line-screenshotpingmujietu-01" @click="onRestoreShot" />
         <i class="download iconfont icon-xiazai1" @click="(e) => onDownload(e, uploadStore.uploadPath)" />
         <i class="view iconfont icon-browse" @click="onPreview" />
         <i class="del iconfont icon-shanchu" @click="onDelImage" />
       </div>
-      <img v-if="showImg && uploadStore.uploadPath" :src="uploadStore.uploadPath" class="cover-img" />
+      <slot name="preview" :data="{ onRestoreShot, onDownload, onPreview, onDelImage }" />
     </div>
     <el-dialog v-model="shotVisible" title="图片剪裁" class="crop-dialog" width="600px">
       <div ref="cropperContent" class="cropper-content">
@@ -72,19 +68,19 @@
 
 <script setup lang="ts">
 import { ipcRenderer } from 'electron';
-import { ref, reactive, onDeactivated, nextTick } from 'vue';
+import { ref, reactive, onDeactivated, nextTick, onUnmounted } from 'vue';
 import { ElMessage } from 'element-plus';
 import { Plus } from '@element-plus/icons-vue';
 import type { UploadProps } from 'element-plus';
 import { VueCropper } from 'vue-cropper';
-import { createStore, uploadStore } from '@/store';
+import { uploadStore } from '@/store';
 import { FILE_TYPE } from '@/constant';
 import { getImgInfo } from '@/utils';
 
 import 'vue-cropper/dist/index.css';
 
 interface IProps {
-  getCoverImage?: (url: string) => void;
+  getUploadPath?: (url: string) => void;
   preview?: boolean;
   showImg?: boolean;
   fixedNumber?: number[];
@@ -93,7 +89,7 @@ interface IProps {
 const props = withDefaults(defineProps<IProps>(), {
   preview: true,
   showImg: true,
-  getCoverImage: () => {},
+  getUploadPath: () => {},
   fixedNumber: () => [600, 338],
 });
 
@@ -134,6 +130,12 @@ onDeactivated(() => {
   sourceUrl.value = '';
 });
 
+// 组件卸载时，清除上传的图片
+onUnmounted(() => {
+  uploadStore.clearFilePath();
+  sourceUrl.value = '';
+});
+
 // 上传校验
 const beforeUpload: UploadProps['beforeUpload'] = (rawFile) => {
   if (!FILE_TYPE.includes(rawFile.type)) {
@@ -166,7 +168,7 @@ const onUpload = (event: { file: Blob }) => {
       option.autoCropWidth = cropWidth;
       option.autoCropHeight = height;
     });
-    props.getCoverImage && props.getCoverImage((e.target as FileReader).result as string);
+    props.getUploadPath && props.getUploadPath((e.target as FileReader).result as string);
   };
 
   reader.readAsDataURL(event.file);
@@ -222,7 +224,7 @@ const onFinish = () => {
     const reader = new FileReader();
     reader.onload = (e: Event) => {
       uploadStore.uploadPath = (e.target as FileReader).result as string;
-      props.getCoverImage && props.getCoverImage((e.target as FileReader).result as string);
+      props.getUploadPath && props.getUploadPath((e.target as FileReader).result as string);
       shotVisible.value = false;
     };
     reader.readAsDataURL(blob);
@@ -233,7 +235,6 @@ const onFinish = () => {
 // 重新截图
 const onRestoreShot = async () => {
   // 重新截图时，将原图赋值给截图输入框
-  console.log(sourceUrl.value, 'sourceUrl.value');
   if (sourceUrl.value) {
     uploadStore.uploadPath = sourceUrl.value;
   }
@@ -248,8 +249,7 @@ const onPreview = () => {
 // 清除图片
 const onDelImage = () => {
   uploadStore.clearFilePath();
-  props.getCoverImage('');
-  createStore.createInfo.coverImage = '';
+  props.getUploadPath('');
 };
 </script>
 
@@ -324,6 +324,7 @@ const onDelImage = () => {
       background-color: @shade-1;
       color: @fff;
       display: none;
+      z-index: 99;
 
       .view {
         font-size: 22px;
@@ -342,14 +343,6 @@ const onDelImage = () => {
       .view {
         margin-right: 20px;
       }
-    }
-
-    .cover-img {
-      display: block;
-      width: 100%;
-      height: 100%;
-      border-radius: 4px;
-      .imgStyle();
     }
 
     &:hover {

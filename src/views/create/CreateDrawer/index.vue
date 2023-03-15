@@ -99,7 +99,11 @@
           </el-form-item>
           <el-form-item prop="cover" label="封面" class="form-item-cover">
             <div class="cover-wrap">
-              <Upload />
+              <Upload :get-upload-path="getUploadPath">
+                <template #preview>
+                  <img :src="uploadStore.uploadPath" class="cover-img" />
+                </template>
+              </Upload>
             </div>
           </el-form-item>
           <el-form-item
@@ -176,6 +180,11 @@ onDeactivated(() => {
   }
 });
 
+// 获取上传图片
+const getUploadPath = (url: string) => {
+  console.log(url, 'url');
+};
+
 // 选择分类
 const onClassifyCommand = (classify: string) => {
   createStore.createInfo.classify = classify;
@@ -248,6 +257,14 @@ const onSubmit = () => {
         align-content: center;
         justify-content: center;
         height: 140px;
+
+        .cover-img {
+          display: block;
+          width: 100%;
+          height: 100%;
+          border-radius: 4px;
+          .imgStyle();
+        }
       }
     }
 
