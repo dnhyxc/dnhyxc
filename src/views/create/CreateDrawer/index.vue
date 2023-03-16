@@ -99,9 +99,9 @@
           </el-form-item>
           <el-form-item prop="cover" label="封面" class="form-item-cover">
             <div class="cover-wrap">
-              <Upload :get-upload-path="getUploadPath">
+              <Upload v-model:file-path="createStore.createInfo.coverImage">
                 <template #preview>
-                  <img :src="uploadStore.uploadPath" class="cover-img" />
+                  <img :src="uploadPath || createStore.createInfo?.coverImage!" class="cover-img" />
                 </template>
               </Upload>
             </div>
@@ -143,7 +143,7 @@ import { ref, computed, onDeactivated } from 'vue';
 import { useRouter } from 'vue-router';
 import type { FormInstance } from 'element-plus';
 import { ARTICLE_CLASSIFY, ARTICLE_TAG } from '@/constant';
-import { createStore, uploadStore } from '@/store';
+import { createStore } from '@/store';
 import Upload from '@/components/Upload/index.vue';
 
 const router = useRouter();
@@ -160,6 +160,7 @@ const props = withDefaults(defineProps<IProps>(), {
 
 const emit = defineEmits(['update:modelValue']);
 
+const uploadPath = ref<string>('');
 const formRef = ref<FormInstance>();
 
 // 计算v-model传过来的参数，防止出现值是可读的，无法修改的警告
@@ -179,11 +180,6 @@ onDeactivated(() => {
     formRef.value?.resetFields();
   }
 });
-
-// 获取上传图片
-const getUploadPath = (url: string) => {
-  console.log(url, 'url');
-};
 
 // 选择分类
 const onClassifyCommand = (classify: string) => {
@@ -208,7 +204,7 @@ const onSubmit = () => {
       await createStore.createArticle(
         {
           ...createStore?.createInfo,
-          coverImage: uploadStore.uploadPath || createStore?.createInfo?.coverImage,
+          coverImage: uploadPath.value || createStore?.createInfo?.coverImage,
           articleId: createStore?.createInfo?.articleId,
           createTime: createStore?.createInfo?.createTime?.valueOf(),
         },

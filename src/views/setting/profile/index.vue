@@ -9,9 +9,9 @@
     <div class="user-info">
       <div class="cover">
         <div class="img-wrap">
-          <img :src="coverUrl" alt="" class="cover-img" />
+          <img :src="mainCover" alt="" class="cover-img" />
           <div class="upload-cover-wrap">
-            <Upload :get-cover-image="getCoverUrl" :preview="false" :show-img="false" :fixed-number="[800, 200]">
+            <Upload v-model:file-path="mainCover" :preview="false" :show-img="false" :fixed-number="[800, 200]">
               <el-button type="primary" link class="action">
                 <i class="font iconfont icon-19shuxie3x" />
                 编辑封面图
@@ -21,7 +21,11 @@
         </div>
         <div class="author-info">
           <div class="head-img-wrap">
-            <Upload :get-cover-image="getHeadUrl" :default-url="profileForm.headUrl" />
+            <Upload v-model:file-path="headUrl" :fixed-number="[130, 130]">
+              <template #preview>
+                <img :src="headUrl" class="cover-img" />
+              </template>
+            </Upload>
           </div>
           <div class="username">dnhyxc</div>
         </div>
@@ -100,41 +104,31 @@ import Upload from '@/components/Upload/index.vue';
 
 const formRef = ref<FormInstance>();
 
-// 从pania中获取头像url,如果没有,则设置默认值
-const { headUrl } = loginStore.userInfo;
-
-const coverUrl = ref<string>('https://pic2.zhimg.com/80/v2-ff0d35d4dcad8e7e1623ef1c294651c1_1440w.webp');
+const mainCover = ref<string>('https://pic2.zhimg.com/80/v2-ff0d35d4dcad8e7e1623ef1c294651c1_1440w.webp');
+const headUrl = ref<string>(loginStore.userInfo?.headUrl || HEAD_IMG);
 
 const profileForm = reactive<{
   username: string;
   job: string;
   motto: string;
   introduce: string;
-  headUrl: string;
 }>({
   username: '',
   job: '',
   motto: '',
   introduce: '',
-  headUrl: headUrl || HEAD_IMG,
 });
-
-// 获取上传的封面图片
-const getCoverUrl = (url: string) => {
-  coverUrl.value = url;
-};
-
-// 获取上传的头像图片
-const getHeadUrl = (url: string) => {
-  profileForm.headUrl = url;
-};
 
 // 确定更新用户信息
 const onUpdateInfo = (formEl: FormInstance | undefined) => {
   if (!formEl) return;
   formEl.validate(async (valid) => {
     if (valid) {
-      console.log('重置密码并登录', profileForm);
+      console.log('重置密码并登录', {
+        ...profileForm,
+        headUrl: headUrl.value,
+        mainCover: mainCover.value,
+      });
     } else {
       console.log('error submit!');
       return false;
@@ -147,9 +141,15 @@ const onEnter = () => {
   if (!formRef.value) return;
   formRef.value.validate(async (valid) => {
     if (valid) {
-      console.log(profileForm, 'profileForm>>>onEnter');
+      console.log(
+        {
+          ...profileForm,
+          headUrl: headUrl.value,
+          mainCover: mainCover.value,
+        },
+        'profileForm>>>onEnter',
+      );
     } else {
-      console.log(profileForm, 'error submit!');
       return false;
     }
   });
@@ -233,11 +233,11 @@ const onEnter = () => {
           background-image: @card-lg;
           box-shadow: 0 0 10px @shadow-color;
 
-          .head-img {
+          .cover-img {
             display: block;
             width: 100%;
             height: 100%;
-            border-radius: 5px;
+            border-radius: 4px;
             .imgStyle();
           }
         }

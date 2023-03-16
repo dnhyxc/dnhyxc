@@ -8,11 +8,11 @@
   <div class="upload-wrap">
     <el-dialog v-model="previewVisible" title="图片预览" width="600px">
       <div class="preview-dialog">
-        <img :src="uploadStore.uploadPath" alt="" class="prew-img" />
+        <img :src="filePath" alt="" class="prew-img" />
       </div>
     </el-dialog>
     <el-upload
-      v-if="!uploadStore.uploadPath || !showImg"
+      v-if="!filePath || !showImg"
       class="uploader"
       :show-file-list="false"
       :before-upload="beforeUpload"
@@ -22,10 +22,10 @@
         <el-icon class="uploader-icon"><Plus /></el-icon>
       </slot>
     </el-upload>
-    <div v-if="uploadStore.uploadPath" class="preview">
+    <div v-if="filePath" class="preview">
       <div v-if="preview" class="mack">
         <i v-if="sourceUrl" class="shot iconfont icon-line-screenshotpingmujietu-01" @click="onRestoreShot" />
-        <i class="download iconfont icon-xiazai1" @click="(e) => onDownload(e, uploadStore.uploadPath)" />
+        <i class="download iconfont icon-xiazai1" @click="(e) => onDownload(e, sourceUrl || filePath)" />
         <i class="view iconfont icon-browse" @click="onPreview" />
         <i class="del iconfont icon-shanchu" @click="onDelImage" />
       </div>
@@ -33,10 +33,10 @@
     </div>
     <el-dialog v-model="shotVisible" title="图片剪裁" class="crop-dialog" width="600px">
       <div ref="cropperContent" class="cropper-content">
-        <div v-if="shotVisible && uploadStore.uploadPath" class="cropper">
+        <div v-if="shotVisible" class="cropper">
           <VueCropper
             ref="cropper"
-            :img="uploadStore.uploadPath"
+            :img="filePath"
             :output-size="option.outputSize"
             :output-type="option.outputType"
             :info="option.info"
@@ -68,30 +68,32 @@
 
 <script setup lang="ts">
 import { ipcRenderer } from 'electron';
-import { ref, reactive, onDeactivated, nextTick, onUnmounted } from 'vue';
+import { ref, reactive, onDeactivated, nextTick, onUnmounted, computed } from 'vue';
 import { ElMessage } from 'element-plus';
 import { Plus } from '@element-plus/icons-vue';
 import type { UploadProps } from 'element-plus';
 import { VueCropper } from 'vue-cropper';
 import { uploadStore } from '@/store';
 import { FILE_TYPE } from '@/constant';
-import { getImgInfo } from '@/utils';
+import { getImgInfo, url2Base64 } from '@/utils';
 
 import 'vue-cropper/dist/index.css';
 
 interface IProps {
-  getUploadPath?: (url: string) => void;
+  filePath: string;
   preview?: boolean;
   showImg?: boolean;
   fixedNumber?: number[];
 }
 
 const props = withDefaults(defineProps<IProps>(), {
+  filePath: '',
   preview: true,
   showImg: true,
-  getUploadPath: () => {},
   fixedNumber: () => [600, 338],
 });
+
+const emit = defineEmits(['update:filePath']);
 
 const sourceUrl = ref<string>(''); // 上传的原图url
 const previewVisible = ref<boolean>(false);
@@ -126,14 +128,22 @@ const option = reactive({
 
 // 组件弃用时，清除上传的图片
 onDeactivated(() => {
-  uploadStore.clearFilePath();
   sourceUrl.value = '';
 });
 
 // 组件卸载时，清除上传的图片
 onUnmounted(() => {
-  uploadStore.clearFilePath();
   sourceUrl.value = '';
+});
+
+// 动态获取 filePath
+const filePath = computed({
+  get() {
+    return props.filePath;
+  },
+  set(url: string) {
+    emit('update:filePath', url);
+  },
 });
 
 // 上传校验
@@ -154,7 +164,7 @@ const onUpload = (event: { file: Blob }) => {
   reader.onload = async (e: Event) => {
     shotVisible.value = true;
     sourceUrl.value = (e.target as FileReader).result as string;
-    uploadStore.uploadPath = (e.target as FileReader).result as string;
+    emit('update:filePath', (e.target as FileReader).result as string);
     // 获取上传的图片宽高
     const imgInfo = (await getImgInfo((e.target as FileReader).result as string)) as { width: number; height: number };
     // 设置截图框的宽高
@@ -168,7 +178,6 @@ const onUpload = (event: { file: Blob }) => {
       option.autoCropWidth = cropWidth;
       option.autoCropHeight = height;
     });
-    props.getUploadPath && props.getUploadPath((e.target as FileReader).result as string);
   };
 
   reader.readAsDataURL(event.file);
@@ -194,7 +203,12 @@ const onRotate = () => {
 // 下载
 const onDownload = async (e: Event, loadUrl?: string) => {
   if (loadUrl) {
-    ipcRenderer.send('download', loadUrl);
+    if (loadUrl.includes('data:image')) {
+      ipcRenderer.send('download', loadUrl);
+    } else {
+      const url = await url2Base64(loadUrl);
+      url && ipcRenderer.send('download', url);
+    }
   } else {
     cropper.value.getCropBlob((blob: Blob) => {
       const url = window.URL.createObjectURL(blob);
@@ -204,12 +218,14 @@ const onDownload = async (e: Event, loadUrl?: string) => {
 
   // 设置一次性监听，防止重复触发
   ipcRenderer.once('download-file', (e, res: string) => {
-    ElMessage({
-      message: res ? '保存成功' : '保存失败',
-      type: res ? 'success' : 'error',
-      offset: 80,
-      duration: 2000,
-    });
+    if (res) {
+      ElMessage({
+        message: '保存成功',
+        type: 'success',
+        offset: 80,
+        duration: 2000,
+      });
+    }
   });
 };
 
@@ -223,12 +239,16 @@ const onFinish = () => {
   cropper.value?.getCropBlob(async (blob: any) => {
     const reader = new FileReader();
     reader.onload = (e: Event) => {
-      uploadStore.uploadPath = (e.target as FileReader).result as string;
-      props.getUploadPath && props.getUploadPath((e.target as FileReader).result as string);
+      // 更新父组件传递过来的filePath
+      emit('update:filePath', (e.target as FileReader).result as string);
       shotVisible.value = false;
     };
     reader.readAsDataURL(blob);
-    await uploadStore.uploadFile(blob);
+    const res = await uploadStore.uploadFile(blob);
+    if (res) {
+      // 更新父组件传递过来的filePath
+      emit('update:filePath', res);
+    }
   });
 };
 
@@ -236,7 +256,8 @@ const onFinish = () => {
 const onRestoreShot = async () => {
   // 重新截图时，将原图赋值给截图输入框
   if (sourceUrl.value) {
-    uploadStore.uploadPath = sourceUrl.value;
+    // 更新父组件传递过来的filePath
+    emit('update:filePath', sourceUrl.value);
   }
   shotVisible.value = true;
 };
@@ -248,8 +269,8 @@ const onPreview = () => {
 
 // 清除图片
 const onDelImage = () => {
-  uploadStore.clearFilePath();
-  props.getUploadPath('');
+  // 清空父组件传递过来的filePath
+  emit('update:filePath', '');
 };
 </script>
 
@@ -325,7 +346,6 @@ const onDelImage = () => {
       color: @fff;
       display: none;
       z-index: 99;
-
       .view {
         font-size: 22px;
         cursor: pointer;

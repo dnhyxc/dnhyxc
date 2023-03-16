@@ -4,14 +4,12 @@ import { normalizeResult } from '@/utils';
 import { useCheckUserId } from '@/hooks';
 
 interface IProps {
-  uploadPath: string | undefined;
   visible: boolean;
 }
 
 // 公共store
 export const useUploadStore = defineStore('upload', {
   state: (): IProps => ({
-    uploadPath: '',
     visible: false,
   }),
 
@@ -24,14 +22,9 @@ export const useUploadStore = defineStore('upload', {
       formData.append('file', file);
       const res = normalizeResult<{ filePath: string }>(await Service.uploadFile(formData));
       if (res.success) {
-        this.uploadPath = res.data.filePath;
         this.visible = true;
+        return res.data.filePath;
       }
-    },
-
-    // 清空返回路径
-    clearFilePath() {
-      this.uploadPath = '';
     },
   },
 });

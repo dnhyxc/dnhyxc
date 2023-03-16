@@ -136,6 +136,8 @@ ipcMain.on('download', (event, url) => {
     item.once('done', (event, state) => {
       if (state === 'completed') {
         win?.webContents.send('download-file', true);
+      } else {
+        win?.webContents.send('download-file', false);
       }
     });
   });

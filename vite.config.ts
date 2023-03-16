@@ -53,10 +53,6 @@ export default defineConfig({
         target: 'http://localhost:9112',
         changeOrigin: true, // 允许跨域
       },
-      '/image': {
-        target: 'http://localhost:9112',
-        changeOrigin: true, // 允许跨域
-      },
     },
   },
   build: {
