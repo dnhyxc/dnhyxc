@@ -8,7 +8,7 @@
   <div class="card-wrap" @click="toDetail(data.id)">
     <div class="card">
       <div class="card-top">
-        <div v-if="!data?.isDelete" class="mask">
+        <div v-if="data?.isDelete" class="mask">
           <span class="mask-text">已下架</span>
         </div>
         <Image :url="data.coverImage || IMG1" :transition-img="IMG1" class="img" />
@@ -31,8 +31,8 @@
               <span class="date">{{ data.createTime ? formatDate(data.createTime) : '-' }}</span>
             </div>
             <div class="tags">
-              <span class="classify" @click="(e) => toClassify(e, 'electron')">{{ data.classify }}</span>
-              <span class="tag" @click="(e) => toTag(e, 'electron')">{{ data.tag }}</span>
+              <span class="classify" @click="(e) => toClassify(e, 'electron')">分类: {{ data.classify }}</span>
+              <span class="tag" @click="(e) => toTag(e, 'electron')">标签: {{ data.tag }}</span>
             </div>
             <div class="actions">
               <div class="action-icons">
@@ -68,7 +68,7 @@ import { useRouter } from 'vue-router';
 import { formatDate } from '@/utils';
 import { ArticleItem } from '@/typings/common';
 import IMG1 from '@/assets/images/1.jpg';
-import { loginStore } from '@/store';
+import { loginStore, articleStore } from '@/store';
 import Image from '@/components/Image/index.vue';
 
 const router = useRouter();
@@ -84,12 +84,12 @@ const props = withDefaults(defineProps<IProps>(), {
 
 // 点赞
 const onLike = (id: string) => {
-  console.log(id, 'onLike');
+  articleStore.likeListArticle({ id });
 };
 
 // 评论
 const onComment = (id: string) => {
-  console.log(id, 'onComment');
+  router.push(`/detail/${id}?scrollTo=1`);
 };
 
 // 编辑

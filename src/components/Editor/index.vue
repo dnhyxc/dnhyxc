@@ -17,7 +17,7 @@
 <script setup lang="ts">
 import { reactive } from 'vue';
 import { ElMessage } from 'element-plus';
-import { createStore } from '@/store';
+import { createStore, uploadStore } from '@/store';
 
 interface ToolbarItem {
   action?: (editor: any) => void;
@@ -89,13 +89,12 @@ const toolbar = reactive<Toolbar>({
 });
 
 // 上传图片事件
-const onUploadImage = (event: Event, insertImage: Function, files: File) => {
+const onUploadImage = async (event: Event, insertImage: Function, files: File) => {
   // 拿到 files 之后上传到文件服务器，然后向编辑框中插入对应的内容
-  console.log(files);
-
+  const res = await uploadStore.uploadFile(files[0]);
   insertImage({
-    url: 'https://pic1.zhimg.com/80/v2-32af95c7b9bb7da9e9f9f3e2601cc46c_720w.webp?source=1940ef5c',
-    desc: '养眼',
+    url: res,
+    desc: files[0]?.name,
     width: '100%',
     height: 'auto',
   });

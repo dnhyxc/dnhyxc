@@ -73,6 +73,10 @@ onMounted(async () => {
     commonStore.detailScrollRef = scrollRef.value;
   });
   await articleStore.getArticleDetail(route.params.id as string);
+  // 在详情获取成功后，如果路由路径中携带了scrollTo参数，则说明是从列表中点击评论进来的，需要跳转到评论
+  if (route.query?.scrollTo) {
+    onScrollTo(articleInfoRef.value?.offsetHeight);
+  }
 });
 
 // 组件卸载前，清楚store中的详情信息

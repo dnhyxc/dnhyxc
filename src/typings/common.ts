@@ -164,7 +164,7 @@ export interface TimelineArticles {
 export interface TimelineResult {
   date: string;
   articles: TimelineArticles[];
-  count: number;
+  count?: number;
 }
 
 // 重置密码表单参数

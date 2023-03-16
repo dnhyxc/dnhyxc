@@ -158,7 +158,7 @@ const onShowMore = () => {
     background-image: @bg-lg-2;
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
-    padding-bottom: 12px;
+    padding-bottom: 20px;
     .img-wrap {
       width: 100%;
       height: 200px;
@@ -223,6 +223,7 @@ const onShowMore = () => {
           font-size: 14px;
           color: @font-4;
           width: 110px;
+          margin-top: 5px;
           cursor: pointer;
           .font {
             margin-right: 5px;

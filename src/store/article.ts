@@ -10,6 +10,7 @@ import {
   CommentParams,
   ReplayComment,
   DeleteArticleParams,
+  // TimelineResult,
 } from '@/typings/common';
 import { createStore, loginStore } from '@/store';
 
@@ -158,6 +159,66 @@ export const useArticleStore = defineStore('article', {
           type: 'success',
           offset: 80,
         });
+      } else {
+        ElMessage({
+          message: res.message,
+          type: 'error',
+          offset: 80,
+        });
+      }
+    },
+
+    // 列表文章点赞
+    async likeListArticle({ id, isTimeLine, isAboutMe }: { id: string; isTimeLine?: boolean; isAboutMe?: boolean }) {
+      const res = normalizeResult<{ id: string; isLike: boolean }>(await Service.likeArticle({ id }));
+
+      if (res.success) {
+        const { id, isLike } = res.data;
+        if (isTimeLine) {
+          // const cloneArticles: TimelineResult[] = JSON.parse(JSON.stringify(this.articleList));
+          // const timelineList = cloneArticles.map((i) => {
+          //   i.articles.forEach((j) => {
+          //     if (j.id === id) {
+          //       j.isLike = res.data.isLike;
+          //       if (isLike) {
+          //         j.likeCount! += 1;
+          //       } else {
+          //         j.likeCount! > 0 ? (j.likeCount! -= 1) : (j.likeCount = 0);
+          //       }
+          //     }
+          //   });
+          //   return i;
+          // });
+          // updateList(timelineList);
+        } else {
+          const cloneList: ArticleItem[] = JSON.parse(JSON.stringify(this.articleList));
+
+          const list = cloneList.map((i) => {
+            if (i.id === id) {
+              i.isLike = res.data.isLike;
+              if (isLike) {
+                i.likeCount! += 1;
+              } else {
+                i.likeCount! > 0 ? (i.likeCount! -= 1) : (i.likeCount = 0);
+              }
+            }
+            return i;
+          });
+
+          // listRef.current = list;
+
+          // isAboutMe为true，就是用户自己的主页或博主自己进入博主主页，此时点赞需要删除取消点赞的文章
+          if (isAboutMe) {
+            const likes = list.filter((i) => i.isLike);
+            this.articleList = likes;
+            // updateList({
+            //   ...articleList,
+            //   list: listRef.current,
+            // });
+          } else {
+            this.articleList = list;
+          }
+        }
       } else {
         ElMessage({
           message: res.message,
