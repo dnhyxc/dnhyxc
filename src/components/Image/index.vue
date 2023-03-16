@@ -61,7 +61,6 @@ const loadImage = () => {
 
 // 图片加载失败事件
 const onError = () => {
-  console.log(loadUrl.value, 'loadUrl.value>>>>>onError');
   loadUrl.value = props.transitionImg;
 };
 
@@ -75,10 +74,12 @@ const onClickImg = () => {
 @import '@/styles/index.less';
 
 .image-wrap-style {
+  box-sizing: border-box;
   width: 100%;
   height: auto;
 
   .image-item {
+    display: block;
     height: 100%;
     width: 100%;
     .imgStyle();

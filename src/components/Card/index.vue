@@ -8,7 +8,10 @@
   <div class="card-wrap" @click="toDetail(data.id)">
     <div class="card">
       <div class="card-top">
-        <img class="img" :src="data.coverImage || IMG1" />
+        <div v-if="!data?.isDelete" class="mask">
+          <span class="mask-text">已下架</span>
+        </div>
+        <Image :url="data.coverImage || IMG1" :transition-img="IMG1" class="img" />
         <div class="info">
           <div class="desc">
             {{ data.abstract }}
@@ -50,7 +53,7 @@
               </div>
               <div v-if="loginStore?.userInfo?.userId === data.authorId" class="action art-action">
                 <span class="edit" @click.stop="toEdit(data.id)">编辑</span>
-                <span class="del" @click="(e) => onReomve(e, data.id)">下架</span>
+                <span class="del" @click.stop="onReomve(data.id)">下架</span>
               </div>
             </div>
           </div>
@@ -62,19 +65,22 @@
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
-import { ElMessage } from 'element-plus';
-import { Message, formatDate } from '@/utils';
+import { formatDate } from '@/utils';
 import { ArticleItem } from '@/typings/common';
 import IMG1 from '@/assets/images/1.jpg';
 import { loginStore } from '@/store';
+import Image from '@/components/Image/index.vue';
 
 const router = useRouter();
 
 interface IProps {
   data: ArticleItem;
+  deleteArticle?: Function;
 }
 
-withDefaults(defineProps<IProps>(), {});
+const props = withDefaults(defineProps<IProps>(), {
+  deleteArticle: () => {},
+});
 
 // 点赞
 const onLike = (id: string) => {
@@ -92,22 +98,8 @@ const toEdit = (id: string) => {
 };
 
 // 下架
-const onReomve = async (e: Event, id: string) => {
-  e.stopPropagation();
-  console.log(id, 'id');
-  Message('确定要下架该文章吗', '下架文章')
-    .then(() => {
-      ElMessage({
-        type: 'success',
-        message: '删除成功',
-      });
-    })
-    .catch(() => {
-      ElMessage({
-        type: 'error',
-        message: '删除失败',
-      });
-    });
+const onReomve = async (id: string) => {
+  props.deleteArticle(id);
 };
 
 // 去详情
@@ -173,19 +165,35 @@ const toTag = (e: Event, name: string) => {
         .imgStyle();
       }
 
+      .mask {
+        position: absolute;
+        top: 10px;
+        right: 5px;
+        color: @font-warning;
+        z-index: 9;
+
+        .mask-text {
+          display: table-cell;
+          vertical-align: middle;
+          .ellipsisMore(3);
+          font-size: 14px;
+          backdrop-filter: blur(3px);
+          padding: 0 5px 2px 5px;
+        }
+      }
+
       .info {
         display: flex;
         align-items: center;
         box-sizing: border-box;
         position: absolute;
-        bottom: 0;
+        bottom: 5px;
         left: 0;
         width: 100%;
-        height: 42%;
+        max-height: 42%;
         padding: 5px;
         border-bottom-left-radius: 5px;
         border-bottom-right-radius: 5px;
-        // background-color: rgba(0, 0, 0, 0.28);
         color: @fff;
         overflow: hidden;
 
@@ -292,6 +300,10 @@ const toTag = (e: Event, name: string) => {
 
             .like-icon {
               margin-bottom: 2px;
+            }
+
+            .icon-24gf-thumbsUp2 {
+              color: @theme-blue;
             }
 
             .comment-icon {

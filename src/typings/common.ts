@@ -251,3 +251,43 @@ export interface CollectListRes {
   total: number;
   list: AddCollectionRes[];
 }
+
+// 删除文章、收藏夹等类型
+export interface useDeleteArticleParams {
+  articleList?: ArticleListResult;
+  setArticleList?: Function;
+  getArticleList?: Function;
+  setAlertStatus?: Function;
+  listRef?: any;
+  delType?: string;
+  pageNo?: number;
+  keyword?: string;
+  classify?: string;
+  tagName?: string;
+  authorId?: string;
+  accessUserId?: string;
+  authorPage?: boolean;
+  authorLike?: boolean;
+  filterList?: string[];
+  getCollectionTotal?: Function;
+  getCollectedTotal?: Function;
+  removeConfirmStyle?: string;
+}
+
+// 删除文章参数
+export interface DeleteArticleParams {
+  articleId: string;
+  pageNo?: number;
+  pageSize?: number;
+  type?: string;
+  keyword?: string;
+  classify?: string;
+  userId?: string;
+  tagName?: string;
+  accessUserId?: string;
+  delType?: string;
+  authorPage?: boolean;
+  authorLike?: boolean;
+  filterList?: string[];
+  authorId?: string;
+}

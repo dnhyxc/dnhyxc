@@ -29,7 +29,7 @@
           class="pullup-content"
         >
           <div v-for="i of articleStore.articleList" :key="i.id" class="pullup-list-item">
-            <Card :data="i" />
+            <Card :data="i" :delete-article="deleteArticle" />
           </div>
           <ToTopIcon v-if="scrollTop >= 500" :on-scroll-to="onScrollTo" />
         </div>
@@ -43,18 +43,22 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { ATRICLE_TYPE } from '@/constant';
 import { scrollTo } from '@/utils';
-import { useScroller } from '@/hooks';
+import { useScroller, useDeleteArticle } from '@/hooks';
 import { articleStore } from '@/store';
 import Carousel from '@/components/Carousel/index.vue';
 import Card from '@/components/Card/index.vue';
 import ToTopIcon from '@/components/ToTopIcon/index.vue';
 
 const searchType = ref<number>(1); // 1：推荐，2：最新，3：最热
-
-const { scrollRef, scrollTop } = useScroller();
+// 搜索内容
+const keyword = ref<string>('');
 const isMounted = ref<boolean>(false);
 const noMore = computed(() => articleStore.articleList.length >= articleStore.total);
 const disabled = computed(() => articleStore.loading || noMore.value);
+
+const { scrollRef, scrollTop } = useScroller();
+
+const { deleteArticle } = useDeleteArticle({ keyword: keyword.value });
 
 onMounted(() => {
   isMounted.value = true;

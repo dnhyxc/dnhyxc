@@ -3,8 +3,15 @@ import { ElMessage } from 'element-plus';
 import * as Service from '@/server';
 import { normalizeResult, Message } from '@/utils';
 import { useCheckUserId } from '@/hooks';
-import { ArticleListResult, ArticleItem, AnotherParams, CommentParams, ReplayComment } from '@/typings/common';
-import { createStore, loginStore, uploadStore } from '@/store';
+import {
+  ArticleListResult,
+  ArticleItem,
+  AnotherParams,
+  CommentParams,
+  ReplayComment,
+  DeleteArticleParams,
+} from '@/typings/common';
+import { createStore, loginStore } from '@/store';
 
 interface IProps {
   loading: boolean;
@@ -85,10 +92,6 @@ export const useArticleStore = defineStore('article', {
             abstract: res.data.abstract,
             articleId: res.data.id,
           };
-
-          if (res.data.coverImage) {
-            uploadStore.uploadPath = res.data.coverImage;
-          }
           // 如果是创建页调用获取详情的接口，则需要清除文章详情的缓存。防止再次进入详情时文章目录出现错乱
           this.articleDetail = { id: '' };
           this.detailArtLikeCount = 0;
@@ -101,13 +104,6 @@ export const useArticleStore = defineStore('article', {
           offset: 80,
         });
       }
-    },
-
-    // 清楚文章列表数据
-    clearArticleList() {
-      this.articleList = [];
-      this.total = 0;
-      this.pageNo = 0;
     },
 
     // 获取上一篇文章
@@ -136,6 +132,38 @@ export const useArticleStore = defineStore('article', {
       this.loading = false;
       if (res?.length) {
         this.anotherArticleList = res;
+      }
+    },
+
+    // 删除文章
+    async deleteArticle(params: DeleteArticleParams) {
+      const res = normalizeResult<ArticleListResult>(
+        await Service.deleteArticle({
+          ...params,
+          pageNo: this.pageNo,
+          pageSize: this.pageSize,
+          userId: params.authorId || loginStore.userInfo?.userId,
+          delType: params.delType === '2' ? params.delType : '',
+        }),
+      );
+
+      if (res.success) {
+        const nextPageOne = res?.data?.list[0] || '';
+        const list = this.articleList.filter((i) => i.id !== params.articleId);
+        this.articleList = nextPageOne ? [...list, nextPageOne] : list;
+        this.total = this.total - 1;
+
+        ElMessage({
+          message: res.message,
+          type: 'success',
+          offset: 80,
+        });
+      } else {
+        ElMessage({
+          message: res.message,
+          type: 'error',
+          offset: 80,
+        });
       }
     },
 
@@ -298,6 +326,13 @@ export const useArticleStore = defineStore('article', {
         }
         return res.data;
       }
+    },
+
+    // 清楚文章列表数据
+    clearArticleList() {
+      this.articleList = [];
+      this.total = 0;
+      this.pageNo = 0;
     },
 
     // 清除详情缓存
