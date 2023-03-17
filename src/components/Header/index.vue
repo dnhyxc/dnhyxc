@@ -20,13 +20,13 @@
     </div>
     <div class="right">
       <div class="search-wrap">
-        <el-tooltip v-if="!showSearch" effect="light" content="搜索" placement="bottom">
+        <el-tooltip v-if="!commonStore.showSearch" effect="light" content="搜索" placement="bottom">
           <i class="font iconfont icon-sousuo2" @click="onClickSearch" />
         </el-tooltip>
         <el-input
-          v-if="showSearch"
+          v-if="commonStore.showSearch"
           ref="searchRef"
-          v-model="search"
+          v-model.trim="search"
           class="search-inp"
           placeholder="请输入搜索内容"
           @blur="onBlur"
@@ -93,10 +93,9 @@
 
 <script setup lang="ts">
 import Store from 'electron-store';
-import { ref, watchEffect, nextTick, onUnmounted, onMounted } from 'vue';
+import { ref, watchEffect, nextTick, onUnmounted, onMounted, watch } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { ipcRenderer } from 'electron';
-import { ElMessage } from 'element-plus';
 import { Search } from '@element-plus/icons-vue';
 import { ACTION_SVGS, MENULIST, CLOSE_CONFIG, CLOSE_PROMPT } from '@/constant';
 import { commonStore } from '@/store';
@@ -143,6 +142,16 @@ onUnmounted(() => {
     clearTimeout(timerRef.value);
   }
 });
+
+// 监听页面搜索关键词，如果articleStore.keyword为空，则清除输入框内容
+watch(
+  () => commonStore.keyword,
+  (newVal) => {
+    if (!newVal) {
+      search.value = '';
+    }
+  },
+);
 
 // 双击放大窗口
 const onDblclick = () => {
@@ -219,6 +228,7 @@ const toSetting = () => {
 // 点击搜索
 const onClickSearch = () => {
   showSearch.value = true;
+  commonStore.showSearch = true;
   nextTick(() => {
     searchRef.value?.focus();
   });
@@ -226,17 +236,15 @@ const onClickSearch = () => {
 
 // 搜索框失去焦点
 const onBlur = () => {
-  showSearch.value = false;
-  search.value = '';
+  // showSearch.value = false;
+  // search.value = '';
 };
 
 // 输入框回车
-const onEnter = () => {
-  if (!search.value.trim()) {
-    ElMessage({
-      message: '请输入搜索内容',
-      type: 'warning',
-    });
+const onEnter = async (e: Event) => {
+  const value = (e.target as HTMLInputElement).value;
+  if (commonStore.keyword !== value) {
+    commonStore.keyword = value;
   }
 };
 </script>

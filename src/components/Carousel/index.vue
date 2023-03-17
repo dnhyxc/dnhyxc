@@ -9,6 +9,21 @@
     <el-carousel loop :interval="3000" trigger="click" type="card" height="210px" class="carousel">
       <el-carousel-item v-for="item in data" :key="item" @click="toDetail(item.id)">
         <div class="carousel-item">
+          <div class="article-info">
+            <div class="top">
+              <div class="header">
+                <div class="title">{{ item.title }}</div>
+              </div>
+              <div class="create-info">
+                <span class="author" @click.stop="toPersonal(item.authorId!)">{{ item.authorName }}</span>
+                <span class="date">{{ formatGapTime(item.createTime!) }}</span>
+              </div>
+            </div>
+            <div class="bottom">
+              <span class="classify" @click.stop="toClassify(item.classify!)">{{ item.classify }}</span>
+              <span class="tag" @click.stop="toTag(item.tag!)">{{ item.tag }}</span>
+            </div>
+          </div>
           <Image :url="item.coverImage || IMG1" :transition-img="IMG1" class="img" />
         </div>
       </el-carousel-item>
@@ -19,6 +34,7 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
 import { ArticleItem } from '@/typings/common';
+import { formatGapTime } from '@/utils';
 import Image from '@/components/Image/index.vue';
 import IMG1 from '@/assets/images/1.jpg';
 
@@ -34,6 +50,21 @@ defineProps<IProps>();
 const toDetail = (id: string) => {
   router.push(`/detail/${id}`);
 };
+
+// 去我的主页
+const toPersonal = (id: string) => {
+  router.push(`/personal?id=${id}`);
+};
+
+// 去分类
+const toClassify = (name: string) => {
+  router.push(`/classify?name=${name}`);
+};
+
+// 去标签列表
+const toTag = (name: string) => {
+  router.push(`/tag/list?tag=${name}`);
+};
 </script>
 
 <style scoped lang="less">
@@ -42,16 +73,93 @@ const toDetail = (id: string) => {
 .carousel-wrap {
   height: 230px;
   margin-bottom: 10px;
-  // border: 1px solid @card-border;
   padding: 0 0 10px 0;
   border-radius: 5px;
 
   .carousel {
     .carousel-item {
+      position: relative;
       box-sizing: border-box;
       height: 100%;
       border-radius: 5px;
 
+      .article-info {
+        position: absolute;
+        top: 0;
+        left: 0;
+        display: flex;
+        justify-content: space-between;
+        flex-direction: column;
+        width: 100%;
+        height: 100%;
+        box-sizing: border-box;
+        padding: 6px 5px 5px;
+
+        .top {
+          box-sizing: border-box;
+
+          .header {
+            display: flex;
+            align-items: center;
+            box-sizing: border-box;
+            width: 100%;
+            overflow: hidden;
+
+            .title {
+              display: inline-block;
+              font-size: 18px;
+              backdrop-filter: blur(3px);
+              padding: 0 5px 2px 5px;
+              border-radius: 5px;
+              color: @fff;
+              .ellipsisMore(1);
+            }
+          }
+
+          .create-info {
+            margin-top: 8px;
+            .ellipsisMore(1);
+
+            .author,
+            .date {
+              color: @fff;
+              backdrop-filter: blur(3px);
+              padding: 0 5px 2px 5px;
+              border-radius: 5px;
+            }
+
+            .author {
+              margin-right: 10px;
+
+              &:hover {
+                color: @theme-blue;
+              }
+            }
+          }
+        }
+
+        .bottom {
+          box-sizing: border-box;
+          text-align: right;
+
+          .classify,
+          .tag {
+            display: inline-block;
+            backdrop-filter: blur(3px);
+            color: @fff;
+            padding: 0 5px 2px 5px;
+            border-radius: 5px;
+
+            &:hover {
+              color: @theme-blue;
+            }
+          }
+
+          .tag {
+            margin-left: 10px;
+          }
+        }
+      }
       .img {
         width: 100%;
         height: 210px;

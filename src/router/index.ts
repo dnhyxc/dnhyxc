@@ -183,8 +183,11 @@ const router = createRouter({
 
 // 全局守卫：登录拦截 本地没有存token,请重新登录
 router.beforeEach(async (to, from, next) => {
+  const commonStore = useCommonStore();
+  // 切换路由时，隐藏页面头部搜索输入框，并清空搜索输入框内容
+  commonStore.showSearch = false;
+
   if (to.path === '/login') {
-    const commonStore = useCommonStore();
     commonStore.setBackPath(from.path);
   }
 

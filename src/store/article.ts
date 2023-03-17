@@ -12,7 +12,7 @@ import {
   DeleteArticleParams,
   // TimelineResult,
 } from '@/typings/common';
-import { createStore, loginStore } from '@/store';
+import { commonStore, createStore, loginStore } from '@/store';
 
 interface IProps {
   loading: boolean;
@@ -59,6 +59,7 @@ export const useArticleStore = defineStore('article', {
           pageNo: this.pageNo,
           pageSize: this.pageSize,
           hot: this.hot,
+          filter: commonStore.keyword,
         }),
       );
       this.loading = false;

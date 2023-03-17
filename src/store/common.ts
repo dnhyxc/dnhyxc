@@ -10,6 +10,8 @@ interface IProps {
   tocTitles: TocTitlesParams[]; // 文章目录
   previewRef: Ref<HTMLDivElement> | null; // 详情预览组件DOM
   detailScrollRef: any; // 详情滚动DOM
+  showSearch: boolean; // 控制页面头部搜索框的显隐
+  keyword?: string; // 列表文章搜索关键词
 }
 
 // 公共store
@@ -24,6 +26,8 @@ export const useCommonStore = defineStore('common', {
     tocTitles: [],
     previewRef: null,
     detailScrollRef: null,
+    showSearch: false,
+    keyword: '',
   }),
 
   actions: {

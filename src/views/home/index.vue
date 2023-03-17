@@ -40,11 +40,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
 import { ATRICLE_TYPE } from '@/constant';
 import { scrollTo } from '@/utils';
 import { useScroller, useDeleteArticle } from '@/hooks';
-import { articleStore } from '@/store';
+import { articleStore, commonStore } from '@/store';
 import Carousel from '@/components/Carousel/index.vue';
 import Card from '@/components/Card/index.vue';
 import ToTopIcon from '@/components/ToTopIcon/index.vue';
@@ -66,8 +66,21 @@ onMounted(() => {
   onFetchData();
 });
 
+// 监听页面搜索关键词，请求列表数据
+watch(
+  () => commonStore.keyword,
+  (newVal, oldVal) => {
+    if (newVal !== oldVal) {
+      articleStore.clearArticleList();
+      onFetchData();
+    }
+  },
+);
+
 onUnmounted(() => {
   articleStore.clearArticleList();
+  // 离开当前页面时清空头部输入框内容
+  commonStore.keyword = '';
 });
 
 // 请求数据
@@ -82,7 +95,9 @@ const onScrollTo = () => {
 
 // 搜索推荐文章
 const searchNewArticles = () => {
+  // 搜索推荐文章时，把设置的所有筛选项清除
   articleStore.hot = false;
+  commonStore.keyword = '';
   searchType.value = 1;
   articleStore.clearArticleList();
   onFetchData();

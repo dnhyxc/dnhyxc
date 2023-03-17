@@ -27,12 +27,12 @@
           </div>
           <div class="art-info">
             <div class="create-info">
-              <span class="author" @click="toPersonal">{{ data.authorName }}</span>
+              <span class="author" @click.stop="toPersonal(data.authorId!)">{{ data.authorName }}</span>
               <span class="date">{{ data.createTime ? formatDate(data.createTime) : '-' }}</span>
             </div>
             <div class="tags">
-              <span class="classify" @click="(e) => toClassify(e, 'electron')">分类: {{ data.classify }}</span>
-              <span class="tag" @click="(e) => toTag(e, 'electron')">标签: {{ data.tag }}</span>
+              <span class="classify" @click.stop="toClassify(data.classify!)">分类: {{ data.classify }}</span>
+              <span class="tag" @click.stop="toTag(data.tag!)">标签: {{ data.tag }}</span>
             </div>
             <div class="actions">
               <div class="action-icons">
@@ -108,20 +108,17 @@ const toDetail = (id: string) => {
 };
 
 // 去我的主页
-const toPersonal = (e: Event) => {
-  e.stopPropagation();
-  router.push('/personal?id=111');
+const toPersonal = (id: string) => {
+  router.push(`/personal?id=${id}`);
 };
 
 // 去分类
-const toClassify = (e: Event, name: string) => {
-  e.stopPropagation();
+const toClassify = (name: string) => {
   router.push(`/classify?name=${name}`);
 };
 
 // 去标签列表
-const toTag = (e: Event, name: string) => {
-  e.stopPropagation();
+const toTag = (name: string) => {
   router.push(`/tag/list?tag=${name}`);
 };
 </script>
@@ -175,7 +172,6 @@ const toTag = (e: Event, name: string) => {
         .mask-text {
           display: table-cell;
           vertical-align: middle;
-          .ellipsisMore(3);
           font-size: 14px;
           backdrop-filter: blur(3px);
           padding: 0 5px 2px 5px;
