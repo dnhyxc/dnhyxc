@@ -68,3 +68,8 @@ export const COLLECT_ARTICLES = '/api/collectArticles';
 export const CHECK_COLLECTION_STATUS = '/api/checkCollectionStatus';
 // 取消收藏
 export const CANCEL_COLLECTED = '/api/cancelCollected';
+
+// 获取文章标签
+export const GET_TAG_LIST = '/api/getTagList';
+// 获取文章分类
+export const GET_CLASSIFY_LIST = '/api/getClassifyList';

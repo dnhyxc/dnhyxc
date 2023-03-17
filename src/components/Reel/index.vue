@@ -9,7 +9,17 @@
     <el-scrollbar ref="scrollRef">
       <div ref="cardList" class="card-list">
         <slot name="card">
-          <div v-for="i in 20" :key="i" class="card" @click="onClick(i)">分类{{ i }}{{ moveInfo.scrollWidth }}</div>
+          <div
+            v-for="(i, index) in classifys"
+            :key="index"
+            :class="`${currentClassify === i.name && 'active'} card`"
+            @click="onClick(i.name!)"
+          >
+            <div class="content">
+              <div class="name">{{ i.name }}</div>
+              <div class="count"><span class="text text-left">共</span>{{ i.value }}<span class="text">篇</span></div>
+            </div>
+          </div>
         </slot>
       </div>
     </el-scrollbar>
@@ -18,23 +28,26 @@
 
 <script setup lang="ts">
 import { ref, onMounted, reactive } from 'vue';
+import { Classifys } from '@/typings/common';
 
 interface IProps {
-  dataSource: any[];
-  onCheckClassify: (id: number) => void;
+  classifys: Classifys[]; // 分类
+  onCheckClassify: (name: string) => void;
   width?: string;
+  currentClassify?: string;
 }
-
-const moveInfo = reactive<{ x: number; scrollWidth: number }>({ x: 0, scrollWidth: 0 });
-const scrollWrap = ref<any>(null);
-const cardList = ref<HTMLDivElement | null>(null);
-const scrollRef = ref<any>(null);
 
 const props = withDefaults(defineProps<IProps>(), {
   dataSource: () => [],
   onCheckClassify: () => {},
   width: 'calc(100vw - 80px)',
+  currentClassify: '',
 });
+
+const moveInfo = reactive<{ x: number; scrollWidth: number }>({ x: 0, scrollWidth: 0 });
+const scrollWrap = ref<any>(null);
+const cardList = ref<HTMLDivElement | null>(null);
+const scrollRef = ref<any>(null);
 
 onMounted(() => {
   onMouseDown();
@@ -105,9 +118,9 @@ const onMouseLeave = () => {
 };
 
 // 点击卡片事件
-const onClick = (id: number) => {
+const onClick = (name: string) => {
   const { onCheckClassify } = props;
-  onCheckClassify && onCheckClassify(id);
+  onCheckClassify && onCheckClassify(name);
 };
 </script>
 
@@ -144,6 +157,49 @@ const onClick = (id: number) => {
       &:last-child {
         margin-right: 0;
       }
+
+      .content {
+        display: flex;
+        justify-content: space-between;
+        flex-direction: column;
+        width: 100%;
+        height: 100%;
+        box-sizing: border-box;
+        border-radius: 5px;
+        padding: 10px 15px;
+
+        .name {
+          font-size: 18px;
+          margin-bottom: 30px;
+        }
+
+        .count {
+          font-size: 28px;
+          font-weight: 700;
+          color: @theme-blue;
+          text-align: right;
+
+          .text {
+            display: inline-block;
+            font-size: 16px;
+            font-weight: 300;
+            color: @font-3;
+            vertical-align: middle;
+            margin-left: 5px;
+          }
+
+          .text-left {
+            margin-left: 0;
+            margin-right: 5px;
+          }
+        }
+      }
+    }
+
+    .active {
+      .clickNoSelectText();
+      .bgMoveColor(135deg);
+      .bgKeyframes(bgmove);
     }
   }
 }

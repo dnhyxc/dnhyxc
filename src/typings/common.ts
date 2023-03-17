@@ -292,3 +292,8 @@ export interface DeleteArticleParams {
   filterList?: string[];
   authorId?: string;
 }
+
+export interface Classifys {
+  value?: number;
+  name?: string;
+}

@@ -12,7 +12,7 @@ import {
   DeleteArticleParams,
   // TimelineResult,
 } from '@/typings/common';
-import { commonStore, createStore, loginStore } from '@/store';
+import { classifyStore, commonStore, createStore, loginStore } from '@/store';
 
 interface IProps {
   loading: boolean;
@@ -189,7 +189,17 @@ export const useArticleStore = defineStore('article', {
     },
 
     // 列表文章点赞
-    async likeListArticle({ id, isTimeLine, isAboutMe }: { id: string; isTimeLine?: boolean; isAboutMe?: boolean }) {
+    async likeListArticle({
+      id,
+      isTimeLine,
+      isAboutMe,
+      pageType,
+    }: {
+      id: string;
+      pageType: string;
+      isTimeLine?: boolean;
+      isAboutMe?: boolean;
+    }) {
       const res = normalizeResult<{ id: string; isLike: boolean }>(await Service.likeArticle({ id }));
 
       if (res.success) {
@@ -211,7 +221,12 @@ export const useArticleStore = defineStore('article', {
           // });
           // updateList(timelineList);
         } else {
-          const cloneList: ArticleItem[] = JSON.parse(JSON.stringify(this.articleList));
+          const dataList = {
+            home: this.articleList,
+            classify: classifyStore.articleList,
+          };
+
+          const cloneList: ArticleItem[] = JSON.parse(JSON.stringify(dataList[pageType]));
 
           const list = cloneList.map((i) => {
             if (i.id === id) {
@@ -225,18 +240,32 @@ export const useArticleStore = defineStore('article', {
             return i;
           });
 
-          // listRef.current = list;
-
           // isAboutMe为true，就是用户自己的主页或博主自己进入博主主页，此时点赞需要删除取消点赞的文章
           if (isAboutMe) {
             const likes = list.filter((i) => i.isLike);
-            this.articleList = likes;
-            // updateList({
-            //   ...articleList,
-            //   list: listRef.current,
-            // });
+            switch (pageType) {
+              case 'home':
+                this.articleList = likes;
+                break;
+              case 'classify':
+                classifyStore.articleList = likes;
+                break;
+
+              default:
+                break;
+            }
           } else {
-            this.articleList = list;
+            switch (pageType) {
+              case 'home':
+                this.articleList = list;
+                break;
+              case 'classify':
+                classifyStore.articleList = list;
+                break;
+
+              default:
+                break;
+            }
           }
         }
       } else {
@@ -409,7 +438,7 @@ export const useArticleStore = defineStore('article', {
       }
     },
 
-    // 清楚文章列表数据
+    // 清除文章列表数据
     clearArticleList() {
       this.articleList = [];
       this.total = 0;

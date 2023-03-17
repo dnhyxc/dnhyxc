@@ -313,6 +313,7 @@ const onEnter = async (e: Event) => {
       .search-inp {
         width: 180px;
         margin-left: 15px;
+        -webkit-app-region: no-drag;
 
         .el-input__icon {
           font-size: 16px;

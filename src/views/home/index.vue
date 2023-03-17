@@ -29,7 +29,7 @@
           class="pullup-content"
         >
           <div v-for="i of articleStore.articleList" :key="i.id" class="pullup-list-item">
-            <Card :data="i" :delete-article="deleteArticle" />
+            <Card :data="i" :delete-article="deleteArticle" :like-list-article="likeListArticle" />
           </div>
           <ToTopIcon v-if="scrollTop >= 500" :on-scroll-to="onScrollTo" />
         </div>
@@ -109,6 +109,11 @@ const searchHotArticles = () => {
   searchType.value = 2;
   articleStore.clearArticleList();
   onFetchData();
+};
+
+// 文章点赞
+const likeListArticle = (id: string) => {
+  articleStore.likeListArticle({ id, pageType: 'home' });
 };
 </script>
 

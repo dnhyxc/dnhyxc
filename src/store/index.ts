@@ -4,6 +4,7 @@ import { useCreateStore } from './create';
 import { useArticleStore } from './article';
 import { useCollectStore } from './collect';
 import { useUploadStore } from './upload';
+import { useClassifyStore } from './classify';
 
 // 公共store
 export const commonStore = useCommonStore();
@@ -22,3 +23,6 @@ export const collectStore = useCollectStore();
 
 // 文件上传
 export const uploadStore = useUploadStore();
+
+// 文章分类
+export const classifyStore = useClassifyStore();

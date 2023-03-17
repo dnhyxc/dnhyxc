@@ -68,7 +68,7 @@ import { useRouter } from 'vue-router';
 import { formatDate } from '@/utils';
 import { ArticleItem } from '@/typings/common';
 import IMG1 from '@/assets/images/1.jpg';
-import { loginStore, articleStore } from '@/store';
+import { loginStore } from '@/store';
 import Image from '@/components/Image/index.vue';
 
 const router = useRouter();
@@ -76,15 +76,17 @@ const router = useRouter();
 interface IProps {
   data: ArticleItem;
   deleteArticle?: Function;
+  likeListArticle?: Function;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
   deleteArticle: () => {},
+  likeListArticle: () => {},
 });
 
 // 点赞
 const onLike = (id: string) => {
-  articleStore.likeListArticle({ id });
+  props.likeListArticle?.(id);
 };
 
 // 评论

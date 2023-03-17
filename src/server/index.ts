@@ -159,3 +159,15 @@ export const cancelCollected = async (articleId: string) => {
   const res = await post(API.CANCEL_COLLECTED, copeParams({ articleId }));
   return res;
 };
+
+// 获取文章分类、标签列表
+export const getTagList = async (type: string) => {
+  const res = await post(API.GET_TAG_LIST, { type });
+  return res;
+};
+
+// 获取文章分类列表
+export async function getClassifyList(params: { pageNo?: number; pageSize?: number; classify: string | number }) {
+  const res = await post(API.GET_CLASSIFY_LIST, copeParams(params));
+  return res;
+}

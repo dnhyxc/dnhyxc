@@ -6,7 +6,7 @@
 -->
 <template>
   <div class="upload-wrap">
-    <el-dialog v-model="previewVisible" title="图片预览" width="600px">
+    <el-dialog v-model="previewVisible" title="图片预览" width="500px">
       <div class="preview-dialog">
         <img :src="filePath" alt="" class="prew-img" />
       </div>
@@ -25,7 +25,7 @@
     <div v-if="filePath" class="preview">
       <div v-if="preview" class="mack">
         <i v-if="sourceUrl" class="shot iconfont icon-line-screenshotpingmujietu-01" @click="onRestoreShot" />
-        <i class="download iconfont icon-xiazai1" @click="(e) => onDownload(e, sourceUrl || filePath)" />
+        <i class="download iconfont icon-xiazai1" @click.stop="(e) => onDownload(e, cropperUrl || filePath)" />
         <i class="view iconfont icon-browse" @click="onPreview" />
         <i class="del iconfont icon-shanchu" @click="onDelImage" />
       </div>
@@ -94,7 +94,7 @@ const props = withDefaults(defineProps<IProps>(), {
 });
 
 const emit = defineEmits(['update:filePath']);
-
+const cropperUrl = ref<string>('');
 const sourceUrl = ref<string>(''); // 上传的原图url
 const previewVisible = ref<boolean>(false);
 const shotVisible = ref<boolean>(false);
@@ -239,6 +239,7 @@ const onFinish = () => {
   cropper.value?.getCropBlob(async (blob: any) => {
     const reader = new FileReader();
     reader.onload = (e: Event) => {
+      cropperUrl.value = (e.target as FileReader).result as string;
       // 更新父组件传递过来的filePath
       emit('update:filePath', (e.target as FileReader).result as string);
       shotVisible.value = false;
@@ -361,7 +362,7 @@ const onDelImage = () => {
       .download,
       .shot,
       .view {
-        margin-right: 20px;
+        margin-right: 15px;
       }
     }
 
