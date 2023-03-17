@@ -88,6 +88,12 @@ export const getNextArticle = async (params: AnotherParams) => {
   return res;
 };
 
+// 随机获取文章
+export const getArticleByRandom = async () => {
+  const res = await post(API.GET_ARTICLE_BY_RANDOM, copeParams());
+  return res;
+};
+
 // 删除文章
 export const deleteArticle = async (params: DeleteArticleParams) => {
   const res = await post(API.DELETE_ARTICLE, params);

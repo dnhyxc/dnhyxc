@@ -111,6 +111,7 @@ export interface GetArticleListParams {
   pageSize: number;
   filter?: any;
   userId?: string;
+  hot?: boolean;
 }
 
 // 文章列表返回数据

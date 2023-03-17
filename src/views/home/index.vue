@@ -8,12 +8,12 @@
   <Loading :loading="articleStore.loading" class="home-wrap">
     <template #default>
       <div class="carousel-content">
-        <Carousel />
+        <Carousel :data="articleStore.recommendArticleList" />
         <div class="search-btns">
-          <el-button type="success" link :class="searchType === 2 && 'active'" @click="searchNewArticles">
-            最新文章
+          <el-button type="primary" link :class="searchType === 1 && 'active'" @click="searchNewArticles">
+            推荐文章
           </el-button>
-          <el-button type="warning" link :class="searchType === 3 && 'active'" @click="searchHotArticles">
+          <el-button type="warning" link :class="searchType === 2 && 'active'" @click="searchHotArticles">
             最热文章
           </el-button>
         </div>
@@ -62,6 +62,7 @@ const { deleteArticle } = useDeleteArticle({ keyword: keyword.value });
 
 onMounted(() => {
   isMounted.value = true;
+  articleStore.getArticleByRandom();
   onFetchData();
 });
 
@@ -79,14 +80,20 @@ const onScrollTo = () => {
   scrollTo(scrollRef, 0);
 };
 
-// 搜索最新文章
+// 搜索推荐文章
 const searchNewArticles = () => {
-  searchType.value = 2;
+  articleStore.hot = false;
+  searchType.value = 1;
+  articleStore.clearArticleList();
+  onFetchData();
 };
 
 // 搜索最热文章
 const searchHotArticles = () => {
-  searchType.value = 3;
+  articleStore.hot = true;
+  searchType.value = 2;
+  articleStore.clearArticleList();
+  onFetchData();
 };
 </script>
 

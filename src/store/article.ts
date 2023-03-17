@@ -23,8 +23,10 @@ interface IProps {
   total: number; // 文章列表总数
   articleDetail: ArticleItem; // 文章详情
   anotherArticleList: ArticleItem[]; // 详情上下篇文章列表
+  recommendArticleList: ArticleItem[]; // 随机文章列表
   commentList: CommentParams[]; // 评论列表
   detailArtLikeCount: number; // 详情文章点赞数量
+  hot?: boolean; // 是否查询最热文章
 }
 
 export const useArticleStore = defineStore('article', {
@@ -40,8 +42,10 @@ export const useArticleStore = defineStore('article', {
       id: '',
     },
     anotherArticleList: [],
+    recommendArticleList: [],
     commentList: [],
     detailArtLikeCount: 0,
+    hot: false,
   }),
 
   actions: {
@@ -54,6 +58,7 @@ export const useArticleStore = defineStore('article', {
         await Service.getArticleList({
           pageNo: this.pageNo,
           pageSize: this.pageSize,
+          hot: this.hot,
         }),
       );
       this.loading = false;
@@ -133,6 +138,20 @@ export const useArticleStore = defineStore('article', {
       this.loading = false;
       if (res?.length) {
         this.anotherArticleList = res;
+      }
+    },
+
+    // 随机获取文章
+    async getArticleByRandom() {
+      const res = normalizeResult<ArticleItem[]>(await Service.getArticleByRandom());
+      if (res.success) {
+        this.recommendArticleList = res.data;
+      } else {
+        ElMessage({
+          message: res.message,
+          type: 'error',
+          offset: 80,
+        });
       }
     },
 

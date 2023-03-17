@@ -26,7 +26,7 @@ export const ARTICLE_DETAIL = '/api/articleDetail';
 export const DELETE_ARTICLE = '/api/deleteArticle';
 // 文章搜索
 export const SEARCH_ARTICLE = '/api/searchArticle';
-// 文章搜索
+// 随机获取文章
 export const GET_ARTICLE_BY_RANDOM = '/api/getArticleByRandom';
 // 文章草稿
 export const CREATE_DRAFT = '/api/createDraft';

@@ -140,8 +140,7 @@ export const MSG_CONFIG = () => ({
 // 首页展示的文章类型
 export const ATRICLE_TYPE = {
   1: '推荐文章',
-  2: '最新文章',
-  3: '最热文章',
+  2: '最热文章',
 };
 
 // URL host
