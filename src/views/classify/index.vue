@@ -79,11 +79,13 @@ onUnmounted(() => {
   classifyStore.classifys = [];
 });
 
+// 计算lineRef的左边偏移量
 watch(
   () => commonStore.reelScrollScale,
   (newVal) => {
     nextTick(() => {
       const width = lineRef.value.offsetWidth * newVal!;
+      // 判断是否到顶，如果到顶需要减去滑块的宽度，防止滑块画出父元素
       scrollLeft.value = width >= lineRef.value.offsetWidth ? `${width - dotRef.value.offsetWidth}px` : `${width}px`;
     });
   },
