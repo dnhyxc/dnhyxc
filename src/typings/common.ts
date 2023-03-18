@@ -255,6 +255,7 @@ export interface CollectListRes {
 
 // 删除文章、收藏夹等类型
 export interface useDeleteArticleParams {
+  pageType: string;
   articleList?: ArticleListResult;
   setArticleList?: Function;
   getArticleList?: Function;
@@ -262,8 +263,6 @@ export interface useDeleteArticleParams {
   listRef?: any;
   delType?: string;
   pageNo?: number;
-  keyword?: string;
-  classify?: string;
   tagName?: string;
   authorId?: string;
   accessUserId?: string;
@@ -278,6 +277,7 @@ export interface useDeleteArticleParams {
 // 删除文章参数
 export interface DeleteArticleParams {
   articleId: string;
+  pageType: string; // 用户区分页面列表数据
   pageNo?: number;
   pageSize?: number;
   type?: string;

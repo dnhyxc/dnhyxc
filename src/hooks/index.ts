@@ -1,8 +1,8 @@
 import { useRouter } from 'vue-router';
 import { toRaw, onMounted, onUnmounted, ref, computed } from 'vue';
 import { ElMessage } from 'element-plus';
-import { loginStore, articleStore } from '@/store';
-import { CommentParams, useDeleteArticleParams } from '@/typings/common';
+import { loginStore, articleStore, commonStore, classifyStore } from '@/store';
+import { CommentParams, useDeleteArticleParams, DeleteArticleParams } from '@/typings/common';
 import { Message } from '@/utils';
 
 const router = useRouter();
@@ -67,15 +67,9 @@ export const useCommentCount = computed(() => {
 
 // 删除文章hooks
 export const useDeleteArticle = ({
-  articleList,
-  setArticleList,
-  setAlertStatus,
   delType,
-  listRef,
-  pageNo,
-  keyword, // 首页搜索输入内容
+  pageType, // 用于区分个分页列表数据
   filterList, // 高级搜索列表
-  classify, // 文章分类页面搜索条件
   tagName, // 标签页选中的标签
   authorId, // 我的主页作者id
   accessUserId, // 我的主页登录人id
@@ -91,10 +85,10 @@ export const useDeleteArticle = ({
       delType !== '3' ? '确定删除该文章吗？' : '确定删除该收藏集吗？',
     ).then(async () => {
       if (delType !== '3') {
-        await articleStore.deleteArticle({
+        const params: DeleteArticleParams = {
           articleId,
-          keyword,
-          classify,
+          keyword: commonStore.keyword, // 头部搜索关键词
+          classify: classifyStore.currentClassify || classifyStore.classifys[0]?.name!, // 文章分类页面搜索条件
           tagName,
           userId: authorId,
           accessUserId,
@@ -102,7 +96,15 @@ export const useDeleteArticle = ({
           authorPage,
           authorLike,
           filterList,
-        });
+          pageType,
+        };
+
+        // 如果没有分类，则删除参数中的classify属性
+        if (!classifyStore.currentClassify && !classifyStore.classifys[0]?.name!) {
+          delete params.classify;
+        }
+
+        await articleStore.deleteArticle(params);
       } else {
         // res = await delCollection(articleId);
       }

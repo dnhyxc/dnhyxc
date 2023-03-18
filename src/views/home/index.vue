@@ -50,15 +50,13 @@ import Card from '@/components/Card/index.vue';
 import ToTopIcon from '@/components/ToTopIcon/index.vue';
 
 const searchType = ref<number>(1); // 1：推荐，2：最新，3：最热
-// 搜索内容
-const keyword = ref<string>('');
 const isMounted = ref<boolean>(false);
 const noMore = computed(() => articleStore.articleList.length >= articleStore.total);
 const disabled = computed(() => articleStore.loading || noMore.value);
 
 const { scrollRef, scrollTop } = useScroller();
 
-const { deleteArticle } = useDeleteArticle({ keyword: keyword.value });
+const { deleteArticle } = useDeleteArticle({ pageType: 'home' });
 
 onMounted(() => {
   isMounted.value = true;

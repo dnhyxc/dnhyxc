@@ -167,7 +167,12 @@ export const getTagList = async (type: string) => {
 };
 
 // 获取文章分类列表
-export async function getClassifyList(params: { pageNo?: number; pageSize?: number; classify: string | number }) {
+export async function getClassifyList(params: {
+  pageNo?: number;
+  pageSize?: number;
+  classify: string | number;
+  filter?: string;
+}) {
   const res = await post(API.GET_CLASSIFY_LIST, copeParams(params));
   return res;
 }

@@ -158,11 +158,31 @@ export const useArticleStore = defineStore('article', {
 
     // 删除文章
     async deleteArticle(params: DeleteArticleParams) {
+      console.log(params, 'params');
+
+      // 设置个页面列表数据
+      const articleList = {
+        home: this.articleList,
+        classify: classifyStore.articleList,
+      };
+
+      // 设置各页面列表数量
+      const total = {
+        home: this.total,
+        classify: classifyStore.total,
+      };
+
+      // 个页面pageNo
+      const pageNo = {
+        home: this.pageNo,
+        classify: classifyStore.pageNo,
+      };
+
       const res = normalizeResult<ArticleListResult>(
         await Service.deleteArticle({
           ...params,
-          pageNo: this.pageNo,
-          pageSize: this.pageSize,
+          pageNo: pageNo[params.pageType],
+          pageSize: 20,
           userId: params.authorId || loginStore.userInfo?.userId,
           delType: params.delType === '2' ? params.delType : '',
         }),
@@ -170,9 +190,39 @@ export const useArticleStore = defineStore('article', {
 
       if (res.success) {
         const nextPageOne = res?.data?.list[0] || '';
-        const list = this.articleList.filter((i) => i.id !== params.articleId);
-        this.articleList = nextPageOne ? [...list, nextPageOne] : list;
-        this.total = this.total - 1;
+        const list = articleList[params.pageType].filter((i: ArticleItem) => i.id !== params.articleId);
+        // this.articleList = nextPageOne ? [...list, nextPageOne] : list;
+        // this.total = this.total - 1;
+
+        switch (params.pageType) {
+          case 'home':
+            this.articleList = nextPageOne ? [...list, nextPageOne] : list;
+            this.total = this.total - 1;
+
+            break;
+
+          case 'classify':
+            classifyStore.articleList = nextPageOne ? [...list, nextPageOne] : list;
+            classifyStore.total = classifyStore.total - 1;
+            // 删除分类文章的同时，更新对应分类的数量
+            classifyStore.classifys.forEach((i) => {
+              if ([classifyStore.currentClassify, classifyStore.classifys[0]?.name].includes(i.name)) {
+                i.value = i.value! - 1;
+              }
+            });
+            // 删除数量为0的分类
+            classifyStore.classifys = classifyStore.classifys.filter((i) => i.value);
+            // 删除该分类后，将当前选中分类设置为classifys的第一个
+            classifyStore.currentClassify = classifyStore.classifys[0]?.name!;
+
+            break;
+
+          default:
+            break;
+        }
+
+        articleList[params.pageType] = nextPageOne ? [...list, nextPageOne] : list;
+        total[params.pageType] = total[params.pageType] - 1;
 
         ElMessage({
           message: res.message,

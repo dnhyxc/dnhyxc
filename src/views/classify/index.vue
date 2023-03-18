@@ -43,7 +43,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
 import { scrollTo } from '@/utils';
 import { useScroller, useDeleteArticle } from '@/hooks';
 import { classifyStore, commonStore, articleStore } from '@/store';
@@ -52,7 +52,7 @@ import Card from '@/components/Card/index.vue';
 import ToTopIcon from '@/components/ToTopIcon/index.vue';
 
 const { scrollRef, scrollTop } = useScroller();
-const { deleteArticle } = useDeleteArticle({});
+const { deleteArticle } = useDeleteArticle({ pageType: 'classify' });
 
 const isMounted = ref<boolean>(false);
 const noMore = computed(() => classifyStore.articleList.length >= classifyStore.total);
@@ -68,7 +68,31 @@ onUnmounted(() => {
   classifyStore.clearArticleList();
   // 离开当前页面时清空头部输入框内容
   commonStore.keyword = '';
+  classifyStore.currentClassify = '';
+  classifyStore.classifys = [];
 });
+
+// 监听页面搜索关键词，请求列表数据
+watch(
+  () => commonStore.keyword,
+  (newVal, oldVal) => {
+    if (newVal !== oldVal) {
+      classifyStore.clearArticleList();
+      onFetchData();
+    }
+  },
+);
+
+// 监听页面搜索关键词，请求列表数据
+watch(
+  () => classifyStore.currentClassify,
+  (newVal, oldVal) => {
+    if (newVal !== oldVal) {
+      classifyStore.clearArticleList();
+      onFetchData();
+    }
+  },
+);
 
 // 请求数据
 const onFetchData = async () => {
@@ -84,7 +108,6 @@ const onScrollTo = () => {
 const onCheckClassify = (name: string) => {
   classifyStore.currentClassify = name;
   classifyStore.clearArticleList();
-  onFetchData();
 };
 
 // 文章点赞

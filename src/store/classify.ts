@@ -3,7 +3,7 @@ import { Classifys, ArticleItem, ArticleListResult } from '@/typings/common';
 import { ElMessage } from 'element-plus';
 import * as Service from '@/server';
 import { normalizeResult, locSetItem } from '@/utils';
-import { loginStore } from '@/store';
+import { commonStore, loginStore } from '@/store';
 
 interface IProps {
   classifys: Classifys[]; // 文章分类数
@@ -50,6 +50,7 @@ export const useClassifyStore = defineStore('classify', {
         pageNo: this.pageNo,
         pageSize: this.pageSize,
         classify: this.currentClassify || this.classifys[0]?.name!,
+        filter: commonStore.keyword, // 头部搜索关键词
       };
       // 保存至storage用于根据不同页面进入详情时，针对性的进行上下篇文章的获取（如：分类页面上下篇、标签页面上下篇）
       locSetItem(
