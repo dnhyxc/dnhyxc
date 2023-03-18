@@ -29,6 +29,7 @@
 <script setup lang="ts">
 import { ref, onMounted, reactive } from 'vue';
 import { Classifys } from '@/typings/common';
+import { commonStore } from '@/store';
 
 interface IProps {
   classifys: Classifys[]; // 分类
@@ -67,6 +68,10 @@ const wheelEvent = (e: WheelEvent) => {
   const startLeft = Math.ceil(scrollRef.value?.wrapRef?.scrollLeft);
   // 如果滚动距离小于0，则将值赋值成0
   moveInfo.scrollWidth = startLeft + Math.ceil(e.deltaY) < 0 ? 0 : startLeft + Math.ceil(e.deltaY);
+  // 计算滚动比例
+  commonStore.reelScrollScale = Number(
+    ((startLeft * 1.0) / (scrollRef.value?.wrapRef?.scrollWidth - scrollRef.value?.wrapRef?.offsetWidth)).toFixed(2),
+  );
   scrollRef.value?.setScrollLeft(moveInfo.scrollWidth);
 };
 
@@ -91,11 +96,19 @@ const onMouseMove = (e: MouseEvent) => {
   if (clientX < moveInfo.x) {
     if (startLeft + scrollWrapWidth >= cardListWidth) return;
     moveInfo.scrollWidth = startLeft + (moveInfo.x - clientX);
+    // 计算滚动比例
+    commonStore.reelScrollScale = Number(
+      ((startLeft * 1.0) / (scrollRef.value?.wrapRef?.scrollWidth - scrollRef.value?.wrapRef?.offsetWidth)).toFixed(2),
+    );
     scrollRef.value?.setScrollLeft(moveInfo.scrollWidth);
   } else {
     if (startLeft <= 0) return;
     // 如果滚动距离小于0，则将值赋值成0
     moveInfo.scrollWidth = startLeft - (clientX - moveInfo.x) < 0 ? 0 : startLeft - (clientX - moveInfo.x);
+    // 计算滚动比例
+    commonStore.reelScrollScale = Number(
+      ((startLeft * 1.0) / (scrollRef.value?.wrapRef?.scrollWidth - scrollRef.value?.wrapRef?.offsetWidth)).toFixed(2),
+    );
     scrollRef.value?.setScrollLeft(moveInfo.scrollWidth);
   }
 };

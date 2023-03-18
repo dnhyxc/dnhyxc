@@ -8,6 +8,7 @@
   <Loading :loading="classifyStore.loading" class="classify-wap">
     <template #default>
       <Reel
+        ref="reelRef"
         :on-check-classify="onCheckClassify"
         :classifys="classifyStore.classifys"
         :current-classify="classifyStore.currentClassify || classifyStore.classifys[0]?.name"
@@ -19,7 +20,9 @@
             <span class="label">当前分类：</span>
             <span>{{ classifyStore.currentClassify || classifyStore.classifys[0]?.name }}</span>
           </span>
-          <span class="line" />
+          <span ref="lineRef" class="line">
+            <span ref="dotRef" class="dot" />
+          </span>
         </div>
         <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
           <div
@@ -50,6 +53,7 @@ import { classifyStore, commonStore, articleStore } from '@/store';
 import Reel from '@/components/Reel/index.vue';
 import Card from '@/components/Card/index.vue';
 import ToTopIcon from '@/components/ToTopIcon/index.vue';
+import { nextTick } from 'process';
 
 const { scrollRef, scrollTop } = useScroller();
 const { deleteArticle } = useDeleteArticle({ pageType: 'classify' });
@@ -57,6 +61,9 @@ const { deleteArticle } = useDeleteArticle({ pageType: 'classify' });
 const isMounted = ref<boolean>(false);
 const noMore = computed(() => classifyStore.articleList.length >= classifyStore.total);
 const disabled = computed(() => classifyStore.loading || noMore.value);
+const lineRef = ref<any>(null);
+const dotRef = ref<any>(null);
+const scrollLeft = ref<string>('');
 
 onMounted(async () => {
   isMounted.value = true;
@@ -71,6 +78,16 @@ onUnmounted(() => {
   classifyStore.currentClassify = '';
   classifyStore.classifys = [];
 });
+
+watch(
+  () => commonStore.reelScrollScale,
+  (newVal) => {
+    nextTick(() => {
+      const width = lineRef.value.offsetWidth * newVal!;
+      scrollLeft.value = width >= lineRef.value.offsetWidth ? `${width - dotRef.value.offsetWidth}px` : `${width}px`;
+    });
+  },
+);
 
 // 监听页面搜索关键词，请求列表数据
 watch(
@@ -162,6 +179,7 @@ const likeListArticle = (id: string) => {
       }
 
       .line {
+        position: relative;
         display: inline-block;
         flex: 1;
         border-radius: 3px;
@@ -170,6 +188,20 @@ const likeListArticle = (id: string) => {
         .bgMoveColor(135deg);
         .bgKeyframes(bgmove);
         box-shadow: 0 0 3px @shadow-color;
+
+        .dot {
+          box-sizing: border-box;
+          position: absolute;
+          left: v-bind(scrollLeft);
+          bottom: -4px;
+          width: 15px;
+          height: 15px;
+          .clickNoSelectText();
+          .bgMoveColor(135deg);
+          .bgKeyframes(bgmove);
+          border-radius: 10px;
+          border: 1px solid @shadow-color;
+        }
       }
     }
   }
