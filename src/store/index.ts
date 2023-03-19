@@ -5,6 +5,7 @@ import { useArticleStore } from './article';
 import { useCollectStore } from './collect';
 import { useUploadStore } from './upload';
 import { useClassifyStore } from './classify';
+import { useTagStore } from './tag';
 
 // 公共store
 export const commonStore = useCommonStore();
@@ -26,3 +27,6 @@ export const uploadStore = useUploadStore();
 
 // 文章分类
 export const classifyStore = useClassifyStore();
+
+// 文章标签
+export const tagStore = useTagStore();

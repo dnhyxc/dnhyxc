@@ -12,7 +12,7 @@ import {
   DeleteArticleParams,
   // TimelineResult,
 } from '@/typings/common';
-import { classifyStore, commonStore, createStore, loginStore } from '@/store';
+import { classifyStore, commonStore, createStore, loginStore, tagStore } from '@/store';
 
 interface IProps {
   loading: boolean;
@@ -158,24 +158,25 @@ export const useArticleStore = defineStore('article', {
 
     // 删除文章
     async deleteArticle(params: DeleteArticleParams) {
-      console.log(params, 'params');
-
       // 设置个页面列表数据
       const articleList = {
         home: this.articleList,
         classify: classifyStore.articleList,
+        tag: tagStore.articleList,
       };
 
       // 设置各页面列表数量
       const total = {
         home: this.total,
         classify: classifyStore.total,
+        tag: tagStore.total,
       };
 
       // 个页面pageNo
       const pageNo = {
         home: this.pageNo,
         classify: classifyStore.pageNo,
+        tag: tagStore.pageNo,
       };
 
       const res = normalizeResult<ArticleListResult>(
@@ -191,8 +192,6 @@ export const useArticleStore = defineStore('article', {
       if (res.success) {
         const nextPageOne = res?.data?.list[0] || '';
         const list = articleList[params.pageType].filter((i: ArticleItem) => i.id !== params.articleId);
-        // this.articleList = nextPageOne ? [...list, nextPageOne] : list;
-        // this.total = this.total - 1;
 
         switch (params.pageType) {
           case 'home':
@@ -206,14 +205,33 @@ export const useArticleStore = defineStore('article', {
             classifyStore.total = classifyStore.total - 1;
             // 删除分类文章的同时，更新对应分类的数量
             classifyStore.classifys.forEach((i) => {
-              if ([classifyStore.currentClassify, classifyStore.classifys[0]?.name].includes(i.name)) {
+              if (params.classify === i.name) {
                 i.value = i.value! - 1;
               }
             });
-            // 删除数量为0的分类
-            classifyStore.classifys = classifyStore.classifys.filter((i) => i.value);
-            // 删除该分类后，将当前选中分类设置为classifys的第一个
-            classifyStore.currentClassify = classifyStore.classifys[0]?.name!;
+            if (classifyStore.classifys.find((i) => !i.value)) {
+              // 删除分类数量为 0 的分类
+              classifyStore.classifys = classifyStore.classifys.filter((i) => i.value);
+              classifyStore.currentClassify = classifyStore.classifys[0]?.name!;
+              params.router.push('/classify');
+            }
+
+            break;
+          case 'tag':
+            tagStore.articleList = nextPageOne ? [...list, nextPageOne] : list;
+            tagStore.total = tagStore.total - 1;
+            // 删除标签中的文章的同时，更新对应标签的数量
+            tagStore.tags.forEach((i) => {
+              if (params.tagName === i.name) {
+                i.value = i.value! - 1;
+              }
+            });
+            if (tagStore.tags.find((i) => !i.value)) {
+              // 删除分类数量为 0 的分类
+              tagStore.tags = tagStore.tags.filter((i) => i.value);
+              tagStore.currentTag = tagStore.tags[0]?.name!;
+              params.router.push('/tag/list');
+            }
 
             break;
 
@@ -271,9 +289,11 @@ export const useArticleStore = defineStore('article', {
           // });
           // updateList(timelineList);
         } else {
+          // 设置各个页面的文章列表数据
           const dataList = {
             home: this.articleList,
             classify: classifyStore.articleList,
+            tag: tagStore.articleList,
           };
 
           const cloneList: ArticleItem[] = JSON.parse(JSON.stringify(dataList[pageType]));
@@ -300,6 +320,9 @@ export const useArticleStore = defineStore('article', {
               case 'classify':
                 classifyStore.articleList = likes;
                 break;
+              case 'tag':
+                tagStore.articleList = likes;
+                break;
 
               default:
                 break;
@@ -311,6 +334,9 @@ export const useArticleStore = defineStore('article', {
                 break;
               case 'classify':
                 classifyStore.articleList = list;
+                break;
+              case 'tag':
+                tagStore.articleList = list;
                 break;
 
               default:

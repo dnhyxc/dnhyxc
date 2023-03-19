@@ -9,8 +9,8 @@
     <div class="title">
       <div class="left">{{ data.title }}</div>
       <div class="right">
-        <span class="edit" @click="(e) => toEdit(e, data.id!)">编辑</span>
-        <span class="del" @click="(e) => onReomve(e, data.id!)">下架</span>
+        <span class="edit" @click.stop="toEdit(data.id!)">编辑</span>
+        <span class="del" @click.stop="onReomve(data.id!)">下架</span>
       </div>
     </div>
     <div class="content">
@@ -19,22 +19,22 @@
           {{ data.abstract }}
         </div>
         <div class="tags">
-          <div class="author" @click="(e) => toPersonal(e, 'author')">{{ data.authorName }}</div>
+          <div class="author" @click.stop="toPersonal(data.authorId!)">{{ data.authorName }}</div>
           <div class="right">
             <el-tooltip class="box-item" effect="light" :content="`分类：${data.classify}`" placement="bottom">
-              <div class="classify" @click="(e) => toClassify(e, data.classify!)">{{ data.classify }}</div>
+              <div class="classify" @click.stop="toClassify(data.classify!)">{{ data.classify }}</div>
             </el-tooltip>
             <el-tooltip class="box-item" effect="light" :content="`标签：${data.tag}`" placement="bottom">
-              <div class="tag" @click="(e) => toTag(e, data.tag!)">{{ data.tag }}dsadsa</div>
+              <div class="tag" @click.stop="toTag(data.tag!)">{{ data.tag }}</div>
             </el-tooltip>
           </div>
         </div>
         <div class="actions">
-          <div class="action like" @click="(e) => onLike(e, data.id!)">
+          <div class="action like" @click.stop="onLike(data.id!)">
             <i :class="`font like-icon iconfont ${data.isLike ? 'icon-24gf-thumbsUp2' : 'icon-24gl-thumbsUp2'}`" />
             <span>{{ data.likeCount || '点赞' }}</span>
           </div>
-          <div class="action comment" @click="(e) => onComment(e, data.id!)">
+          <div class="action comment" @click.stop="onComment(data.id!)">
             <i class="font comment-icon iconfont icon-pinglun" />
             <span>{{ data.replyCount || '评论' }}</span>
           </div>
@@ -45,71 +45,71 @@
         </div>
       </div>
       <div class="img-wrap">
-        <img
-          class="img"
-          src="https://pic1.zhimg.com/80/v2-c2b64233c64c7703f4b84f8d839d0078_1440w.webp?source=1940ef5c"
-          alt=""
-        />
+        <Image :url="data.coverImage || IMG1" :transition-img="IMG1" class="img" />
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
+import { IMG1 } from '@/constant';
 import { TimelineArticles } from '@/typings/common';
+import Image from '@/components/Image/index.vue';
 
 const router = useRouter();
+const route = useRoute();
 
 interface IProps {
   data: TimelineArticles;
+  likeListArticle?: (id: string) => void;
+  deleteArticle?: (id: string) => void;
 }
 
-const props = withDefaults(defineProps<IProps>(), {});
-
-console.log(props, 'props');
+const props = withDefaults(defineProps<IProps>(), {
+  likeListArticle: () => {},
+  deleteArticle: () => {},
+});
 
 // 编辑
-const toEdit = (e: Event, id: string) => {
-  e.stopPropagation();
+const toEdit = (id: string) => {
   console.log(id, '编辑');
   router.push(`/create?id=${id}`);
 };
 
 // 删除
-const onReomve = (e: Event, id: string) => {
-  e.stopPropagation();
-  console.log(id, '编辑');
+const onReomve = (id: string) => {
+  console.log(id, '删除');
+  props?.deleteArticle?.(id);
 };
 
 // 去作者主页
-const toPersonal = (e: Event, id: string) => {
-  e.stopPropagation();
-  console.log(id, 'item');
+const toPersonal = (id: string) => {
+  router.push(`/personal?authorId=${id}`);
 };
 
 // 去分类页
-const toClassify = (e: Event, classify: string) => {
-  e.stopPropagation();
+const toClassify = (classify: string) => {
   console.log(classify, 'toClassify');
+  router.push(`/classify?classify=${classify}`);
 };
 
 // 去标签
-const toTag = (e: Event, tag: string) => {
-  e.stopPropagation();
-  console.log(tag, 'toTag');
-  router.push(`/tag/list?tag=${tag}`);
+const toTag = (tag: string) => {
+  if (route.path !== '/tag/list') {
+    console.log(tag, 'toTag', route.path);
+    router.push(`/tag/list?tag=${tag}`);
+  }
 };
 
 // 点赞
-const onLike = (e: Event, id: string) => {
-  e.stopPropagation();
+const onLike = (id: string) => {
   console.log(id, 'onLike');
+  props?.likeListArticle?.(id);
 };
 
 // 评论
-const onComment = (e: Event, id: string) => {
-  e.stopPropagation();
+const onComment = (id: string) => {
   console.log(id, 'onComment');
 };
 </script>
@@ -263,7 +263,6 @@ const onComment = (e: Event, id: string) => {
       display: flex;
       width: 20%;
       min-width: 135px;
-
       .img {
         display: block;
         width: 100%;
@@ -271,6 +270,12 @@ const onComment = (e: Event, id: string) => {
         max-height: 85px;
         border-radius: 5px;
         .imgStyle();
+
+        :deep {
+          .image-item {
+            border-radius: 5px;
+          }
+        }
       }
     }
   }

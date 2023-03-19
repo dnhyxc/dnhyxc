@@ -6,6 +6,7 @@ import {
   AnotherParams,
   CommentParams,
   DeleteArticleParams,
+  SearchArticleParams,
 } from '@/typings/common';
 import { loginStore } from '@/store';
 import * as API from './api';
@@ -167,12 +168,18 @@ export const getTagList = async (type: string) => {
 };
 
 // 获取文章分类列表
-export async function getClassifyList(params: {
+export const getClassifyList = async (params: {
   pageNo?: number;
   pageSize?: number;
   classify: string | number;
   filter?: string;
-}) {
+}) => {
   const res = await post(API.GET_CLASSIFY_LIST, copeParams(params));
   return res;
-}
+};
+
+// 文章搜索
+export const searchArticle = async (params: SearchArticleParams) => {
+  const res = await post(API.SEARCH_ARTICLE, copeParams(params));
+  return res;
+};

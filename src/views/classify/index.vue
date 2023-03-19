@@ -5,20 +5,22 @@
  * index.vue
 -->
 <template>
-  <Loading :loading="classifyStore.loading" class="classify-wap">
+  <Loading :loading="classifyStore.loading" class="classify-wrap">
     <template #default>
       <Reel
         ref="reelRef"
         :on-check-classify="onCheckClassify"
         :classifys="classifyStore.classifys"
-        :current-classify="classifyStore.currentClassify || classifyStore.classifys[0]?.name"
+        :current-classify="classifyStore.currentClassify || route.query?.classify as string || classifyStore.classifys[0]?.name"
       />
       <div class="content">
         <div class="line-wrap">
           <i class="left-line iconfont icon-fenlei2" />
           <span class="current-classify">
             <span class="label">当前分类：</span>
-            <span>{{ classifyStore.currentClassify || classifyStore.classifys[0]?.name }}</span>
+            <span>{{
+              classifyStore.currentClassify || route.query?.classify || classifyStore.classifys[0]?.name
+            }}</span>
           </span>
           <span ref="lineRef" class="line">
             <span ref="dotRef" class="dot" />
@@ -46,17 +48,20 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
+import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import { scrollTo } from '@/utils';
 import { useScroller, useDeleteArticle } from '@/hooks';
 import { classifyStore, commonStore, articleStore } from '@/store';
 import Reel from '@/components/Reel/index.vue';
 import Card from '@/components/Card/index.vue';
 import ToTopIcon from '@/components/ToTopIcon/index.vue';
-import { nextTick } from 'process';
+
+const route = useRoute();
+const router = useRouter();
 
 const { scrollRef, scrollTop } = useScroller();
-const { deleteArticle } = useDeleteArticle({ pageType: 'classify' });
+const { deleteArticle } = useDeleteArticle({ pageType: 'classify', classify: route.query?.classify as string, router });
 
 const isMounted = ref<boolean>(false);
 const noMore = computed(() => classifyStore.articleList.length >= classifyStore.total);
@@ -67,6 +72,7 @@ const scrollLeft = ref<string>('');
 
 onMounted(async () => {
   isMounted.value = true;
+  // 获取分类信息
   await classifyStore.getClassifys();
   onFetchData();
 });
@@ -115,7 +121,7 @@ watch(
 
 // 请求数据
 const onFetchData = async () => {
-  await classifyStore.getClassifyList();
+  await classifyStore.getClassifyList(route.query?.classify as string);
 };
 
 // 置顶
@@ -126,7 +132,6 @@ const onScrollTo = () => {
 // 点击卡片事件
 const onCheckClassify = (name: string) => {
   classifyStore.currentClassify = name;
-  classifyStore.clearArticleList();
 };
 
 // 文章点赞
@@ -138,7 +143,7 @@ const likeListArticle = (id: string) => {
 <style scoped lang="less">
 @import '@/styles/index.less';
 
-.classify-wap {
+.classify-wrap {
   display: flex;
   flex-direction: column;
   height: 100%;

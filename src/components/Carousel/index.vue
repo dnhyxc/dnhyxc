@@ -35,8 +35,8 @@
 import { useRouter } from 'vue-router';
 import { ArticleItem } from '@/typings/common';
 import { formatGapTime } from '@/utils';
+import { IMG1 } from '@/constant';
 import Image from '@/components/Image/index.vue';
-import IMG1 from '@/assets/images/1.jpg';
 
 const router = useRouter();
 
@@ -58,7 +58,7 @@ const toPersonal = (id: string) => {
 
 // 去分类
 const toClassify = (name: string) => {
-  router.push(`/classify?name=${name}`);
+  router.push(`/classify?classify=${name}`);
 };
 
 // 去标签列表

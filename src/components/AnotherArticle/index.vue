@@ -68,7 +68,7 @@ const onJump = (name: string, type: string) => {
   if (type === 'tag') {
     router.push(`/tag/list?tagName=${name}`);
   } else {
-    router.push(`/classify?classifyName=${name}`);
+    router.push(`/classify?classify=${name}`);
   }
 };
 </script>

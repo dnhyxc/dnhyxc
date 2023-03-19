@@ -263,6 +263,7 @@ export interface useDeleteArticleParams {
   listRef?: any;
   delType?: string;
   pageNo?: number;
+  classify?: string;
   tagName?: string;
   authorId?: string;
   accessUserId?: string;
@@ -272,6 +273,7 @@ export interface useDeleteArticleParams {
   getCollectionTotal?: Function;
   getCollectedTotal?: Function;
   removeConfirmStyle?: string;
+  router?: any;
 }
 
 // 删除文章参数
@@ -291,9 +293,20 @@ export interface DeleteArticleParams {
   authorLike?: boolean;
   filterList?: string[];
   authorId?: string;
+  router?: any;
 }
 
+// 分类、标签信息查询
 export interface Classifys {
-  value?: number;
-  name?: string;
+  value: number;
+  name: string;
+}
+
+// 文章搜索参数
+export interface SearchArticleParams {
+  keyword?: string | undefined | null;
+  tagName?: string | undefined | null;
+  pageNo: number;
+  pageSize: number;
+  userId?: string;
 }

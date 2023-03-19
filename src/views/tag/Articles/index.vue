@@ -5,7 +5,7 @@
  * index.vue
 -->
 <template>
-  <div class="articles-wrap">
+  <Loading :loading="tagStore.loading" class="articles-wrap">
     <div class="left">
       <div class="title">
         <span>文章标签列表</span>
@@ -14,24 +14,12 @@
           @click="onScrollTo"
         />
       </div>
-      <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
-        <div
-          v-for="i in [
-            { value: 1, name: 'Vue3' },
-            { value: 2, name: 'Electron' },
-            { value: 3, name: 'React' },
-            { value: 4, name: 'webpack' },
-            { value: 5, name: 'node' },
-            { value: 6, name: 'vite' },
-            { value: 7, name: 'vite2' },
-            { value: 8, name: 'vite3' },
-            { value: 9, name: 'vite4' },
-            { value: 10, name: 'vite5' },
-          ]"
-          :key="i.name"
-          class="tag-wrap"
-        >
-          <div :class="`${currentTag === i.name && 'active'} tag`" @click="onCheckTag(i.name)">
+      <el-scrollbar v-if="tagStore.tags.length > 0" ref="tagListRef" wrap-class="scrollbar-wrapper">
+        <div v-for="i in tagStore.tags" :key="i.name" class="tag-wrap">
+          <div
+            :class="`${(tagStore.currentTag || route.query?.tag || tagStore.tags[0]?.name) === i.name && 'active'} tag`"
+            @click="onCheckTag(i.name)"
+          >
             <div class="tag-name">{{ i.name }}</div>
             <div class="tag-count">包含（{{ i.value }}） 篇</div>
           </div>
@@ -39,10 +27,13 @@
       </el-scrollbar>
     </div>
     <div class="right">
-      <div class="header">当前选中{{ currentTag }}</div>
+      <div v-if="tagStore.tags.length > 0" class="header">
+        当前选中{{ tagStore.currentTag || route.query?.tag || tagStore.tags[0]?.name }}
+      </div>
       <div class="content">
-        <el-scrollbar wrap-class="scrollbar-wrapper">
+        <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
           <div
+            v-if="isMounted"
             v-infinite-scroll="onFetchData"
             :infinite-scroll-delay="300"
             :infinite-scroll-disabled="disabled"
@@ -50,334 +41,79 @@
             class="article-list"
           >
             <LineCard
-              v-for="data in dataSource"
+              v-for="data in tagStore.articleList"
               :key="data.id"
               :data="data"
               class="author-line-card"
-              @click="(e:Event) => onClickCard(e, data.id!)"
+              :delete-article="deleteArticle"
+              :like-list-article="likeListArticle"
             />
             <ToTopIcon v-if="scrollTop >= 500" :on-scroll-to="onScrollTo" class="to-top" />
           </div>
-          <div v-if="loading" class="loading">Loading...</div>
           <div v-if="noMore" class="no-more">没有更多了～～～</div>
         </el-scrollbar>
       </div>
     </div>
-  </div>
+  </Loading>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { scrollTo } from '@/utils';
-import { useScroller } from '@/hooks';
-import { TimelineArticles } from '@/typings/common';
-
-const loading = ref<boolean>(false);
-
-const { scrollRef, scrollTop } = useScroller();
+import { useScroller, useDeleteArticle } from '@/hooks';
+import { tagStore, articleStore, commonStore } from '@/store';
 
 const route = useRoute();
 const router = useRouter();
 
-const currentTag = ref<string>(route.query?.tag as string);
-const dataSource = ref<TimelineArticles[]>([
-  {
-    title: 'react webpac5 项目搭建',
-    id: '63e3187be2d6bf53efaa6a3c',
-    classify: '架构',
-    tag: '前端框架',
-    abstract: '项目搭建',
-    authorId: '63e24c3be2d6bf53efaa69a9',
-    authorName: 'dnhyxc',
-    isLike: false,
-    likeCount: 0,
-    createTime: 1675827289879,
-    readCount: 6,
-    commentCount: 0,
-  },
-  {
-    title: 'react webpac5 项目搭建',
-    id: '63e3187be2d6bf53efaa6a3d',
-    classify: '架构',
-    tag: '前端框架',
-    abstract: '项目搭建',
-    authorId: '63e24c3be2d6bf53efaa69a9',
-    authorName: 'dnhyxc',
-    isLike: false,
-    likeCount: 0,
-    createTime: 1675827289879,
-    readCount: 6,
-    commentCount: 0,
-  },
-  {
-    title: 'react webpac5 项目搭建',
-    id: '63e3187be2d6bf53efaa6a3a',
-    classify: '架构',
-    tag: '前端框架',
-    abstract: '项目搭建',
-    authorId: '63e24c3be2d6bf53efaa69a9',
-    authorName: 'dnhyxc',
-    isLike: false,
-    likeCount: 0,
-    createTime: 1675827289879,
-    readCount: 6,
-    commentCount: 0,
-  },
-  {
-    title: 'Electron vue3 项目搭建',
-    id: '63e3187be2d6bf53efaa6a6a',
-    classify: '架构',
-    tag: '前端框架',
-    abstract: '项目搭建',
-    authorId: '63e24c3be2d6bf53efaa69a9',
-    authorName: 'dnhyxc',
-    isLike: false,
-    likeCount: 0,
-    createTime: 1675827289879,
-    readCount: 6,
-    commentCount: 0,
-  },
-  {
-    title: 'Vue3 + vite',
-    id: '63e3187be2d6bf53efaa6a9a',
-    classify: '架构',
-    tag: '前端框架',
-    abstract: '项目搭建',
-    authorId: '63e24c3be2d6bf53efaa69a9',
-    authorName: 'dnhyxc',
-    isLike: false,
-    likeCount: 0,
-    createTime: 1675827289879,
-    readCount: 6,
-    commentCount: 0,
-  },
-  {
-    title: 'Vue3 + vite',
-    id: '63e3187be2d6bf53efaa0a9a',
-    classify: '架构',
-    tag: '前端框架',
-    abstract: '项目搭建',
-    authorId: '63e24c3be2d6bf53efaa69a9',
-    authorName: 'dnhyxc',
-    isLike: false,
-    likeCount: 0,
-    createTime: 1675827289879,
-    readCount: 6,
-    commentCount: 0,
-  },
-  {
-    title: 'Vue3 + vite',
-    id: '63e3187be2d6bf53efal6a9a',
-    classify: '架构',
-    tag: '前端框架',
-    abstract: '项目搭建',
-    authorId: '63e24c3be2d6bf53efaa69a9',
-    authorName: 'dnhyxc',
-    isLike: false,
-    likeCount: 0,
-    createTime: 1675827289879,
-    readCount: 6,
-    commentCount: 0,
-  },
-  {
-    title: 'Vue3 + vite',
-    id: '63e3187be2d6bf530fal6a9a',
-    classify: '架构',
-    tag: '前端框架',
-    abstract: '项目搭建',
-    authorId: '63e24c3be2d6bf53efaa69a9',
-    authorName: 'dnhyxc',
-    isLike: false,
-    likeCount: 0,
-    createTime: 1675827289879,
-    readCount: 6,
-    commentCount: 0,
-  },
-  {
-    title: 'Vue3 + vite',
-    id: '63e3187be2d6bf53ef5l6a9a',
-    classify: '架构',
-    tag: '前端框架',
-    abstract: '项目搭建',
-    authorId: '63e24c3be2d6bf53efaa69a9',
-    authorName: 'dnhyxc',
-    isLike: false,
-    likeCount: 0,
-    createTime: 1675827289879,
-    readCount: 6,
-    commentCount: 0,
-  },
-]);
+const isMounted = ref<boolean>(false);
+const noMore = computed(() => tagStore.articleList.length >= tagStore.total);
+const disabled = computed(() => tagStore.loading || noMore.value);
 
-const noMore = computed(() => dataSource.value.length > 31);
-const disabled = computed(() => loading.value || noMore.value);
+const { scrollRef, scrollTop } = useScroller();
+const { deleteArticle } = useDeleteArticle({ pageType: 'tag', tagName: route.query?.tag as string, router });
+
+onMounted(async () => {
+  isMounted.value = true;
+  // 获取标签信息
+  await tagStore.getTags();
+  onFetchData();
+});
+
+onUnmounted(() => {
+  tagStore.clearArticleList();
+  // 离开当前页面时清空头部输入框内容
+  commonStore.keyword = '';
+  tagStore.currentTag = '';
+  tagStore.tags = [];
+});
+
+// 监听页面搜索关键词，请求列表数据
+watch(
+  () => commonStore.keyword,
+  (newVal, oldVal) => {
+    if (newVal !== oldVal) {
+      tagStore.clearArticleList();
+      onFetchData();
+    }
+  },
+);
+
+// 监听选中标签，请求列表数据
+watch(
+  () => tagStore.currentTag,
+  (newVal, oldVal) => {
+    if (newVal !== oldVal) {
+      tagStore.clearArticleList();
+      onFetchData();
+    }
+  },
+);
 
 // 请求数据
 const onFetchData = async () => {
-  console.log('正在加载更多');
-
-  try {
-    loading.value = true;
-    const newData: any = await ajaxGet(/* url */);
-    loading.value = false;
-    console.log(newData, 'newData');
-
-    if (dataSource.value.length > 31) return;
-    dataSource.value = [...dataSource.value, ...newData];
-  } catch (err) {
-    // handle err
-    console.log(err);
-  }
-};
-
-const ajaxGet = async (/* url */) => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve([
-        {
-          title: 'react webpac5 项目搭建',
-          id: '63e3187be2d6bf53efaa6a3c',
-          classify: '架构',
-          tag: '前端框架',
-          abstract: '项目搭建',
-          authorId: '63e24c3be2d6bf53efaa69a9',
-          authorName: 'dnhyxc',
-          isLike: false,
-          likeCount: 0,
-          createTime: 1675827289879,
-          readCount: 6,
-          commentCount: 0,
-        },
-        {
-          title: 'react webpac5 项目搭建',
-          id: '63e3187be2d6bf53efaa6a3d',
-          classify: '架构',
-          tag: '前端框架',
-          abstract: '项目搭建',
-          authorId: '63e24c3be2d6bf53efaa69a9',
-          authorName: 'dnhyxc',
-          isLike: false,
-          likeCount: 0,
-          createTime: 1675827289879,
-          readCount: 6,
-          commentCount: 0,
-        },
-        {
-          title: 'react webpac5 项目搭建',
-          id: '63e3187be2d6bf53efaa6a3d',
-          classify: '架构',
-          tag: '前端框架',
-          abstract: '项目搭建',
-          authorId: '63e24c3be2d6bf53efaa69a9',
-          authorName: 'dnhyxc',
-          isLike: false,
-          likeCount: 0,
-          createTime: 1675827289879,
-          readCount: 6,
-          commentCount: 0,
-        },
-        {
-          title: 'react webpac5 项目搭建',
-          id: '63e3187be2d6bf53efaa6a3d',
-          classify: '架构',
-          tag: '前端框架',
-          abstract: '项目搭建',
-          authorId: '63e24c3be2d6bf53efaa69a9',
-          authorName: 'dnhyxc',
-          isLike: false,
-          likeCount: 0,
-          createTime: 1675827289879,
-          readCount: 6,
-          commentCount: 0,
-        },
-        {
-          title: 'react webpac5 项目搭建',
-          id: '63e3187be2d6bf53efaa6a3d',
-          classify: '架构',
-          tag: '前端框架',
-          abstract: '项目搭建',
-          authorId: '63e24c3be2d6bf53efaa69a9',
-          authorName: 'dnhyxc',
-          isLike: false,
-          likeCount: 0,
-          createTime: 1675827289879,
-          readCount: 6,
-          commentCount: 0,
-        },
-        {
-          title: 'react webpac5 项目搭建',
-          id: '63e3187be2d6bf53efaa6a3d',
-          classify: '架构',
-          tag: '前端框架',
-          abstract: '项目搭建',
-          authorId: '63e24c3be2d6bf53efaa69a9',
-          authorName: 'dnhyxc',
-          isLike: false,
-          likeCount: 0,
-          createTime: 1675827289879,
-          readCount: 6,
-          commentCount: 0,
-        },
-        {
-          title: 'react webpac5 项目搭建',
-          id: '63e3187be2d6bf53efaa6a3d',
-          classify: '架构',
-          tag: '前端框架',
-          abstract: '项目搭建',
-          authorId: '63e24c3be2d6bf53efaa69a9',
-          authorName: 'dnhyxc',
-          isLike: false,
-          likeCount: 0,
-          createTime: 1675827289879,
-          readCount: 6,
-          commentCount: 0,
-        },
-        {
-          title: 'react webpac5 项目搭建',
-          id: '63e3187be2d6bf53efaa6a3d',
-          classify: '架构',
-          tag: '前端框架',
-          abstract: '项目搭建',
-          authorId: '63e24c3be2d6bf53efaa69a9',
-          authorName: 'dnhyxc',
-          isLike: false,
-          likeCount: 0,
-          createTime: 1675827289879,
-          readCount: 6,
-          commentCount: 0,
-        },
-        {
-          title: 'react webpac5 项目搭建',
-          id: '63e3187be2d6bf53efaa6a3d',
-          classify: '架构',
-          tag: '前端框架',
-          abstract: '项目搭建',
-          authorId: '63e24c3be2d6bf53efaa69a9',
-          authorName: 'dnhyxc',
-          isLike: false,
-          likeCount: 0,
-          createTime: 1675827289879,
-          readCount: 6,
-          commentCount: 0,
-        },
-        {
-          title: 'react webpac5 项目搭建',
-          id: '63e3187be2d6bf53efaa6a3d',
-          classify: '架构',
-          tag: '前端框架',
-          abstract: '项目搭建',
-          authorId: '63e24c3be2d6bf53efaa69a9',
-          authorName: 'dnhyxc',
-          isLike: false,
-          likeCount: 0,
-          createTime: 1675827289879,
-          readCount: 6,
-          commentCount: 0,
-        },
-      ]);
-    }, 1000);
-  });
+  await tagStore.getArticleByTagName(route.query?.tag as string);
 };
 
 // 滚动到某位置
@@ -388,17 +124,12 @@ const onScrollTo = () => {
 
 // 选中标签
 const onCheckTag = (tag: string) => {
-  console.log(tag, 'tag');
-
-  currentTag.value = tag;
-
-  router.push(`/tag/list?tag=${tag}`);
+  tagStore.currentTag = tag;
 };
 
-// 点击卡片
-const onClickCard = (e: Event, id: string) => {
-  e.stopPropagation();
-  router.push(`/detail/${id}`);
+// 文章点赞
+const likeListArticle = (id: string) => {
+  articleStore.likeListArticle({ id, pageType: 'tag' });
 };
 </script>
 

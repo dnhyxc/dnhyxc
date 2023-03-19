@@ -1,7 +1,7 @@
 import { useRouter } from 'vue-router';
 import { toRaw, onMounted, onUnmounted, ref, computed } from 'vue';
 import { ElMessage } from 'element-plus';
-import { loginStore, articleStore, commonStore, classifyStore } from '@/store';
+import { loginStore, articleStore, commonStore, classifyStore, tagStore } from '@/store';
 import { CommentParams, useDeleteArticleParams, DeleteArticleParams } from '@/typings/common';
 import { Message } from '@/utils';
 
@@ -70,11 +70,13 @@ export const useDeleteArticle = ({
   delType,
   pageType, // 用于区分个分页列表数据
   filterList, // 高级搜索列表
+  classify, // 文章分类
   tagName, // 标签页选中的标签
   authorId, // 我的主页作者id
   accessUserId, // 我的主页登录人id
   authorPage, // 代表博主页面
   authorLike, // 代表博主页面博主点赞列表
+  router, // 路由
   getCollectionTotal, // 获取收藏集总数的方法
   getCollectedTotal, // 获取收藏集中收藏的文章总数的方法
   removeConfirmStyle, // confirm 样式
@@ -88,8 +90,8 @@ export const useDeleteArticle = ({
         const params: DeleteArticleParams = {
           articleId,
           keyword: commonStore.keyword, // 头部搜索关键词
-          classify: classifyStore.currentClassify || classifyStore.classifys[0]?.name!, // 文章分类页面搜索条件
-          tagName,
+          classify: classifyStore.currentClassify || classify || classifyStore.classifys[0]?.name!, // 文章分类页面搜索条件
+          tagName: tagStore.currentTag || tagName || tagStore.tags[0]?.name,
           userId: authorId,
           accessUserId,
           delType,
@@ -97,11 +99,17 @@ export const useDeleteArticle = ({
           authorLike,
           filterList,
           pageType,
+          router,
         };
 
         // 如果没有分类，则删除参数中的classify属性
-        if (!classifyStore.currentClassify && !classifyStore.classifys[0]?.name!) {
+        if (!classifyStore.currentClassify && !classify && !classifyStore.classifys[0]?.name!) {
           delete params.classify;
+        }
+
+        // 如果没有选中tag，则删除tagName属性
+        if (!tagStore.currentTag && !tagName && !tagStore.tags[0]?.name) {
+          delete params.tagName;
         }
 
         await articleStore.deleteArticle(params);

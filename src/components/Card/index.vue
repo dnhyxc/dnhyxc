@@ -67,7 +67,7 @@
 import { useRouter } from 'vue-router';
 import { formatDate } from '@/utils';
 import { ArticleItem } from '@/typings/common';
-import IMG1 from '@/assets/images/1.jpg';
+import { IMG1 } from '@/constant';
 import { loginStore } from '@/store';
 import Image from '@/components/Image/index.vue';
 
@@ -116,7 +116,7 @@ const toPersonal = (id: string) => {
 
 // 去分类
 const toClassify = (name: string) => {
-  router.push(`/classify?name=${name}`);
+  router.push(`/classify?classify=${name}`);
 };
 
 // 去标签列表

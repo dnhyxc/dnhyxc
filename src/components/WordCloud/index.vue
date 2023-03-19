@@ -76,8 +76,6 @@ watch(
 
 // 绘制图表事件
 const drawChart = () => {
-  console.log(props.data, 'aaa');
-
   const maskImage = new Image();
   // 配置
   const option = {
