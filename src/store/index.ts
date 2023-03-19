@@ -6,6 +6,7 @@ import { useCollectStore } from './collect';
 import { useUploadStore } from './upload';
 import { useClassifyStore } from './classify';
 import { useTagStore } from './tag';
+import { useTimelineStore } from './timeline';
 
 // 公共store
 export const commonStore = useCommonStore();
@@ -30,3 +31,6 @@ export const classifyStore = useClassifyStore();
 
 // 文章标签
 export const tagStore = useTagStore();
+
+// 文章标签
+export const timelineStore = useTimelineStore();

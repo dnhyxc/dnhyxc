@@ -279,7 +279,7 @@ export interface useDeleteArticleParams {
 // 删除文章参数
 export interface DeleteArticleParams {
   articleId: string;
-  pageType: string; // 用户区分页面列表数据
+  pageType?: string; // 用户区分页面列表数据
   pageNo?: number;
   pageSize?: number;
   type?: string;

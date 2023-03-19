@@ -11,7 +11,7 @@
       <div class="card">
         <div v-for="card in item.articles" :key="card.id" class="card-item" @click="(e) => onClickCard(e, card.id!)">
           <div class="date">{{ formatDate(card.createTime!) }}</div>
-          <LineCard :data="card" />
+          <LineCard :data="card" :delete-article="deleteArticle" :like-list-article="likeListArticle" />
         </div>
       </div>
     </div>
@@ -28,13 +28,15 @@ const router = useRouter();
 
 interface IProps {
   dataSource: TimelineResult[];
+  deleteArticle?: (id: string) => void;
+  likeListArticle?: (id: string) => void;
 }
 
-const props = withDefaults(defineProps<IProps>(), {
+withDefaults(defineProps<IProps>(), {
   dataSource: () => [],
+  deleteArticle: () => {},
+  likeListArticle: () => {},
 });
-
-console.log(props, 'props');
 
 const onClickCard = (e: Event, id: string) => {
   e.stopPropagation();

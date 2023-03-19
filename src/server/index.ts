@@ -183,3 +183,9 @@ export const searchArticle = async (params: SearchArticleParams) => {
   const res = await post(API.SEARCH_ARTICLE, copeParams(params));
   return res;
 };
+
+// 获取时间轴列表
+export const getTimelineList = async (params?: { pageNo?: number; pageSize?: number; keyword?: string }) => {
+  const res = await post(API.GET_TIMELINE_LIST, copeParams(params));
+  return res;
+};

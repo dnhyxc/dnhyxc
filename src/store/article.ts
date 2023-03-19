@@ -10,9 +10,9 @@ import {
   CommentParams,
   ReplayComment,
   DeleteArticleParams,
-  // TimelineResult,
+  TimelineResult,
 } from '@/typings/common';
-import { classifyStore, commonStore, createStore, loginStore, tagStore } from '@/store';
+import { classifyStore, commonStore, createStore, loginStore, tagStore, timelineStore } from '@/store';
 
 interface IProps {
   loading: boolean;
@@ -182,7 +182,7 @@ export const useArticleStore = defineStore('article', {
       const res = normalizeResult<ArticleListResult>(
         await Service.deleteArticle({
           ...params,
-          pageNo: pageNo[params.pageType],
+          pageNo: pageNo[params.pageType!],
           pageSize: 20,
           userId: params.authorId || loginStore.userInfo?.userId,
           delType: params.delType === '2' ? params.delType : '',
@@ -191,7 +191,7 @@ export const useArticleStore = defineStore('article', {
 
       if (res.success) {
         const nextPageOne = res?.data?.list[0] || '';
-        const list = articleList[params.pageType].filter((i: ArticleItem) => i.id !== params.articleId);
+        const list = articleList[params.pageType!].filter((i: ArticleItem) => i.id !== params.articleId);
 
         switch (params.pageType) {
           case 'home':
@@ -239,8 +239,8 @@ export const useArticleStore = defineStore('article', {
             break;
         }
 
-        articleList[params.pageType] = nextPageOne ? [...list, nextPageOne] : list;
-        total[params.pageType] = total[params.pageType] - 1;
+        articleList[params.pageType!] = nextPageOne ? [...list, nextPageOne] : list;
+        total[params.pageType!] = total[params.pageType!] - 1;
 
         ElMessage({
           message: res.message,
@@ -264,30 +264,30 @@ export const useArticleStore = defineStore('article', {
       pageType,
     }: {
       id: string;
-      pageType: string;
+      pageType?: string;
       isTimeLine?: boolean;
       isAboutMe?: boolean;
     }) {
       const res = normalizeResult<{ id: string; isLike: boolean }>(await Service.likeArticle({ id }));
-
       if (res.success) {
         const { id, isLike } = res.data;
+        // 时间轴页面
         if (isTimeLine) {
-          // const cloneArticles: TimelineResult[] = JSON.parse(JSON.stringify(this.articleList));
-          // const timelineList = cloneArticles.map((i) => {
-          //   i.articles.forEach((j) => {
-          //     if (j.id === id) {
-          //       j.isLike = res.data.isLike;
-          //       if (isLike) {
-          //         j.likeCount! += 1;
-          //       } else {
-          //         j.likeCount! > 0 ? (j.likeCount! -= 1) : (j.likeCount = 0);
-          //       }
-          //     }
-          //   });
-          //   return i;
-          // });
-          // updateList(timelineList);
+          const cloneArticles: TimelineResult[] = JSON.parse(JSON.stringify(timelineStore.timelineList));
+          const timelineList = cloneArticles.map((i) => {
+            i.articles.forEach((j) => {
+              if (j.id === id) {
+                j.isLike = res.data.isLike;
+                if (isLike) {
+                  j.likeCount! += 1;
+                } else {
+                  j.likeCount! > 0 ? (j.likeCount! -= 1) : (j.likeCount = 0);
+                }
+              }
+            });
+            return i;
+          });
+          timelineStore.timelineList = timelineList;
         } else {
           // 设置各个页面的文章列表数据
           const dataList = {
@@ -296,7 +296,7 @@ export const useArticleStore = defineStore('article', {
             tag: tagStore.articleList,
           };
 
-          const cloneList: ArticleItem[] = JSON.parse(JSON.stringify(dataList[pageType]));
+          const cloneList: ArticleItem[] = JSON.parse(JSON.stringify(dataList[pageType!]));
 
           const list = cloneList.map((i) => {
             if (i.id === id) {

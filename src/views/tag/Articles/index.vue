@@ -63,6 +63,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { scrollTo } from '@/utils';
 import { useScroller, useDeleteArticle } from '@/hooks';
 import { tagStore, articleStore, commonStore } from '@/store';
+import Loading from '@/components/Loading/index.vue';
 
 const route = useRoute();
 const router = useRouter();

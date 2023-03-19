@@ -40,6 +40,8 @@ export const GET_DRAFT_BY_ID = '/api/getDraftById';
 export const DELETE_DRAFT = '/api/deleteDraft';
 // 高级搜索
 export const ADVANCED_SEARCH = '/api/advancedSearch';
+// 获取文章分类
+export const GET_TIMELINE_LIST = '/api/getTimelineList';
 
 // 获取上一篇文章
 export const GET_PREV_ARTICLE = '/api/getPrevArticle';

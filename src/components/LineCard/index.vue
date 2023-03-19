@@ -266,8 +266,7 @@ const onComment = (id: string) => {
     .img-wrap {
       box-sizing: border-box;
       display: flex;
-      width: 20%;
-      min-width: 135px;
+      flex: 0.6;
       .img {
         display: block;
         width: 100%;
