@@ -20,8 +20,8 @@
               </div>
             </div>
             <div class="bottom">
-              <span class="classify" @click.stop="toClassify(item.classify!)">{{ item.classify }}</span>
-              <span class="tag" @click.stop="toTag(item.tag!)">{{ item.tag }}</span>
+              <span class="classify" @click.stop="toClassify(item.classify!)">分类: {{ item.classify }}</span>
+              <span class="tag" @click.stop="toTag(item.tag!)">标签: {{ item.tag }}</span>
             </div>
           </div>
           <Image :url="item.coverImage || IMG1" :transition-img="IMG1" class="img" />
@@ -129,10 +129,13 @@ const toTag = (name: string) => {
             }
 
             .author {
+              display: inline-block;
               margin-right: 10px;
+              padding: 0 5px 2px 5px;
 
               &:hover {
                 color: @theme-blue;
+                background-color: rgba(225, 225, 225, 0.85);
               }
             }
           }
@@ -152,6 +155,7 @@ const toTag = (name: string) => {
 
             &:hover {
               color: @theme-blue;
+              background-color: rgba(225, 225, 225, 0.85);
             }
           }
 

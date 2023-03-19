@@ -66,7 +66,7 @@ const toDetail = (id: string) => {
 // 去分类或者标签列表
 const onJump = (name: string, type: string) => {
   if (type === 'tag') {
-    router.push(`/tag/list?tagName=${name}`);
+    router.push(`/tag/list?tag=${name}`);
   } else {
     router.push(`/classify?classify=${name}`);
   }

@@ -5,10 +5,10 @@
  * index.vue
 -->
 <template>
-  <div class="timeline-card">
+  <div class="timeline-card" @click.stop="toDetail(data.id!)">
     <div class="title">
       <div class="left">{{ data.title }}</div>
-      <div class="right">
+      <div v-if="data.authorId === loginStore.userInfo?.userId" class="right">
         <span class="edit" @click.stop="toEdit(data.id!)">编辑</span>
         <span class="del" @click.stop="onReomve(data.id!)">下架</span>
       </div>
@@ -56,6 +56,7 @@ import { useRouter, useRoute } from 'vue-router';
 import { IMG1 } from '@/constant';
 import { TimelineArticles } from '@/typings/common';
 import Image from '@/components/Image/index.vue';
+import { loginStore } from '@/store';
 
 const router = useRouter();
 const route = useRoute();
@@ -73,13 +74,11 @@ const props = withDefaults(defineProps<IProps>(), {
 
 // 编辑
 const toEdit = (id: string) => {
-  console.log(id, '编辑');
   router.push(`/create?id=${id}`);
 };
 
 // 删除
 const onReomve = (id: string) => {
-  console.log(id, '删除');
   props?.deleteArticle?.(id);
 };
 
@@ -90,27 +89,29 @@ const toPersonal = (id: string) => {
 
 // 去分类页
 const toClassify = (classify: string) => {
-  console.log(classify, 'toClassify');
   router.push(`/classify?classify=${classify}`);
 };
 
 // 去标签
 const toTag = (tag: string) => {
   if (route.path !== '/tag/list') {
-    console.log(tag, 'toTag', route.path);
     router.push(`/tag/list?tag=${tag}`);
   }
 };
 
 // 点赞
 const onLike = (id: string) => {
-  console.log(id, 'onLike');
   props?.likeListArticle?.(id);
+};
+
+// 前往首页
+const toDetail = (id: string) => {
+  router.push(`/detail/${id}`);
 };
 
 // 评论
 const onComment = (id: string) => {
-  console.log(id, 'onComment');
+  router.push(`/detail/${id}?scrollTo=1`);
 };
 </script>
 
@@ -233,6 +234,10 @@ const onComment = (id: string) => {
 
           .like-icon {
             margin-bottom: 2px;
+          }
+
+          .icon-24gf-thumbsUp2 {
+            color: @theme-blue;
           }
 
           .comment-icon {

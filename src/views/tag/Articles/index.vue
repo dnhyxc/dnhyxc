@@ -7,13 +7,13 @@
 <template>
   <Loading :loading="tagStore.loading" class="articles-wrap">
     <div class="left">
-      <div class="title">
+      <span class="title">
         <span>文章标签列表</span>
         <i
           :class="`font iconfont ${scrollTop > 0 ? 'icon-shuangjiantou-shang' : 'icon-shuangjiantou-xia'}`"
           @click="onScrollTo"
         />
-      </div>
+      </span>
       <el-scrollbar v-if="tagStore.tags.length > 0" ref="tagListRef" wrap-class="scrollbar-wrapper">
         <div v-for="i in tagStore.tags" :key="i.name" class="tag-wrap">
           <div
@@ -28,7 +28,7 @@
     </div>
     <div class="right">
       <div v-if="tagStore.tags.length > 0" class="header">
-        当前选中{{ tagStore.currentTag || route.query?.tag || tagStore.tags[0]?.name }}
+        {{ tagStore.currentTag || route.query?.tag || tagStore.tags[0]?.name }}
       </div>
       <div class="content">
         <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
@@ -254,6 +254,7 @@ const likeListArticle = (id: string) => {
     padding: 5px 5px;
 
     .header {
+      display: inline-block;
       font-size: 18px;
       font-weight: 700;
       color: @active;
