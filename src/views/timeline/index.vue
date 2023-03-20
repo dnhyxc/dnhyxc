@@ -19,7 +19,7 @@
 
 <script setup lang="ts">
 import { onMounted } from 'vue';
-import { useScroller, useDeleteArticle } from '@/hooks';
+import { useScroller } from '@/hooks';
 import { scrollTo } from '@/utils';
 import { timelineStore, articleStore } from '@/store';
 import Timeline from '@/components/Timeline/index.vue';
@@ -28,7 +28,6 @@ import Loading from '@/components/Loading/index.vue';
 
 // scrollRef：el-scrollbar ref，scrollTop：滚动距离
 const { scrollRef, scrollTop } = useScroller();
-const { deleteArticle } = useDeleteArticle({ pageType: 'timeline' });
 
 onMounted(async () => {
   await timelineStore.getTimelineList();
@@ -37,6 +36,11 @@ onMounted(async () => {
 // 文章点赞
 const likeListArticle = (id: string) => {
   articleStore.likeListArticle({ id, isTimeLine: true });
+};
+
+// 删除文章
+const deleteArticle = (id: string) => {
+  timelineStore.deleteTimelineArticle(id);
 };
 
 // 置顶

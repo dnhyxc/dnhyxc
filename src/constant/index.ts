@@ -123,6 +123,9 @@ export const SETTING_MENU = [
   },
 ];
 
+// 需要头部搜索的页面
+export const NEED_HEAD_SEARCH = ['/home', '/classify', '/tag'];
+
 // 需要登陆权限的路由
 export const WITH_AUTH_ROUTES = ['/create', '/timeline', '/personal'];
 

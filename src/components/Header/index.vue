@@ -19,7 +19,7 @@
       <div class="title">{{ commonStore.crumbsInfo.crumbsName }}</div>
     </div>
     <div class="right">
-      <div class="search-wrap">
+      <div v-if="NEED_HEAD_SEARCH.includes(route.path)" class="search-wrap">
         <el-tooltip v-if="!commonStore.showSearch" effect="light" content="搜索" placement="bottom">
           <i class="font iconfont icon-sousuo2" @click="onClickSearch" />
         </el-tooltip>
@@ -97,7 +97,7 @@ import { ref, watchEffect, nextTick, onUnmounted, onMounted, watch } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { ipcRenderer } from 'electron';
 import { Search } from '@element-plus/icons-vue';
-import { ACTION_SVGS, MENULIST, CLOSE_CONFIG, CLOSE_PROMPT } from '@/constant';
+import { ACTION_SVGS, MENULIST, CLOSE_CONFIG, CLOSE_PROMPT, NEED_HEAD_SEARCH } from '@/constant';
 import { commonStore } from '@/store';
 import { checkOS } from '@/utils';
 
