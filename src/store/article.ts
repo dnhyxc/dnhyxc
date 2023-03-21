@@ -264,9 +264,15 @@ export const useArticleStore = defineStore('article', {
       if (res.success) {
         const { id, isLike } = res.data;
 
+        console.log(authorStore.currentTabKey, 'authorStore.currentTabKey', id);
+
         // 时间轴页面
-        if (isTimeLine) {
-          const cloneArticles: TimelineResult[] = JSON.parse(JSON.stringify(timelineStore.timelineList));
+        if (isTimeLine || authorStore.currentTabKey === '2') {
+          const cloneArticles: TimelineResult[] =
+            authorStore.currentTabKey !== '2'
+              ? JSON.parse(JSON.stringify(timelineStore.timelineList))
+              : JSON.parse(JSON.stringify(authorStore.timelineList));
+
           const timelineList = cloneArticles.map((i) => {
             i.articles.forEach((j) => {
               if (j.id === id) {
@@ -280,7 +286,12 @@ export const useArticleStore = defineStore('article', {
             });
             return i;
           });
-          timelineStore.timelineList = timelineList;
+          // authorStore.currentTabKey !== '2' 为时间轴页面，否则为博主时间轴页面
+          if (authorStore.currentTabKey !== '2') {
+            timelineStore.timelineList = timelineList;
+          } else {
+            authorStore.timelineList = timelineList;
+          }
         } else {
           // 设置各个页面的文章列表数据
           const dataList = {
@@ -304,6 +315,7 @@ export const useArticleStore = defineStore('article', {
             return i;
           });
 
+          // 博主点赞页面
           if (loginStore.userInfo.auth === 1 && authorStore.currentTabKey === '1') {
             switch (pageType) {
               case 'author':
@@ -326,7 +338,10 @@ export const useArticleStore = defineStore('article', {
                 tagStore.articleList = list;
                 break;
               case 'author':
-                authorStore.articleList = list;
+                // 博主文章列表
+                if (authorStore.currentTabKey === '0') {
+                  authorStore.articleList = list;
+                }
                 break;
 
               default:

@@ -73,10 +73,14 @@
                     class="author-line-card"
                     :delete-article="deleteArticle"
                     :like-list-article="likeListArticle"
-                    @click="(e) => onClickCard(e, data.id!)"
                   />
                 </div>
-                <Timeline v-if="tab.value === '3'" :data-source="authorStore.timelineList" />
+                <Timeline
+                  v-if="tab.value === '3'"
+                  :data-source="authorStore.timelineList"
+                  :delete-article="deleteTimeLineArticle"
+                  :like-list-article="likeListArticle"
+                />
                 <div v-if="noMore" class="no-more">没有更多了～～～</div>
               </el-tab-pane>
             </el-tabs>
@@ -89,15 +93,12 @@
 
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue';
-import { useRouter } from 'vue-router';
 import { HEAD_IMG, AUTHOR_TABS, IMG1 } from '@/constant';
 import { authorStore, articleStore } from '@/store';
 import { useDeleteArticle } from '@/hooks';
 import LineCard from '@/components/LineCard/index.vue';
 import Image from '@/components/Image/index.vue';
 import Loading from '@/components/Loading/index.vue';
-
-const router = useRouter();
 
 const viewMore = ref<boolean>(false);
 const isMounted = ref<boolean>(false);
@@ -108,9 +109,9 @@ const { deleteArticle } = useDeleteArticle({ pageType: 'author' });
 
 onMounted(async () => {
   isMounted.value = true;
-  // 获取博主信息
   authorStore.currentTabKey = '0';
   authorStore.clearArticleList();
+  // 获取博主信息
   await authorStore.getUserInfo();
   getAuthorArticles();
 });
@@ -129,8 +130,9 @@ const onTabChange = (name: string) => {
     authorStore.clearArticleList();
     getAuthorArticles();
   } else {
+    authorStore.currentTabKey = '2';
     authorStore.clearArticleList();
-    authorStore.getAuthorTimeline('2');
+    authorStore.getAuthorTimeline();
   }
 };
 
@@ -139,10 +141,9 @@ const likeListArticle = (id: string) => {
   articleStore.likeListArticle({ id, pageType: 'author' });
 };
 
-// 点击卡片
-const onClickCard = (e: Event, id: string) => {
-  e.stopPropagation();
-  router.push(`/detail/${id}`);
+// 删除博主页面时间轴
+const deleteTimeLineArticle = (id: string) => {
+  authorStore.deleteTimelineArticle(id);
 };
 
 // 查看更多信息

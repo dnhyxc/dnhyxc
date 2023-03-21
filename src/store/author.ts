@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import { ElMessage } from 'element-plus';
 import { UserInfoParams, ArticleListResult, ArticleItem, TimelineResult } from '@/typings/common';
 import * as Service from '@/server';
-import { normalizeResult, locSetItem } from '@/utils';
+import { normalizeResult, locSetItem, Message } from '@/utils';
 import { loginStore } from '@/store';
 import { AUTHOR_API_PATH, PAGESIZE } from '@/constant';
 
@@ -100,9 +100,12 @@ export const useAuthorStore = defineStore('author', {
     },
 
     // 获取时间轴列表
-    async getAuthorTimeline(selectKey: string) {
+    async getAuthorTimeline() {
       // 保存至storage用于根据不同页面进入详情时，针对性的进行上下篇文章的获取（如：分类页面上下篇、标签页面上下篇）
-      locSetItem('params', JSON.stringify({ accessUserId: loginStore.userInfo?.userId, selectKey, from: 'author' }));
+      locSetItem(
+        'params',
+        JSON.stringify({ accessUserId: loginStore.userInfo?.userId, selectKey: this.currentTabKey, from: 'author' }),
+      );
       this.loading = true;
       const res = normalizeResult<TimelineResult[]>(
         await Service.getAuthorTimeline({ accessUserId: loginStore.userInfo?.userId }),
@@ -117,6 +120,33 @@ export const useAuthorStore = defineStore('author', {
           offset: 80,
         });
       }
+    },
+
+    // 删除timeline文章hooks
+    async deleteTimelineArticle(articleId: string) {
+      Message('', '确定删除该文章吗？').then(async () => {
+        const res = normalizeResult<{ id: string }>(await Service.deleteArticle({ articleId, type: 'timeline' }));
+        if (res.success) {
+          const list = this.timelineList.map((i) => {
+            if (i.articles.length) {
+              const filterList = i.articles.filter((j) => j.id !== articleId);
+              return {
+                ...i,
+                count: filterList.length,
+                articles: filterList,
+              };
+            }
+            return { ...i };
+          });
+          this.timelineList = list;
+        } else {
+          ElMessage({
+            message: res.message,
+            type: 'error',
+            offset: 80,
+          });
+        }
+      });
     },
 
     // 清除文章列表数据
