@@ -51,7 +51,7 @@ export const resetPassword = async (params: { username: string; password: string
 };
 
 // 获取用户信息
-export const getUserInfo = async (params?: { auth?: number; needTotal?: boolean }) => {
+export const getUserInfo = async (params?: { userId?: string; auth?: number; needTotal?: boolean }) => {
   const res = await post(API.GET_USER_INFO, copeParams(params));
   return res;
 };
@@ -203,5 +203,37 @@ export const getAuthorArticleList = async (
 // 获取博主时间轴文章列表
 export const getAuthorTimeline = async (params: { accessUserId?: string }) => {
   const res = await post(API.GET_AUTHOR_TIMELINE, params);
+  return res;
+};
+
+// 获取个人主页的列表数据
+export const getMyArticleList = async (
+  params: {
+    pageNo?: number;
+    pageSize?: number;
+    userId: string;
+    accessUserId?: string;
+  },
+  path: string,
+) => {
+  const res = await post(path, params);
+  return res;
+};
+
+// 删除收藏集
+export const delCollection = async (params: { id: string; userId?: string; pageNo?: number; pageSize?: number }) => {
+  const res = await post(API.DEL_COLLECTION, params);
+  return res;
+};
+
+// 获取收藏数
+export const getCollectTotal = async (params: { userId: string; status: number }) => {
+  const res = await post(API.GET_COLLECT_TOTAL, params);
+  return res;
+};
+
+// 获取收藏文章总条数
+export const getCollectedTotal = async (params: { userId: string; status: number }) => {
+  const res = await post(API.GET_COLLECTED_TOTAL, params);
   return res;
 };

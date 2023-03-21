@@ -63,7 +63,7 @@ const onEditArticle = () => {
 
 // 去我的主页
 const toSetting = (authorId: string | undefined) => {
-  router.push(`/personal?id=${authorId}`);
+  router.push(`/personal?authorId=${authorId}`);
 };
 </script>
 

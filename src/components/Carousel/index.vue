@@ -53,7 +53,7 @@ const toDetail = (id: string) => {
 
 // 去我的主页
 const toPersonal = (id: string) => {
-  router.push(`/personal?id=${id}`);
+  router.push(`/personal?authorId=${id}`);
 };
 
 // 去分类

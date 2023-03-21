@@ -8,6 +8,7 @@ import { useClassifyStore } from './classify';
 import { useTagStore } from './tag';
 import { useTimelineStore } from './timeline';
 import { useAuthorStore } from './author';
+import { usePersonalStore } from './personal';
 
 // 公共store
 export const commonStore = useCommonStore();
@@ -33,8 +34,11 @@ export const classifyStore = useClassifyStore();
 // 文章标签
 export const tagStore = useTagStore();
 
-// 文章标签
+// 时间轴
 export const timelineStore = useTimelineStore();
 
-// 文章标签
+// 博主主页
 export const authorStore = useAuthorStore();
+
+// 个人主页
+export const personalStore = usePersonalStore();

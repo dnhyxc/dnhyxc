@@ -6,6 +6,7 @@ import RESTORESVG from '@/assets/svg/restore.svg';
 import PAGESVG from '@/assets/svg/page_icon.svg';
 import HEAD_IMG from '@/assets/images/3.jpg';
 import IMG1 from '@/assets/images/1.jpg';
+import * as API from '@/server/api';
 
 // 滚动加载每页加载数量
 export const PAGESIZE = 20;
@@ -439,6 +440,13 @@ export const CODE_CONTROL = [
 export const AUTHOR_API_PATH = {
   0: '/api/getAuthorArticleList',
   1: '/api/getAuthorLikeArticles',
+};
+
+// 我的主页页面API
+export const ABOUT_ME_API_PATH = {
+  0: API.GET_MY_ARTICLE_LIST,
+  1: API.GET_LIKE_ARTICLE_LIST,
+  2: API.GET_COLLECTION_LIST,
 };
 
 export const BIRD_BASE64 =

@@ -152,6 +152,7 @@ export const useAuthorStore = defineStore('author', {
     // 清除文章列表数据
     clearArticleList() {
       this.articleList = [];
+      this.timelineList = [];
       this.total = 0;
       this.pageNo = 0;
     },

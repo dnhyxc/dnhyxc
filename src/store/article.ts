@@ -12,7 +12,16 @@ import {
   DeleteArticleParams,
   TimelineResult,
 } from '@/typings/common';
-import { authorStore, classifyStore, commonStore, createStore, loginStore, tagStore, timelineStore } from '@/store';
+import {
+  authorStore,
+  classifyStore,
+  commonStore,
+  createStore,
+  loginStore,
+  personalStore,
+  tagStore,
+  timelineStore,
+} from '@/store';
 import { PAGESIZE } from '@/constant';
 
 interface IProps {
@@ -263,9 +272,6 @@ export const useArticleStore = defineStore('article', {
       );
       if (res.success) {
         const { id, isLike } = res.data;
-
-        console.log(authorStore.currentTabKey, 'authorStore.currentTabKey', id);
-
         // 时间轴页面
         if (isTimeLine || authorStore.currentTabKey === '2') {
           const cloneArticles: TimelineResult[] =
@@ -299,10 +305,12 @@ export const useArticleStore = defineStore('article', {
             classify: classifyStore.articleList,
             tag: tagStore.articleList,
             author: authorStore.articleList,
+            personal: personalStore.articleList,
           };
 
           const cloneList: ArticleItem[] = JSON.parse(JSON.stringify(dataList[pageType!]));
 
+          // 处理点赞数
           const list = cloneList.map((i) => {
             if (i.id === id) {
               i.isLike = res.data.isLike;
@@ -342,6 +350,9 @@ export const useArticleStore = defineStore('article', {
                 if (authorStore.currentTabKey === '0') {
                   authorStore.articleList = list;
                 }
+                break;
+              case 'personal':
+                personalStore.articleList = list;
                 break;
 
               default:

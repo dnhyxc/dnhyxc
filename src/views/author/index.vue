@@ -5,8 +5,8 @@
  * index.vue
 -->
 <template>
-  <div class="author-wrap">
-    <Loading :loading="authorStore.loading" class="author-wrap">
+  <Loading :loading="authorStore.loading" class="author-wrap">
+    <template #default>
       <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
         <div
           v-if="isMounted"
@@ -87,8 +87,8 @@
           </div>
         </div>
       </el-scrollbar>
-    </Loading>
-  </div>
+    </template>
+  </Loading>
 </template>
 
 <script setup lang="ts">
@@ -102,14 +102,22 @@ import Loading from '@/components/Loading/index.vue';
 
 const viewMore = ref<boolean>(false);
 const isMounted = ref<boolean>(false);
-const noMore = computed(() => authorStore.articleList.length >= authorStore.total);
+const noMore = computed(() => {
+  const { articleList, total, timelineList, currentTabKey } = authorStore;
+  return (
+    articleList.length >= total && (currentTabKey === '2' ? articleList.length : timelineList[0]?.articles?.length)
+  );
+});
 const disabled = computed(() => authorStore.loading || noMore.value);
 
 const { deleteArticle } = useDeleteArticle({ pageType: 'author' });
 
 onMounted(async () => {
+  // 防止页面加载报错
   isMounted.value = true;
+  // 重置选中tab key 为 0
   authorStore.currentTabKey = '0';
+  // 清空原始数据
   authorStore.clearArticleList();
   // 获取博主信息
   await authorStore.getUserInfo();

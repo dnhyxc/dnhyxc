@@ -77,7 +77,6 @@ export const useDeleteArticle = ({
   router, // 路由
   getCollectionTotal, // 获取收藏集总数的方法
   getCollectedTotal, // 获取收藏集中收藏的文章总数的方法
-  removeConfirmStyle, // confirm 样式
 }: useDeleteArticleParams) => {
   const deleteArticle = (articleId: string) => {
     Message(
@@ -114,32 +113,6 @@ export const useDeleteArticle = ({
       }
     });
   };
-
-  // 删除收藏集
-  // const delCollection = async (id: string) => {
-  //   const res = normalizeResult<ArticleListResult>(
-  //     await Service.delCollection({
-  //       id,
-  //       userId: getUserInfo?.userId,
-  //       pageNo,
-  //       pageSize: PAGESIZE,
-  //     }),
-  //   );
-  //   if (res.success) {
-  //     const nextPageOne = res?.data?.list[0] || '';
-  //     const list = articleList.list.filter((i) => i.id !== id);
-  //     listRef.current = nextPageOne ? [...list, nextPageOne] : list;
-  //     setArticleList({
-  //       ...articleList,
-  //       total: articleList.total - 1,
-  //       list: listRef.current,
-  //     });
-  //     // 如果是收藏集tab，getCollectionTotal有值，需要实时获取删除后的收藏集总条数
-  //     getCollectionTotal && getCollectionTotal();
-  //     getCollectedTotal && getCollectedTotal();
-  //   }
-  //   return res;
-  // };
 
   return { deleteArticle };
 };

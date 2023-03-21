@@ -64,6 +64,8 @@ export const DELETE_COMMENT = '/api/deleteComment';
 export const CREATE_COLLECTION = '/api/createCollection';
 // 获取收藏集列表
 export const GET_COLLECTION_LIST = '/api/getCollectionList';
+// 删除收藏集
+export const DEL_COLLECTION = '/api/delCollection';
 // 收藏文章
 export const COLLECT_ARTICLES = '/api/collectArticles';
 // 获取收藏状态
@@ -82,3 +84,14 @@ export const GET_AUTHOR_ARTICLE_LIST = '/api/getAuthorArticleList';
 export const GET_AUTHOR_LIKE_ARTICLES = '/api/getAuthorLikeArticles';
 // 获取博主点赞的文章列表
 export const GET_AUTHOR_TIMELINE = '/api/getAuthorTimeline';
+
+// 获取我发布的文章列表
+export const GET_MY_ARTICLE_LIST = '/api/getMyArticleList';
+// 获取我点赞的文章列表
+export const GET_LIKE_ARTICLE_LIST = '/api/getLikeArticleList';
+
+// 获取收藏文章总条数
+export const GET_COLLECTED_TOTAL = '/api/getCollectedTotal';
+
+// 获取收藏集总数
+export const GET_COLLECT_TOTAL = '/api/getCollectTotal';

@@ -5,123 +5,137 @@
  * index.vue
 -->
 <template>
-  <div class="personal-wrap">
-    <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
-      <div class="header">
-        <div class="left">
-          <div class="head-wrap">
-            <img :src="HEAD_IMG" alt="头像" class="head-img" />
+  <Loading :loading="personalStore.loading" class="personal-wrap">
+    <template #default>
+      <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
+        <div
+          v-if="isMounted"
+          v-infinite-scroll="getMyArticleList"
+          :infinite-scroll-delay="300"
+          :infinite-scroll-disabled="disabled"
+          :infinite-scroll-distance="2"
+          class="pullup-content"
+        >
+          <div class="header">
+            <div class="left">
+              <div class="head-wrap">
+                <img :src="HEAD_IMG" alt="头像" class="head-img" />
+              </div>
+            </div>
+            <div class="right">
+              <div class="userInfo">
+                <div class="username">{{ personalStore.userInfo?.username || '-' }}</div>
+                <div class="job">{{ personalStore.userInfo?.job || '-' }}</div>
+                <div class="motto">{{ personalStore.userInfo?.motto || '-' }}</div>
+                <el-tooltip v-if="personalStore.userInfo?.introduce" placement="top" effect="light">
+                  <template #content>
+                    <span class="introduce-tip">{{ personalStore.userInfo?.introduce }}</span>
+                  </template>
+                  <div class="desc">{{ personalStore.userInfo?.introduce || '-' }}</div>
+                </el-tooltip>
+                <div v-else class="desc">{{ personalStore.userInfo?.introduce || '-' }}</div>
+              </div>
+              <div class="actions">
+                <div class="top">
+                  <span v-for="icon in ICONLINKS" :key="icon.name" class="icon">
+                    <i v-if="icon.label" :class="`${icon.className} font iconfont ${icon.name}`" />
+                  </span>
+                </div>
+                <div class="bottom">
+                  <el-button type="primary" @click="toSetting">修改个人资料</el-button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="content">
+            <el-tabs type="border-card" class="el-tabs" @tab-change="onTabChange">
+              <el-tab-pane v-for="tab in tabs" :key="tab.value" :label="tab.name" class="tab-pane">
+                <div class="list-wrap">
+                  <LineCard
+                    v-for="data in personalStore.articleList"
+                    :key="data.id"
+                    :data="data"
+                    class="author-line-card"
+                    :delete-article="deleteArticle"
+                    :like-list-article="likeListArticle"
+                  />
+                </div>
+              </el-tab-pane>
+            </el-tabs>
           </div>
         </div>
-        <div class="right">
-          <div class="userInfo">
-            <div class="username">dnhyxc</div>
-            <div class="job">前端工程师</div>
-            <div class="motto">行到水穷处，坐看云起时</div>
-            <div class="desc">我希望有个如你一般的人，陪我看日出</div>
-          </div>
-          <div class="actions">
-            <div class="top">
-              <span v-for="icon in ICONLINKS" :key="icon.name" class="icon">
-                <i v-if="icon.label" :class="`${icon.className} font iconfont ${icon.name}`" />
-              </span>
-            </div>
-            <div class="bottom">
-              <el-button type="primary" @click="toSetting">修改个人资料</el-button>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="content">
-        <el-tabs type="border-card" class="el-tabs">
-          <el-tab-pane v-for="tab in tabs" :key="tab.value" :label="tab.name" class="tab-pane">
-            <div class="list-wrap">
-              <LineCard
-                v-for="data in dataSource"
-                :key="data.id"
-                :data="data"
-                class="author-line-card"
-                @click="(e: Event) => onClickCard(e, data.id!)"
-              />
-            </div>
-          </el-tab-pane>
-        </el-tabs>
-      </div>
-    </el-scrollbar>
-  </div>
+        <div v-if="noMore" class="no-more">没有更多了～～～</div>
+      </el-scrollbar>
+    </template>
+  </Loading>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { loginStore } from '@/store';
+import { useDeleteArticle } from '@/hooks';
+import { articleStore, loginStore, personalStore } from '@/store';
 import { HEAD_IMG, ICONLINKS, ABOUT_ME_TABS, ABOUT_TABS } from '@/constant';
-import { TimelineArticles } from '@/typings/common';
 
 const route = useRoute();
 const router = useRouter();
 
-const dataSource = ref<TimelineArticles[]>([
-  {
-    title: 'react webpac5 项目搭建',
-    id: '63e3187be2d6bf53efaa6a3c',
-    classify: '架构',
-    tag: '前端框架',
-    abstract: '项目搭建',
-    authorId: '63e24c3be2d6bf53efaa69a9',
-    authorName: 'dnhyxc',
-    isLike: false,
-    likeCount: 0,
-    createTime: 1675827289879,
-    readCount: 6,
-    commentCount: 0,
-  },
-  {
-    title: 'react webpac5 项目搭建',
-    id: '63e3187be2d6bf53efaa6a3d',
-    classify: '架构',
-    tag: '前端框架',
-    abstract: '项目搭建',
-    authorId: '63e24c3be2d6bf53efaa69a9',
-    authorName: 'dnhyxc',
-    isLike: false,
-    likeCount: 0,
-    createTime: 1675827289879,
-    readCount: 6,
-    commentCount: 0,
-  },
-  {
-    title: 'react webpac5 项目搭建',
-    id: '63e3187be2d6bf53efaa6a3a',
-    classify: '架构',
-    tag: '前端框架',
-    abstract: '项目搭建',
-    authorId: '63e24c3be2d6bf53efaa69a9',
-    authorName: 'dnhyxc',
-    isLike: false,
-    likeCount: 0,
-    createTime: 1675827289879,
-    readCount: 6,
-    commentCount: 0,
-  },
-]);
+const { deleteArticle } = useDeleteArticle({ pageType: 'personal' });
 
+const isMounted = ref<boolean>(false);
+const noMore = computed(() => {
+  const { articleList, total } = personalStore;
+  return articleList.length >= total && articleList.length;
+});
+const disabled = computed(() => personalStore.loading || noMore.value);
+
+// 根据用户信息动态计算tabs
 const tabs = computed(() => {
   const { authorId } = route.query;
   if (authorId && authorId !== loginStore.userInfo.userId) {
-    console.log(loginStore.userInfo.userId, '111');
-
     return ABOUT_TABS;
   } else {
-    console.log('222');
     return ABOUT_ME_TABS;
   }
 });
 
-// 点击卡片
-const onClickCard = (e: Event, id: string) => {
-  e.stopPropagation();
-  router.push(`/detail/${id}`);
+onMounted(async () => {
+  // 防止页面加载报错
+  isMounted.value = true;
+  // 重置选中tab key 为 0
+  personalStore.currentTabKey = '0';
+  // 清空原始数据
+  personalStore.clearArticleList();
+  const { authorId } = route.query;
+  if (authorId && authorId !== loginStore.userInfo.userId) {
+    // 获取个人主页信息
+    await personalStore.getUserInfo(authorId as string);
+  } else {
+    // 当userId等于登录人的userId时，直接将loginStore中的用户信息赋值给personalStore
+    personalStore.userInfo = loginStore.userInfo;
+  }
+  getMyArticleList();
+});
+
+// 获取各tab中的文章列表
+const getMyArticleList = async () => {
+  await personalStore.getMyArticleList();
+};
+
+// tab 切换
+const onTabChange = (name: string) => {
+  // name: 0：博主文章、name: 1：博主点赞、name: 2：时间轴
+  // 设置选中tab
+  personalStore.currentTabKey = name;
+  // 切换时清空原有数据
+  personalStore.clearArticleList();
+  // 切换tab时，重新加载数据
+  getMyArticleList();
+};
+
+// 文章点赞
+const likeListArticle = (id: string) => {
+  articleStore.likeListArticle({ id, pageType: 'personal' });
 };
 
 // 去修改资料
@@ -186,6 +200,10 @@ const toSetting = () => {
         .desc {
           font-size: 14px;
           .ellipsisMore(1);
+        }
+
+        .desc {
+          cursor: pointer;
         }
       }
 
@@ -311,5 +329,16 @@ const toSetting = () => {
       }
     }
   }
+
+  .no-more {
+    text-align: center;
+    color: @font-4;
+    margin: 15px 0 5px;
+  }
+}
+
+.introduce-tip {
+  display: inline-block;
+  width: 300px;
 }
 </style>

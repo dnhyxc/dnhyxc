@@ -272,7 +272,6 @@ export interface useDeleteArticleParams {
   filterList?: string[];
   getCollectionTotal?: Function;
   getCollectedTotal?: Function;
-  removeConfirmStyle?: string;
   router?: any;
 }
 
@@ -309,4 +308,13 @@ export interface SearchArticleParams {
   pageNo: number;
   pageSize: number;
   userId?: string;
+}
+
+// 我的主页获取列表数据的参数定义
+export interface PerGetArticlesParams {
+  pageNo: number;
+  pageSize: number;
+  userId: string;
+  accessUserId: string;
+  isVisitor?: boolean;
 }
