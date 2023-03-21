@@ -74,8 +74,6 @@ export const useDeleteArticle = ({
   tagName, // 标签页选中的标签
   authorId, // 我的主页作者id
   accessUserId, // 我的主页登录人id
-  authorPage, // 代表博主页面
-  authorLike, // 代表博主页面博主点赞列表
   router, // 路由
   getCollectionTotal, // 获取收藏集总数的方法
   getCollectedTotal, // 获取收藏集中收藏的文章总数的方法
@@ -95,8 +93,6 @@ export const useDeleteArticle = ({
           userId: authorId,
           accessUserId,
           delType,
-          authorPage,
-          authorLike,
           filterList,
           pageType,
           router,

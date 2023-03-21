@@ -4,6 +4,7 @@ import { ElMessage } from 'element-plus';
 import * as Service from '@/server';
 import { normalizeResult, locSetItem } from '@/utils';
 import { commonStore, loginStore } from '@/store';
+import { PAGESIZE } from '@/constant';
 
 interface IProps {
   tags: Classifys[]; // 文章分类数
@@ -20,7 +21,7 @@ export const useTagStore = defineStore('tag', {
     tags: [],
     loading: false,
     pageNo: 0,
-    pageSize: 20,
+    pageSize: PAGESIZE,
     articleList: [],
     total: 0,
     currentTag: '',
@@ -43,7 +44,7 @@ export const useTagStore = defineStore('tag', {
 
     // 获取标签所对应的文章列表
     async getArticleByTagName(tagName?: string) {
-      if (this.articleList.length !== 0 && this.articleList.length > this.total) return;
+      if (this.articleList.length !== 0 && this.articleList.length >= this.total) return;
       this.pageNo = this.pageNo + 1;
       this.loading = true;
       const params = {

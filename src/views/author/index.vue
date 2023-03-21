@@ -6,132 +6,138 @@
 -->
 <template>
   <div class="author-wrap">
-    <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
-      <div class="cover">
-        <div class="img-wrap">
-          <img
-            src="https://pic2.zhimg.com/80/v2-ff0d35d4dcad8e7e1623ef1c294651c1_1440w.webp"
-            alt=""
-            class="cover-img"
-          />
-        </div>
-        <div class="author-info">
-          <div class="head-img-wrap">
-            <img :src="HEAD_IMG" alt="" class="head-img" />
+    <Loading :loading="authorStore.loading" class="author-wrap">
+      <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
+        <div
+          v-if="isMounted"
+          v-infinite-scroll="getAuthorArticles"
+          :infinite-scroll-delay="300"
+          :infinite-scroll-disabled="disabled"
+          :infinite-scroll-distance="2"
+          class="pullup-content"
+        >
+          <div class="cover">
+            <div class="img-wrap">
+              <Image :url="authorStore.userInfo?.mainCover || IMG1" :transition-img="IMG1" class="cover-img" />
+            </div>
+            <div class="author-info">
+              <div class="head-img-wrap">
+                <Image :url="authorStore.userInfo?.headUrl || HEAD_IMG" :transition-img="HEAD_IMG" class="head-img" />
+              </div>
+              <div class="infos">
+                <div class="username">{{ authorStore.userInfo?.username }}</div>
+                <div class="job">{{ authorStore.userInfo?.job }}</div>
+                <div v-if="viewMore" class="user-detail">
+                  <div class="motto">
+                    座右铭：
+                    <span class="desc-text">{{ authorStore.userInfo?.motto }}</span>
+                  </div>
+                  <div class="desc">
+                    个人介绍：
+                    <span class="desc-text">
+                      {{ authorStore.userInfo?.introduce }}
+                    </span>
+                  </div>
+                  <div class="github">
+                    github：
+                    <span class="link">{{ authorStore.userInfo?.github }}</span>
+                  </div>
+                  <div class="juejin">
+                    掘金：
+                    <span class="link">{{ authorStore.userInfo?.juejin }}</span>
+                  </div>
+                  <div class="zhihu">
+                    知乎：
+                    <span class="link">{{ authorStore.userInfo?.zhihu }}</span>
+                  </div>
+                  <div class="blog">
+                    博客：
+                    <span class="link">{{ authorStore.userInfo?.blog }}</span>
+                  </div>
+                </div>
+                <div class="view-more" @click="onShowMore">
+                  <i :class="`font iconfont ${viewMore ? 'icon-arrow-up-bold' : 'icon-arrow-down-bold'}`" />
+                  <span>查看更多资料</span>
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="infos">
-            <div class="username">dnhyxc</div>
-            <div class="job">前端工程师</div>
-            <div v-if="viewMore" class="user-detail">
-              <div class="motto">
-                座右铭：
-                <span class="desc-text">行到水穷处，坐看云起时！</span>
-              </div>
-              <div class="desc">
-                个人介绍：
-                <span class="desc-text">
-                  我希望有个如你一般的人，如山间清爽的风，如古城温暖的光，从清晨到夜晚，由山野到书房，等待，不怕岁月蹉跎，不怕路途遥远，只要最后是你就好！
-                  明天会更好
-                </span>
-              </div>
-              <div class="github">
-                github：
-                <span class="link">https://github.com/dnhyxc</span>
-              </div>
-              <div class="juejin">
-                知乎：
-                <span class="link">https://github.com/dnhyxc</span>
-              </div>
-              <div class="zhihu">
-                知乎：
-                <span class="link">https://github.com/dnhyxc</span>
-              </div>
-              <div class="blog">
-                博客：
-                <span class="link">https://github.com/dnhyxc</span>
-              </div>
-            </div>
-            <div class="view-more" @click="onShowMore">
-              <i :class="`font iconfont ${viewMore ? 'icon-arrow-up-bold' : 'icon-arrow-down-bold'}`" />
-              <span>查看更多资料</span>
-            </div>
+          <div class="content">
+            <el-tabs type="border-card" class="el-tabs" @tab-change="onTabChange">
+              <el-tab-pane v-for="tab in AUTHOR_TABS" :key="tab.value" :label="tab.name">
+                <div v-if="tab.value !== '3'" class="list-wrap">
+                  <LineCard
+                    v-for="data in authorStore.articleList"
+                    :key="data.id"
+                    :data="data"
+                    class="author-line-card"
+                    :delete-article="deleteArticle"
+                    :like-list-article="likeListArticle"
+                    @click="(e) => onClickCard(e, data.id!)"
+                  />
+                </div>
+                <Timeline v-if="tab.value === '3'" :data-source="authorStore.timelineList" />
+                <div v-if="noMore" class="no-more">没有更多了～～～</div>
+              </el-tab-pane>
+            </el-tabs>
           </div>
         </div>
-      </div>
-      <div class="content">
-        <el-tabs type="border-card" class="el-tabs">
-          <el-tab-pane v-for="tab in AUTHOR_TABS" :key="tab.value" :label="tab.name">
-            <div class="list-wrap">
-              <LineCard
-                v-for="data in dataSource"
-                :key="data.id"
-                :data="data"
-                class="author-line-card"
-                @click="(e) => onClickCard(e, data.id!)"
-              />
-            </div>
-          </el-tab-pane>
-        </el-tabs>
-      </div>
-    </el-scrollbar>
+      </el-scrollbar>
+    </Loading>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
-import { HEAD_IMG, AUTHOR_TABS } from '@/constant';
-import { TimelineArticles } from '@/typings/common';
+import { HEAD_IMG, AUTHOR_TABS, IMG1 } from '@/constant';
+import { authorStore, articleStore } from '@/store';
+import { useDeleteArticle } from '@/hooks';
 import LineCard from '@/components/LineCard/index.vue';
+import Image from '@/components/Image/index.vue';
+import Loading from '@/components/Loading/index.vue';
 
 const router = useRouter();
 
-const dataSource = ref<TimelineArticles[]>([
-  {
-    title: 'react webpac5 项目搭建',
-    id: '63e3187be2d6bf53efaa6a3c',
-    classify: '架构',
-    tag: '前端框架',
-    abstract: '项目搭建',
-    authorId: '63e24c3be2d6bf53efaa69a9',
-    authorName: 'dnhyxc',
-    isLike: false,
-    likeCount: 0,
-    createTime: 1675827289879,
-    readCount: 6,
-    commentCount: 0,
-  },
-  {
-    title: 'react webpac5 项目搭建',
-    id: '63e3187be2d6bf53efaa6a3d',
-    classify: '架构',
-    tag: '前端框架',
-    abstract: '项目搭建',
-    authorId: '63e24c3be2d6bf53efaa69a9',
-    authorName: 'dnhyxc',
-    isLike: false,
-    likeCount: 0,
-    createTime: 1675827289879,
-    readCount: 6,
-    commentCount: 0,
-  },
-  {
-    title: 'react webpac5 项目搭建',
-    id: '63e3187be2d6bf53efaa6a3a',
-    classify: '架构',
-    tag: '前端框架',
-    abstract: '项目搭建',
-    authorId: '63e24c3be2d6bf53efaa69a9',
-    authorName: 'dnhyxc',
-    isLike: false,
-    likeCount: 0,
-    createTime: 1675827289879,
-    readCount: 6,
-    commentCount: 0,
-  },
-]);
-
 const viewMore = ref<boolean>(false);
+const isMounted = ref<boolean>(false);
+const noMore = computed(() => authorStore.articleList.length >= authorStore.total);
+const disabled = computed(() => authorStore.loading || noMore.value);
+
+const { deleteArticle } = useDeleteArticle({ pageType: 'author' });
+
+onMounted(async () => {
+  isMounted.value = true;
+  // 获取博主信息
+  authorStore.currentTabKey = '0';
+  authorStore.clearArticleList();
+  await authorStore.getUserInfo();
+  getAuthorArticles();
+});
+
+// 获取各tab文章列表
+const getAuthorArticles = async () => {
+  await authorStore.getAuthorArticles();
+};
+
+// tab 切换
+const onTabChange = (name: string) => {
+  // name: 0：博主文章、name: 1：博主点赞、name: 2：时间轴
+  if (name !== '2') {
+    // 设置选中tab
+    authorStore.currentTabKey = name;
+    authorStore.clearArticleList();
+    getAuthorArticles();
+  } else {
+    authorStore.clearArticleList();
+    authorStore.getAuthorTimeline('2');
+  }
+};
+
+// 文章点赞
+const likeListArticle = (id: string) => {
+  articleStore.likeListArticle({ id, pageType: 'author' });
+};
 
 // 点击卡片
 const onClickCard = (e: Event, id: string) => {
@@ -262,7 +268,6 @@ const onShowMore = () => {
   .content {
     margin-top: 10px;
     border-radius: 5px;
-
     .el-tabs {
       border: 1px solid @card-border;
       border-radius: 5px;
@@ -337,6 +342,12 @@ const onShowMore = () => {
           }
         }
       }
+    }
+
+    .no-more {
+      text-align: center;
+      color: @font-4;
+      margin: 15px 0 5px;
     }
   }
 }

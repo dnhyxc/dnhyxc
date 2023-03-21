@@ -50,7 +50,7 @@ const onClickCard = (e: Event, id: string) => {
 
 .timeline {
   position: relative;
-  padding: 20px 0;
+  padding: 20px 0 0;
 
   .timeline-item {
     box-sizing: border-box;
@@ -198,6 +198,18 @@ const onClickCard = (e: Event, id: string) => {
         left: -95px;
         font-size: 25px;
         font-weight: 700;
+      }
+    }
+
+    &:nth-child(odd) {
+      &:last-child {
+        padding: 0 50px 0 20px;
+      }
+    }
+
+    &:nth-child(even) {
+      &:last-child {
+        padding: 0 20px 0 50px;
       }
     }
   }

@@ -12,7 +12,8 @@ import {
   DeleteArticleParams,
   TimelineResult,
 } from '@/typings/common';
-import { classifyStore, commonStore, createStore, loginStore, tagStore, timelineStore } from '@/store';
+import { authorStore, classifyStore, commonStore, createStore, loginStore, tagStore, timelineStore } from '@/store';
+import { PAGESIZE } from '@/constant';
 
 interface IProps {
   loading: boolean;
@@ -35,7 +36,7 @@ export const useArticleStore = defineStore('article', {
     loading: false,
     likeLoading: false,
     pageNo: 0,
-    pageSize: 20,
+    pageSize: PAGESIZE,
     articleList: [],
     total: 0,
     articleDetail: {
@@ -51,7 +52,7 @@ export const useArticleStore = defineStore('article', {
   actions: {
     // 获取文章列表
     async getArticleList() {
-      if (this.articleList.length !== 0 && this.articleList.length > this.total) return;
+      if (this.articleList.length !== 0 && this.articleList.length >= this.total) return;
       this.pageNo = this.pageNo + 1;
       this.loading = true;
       const res = normalizeResult<ArticleListResult>(
@@ -163,13 +164,7 @@ export const useArticleStore = defineStore('article', {
         home: this.articleList,
         classify: classifyStore.articleList,
         tag: tagStore.articleList,
-      };
-
-      // 设置各页面列表数量
-      const total = {
-        home: this.total,
-        classify: classifyStore.total,
-        tag: tagStore.total,
+        author: authorStore.articleList,
       };
 
       // 个页面pageNo
@@ -177,15 +172,18 @@ export const useArticleStore = defineStore('article', {
         home: this.pageNo,
         classify: classifyStore.pageNo,
         tag: tagStore.pageNo,
+        author: authorStore.pageNo,
       };
 
       const res = normalizeResult<ArticleListResult>(
         await Service.deleteArticle({
           ...params,
           pageNo: pageNo[params.pageType!],
-          pageSize: 20,
+          pageSize: PAGESIZE,
           userId: params.authorId || loginStore.userInfo?.userId,
           delType: params.delType === '2' ? params.delType : '',
+          authorPage: authorStore.currentTabKey === '0', // 判断是否是博主主页的博主文章tab
+          authorLike: authorStore.currentTabKey === '1', // 判断是否是博主主页的博主点赞文章tab
         }),
       );
 
@@ -234,13 +232,15 @@ export const useArticleStore = defineStore('article', {
             }
 
             break;
+          case 'author':
+            authorStore.articleList = nextPageOne ? [...list, nextPageOne] : list;
+            authorStore.total = authorStore.total - 1;
+
+            break;
 
           default:
             break;
         }
-
-        articleList[params.pageType!] = nextPageOne ? [...list, nextPageOne] : list;
-        total[params.pageType!] = total[params.pageType!] - 1;
 
         ElMessage({
           message: res.message,
@@ -257,20 +257,13 @@ export const useArticleStore = defineStore('article', {
     },
 
     // 列表文章点赞
-    async likeListArticle({
-      id,
-      isTimeLine,
-      isAboutMe,
-      pageType,
-    }: {
-      id: string;
-      pageType?: string;
-      isTimeLine?: boolean;
-      isAboutMe?: boolean;
-    }) {
-      const res = normalizeResult<{ id: string; isLike: boolean }>(await Service.likeArticle({ id }));
+    async likeListArticle({ id, isTimeLine, pageType }: { id: string; pageType?: string; isTimeLine?: boolean }) {
+      const res = normalizeResult<{ id: string; isLike: boolean; nextPageOne: ArticleItem[]; total: number }>(
+        await Service.likeArticle({ id }),
+      );
       if (res.success) {
         const { id, isLike } = res.data;
+
         // 时间轴页面
         if (isTimeLine) {
           const cloneArticles: TimelineResult[] = JSON.parse(JSON.stringify(timelineStore.timelineList));
@@ -294,6 +287,7 @@ export const useArticleStore = defineStore('article', {
             home: this.articleList,
             classify: classifyStore.articleList,
             tag: tagStore.articleList,
+            author: authorStore.articleList,
           };
 
           const cloneList: ArticleItem[] = JSON.parse(JSON.stringify(dataList[pageType!]));
@@ -310,18 +304,11 @@ export const useArticleStore = defineStore('article', {
             return i;
           });
 
-          // isAboutMe为true，就是用户自己的主页或博主自己进入博主主页，此时点赞需要删除取消点赞的文章
-          if (isAboutMe) {
-            const likes = list.filter((i) => i.isLike);
+          if (loginStore.userInfo.auth === 1 && authorStore.currentTabKey === '1') {
             switch (pageType) {
-              case 'home':
-                this.articleList = likes;
-                break;
-              case 'classify':
-                classifyStore.articleList = likes;
-                break;
-              case 'tag':
-                tagStore.articleList = likes;
+              case 'author':
+                authorStore.clearArticleList();
+                authorStore.getAuthorArticles();
                 break;
 
               default:
@@ -337,6 +324,9 @@ export const useArticleStore = defineStore('article', {
                 break;
               case 'tag':
                 tagStore.articleList = list;
+                break;
+              case 'author':
+                authorStore.articleList = list;
                 break;
 
               default:

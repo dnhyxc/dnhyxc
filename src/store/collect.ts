@@ -5,6 +5,7 @@ import { articleStore } from '@/store';
 import * as Service from '@/server';
 import { normalizeResult } from '@/utils';
 import { useCheckUserId } from '@/hooks';
+import { PAGESIZE } from '@/constant';
 
 interface IProps {
   loading: boolean;
@@ -19,7 +20,7 @@ interface IProps {
 export const useCollectStore = defineStore('collect', {
   state: (): IProps => ({
     pageNo: 0,
-    pageSize: 10,
+    pageSize: PAGESIZE,
     total: 0,
     collectList: [],
     loading: false,
@@ -56,7 +57,7 @@ export const useCollectStore = defineStore('collect', {
     async getCollectList() {
       // 检验是否有userId，如果没有禁止发送请求
       if (!useCheckUserId()) return;
-      if (this.collectList.length !== 0 && this.collectList.length > this.total) return;
+      if (this.collectList.length !== 0 && this.collectList.length >= this.total) return;
       this.pageNo = this.pageNo + 1;
       this.loading = true;
       const res = normalizeResult<CollectListRes>(

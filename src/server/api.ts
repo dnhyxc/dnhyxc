@@ -75,3 +75,10 @@ export const CANCEL_COLLECTED = '/api/cancelCollected';
 export const GET_TAG_LIST = '/api/getTagList';
 // 获取文章分类
 export const GET_CLASSIFY_LIST = '/api/getClassifyList';
+
+// 获取我点赞的文章列表
+export const GET_AUTHOR_ARTICLE_LIST = '/api/getAuthorArticleList';
+// 获取博主点赞的文章列表
+export const GET_AUTHOR_LIKE_ARTICLES = '/api/getAuthorLikeArticles';
+// 获取博主点赞的文章列表
+export const GET_AUTHOR_TIMELINE = '/api/getAuthorTimeline';

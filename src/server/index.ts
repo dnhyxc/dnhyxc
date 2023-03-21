@@ -12,12 +12,9 @@ import { loginStore } from '@/store';
 import * as API from './api';
 
 // 处理请求参数，为请求自动加上userId
-const copeParams = <T>(params?: T) => {
+const copeParams = (params?: any) => {
   const { userInfo } = loginStore;
-  const data = {
-    ...params,
-    userId: userInfo?.userId,
-  };
+  const data = params?.userId ? params : { ...params, userId: userInfo?.userId };
   return data;
 };
 
@@ -54,8 +51,8 @@ export const resetPassword = async (params: { username: string; password: string
 };
 
 // 获取用户信息
-export const getUserInfo = async () => {
-  const res = await post(API.GET_USER_INFO, copeParams());
+export const getUserInfo = async (params?: { auth?: number; needTotal?: boolean }) => {
+  const res = await post(API.GET_USER_INFO, copeParams(params));
   return res;
 };
 
@@ -187,5 +184,24 @@ export const searchArticle = async (params: SearchArticleParams) => {
 // 获取时间轴列表
 export const getTimelineList = async (params?: { pageNo?: number; pageSize?: number; keyword?: string }) => {
   const res = await post(API.GET_TIMELINE_LIST, copeParams(params));
+  return res;
+};
+
+// 获取博主各种文章列表
+export const getAuthorArticleList = async (
+  params: {
+    pageNo?: number;
+    pageSize?: number;
+    accessUserId?: string;
+  },
+  path: string,
+) => {
+  const res = await post(path, params);
+  return res;
+};
+
+// 获取博主时间轴文章列表
+export const getAuthorTimeline = async (params: { accessUserId?: string }) => {
+  const res = await post(API.GET_AUTHOR_TIMELINE, params);
   return res;
 };
