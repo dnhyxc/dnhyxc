@@ -135,7 +135,7 @@ export const usePersonalStore = defineStore('personal', {
       this.loading = false;
       if (res.success) {
         const { total, list } = res.data;
-        this.articleList = list;
+        this.articleList = [...this.articleList, ...list];
         this.total = total;
       }
     },

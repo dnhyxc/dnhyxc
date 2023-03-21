@@ -174,6 +174,7 @@ export const useArticleStore = defineStore('article', {
         classify: classifyStore.articleList,
         tag: tagStore.articleList,
         author: authorStore.articleList,
+        personal: personalStore.articleList,
       };
 
       // 个页面pageNo
@@ -182,6 +183,7 @@ export const useArticleStore = defineStore('article', {
         classify: classifyStore.pageNo,
         tag: tagStore.pageNo,
         author: authorStore.pageNo,
+        personal: personalStore.pageNo,
       };
 
       const res = normalizeResult<ArticleListResult>(
@@ -244,6 +246,11 @@ export const useArticleStore = defineStore('article', {
           case 'author':
             authorStore.articleList = nextPageOne ? [...list, nextPageOne] : list;
             authorStore.total = authorStore.total - 1;
+
+            break;
+          case 'personal':
+            personalStore.articleList = nextPageOne ? [...list, nextPageOne] : list;
+            personalStore.total = personalStore.total - 1;
 
             break;
 
