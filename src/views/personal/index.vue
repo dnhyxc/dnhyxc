@@ -355,14 +355,17 @@ const toSetting = () => {
             }
           }
 
-          &:nth-child(odd) {
+          &:nth-child(even) {
+            margin-right: 0;
             &:last-child {
               margin-bottom: 0;
             }
           }
 
-          &:nth-child(even) {
-            margin-right: 0;
+          &:nth-child(odd) {
+            &:nth-last-child(2) {
+              margin-bottom: 0;
+            }
             &:last-child {
               margin-bottom: 0;
             }
