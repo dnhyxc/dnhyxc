@@ -48,6 +48,7 @@
             </div>
           </div>
           <div class="content">
+            <div class="collect-count-info">sosos</div>
             <el-tabs type="border-card" class="el-tabs" @tab-click="onTabChange">
               <el-tab-pane v-for="tab in tabs" :key="tab.value" :label="tab.name" class="tab-pane">
                 <div v-if="tab.value !== '3'" class="list-wrap">
@@ -306,8 +307,17 @@ const toSetting = () => {
   }
 
   .content {
+    position: relative;
     margin-top: 10px;
     border-radius: 5px;
+
+    .collect-count-info {
+      position: absolute;
+      top: -10px;
+      right: 10px;
+      border: 1px solid red;
+      z-index: 999;
+    }
 
     .el-tabs {
       border: 1px solid @card-border;
