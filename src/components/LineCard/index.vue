@@ -7,46 +7,50 @@
 <template>
   <div class="timeline-card" @click.stop="toDetail(data.id!)">
     <div class="title">
-      <div class="left">{{ data.title }}</div>
-      <div v-if="data.authorId === loginStore.userInfo?.userId" class="right">
-        <span class="edit" @click.stop="toEdit(data.id!)">编辑</span>
-        <span class="del" @click.stop="onReomve(data.id!)">下架</span>
-      </div>
+      <slot name="title">
+        <div class="left">{{ data.title }}</div>
+        <div v-if="data.authorId === loginStore.userInfo?.userId" class="right">
+          <span class="edit" @click.stop="toEdit(data.id!)">编辑</span>
+          <span class="del" @click.stop="onReomve(data.id!)">下架</span>
+        </div>
+      </slot>
     </div>
     <div class="content">
-      <div class="art-info">
-        <div class="desc">
-          {{ data.abstract }}
-        </div>
-        <div class="tags">
-          <div class="author" @click.stop="toPersonal(data.authorId!)">{{ data.authorName }}</div>
-          <div class="right">
-            <el-tooltip class="box-item" effect="light" :content="`分类：${data.classify}`" placement="bottom">
-              <div class="classify" @click.stop="toClassify(data.classify!)">{{ data.classify }}</div>
-            </el-tooltip>
-            <el-tooltip class="box-item" effect="light" :content="`标签：${data.tag}`" placement="bottom">
-              <div class="tag" @click.stop="toTag(data.tag!)">{{ data.tag }}</div>
-            </el-tooltip>
+      <slot name="content">
+        <div class="art-info">
+          <div class="desc">
+            {{ data.abstract }}
+          </div>
+          <div class="tags">
+            <div class="author" @click.stop="toPersonal(data.authorId!)">{{ data.authorName }}</div>
+            <div class="right">
+              <el-tooltip class="box-item" effect="light" :content="`分类：${data.classify}`" placement="bottom">
+                <div class="classify" @click.stop="toClassify(data.classify!)">{{ data.classify }}</div>
+              </el-tooltip>
+              <el-tooltip class="box-item" effect="light" :content="`标签：${data.tag}`" placement="bottom">
+                <div class="tag" @click.stop="toTag(data.tag!)">{{ data.tag }}</div>
+              </el-tooltip>
+            </div>
+          </div>
+          <div class="actions">
+            <div class="action like" @click.stop="onLike(data.id!)">
+              <i :class="`font like-icon iconfont ${data.isLike ? 'icon-24gf-thumbsUp2' : 'icon-24gl-thumbsUp2'}`" />
+              <span>{{ data.likeCount || '点赞' }}</span>
+            </div>
+            <div class="action comment" @click.stop="onComment(data.id!)">
+              <i class="font comment-icon iconfont icon-pinglun" />
+              <span>{{ data.replyCount || '评论' }}</span>
+            </div>
+            <div class="action read-count">
+              <i class="font read-icon iconfont icon-yanjing" />
+              <span class="text">{{ data.readCount || '阅读' }}</span>
+            </div>
           </div>
         </div>
-        <div class="actions">
-          <div class="action like" @click.stop="onLike(data.id!)">
-            <i :class="`font like-icon iconfont ${data.isLike ? 'icon-24gf-thumbsUp2' : 'icon-24gl-thumbsUp2'}`" />
-            <span>{{ data.likeCount || '点赞' }}</span>
-          </div>
-          <div class="action comment" @click.stop="onComment(data.id!)">
-            <i class="font comment-icon iconfont icon-pinglun" />
-            <span>{{ data.replyCount || '评论' }}</span>
-          </div>
-          <div class="action read-count">
-            <i class="font read-icon iconfont icon-yanjing" />
-            <span class="text">{{ data.readCount || '阅读' }}</span>
-          </div>
+        <div class="img-wrap">
+          <Image :url="data.coverImage || IMG1" :transition-img="IMG1" class="img" />
         </div>
-      </div>
-      <div class="img-wrap">
-        <Image :url="data.coverImage || IMG1" :transition-img="IMG1" class="img" />
-      </div>
+      </slot>
     </div>
   </div>
 </template>

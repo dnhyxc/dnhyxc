@@ -41,16 +41,16 @@
                     <i v-if="icon.label" :class="`${icon.className} font iconfont ${icon.name}`" />
                   </span>
                 </div>
-                <div class="bottom">
+                <div v-if="isShowCollectActions" class="bottom">
                   <el-button type="primary" @click="toSetting">修改个人资料</el-button>
                 </div>
               </div>
             </div>
           </div>
           <div class="content">
-            <el-tabs type="border-card" class="el-tabs" @tab-change="onTabChange">
+            <el-tabs type="border-card" class="el-tabs" @tab-click="onTabChange">
               <el-tab-pane v-for="tab in tabs" :key="tab.value" :label="tab.name" class="tab-pane">
-                <div class="list-wrap">
+                <div v-if="tab.value !== '3'" class="list-wrap">
                   <LineCard
                     v-for="data in personalStore.articleList"
                     :key="data.id"
@@ -59,6 +59,35 @@
                     :delete-article="deleteArticle"
                     :like-list-article="likeListArticle"
                   />
+                </div>
+                <div v-else class="list-wrap">
+                  <LineCard
+                    v-for="data in personalStore.articleList"
+                    :key="data.id"
+                    :data="data"
+                    class="author-line-card collect-card"
+                  >
+                    <template #title>
+                      <div class="collect-name">
+                        <span class="title">{{ data.name }}</span>
+                        <span v-if="isShowCollectActions" class="actions">
+                          <i class="edit iconfont" @click.stop="onEditCollect(data.id)">编辑</i>
+                          <i class="del iconfont" @click.stop="deleteCollection(data.id)">删除</i>
+                        </span>
+                      </div>
+                    </template>
+                    <template #content>
+                      <div class="collect-content">
+                        <span class="collect-desc">{{ data.desc }}</span>
+                        <div class="collect-info">
+                          <span class="collect-date">
+                            {{ formatDate(data.createTime!, 'YYYY-MM-DD') }}更新 · {{ data.articleIds?.length }}
+                            篇文章
+                          </span>
+                        </div>
+                      </div>
+                    </template>
+                  </LineCard>
                 </div>
               </el-tab-pane>
             </el-tabs>
@@ -71,14 +100,18 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import type { TabsPaneContext } from 'element-plus';
 import { useDeleteArticle } from '@/hooks';
 import { articleStore, loginStore, personalStore } from '@/store';
-import { HEAD_IMG, ICONLINKS, ABOUT_ME_TABS, ABOUT_TABS } from '@/constant';
+import { formatDate } from '@/utils';
+import { HEAD_IMG, ICONLINKS, ABOUT_ME_TABS, ABOUT_TABS, PERSONAL_CURRENT_TAB } from '@/constant';
 
 const route = useRoute();
 const router = useRouter();
+
+const { authorId: userId } = route.query;
 
 const { deleteArticle } = useDeleteArticle({ pageType: 'personal' });
 
@@ -88,11 +121,12 @@ const noMore = computed(() => {
   return articleList.length >= total && articleList.length;
 });
 const disabled = computed(() => personalStore.loading || noMore.value);
+// 判断是否展示删除、编辑收藏集的按钮
+const isShowCollectActions = computed(() => !userId || userId === loginStore.userInfo?.userId);
 
 // 根据用户信息动态计算tabs
 const tabs = computed(() => {
-  const { authorId } = route.query;
-  if (authorId && authorId !== loginStore.userInfo.userId) {
+  if (userId && userId !== loginStore.userInfo.userId) {
     return ABOUT_TABS;
   } else {
     return ABOUT_ME_TABS;
@@ -106,15 +140,23 @@ onMounted(async () => {
   personalStore.currentTabKey = '0';
   // 清空原始数据
   personalStore.clearArticleList();
-  const { authorId } = route.query;
-  if (authorId && authorId !== loginStore.userInfo.userId) {
+  if (userId && userId !== loginStore.userInfo?.userId) {
     // 获取个人主页信息
-    await personalStore.getUserInfo(authorId as string);
+    await personalStore.getUserInfo(userId as string);
   } else {
     // 当userId等于登录人的userId时，直接将loginStore中的用户信息赋值给personalStore
     personalStore.userInfo = loginStore.userInfo;
   }
   getMyArticleList();
+});
+
+onUnmounted(() => {
+  // 重置选中tab key 为 0
+  personalStore.currentTabKey = '0';
+  // 清空我的主页用户信息
+  personalStore.userInfo = {};
+  // 清空原始数据
+  personalStore.clearArticleList();
 });
 
 // 获取各tab中的文章列表
@@ -123,10 +165,13 @@ const getMyArticleList = async () => {
 };
 
 // tab 切换
-const onTabChange = (name: string) => {
+const onTabChange = (data: TabsPaneContext) => {
+  const tabKey = PERSONAL_CURRENT_TAB[data?.props?.label];
+
+  console.log(tabKey, 'name');
   // name: 0：博主文章、name: 1：博主点赞、name: 2：时间轴
   // 设置选中tab
-  personalStore.currentTabKey = name;
+  personalStore.currentTabKey = tabKey;
   // 切换时清空原有数据
   personalStore.clearArticleList();
   // 切换tab时，重新加载数据
@@ -136,6 +181,17 @@ const onTabChange = (name: string) => {
 // 文章点赞
 const likeListArticle = (id: string) => {
   articleStore.likeListArticle({ id, pageType: 'personal' });
+};
+
+// 编辑收藏集
+const onEditCollect = (id: string) => {
+  console.log(id, 'onEditCollect');
+};
+
+// 删除收藏集
+const deleteCollection = (id: string) => {
+  console.log('删除收藏集', id);
+  personalStore.delCollection(id);
 };
 
 // 去修改资料
@@ -323,6 +379,54 @@ const toSetting = () => {
               height: auto;
               border-radius: 5px;
               .imgStyle();
+            }
+          }
+        }
+
+        .collect-card {
+          display: flex;
+          flex-direction: column;
+
+          .collect-name {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+
+            .title {
+              flex: 1;
+              font-size: 16px;
+              font-weight: 700;
+              margin-right: 20px;
+              .ellipsisMore(1);
+            }
+
+            .actions {
+              .edit {
+                margin-right: 10px;
+                color: @theme-blue;
+                font-size: 14px;
+              }
+
+              .del {
+                color: @font-danger;
+                font-size: 14px;
+              }
+            }
+          }
+
+          .collect-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+
+            .collect-desc {
+              margin-bottom: 10px;
+              font-size: 14px;
+              .ellipsisMore(2);
+            }
+
+            .collect-info {
+              font-size: 14px;
             }
           }
         }

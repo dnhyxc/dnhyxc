@@ -101,8 +101,11 @@ export const usePersonalStore = defineStore('personal', {
 
     // 获取我的文章、点赞文章列表、我的收藏列表
     async getMyArticleList() {
+      if (!this.userInfo.userId) return;
       if (this.articleList.length !== 0 && this.articleList.length >= this.total) return;
       this.pageNo = this.pageNo + 1;
+      console.log(this.pageNo, 'this.pageNo');
+
       this.loading = true;
       const params: PerGetArticlesParams = {
         pageNo: this.pageNo,
@@ -154,11 +157,11 @@ export const usePersonalStore = defineStore('personal', {
         const nextPageOne = res?.data?.list[0] || '';
         const list = this.articleList.filter((i) => i.id !== id);
         this.articleList = nextPageOne ? [...list, nextPageOne] : list;
+        this.total = this.total - 1;
         // 如果是收藏集tab，getCollectionTotal有值，需要实时获取删除后的收藏集总条数
-        this.getCollectedTotal();
+        this.getCollectionTotal();
         this.getCollectedTotal();
       }
-      return res;
     },
 
     // 获取收藏集总数
@@ -197,6 +200,8 @@ export const usePersonalStore = defineStore('personal', {
       this.timelineList = [];
       this.total = 0;
       this.pageNo = 0;
+      this.collectTotal = 0;
+      this.collectedCount = 0;
     },
   },
 });

@@ -298,6 +298,15 @@ export const AUTHOR_TABS = [
   },
 ];
 
+// 设置我的主页选中tab对应关系
+export const PERSONAL_CURRENT_TAB = {
+  我的文章: '0',
+  点赞文章: '1',
+  我的收藏: '2',
+  他的文章: '0',
+  他的收藏: '2',
+};
+
 // 我的主页tabs
 export const ABOUT_ME_TABS = [
   {
