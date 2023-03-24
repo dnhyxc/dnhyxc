@@ -104,8 +104,6 @@ export const usePersonalStore = defineStore('personal', {
       if (!this.userInfo.userId) return;
       if (this.articleList.length !== 0 && this.articleList.length >= this.total) return;
       this.pageNo = this.pageNo + 1;
-      console.log(this.pageNo, 'this.pageNo');
-
       this.loading = true;
       const params: PerGetArticlesParams = {
         pageNo: this.pageNo,

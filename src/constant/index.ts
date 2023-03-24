@@ -307,6 +307,13 @@ export const PERSONAL_CURRENT_TAB = {
   他的收藏: '2',
 };
 
+// 我的主页对应选中tab value
+export const PERSONAL_CURRENT_VALUE = {
+  0: '他的文章',
+  1: '点赞文章',
+  2: '他的收藏',
+};
+
 // 我的主页tabs
 export const ABOUT_ME_TABS = [
   {

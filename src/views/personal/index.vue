@@ -48,8 +48,21 @@
             </div>
           </div>
           <div class="content">
-            <div class="collect-count-info">sosos</div>
-            <el-tabs type="border-card" class="el-tabs" @tab-click="onTabChange">
+            <div v-if="personalStore.currentTabKey === '2'" class="collect-count-info">
+              <span class="add-collect">
+                <i class="iconfont icon-add" />
+                新建收藏集
+              </span>
+              <span class="collect-count">
+                {{ !userId || userId === loginStore.userInfo?.userId ? '我' : '他' }}创建的
+                {{ personalStore.collectTotal }}
+              </span>
+              <span class="collect-count">
+                {{ !userId || userId === loginStore.userInfo?.userId ? '我' : '他' }}收藏的文章
+                {{ personalStore.collectedCount }}
+              </span>
+            </div>
+            <el-tabs v-model="personalStore.currentTabKey" type="border-card" class="el-tabs" @tab-click="onTabChange">
               <el-tab-pane v-for="tab in tabs" :key="tab.value" :label="tab.name" class="tab-pane">
                 <div v-if="tab.value !== '3'" class="list-wrap">
                   <LineCard
@@ -66,7 +79,9 @@
                     v-for="data in personalStore.articleList"
                     :key="data.id"
                     :data="data"
+                    is-collect
                     class="author-line-card collect-card"
+                    @click.stop="toDetail(data.id!)"
                   >
                     <template #title>
                       <div class="collect-name">
@@ -101,7 +116,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { ref, computed, onMounted, onUnmounted, watch, watchEffect } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import type { TabsPaneContext } from 'element-plus';
 import { useDeleteArticle } from '@/hooks';
@@ -134,11 +149,15 @@ const tabs = computed(() => {
   }
 });
 
+watchEffect(() => {
+  console.log(personalStore.currentTabKey, 'tabKeytabKeytabKey');
+});
+
 onMounted(async () => {
   // 防止页面加载报错
   isMounted.value = true;
   // 重置选中tab key 为 0
-  personalStore.currentTabKey = '0';
+  // personalStore.currentTabKey = '0';
   // 清空原始数据
   personalStore.clearArticleList();
   if (userId && userId !== loginStore.userInfo?.userId) {
@@ -151,11 +170,23 @@ onMounted(async () => {
   getMyArticleList();
 });
 
+// 监听currentTabKey实时获取收藏集数或者收藏文章数
+watch(
+  () => personalStore.currentTabKey,
+  (cur) => {
+    // 只在 tab 是我的收藏的时候才获取数量
+    if (cur === '2') {
+      personalStore.getCollectedTotal();
+      personalStore.getCollectionTotal();
+    }
+  },
+);
+
 onUnmounted(() => {
   // 重置选中tab key 为 0
   personalStore.currentTabKey = '0';
   // 清空我的主页用户信息
-  personalStore.userInfo = {};
+  // personalStore.userInfo = {};
   // 清空原始数据
   personalStore.clearArticleList();
 });
@@ -168,8 +199,8 @@ const getMyArticleList = async () => {
 // tab 切换
 const onTabChange = (data: TabsPaneContext) => {
   const tabKey = PERSONAL_CURRENT_TAB[data?.props?.label];
+  console.log(tabKey, 'tabKey');
 
-  console.log(tabKey, 'name');
   // name: 0：博主文章、name: 1：博主点赞、name: 2：时间轴
   // 设置选中tab
   personalStore.currentTabKey = tabKey;
@@ -193,6 +224,11 @@ const onEditCollect = (id: string) => {
 const deleteCollection = (id: string) => {
   console.log('删除收藏集', id);
   personalStore.delCollection(id);
+};
+
+// 前往收藏集详情
+const toDetail = (id: string) => {
+  router.push(`/collect/${id}?authorId=${userId || loginStore.userInfo?.userId}`);
 };
 
 // 去修改资料
@@ -310,15 +346,6 @@ const toSetting = () => {
     position: relative;
     margin-top: 10px;
     border-radius: 5px;
-
-    .collect-count-info {
-      position: absolute;
-      top: -10px;
-      right: 10px;
-      border: 1px solid red;
-      z-index: 999;
-    }
-
     .el-tabs {
       border: 1px solid @card-border;
       border-radius: 5px;
@@ -443,6 +470,28 @@ const toSetting = () => {
             }
           }
         }
+      }
+    }
+    .collect-count-info {
+      position: absolute;
+      top: 9px;
+      right: 22px;
+      z-index: 12;
+
+      .add-collect {
+        font-size: 14px;
+        color: @theme-blue;
+        cursor: pointer;
+        .clickNoSelectText();
+      }
+
+      .collect-count {
+        font-size: 14px;
+        background-image: @head-lg;
+        padding: 2px 5px 3px;
+        border-radius: 5px;
+        color: @font-2;
+        margin-left: 10px;
       }
     }
   }

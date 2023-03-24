@@ -90,6 +90,16 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import('@/views/personal/index.vue'),
       },
       {
+        path: '/collect/:id',
+        name: 'collect',
+        meta: {
+          title: '收藏信息',
+          keepAlive: false,
+          auth: true,
+        },
+        component: () => import('@/views/collect/index.vue'),
+      },
+      {
         path: '/setting',
         name: 'setting',
         meta: {
