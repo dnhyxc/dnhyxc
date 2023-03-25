@@ -48,8 +48,8 @@
             </div>
           </div>
           <div class="content">
-            <div v-if="personalStore.currentTabKey === '2'" class="collect-count-info">
-              <span class="add-collect">
+            <div v-if="personalStore.currentTabKey === '1'" class="collect-count-info">
+              <span class="add-collect" @click.stop="onAddCollect">
                 <i class="iconfont icon-add" />
                 新建收藏集
               </span>
@@ -62,9 +62,9 @@
                 {{ personalStore.collectedCount }}
               </span>
             </div>
-            <el-tabs v-model="personalStore.currentTabKey" type="border-card" class="el-tabs" @tab-click="onTabChange">
+            <el-tabs v-model="personalStore.currentTabKey" type="border-card" class="el-tabs" @tab-change="onTabChange">
               <el-tab-pane v-for="tab in tabs" :key="tab.value" :label="tab.name" class="tab-pane">
-                <div v-if="tab.value !== '3'" class="list-wrap">
+                <div v-if="tab.value !== '2'" class="list-wrap">
                   <LineCard
                     v-for="data in personalStore.articleList"
                     :key="data.id"
@@ -85,9 +85,12 @@
                   >
                     <template #title>
                       <div class="collect-name">
-                        <span class="title">{{ data.name }}</span>
+                        <span class="title">
+                          {{ data.name }}
+                          <i v-show="Number(data.status) === 2" class="iconfont icon-33" />
+                        </span>
                         <span v-if="isShowCollectActions" class="actions">
-                          <i class="edit iconfont" @click.stop="onEditCollect(data.id)">编辑</i>
+                          <i class="edit iconfont" @click.stop="onEditCollect(data as any)">编辑</i>
                           <i class="del iconfont" @click.stop="deleteCollection(data.id)">删除</i>
                         </span>
                       </div>
@@ -113,25 +116,43 @@
       </el-scrollbar>
     </template>
   </Loading>
+  <AddCollectModel
+    v-model:collect-visible="collectVisible"
+    v-model:build-visible="buildVisible"
+    :default-values="currentCollectValues"
+    :is-edit="isEdit"
+  />
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted, watch, watchEffect } from 'vue';
+import { ref, computed, onMounted, onUnmounted, watchEffect } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import type { TabsPaneContext } from 'element-plus';
 import { useDeleteArticle } from '@/hooks';
 import { articleStore, loginStore, personalStore } from '@/store';
 import { formatDate } from '@/utils';
-import { HEAD_IMG, ICONLINKS, ABOUT_ME_TABS, ABOUT_TABS, PERSONAL_CURRENT_TAB } from '@/constant';
+import { CollectParams } from '@/typings/common';
+import { HEAD_IMG, ICONLINKS, ABOUT_ME_TABS, ABOUT_TABS } from '@/constant';
+import AddCollectModel from '@/components/AddCollectModel/index.vue';
 
 const route = useRoute();
 const router = useRouter();
+const { deleteArticle } = useDeleteArticle({ pageType: 'personal' });
 
 const { authorId: userId } = route.query;
 
-const { deleteArticle } = useDeleteArticle({ pageType: 'personal' });
-
 const isMounted = ref<boolean>(false);
+// 收藏集弹窗显隐状态
+const collectVisible = ref<boolean>(false);
+// 创建收藏集弹窗显隐状态
+const buildVisible = ref<boolean>(false);
+// 传入创建收藏集弹窗，判断是否是编辑
+const isEdit = ref<boolean>(false);
+const currentCollectValues = ref<CollectParams>({
+  name: '',
+  desc: '',
+  status: '1',
+});
+
 const noMore = computed(() => {
   const { articleList, total } = personalStore;
   return articleList.length >= total && articleList.length;
@@ -149,15 +170,9 @@ const tabs = computed(() => {
   }
 });
 
-watchEffect(() => {
-  console.log(personalStore.currentTabKey, 'tabKeytabKeytabKey');
-});
-
 onMounted(async () => {
   // 防止页面加载报错
   isMounted.value = true;
-  // 重置选中tab key 为 0
-  // personalStore.currentTabKey = '0';
   // 清空原始数据
   personalStore.clearArticleList();
   if (userId && userId !== loginStore.userInfo?.userId) {
@@ -170,23 +185,15 @@ onMounted(async () => {
   getMyArticleList();
 });
 
-// 监听currentTabKey实时获取收藏集数或者收藏文章数
-watch(
-  () => personalStore.currentTabKey,
-  (cur) => {
-    // 只在 tab 是我的收藏的时候才获取数量
-    if (cur === '2') {
-      personalStore.getCollectedTotal();
-      personalStore.getCollectionTotal();
-    }
-  },
-);
+watchEffect(() => {
+  // currentTabKey为1的时候，说明是收藏tab，需要获取收藏的文章总数和收藏集数量
+  if (personalStore.currentTabKey === '1') {
+    personalStore.getCollectedTotal();
+    personalStore.getCollectionTotal();
+  }
+});
 
 onUnmounted(() => {
-  // 重置选中tab key 为 0
-  personalStore.currentTabKey = '0';
-  // 清空我的主页用户信息
-  // personalStore.userInfo = {};
   // 清空原始数据
   personalStore.clearArticleList();
 });
@@ -197,13 +204,9 @@ const getMyArticleList = async () => {
 };
 
 // tab 切换
-const onTabChange = (data: TabsPaneContext) => {
-  const tabKey = PERSONAL_CURRENT_TAB[data?.props?.label];
-  console.log(tabKey, 'tabKey');
-
-  // name: 0：博主文章、name: 1：博主点赞、name: 2：时间轴
+const onTabChange = (value: string) => {
   // 设置选中tab
-  personalStore.currentTabKey = tabKey;
+  personalStore.currentTabKey = value;
   // 切换时清空原有数据
   personalStore.clearArticleList();
   // 切换tab时，重新加载数据
@@ -215,9 +218,19 @@ const likeListArticle = (id: string) => {
   articleStore.likeListArticle({ id, pageType: 'personal' });
 };
 
+// 新增收藏集
+const onAddCollect = () => {
+  currentCollectValues.value = { name: '', desc: '', status: '1' };
+  buildVisible.value = true;
+};
+
 // 编辑收藏集
-const onEditCollect = (id: string) => {
-  console.log(id, 'onEditCollect');
+const onEditCollect = (data: CollectParams) => {
+  console.log(data, 'data,,,,,,donEditCollect');
+
+  currentCollectValues.value = data;
+  buildVisible.value = true;
+  isEdit.value = true;
 };
 
 // 删除收藏集
@@ -433,11 +446,19 @@ const toSetting = () => {
             width: 100%;
 
             .title {
+              display: flex;
+              align-items: center;
               flex: 1;
               font-size: 16px;
               font-weight: 700;
               margin-right: 20px;
               .ellipsisMore(1);
+
+              .icon-33 {
+                display: inline-block;
+                font-size: 15px;
+                margin-left: 3px;
+              }
             }
 
             .actions {

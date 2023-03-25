@@ -7,6 +7,7 @@ import {
   CommentParams,
   DeleteArticleParams,
   SearchArticleParams,
+  CollectParams,
 } from '@/typings/common';
 import { loginStore } from '@/store';
 import * as API from './api';
@@ -129,10 +130,16 @@ export const likeArticle = async (params: { id: string; authorId?: string | null
 };
 
 // 新建收藏集
-export const createCollection = async (params: { name: string; desc: string; status: number }) => {
+export const createCollection = async (params: CollectParams) => {
   const res = await post(API.CREATE_COLLECTION, copeParams(params));
   return res;
 };
+
+// 更新收藏集
+export const updateCollection = async (params: CollectParams) =>{
+  const res = await post(API.UPDATE_COLLECTION, params);
+  return res;
+}
 
 // 获取收藏集列表
 export const getCollectionList = async (params: { pageNo: number; pageSize: number }) => {

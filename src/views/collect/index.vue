@@ -88,6 +88,10 @@ const disabled = computed(() => personalStore.loading || noMore.value);
 onMounted(async () => {
   // 防止页面加载报错
   isMounted.value = true;
+  if (!personalStore.userInfo?.userId) {
+    // 获取个人主页信息
+    await personalStore.getUserInfo(userId as string);
+  }
   // 清空原始数据
   getCollectArticleList();
 });
@@ -110,14 +114,12 @@ const likeListArticle = (id: string) => {
 // 返回我的主页
 const toPersonal = () => {
   console.log(userId, 'userId', loginStore?.userInfo.userId);
-
+  personalStore.currentTabKey = '1';
   if (userId !== loginStore?.userInfo.userId) {
     console.log('不是当前用户');
-    personalStore.currentTabKey = '1';
     router.push(`/personal?authorId=${userId}&tab=2`);
   } else {
     console.log('是当前用户');
-    personalStore.currentTabKey = '2';
     router.push('/personal?tab=2');
   }
 };

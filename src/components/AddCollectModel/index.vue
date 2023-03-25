@@ -75,29 +75,35 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, reactive } from 'vue';
+import { computed, ref, reactive, watch } from 'vue';
 import { FormInstance } from 'element-plus';
 import { collectStore } from '@/store';
+import { CollectParams } from '@/typings/common';
 
 interface IProps {
   collectVisible: boolean;
   buildVisible?: boolean;
+  defaultValues?: CollectParams;
+  isEdit?: boolean;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
   collectVisible: false,
   buildVisible: false,
+  defaultValues: () => ({
+    desc: '',
+    name: '',
+    status: '',
+    id: '',
+  }),
+  isEdit: false,
 });
 
 const emit = defineEmits(['update:collectVisible', 'update:buildVisible']);
 
 const formRef = ref<FormInstance>();
 
-const addCollectForm = reactive<{ desc: string; name: string; status: string }>({
-  name: '',
-  desc: '',
-  status: '1',
-});
+const addCollectForm = reactive<CollectParams>(props.defaultValues);
 
 // 计算v-model传过来的参数，防止出现值是可读的，无法修改的警告
 const visible = computed({
@@ -109,6 +115,15 @@ const visible = computed({
   },
 });
 
+watch(
+  () => props.defaultValues,
+  (newVal) => {
+    addCollectForm.name = newVal.name;
+    addCollectForm.desc = newVal.desc;
+    addCollectForm.status = String(newVal.status);
+  },
+);
+
 // 取消
 const onCancel = () => {
   formRef.value?.resetFields();
@@ -118,7 +133,11 @@ const onCancel = () => {
 
 // 确定
 const onSubmit = async () => {
-  await collectStore?.addCollect(addCollectForm);
+  if (props.isEdit && props.defaultValues?.id) {
+    await collectStore.updateCollect({ ...addCollectForm, id: props.defaultValues?.id });
+  } else {
+    await collectStore?.addCollect(addCollectForm);
+  }
   formRef.value?.resetFields();
   emit('update:buildVisible', false);
   emit('update:collectVisible', true);

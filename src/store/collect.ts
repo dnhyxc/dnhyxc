@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { ElMessage } from 'element-plus';
-import { CollectListRes, AddCollectionRes } from '@/typings/common';
-import { articleStore } from '@/store';
+import { CollectListRes, AddCollectionRes, CollectParams, ArticleItem } from '@/typings/common';
+import { articleStore, personalStore } from '@/store';
 import * as Service from '@/server';
 import { normalizeResult } from '@/utils';
 import { useCheckUserId } from '@/hooks';
@@ -29,8 +29,8 @@ export const useCollectStore = defineStore('collect', {
   }),
 
   actions: {
-    // 创建文章
-    async addCollect(params: { name: string; desc: string; status: string }) {
+    // 创建收藏集
+    async addCollect(params: CollectParams) {
       // 检验是否有userId，如果没有禁止发送请求
       if (!useCheckUserId()) return;
       const res = normalizeResult<AddCollectionRes>(
@@ -43,7 +43,44 @@ export const useCollectStore = defineStore('collect', {
           offset: 80,
         });
         this.checkedCollectIds = [res.data.id];
-        return res;
+        // 创建成功后，静态向我的主页中的我的收藏列表中曾加
+        personalStore.articleList = [res.data, ...personalStore.articleList];
+        personalStore.total = personalStore.total + 1;
+        personalStore.collectTotal += 1;
+      } else {
+        ElMessage({
+          message: res.message,
+          type: 'error',
+          offset: 80,
+        });
+      }
+    },
+
+    // 更新收藏集
+    async updateCollect(params: CollectParams) {
+      if (!params?.id) return;
+      const res = normalizeResult<{ id: string }>(
+        await Service.updateCollection({
+          ...params,
+          status: Number(params.status),
+        }),
+      );
+      if (res.success) {
+        // 静默更新收藏列表
+        personalStore.articleList = personalStore.articleList.map((i) => {
+          if (i.id === params.id) {
+            return {
+              ...i,
+              ...params,
+            };
+          }
+          return i;
+        }) as unknown as ArticleItem[];
+        ElMessage({
+          message: res.message,
+          type: 'success',
+          offset: 80,
+        });
       } else {
         ElMessage({
           message: res.message,

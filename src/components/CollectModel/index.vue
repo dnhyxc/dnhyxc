@@ -24,7 +24,7 @@
           >
             <div v-for="i in collectStore?.collectList" :key="i.id" class="collect-list">
               <div class="left" @click.stop="onCheckedItem(i.id)">
-                <div class="collect-name">{{ i.name }} <i v-if="i.status === 2" class="iconfont icon-lock" /></div>
+                <div class="collect-name">{{ i.name }} <i v-if="i.status === 2" class="iconfont icon-33" /></div>
                 <div class="collect-info">{{ i.articleIds?.length }} 篇文章</div>
               </div>
               <div class="right">
@@ -189,8 +189,8 @@ const onSubmit = async () => {
           font-size: 16px;
           margin-bottom: 8px;
 
-          .icon-lock {
-            font-size: 13px;
+          .icon-33 {
+            font-size: 15px;
             margin-left: 5px;
           }
         }

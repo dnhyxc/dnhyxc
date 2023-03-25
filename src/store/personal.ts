@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import { ElMessage } from 'element-plus';
 import { UserInfoParams, ArticleListResult, ArticleItem, TimelineResult, PerGetArticlesParams } from '@/typings/common';
 import * as Service from '@/server';
-import { normalizeResult, locSetItem } from '@/utils';
+import { normalizeResult, locSetItem, uniqueFunc } from '@/utils';
 import { loginStore } from '@/store';
 import { AUTHOR_API_PATH, PAGESIZE, ABOUT_ME_API_PATH } from '@/constant';
 
@@ -109,16 +109,13 @@ export const usePersonalStore = defineStore('personal', {
         pageNo: this.pageNo,
         pageSize: this.pageSize,
         userId: this.userInfo?.userId!,
-        // userId: authorId || getUserInfo?.userId,
         accessUserId: loginStore.userInfo?.userId!, // accessUserId有值，说明是访问别人的主页，需要通过accessUserId去获取点赞状态
       };
+
       // 访问他人主页时，增加isVisitor参数
       if (this.userInfo.userId !== loginStore.userInfo?.userId) {
         params.isVisitor = true;
       }
-      // if (authorId && authorId !== getUserInfo?.userId) {
-      //   params.isVisitor = true;
-      // }
 
       // 保存至storage用于根据不同页面进入详情时，针对性的进行上下篇文章的获取（如：分类页面上下篇、标签页面上下篇）
       locSetItem(
@@ -130,14 +127,21 @@ export const usePersonalStore = defineStore('personal', {
           from: 'personal',
         }),
       );
+
       const res = normalizeResult<ArticleListResult>(
         await Service.getMyArticleList(params, ABOUT_ME_API_PATH[this.currentTabKey]),
       );
       this.loading = false;
       if (res.success) {
         const { total, list } = res.data;
-        this.articleList = [...this.articleList, ...list];
-        this.total = total;
+        // 当是我的收藏时，再增加收藏集时，需要去除重复的收藏集
+        if (this.currentTabKey === '1' && this.pageNo > 1) {
+          this.articleList = uniqueFunc([...this.articleList, ...list], 'id');
+          this.total = total;
+        } else {
+          this.articleList = [...this.articleList, ...list];
+          this.total = total;
+        }
       }
     },
 
@@ -167,9 +171,7 @@ export const usePersonalStore = defineStore('personal', {
       const res = normalizeResult<number>(
         await Service.getCollectTotal({
           userId: this.userInfo?.userId!,
-          // userId: authorId || getUserInfo?.userId,
           status: this.userInfo.userId !== loginStore.userInfo?.userId ? 1 : 0, // 1: 公开，2：私有
-          // status: authorId && authorId !== getUserInfo?.userId ? 1 : 0, // 1: 公开，2：私有
         }),
       );
       if (res.success) {
@@ -182,9 +184,7 @@ export const usePersonalStore = defineStore('personal', {
       const res = normalizeResult<{ total: number }>(
         await Service.getCollectedTotal({
           userId: this.userInfo?.userId!,
-          // userId: authorId || getUserInfo?.userId,
           status: this.userInfo.userId !== loginStore.userInfo?.userId ? 1 : 0, // 1: 公开，2：私有
-          // status: authorId && authorId !== getUserInfo?.userId ? 1 : 0, // 1: 公开，2：私有
         }),
       );
       if (res.success) {

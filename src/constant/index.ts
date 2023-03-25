@@ -298,22 +298,6 @@ export const AUTHOR_TABS = [
   },
 ];
 
-// 设置我的主页选中tab对应关系
-export const PERSONAL_CURRENT_TAB = {
-  我的文章: '0',
-  点赞文章: '1',
-  我的收藏: '2',
-  他的文章: '0',
-  他的收藏: '2',
-};
-
-// 我的主页对应选中tab value
-export const PERSONAL_CURRENT_VALUE = {
-  0: '他的文章',
-  1: '点赞文章',
-  2: '他的收藏',
-};
-
 // 我的主页tabs
 export const ABOUT_ME_TABS = [
   {
@@ -321,11 +305,11 @@ export const ABOUT_ME_TABS = [
     value: '1',
   },
   {
-    name: '点赞文章',
+    name: '我的收藏',
     value: '2',
   },
   {
-    name: '我的收藏',
+    name: '点赞文章',
     value: '3',
   },
 ];
@@ -338,7 +322,7 @@ export const ABOUT_TABS = [
   },
   {
     name: '他的收藏',
-    value: '3',
+    value: '2',
   },
 ];
 
@@ -461,8 +445,8 @@ export const AUTHOR_API_PATH = {
 // 我的主页页面API
 export const ABOUT_ME_API_PATH = {
   0: API.GET_MY_ARTICLE_LIST,
-  1: API.GET_LIKE_ARTICLE_LIST,
-  2: API.GET_COLLECTION_LIST,
+  1: API.GET_COLLECTION_LIST,
+  2: API.GET_LIKE_ARTICLE_LIST,
 };
 
 export const BIRD_BASE64 =

@@ -318,3 +318,11 @@ export interface PerGetArticlesParams {
   accessUserId: string;
   isVisitor?: boolean;
 }
+
+// 收藏集信息
+export interface CollectParams {
+  name: string;
+  desc: string;
+  status: string | number;
+  id?: string;
+}

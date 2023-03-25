@@ -26,6 +26,12 @@ export const checkOS = () => {
   }
 };
 
+// 数组去重方法
+export const uniqueFunc = (arr: any, uniId: string) => {
+  const res = new Map();
+  return arr.filter((item: any) => !res.has(item[uniId]) && res.set(item[uniId], 1));
+};
+
 // 二次确认弹窗
 export const Message = (title: string = '确定下架该文章吗？', content: string = '下架文章') => {
   return ElMessageBox.confirm(title, content, MSG_CONFIG() as ElMessageBoxOptions);
