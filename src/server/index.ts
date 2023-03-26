@@ -136,10 +136,10 @@ export const createCollection = async (params: CollectParams) => {
 };
 
 // 更新收藏集
-export const updateCollection = async (params: CollectParams) =>{
-  const res = await post(API.UPDATE_COLLECTION, params);
+export const updateCollection = async (params: CollectParams) => {
+  const res = await post(API.UPDATE_COLLECTION, copeParams(params));
   return res;
-}
+};
 
 // 获取收藏集列表
 export const getCollectionList = async (params: { pageNo: number; pageSize: number }) => {
@@ -242,5 +242,26 @@ export const getCollectTotal = async (params: { userId: string; status: number }
 // 获取收藏文章总条数
 export const getCollectedTotal = async (params: { userId: string; status: number }) => {
   const res = await post(API.GET_COLLECTED_TOTAL, params);
+  return res;
+};
+
+// 获取收藏集中的文章
+export const getCollectArticles = async (params: { pageNo: number; pageSize: number; articleIds?: string[] }) => {
+  const res = await post(API.GET_COLLECT_ARTICLES, copeParams(params));
+  return res;
+};
+
+// 获取收藏集详情
+export const getCollectInfo = async (id: string) => {
+  const res = await post(API.GET_COLLECT_INFO, { id });
+  return res;
+};
+
+// 取消收藏收藏集中的文章(移除收藏集中的文章)
+export const removeCollectArticle = async (params: {
+  articleId: string;
+  id: string; // 收藏集id
+}) => {
+  const res = await post(API.REMOVE_COLLECT_ARTICLE, copeParams(params));
   return res;
 };

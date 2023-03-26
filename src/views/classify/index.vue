@@ -225,8 +225,8 @@ const likeListArticle = (id: string) => {
     bottom: 47px;
   }
 
-  .loading,
   .no-more {
+    margin-top: 3px;
     text-align: center;
     color: @font-4;
   }

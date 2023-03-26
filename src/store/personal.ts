@@ -45,7 +45,14 @@ export const usePersonalStore = defineStore('personal', {
     collectedCount: 0,
   }),
 
-  getters: {},
+  getters: {
+    // 返回当前选中的收藏集
+    currentCollect: (state) => {
+      return (id: string) => {
+        return state.articleList.find((i) => i.id === id);
+      };
+    },
+  },
 
   actions: {
     // 获取用户信息

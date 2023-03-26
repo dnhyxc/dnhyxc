@@ -97,7 +97,7 @@ watch(
   (newVal) => {
     if (!newVal) {
       // 窗口隐藏时，清除收藏集相关数据
-      collectStore?.clearCollectList();
+      collectStore?.init();
     } else {
       // 当窗口显示时，请求收藏集列表
       onFetchData();
@@ -107,14 +107,13 @@ watch(
 
 // 请求数据
 const onFetchData = async () => {
-  console.log('加载收藏集》》》》getCollectList');
   await collectStore.getCollectList();
 };
 
 // 选择需要加入的收藏夹
 const onCheckedItem = (id: string) => {
-  const res = collectStore?.checkedCollectIds.find((i) => i === id);
-  if (res) {
+  const findId = collectStore?.checkedCollectIds.find((i) => i === id);
+  if (findId) {
     collectStore.checkedCollectIds = collectStore.checkedCollectIds.filter((i) => i !== id);
   } else {
     collectStore.checkedCollectIds = [...collectStore.checkedCollectIds, id];
@@ -129,13 +128,11 @@ const onBuildCollect = () => {
 
 // 取消
 const onCancel = () => {
-  console.log(collectStore.checkedCollectIds, 'onCancel');
   emit('update:collectVisible', false);
 };
 
 // 确定
 const onSubmit = async () => {
-  console.log(collectStore.checkedCollectIds, 'onSubmit');
   await collectStore?.collectArticles(props.articleId);
   emit('update:collectVisible', false);
 };

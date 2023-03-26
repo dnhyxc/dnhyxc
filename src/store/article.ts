@@ -15,6 +15,7 @@ import {
 import {
   authorStore,
   classifyStore,
+  collectStore,
   commonStore,
   createStore,
   loginStore,
@@ -313,6 +314,7 @@ export const useArticleStore = defineStore('article', {
             tag: tagStore.articleList,
             author: authorStore.articleList,
             personal: personalStore.articleList,
+            collect: collectStore.articleList,
           };
 
           const cloneList: ArticleItem[] = JSON.parse(JSON.stringify(dataList[pageType!]));
@@ -360,6 +362,9 @@ export const useArticleStore = defineStore('article', {
                 break;
               case 'personal':
                 personalStore.articleList = list;
+                break;
+              case 'collect':
+                collectStore.articleList = list;
                 break;
 
               default:

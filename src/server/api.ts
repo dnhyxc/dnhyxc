@@ -66,6 +66,12 @@ export const CREATE_COLLECTION = '/api/createCollection';
 export const UPDATE_COLLECTION = '/api/updateCollection';
 // 获取收藏集列表
 export const GET_COLLECTION_LIST = '/api/getCollectionList';
+// 收藏集详情
+export const GET_COLLECT_INFO = '/api/getCollectInfo';
+// 获取收藏集中收藏的文章列表
+export const GET_COLLECT_ARTICLES = '/api/getCollectArticles';
+// 移除收藏集中的文章
+export const REMOVE_COLLECT_ARTICLE = '/api/removeCollectArticle';
 // 删除收藏集
 export const DEL_COLLECTION = '/api/delCollection';
 // 收藏文章

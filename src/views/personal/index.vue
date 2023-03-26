@@ -7,6 +7,37 @@
 <template>
   <Loading :loading="personalStore.loading" class="personal-wrap">
     <template #default>
+      <div class="header">
+        <div class="left">
+          <div class="head-wrap">
+            <img :src="HEAD_IMG" alt="头像" class="head-img" />
+          </div>
+        </div>
+        <div class="right">
+          <div class="userInfo">
+            <div class="username">{{ personalStore.userInfo?.username || '-' }}</div>
+            <div class="job">{{ personalStore.userInfo?.job || '-' }}</div>
+            <div class="motto">{{ personalStore.userInfo?.motto || '-' }}</div>
+            <el-tooltip v-if="personalStore.userInfo?.introduce" placement="top" effect="light">
+              <template #content>
+                <span class="introduce-tip">{{ personalStore.userInfo?.introduce }}</span>
+              </template>
+              <div class="desc">{{ personalStore.userInfo?.introduce || '-' }}</div>
+            </el-tooltip>
+            <div v-else class="desc">{{ personalStore.userInfo?.introduce || '-' }}</div>
+          </div>
+          <div class="actions">
+            <div class="top">
+              <span v-for="icon in ICONLINKS" :key="icon.name" class="icon">
+                <i v-if="icon.label" :class="`${icon.className} font iconfont ${icon.name}`" />
+              </span>
+            </div>
+            <div v-if="isShowCollectActions" class="bottom">
+              <el-button type="primary" @click="toSetting">修改个人资料</el-button>
+            </div>
+          </div>
+        </div>
+      </div>
       <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
         <div
           v-if="isMounted"
@@ -16,37 +47,6 @@
           :infinite-scroll-distance="2"
           class="pullup-content"
         >
-          <div class="header">
-            <div class="left">
-              <div class="head-wrap">
-                <img :src="HEAD_IMG" alt="头像" class="head-img" />
-              </div>
-            </div>
-            <div class="right">
-              <div class="userInfo">
-                <div class="username">{{ personalStore.userInfo?.username || '-' }}</div>
-                <div class="job">{{ personalStore.userInfo?.job || '-' }}</div>
-                <div class="motto">{{ personalStore.userInfo?.motto || '-' }}</div>
-                <el-tooltip v-if="personalStore.userInfo?.introduce" placement="top" effect="light">
-                  <template #content>
-                    <span class="introduce-tip">{{ personalStore.userInfo?.introduce }}</span>
-                  </template>
-                  <div class="desc">{{ personalStore.userInfo?.introduce || '-' }}</div>
-                </el-tooltip>
-                <div v-else class="desc">{{ personalStore.userInfo?.introduce || '-' }}</div>
-              </div>
-              <div class="actions">
-                <div class="top">
-                  <span v-for="icon in ICONLINKS" :key="icon.name" class="icon">
-                    <i v-if="icon.label" :class="`${icon.className} font iconfont ${icon.name}`" />
-                  </span>
-                </div>
-                <div v-if="isShowCollectActions" class="bottom">
-                  <el-button type="primary" @click="toSetting">修改个人资料</el-button>
-                </div>
-              </div>
-            </div>
-          </div>
           <div class="content">
             <div v-if="personalStore.currentTabKey === '1'" class="collect-count-info">
               <span class="add-collect" @click.stop="onAddCollect">
@@ -111,6 +111,7 @@
               </el-tab-pane>
             </el-tabs>
           </div>
+          <ToTopIcon v-if="scrollTop >= 500" :on-scroll-to="onScrollTo" class="to-top" />
         </div>
         <div v-if="noMore" class="no-more">没有更多了～～～</div>
       </el-scrollbar>
@@ -127,15 +128,16 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted, watchEffect } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { useDeleteArticle } from '@/hooks';
+import { useDeleteArticle, useScroller } from '@/hooks';
 import { articleStore, loginStore, personalStore } from '@/store';
-import { formatDate } from '@/utils';
+import { formatDate, scrollTo } from '@/utils';
 import { CollectParams } from '@/typings/common';
 import { HEAD_IMG, ICONLINKS, ABOUT_ME_TABS, ABOUT_TABS } from '@/constant';
 import AddCollectModel from '@/components/AddCollectModel/index.vue';
 
 const route = useRoute();
 const router = useRouter();
+const { scrollRef, scrollTop } = useScroller();
 const { deleteArticle } = useDeleteArticle({ pageType: 'personal' });
 
 const { authorId: userId } = route.query;
@@ -248,12 +250,19 @@ const toDetail = (id: string) => {
 const toSetting = () => {
   router.push('/setting');
 };
+
+// 置顶
+const onScrollTo = () => {
+  scrollTo(scrollRef, 0);
+};
 </script>
 
 <style scoped lang="less">
 @import '@/styles/index.less';
 
 .personal-wrap {
+  display: flex;
+  flex-direction: column;
   width: 100%;
   height: 100%;
 
@@ -264,6 +273,7 @@ const toSetting = () => {
     background-image: @bg-lg-2;
     box-shadow: 0 0 1px @green-sky inset;
     border-radius: 5px;
+    margin-bottom: 10px;
 
     .left {
       width: 130px;
@@ -357,8 +367,8 @@ const toSetting = () => {
 
   .content {
     position: relative;
-    margin-top: 10px;
     border-radius: 5px;
+    flex: 1;
     .el-tabs {
       border: 1px solid @card-border;
       border-radius: 5px;
@@ -520,7 +530,7 @@ const toSetting = () => {
   .no-more {
     text-align: center;
     color: @font-4;
-    margin: 15px 0 5px;
+    margin: 15px 0 0;
   }
 }
 

@@ -85,6 +85,7 @@
               </el-tab-pane>
             </el-tabs>
           </div>
+          <ToTopIcon v-if="scrollTop >= 500" :on-scroll-to="onScrollTo" class="to-top" />
         </div>
       </el-scrollbar>
     </template>
@@ -95,17 +96,20 @@
 import { ref, onMounted, computed } from 'vue';
 import { HEAD_IMG, AUTHOR_TABS, IMG1 } from '@/constant';
 import { authorStore, articleStore } from '@/store';
-import { useDeleteArticle } from '@/hooks';
+import { useDeleteArticle, useScroller } from '@/hooks';
+import { scrollTo } from '@/utils';
 import LineCard from '@/components/LineCard/index.vue';
 import Image from '@/components/Image/index.vue';
 import Loading from '@/components/Loading/index.vue';
+
+const { scrollRef, scrollTop } = useScroller();
 
 const viewMore = ref<boolean>(false);
 const isMounted = ref<boolean>(false);
 const noMore = computed(() => {
   const { articleList, total, timelineList, currentTabKey } = authorStore;
   return (
-    articleList.length >= total && (currentTabKey === '2' ? articleList.length : timelineList[0]?.articles?.length)
+    articleList.length >= total && (currentTabKey === '2' ? timelineList[0]?.articles?.length : articleList.length)
   );
 });
 const disabled = computed(() => authorStore.loading || noMore.value);
@@ -157,6 +161,11 @@ const deleteTimeLineArticle = (id: string) => {
 // 查看更多信息
 const onShowMore = () => {
   viewMore.value = !viewMore.value;
+};
+
+// 置顶
+const onScrollTo = () => {
+  scrollTo(scrollRef, 0);
 };
 </script>
 
@@ -324,6 +333,9 @@ const onShowMore = () => {
           }
 
           &:nth-child(odd) {
+            &:nth-last-child(2) {
+              margin-bottom: 0;
+            }
             &:last-child {
               margin-bottom: 0;
             }

@@ -1,9 +1,9 @@
 import { defineStore } from 'pinia';
 import { ElMessage } from 'element-plus';
-import { CollectListRes, AddCollectionRes, CollectParams, ArticleItem } from '@/typings/common';
+import { CollectListRes, AddCollectionRes, CollectParams, ArticleItem, ArticleListResult } from '@/typings/common';
 import { articleStore, personalStore } from '@/store';
 import * as Service from '@/server';
-import { normalizeResult } from '@/utils';
+import { normalizeResult, Message } from '@/utils';
 import { useCheckUserId } from '@/hooks';
 import { PAGESIZE } from '@/constant';
 
@@ -13,8 +13,10 @@ interface IProps {
   pageSize: number;
   collectList: AddCollectionRes[]; // 收藏集列表数据
   total: number; // 收藏集列表总数
-  checkedCollectIds: string[];
+  checkedCollectIds: string[]; // 选中的收藏集ids
   collectStatus: boolean;
+  collectInfo: AddCollectionRes; // 当前收藏集详情
+  articleList: ArticleItem[];
 }
 
 export const useCollectStore = defineStore('collect', {
@@ -26,6 +28,8 @@ export const useCollectStore = defineStore('collect', {
     loading: false,
     checkedCollectIds: [],
     collectStatus: false,
+    collectInfo: { id: '' },
+    articleList: [],
   }),
 
   actions: {
@@ -58,6 +62,8 @@ export const useCollectStore = defineStore('collect', {
 
     // 更新收藏集
     async updateCollect(params: CollectParams) {
+      // 检验是否有userId，如果没有禁止发送请求
+      if (!useCheckUserId()) return;
       if (!params?.id) return;
       const res = normalizeResult<{ id: string }>(
         await Service.updateCollection({
@@ -130,6 +136,9 @@ export const useCollectStore = defineStore('collect', {
           articleStore.articleDetail.collectCount += 1;
         }
         this.collectStatus = true;
+        if (!this.checkedCollectIds.includes(this.collectInfo.id)) {
+          this.removeCollectArticle(articleId, this.collectInfo.id);
+        }
         ElMessage({
           message: res.message,
           type: 'success',
@@ -169,12 +178,96 @@ export const useCollectStore = defineStore('collect', {
       }
     },
 
+    // 获取收藏集详情
+    async getCollectInfo(id: string) {
+      // 每次获取收藏集详情之前，先重置缓存中的各种收藏集信息
+      this.clearCollectList();
+      const res = normalizeResult<AddCollectionRes>(await Service.getCollectInfo(id));
+      if (res.success) {
+        this.collectInfo = res.data;
+        // 查询完收藏集信息之后，初始化获取收藏的文章列表
+        this.getCollectArticles();
+      } else {
+        ElMessage({
+          message: res.message,
+          type: 'error',
+          offset: 80,
+        });
+      }
+    },
+
+    // 获取收藏集中收藏的文章
+    async getCollectArticles() {
+      if (this.collectList.length !== 0 && this.collectList.length >= this.total) return;
+      this.pageNo = this.pageNo + 1;
+      this.loading = true;
+      const res = normalizeResult<ArticleListResult>(
+        await Service.getCollectArticles({
+          pageNo: this.pageNo,
+          pageSize: this.pageSize,
+          articleIds: this.collectInfo?.articleIds,
+        }),
+      );
+      this.loading = false;
+      if (res.success) {
+        this.articleList = [...this.articleList, ...res.data.list];
+        this.total = res.data.total;
+      } else {
+        ElMessage({
+          message: res.message,
+          type: 'error',
+          offset: 80,
+        });
+      }
+    },
+
+    // 移除收藏集中的文章
+    async removeCollectArticle(articleId: string, collectId: string) {
+      if (!collectId) return;
+      this.loading = true;
+      const res = normalizeResult<number>(
+        await Service.removeCollectArticle({
+          id: collectId,
+          articleId,
+        }),
+      );
+      if (res.success) {
+        this.collectInfo.articleIds = this.collectInfo?.articleIds?.filter((i) => i !== articleId);
+        this.clearCollectList();
+        // 重新获取收藏集中的文章
+        this.getCollectArticles();
+      } else {
+        ElMessage({
+          message: res.message,
+          type: 'error',
+          offset: 80,
+        });
+      }
+    },
+
+    // 将收藏集中的文章移除，注意：并不是删除文章
+    async removeArticle(id: string, collectId: string) {
+      Message('移除后，该文章将从当前收藏集中删除', '确定移除该文章吗？').then(async () => {
+        // 调用接口，移除收藏集中收藏的文章
+        await this.removeCollectArticle(id, collectId);
+      });
+    },
+
+    // 清除收藏集滚动相关数据
+    init() {
+      this.pageNo = 0;
+      this.total = 0;
+      this.collectList = [];
+      this.checkedCollectIds = [];
+    },
+
     // 清除收藏集
     clearCollectList() {
       this.collectList = [];
       this.pageNo = 0;
       this.total = 0;
       this.checkedCollectIds = [];
+      this.articleList = [];
     },
   },
 });

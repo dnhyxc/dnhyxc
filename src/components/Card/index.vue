@@ -51,10 +51,12 @@
                   <span class="text">{{ data.readCount || '阅读' }}</span>
                 </div>
               </div>
-              <div v-if="loginStore?.userInfo?.userId === data.authorId" class="action art-action">
-                <span class="edit" @click.stop="toEdit(data.id)">编辑</span>
-                <span class="del" @click.stop="onReomve(data.id)">下架</span>
-              </div>
+              <slot name="actions">
+                <div v-if="loginStore?.userInfo?.userId === data.authorId" class="action art-action">
+                  <span class="edit" @click.stop="toEdit(data.id)">编辑</span>
+                  <span class="del" @click.stop="onReomve(data.id)">下架</span>
+                </div>
+              </slot>
             </div>
           </div>
         </slot>

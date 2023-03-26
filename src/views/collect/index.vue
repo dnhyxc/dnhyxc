@@ -5,7 +5,7 @@
  * index.vue
 -->
 <template>
-  <Loading :loading="personalStore.loading" class="collect-wrap">
+  <Loading :loading="collectStore.loading" class="collect-wrap">
     <template #default>
       <div class="header">
         <div class="left">
@@ -15,14 +15,14 @@
         </div>
         <div class="right">
           <div class="collect-info">
-            <div class="collect-name">{{ personalStore.userInfo?.username || '-' }}</div>
-            <el-tooltip v-if="personalStore.userInfo?.introduce" placement="top" effect="light">
+            <div class="collect-name">{{ collectStore.collectInfo?.name || '-' }}</div>
+            <el-tooltip v-if="collectStore.collectInfo?.desc" placement="top" effect="light">
               <template #content>
-                <span class="introduce-tip">{{ personalStore.userInfo?.introduce }}</span>
+                <span class="introduce-tip">{{ collectStore.collectInfo?.desc }}</span>
               </template>
-              <div class="desc">{{ personalStore.userInfo?.introduce || '-' }}</div>
+              <div class="desc">{{ collectStore.collectInfo?.desc || '-' }}</div>
             </el-tooltip>
-            <div v-else class="desc">{{ personalStore.userInfo?.introduce || '-' }}</div>
+            <div v-else class="desc">{{ collectStore.collectInfo?.desc || '-' }}</div>
           </div>
           <div class="user-info">
             <span class="username">{{ personalStore.userInfo?.username || '-' }}</span>
@@ -42,46 +42,51 @@
           :infinite-scroll-distance="2"
           class="pullup-content"
         >
-          <div class="content">
-            <div class="list-wrap">
-              <LineCard
-                v-for="data in personalStore.articleList"
-                :key="data.id"
-                :data="data"
-                class="author-line-card"
-                :delete-article="deleteArticle"
-                :like-list-article="likeListArticle"
-              />
-            </div>
+          <div v-for="i of collectStore.articleList" :key="i.id" class="pullup-list-item">
+            <Card :data="i" :like-list-article="likeListArticle">
+              <template #actions>
+                <div class="action art-action">
+                  <span class="move" @click.stop="onMoveTo(i.id)">转移</span>
+                  <span class="remove" @click.stop="onReomve(i.id)">移除</span>
+                </div>
+              </template>
+            </Card>
           </div>
+          <ToTopIcon v-if="scrollTop >= 500" :on-scroll-to="onScrollTo" class="to-top" />
         </div>
         <div v-if="noMore" class="no-more">没有更多了～～～</div>
       </el-scrollbar>
     </template>
   </Loading>
+  <CollectModel v-model:collect-visible="collectVisible" :article-id="moveArticleId" />
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { useDeleteArticle } from '@/hooks';
-import { articleStore, loginStore, personalStore } from '@/store';
+import { useScroller } from '@/hooks';
+import { articleStore, collectStore, loginStore, personalStore } from '@/store';
 // import { formatDate } from '@/utils';
+import { scrollTo } from '@/utils';
 import { HEAD_IMG } from '@/constant';
+import Card from '@/components/Card/index.vue';
+import CollectModel from '@/components/CollectModel/index.vue';
 
 const route = useRoute();
 const router = useRouter();
+const { scrollRef, scrollTop } = useScroller();
 
 const { authorId: userId } = route.query;
-
-const { deleteArticle } = useDeleteArticle({ pageType: 'personal' });
+const { id: collectId } = route.params;
 
 const isMounted = ref<boolean>(false);
+const collectVisible = ref<boolean>(false);
+const moveArticleId = ref<string>('');
 const noMore = computed(() => {
-  const { articleList, total } = personalStore;
+  const { articleList, total } = collectStore;
   return articleList.length >= total && articleList.length;
 });
-const disabled = computed(() => personalStore.loading || noMore.value);
+const disabled = computed(() => collectStore.loading || noMore.value);
 // 判断是否展示删除、编辑收藏集的按钮
 // const isShowCollectActions = computed(() => !userId || userId === loginStore.userInfo?.userId);
 
@@ -92,8 +97,8 @@ onMounted(async () => {
     // 获取个人主页信息
     await personalStore.getUserInfo(userId as string);
   }
-  // 清空原始数据
-  getCollectArticleList();
+  // 获取收藏集详情
+  collectStore.getCollectInfo(collectId as string);
 });
 
 onUnmounted(() => {
@@ -103,42 +108,42 @@ onUnmounted(() => {
 
 // 获取收藏集的文章
 const getCollectArticleList = () => {
-  console.log('获取收藏的文章');
+  collectStore.getCollectArticles();
 };
 
 // 文章点赞
 const likeListArticle = (id: string) => {
-  articleStore.likeListArticle({ id, pageType: 'personal' });
+  articleStore.likeListArticle({ id, pageType: 'collect' });
 };
 
 // 返回我的主页
 const toPersonal = () => {
-  console.log(userId, 'userId', loginStore?.userInfo.userId);
   personalStore.currentTabKey = '1';
   if (userId !== loginStore?.userInfo.userId) {
-    console.log('不是当前用户');
     router.push(`/personal?authorId=${userId}&tab=2`);
   } else {
-    console.log('是当前用户');
     router.push('/personal?tab=2');
   }
 };
 
-// // 编辑收藏集
-// const onEditCollect = (id: string) => {
-//   console.log(id, 'onEditCollect');
-// };
+// 移动文章至别的分组
+const onMoveTo = (id: string) => {
+  // 清空收藏集弹窗中的页码及收藏集列表数据
+  collectStore.init();
+  collectVisible.value = true;
+  moveArticleId.value = id;
+};
 
-// // 删除收藏集
-// const deleteCollection = (id: string) => {
-//   console.log('删除收藏集', id);
-//   personalStore.delCollection(id);
-// };
+// 移除文章
+const onReomve = (id: string) => {
+  console.log('移除文章', id);
+  collectStore.removeArticle(id, collectId as string);
+};
 
-// // 去修改资料
-// const toSetting = () => {
-//   router.push('/setting');
-// };
+// 置顶
+const onScrollTo = () => {
+  scrollTo(scrollRef, 0);
+};
 </script>
 
 <style scoped lang="less">
@@ -158,6 +163,7 @@ const toPersonal = () => {
     box-shadow: 0 0 1px @green-sky inset;
     border-radius: 5px;
     height: 120px;
+    margin-bottom: 10px;
 
     .left {
       width: 120px;
@@ -229,22 +235,25 @@ const toPersonal = () => {
     }
   }
 
-  .pullup-content {
-    flex: 1;
+  :deep {
+    .scrollbar-wrapper(12px);
+  }
 
-    .content {
-      flex: 1;
-      position: relative;
-      margin-top: 10px;
-      border-radius: 5px;
-      border: 1px solid red;
-    }
+  .move {
+    margin-right: 10px;
+    color: @theme-blue;
+    font-size: 14px;
+  }
+
+  .remove {
+    color: @font-danger;
+    font-size: 14px;
   }
 
   .no-more {
     text-align: center;
     color: @font-4;
-    margin: 15px 0 5px;
+    margin-top: 3px;
     .clickNoSelectText();
   }
 }
