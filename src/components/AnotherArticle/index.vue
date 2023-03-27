@@ -39,7 +39,8 @@
 import { onMounted, inject } from 'vue';
 import { useRouter } from 'vue-router';
 import { articleStore } from '@/store';
-import { formatGapTime } from '@/utils';
+import { formatGapTime, locGetItem } from '@/utils';
+import { AnotherParams } from '@/typings/common';
 
 const reload = inject<Function>('reload');
 
@@ -52,7 +53,9 @@ const router = useRouter();
 const props = defineProps<IProps>();
 
 onMounted(() => {
-  articleStore.getAnotherArticles({ id: props.id });
+  // 获取从哪个页面跳转到详情的参数，用户获取对应页面的上篇文章详情
+  const params: AnotherParams = (locGetItem('params') && JSON.parse(locGetItem('params')!)) || {};
+  articleStore.getAnotherArticles({ id: props.id, ...params });
 });
 
 // 跳转详情

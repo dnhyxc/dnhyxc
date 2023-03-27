@@ -229,7 +229,7 @@ export const getMyArticleList = async (
 
 // 删除收藏集
 export const delCollection = async (params: { id: string; userId?: string; pageNo?: number; pageSize?: number }) => {
-  const res = await post(API.DEL_COLLECTION, params);
+  const res = await post(API.DEL_COLLECTION, copeParams(params));
   return res;
 };
 

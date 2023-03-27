@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import { ElMessage } from 'element-plus';
 import { UserInfoParams, ArticleListResult, ArticleItem, TimelineResult, PerGetArticlesParams } from '@/typings/common';
 import * as Service from '@/server';
-import { normalizeResult, locSetItem, uniqueFunc } from '@/utils';
+import { normalizeResult, locSetItem, uniqueFunc, Message } from '@/utils';
 import { loginStore } from '@/store';
 import { AUTHOR_API_PATH, PAGESIZE, ABOUT_ME_API_PATH } from '@/constant';
 
@@ -154,23 +154,25 @@ export const usePersonalStore = defineStore('personal', {
 
     // 删除收藏集
     async delCollection(id: string) {
-      const res = normalizeResult<ArticleListResult>(
-        await Service.delCollection({
-          id,
-          userId: this.userInfo.userId,
-          pageNo: this.pageNo,
-          pageSize: this.pageSize,
-        }),
-      );
-      if (res.success) {
-        const nextPageOne = res?.data?.list[0] || '';
-        const list = this.articleList.filter((i) => i.id !== id);
-        this.articleList = nextPageOne ? [...list, nextPageOne] : list;
-        this.total = this.total - 1;
-        // 如果是收藏集tab，getCollectionTotal有值，需要实时获取删除后的收藏集总条数
-        this.getCollectionTotal();
-        this.getCollectedTotal();
-      }
+      Message('删除收藏集同时会移除收藏集中的文章！', '确定移除该收藏集吗？').then(async () => {
+        const res = normalizeResult<ArticleListResult>(
+          await Service.delCollection({
+            id,
+            userId: this.userInfo.userId,
+            pageNo: this.pageNo,
+            pageSize: this.pageSize,
+          }),
+        );
+        if (res.success) {
+          const nextPageOne = res?.data?.list[0] || '';
+          const list = this.articleList.filter((i) => i.id !== id);
+          this.articleList = nextPageOne ? [...list, nextPageOne] : list;
+          this.total = this.total - 1;
+          // 如果是收藏集tab，getCollectionTotal有值，需要实时获取删除后的收藏集总条数
+          this.getCollectionTotal();
+          this.getCollectedTotal();
+        }
+      });
     },
 
     // 获取收藏集总数

@@ -81,7 +81,7 @@ import { collectStore } from '@/store';
 import { CollectParams } from '@/typings/common';
 
 interface IProps {
-  collectVisible: boolean;
+  collectVisible?: boolean;
   buildVisible?: boolean;
   defaultValues?: CollectParams;
   isEdit?: boolean;

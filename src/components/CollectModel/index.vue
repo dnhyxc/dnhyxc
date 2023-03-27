@@ -34,7 +34,6 @@
               </div>
             </div>
           </div>
-          <!-- <div v-if="collectStore.loading" class="loading">Loading...</div> -->
           <div v-if="noMore" class="no-more">没有更多了～～～</div>
         </el-scrollbar>
       </Loading>

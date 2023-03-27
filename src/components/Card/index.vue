@@ -5,7 +5,7 @@
  * index.vue
 -->
 <template>
-  <div class="card-wrap" @click="toDetail(data.id)">
+  <div class="card-wrap" @click="toDetail(data)">
     <div class="card">
       <div class="card-top">
         <div v-if="data?.isDelete" class="mask">
@@ -36,13 +36,13 @@
             </div>
             <div class="actions">
               <div class="action-icons">
-                <div class="action like" @click.stop="onLike(data.id)">
+                <div class="action like" @click.stop="onLike(data)">
                   <i
                     :class="`font like-icon iconfont ${data.isLike ? 'icon-24gf-thumbsUp2' : 'icon-24gl-thumbsUp2'}`"
                   />
                   <span>{{ data.likeCount || '点赞' }}</span>
                 </div>
-                <div class="action comment" @click.stop="onComment(data.id)">
+                <div class="action comment" @click.stop="onComment(data)">
                   <i class="font comment-icon iconfont icon-pinglun" />
                   <span>{{ data.commentCount || '评论' }}</span>
                 </div>
@@ -53,8 +53,8 @@
               </div>
               <slot name="actions">
                 <div v-if="loginStore?.userInfo?.userId === data.authorId" class="action art-action">
-                  <span class="edit" @click.stop="toEdit(data.id)">编辑</span>
-                  <span class="del" @click.stop="onReomve(data.id)">下架</span>
+                  <span class="edit" @click.stop="toEdit(data)">编辑</span>
+                  <span class="del" @click.stop="onReomve(data)">下架</span>
                 </div>
               </slot>
             </div>
@@ -67,7 +67,7 @@
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
-import { formatDate } from '@/utils';
+import { formatDate, chackIsDelete } from '@/utils';
 import { ArticleItem } from '@/typings/common';
 import { IMG1 } from '@/constant';
 import { loginStore } from '@/store';
@@ -87,28 +87,33 @@ const props = withDefaults(defineProps<IProps>(), {
 });
 
 // 点赞
-const onLike = (id: string) => {
-  props.likeListArticle?.(id);
+const onLike = async (data: ArticleItem) => {
+  await chackIsDelete(data);
+  props.likeListArticle?.(data.id);
 };
 
 // 评论
-const onComment = (id: string) => {
-  router.push(`/detail/${id}?scrollTo=1`);
+const onComment = async (data: ArticleItem) => {
+  await chackIsDelete(data);
+  router.push(`/detail/${data.id}?scrollTo=1`);
 };
 
 // 编辑
-const toEdit = (id: string) => {
-  router.push(`/create?id=${id}`);
+const toEdit = async (data: ArticleItem) => {
+  await chackIsDelete(data);
+  router.push(`/create?id=${data.id}`);
 };
 
 // 下架
-const onReomve = async (id: string) => {
-  props.deleteArticle(id);
+const onReomve = async (data: ArticleItem) => {
+  await chackIsDelete(data);
+  props.deleteArticle(data.id);
 };
 
 // 去详情
-const toDetail = (id: string) => {
-  router.push(`/detail/${id}`);
+const toDetail = async (data: ArticleItem) => {
+  await chackIsDelete(data);
+  router.push(`/detail/${data.id}`);
 };
 
 // 去我的主页

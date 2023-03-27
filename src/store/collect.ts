@@ -82,6 +82,12 @@ export const useCollectStore = defineStore('collect', {
           }
           return i;
         }) as unknown as ArticleItem[];
+        // 更新收藏集后静默更新当前收藏集数据
+        this.collectInfo = {
+          ...this.collectInfo,
+          ...params,
+          status: Number(params?.status), // 将状态改为数值类型，用户界面判断是否展示锁的标识
+        } as AddCollectionRes;
         ElMessage({
           message: res.message,
           type: 'success',
@@ -250,6 +256,33 @@ export const useCollectStore = defineStore('collect', {
       Message('移除后，该文章将从当前收藏集中删除', '确定移除该文章吗？').then(async () => {
         // 调用接口，移除收藏集中收藏的文章
         await this.removeCollectArticle(id, collectId);
+      });
+    },
+
+    // 删除收藏集
+    async deleteCollect(toPersonal: Function) {
+      Message('删除收藏集同时会移除收藏集中的文章！', '确定移除该收藏集吗？').then(async () => {
+        const res = normalizeResult<ArticleListResult>(
+          await Service.delCollection({
+            id: this.collectInfo?.id,
+          }),
+        );
+        if (res.success) {
+          console.log(res, 'res');
+          ElMessage({
+            message: res.message,
+            type: 'success',
+            offset: 80,
+          });
+          // 删除成功后，重新回到我的主页
+          toPersonal && toPersonal();
+        } else {
+          ElMessage({
+            message: res.message,
+            type: 'error',
+            offset: 80,
+          });
+        }
       });
     },
 

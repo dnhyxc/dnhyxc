@@ -15,7 +15,16 @@
         </div>
         <div class="right">
           <div class="collect-info">
-            <div class="collect-name">{{ collectStore.collectInfo?.name || '-' }}</div>
+            <div class="collect-title">
+              <span class="collect-name">
+                {{ collectStore.collectInfo?.name || '-' }}
+                <i v-if="collectStore.collectInfo?.status === 2" class="iconfont icon-33" />
+              </span>
+              <span class="modify">
+                <i class="iconfont icon-bianji" @click.stop="onEditCollect">&nbsp;编辑</i>
+                <i class="iconfont icon-shanchu" @click.stop="onDeleteCollect">&nbsp;删除</i>
+              </span>
+            </div>
             <el-tooltip v-if="collectStore.collectInfo?.desc" placement="top" effect="light">
               <template #content>
                 <span class="introduce-tip">{{ collectStore.collectInfo?.desc }}</span>
@@ -25,11 +34,12 @@
             <div v-else class="desc">{{ collectStore.collectInfo?.desc || '-' }}</div>
           </div>
           <div class="user-info">
-            <span class="username">{{ personalStore.userInfo?.username || '-' }}</span>
-            <span class="more-collect" @click.stop="toPersonal">
+            <div class="username">{{ personalStore.userInfo?.username || '-' }}</div>
+            <div class="create-time">{{ formatDate(collectStore.collectInfo?.createTime!) || '-' }}</div>
+            <div class="more-collect" @click.stop="toPersonal">
               更多收藏集
               <i class="iconfont icon-arrow-right-bold" />
-            </span>
+            </div>
           </div>
         </div>
       </div>
@@ -45,9 +55,9 @@
           <div v-for="i of collectStore.articleList" :key="i.id" class="pullup-list-item">
             <Card :data="i" :like-list-article="likeListArticle">
               <template #actions>
-                <div class="action art-action">
-                  <span class="move" @click.stop="onMoveTo(i.id)">转移</span>
-                  <span class="remove" @click.stop="onReomve(i.id)">移除</span>
+                <div v-if="personalStore.userInfo?.userId === loginStore.userInfo?.userId" class="action art-action">
+                  <span class="move" @click.stop="onMoveTo(i)">转移</span>
+                  <span class="remove" @click.stop="onReomve(i)">移除</span>
                 </div>
               </template>
             </Card>
@@ -58,6 +68,7 @@
       </el-scrollbar>
     </template>
   </Loading>
+  <AddCollectModel v-model:build-visible="buildVisible" :default-values="currentCollectValues" :is-edit="isEdit" />
   <CollectModel v-model:collect-visible="collectVisible" :article-id="moveArticleId" />
 </template>
 
@@ -66,11 +77,12 @@ import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useScroller } from '@/hooks';
 import { articleStore, collectStore, loginStore, personalStore } from '@/store';
-// import { formatDate } from '@/utils';
-import { scrollTo } from '@/utils';
+import { ArticleItem, CollectParams } from '@/typings/common';
+import { formatDate, scrollTo, chackIsDelete } from '@/utils';
 import { HEAD_IMG } from '@/constant';
 import Card from '@/components/Card/index.vue';
 import CollectModel from '@/components/CollectModel/index.vue';
+import AddCollectModel from '@/components/AddCollectModel/index.vue';
 
 const route = useRoute();
 const router = useRouter();
@@ -81,7 +93,16 @@ const { id: collectId } = route.params;
 
 const isMounted = ref<boolean>(false);
 const collectVisible = ref<boolean>(false);
+const buildVisible = ref<boolean>(false);
 const moveArticleId = ref<string>('');
+// 传入创建收藏集弹窗，判断是否是编辑
+const isEdit = ref<boolean>(false);
+const currentCollectValues = ref<CollectParams>({
+  name: '',
+  desc: '',
+  status: '1',
+});
+
 const noMore = computed(() => {
   const { articleList, total } = collectStore;
   return articleList.length >= total && articleList.length;
@@ -127,17 +148,38 @@ const toPersonal = () => {
 };
 
 // 移动文章至别的分组
-const onMoveTo = (id: string) => {
+const onMoveTo = async (data: ArticleItem) => {
+  await chackIsDelete(data);
   // 清空收藏集弹窗中的页码及收藏集列表数据
   collectStore.init();
   collectVisible.value = true;
-  moveArticleId.value = id;
+  moveArticleId.value = data.id;
 };
 
 // 移除文章
-const onReomve = (id: string) => {
-  console.log('移除文章', id);
-  collectStore.removeArticle(id, collectId as string);
+const onReomve = async (data: ArticleItem) => {
+  await chackIsDelete(data);
+  collectStore.removeArticle(data.id, collectId as string);
+};
+
+// 编辑收藏夹
+const onEditCollect = () => {
+  const { desc = '', name = '', status = '', id = '' } = collectStore.collectInfo;
+  buildVisible.value = true;
+  isEdit.value = true;
+  // 设置新建弹窗初始化内容
+  currentCollectValues.value = {
+    desc,
+    name,
+    status,
+    id,
+  };
+};
+
+// 删除收藏夹
+const onDeleteCollect = () => {
+  console.log(collectStore.collectInfo?.id, 'id删除收藏夹');
+  collectStore.deleteCollect(toPersonal);
 };
 
 // 置顶
@@ -193,12 +235,36 @@ const onScrollTo = () => {
       .collect-info {
         display: flex;
         flex-direction: column;
-        margin-right: 10px;
 
-        .collect-name {
+        .collect-title {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          width: 100%;
           font-size: 18px;
           font-weight: 700;
-          .ellipsisMore(1);
+
+          .collect-name {
+            flex: 1;
+            margin-right: 20px;
+            .ellipsisMore(1);
+          }
+
+          .modify {
+            font-size: 16px;
+            font-weight: 300;
+            cursor: pointer;
+            .clickNoSelectText();
+
+            .icon-bianji {
+              color: @theme-blue;
+            }
+
+            .icon-shanchu {
+              color: @font-danger;
+              margin-left: 10px;
+            }
+          }
         }
 
         .desc {
@@ -218,9 +284,15 @@ const onScrollTo = () => {
         width: 100%;
 
         .username {
+          flex: 1;
           font-size: 18px;
           margin-right: 20px;
+          text-align: right;
           .ellipsisMore(1);
+        }
+
+        .create-time {
+          margin-right: 20px;
         }
 
         .more-collect {

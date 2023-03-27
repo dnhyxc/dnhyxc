@@ -1,7 +1,8 @@
-import { ElMessageBox } from 'element-plus';
+import { ElMessageBox, ElMessage } from 'element-plus';
 import type { ElMessageBoxOptions } from 'element-plus';
 import moment from 'moment';
 import { MSG_CONFIG, CODE_CONTROL } from '@/constant';
+import { ArticleItem } from '@/typings/common';
 import { usePlugins } from './plugins';
 import { normalizeResult } from './result';
 import { decrypt, encrypt } from './crypto';
@@ -190,6 +191,22 @@ export const image2Base64 = (image: any) => {
   ctx?.drawImage(image, 0, 0, image.width, image.height);
   // 可选其他值 image/jpeg
   return canvas.toDataURL('image/png');
+};
+
+// 校验文章是否下架
+export const chackIsDelete = (data: ArticleItem) => {
+  return new Promise((resolve, reject) => {
+    if (data?.isDelete) {
+      ElMessage({
+        message: '文章已下架，无法操作',
+        type: 'warning',
+        offset: 80,
+      });
+      reject(new Error('文章已下架，无法操作'));
+    } else {
+      resolve(true);
+    }
+  });
 };
 
 export {

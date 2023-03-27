@@ -268,6 +268,7 @@ const onScrollTo = () => {
             .desc-text,
             .link {
               text-indent: 28px;
+              margin-top: 5px;
             }
 
             .desc-text {

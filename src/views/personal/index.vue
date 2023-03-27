@@ -228,8 +228,6 @@ const onAddCollect = () => {
 
 // 编辑收藏集
 const onEditCollect = (data: CollectParams) => {
-  console.log(data, 'data,,,,,,donEditCollect');
-
   currentCollectValues.value = data;
   buildVisible.value = true;
   isEdit.value = true;
