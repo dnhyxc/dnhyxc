@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import { ElMessage } from 'element-plus';
 import { UserInfoParams, ArticleListResult, ArticleItem, TimelineResult, PerGetArticlesParams } from '@/typings/common';
 import * as Service from '@/server';
+import { useCheckUserId } from '@/hooks';
 import { normalizeResult, locSetItem, uniqueFunc, Message } from '@/utils';
 import { loginStore } from '@/store';
 import { AUTHOR_API_PATH, PAGESIZE, ABOUT_ME_API_PATH } from '@/constant';
@@ -154,6 +155,7 @@ export const usePersonalStore = defineStore('personal', {
 
     // 删除收藏集
     async delCollection(id: string) {
+      if (!useCheckUserId(false)) return;
       Message('删除收藏集同时会移除收藏集中的文章！', '确定移除该收藏集吗？').then(async () => {
         const res = normalizeResult<ArticleListResult>(
           await Service.delCollection({

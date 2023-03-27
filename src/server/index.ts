@@ -8,6 +8,7 @@ import {
   DeleteArticleParams,
   SearchArticleParams,
   CollectParams,
+  UserInfoParams,
 } from '@/typings/common';
 import { loginStore } from '@/store';
 import * as API from './api';
@@ -263,5 +264,11 @@ export const removeCollectArticle = async (params: {
   id: string; // 收藏集id
 }) => {
   const res = await post(API.REMOVE_COLLECT_ARTICLE, copeParams(params));
+  return res;
+};
+
+// 更新用户信息
+export const updateUserInfo = async (params: UserInfoParams, path: string) => {
+  const res = await put(path, copeParams(params));
   return res;
 };

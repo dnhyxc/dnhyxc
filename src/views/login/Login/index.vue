@@ -64,7 +64,7 @@ const loginForm = reactive<{
   username: string;
   password: string;
 }>({
-  username: '',
+  username: loginStore.userInfo?.username || '',
   password: '',
 });
 

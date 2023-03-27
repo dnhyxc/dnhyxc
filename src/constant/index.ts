@@ -67,18 +67,18 @@ export const MENULIST = [
     active: 'icon-yonghuziliao',
     show: true,
   },
-  {
-    name: '我的主页',
-    key: 'personal',
-    path: '/personal',
-    show: false,
-  },
-  {
-    name: '文章详情',
-    key: 'detail',
-    path: '/detail',
-    show: true,
-  },
+  // {
+  //   name: '我的主页',
+  //   key: 'personal',
+  //   path: '/personal',
+  //   show: false,
+  // },
+  // {
+  //   name: '文章详情',
+  //   key: 'detail',
+  //   path: '/detail',
+  //   show: false,
+  // },
 ];
 
 export const ACTION_SVGS = [
@@ -438,8 +438,8 @@ export const CODE_CONTROL = [
 
 // 关于博主页面接口path
 export const AUTHOR_API_PATH = {
-  0: '/api/getAuthorArticleList',
-  1: '/api/getAuthorLikeArticles',
+  0: API.GET_AUTHOR_ARTICLE_LIST,
+  1: API.GET_AUTHOR_LIKE_ARTICLES,
 };
 
 // 我的主页页面API
@@ -447,6 +447,12 @@ export const ABOUT_ME_API_PATH = {
   0: API.GET_MY_ARTICLE_LIST,
   1: API.GET_COLLECTION_LIST,
   2: API.GET_LIKE_ARTICLE_LIST,
+};
+
+// 更新用户信息api
+export const UPDATE_INFO_API_PATH = {
+  1: API.UPDATE_INFO,
+  2: API.RESET_PASSWORD,
 };
 
 export const BIRD_BASE64 =

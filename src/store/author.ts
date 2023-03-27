@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import { ElMessage } from 'element-plus';
 import { UserInfoParams, ArticleListResult, ArticleItem, TimelineResult } from '@/typings/common';
 import * as Service from '@/server';
+import { useCheckUserId } from '@/hooks';
 import { normalizeResult, locSetItem, Message } from '@/utils';
 import { loginStore } from '@/store';
 import { AUTHOR_API_PATH, PAGESIZE } from '@/constant';
@@ -124,6 +125,7 @@ export const useAuthorStore = defineStore('author', {
 
     // 删除timeline文章hooks
     async deleteTimelineArticle(articleId: string) {
+      if (!useCheckUserId(false)) return;
       Message('', '确定删除该文章吗？').then(async () => {
         const res = normalizeResult<{ id: string }>(await Service.deleteArticle({ articleId, type: 'timeline' }));
         if (res.success) {

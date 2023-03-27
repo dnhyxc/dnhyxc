@@ -9,7 +9,7 @@
     <div class="user-info">
       <div class="cover">
         <div class="img-wrap">
-          <img :src="mainCover" alt="" class="cover-img" />
+          <Image :url="mainCover || IMG1" :transition-img="IMG1" class="cover-img" />
           <div class="upload-cover-wrap">
             <Upload v-model:file-path="mainCover" :preview="false" :show-img="false" :fixed-number="[800, 200]">
               <el-button type="primary" link class="action">
@@ -23,7 +23,7 @@
           <div class="head-img-wrap">
             <Upload v-model:file-path="headUrl" :fixed-number="[130, 130]">
               <template #preview>
-                <img :src="headUrl" class="cover-img" />
+                <Image :url="headUrl || HEAD_IMG" :transition-img="HEAD_IMG" class="cover-img" />
               </template>
             </Upload>
           </div>
@@ -83,6 +83,8 @@
             v-model.trim="profileForm.introduce"
             type="textarea"
             :autosize="{ minRows: 3, maxRows: 5 }"
+            maxlength="200"
+            show-word-limit
             placeholder="请输入个人介绍"
             @keyup.enter="onEnter"
           />
@@ -97,14 +99,17 @@
 
 <script setup lang="ts">
 import { ref, reactive } from 'vue';
+import { useRouter } from 'vue-router';
 import { FormInstance } from 'element-plus';
-import { HEAD_IMG } from '@/constant';
+import { HEAD_IMG, IMG1 } from '@/constant';
 import { loginStore } from '@/store';
 import Upload from '@/components/Upload/index.vue';
 
+const router = useRouter();
+
 const formRef = ref<FormInstance>();
 
-const mainCover = ref<string>('https://pic2.zhimg.com/80/v2-ff0d35d4dcad8e7e1623ef1c294651c1_1440w.webp');
+const mainCover = ref<string>(loginStore.userInfo?.mainCover || IMG1);
 const headUrl = ref<string>(loginStore.userInfo?.headUrl || HEAD_IMG);
 
 const profileForm = reactive<{
@@ -113,10 +118,10 @@ const profileForm = reactive<{
   motto: string;
   introduce: string;
 }>({
-  username: '',
-  job: '',
-  motto: '',
-  introduce: '',
+  username: loginStore.userInfo?.username || '',
+  job: loginStore.userInfo?.job || '',
+  motto: loginStore.userInfo?.motto || '',
+  introduce: loginStore.userInfo?.introduce || '',
 });
 
 // 确定更新用户信息
@@ -129,8 +134,15 @@ const onUpdateInfo = (formEl: FormInstance | undefined) => {
         headUrl: headUrl.value,
         mainCover: mainCover.value,
       });
+      loginStore.updateUserInfo(
+        {
+          ...profileForm,
+          headUrl: headUrl.value,
+          mainCover: mainCover.value,
+        },
+        router,
+      );
     } else {
-      console.log('error submit!');
       return false;
     }
   });

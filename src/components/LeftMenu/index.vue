@@ -21,7 +21,13 @@
     </el-scrollbar>
     <div class="setting">
       <el-dropdown v-if="loginStore?.userInfo?.userId">
-        <el-avatar shape="square" :size="checkOS() === 'mac' ? 45 : 38" fit="cover" :src="HEAD_IMG" class="avatar" />
+        <el-avatar
+          shape="square"
+          :size="checkOS() === 'mac' ? 45 : 38"
+          fit="cover"
+          :src="loginStore.userInfo?.headUrl || HEAD_IMG"
+          class="avatar"
+        />
         <template #dropdown>
           <el-dropdown-menu>
             <el-dropdown-item @click="toPersonal">

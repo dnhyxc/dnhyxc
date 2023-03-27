@@ -123,6 +123,7 @@
               :autosize="{ minRows: 5, maxRows: 8 }"
               type="textarea"
               maxlength="300"
+              show-word-limit
               placeholder="请输入文章摘要"
             />
           </el-form-item>

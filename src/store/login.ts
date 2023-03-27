@@ -1,10 +1,12 @@
 import { defineStore } from 'pinia';
 import { Router } from 'vue-router';
 import { ElMessage } from 'element-plus';
-import { LoginParams, UserLoginParams, UserInfoParams } from '@/typings/common';
+import { LoginParams, UserLoginParams, UserInfoParams, registerRes } from '@/typings/common';
 import { commonStore } from '@/store';
 import * as Service from '@/server';
+import { useCheckUserId } from '@/hooks';
 import { normalizeResult, encrypt, locSetItem, locGetItem, locRemoveItem } from '@/utils';
+import { UPDATE_INFO_API_PATH } from '@/constant';
 
 interface IProps {
   token: string | undefined | null;
@@ -113,11 +115,70 @@ export const useLoginStore = defineStore('login', {
 
     // 获取用户信息
     async getUserInfo() {
+      if (!useCheckUserId(false)) return;
       try {
         const res = normalizeResult<UserInfoParams>(await Service.getUserInfo());
         return res.data;
       } catch (error) {
         throw error;
+      }
+    },
+
+    // 修改用户信息
+    async updateUserInfo(params: UserInfoParams, router?: Router) {
+      if (!useCheckUserId(false)) return;
+      const { username, motto, job, introduce, headUrl, mainCover } = this.userInfo;
+      if (
+        params.username !== username ||
+        params.job !== job ||
+        params.motto !== motto ||
+        params.introduce !== introduce ||
+        params.headUrl !== headUrl ||
+        params.mainCover !== mainCover
+      ) {
+        const res = normalizeResult<registerRes>(await Service.updateUserInfo(params, UPDATE_INFO_API_PATH[1]));
+        if (res.success) {
+          this.userInfo = {
+            ...this.userInfo,
+            ...params,
+          };
+          locSetItem(
+            'userInfo',
+            JSON.stringify({
+              ...this.userInfo,
+              ...params,
+            }),
+          );
+          if (params.username !== username) {
+            this.token = '';
+            locRemoveItem('token');
+            locRemoveItem('userInfo');
+            ElMessage({
+              message: '用户名称已修改，请重新登录',
+              type: 'success',
+              offset: 80,
+            });
+            router?.replace('/login');
+          } else {
+            ElMessage({
+              message: res.message,
+              type: 'success',
+              offset: 80,
+            });
+          }
+        } else {
+          ElMessage({
+            message: res.message,
+            type: 'warning',
+            offset: 80,
+          });
+        }
+      } else {
+        ElMessage({
+          message: '没修改信息，休想提交',
+          type: 'warning',
+          offset: 80,
+        });
       }
     },
 
