@@ -17,15 +17,18 @@
           <div class="collect-info">
             <div class="collect-title">
               <span class="collect-name">
-                {{ collectStore.collectInfo?.name || '-' }}
                 <i v-if="collectStore.collectInfo?.status === 2" class="iconfont icon-33" />
+                {{ collectStore.collectInfo?.name || '-' }}
               </span>
+              <div class="create-time">
+                {{ formatDate(collectStore.collectInfo?.createTime!, 'YYYY/MM/DD') || '-' }}
+              </div>
               <span class="modify">
                 <i class="iconfont icon-bianji" @click.stop="onEditCollect">&nbsp;编辑</i>
                 <i class="iconfont icon-shanchu" @click.stop="onDeleteCollect">&nbsp;删除</i>
               </span>
             </div>
-            <el-tooltip v-if="collectStore.collectInfo?.desc" placement="top" effect="light">
+            <el-tooltip v-if="collectStore.collectInfo?.desc?.length! > 100" placement="bottom" effect="light">
               <template #content>
                 <span class="introduce-tip">{{ collectStore.collectInfo?.desc }}</span>
               </template>
@@ -35,7 +38,6 @@
           </div>
           <div class="user-info">
             <div class="username">{{ personalStore.userInfo?.username || '-' }}</div>
-            <div class="create-time">{{ formatDate(collectStore.collectInfo?.createTime!) || '-' }}</div>
             <div class="more-collect" @click.stop="toPersonal">
               更多收藏集
               <i class="iconfont icon-arrow-right-bold" />
@@ -53,7 +55,7 @@
           class="pullup-content"
         >
           <div v-for="i of collectStore.articleList" :key="i.id" class="pullup-list-item">
-            <Card :data="i" :like-list-article="likeListArticle">
+            <Card :data="i" :like-list-article="likeListArticle" class="card">
               <template #actions>
                 <div v-if="personalStore.userInfo?.userId === loginStore.userInfo?.userId" class="action art-action">
                   <span class="move" @click.stop="onMoveTo(i)">转移</span>
@@ -202,7 +204,7 @@ const onScrollTo = () => {
     justify-content: flex-start;
     padding: 10px;
     background-image: @bg-lg-2;
-    box-shadow: 0 0 1px @green-sky inset;
+    box-shadow: @shadow-mack;
     border-radius: 5px;
     height: 120px;
     margin-bottom: 10px;
@@ -248,16 +250,27 @@ const onScrollTo = () => {
             flex: 1;
             margin-right: 20px;
             .ellipsisMore(1);
+
+            .icon-33 {
+              font-size: 18px;
+            }
+          }
+
+          .create-time {
+            font-size: 14px;
+            font-weight: 300;
           }
 
           .modify {
             font-size: 16px;
             font-weight: 300;
             cursor: pointer;
+            display: none;
             .clickNoSelectText();
 
             .icon-bianji {
               color: @theme-blue;
+              margin-left: 10px;
             }
 
             .icon-shanchu {
@@ -291,10 +304,6 @@ const onScrollTo = () => {
           .ellipsisMore(1);
         }
 
-        .create-time {
-          margin-right: 20px;
-        }
-
         .more-collect {
           display: flex;
           align-items: center;
@@ -304,11 +313,21 @@ const onScrollTo = () => {
           .clickNoSelectText();
         }
       }
+
+      &:hover {
+        .modify {
+          display: block !important;
+        }
+      }
     }
   }
 
   :deep {
     .scrollbar-wrapper(12px);
+
+    .el-tabs {
+      background-color: transparent;
+    }
   }
 
   .move {

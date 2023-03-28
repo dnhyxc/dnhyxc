@@ -141,6 +141,7 @@ const toTag = (name: string) => {
   align-items: center;
   flex-wrap: wrap;
   border-radius: 5px;
+  box-shadow: @shadow-mack;
 
   .card {
     position: relative;

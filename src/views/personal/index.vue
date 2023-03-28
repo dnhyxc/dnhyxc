@@ -18,7 +18,7 @@
             <div class="username">{{ personalStore.userInfo?.username || '-' }}</div>
             <div class="job">{{ personalStore.userInfo?.job || '-' }}</div>
             <div class="motto">{{ personalStore.userInfo?.motto || '-' }}</div>
-            <el-tooltip v-if="personalStore.userInfo?.introduce" placement="top" effect="light">
+            <el-tooltip v-if="personalStore.userInfo?.introduce?.length! > 100" placement="top" effect="light">
               <template #content>
                 <span class="introduce-tip">{{ personalStore.userInfo?.introduce }}</span>
               </template>
@@ -207,7 +207,7 @@ watchEffect(() => {
   const { userId: loginUserId } = loginStore.userInfo;
   const { currentTabKey } = personalStore;
   // 判断是否是当前用户，并且当前是否选中了我的点赞tab，如果是，需要默认选中他的文章tab
-  if (userId !== loginUserId && currentTabKey === '2') {
+  if (userId && userId !== loginUserId && currentTabKey === '2') {
     personalStore.currentTabKey = '0';
   }
   // currentTabKey为1的时候，说明是收藏tab，需要获取收藏的文章总数和收藏集数量
@@ -304,7 +304,7 @@ const onScrollTo = () => {
     justify-content: flex-start;
     padding: 10px;
     background-image: @bg-lg-2;
-    box-shadow: 0 0 1px @green-sky inset;
+    box-shadow: @shadow-mack;
     border-radius: 5px;
     margin-bottom: 10px;
 
@@ -414,6 +414,7 @@ const onScrollTo = () => {
     .el-tabs {
       border: 1px solid @card-border;
       border-radius: 5px;
+      background-color: transparent;
 
       :deep {
         .el-tabs__content {

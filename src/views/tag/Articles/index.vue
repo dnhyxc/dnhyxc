@@ -165,7 +165,6 @@ const likeListArticle = (id: string) => {
       align-items: center;
       font-size: 18px;
       color: @active;
-      border-bottom: 1px solid @card-border;
       margin-bottom: 6px;
       padding-bottom: 9px;
       border-radius: 5px;
@@ -230,7 +229,7 @@ const likeListArticle = (id: string) => {
       }
 
       .active {
-        color: @active;
+        color: @theme-blue;
         &::before {
           position: absolute;
           top: 50%;
@@ -241,7 +240,7 @@ const likeListArticle = (id: string) => {
           height: 60%;
           border-top-right-radius: 5px;
           border-bottom-right-radius: 5px;
-          background-color: @active;
+          background-color: @theme-blue;
         }
       }
     }
@@ -261,7 +260,6 @@ const likeListArticle = (id: string) => {
       color: @active;
       padding-top: 2px;
       padding-bottom: 8px;
-      border-bottom: 1px solid @card-border;
       border-radius: 5px;
       .textLg();
     }

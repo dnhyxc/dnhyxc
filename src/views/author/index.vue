@@ -183,6 +183,7 @@ const onScrollTo = () => {
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
     padding-bottom: 20px;
+
     .img-wrap {
       width: 100%;
       height: 200px;
@@ -193,6 +194,13 @@ const onScrollTo = () => {
         border-top-left-radius: 5px;
         border-top-right-radius: 5px;
         .imgStyle();
+      }
+
+      :deep {
+        .image-item {
+          border-top-left-radius: 5px;
+          border-top-right-radius: 5px;
+        }
       }
     }
 
