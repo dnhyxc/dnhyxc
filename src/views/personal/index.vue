@@ -28,12 +28,16 @@
           </div>
           <div class="actions">
             <div class="top">
-              <span v-for="icon in ICONLINKS" :key="icon.name" class="icon">
-                <i v-if="icon.label" :class="`${icon.className} font iconfont ${icon.name}`" />
-              </span>
+              <i
+                v-for="icon in iconLinks"
+                v-show="icon.href"
+                :key="icon.name"
+                :class="`${icon.className} icon font iconfont ${icon.name}`"
+                @click.stop="onClickLink(icon.href, icon.label)"
+              />
             </div>
             <div v-if="isShowCollectActions" class="bottom">
-              <el-button type="primary" @click="toSetting">修改个人资料</el-button>
+              <el-button class="edit-btn" type="primary" @click="toSetting">修改个人资料</el-button>
             </div>
           </div>
         </div>
@@ -126,11 +130,13 @@
 </template>
 
 <script setup lang="ts">
+import { shell } from 'electron';
 import { ref, computed, onMounted, onUnmounted, watchEffect } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import { ElMessage } from 'element-plus';
 import { useDeleteArticle, useScroller } from '@/hooks';
 import { articleStore, loginStore, personalStore } from '@/store';
-import { formatDate, scrollTo } from '@/utils';
+import { formatDate, scrollTo, checkUrl } from '@/utils';
 import { CollectParams } from '@/typings/common';
 import { HEAD_IMG, ICONLINKS, ABOUT_ME_TABS, ABOUT_TABS } from '@/constant';
 import AddCollectModel from '@/components/AddCollectModel/index.vue';
@@ -172,6 +178,16 @@ const tabs = computed(() => {
   }
 });
 
+// 动态获取ICONLINKS
+const iconLinks = computed(() => {
+  return ICONLINKS.map((i) => {
+    return {
+      ...i,
+      href: loginStore.userInfo?.[i.label],
+    };
+  });
+});
+
 onMounted(async () => {
   // 防止页面加载报错
   isMounted.value = true;
@@ -188,6 +204,12 @@ onMounted(async () => {
 });
 
 watchEffect(() => {
+  const { userId: loginUserId } = loginStore.userInfo;
+  const { currentTabKey } = personalStore;
+  // 判断是否是当前用户，并且当前是否选中了我的点赞tab，如果是，需要默认选中他的文章tab
+  if (userId !== loginUserId && currentTabKey === '2') {
+    personalStore.currentTabKey = '0';
+  }
   // currentTabKey为1的时候，说明是收藏tab，需要获取收藏的文章总数和收藏集数量
   if (personalStore.currentTabKey === '1') {
     personalStore.getCollectedTotal();
@@ -235,7 +257,6 @@ const onEditCollect = (data: CollectParams) => {
 
 // 删除收藏集
 const deleteCollection = (id: string) => {
-  console.log('删除收藏集', id);
   personalStore.delCollection(id);
 };
 
@@ -247,6 +268,20 @@ const toDetail = (id: string) => {
 // 去修改资料
 const toSetting = () => {
   router.push('/setting');
+};
+
+// 点击juejin、github等链接
+const onClickLink = (href: string, name: string) => {
+  if (checkUrl(href)) {
+    // 使用浏览器打开链接
+    shell.openExternal(href);
+  } else {
+    ElMessage({
+      message: `${name} 链接无法使用`,
+      type: 'warning',
+      offset: 80,
+    });
+  }
 };
 
 // 置顶
@@ -329,8 +364,9 @@ const onScrollTo = () => {
 
         .top {
           display: flex;
-          justify-content: space-between;
+          justify-content: center;
           align-items: center;
+          width: 100%;
           .icon {
             display: block;
             width: auto;
@@ -357,6 +393,14 @@ const onScrollTo = () => {
 
           .blog-icon {
             font-size: 25px;
+          }
+        }
+
+        .bottom {
+          width: 100%;
+
+          .edit-btn {
+            width: 100%;
           }
         }
       }

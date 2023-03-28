@@ -27,7 +27,7 @@
               </template>
             </Upload>
           </div>
-          <div class="username">dnhyxc</div>
+          <div class="username">{{ loginStore.userInfo?.username }}</div>
         </div>
       </div>
     </div>
@@ -129,17 +129,13 @@ const onUpdateInfo = (formEl: FormInstance | undefined) => {
   if (!formEl) return;
   formEl.validate(async (valid) => {
     if (valid) {
-      console.log('重置密码并登录', {
-        ...profileForm,
-        headUrl: headUrl.value,
-        mainCover: mainCover.value,
-      });
       loginStore.updateUserInfo(
         {
           ...profileForm,
           headUrl: headUrl.value,
           mainCover: mainCover.value,
         },
+        1, // 1 标识更改用户信息，2 标识更改用户密码
         router,
       );
     } else {
@@ -153,13 +149,14 @@ const onEnter = () => {
   if (!formRef.value) return;
   formRef.value.validate(async (valid) => {
     if (valid) {
-      console.log(
+      loginStore.updateUserInfo(
         {
           ...profileForm,
           headUrl: headUrl.value,
           mainCover: mainCover.value,
         },
-        'profileForm>>>onEnter',
+        1, // 1 标识更改用户信息，2 标识更改用户密码
+        router,
       );
     } else {
       return false;

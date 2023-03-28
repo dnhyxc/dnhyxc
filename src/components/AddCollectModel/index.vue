@@ -93,7 +93,7 @@ const props = withDefaults(defineProps<IProps>(), {
   defaultValues: () => ({
     desc: '',
     name: '',
-    status: '',
+    status: '1',
     id: '',
   }),
   isEdit: false,

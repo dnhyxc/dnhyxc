@@ -21,7 +21,12 @@
           &nbsp;填写
         </i>
         <div v-show="currentEdit === i.type" class="edit-content">
-          <el-input v-model.trim="accountForm[i.type]" v-focus :placeholder="i.placeholder" @keyup.enter="onEnter(i.type)" />
+          <el-input
+            v-model.trim="accountForm[i.type]"
+            v-focus
+            :placeholder="i.placeholder"
+            @keyup.enter="onEnter(i.type)"
+          />
           <div class="actions">
             <el-button type="primary" class="action" @click="onOk(i.type)">确定</el-button>
             <el-button class="action" @click="onCancel(i.type)">取消</el-button>
@@ -32,7 +37,7 @@
     <div class="pwd-item item">
       <span class="label">修改密码</span>
       <div class="reset-wrap">
-        <i class="edit-font reset-font font iconfont icon-zhongzhi" @click="onReset('pwd')">&nbsp;重置密码</i>
+        <i class="edit-font reset-font font iconfont icon-zhongzhi" @click="onReset('password')">&nbsp;重置密码</i>
       </div>
     </div>
     <div class="logout-item item">
@@ -41,19 +46,24 @@
         <i class="edit-font font iconfont icon-tuichu1" @click="onReset('logout')">&nbsp;注销</i>
       </div>
     </div>
-    <el-dialog v-model="visible" :title="resetType === 'pwd' ? '重置密码' : '账号注销'" width="500">
-      <ResetForm :on-enter="onResetEnter" :need-pwd="resetType === 'pwd'" :data-source="dataSource">
+    <el-dialog v-model="visible" :title="resetType === 'password' ? '重置密码' : '账号注销'" width="500">
+      <ResetForm
+        :key="visible ? 1 : 0"
+        :on-enter="onResetEnter"
+        :need-pwd="resetType === 'password'"
+        :data-source="dataSource"
+      >
         <template #footer="formData">
+          <el-button class="action" size="large" @click="onCancelResetPwd(formData.data as FormData<FormInstance>)">
+            取消
+          </el-button>
           <el-button
             type="primary"
             size="large"
             class="action"
             @click="onResetPwd(formData.data as FormData<FormInstance>)"
           >
-            {{ resetType === 'pwd' ? '重置' : '注销' }}
-          </el-button>
-          <el-button class="action" size="large" @click="onCancelResetPwd(formData.data as FormData<FormInstance>)">
-            取消
+            {{ resetType === 'password' ? '重置' : '注销' }}
           </el-button>
         </template>
       </ResetForm>
@@ -63,11 +73,14 @@
 
 <script setup lang="ts">
 import { reactive, ref, Ref, Directive, nextTick } from 'vue';
-import { FormInstance } from 'element-plus';
+import { useRouter } from 'vue-router';
+import { FormInstance, ElMessage } from 'element-plus';
 import { SETTING_TYPE } from '@/constant';
 import { loginStore } from '@/store';
 import { FormData, ResetFormParams } from '@/typings/common';
 import ResetForm from '@/components/ResetForm/index.vue';
+
+const router = useRouter();
 
 // 局部自动获取焦点指令
 const vFocus: Directive = (el) => {
@@ -96,7 +109,7 @@ const accountForm = reactive<{
 
 // 注销、重置密码表单初始化数据
 const dataSource = reactive<ResetFormParams>({
-  username: 'dnhyxc',
+  username: loginStore.userInfo?.username || '',
   newPwd: '',
   confirmPwd: '',
 });
@@ -116,13 +129,29 @@ const onEdit = (type: string) => {
 };
 
 // 输入框回车事件
-const onEnter = (type: string) => {
+const onEnter = async (type: string) => {
+  console.log(type, 'type>>>onEnter');
   console.log(accountForm, 'accountForm', accountForm[type]);
+  // loginStore.updateUserInfo(
+  //   {
+  //     [type]: accountForm[type],
+  //   },
+  //   1, // 1 标识更改用户信息，2 标识更改用户密码
+  //   router,
+  // );
   currentEdit.value = '';
 };
 
 // 编辑
 const onOk = (type: string) => {
+  loginStore.updateUserInfo(
+    {
+      [type]: accountForm[type],
+    },
+    1, // 1 标识更改用户信息，2 标识更改用户密码
+    router,
+  );
+
   console.log(accountForm, 'accountForm', accountForm[type]);
   currentEdit.value = '';
 };
@@ -145,18 +174,25 @@ const onResetPwd = (Form: FormData<FormInstance>) => {
   if (!Form.formRef) return;
   Form.formRef.validate(async (valid) => {
     if (valid) {
-      if (resetType.value === 'pwd') {
+      const { username, confirmPwd } = Form.resetForm;
+      if (resetType.value === 'password') {
         // 重置密码
-        console.log('重置密码并登录', Form.resetForm);
-        const { username, confirmPwd } = Form.resetForm;
         await loginStore.onResetPwd({ username, password: confirmPwd! });
         Form.formRef.resetFields();
         Form.resetForm = { username: '', confirmPwd: '', newPwd: '' };
         // 成功时关闭弹窗
         visible.value = false;
       } else {
-        // 注销账号
-        console.log('注销》》》》》账号', Form.resetForm);
+        console.log(Form.resetForm, 'username', loginStore.userInfo?.username);
+        if (username !== loginStore.userInfo?.username) {
+          ElMessage({
+            message: '您要注销的用户名不是当前登录人的用户名',
+            type: 'warning',
+            offset: 80,
+          });
+          return;
+        }
+        await loginStore.onLogout(router);
         Form.formRef.resetFields();
         Form.resetForm = { username: '', confirmPwd: '', newPwd: '' };
         // 成功时关闭弹窗
@@ -169,10 +205,29 @@ const onResetPwd = (Form: FormData<FormInstance>) => {
 };
 
 // 重置密码、注销回车事件
-const onResetEnter = (formRef: Ref<FormInstance>, resetForm: ResetFormParams) => {
+const onResetEnter = async (formRef: Ref<FormInstance>, resetForm: ResetFormParams) => {
   console.log(formRef, resetForm, 'onResetEnter>>>values');
+  const { username, confirmPwd } = resetForm;
+  if (resetType.value === 'password') {
+    await loginStore.onResetPwd({ username, password: confirmPwd! });
+  } else {
+    console.log(username, 'username', loginStore.userInfo?.username);
+
+    if (username !== loginStore.userInfo?.username) {
+      ElMessage({
+        message: '您要注销的用户名不是当前登录人的用户名',
+        type: 'warning',
+        offset: 80,
+      });
+      return;
+    }
+    console.log(username, confirmPwd, ' username, 账号注销');
+    await loginStore.onLogout(router);
+  }
+  // 重置密码
   // 成功时关闭弹窗
   formRef.value.resetFields();
+  resetForm = { username: '', confirmPwd: '', newPwd: '' };
   setTimeout(() => {
     visible.value = false;
   }, 50);

@@ -6,6 +6,8 @@ export const UPLOAD = '/api/upload';
 export const LOGIN = '/api/login';
 // 用户注册
 export const REGISTER = '/api/register';
+// 账号注销
+export const LOGOUT = '/api/logout';
 // 获取用户信息
 export const GET_USER_INFO = '/api/getUserInfo';
 // 更新用户信息

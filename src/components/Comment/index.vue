@@ -7,13 +7,7 @@
 <template>
   <div ref="commentsRef" class="Comments">
     <div class="draftInputWrap">
-      <DraftInput
-        :get-comment-list="getCommentList"
-        :on-jump="() => toPersonal('authorId')"
-        :focus="focus"
-        :article-id="id"
-        :on-hide-input="onHideInput"
-      />
+      <DraftInput :get-comment-list="getCommentList" :focus="focus" :article-id="id" :on-hide-input="onHideInput" />
     </div>
     <div v-if="articleStore?.commentList?.length > 0" class="title">
       全部评论
@@ -163,6 +157,7 @@
 
 <script setup lang="ts">
 import { onMounted, ref, computed } from 'vue';
+import { useRouter } from 'vue-router';
 import { CommentParams } from '@/typings/common';
 import { HEAD_IMG } from '@/constant';
 import { loginStore, articleStore } from '@/store';
@@ -170,6 +165,8 @@ import { formatGapTime } from '@/utils';
 import Image from '@/components/Image/index.vue';
 import DraftInput from '@/components/DraftInput/index.vue';
 import { ElMessage } from 'element-plus';
+
+const router = useRouter();
 
 interface IProps {
   id: string;
@@ -216,7 +213,7 @@ const getCommentCount = computed(() => {
 
 // 去个人主页
 const toPersonal = (authorId: string) => {
-  console.log(authorId, 'toPersonal');
+  router.push(`/personal?authorId=${authorId}`);
 };
 
 // 点击回复按钮事件

@@ -209,6 +209,13 @@ export const chackIsDelete = (data: ArticleItem) => {
   });
 };
 
+// 校验是否是正常的url
+export const checkUrl = (url: string) => {
+  const Expression = /http(s)?:\/\/([\w-]+\.)+[\w-]+(\/[\w- ./?%&=]*)?/;
+  const objExp = new RegExp(Expression);
+  return objExp.test(url);
+};
+
 export {
   request,
   normalizeResult,

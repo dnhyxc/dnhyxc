@@ -7,7 +7,13 @@
 <template>
   <div :class="`${checkOS() === 'mac' && 'mac-left-menu-wrap'} left-menu-wrap`">
     <el-scrollbar ref="scrollRef">
-      <div v-for="menu in menuList" :key="menu.key" class="menu-list" @click="(e) => onSelectMenu(e, menu)">
+      <div
+        v-for="menu in menuList"
+        v-show="!menu.hide"
+        :key="menu.key"
+        class="menu-list"
+        @click="(e) => onSelectMenu(e, menu)"
+      >
         <el-tooltip class="box-item" effect="light" :content="menu.name" placement="right">
           <i
             :class="`${
@@ -27,6 +33,7 @@
           fit="cover"
           :src="loginStore.userInfo?.headUrl || HEAD_IMG"
           class="avatar"
+          @click.stop="toPersonal"
         />
         <template #dropdown>
           <el-dropdown-menu>
@@ -36,7 +43,7 @@
                 <span class="dropdown-text">我的主页</span>
               </div>
             </el-dropdown-item>
-            <el-dropdown-item @click="onLogout">
+            <el-dropdown-item @click="onQuit">
               <div class="dropdown">
                 <i class="iconfont icon-tuichu1" />
                 <span class="dropdown-text">退出登录</span>
@@ -46,14 +53,14 @@
         </template>
       </el-dropdown>
       <div v-else class="login-btn">
-        <div class="login" @click="onLogin">登录</div>
+        <div class="login" @click.stop="onLogin">登录</div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watchEffect } from 'vue';
+import { ref, computed, watchEffect, inject } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { MENULIST, HEAD_IMG } from '@/constant';
 import { MenuListParams } from '@/typings/common';
@@ -62,6 +69,8 @@ import { checkOS } from '@/utils';
 
 const router = useRouter();
 const route = useRoute();
+
+const reload = inject<Function>('reload');
 
 const activeMenu = ref<MenuListParams>(MENULIST[0]);
 
@@ -101,6 +110,10 @@ const toPersonal = () => {
     crumbsPath: '/personal',
   });
   router.push('/personal');
+  // 路由跳转之后，重新刷新我的主页，防止当前就在别人的主页的时，出现页面不刷新的情况
+  setTimeout(() => {
+    reload && reload();
+  }, 100);
 };
 
 // 登录
@@ -109,12 +122,12 @@ const onLogin = () => {
 };
 
 // 退出登录
-const onLogout = () => {
+const onQuit = () => {
   commonStore.setCrumbsInfo({
     crumbsName: MENULIST[0].name,
     crumbsPath: MENULIST[0].path,
   });
-  loginStore.onLogout();
+  loginStore.onQuit();
   router.push('/login');
 };
 </script>

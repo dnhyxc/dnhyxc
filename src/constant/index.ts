@@ -67,18 +67,20 @@ export const MENULIST = [
     active: 'icon-yonghuziliao',
     show: true,
   },
-  // {
-  //   name: '我的主页',
-  //   key: 'personal',
-  //   path: '/personal',
-  //   show: false,
-  // },
-  // {
-  //   name: '文章详情',
-  //   key: 'detail',
-  //   path: '/detail',
-  //   show: false,
-  // },
+  {
+    name: '我的主页',
+    key: 'personal',
+    path: '/personal',
+    show: false,
+    hide: true,
+  },
+  {
+    name: '文章详情',
+    key: 'detail',
+    path: '/detail',
+    show: false,
+    hide: true,
+  },
 ];
 
 export const ACTION_SVGS = [

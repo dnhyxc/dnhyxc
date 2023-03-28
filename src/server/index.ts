@@ -46,6 +46,12 @@ export const register = async (params: LoginParams) => {
   }
 };
 
+// 账号注销
+export const logout = async () => {
+  const res = await post(API.LOGOUT, copeParams({}));
+  return res;
+};
+
 // 重置密码
 export const resetPassword = async (params: { username: string; password: string }) => {
   const res = await put(API.RESET_PASSWORD, params);

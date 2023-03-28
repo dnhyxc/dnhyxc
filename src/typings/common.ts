@@ -66,6 +66,7 @@ export interface UserInfoParams {
   bindUserIds?: string[];
   isDelete?: boolean;
   auth?: number;
+  password?: string;
 }
 
 // 用户列表相应参数

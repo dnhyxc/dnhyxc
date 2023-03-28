@@ -5,7 +5,7 @@ import { LoginParams, UserLoginParams, UserInfoParams, registerRes } from '@/typ
 import { commonStore } from '@/store';
 import * as Service from '@/server';
 import { useCheckUserId } from '@/hooks';
-import { normalizeResult, encrypt, locSetItem, locGetItem, locRemoveItem } from '@/utils';
+import { normalizeResult, Message, encrypt, locSetItem, locGetItem, locRemoveItem } from '@/utils';
 import { UPDATE_INFO_API_PATH } from '@/constant';
 
 interface IProps {
@@ -24,7 +24,7 @@ export const useLoginStore = defineStore('login', {
       introduce: '',
       headUrl: '',
       mainCover: '',
-      juejin: 'https://juejin.cn/user/4265760848885368',
+      juejin: '',
       zhihu: '',
       github: '',
       blog: '',
@@ -104,6 +104,11 @@ export const useLoginStore = defineStore('login', {
       // 重置成功后直接登录
       if (res.success) {
         await this.onLogin(params, router);
+        ElMessage({
+          message: res.message,
+          type: 'success',
+          offset: 80,
+        });
       } else {
         ElMessage({
           message: res.message,
@@ -111,6 +116,28 @@ export const useLoginStore = defineStore('login', {
           offset: 80,
         });
       }
+    },
+
+    // 账号注销
+    async onLogout(router: Router) {
+      Message('', '确定要注销该账号吗？').then(async () => {
+        const res = normalizeResult<string>(await Service.logout());
+        if (res.success) {
+          this.onQuit();
+          ElMessage({
+            message: res.message,
+            type: 'success',
+            offset: 80,
+          });
+          router.push('/home');
+        } else {
+          ElMessage({
+            message: res.message,
+            type: 'error',
+            offset: 80,
+          });
+        }
+      });
     },
 
     // 获取用户信息
@@ -125,57 +152,43 @@ export const useLoginStore = defineStore('login', {
     },
 
     // 修改用户信息
-    async updateUserInfo(params: UserInfoParams, router?: Router) {
+    async updateUserInfo(params: UserInfoParams, pageType: number, router?: Router) {
       if (!useCheckUserId(false)) return;
-      const { username, motto, job, introduce, headUrl, mainCover } = this.userInfo;
-      if (
-        params.username !== username ||
-        params.job !== job ||
-        params.motto !== motto ||
-        params.introduce !== introduce ||
-        params.headUrl !== headUrl ||
-        params.mainCover !== mainCover
-      ) {
-        const res = normalizeResult<registerRes>(await Service.updateUserInfo(params, UPDATE_INFO_API_PATH[1]));
-        if (res.success) {
-          this.userInfo = {
+      const { username } = this.userInfo;
+      const res = normalizeResult<registerRes>(await Service.updateUserInfo(params, UPDATE_INFO_API_PATH[pageType]));
+      if (res.success) {
+        this.userInfo = {
+          ...this.userInfo,
+          ...params,
+        };
+        locSetItem(
+          'userInfo',
+          JSON.stringify({
             ...this.userInfo,
             ...params,
-          };
-          locSetItem(
-            'userInfo',
-            JSON.stringify({
-              ...this.userInfo,
-              ...params,
-            }),
-          );
-          if (params.username !== username) {
-            this.token = '';
-            locRemoveItem('token');
-            locRemoveItem('userInfo');
-            ElMessage({
-              message: '用户名称已修改，请重新登录',
-              type: 'success',
-              offset: 80,
-            });
-            router?.replace('/login');
-          } else {
-            ElMessage({
-              message: res.message,
-              type: 'success',
-              offset: 80,
-            });
-          }
+          }),
+        );
+        // 判断是否是个人资料页面修改了用户名或者在账号设置页面中修改了密码
+        if ((params.username && params.username !== username) || params.password) {
+          this.token = '';
+          locRemoveItem('token');
+          locRemoveItem('userInfo');
+          ElMessage({
+            message: `${params.password ? '密码已重置' : '用户名称已修改'}，请重新登录`,
+            type: 'success',
+            offset: 80,
+          });
+          router?.replace('/login');
         } else {
           ElMessage({
             message: res.message,
-            type: 'warning',
+            type: 'success',
             offset: 80,
           });
         }
       } else {
         ElMessage({
-          message: '没修改信息，休想提交',
+          message: res.message,
           type: 'warning',
           offset: 80,
         });
@@ -183,7 +196,7 @@ export const useLoginStore = defineStore('login', {
     },
 
     // 退出登录
-    onLogout() {
+    onQuit() {
       this.token = '';
       this.userInfo = {};
       locRemoveItem('token');
