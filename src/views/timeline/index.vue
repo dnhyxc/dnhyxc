@@ -12,6 +12,7 @@
         :delete-article="deleteArticle"
         :like-list-article="likeListArticle"
       />
+      <div v-if="timelineStore.timelineList?.length > 0" class="no-more">没有更多了～～～</div>
     </el-scrollbar>
     <ToTopIcon v-if="scrollTop >= 500" class="to-top" :on-scroll-to="onScrollTo" />
   </Loading>
@@ -65,6 +66,12 @@ const onScrollTo = () => {
   .to-top {
     right: 40px;
     bottom: 40px;
+  }
+
+  .no-more {
+    text-align: center;
+    color: @font-4;
+    margin: 15px 0 0;
   }
 }
 </style>

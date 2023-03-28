@@ -100,6 +100,16 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import('@/views/collect/index.vue'),
       },
       {
+        path: '/search',
+        name: 'search',
+        meta: {
+          title: '高级搜索',
+          keepAlive: false,
+          auth: true,
+        },
+        component: () => import('@/views/search'),
+      },
+      {
         path: '/setting',
         name: 'setting',
         meta: {

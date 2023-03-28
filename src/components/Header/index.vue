@@ -19,9 +19,31 @@
       <div class="title">{{ commonStore.crumbsInfo.crumbsName }}</div>
     </div>
     <div class="right">
-      <div v-if="NEED_HEAD_SEARCH.includes(route.path)" class="search-wrap">
-        <el-tooltip v-if="!commonStore.showSearch" effect="light" content="搜索" placement="bottom">
+      <div class="search-wrap">
+        <el-dropdown
+          v-if="!commonStore.showSearch && NEED_HEAD_SEARCH.includes(route.path)"
+          effect="light"
+          content="搜索"
+          placement="bottom"
+        >
           <i class="font iconfont icon-sousuo2" @click="onClickSearch" />
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item @click="onCheckSearchType(1)">普通搜索</el-dropdown-item>
+              <el-dropdown-item @click="onCheckSearchType(2)">高级搜索</el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
+        <el-tooltip
+          v-if="!commonStore.showSearch && !NEED_HEAD_SEARCH.includes(route.path) && route.path !== '/search'"
+          effect="light"
+          content="高级搜索"
+          placement="bottom"
+        >
+          <i class="font iconfont icon-sousuo2" @click="onClickSearch" />
+        </el-tooltip>
+        <el-tooltip v-if="commonStore.showSearch" effect="light" content="高级搜索" placement="bottom">
+          <i class="iconfont icon-qiehuan" @click="onCheckSearchType(2)" />
         </el-tooltip>
         <el-input
           v-if="commonStore.showSearch"
@@ -227,11 +249,36 @@ const toSetting = () => {
 
 // 点击搜索
 const onClickSearch = () => {
-  showSearch.value = true;
-  commonStore.showSearch = true;
-  nextTick(() => {
-    searchRef.value?.focus();
-  });
+  if (NEED_HEAD_SEARCH.includes(route.path)) {
+    showSearch.value = true;
+    commonStore.showSearch = true;
+    nextTick(() => {
+      searchRef.value?.focus();
+    });
+  } else {
+    commonStore.setCrumbsInfo({
+      crumbsName: '高级搜索',
+      crumbsPath: '/search',
+    });
+    router.push('/search');
+  }
+};
+
+// 选择搜索类型
+const onCheckSearchType = (value: number) => {
+  if (value === 1 && NEED_HEAD_SEARCH.includes(route.path)) {
+    showSearch.value = true;
+    commonStore.showSearch = true;
+    nextTick(() => {
+      searchRef.value?.focus();
+    });
+  } else {
+    commonStore.setCrumbsInfo({
+      crumbsName: '高级搜索',
+      crumbsPath: '/search',
+    });
+    router.push('/search');
+  }
 };
 
 // 搜索框失去焦点
@@ -310,6 +357,13 @@ const onEnter = async (e: Event) => {
         -webkit-app-region: no-drag;
         color: @font-3;
       }
+
+      .icon-qiehuan {
+        color: @font-4;
+        font-size: 20px;
+        cursor: pointer;
+      }
+
       .search-inp {
         width: 180px;
         margin-left: 15px;

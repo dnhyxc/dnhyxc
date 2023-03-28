@@ -60,7 +60,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watchEffect, inject } from 'vue';
+import { ref, computed, watchEffect } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { MENULIST, HEAD_IMG } from '@/constant';
 import { MenuListParams } from '@/typings/common';
@@ -69,8 +69,6 @@ import { checkOS } from '@/utils';
 
 const router = useRouter();
 const route = useRoute();
-
-const reload = inject<Function>('reload');
 
 const activeMenu = ref<MenuListParams>(MENULIST[0]);
 
@@ -110,10 +108,6 @@ const toPersonal = () => {
     crumbsPath: '/personal',
   });
   router.push('/personal');
-  // 路由跳转之后，重新刷新我的主页，防止当前就在别人的主页的时，出现页面不刷新的情况
-  setTimeout(() => {
-    reload && reload();
-  }, 100);
 };
 
 // 登录
