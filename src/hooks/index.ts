@@ -1,7 +1,7 @@
 import { useRouter } from 'vue-router';
 import { toRaw, onMounted, onUnmounted, ref, computed } from 'vue';
 import { ElMessage } from 'element-plus';
-import { loginStore, articleStore, commonStore, classifyStore, tagStore } from '@/store';
+import { loginStore, articleStore, commonStore, classifyStore, tagStore, personalStore, authorStore } from '@/store';
 import { CommentParams, useDeleteArticleParams, DeleteArticleParams } from '@/typings/common';
 import { Message } from '@/utils';
 
@@ -79,15 +79,18 @@ export const useDeleteArticle = ({
     Message('', '确定下架该文章吗？').then(async () => {
       const params: DeleteArticleParams = {
         articleId,
-        keyword: commonStore.keyword, // 头部搜索关键词
         classify: classifyStore.currentClassify || classify || classifyStore.classifys[0]?.name!, // 文章分类页面搜索条件
         tagName: tagStore.currentTag || tagName || tagStore.tags[0]?.name,
         userId: authorId,
         accessUserId,
         filterList,
         pageType,
-        router,
       };
+
+      // 头部搜索关键词
+      if (commonStore.keyword) {
+        params.keyword = commonStore.keyword;
+      }
 
       // 如果没有分类，则删除参数中的classify属性
       if (!classifyStore.currentClassify && !classify && !classifyStore.classifys[0]?.name!) {
@@ -99,7 +102,22 @@ export const useDeleteArticle = ({
         delete params.tagName;
       }
 
-      await articleStore.deleteArticle(params);
+      // 判断是否是我的主页点赞文章
+      if (pageType === 'personal' && personalStore.currentTabKey === '2') {
+        params.delType = true;
+      }
+
+      // 判断是否是博主主页的博主文章tab
+      if (pageType === 'author' && authorStore.currentTabKey === '0') {
+        params.authorPage = true;
+      }
+
+      // 判断是否是博主主页的博主点赞文章tab
+      if (pageType === 'author' && authorStore.currentTabKey === '1') {
+        params.authorLike = true;
+      }
+
+      await articleStore.deleteArticle(params, router);
     });
   };
 

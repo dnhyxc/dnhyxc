@@ -281,7 +281,7 @@ export interface DeleteArticleParams {
   userId?: string;
   tagName?: string;
   accessUserId?: string;
-  delType?: string;
+  delType?: boolean;
   authorPage?: boolean;
   authorLike?: boolean;
   filterList?: string[];

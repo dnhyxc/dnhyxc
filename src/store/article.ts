@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia';
+import { Router } from 'vue-router';
 import { ElMessage } from 'element-plus';
 import * as Service from '@/server';
 import { normalizeResult, Message } from '@/utils';
@@ -169,7 +170,7 @@ export const useArticleStore = defineStore('article', {
     },
 
     // 删除文章
-    async deleteArticle(params: DeleteArticleParams) {
+    async deleteArticle(params: DeleteArticleParams, router: Router) {
       // 设置个页面列表数据
       const articleList = {
         home: this.articleList,
@@ -196,8 +197,6 @@ export const useArticleStore = defineStore('article', {
           pageNo: pageNo[params.pageType!],
           pageSize: PAGESIZE,
           userId: params.authorId || loginStore.userInfo?.userId,
-          authorPage: authorStore.currentTabKey === '0', // 判断是否是博主主页的博主文章tab
-          authorLike: authorStore.currentTabKey === '1', // 判断是否是博主主页的博主点赞文章tab
         }),
       );
 

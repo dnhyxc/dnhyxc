@@ -118,6 +118,7 @@
           <ToTopIcon v-if="scrollTop >= 500" :on-scroll-to="onScrollTo" class="to-top" />
         </div>
         <div v-if="noMore" class="no-more">没有更多了～～～</div>
+        <Empty v-if="!personalStore.loading && !personalStore.articleList?.length" />
       </el-scrollbar>
     </template>
   </Loading>
@@ -144,7 +145,7 @@ import AddCollectModel from '@/components/AddCollectModel/index.vue';
 const route = useRoute();
 const router = useRouter();
 const { scrollRef, scrollTop } = useScroller();
-const { deleteArticle } = useDeleteArticle({ pageType: 'personal' });
+const { deleteArticle } = useDeleteArticle({ pageType: 'personal', accessUserId: loginStore.userInfo?.userId });
 
 const { authorId: userId } = route.query;
 
