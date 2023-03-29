@@ -17,7 +17,7 @@
         @keyup.enter="onEnter"
       >
         <template #append>
-          <el-button type="primary">
+          <el-button type="primary" class="el-inp-btn" @click="onSearch">
             <i class="iconfont icon-sousuo2" />
             <span class="text">搜索</span>
           </el-button>
@@ -55,6 +55,7 @@
         <ToTopIcon v-if="scrollTop >= 500" :on-scroll-to="onScrollTo" class="to-top" />
       </div>
       <div v-if="noMore" class="no-more">没有更多了～～～</div>
+      <Empty v-if="!searchStore.loading && !searchStore.articleList?.length" />
     </el-scrollbar>
   </Loading>
 </template>
@@ -66,7 +67,7 @@ import { searchStore, articleStore } from '@/store';
 import { SEARCH_TYPE } from '@/constant';
 import { useScroller, useDeleteArticle } from '@/hooks';
 import { scrollTo } from '@/utils';
-// import { ArticleItem, CollectParams } from '@/typings/common';
+import Empty from '@/components/Empty/index.vue';
 
 const { scrollRef, scrollTop } = useScroller();
 const { deleteArticle } = useDeleteArticle({ pageType: 'search' });
@@ -114,6 +115,21 @@ const onEnter = (e: Event) => {
   const keyword = (e.target as HTMLInputElement).value;
   searchStore.keyword = keyword;
   if (keyword) {
+    getSearchArticleList();
+  } else {
+    ElMessage({
+      message: '请先输入搜索关键字',
+      type: 'warning',
+      offset: 80,
+    });
+  }
+};
+
+// 点击搜索
+const onSearch = () => {
+  console.log(searchStore.keyword, 'searchStore.keyword');
+  searchStore.clearArticleList();
+  if (searchStore.keyword) {
     getSearchArticleList();
   } else {
     ElMessage({
@@ -173,6 +189,7 @@ const onScrollTo = () => {
 @import '@/styles/index.less';
 
 .search-wrap {
+  position: relative;
   display: flex;
   flex-direction: column;
   .search-inp-wrap {
@@ -185,6 +202,11 @@ const onScrollTo = () => {
 
     .el-inp {
       width: 45vw;
+      -webkit-app-region: no-drag;
+    }
+
+    .el-inp-btn {
+      -webkit-app-region: no-drag;
     }
 
     .icon-sousuo2,

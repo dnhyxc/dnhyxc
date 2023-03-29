@@ -42,6 +42,7 @@ declare module '@vue/runtime-core' {
     ElTabs: typeof import('element-plus/es')['ElTabs']
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
     ElUpload: typeof import('element-plus/es')['ElUpload']
+    Empty: typeof import('./src/components/Empty/index.vue')['default']
     Header: typeof import('./src/components/Header/index.vue')['default']
     Image: typeof import('./src/components/Image/index.vue')['default']
     LeftMenu: typeof import('./src/components/LeftMenu/index.vue')['default']

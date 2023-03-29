@@ -67,6 +67,7 @@
           <ToTopIcon v-if="scrollTop >= 500" :on-scroll-to="onScrollTo" class="to-top" />
         </div>
         <div v-if="noMore" class="no-more">没有更多了～～～</div>
+        <Empty v-if="!collectStore.loading && !collectStore.articleList?.length" />
       </el-scrollbar>
     </template>
   </Loading>
@@ -85,6 +86,7 @@ import { HEAD_IMG } from '@/constant';
 import Card from '@/components/Card/index.vue';
 import CollectModel from '@/components/CollectModel/index.vue';
 import AddCollectModel from '@/components/AddCollectModel/index.vue';
+import Empty from '@/components/Empty/index.vue';
 
 const route = useRoute();
 const router = useRouter();
