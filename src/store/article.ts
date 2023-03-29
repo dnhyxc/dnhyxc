@@ -20,6 +20,7 @@ import {
   createStore,
   loginStore,
   personalStore,
+  searchStore,
   tagStore,
   timelineStore,
 } from '@/store';
@@ -176,6 +177,7 @@ export const useArticleStore = defineStore('article', {
         tag: tagStore.articleList,
         author: authorStore.articleList,
         personal: personalStore.articleList,
+        search: searchStore.articleList,
       };
 
       // 个页面pageNo
@@ -185,6 +187,7 @@ export const useArticleStore = defineStore('article', {
         tag: tagStore.pageNo,
         author: authorStore.pageNo,
         personal: personalStore.pageNo,
+        search: searchStore.pageNo,
       };
 
       const res = normalizeResult<ArticleListResult>(
@@ -193,7 +196,6 @@ export const useArticleStore = defineStore('article', {
           pageNo: pageNo[params.pageType!],
           pageSize: PAGESIZE,
           userId: params.authorId || loginStore.userInfo?.userId,
-          delType: params.delType === '2' ? params.delType : '',
           authorPage: authorStore.currentTabKey === '0', // 判断是否是博主主页的博主文章tab
           authorLike: authorStore.currentTabKey === '1', // 判断是否是博主主页的博主点赞文章tab
         }),
@@ -252,6 +254,11 @@ export const useArticleStore = defineStore('article', {
           case 'personal':
             personalStore.articleList = nextPageOne ? [...list, nextPageOne] : list;
             personalStore.total = personalStore.total - 1;
+
+            break;
+          case 'search':
+            searchStore.articleList = nextPageOne ? [...list, nextPageOne] : list;
+            searchStore.total = searchStore.total - 1;
 
             break;
 
@@ -315,6 +322,7 @@ export const useArticleStore = defineStore('article', {
             author: authorStore.articleList,
             personal: personalStore.articleList,
             collect: collectStore.articleList,
+            search: searchStore.articleList,
           };
 
           const cloneList: ArticleItem[] = JSON.parse(JSON.stringify(dataList[pageType!]));
@@ -365,6 +373,9 @@ export const useArticleStore = defineStore('article', {
                 break;
               case 'collect':
                 collectStore.articleList = list;
+                break;
+              case 'search':
+                searchStore.articleList = list;
                 break;
 
               default:

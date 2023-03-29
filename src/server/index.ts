@@ -9,6 +9,7 @@ import {
   SearchArticleParams,
   CollectParams,
   UserInfoParams,
+  AdvancedSearchParams,
 } from '@/typings/common';
 import { loginStore } from '@/store';
 import * as API from './api';
@@ -276,5 +277,11 @@ export const removeCollectArticle = async (params: {
 // 更新用户信息
 export const updateUserInfo = async (params: UserInfoParams, path: string) => {
   const res = await put(path, copeParams(params));
+  return res;
+};
+
+// 高级搜索
+export const advancedSearch = async (params: AdvancedSearchParams) => {
+  const res = await post(API.ADVANCED_SEARCH, copeParams(params));
   return res;
 };

@@ -67,6 +67,7 @@ export const MENULIST = [
     active: 'icon-yonghuziliao',
     show: true,
   },
+  // 以下加上是为了控制头部面包屑能展示对应的文案
   {
     name: '我的主页',
     key: 'personal',
@@ -78,6 +79,13 @@ export const MENULIST = [
     name: '文章详情',
     key: 'detail',
     path: '/detail',
+    show: false,
+    hide: true,
+  },
+  {
+    name: '高级搜索',
+    key: 'search',
+    path: '/search',
     show: false,
     hide: true,
   },
@@ -126,6 +134,60 @@ export const SETTING_MENU = [
     key: 'theme',
     path: '/theme',
     show: false,
+  },
+];
+
+// 高级搜索过滤项
+export const SEARCH_TYPE = [
+  {
+    label: '全部',
+    type: 'all',
+    key: '1',
+  },
+  {
+    label: '文章标题',
+    type: 'title',
+    key: '2',
+  },
+  {
+    label: '文章标签',
+    type: 'tag',
+    key: '3',
+  },
+  {
+    label: '文章分类',
+    type: 'classify',
+    key: '4',
+  },
+  {
+    label: '文章摘要',
+    type: 'abstract',
+    key: '5',
+  },
+  {
+    label: '文章内容',
+    type: 'content',
+    key: '6',
+  },
+  {
+    label: '我点赞的',
+    type: 'isLike',
+    key: '7',
+  },
+  {
+    label: '作者名称',
+    type: 'authorName',
+    key: '8',
+  },
+  {
+    label: '最多评论',
+    type: 'replyCount',
+    key: '9',
+  },
+  {
+    label: '最多点赞',
+    type: 'likeCount',
+    key: '10',
   },
 ];
 

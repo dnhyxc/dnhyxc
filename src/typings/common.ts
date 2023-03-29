@@ -258,11 +258,6 @@ export interface CollectListRes {
 export interface useDeleteArticleParams {
   pageType: string;
   articleList?: ArticleListResult;
-  setArticleList?: Function;
-  getArticleList?: Function;
-  setAlertStatus?: Function;
-  listRef?: any;
-  delType?: string;
   pageNo?: number;
   classify?: string;
   tagName?: string;
@@ -271,8 +266,6 @@ export interface useDeleteArticleParams {
   authorPage?: boolean;
   authorLike?: boolean;
   filterList?: string[];
-  getCollectionTotal?: Function;
-  getCollectedTotal?: Function;
   router?: any;
 }
 
@@ -326,4 +319,13 @@ export interface CollectParams {
   desc: string;
   status: string | number;
   id?: string;
+}
+
+// 高级搜索参数
+export interface AdvancedSearchParams {
+  keyword: string;
+  pageNo: number;
+  pageSize: number;
+  userId?: string;
+  filterList?: string[];
 }

@@ -67,7 +67,6 @@ export const useCommentCount = computed(() => {
 
 // 删除文章hooks
 export const useDeleteArticle = ({
-  delType,
   pageType, // 用于区分个分页列表数据
   filterList, // 高级搜索列表
   classify, // 文章分类
@@ -75,42 +74,32 @@ export const useDeleteArticle = ({
   authorId, // 我的主页作者id
   accessUserId, // 我的主页登录人id
   router, // 路由
-  getCollectionTotal, // 获取收藏集总数的方法
-  getCollectedTotal, // 获取收藏集中收藏的文章总数的方法
 }: useDeleteArticleParams) => {
   const deleteArticle = (articleId: string) => {
-    Message(
-      delType === '3' ? '删除收藏集同时会移除收藏集中的文章' : '',
-      delType !== '3' ? '确定删除该文章吗？' : '确定删除该收藏集吗？',
-    ).then(async () => {
-      if (delType !== '3') {
-        const params: DeleteArticleParams = {
-          articleId,
-          keyword: commonStore.keyword, // 头部搜索关键词
-          classify: classifyStore.currentClassify || classify || classifyStore.classifys[0]?.name!, // 文章分类页面搜索条件
-          tagName: tagStore.currentTag || tagName || tagStore.tags[0]?.name,
-          userId: authorId,
-          accessUserId,
-          delType,
-          filterList,
-          pageType,
-          router,
-        };
+    Message('', '确定下架该文章吗？').then(async () => {
+      const params: DeleteArticleParams = {
+        articleId,
+        keyword: commonStore.keyword, // 头部搜索关键词
+        classify: classifyStore.currentClassify || classify || classifyStore.classifys[0]?.name!, // 文章分类页面搜索条件
+        tagName: tagStore.currentTag || tagName || tagStore.tags[0]?.name,
+        userId: authorId,
+        accessUserId,
+        filterList,
+        pageType,
+        router,
+      };
 
-        // 如果没有分类，则删除参数中的classify属性
-        if (!classifyStore.currentClassify && !classify && !classifyStore.classifys[0]?.name!) {
-          delete params.classify;
-        }
-
-        // 如果没有选中tag，则删除tagName属性
-        if (!tagStore.currentTag && !tagName && !tagStore.tags[0]?.name) {
-          delete params.tagName;
-        }
-
-        await articleStore.deleteArticle(params);
-      } else {
-        // res = await delCollection(articleId);
+      // 如果没有分类，则删除参数中的classify属性
+      if (!classifyStore.currentClassify && !classify && !classifyStore.classifys[0]?.name!) {
+        delete params.classify;
       }
+
+      // 如果没有选中tag，则删除tagName属性
+      if (!tagStore.currentTag && !tagName && !tagStore.tags[0]?.name) {
+        delete params.tagName;
+      }
+
+      await articleStore.deleteArticle(params);
     });
   };
 

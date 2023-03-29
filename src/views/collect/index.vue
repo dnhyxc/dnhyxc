@@ -160,7 +160,6 @@ const onMoveTo = async (data: ArticleItem) => {
 
 // 移除文章
 const onReomve = async (data: ArticleItem) => {
-  await chackIsDelete(data);
   collectStore.removeArticle(data.id, collectId as string);
 };
 
@@ -180,7 +179,6 @@ const onEditCollect = () => {
 
 // 删除收藏夹
 const onDeleteCollect = () => {
-  console.log(collectStore.collectInfo?.id, 'id删除收藏夹');
   collectStore.deleteCollect(toPersonal);
 };
 

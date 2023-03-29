@@ -9,6 +9,7 @@ import { useTagStore } from './tag';
 import { useTimelineStore } from './timeline';
 import { useAuthorStore } from './author';
 import { usePersonalStore } from './personal';
+import { useSearchStore } from './search';
 
 // 公共store
 export const commonStore = useCommonStore();
@@ -42,3 +43,6 @@ export const authorStore = useAuthorStore();
 
 // 个人主页
 export const personalStore = usePersonalStore();
+
+// 高级搜索
+export const searchStore = useSearchStore();
