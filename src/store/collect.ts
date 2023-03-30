@@ -8,7 +8,7 @@ import { useCheckUserId } from '@/hooks';
 import { PAGESIZE } from '@/constant';
 
 interface IProps {
-  loading: boolean;
+  loading: boolean | null;
   pageNo: number;
   pageSize: number;
   collectList: AddCollectionRes[]; // 收藏集列表数据
@@ -25,7 +25,7 @@ export const useCollectStore = defineStore('collect', {
     pageSize: PAGESIZE,
     total: 0,
     collectList: [],
-    loading: false,
+    loading: null,
     checkedCollectIds: [],
     collectStatus: false,
     collectInfo: { id: '' },

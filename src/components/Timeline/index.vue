@@ -6,7 +6,7 @@
 -->
 <template>
   <div class="timeline">
-    <div v-for="item in dataSource" :key="item.date" class="timeline-item">
+    <div v-for="item in dataSource" v-show="item.articles?.length" :key="item.date" class="timeline-item">
       <div class="year">{{ item.date }}</div>
       <div class="card">
         <div v-for="card in item.articles" :key="card.id" class="card-item" @click="(e) => onClickCard(e, card.id!)">

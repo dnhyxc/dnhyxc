@@ -64,7 +64,12 @@
           </div>
           <div class="content">
             <el-tabs type="border-card" class="el-tabs" @tab-change="onTabChange">
-              <el-tab-pane v-for="tab in AUTHOR_TABS" :key="tab.value" :label="tab.name" class="tab-pane">
+              <el-tab-pane
+                v-for="tab in AUTHOR_TABS"
+                :key="tab.value"
+                :label="tab.name"
+                :class="`${showEmpty && 'tab-pane'}`"
+              >
                 <div v-if="tab.value !== '3'" class="list-wrap">
                   <LineCard
                     v-for="data in authorStore.articleList"
@@ -82,9 +87,7 @@
                   :like-list-article="likeListArticle"
                 />
                 <div v-if="noMore" class="no-more">没有更多了～～～</div>
-                <Empty
-                  v-if="!authorStore.loading && !authorStore.articleList?.length && !authorStore.timelineList[0]?.count"
-                />
+                <Empty v-if="showEmpty" />
               </el-tab-pane>
             </el-tabs>
           </div>
@@ -102,6 +105,7 @@ import { authorStore, articleStore } from '@/store';
 import { useDeleteArticle, useScroller } from '@/hooks';
 import { scrollTo } from '@/utils';
 import LineCard from '@/components/LineCard/index.vue';
+import Timeline from '@/components/Timeline/index.vue';
 import Image from '@/components/Image/index.vue';
 import Loading from '@/components/Loading/index.vue';
 import Empty from '@/components/Empty/index.vue';
@@ -115,6 +119,7 @@ const noMore = computed(() => {
   return currentTabKey === '2' ? timelineList[0]?.articles?.length : articleList.length && articleList.length >= total;
 });
 const disabled = computed(() => authorStore.loading || noMore.value);
+const showEmpty = computed(() => authorStore.loading !== null && !authorStore.loading && !noMore.value);
 
 const { deleteArticle } = useDeleteArticle({ pageType: 'author' });
 
@@ -144,8 +149,8 @@ const onTabChange = (name: string) => {
     authorStore.clearArticleList();
     getAuthorArticles();
   } else {
-    authorStore.currentTabKey = '2';
     authorStore.clearArticleList();
+    authorStore.currentTabKey = '2';
     authorStore.getAuthorTimeline();
   }
 };

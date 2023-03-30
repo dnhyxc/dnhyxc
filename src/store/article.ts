@@ -28,7 +28,7 @@ import {
 import { PAGESIZE } from '@/constant';
 
 interface IProps {
-  loading: boolean;
+  loading: boolean | null;
   likeLoading: boolean;
   pageNo: number;
   pageSize: number;
@@ -45,7 +45,7 @@ interface IProps {
 export const useArticleStore = defineStore('article', {
   state: (): IProps => ({
     // 首页、标签列表、分类列表文章列表数据
-    loading: false,
+    loading: null,
     likeLoading: false,
     pageNo: 0,
     pageSize: PAGESIZE,

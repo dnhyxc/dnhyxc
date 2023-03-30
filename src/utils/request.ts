@@ -81,7 +81,7 @@ export type FetchResult = Promise<{ err: Error | null; data: any }>;
  * @return {Promise<{ data: any, err: Error }>} An object containing either "data" or "err"
  */
 export default function request(_url: string, options?: any): FetchResult {
-  const url = addTimestamp(_url.startsWith('http') ? _url : addGatewayPattern(_url));
+  const url = addTimestamp(_url?.startsWith('http') ? _url : addGatewayPattern(_url));
   const defaultOptions = {
     credentials: 'include',
   };

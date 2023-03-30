@@ -51,6 +51,7 @@
             <ToTopIcon v-if="scrollTop >= 500" :on-scroll-to="onScrollTo" class="to-top" />
           </div>
           <div v-if="noMore" class="no-more">没有更多了～～～</div>
+          <Empty v-if="!noMore" />
         </el-scrollbar>
       </div>
     </div>
@@ -69,7 +70,10 @@ const route = useRoute();
 const router = useRouter();
 
 const isMounted = ref<boolean>(false);
-const noMore = computed(() => tagStore.articleList.length >= tagStore.total);
+const noMore = computed(() => {
+  const { articleList, total } = tagStore;
+  return articleList.length >= total && articleList.length;
+});
 const disabled = computed(() => tagStore.loading || noMore.value);
 
 const { scrollRef, scrollTop } = useScroller();
@@ -269,6 +273,7 @@ const likeListArticle = (id: string) => {
       margin-top: 6px;
 
       .article-list {
+        position: relative;
         display: flex;
         justify-content: space-between;
         flex-wrap: wrap;

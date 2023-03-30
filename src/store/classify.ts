@@ -8,7 +8,7 @@ import { PAGESIZE } from '@/constant';
 
 interface IProps {
   classifys: Classifys[]; // 文章分类数
-  loading: boolean;
+  loading: boolean | null;
   pageNo: number;
   pageSize: number;
   articleList: ArticleItem[]; // 文章列表数据
@@ -19,7 +19,7 @@ interface IProps {
 export const useClassifyStore = defineStore('classify', {
   state: (): IProps => ({
     classifys: [],
-    loading: false,
+    loading: null,
     pageNo: 0,
     pageSize: PAGESIZE,
     articleList: [],

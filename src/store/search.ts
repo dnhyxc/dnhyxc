@@ -6,7 +6,7 @@ import { normalizeResult } from '@/utils';
 import { PAGESIZE } from '@/constant';
 
 interface IProps {
-  loading: boolean;
+  loading: boolean | null;
   pageNo: number;
   pageSize: number;
   articleList: ArticleItem[]; // 文章列表数据
@@ -17,7 +17,7 @@ interface IProps {
 
 export const useSearchStore = defineStore('search', {
   state: (): IProps => ({
-    loading: false,
+    loading: null,
     pageNo: 0,
     pageSize: PAGESIZE,
     articleList: [],

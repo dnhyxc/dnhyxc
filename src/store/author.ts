@@ -8,7 +8,7 @@ import { loginStore } from '@/store';
 import { AUTHOR_API_PATH, PAGESIZE } from '@/constant';
 
 interface IProps {
-  loading: boolean;
+  loading: boolean | null;
   userInfo: UserInfoParams;
   pageNo: number;
   pageSize: number;
@@ -20,7 +20,7 @@ interface IProps {
 
 export const useAuthorStore = defineStore('author', {
   state: (): IProps => ({
-    loading: false,
+    loading: null,
     userInfo: {
       userId: '',
       username: '',

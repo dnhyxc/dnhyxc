@@ -21,7 +21,7 @@
 import { LOADING_SVG } from '@/constant';
 
 interface IProps {
-  loading: boolean;
+  loading: boolean | null;
   loadIcon?: string;
 }
 

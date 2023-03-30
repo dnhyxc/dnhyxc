@@ -8,13 +8,13 @@ import { loginStore } from '@/store';
 
 interface IProps {
   timelineList: TimelineResult[];
-  loading: boolean;
+  loading: boolean | null;
 }
 
 export const useTimelineStore = defineStore('timeline', {
   state: (): IProps => ({
     timelineList: [],
-    loading: false,
+    loading: null,
   }),
 
   actions: {

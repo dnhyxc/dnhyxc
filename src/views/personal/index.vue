@@ -67,7 +67,12 @@
               </span>
             </div>
             <el-tabs v-model="personalStore.currentTabKey" type="border-card" class="el-tabs" @tab-change="onTabChange">
-              <el-tab-pane v-for="tab in tabs" :key="tab.value" :label="tab.name" class="tab-pane">
+              <el-tab-pane
+                v-for="tab in tabs"
+                :key="tab.value"
+                :label="tab.name"
+                :class="`${!personalStore.articleList?.length && 'tab-pane'}`"
+              >
                 <div v-if="tab.value !== '2'" class="list-wrap">
                   <LineCard
                     v-for="data in personalStore.articleList"
@@ -112,13 +117,13 @@
                     </template>
                   </LineCard>
                 </div>
+                <Empty v-if="showEmpty" />
               </el-tab-pane>
             </el-tabs>
           </div>
           <ToTopIcon v-if="scrollTop >= 500" :on-scroll-to="onScrollTo" class="to-top" />
         </div>
         <div v-if="noMore" class="no-more">没有更多了～～～</div>
-        <Empty v-if="!personalStore.loading && !personalStore.articleList?.length" />
       </el-scrollbar>
     </template>
   </Loading>
@@ -167,6 +172,9 @@ const noMore = computed(() => {
   return articleList.length >= total && articleList.length;
 });
 const disabled = computed(() => personalStore.loading || noMore.value);
+const showEmpty = computed(
+  () => personalStore.loading !== null && !personalStore.loading && !personalStore.articleList?.length,
+);
 // 判断是否展示删除、编辑收藏集的按钮
 const isShowCollectActions = computed(() => !userId || userId === loginStore.userInfo?.userId);
 
@@ -434,6 +442,10 @@ const onScrollTo = (to?: number) => {
             border-right-color: @card-border;
           }
         }
+      }
+
+      .tab-pane {
+        min-height: 200px;
       }
 
       .list-wrap {

@@ -8,7 +8,7 @@ import { loginStore } from '@/store';
 import { PAGESIZE, ABOUT_ME_API_PATH } from '@/constant';
 
 interface IProps {
-  loading: boolean;
+  loading: boolean | null;
   userInfo: UserInfoParams;
   pageNo: number;
   pageSize: number;
@@ -22,7 +22,7 @@ interface IProps {
 
 export const usePersonalStore = defineStore('personal', {
   state: (): IProps => ({
-    loading: false,
+    loading: null,
     userInfo: {
       userId: '',
       username: '',

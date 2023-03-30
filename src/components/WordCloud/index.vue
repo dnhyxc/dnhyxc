@@ -8,6 +8,10 @@
   <div class="word-cloud">
     <div class="title">{{ title }}</div>
     <div ref="charts" :style="{ ...styles }" />
+    <div v-if="!data?.length" class="empty-wrap">
+      <img :src="EMPTY" />
+      <span class="empty-text">空空如也</span>
+    </div>
   </div>
 </template>
 
@@ -15,7 +19,7 @@
 import { ref, onMounted, nextTick, onUnmounted, watch, computed } from 'vue';
 import * as echarts from 'echarts';
 import 'echarts-wordcloud';
-import { SEA_BASE64 } from '@/constant';
+import { SEA_BASE64, EMPTY } from '@/constant';
 
 interface IProps {
   data: { name: string; value: number }[];
@@ -170,7 +174,22 @@ const resize = () => {
     color: @active;
     .textLg();
   }
+
+  .empty-wrap {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    transform: translate(-50%, -50%);
+    display: flex;
+    .clickNoSelectText();
+
+    .empty-text {
+      color: @font-3;
+    }
+  }
 }
 </style>
-
-<!-- https://blog.csdn.net/sinat_35082096/article/details/125971175 -->
