@@ -64,7 +64,7 @@
           </div>
           <div class="content">
             <el-tabs type="border-card" class="el-tabs" @tab-change="onTabChange">
-              <el-tab-pane v-for="tab in AUTHOR_TABS" :key="tab.value" :label="tab.name">
+              <el-tab-pane v-for="tab in AUTHOR_TABS" :key="tab.value" :label="tab.name" class="tab-pane">
                 <div v-if="tab.value !== '3'" class="list-wrap">
                   <LineCard
                     v-for="data in authorStore.articleList"
@@ -82,6 +82,9 @@
                   :like-list-article="likeListArticle"
                 />
                 <div v-if="noMore" class="no-more">没有更多了～～～</div>
+                <Empty
+                  v-if="!authorStore.loading && !authorStore.articleList?.length && !authorStore.timelineList[0]?.count"
+                />
               </el-tab-pane>
             </el-tabs>
           </div>
@@ -101,6 +104,7 @@ import { scrollTo } from '@/utils';
 import LineCard from '@/components/LineCard/index.vue';
 import Image from '@/components/Image/index.vue';
 import Loading from '@/components/Loading/index.vue';
+import Empty from '@/components/Empty/index.vue';
 
 const { scrollRef, scrollTop } = useScroller();
 
@@ -108,9 +112,7 @@ const viewMore = ref<boolean>(false);
 const isMounted = ref<boolean>(false);
 const noMore = computed(() => {
   const { articleList, total, timelineList, currentTabKey } = authorStore;
-  return (
-    articleList.length >= total && (currentTabKey === '2' ? timelineList[0]?.articles?.length : articleList.length)
-  );
+  return currentTabKey === '2' ? timelineList[0]?.articles?.length : articleList.length && articleList.length >= total;
 });
 const disabled = computed(() => authorStore.loading || noMore.value);
 
@@ -169,8 +171,6 @@ const onShowMore = () => {
 
 // 置顶
 const onScrollTo = (to?: number) => {
-  console.log(to, 'toooooooooooooooooo');
-
   scrollTo(scrollRef, to || 0);
 };
 </script>
@@ -325,6 +325,11 @@ const onScrollTo = (to?: number) => {
             border-right-color: @card-border;
           }
         }
+      }
+
+      .tab-pane {
+        position: relative;
+        min-height: 200px;
       }
 
       .list-wrap {

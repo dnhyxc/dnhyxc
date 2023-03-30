@@ -41,6 +41,7 @@
             <ToTopIcon v-if="scrollTop >= 500" :on-scroll-to="onScrollTo" class="to-top" />
           </div>
           <div v-if="noMore" class="no-more">没有更多了～～～</div>
+          <Empty v-if="!classifyStore.loading && !classifyStore.articleList?.length" />
         </el-scrollbar>
       </div>
     </template>
@@ -56,6 +57,7 @@ import { classifyStore, commonStore, articleStore } from '@/store';
 import Reel from '@/components/Reel/index.vue';
 import Card from '@/components/Card/index.vue';
 import ToTopIcon from '@/components/ToTopIcon/index.vue';
+import Empty from '@/components/Empty/index.vue';
 
 const route = useRoute();
 const router = useRouter();
@@ -64,7 +66,10 @@ const { scrollRef, scrollTop } = useScroller();
 const { deleteArticle } = useDeleteArticle({ pageType: 'classify', classify: route.query?.classify as string, router });
 
 const isMounted = ref<boolean>(false);
-const noMore = computed(() => classifyStore.articleList.length >= classifyStore.total);
+const noMore = computed(() => {
+  const { articleList, total } = classifyStore;
+  return articleList.length >= total && articleList.length;
+});
 const disabled = computed(() => classifyStore.loading || noMore.value);
 const lineRef = ref<any>(null);
 const dotRef = ref<any>(null);

@@ -34,6 +34,7 @@
           <ToTopIcon v-if="scrollTop >= 500" :on-scroll-to="onScrollTo" />
         </div>
         <div v-if="noMore" class="no-more">没有更多了～～～</div>
+        <Empty v-if="!articleStore.loading && !articleStore.articleList?.length" />
       </el-scrollbar>
     </template>
   </Loading>
@@ -48,10 +49,15 @@ import { articleStore, commonStore } from '@/store';
 import Carousel from '@/components/Carousel/index.vue';
 import Card from '@/components/Card/index.vue';
 import ToTopIcon from '@/components/ToTopIcon/index.vue';
+import Empty from '@/components/Empty/index.vue';
 
 const searchType = ref<number>(1); // 1：推荐，2：最新，3：最热
 const isMounted = ref<boolean>(false);
-const noMore = computed(() => articleStore.articleList.length >= articleStore.total);
+
+const noMore = computed(() => {
+  const { articleList, total } = articleStore;
+  return articleList.length >= total && articleList.length;
+});
 const disabled = computed(() => articleStore.loading || noMore.value);
 
 const { scrollRef, scrollTop } = useScroller();
