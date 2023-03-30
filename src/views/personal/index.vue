@@ -224,7 +224,7 @@ const getMyArticleList = async () => {
 
 // tab 切换
 const onTabChange = (value: string) => {
-  // 设置选中tab
+  // 设置选中tab，value：0：我/他的文章，1：我的收藏，2：点赞文章
   personalStore.currentTabKey = value;
   // 切换时清空原有数据
   personalStore.clearArticleList();
@@ -233,8 +233,12 @@ const onTabChange = (value: string) => {
 };
 
 // 文章点赞
-const likeListArticle = (id: string) => {
-  articleStore.likeListArticle({ id, pageType: 'personal' });
+const likeListArticle = async (id: string) => {
+  await articleStore.likeListArticle({ id, pageType: 'personal' });
+  // 取消点赞文章重新刷新列表之后，自动滚动到之前查看页面的位置
+  if (personalStore.currentTabKey === '2') {
+    onScrollTo(scrollTop.value);
+  }
 };
 
 // 新增收藏集
@@ -280,8 +284,8 @@ const onClickLink = (href: string, name: string) => {
 };
 
 // 置顶
-const onScrollTo = () => {
-  scrollTo(scrollRef, 0);
+const onScrollTo = (to?: number) => {
+  scrollTo(scrollRef, to || 0);
 };
 </script>
 

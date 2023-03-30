@@ -5,7 +5,7 @@ import * as Service from '@/server';
 import { useCheckUserId } from '@/hooks';
 import { normalizeResult, locSetItem, uniqueFunc, Message } from '@/utils';
 import { loginStore } from '@/store';
-import { AUTHOR_API_PATH, PAGESIZE, ABOUT_ME_API_PATH } from '@/constant';
+import { PAGESIZE, ABOUT_ME_API_PATH } from '@/constant';
 
 interface IProps {
   loading: boolean;
@@ -15,7 +15,7 @@ interface IProps {
   articleList: ArticleItem[];
   timelineList: TimelineResult[];
   total: number;
-  currentTabKey: string;
+  currentTabKey: string; // 0：我/他的文章，1：我的收藏，2：点赞文章
   collectTotal: number;
   collectedCount: number;
 }
@@ -61,43 +61,6 @@ export const usePersonalStore = defineStore('personal', {
       const res = normalizeResult<UserInfoParams>(await Service.getUserInfo({ userId }));
       if (res.success) {
         this.userInfo = res.data;
-      } else {
-        ElMessage({
-          message: res.message,
-          type: 'error',
-          offset: 80,
-        });
-      }
-    },
-
-    // 获取博主的文章及点赞文章列表
-    async getAuthorArticles() {
-      if (this.articleList.length !== 0 && this.articleList.length >= this.total) return;
-      this.pageNo = this.pageNo + 1;
-      this.loading = true;
-      const params = {
-        pageNo: this.pageNo,
-        pageSize: this.pageSize,
-        accessUserId: loginStore.userInfo?.userId,
-      };
-      // 保存至storage用于根据不同页面进入详情时，针对性的进行上下篇文章的获取（如：分类页面上下篇、标签页面上下篇）
-      locSetItem(
-        'params',
-        JSON.stringify({
-          accessUserId: loginStore.userInfo?.userId,
-          selectKey: this.currentTabKey,
-          from: 'author',
-        }),
-      );
-      const res = normalizeResult<ArticleListResult>(
-        await Service.getAuthorArticleList(params, AUTHOR_API_PATH[this.currentTabKey]),
-      );
-      this.loading = false;
-      if (res.success) {
-        const { total, list } = res.data;
-        // 使用ref暂存list，防止滚动加载时，list添加错乱问题
-        this.articleList = [...this.articleList, ...list];
-        this.total = total;
       } else {
         ElMessage({
           message: res.message,

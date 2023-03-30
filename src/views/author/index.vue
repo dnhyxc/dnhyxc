@@ -149,8 +149,12 @@ const onTabChange = (name: string) => {
 };
 
 // 文章点赞
-const likeListArticle = (id: string) => {
-  articleStore.likeListArticle({ id, pageType: 'author' });
+const likeListArticle = async (id: string) => {
+  await articleStore.likeListArticle({ id, pageType: 'author' });
+  // 取消点赞文章重新刷新列表之后，自动滚动到之前查看页面的位置
+  if (authorStore.currentTabKey === '1') {
+    onScrollTo(scrollTop.value);
+  }
 };
 
 // 删除博主页面时间轴
@@ -164,8 +168,10 @@ const onShowMore = () => {
 };
 
 // 置顶
-const onScrollTo = () => {
-  scrollTo(scrollRef, 0);
+const onScrollTo = (to?: number) => {
+  console.log(to, 'toooooooooooooooooo');
+
+  scrollTo(scrollRef, to || 0);
 };
 </script>
 

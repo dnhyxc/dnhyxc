@@ -339,47 +339,43 @@ export const useArticleStore = defineStore('article', {
             return i;
           });
 
-          // 博主点赞页面
-          if (loginStore.userInfo.auth === 1 && authorStore.currentTabKey === '1') {
-            switch (pageType) {
-              case 'author':
+          switch (pageType) {
+            case 'home':
+              this.articleList = list;
+              break;
+            case 'classify':
+              classifyStore.articleList = list;
+              break;
+            case 'tag':
+              tagStore.articleList = list;
+              break;
+            case 'author':
+              // 取消点赞之后，重新获取点赞文章列表
+              if (loginStore.userInfo?.auth === 1 && authorStore.currentTabKey === '1') {
                 authorStore.clearArticleList();
                 authorStore.getAuthorArticles();
-                break;
+                return;
+              }
+              authorStore.articleList = list;
+              break;
+            case 'personal':
+              // 取消点赞之后，重新获取点赞文章列表
+              if (personalStore.currentTabKey === '2') {
+                personalStore.clearArticleList();
+                personalStore.getMyArticleList();
+                return;
+              }
+              personalStore.articleList = list;
+              break;
+            case 'collect':
+              collectStore.articleList = list;
+              break;
+            case 'search':
+              searchStore.articleList = list;
+              break;
 
-              default:
-                break;
-            }
-          } else {
-            switch (pageType) {
-              case 'home':
-                this.articleList = list;
-                break;
-              case 'classify':
-                classifyStore.articleList = list;
-                break;
-              case 'tag':
-                tagStore.articleList = list;
-                break;
-              case 'author':
-                // 博主文章列表
-                if (authorStore.currentTabKey === '0') {
-                  authorStore.articleList = list;
-                }
-                break;
-              case 'personal':
-                personalStore.articleList = list;
-                break;
-              case 'collect':
-                collectStore.articleList = list;
-                break;
-              case 'search':
-                searchStore.articleList = list;
-                break;
-
-              default:
-                break;
-            }
+            default:
+              break;
           }
         }
       } else {

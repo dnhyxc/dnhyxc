@@ -94,13 +94,13 @@ export const scrollToTop = (ref: any, time: number = 500, position: number = 0) 
 };
 
 // 滚动到某位置
-export const scrollTo = (ref: any, position: number) => {
+export const scrollTo = (ref: any, position: number, time = 20) => {
   // el-scrollbar 容器
   const el = ref.value?.wrapRef as HTMLDivElement;
   // 使用requestAnimationFrame，如果没有则使用setTimeOut
   if (!window.requestAnimationFrame) {
     window.requestAnimationFrame = (callback) => {
-      return setTimeout(callback, 20);
+      return setTimeout(callback, time);
     };
   }
   // 获取当前元素滚动的距离
