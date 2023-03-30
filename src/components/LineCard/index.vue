@@ -43,7 +43,7 @@
             </div>
             <div class="action read-count">
               <i class="font read-icon iconfont icon-yanjing" />
-              <span class="text">{{ data.readCount || '阅读' }}</span>
+              <span class="text read">{{ data.readCount || '阅读' }}</span>
             </div>
           </div>
         </div>
@@ -173,7 +173,7 @@ const onComment = (id: string) => {
       margin-right: 10px;
       .desc {
         .ellipsisMore(1);
-        margin-bottom: 5px;
+        margin-bottom: 10px;
         font-size: 14px;
       }
 
@@ -181,7 +181,7 @@ const onComment = (id: string) => {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 5px;
+        margin-bottom: 10px;
         font-size: 14px;
 
         .author {
@@ -249,16 +249,21 @@ const onComment = (id: string) => {
           }
 
           .read-icon {
-            font-size: 18px;
+            font-size: 17px;
           }
 
           .text {
             margin-top: 2px;
           }
+
+          .read {
+            margin-top: 0;
+          }
         }
 
         .like,
-        .comment {
+        .comment,
+        .read-count {
           cursor: pointer;
           &:hover {
             color: @sub-2-blue;

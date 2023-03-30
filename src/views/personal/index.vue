@@ -303,7 +303,6 @@ const onScrollTo = (to?: number) => {
     justify-content: flex-start;
     padding: 10px;
     background-image: @bg-lg-2;
-    box-shadow: @shadow-mack;
     border-radius: 5px;
     margin-bottom: 10px;
 

@@ -344,7 +344,8 @@ const toTag = (name: string) => {
           }
 
           .like,
-          .comment {
+          .comment,
+          .read-count {
             cursor: pointer;
             &:hover {
               color: @sub-2-blue;
