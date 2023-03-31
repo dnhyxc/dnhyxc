@@ -146,6 +146,7 @@ import { formatDate, scrollTo, checkUrl } from '@/utils';
 import { CollectParams } from '@/typings/common';
 import { HEAD_IMG, ICONLINKS, ABOUT_ME_TABS, ABOUT_TABS } from '@/constant';
 import AddCollectModel from '@/components/AddCollectModel/index.vue';
+import Empty from '@/components/Empty/index.vue';
 
 const route = useRoute();
 const router = useRouter();

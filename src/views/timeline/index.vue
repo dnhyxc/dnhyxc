@@ -13,14 +13,14 @@
         :like-list-article="likeListArticle"
       />
       <div v-if="timelineStore.timelineList?.length > 0" class="no-more">没有更多了～～～</div>
-      <Empty v-else />
+      <Empty v-if="showEmpty" />
     </el-scrollbar>
     <ToTopIcon v-if="scrollTop >= 500" class="to-top" :on-scroll-to="onScrollTo" />
   </Loading>
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue';
+import { onMounted, computed } from 'vue';
 import { useScroller } from '@/hooks';
 import { scrollTo } from '@/utils';
 import { timelineStore, articleStore } from '@/store';
@@ -31,6 +31,10 @@ import Empty from '@/components/Empty/index.vue';
 
 // scrollRef：el-scrollbar ref，scrollTop：滚动距离
 const { scrollRef, scrollTop } = useScroller();
+
+const showEmpty = computed(
+  () => timelineStore.loading !== null && !timelineStore.loading && !timelineStore.timelineList?.length,
+);
 
 onMounted(async () => {
   await timelineStore.getTimelineList();

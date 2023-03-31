@@ -55,7 +55,7 @@
         <ToTopIcon v-if="scrollTop >= 500" :on-scroll-to="onScrollTo" class="to-top" />
       </div>
       <div v-if="noMore" class="no-more">没有更多了～～～</div>
-      <Empty v-if="!searchStore.loading && !searchStore.articleList?.length" />
+      <Empty v-if="showEmpty" />
     </el-scrollbar>
   </Loading>
 </template>
@@ -80,6 +80,7 @@ const noMore = computed(() => {
   return articleList.length >= total && articleList.length;
 });
 const disabled = computed(() => searchStore.loading || noMore.value);
+const showEmpty = computed(() => !searchStore.loading && !searchStore.articleList?.length);
 // 动态计算展示的筛选项
 const conditions = computed(() => {
   if (showMore.value) {
@@ -192,6 +193,7 @@ const onScrollTo = () => {
   position: relative;
   display: flex;
   flex-direction: column;
+
   .search-inp-wrap {
     position: fixed;
     top: 8px;

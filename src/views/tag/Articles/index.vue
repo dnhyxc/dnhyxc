@@ -51,7 +51,7 @@
             <ToTopIcon v-if="scrollTop >= 500" :on-scroll-to="onScrollTo" class="to-top" />
           </div>
           <div v-if="noMore" class="no-more">没有更多了～～～</div>
-          <Empty v-if="!noMore" />
+          <Empty v-if="showEmpty" />
         </el-scrollbar>
       </div>
     </div>
@@ -75,7 +75,7 @@ const noMore = computed(() => {
   return articleList.length >= total && articleList.length;
 });
 const disabled = computed(() => tagStore.loading || noMore.value);
-
+const showEmpty = computed(() => tagStore.loading !== null && !tagStore.loading && !tagStore.articleList?.length);
 const { scrollRef, scrollTop } = useScroller();
 const { deleteArticle } = useDeleteArticle({ pageType: 'tag', tagName: route.query?.tag as string, router });
 

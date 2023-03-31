@@ -352,7 +352,10 @@ export const useArticleStore = defineStore('article', {
             case 'author':
               // 取消点赞之后，重新获取点赞文章列表
               if (loginStore.userInfo?.auth === 1 && authorStore.currentTabKey === '1') {
+                // 获取删除时拉取的文章总数，用于取消点赞时，拉取对应的数量
+                const total = authorStore.total;
                 authorStore.clearArticleList();
+                authorStore.pageSize = total;
                 authorStore.getAuthorArticles();
                 return;
               }
@@ -361,7 +364,10 @@ export const useArticleStore = defineStore('article', {
             case 'personal':
               // 取消点赞之后，重新获取点赞文章列表
               if (personalStore.currentTabKey === '2') {
+                // 获取删除时拉取的文章总数，用于取消点赞时，拉取对应的数量
+                const total = personalStore.total;
                 personalStore.clearArticleList();
+                personalStore.pageSize = total;
                 personalStore.getMyArticleList();
                 return;
               }

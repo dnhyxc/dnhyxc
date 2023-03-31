@@ -27,7 +27,7 @@
               <div class="infos">
                 <div class="username">{{ authorStore.userInfo?.username }}</div>
                 <div class="job">{{ authorStore.userInfo?.job }}</div>
-                <div v-if="viewMore" class="user-detail">
+                <div :class="`${viewMore ? 'all-user-detail' : 'user-detail'}`">
                   <div class="motto">
                     座右铭：
                     <span class="desc-text">{{ authorStore.userInfo?.motto }}</span>
@@ -116,10 +116,17 @@ const viewMore = ref<boolean>(false);
 const isMounted = ref<boolean>(false);
 const noMore = computed(() => {
   const { articleList, total, timelineList, currentTabKey } = authorStore;
-  return currentTabKey === '2' ? timelineList[0]?.articles?.length : articleList.length && articleList.length >= total;
+  return currentTabKey === '2' ? timelineList?.length : articleList.length && articleList.length >= total;
 });
 const disabled = computed(() => authorStore.loading || noMore.value);
-const showEmpty = computed(() => authorStore.loading !== null && !authorStore.loading && !noMore.value);
+const showEmpty = computed(() => {
+  const { timelineList, articleList, currentTabKey, loading } = authorStore;
+  if (loading !== null && !loading && ((currentTabKey === '2' && !timelineList.length) || !articleList.length)) {
+    return true;
+  } else {
+    return false;
+  }
+});
 
 const { deleteArticle } = useDeleteArticle({ pageType: 'author' });
 
@@ -150,7 +157,7 @@ const onTabChange = (name: string) => {
     getAuthorArticles();
   } else {
     authorStore.clearArticleList();
-    authorStore.currentTabKey = '2';
+    authorStore.currentTabKey = name;
     authorStore.getAuthorTimeline();
   }
 };
@@ -220,6 +227,7 @@ const onScrollTo = (to?: number) => {
       display: flex;
       justify-content: flex-start;
       width: 100%;
+
       .head-img-wrap {
         position: absolute;
         top: -70px;
@@ -260,6 +268,16 @@ const onScrollTo = (to?: number) => {
         .user-detail {
           font-size: 14px;
           color: @font-4;
+          transition: all 0.35s ease-in-out;
+          max-height: 0;
+          overflow: hidden;
+        }
+
+        .all-user-detail {
+          font-size: 14px;
+          color: @font-4;
+          max-height: 100vh;
+          transition: all 0.35s ease-in-out;
         }
 
         .view-more {
@@ -273,7 +291,8 @@ const onScrollTo = (to?: number) => {
           }
         }
 
-        .user-detail {
+        .user-detail,
+        .all-user-detail {
           .motto,
           .desc,
           .github,
