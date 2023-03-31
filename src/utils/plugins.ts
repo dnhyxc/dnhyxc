@@ -40,6 +40,8 @@ export const usePlugins = <T>(app: T | any) => {
 
   // 为预览组件增加复制功能
   VMdPreview.use(createCopyCodePlugin());
+  // 预览组件支持表情
+  VMdPreview.use(createEmojiPlugin());
 
   // 表情（注意：plugin use 必须放在 Theme 之后，否则不生效）
   VueMarkdownEditor.use(createEmojiPlugin());
