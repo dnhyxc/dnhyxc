@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
 import { Router } from 'vue-router';
+import type { Ref } from 'vue';
 import { ElMessage } from 'element-plus';
 import * as Service from '@/server';
 import { normalizeResult, Message } from '@/utils';
@@ -170,7 +171,7 @@ export const useArticleStore = defineStore('article', {
     },
 
     // 删除文章
-    async deleteArticle(params: DeleteArticleParams, router: Router) {
+    async deleteArticle(params: DeleteArticleParams, router?: Router, scrollbar?: Ref<HTMLDivElement>) {
       // 设置个页面列表数据
       const articleList = {
         home: this.articleList,
@@ -224,7 +225,11 @@ export const useArticleStore = defineStore('article', {
               // 删除分类数量为 0 的分类
               classifyStore.classifys = classifyStore.classifys.filter((i) => i.value);
               classifyStore.currentClassify = classifyStore.classifys[0]?.name!;
-              params.router.push('/classify');
+              router?.push('/classify');
+              if (commonStore.reelScrollRef) {
+                commonStore.reelScrollScale = 0;
+                commonStore.reelScrollRef.scrollLeft = 0;
+              }
             }
 
             break;
@@ -241,7 +246,11 @@ export const useArticleStore = defineStore('article', {
               // 删除分类数量为 0 的分类
               tagStore.tags = tagStore.tags.filter((i) => i.value);
               tagStore.currentTag = tagStore.tags[0]?.name!;
-              params.router.push('/tag/list');
+              router?.push('/tag/list');
+              // 删除空标签之后滚动到最顶上
+              if (scrollbar?.value) {
+                scrollbar.value.scrollTop = 0;
+              }
             }
 
             break;

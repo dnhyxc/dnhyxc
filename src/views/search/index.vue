@@ -128,7 +128,6 @@ const onEnter = (e: Event) => {
 
 // 点击搜索
 const onSearch = () => {
-  console.log(searchStore.keyword, 'searchStore.keyword');
   searchStore.clearArticleList();
   if (searchStore.keyword) {
     getSearchArticleList();

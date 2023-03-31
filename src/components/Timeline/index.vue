@@ -9,7 +9,7 @@
     <div v-for="item in dataSource" v-show="item.articles?.length" :key="item.date" class="timeline-item">
       <div class="year">{{ item.date }}</div>
       <div class="card">
-        <div v-for="card in item.articles" :key="card.id" class="card-item" @click="(e) => onClickCard(e, card.id!)">
+        <div v-for="card in item.articles" :key="card.id" class="card-item" @click.stop="onClickCard(card.id!)">
           <div class="date">{{ formatDate(card.createTime!) }}</div>
           <LineCard :data="card" :delete-article="deleteArticle" :like-list-article="likeListArticle" />
         </div>
@@ -38,9 +38,7 @@ withDefaults(defineProps<IProps>(), {
   likeListArticle: () => {},
 });
 
-const onClickCard = (e: Event, id: string) => {
-  e.stopPropagation();
-  console.log(id, 'item');
+const onClickCard = (id: string) => {
   router.push(`/detail/${id}`);
 };
 </script>

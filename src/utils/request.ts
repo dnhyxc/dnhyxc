@@ -15,7 +15,6 @@ interface ErrorWithResponse extends Error {
 
 // 设置重定向路径
 function setRedirectPath(value: string) {
-  console.log(value, 'value>>>>>login');
   ssnSetItem('redirectUrl', JSON.stringify(value));
 }
 

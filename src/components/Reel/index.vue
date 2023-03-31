@@ -27,7 +27,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, reactive } from 'vue';
+import { ref, onMounted, reactive, watchEffect, onUnmounted } from 'vue';
 import { Classifys } from '@/typings/common';
 import { commonStore } from '@/store';
 
@@ -51,10 +51,19 @@ const cardList = ref<HTMLDivElement | null>(null);
 const scrollRef = ref<any>(null);
 
 onMounted(() => {
+  // 保存滚动容器
+  watchEffect(() => {
+    commonStore.reelScrollRef = scrollRef.value?.wrapRef;
+  });
   onMouseDown();
   onMouseUp();
   onMouseLeave();
   onSwill();
+});
+
+onUnmounted(() => {
+  commonStore.reelScrollRef = null;
+  commonStore.reelScrollScale = 0;
 });
 
 // 监听鼠标滚轮事件

@@ -8,7 +8,7 @@
   <div class="word-cloud">
     <div class="title">{{ title }}</div>
     <div ref="charts" :style="{ ...styles }" />
-    <div v-if="!data?.length" class="empty-wrap">
+    <div v-if="loading !== null && !loading && !data?.length" class="empty-wrap">
       <img :src="EMPTY" />
       <span class="empty-text">空空如也</span>
     </div>
@@ -26,6 +26,7 @@ interface IProps {
   callback: (name: string) => void;
   title?: string;
   styles?: any;
+  loading?: boolean | null;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
@@ -35,6 +36,7 @@ const props = withDefaults(defineProps<IProps>(), {
     with: '100%',
     height: '100%',
   },
+  loading: null,
 });
 
 // 图表元素

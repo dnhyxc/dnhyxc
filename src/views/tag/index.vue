@@ -6,7 +6,7 @@
 -->
 <template>
   <div class="tag-wrap">
-    <WordCloud :data="tagStore.tags" class="word-cloud-wrap" :callback="onCheckTag" />
+    <WordCloud :data="tagStore.tags" class="word-cloud-wrap" :callback="onCheckTag" :loading="tagStore.loading" />
     <div class="tag-list">
       <div class="title">
         <span>文章标签列表</span>

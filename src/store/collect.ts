@@ -268,7 +268,6 @@ export const useCollectStore = defineStore('collect', {
           }),
         );
         if (res.success) {
-          console.log(res, 'res');
           ElMessage({
             message: res.message,
             type: 'success',

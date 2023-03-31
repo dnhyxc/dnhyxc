@@ -13,6 +13,7 @@ interface IProps {
   showSearch: boolean; // 控制页面头部搜索框的显隐
   keyword?: string; // 列表文章搜索关键词
   reelScrollScale?: number; // 卷轴滚动宽度
+  reelScrollRef: HTMLDivElement | null; // Reel 滚动容器
 }
 
 // 公共store
@@ -30,6 +31,7 @@ export const useCommonStore = defineStore('common', {
     showSearch: false,
     keyword: '',
     reelScrollScale: 0,
+    reelScrollRef: null,
   }),
 
   actions: {

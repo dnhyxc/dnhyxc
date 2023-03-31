@@ -1,3 +1,5 @@
+import type { Ref } from 'vue';
+
 // 菜单类型
 export interface MenuListParams {
   name: string;
@@ -267,6 +269,7 @@ export interface useDeleteArticleParams {
   authorLike?: boolean;
   filterList?: string[];
   router?: any;
+  scrollbar?: Ref<HTMLDivElement>;
 }
 
 // 删除文章参数

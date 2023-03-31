@@ -18,9 +18,9 @@
           <i class="left-line iconfont icon-fenlei2" />
           <span class="current-classify">
             <span class="label">当前分类：</span>
-            <span>{{
-              classifyStore.currentClassify || route.query?.classify || classifyStore.classifys[0]?.name
-            }}</span>
+            <span>
+              {{ classifyStore.currentClassify || route.query?.classify || classifyStore.classifys[0]?.name }}
+            </span>
           </span>
           <span ref="lineRef" class="line">
             <span ref="dotRef" class="dot" />
@@ -79,6 +79,7 @@ const dotRef = ref<any>(null);
 const scrollLeft = ref<string>('');
 
 onMounted(async () => {
+  // 初始化时，将scrollLeft设置为0px
   isMounted.value = true;
   // 获取分类信息
   await classifyStore.getClassifys();

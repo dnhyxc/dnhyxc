@@ -14,8 +14,9 @@
           size="large"
           class="action"
           @click="onResetPwd(formData.data as FormData<FormInstance>)"
-          >重置并登录</el-button
         >
+          重置并登录
+        </el-button>
         <el-button class="action" size="large" @click="toLogin()">返回登录</el-button>
       </template>
     </ResetForm>
@@ -27,7 +28,7 @@ import { Ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { FormInstance } from 'element-plus';
 import { FormData, ResetFormParams } from '@/typings/common';
-import { commonStore, loginStore } from '@/store';
+import { loginStore } from '@/store';
 import ResetForm from '@/components/ResetForm/index.vue';
 
 const router = useRouter();
@@ -39,7 +40,6 @@ const onResetPwd = (Form: FormData<FormInstance>) => {
   if (!Form.formRef) return;
   Form.formRef.validate(async (valid: any) => {
     if (valid) {
-      console.log('重置密码并登录', Form.resetForm, commonStore.backPath);
       loginStore.onResetPwd({ username: Form.resetForm.username, password: Form.resetForm.confirmPwd! }, router);
     } else {
       return false;
@@ -48,8 +48,13 @@ const onResetPwd = (Form: FormData<FormInstance>) => {
 };
 
 const onEnter = (formRef: Ref<FormInstance>, resetForm: ResetFormParams) => {
-  console.log(formRef.value, 'formRef');
-  console.log(resetForm, 'resetForm');
+  formRef.value.validate(async (valid: any) => {
+    if (valid) {
+      loginStore.onResetPwd({ username: resetForm.username, password: resetForm.confirmPwd! }, router);
+    } else {
+      return false;
+    }
+  });
 };
 
 // 却换到登录注册组件

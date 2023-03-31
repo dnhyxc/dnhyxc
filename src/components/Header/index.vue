@@ -51,7 +51,6 @@
           v-model.trim="search"
           class="search-inp"
           placeholder="请输入搜索内容"
-          @blur="onBlur"
           @keyup.enter="onEnter"
         >
           <template #suffix>
@@ -279,12 +278,6 @@ const onCheckSearchType = (value: number) => {
     });
     router.push('/search');
   }
-};
-
-// 搜索框失去焦点
-const onBlur = () => {
-  // showSearch.value = false;
-  // search.value = '';
 };
 
 // 输入框回车

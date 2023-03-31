@@ -77,7 +77,6 @@ const onSubmit = (formEl: FormInstance, type: string) => {
       if (type === 'login') {
         await loginStore.onLogin(loginForm, router);
       } else {
-        console.log('注册', loginForm);
         loginStore.onRegister(loginForm);
       }
     } else {
@@ -105,7 +104,6 @@ const onEnter = () => {
     if (valid) {
       await loginStore.onLogin(loginForm, router);
     } else {
-      console.log(loginForm, 'error submit!');
       return false;
     }
   });

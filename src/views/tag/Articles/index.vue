@@ -17,6 +17,7 @@
       <el-scrollbar v-if="tagStore.tags.length > 0" ref="tagListRef" wrap-class="scrollbar-wrapper">
         <div v-for="i in tagStore.tags" :key="i.name" class="tag-wrap">
           <div
+            :id="(tagStore.currentTag || route.query?.tag || tagStore.tags[0]?.name) === i.name ? 'ACTIVE_TAG' : ''"
             :class="`${(tagStore.currentTag || route.query?.tag || tagStore.tags[0]?.name) === i.name && 'active'} tag`"
             @click="onCheckTag(i.name)"
           >
@@ -59,7 +60,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
+import { ref, Ref, computed, onMounted, onUnmounted, watch, watchEffect } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { scrollTo } from '@/utils';
 import { useScroller, useDeleteArticle } from '@/hooks';
@@ -69,6 +70,8 @@ import Loading from '@/components/Loading/index.vue';
 const route = useRoute();
 const router = useRouter();
 
+const tagListRef = ref<any>(null);
+const scrollbar = ref<HTMLDivElement | null>(null);
 const isMounted = ref<boolean>(false);
 const noMore = computed(() => {
   const { articleList, total } = tagStore;
@@ -77,9 +80,22 @@ const noMore = computed(() => {
 const disabled = computed(() => tagStore.loading || noMore.value);
 const showEmpty = computed(() => tagStore.loading !== null && !tagStore.loading && !tagStore.articleList?.length);
 const { scrollRef, scrollTop } = useScroller();
-const { deleteArticle } = useDeleteArticle({ pageType: 'tag', tagName: route.query?.tag as string, router });
+const { deleteArticle } = useDeleteArticle({
+  pageType: 'tag',
+  tagName: route.query?.tag as string,
+  router,
+  scrollbar: scrollbar as Ref<HTMLDivElement>,
+});
 
 onMounted(async () => {
+  // 计算当前选中的标签位置，自动滑动到当前选中的标签位置
+  watchEffect(() => {
+    scrollbar.value = tagListRef.value?.wrapRef as HTMLDivElement;
+    if (scrollbar.value) {
+      const activeTag = document.querySelector('#ACTIVE_TAG') as HTMLDivElement;
+      scrollbar.value.scrollTop = activeTag?.offsetTop;
+    }
+  });
   isMounted.value = true;
   // 获取标签信息
   await tagStore.getTags();
