@@ -5,40 +5,99 @@
  * index.vue
 -->
 <template>
-  <div class="detail-wrap">
+  <Loading :loading="articleStore.loading" class="detail-wrap">
     <div class="content">
       <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
-        <Preview v-if="mackdown" :mackdown="mackdown" class="preview-content" />
+        <div ref="articleInfoRef" class="articleInfo">
+          <PageHeader />
+          <Preview
+            v-if="articleStore.articleDetail.content"
+            :mackdown="articleStore.articleDetail.content"
+            class="preview-content"
+          />
+        </div>
+        <Comment
+          v-if="articleStore.articleDetail.authorId"
+          :id="(route.params.id as string)"
+          :author-id="articleStore.articleDetail.authorId!"
+          :focus="focus"
+          @update-focus="updateFocus"
+        />
       </el-scrollbar>
       <ToTopIcon v-if="scrollTop >= 500" :on-scroll-to="onScrollTo" />
     </div>
     <div class="right">
-      <Multibar class="action-list" />
-      <Toc />
+      <Multibar
+        :id="(route.params.id as string)"
+        class="action-list"
+        :scroll-height="articleInfoRef?.offsetHeight"
+        :on-scroll-to="() => onScrollTo(articleInfoRef?.offsetHeight)"
+      />
+      <Toc class="toc-list" />
+      <AnotherArticle
+        v-if="articleStore.articleDetail.content"
+        :id="(route.params.id as string)"
+        class="another-list"
+      />
     </div>
-  </div>
+  </Loading>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { onMounted, onUnmounted, nextTick, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { useScroller } from '@/hooks';
 import { scrollTo } from '@/utils';
+import { articleStore, commonStore } from '@/store';
+import PageHeader from '@/components/PreviewHeader/index.vue';
 import Preview from '@/components/Preview/index.vue';
 import Multibar from '@/components/Multibar/index.vue';
 import Toc from '@/components/Toc/index.vue';
 import ToTopIcon from '@/components/ToTopIcon/index.vue';
+import AnotherArticle from '@/components/AnotherArticle/index.vue';
+import Comment from '@/components/Comment/index.vue';
+import Loading from '@/components/Loading/index.vue';
 
 const route = useRoute();
 
-const mackdown = ref<string | undefined>(route.params.id as string);
+const articleInfoRef = ref<HTMLDivElement | null>(null);
+
+// 评论输入框焦点控制变量
+const focus = ref<boolean>(false);
 
 // scrollRef：el-scrollbar ref，scrollTop：滚动距离
 const { scrollRef, scrollTop } = useScroller();
 
+onMounted(async () => {
+  nextTick(() => {
+    commonStore.detailScrollRef = scrollRef.value;
+  });
+  await articleStore.getArticleDetail(route.params.id as string);
+  // 在详情获取成功后，如果路由路径中携带了scrollTo参数，则说明是从列表中点击评论进来的，需要跳转到评论
+  if (route.query?.scrollTo) {
+    onScrollTo(articleInfoRef.value?.offsetHeight);
+  }
+});
+
+// 组件卸载前，清楚store中的详情信息
+onUnmounted(() => {
+  articleStore.articleDetail = { id: '' };
+  articleStore.commentList = [];
+  articleStore.anotherArticleList = [];
+});
+
+// 更改输入框焦点状态
+const updateFocus = (value: boolean) => {
+  focus.value = value;
+};
+
 // 置顶
-const onScrollTo = () => {
-  scrollTo(scrollRef, 0);
+const onScrollTo = (height?: number) => {
+  // height 有值说明是点击评论滑动到评论区域，默认使最外层输入框获取焦点
+  if (height) {
+    focus.value = true;
+  }
+  scrollTo(scrollRef, height || 0);
 };
 </script>
 
@@ -49,6 +108,7 @@ const onScrollTo = () => {
   display: flex;
   justify-content: center;
   box-sizing: border-box;
+
   .content {
     position: relative;
     flex: 1;
@@ -59,29 +119,38 @@ const onScrollTo = () => {
     .pageHeight();
     border-radius: 5px;
     box-shadow: @shadow-mack;
+
     :deep {
       .el-scrollbar {
-        width: 100%;
         border-radius: 5px;
+        width: 100%;
       }
       .scrollbar-wrapper {
         box-sizing: border-box;
         height: 100%;
-        width: 100%;
         border-radius: 5px;
       }
     }
     .preview-content {
-      height: 100px;
+      max-width: calc(100vw - 352px);
     }
   }
   .right {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
     width: 260px;
-    height: calc(100vh - 75px);
     box-sizing: border-box;
     border-radius: 5px;
+    max-height: calc(100vh - 75px);
+
     .action-list {
       margin-bottom: 10px;
+    }
+
+    .toc-list {
+      box-sizing: border-box;
+      flex: 1;
     }
   }
 }

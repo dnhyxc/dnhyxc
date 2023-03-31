@@ -1,5 +1,6 @@
 import path from 'path';
-import { app, BrowserWindow, ipcMain, Tray } from 'electron';
+import { app, BrowserWindow, ipcMain, Tray, dialog } from 'electron';
+import Store from 'electron-store';
 import { registerShortcut, unRegisterShortcut } from './shortcut';
 import { createContextMenu, getIconPath } from './tray';
 
@@ -16,6 +17,9 @@ const isMac: boolean = process.platform === 'darwin';
 
 // 屏蔽警告
 process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = 'true';
+
+// 注册electron-store
+Store.initRenderer();
 
 const createWindow = () => {
   win = new BrowserWindow({
@@ -73,6 +77,11 @@ const createWindow = () => {
   win?.on('unmaximize', () => {
     win?.webContents.send('mainWin-max', false);
   });
+
+  // 监听页面是否刷新，页面刷新时，取消窗口置顶
+  win?.webContents.addListener('did-start-loading', () => {
+    win?.setAlwaysOnTop(false);
+  });
 };
 
 // 窗口最小化
@@ -94,16 +103,51 @@ ipcMain.on('window-close', () => {
   win?.hide();
 });
 
+// 退出程序
+ipcMain.on('window-out', () => {
+  if (!isMac) {
+    app.quit();
+  }
+});
+
 // 窗口置顶
 ipcMain.on('win-show', (_, status) => {
   win?.setAlwaysOnTop(status);
+});
+
+// 监听渲染进程发起的打开文件夹指令，properties: ['openDirectory']：用户执行只能选择文件夹
+ipcMain.on('openDialog', (event) => {
+  dialog.showOpenDialog({ properties: ['openDirectory'] }).then((result) => {
+    if (result.filePaths.length > 0) {
+      event.sender.send('selectedItem', result.filePaths);
+    }
+  });
+});
+
+// 监听渲染进程请求获取electron的用户目录
+ipcMain.on('get-app-path', (event) => {
+  event.sender.send('got-app-path', app.getAppPath());
+});
+
+// 监听渲染进程发出的download事件
+ipcMain.on('download', (event, url) => {
+  win?.webContents.downloadURL(url); // 触发 will-download 事件
+  win?.webContents.session.on('will-download', (event, item, webContents) => {
+    item.once('done', (event, state) => {
+      if (state === 'completed') {
+        win?.webContents.send('download-file', true);
+      } else {
+        win?.webContents.send('download-file', false);
+      }
+    });
+  });
 });
 
 // 在Electron完成初始化时被触发
 app
   .whenReady()
   .then(createWindow)
-  .then(() => registerShortcut({ isDev, win, isMac }))
+  .then(() => registerShortcut({ isDev, win, isMac, app }))
   .then(() => {
     tray = new Tray(path.join(__dirname, getIconPath({ isDev, isMac })));
     if (!isMac) {
@@ -116,6 +160,15 @@ app
         win?.show();
       });
     }
+  })
+  .then(() => {
+    // 监听渲染进程快捷键修改，重新注册快捷键
+    ipcMain.on('restore-register-shortcut', (event) => {
+      // 重新注册前先取消之前的注册，防止多次注册
+      unRegisterShortcut();
+      // 重新注册快捷键
+      registerShortcut({ isDev, win, isMac, app });
+    });
   });
 
 // 退出

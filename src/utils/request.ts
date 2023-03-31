@@ -2,7 +2,7 @@ import fetch from 'isomorphic-fetch';
 import { ElMessage } from 'element-plus';
 import { stringify } from 'query-string';
 import { addGatewayPattern } from './urlTool';
-import { ssnGetItem, ssnSetItem } from './storage';
+import { ssnSetItem, locGetItem } from './storage';
 
 export interface ICheckStatusProps {
   response: Response;
@@ -15,7 +15,6 @@ interface ErrorWithResponse extends Error {
 
 // 设置重定向路径
 function setRedirectPath(value: string) {
-  console.log(value, 'value>>>>>login');
   ssnSetItem('redirectUrl', JSON.stringify(value));
 }
 
@@ -81,7 +80,7 @@ export type FetchResult = Promise<{ err: Error | null; data: any }>;
  * @return {Promise<{ data: any, err: Error }>} An object containing either "data" or "err"
  */
 export default function request(_url: string, options?: any): FetchResult {
-  const url = addTimestamp(_url.startsWith('http') ? _url : addGatewayPattern(_url));
+  const url = addTimestamp(_url?.startsWith('http') ? _url : addGatewayPattern(_url));
   const defaultOptions = {
     credentials: 'include',
   };
@@ -91,7 +90,7 @@ export default function request(_url: string, options?: any): FetchResult {
       newOptions.headers = {
         Accept: 'application/json',
         'Content-Type': 'application/json; charset=utf-8',
-        Authorization: `Bearer ${ssnGetItem('token')}`,
+        Authorization: `Bearer ${locGetItem('token')}`,
         ...newOptions.headers,
       };
       newOptions.body = JSON.stringify(newOptions.body);
@@ -99,7 +98,7 @@ export default function request(_url: string, options?: any): FetchResult {
       // NewOptions.body is FormData
       newOptions.headers = {
         Accept: 'application/json',
-        Authorization: `Bearer ${ssnGetItem('token')}`,
+        Authorization: `Bearer ${locGetItem('token')}`,
         ...newOptions.headers,
       };
     }

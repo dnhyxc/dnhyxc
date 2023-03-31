@@ -8,7 +8,6 @@
   <div :class="`${checkOS() === 'mac' && 'mac-header-wrap'} header-wrap`" @dblclick="onDblclick">
     <div class="left">
       <div class="icon-wrap">
-        <!-- <img :src="PAGEICON" class="page-icon" /> -->
         <i class="page-icon iconfont icon-haidao_" />
       </div>
       <el-tooltip effect="light" content="后退" placement="bottom">
@@ -21,16 +20,37 @@
     </div>
     <div class="right">
       <div class="search-wrap">
-        <el-tooltip v-if="!showSearch" effect="light" content="搜索" placement="bottom">
+        <el-dropdown
+          v-if="!commonStore.showSearch && NEED_HEAD_SEARCH.includes(route.path)"
+          effect="light"
+          content="搜索"
+          placement="bottom"
+        >
+          <i class="font iconfont icon-sousuo2" @click="onClickSearch" />
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item @click="onCheckSearchType(1)">普通搜索</el-dropdown-item>
+              <el-dropdown-item @click="onCheckSearchType(2)">高级搜索</el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
+        <el-tooltip
+          v-if="!commonStore.showSearch && !NEED_HEAD_SEARCH.includes(route.path) && route.path !== '/search'"
+          effect="light"
+          content="高级搜索"
+          placement="bottom"
+        >
           <i class="font iconfont icon-sousuo2" @click="onClickSearch" />
         </el-tooltip>
+        <el-tooltip v-if="commonStore.showSearch" effect="light" content="高级搜索" placement="bottom">
+          <i class="iconfont icon-qiehuan" @click="onCheckSearchType(2)" />
+        </el-tooltip>
         <el-input
-          v-if="showSearch"
+          v-if="commonStore.showSearch"
           ref="searchRef"
-          v-model="search"
+          v-model.trim="search"
           class="search-inp"
           placeholder="请输入搜索内容"
-          @blur="onBlur"
           @keyup.enter="onEnter"
         >
           <template #suffix>
@@ -72,28 +92,50 @@
         </div>
       </div>
     </div>
+    <el-dialog v-model="closeVisible" title="关闭应用" width="380">
+      <div class="dl-content">
+        <div class="actions">
+          <el-button link class="radio-close" @click.prevent="onAppClose(1)">
+            <i class="font iconfont icon-3zuidahua-3" />
+            最小化到托盘，不退出程序
+          </el-button>
+          <el-button link class="radio-close" @click.prevent="onAppClose(2)">
+            <i class="font out-icon iconfont icon-tuichu1" />
+            退出程序
+          </el-button>
+        </div>
+        <div class="close-info">
+          <el-checkbox v-model="remindStatus">
+            <span class="info-text">不在提醒</span>
+          </el-checkbox>
+        </div>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, watchEffect, nextTick } from 'vue';
+import Store from 'electron-store';
+import { ref, watchEffect, nextTick, onUnmounted, onMounted, watch } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { ipcRenderer } from 'electron';
-import { ElMessage } from 'element-plus';
 import { Search } from '@element-plus/icons-vue';
-import { ACTION_SVGS, MENULIST } from '@/constant';
+import { ACTION_SVGS, MENULIST, CLOSE_CONFIG, CLOSE_PROMPT, NEED_HEAD_SEARCH } from '@/constant';
 import { commonStore } from '@/store';
 import { checkOS } from '@/utils';
-// import PAGEICON from '@/assets/svg/page_icon.svg';
 
 const router = useRouter();
 const route = useRoute();
+const store = new Store();
 
 const toggle = ref<boolean>(false);
 const showSearch = ref<boolean>(false);
 const search = ref<string>('');
 const searchRef = ref<HTMLInputElement | null>(null);
 const stickyStatus = ref<boolean>(false);
+const closeVisible = ref<boolean>(false);
+const remindStatus = ref<boolean>((store.get(CLOSE_PROMPT) as boolean) || false);
+const timerRef = ref<ReturnType<typeof setTimeout> | null>();
 
 // 监听路由变化，设置当前选中菜单
 watchEffect(() => {
@@ -103,7 +145,36 @@ watchEffect(() => {
     crumbsPath: route.path,
   });
   commonStore.setActivePath(route.path);
+
+  // 监听不再提示的勾选状态，实时设置store
+  if (remindStatus.value !== (store.get(CLOSE_PROMPT) as boolean)) {
+    store.set(CLOSE_PROMPT, remindStatus.value);
+  }
 });
+
+onMounted(() => {
+  // 渲染进程监听窗口是否最大化
+  ipcRenderer.on('mainWin-max', (_, status) => {
+    toggle.value = status;
+  });
+});
+
+// 清除副作用
+onUnmounted(() => {
+  if (timerRef.value) {
+    clearTimeout(timerRef.value);
+  }
+});
+
+// 监听页面搜索关键词，如果articleStore.keyword为空，则清除输入框内容
+watch(
+  () => commonStore.keyword,
+  (newVal) => {
+    if (!newVal) {
+      search.value = '';
+    }
+  },
+);
 
 // 双击放大窗口
 const onDblclick = () => {
@@ -133,8 +204,33 @@ const onClick = (item: { title: string; svg: string }) => {
   }
 
   if (item.title === '关闭') {
-    ipcRenderer.send('window-close');
+    const closeConfig = store.get(CLOSE_CONFIG);
+    const closePrompt = store.get(CLOSE_PROMPT);
+    if (!closePrompt) {
+      closeVisible.value = true;
+      return;
+    }
+    closePrompt && closeConfig === 1 && ipcRenderer.send('window-close');
+    closePrompt && closeConfig === 2 && ipcRenderer.send('window-out');
   }
+};
+
+// 最小化程序
+const onAppClose = (type: number) => {
+  closeVisible.value = false;
+  store.set(CLOSE_CONFIG, type);
+  if (timerRef.value) {
+    clearTimeout(timerRef.value);
+    timerRef.value = null;
+  }
+  // 设置一定的延时等待弹窗先关闭，再关闭程序
+  timerRef.value = setTimeout(() => {
+    if (type === 1) {
+      ipcRenderer.send('window-close');
+    } else {
+      ipcRenderer.send('window-out');
+    }
+  }, 100);
 };
 
 // 置顶
@@ -142,11 +238,6 @@ const onSticky = () => {
   stickyStatus.value = !stickyStatus.value;
   ipcRenderer.send('win-show', stickyStatus.value);
 };
-
-// 渲染进程监听窗口是否最大化
-ipcRenderer.on('mainWin-max', (_, status) => {
-  toggle.value = status;
-});
 
 // 点击去设置页
 const toSetting = () => {
@@ -159,28 +250,44 @@ const toSetting = () => {
 
 // 点击搜索
 const onClickSearch = () => {
-  showSearch.value = true;
-  nextTick(() => {
-    searchRef.value?.focus();
-  });
+  if (NEED_HEAD_SEARCH.includes(route.path)) {
+    showSearch.value = true;
+    commonStore.showSearch = true;
+    nextTick(() => {
+      searchRef.value?.focus();
+    });
+  } else {
+    commonStore.setCrumbsInfo({
+      crumbsName: '高级搜索',
+      crumbsPath: '/search',
+    });
+    router.push('/search');
+  }
 };
 
-// 搜索框失去焦点
-const onBlur = () => {
-  showSearch.value = false;
-  search.value = '';
+// 选择搜索类型
+const onCheckSearchType = (value: number) => {
+  if (value === 1 && NEED_HEAD_SEARCH.includes(route.path)) {
+    showSearch.value = true;
+    commonStore.showSearch = true;
+    nextTick(() => {
+      searchRef.value?.focus();
+    });
+  } else {
+    commonStore.setCrumbsInfo({
+      crumbsName: '高级搜索',
+      crumbsPath: '/search',
+    });
+    router.push('/search');
+  }
 };
 
 // 输入框回车
-const onEnter = () => {
-  if (!search.value.trim()) {
-    ElMessage({
-      message: '请输入搜索内容',
-      type: 'warning',
-    });
-    return;
+const onEnter = async (e: Event) => {
+  const value = (e.target as HTMLInputElement).value;
+  if (commonStore.keyword !== value) {
+    commonStore.keyword = value;
   }
-  console.log(search.value, 'sousuoneirong');
 };
 </script>
 
@@ -251,9 +358,16 @@ const onEnter = () => {
         color: @font-3;
       }
 
+      .icon-qiehuan {
+        color: @font-4;
+        font-size: 20px;
+        cursor: pointer;
+      }
+
       .search-inp {
         width: 180px;
         margin-left: 15px;
+        -webkit-app-region: no-drag;
 
         .el-input__icon {
           font-size: 16px;
@@ -262,6 +376,7 @@ const onEnter = () => {
         :deep {
           .el-input__wrapper {
             background-color: @menu-weak;
+            border-radius: 30px;
           }
         }
       }
@@ -339,6 +454,46 @@ const onEnter = () => {
         margin-left: 15px;
         font-size: 16px;
       }
+    }
+  }
+
+  .dl-content {
+    .actions {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      padding-left: 20px;
+    }
+    .radio-close {
+      padding: 0;
+      margin-left: 0;
+      margin-top: 20px;
+      font-size: 16px;
+
+      .font {
+        margin-right: 10px;
+        color: @theme-blue;
+      }
+
+      .out-icon {
+        color: @font-warning;
+      }
+    }
+
+    .close-info {
+      display: flex;
+      margin-top: 15px;
+
+      .info-text {
+        display: inline-block;
+        margin-top: 2px;
+      }
+    }
+  }
+
+  :deep {
+    .el-dialog__body {
+      padding: 0 20px 15px 20px;
     }
   }
 }

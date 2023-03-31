@@ -2,12 +2,12 @@
   <div class="container">
     <!-- 上传图片菜单默认为禁用状态 设置 disabled-menus 为空数组可以开启 -->
     <v-md-editor
-      v-model="mackdown"
+      v-model.trim="createStore.createInfo.content"
       placeholder="编辑内容"
       autofocus
       :height="height"
       :disabled-menus="[]"
-      left-toolbar="undo redo | h bold italic | quote code | strikethrough hr | emoji link image | ul ol table | create"
+      left-toolbar="undo redo | h bold italic | quote code | strikethrough hr | emoji link image | ul ol table | clear | create"
       :toolbar="toolbar"
       @upload-image="onUploadImage"
     />
@@ -15,8 +15,9 @@
 </template>
 
 <script setup lang="ts">
+import { reactive } from 'vue';
 import { ElMessage } from 'element-plus';
-import { ref, reactive, watchEffect } from 'vue';
+import { createStore, uploadStore } from '@/store';
 
 interface ToolbarItem {
   action?: (editor: any) => void;
@@ -34,57 +35,66 @@ interface Toolbar {
     action?: (editor?: any) => void;
     menus?: ToolbarItem[];
   };
+  clear?: {
+    title?: string;
+    text?: string;
+    icon?: string;
+    action?: (editor?: any) => void;
+    menus?: ToolbarItem[];
+  };
 }
 
 interface IProps {
   articleId?: string;
   height?: string;
-  mackdown?: string;
   onSaveMackdown?: (html: string) => void;
   onEditChange?: (html: string) => void;
-  onPublish?: (html: string) => void;
+  onPublish?: () => void;
+  onClear?: () => void;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
   articleId: '',
   height: 'calc(100vh - 75px)',
-  mackdown: '',
   onSaveMackdown: () => {},
   onEditChange: () => {},
   onPublish: () => {},
+  onClear: () => {},
 });
-
-const mackdown = ref<string>('');
 
 // 自定义工具栏配置
 const toolbar = reactive<Toolbar>({
   create: {
-    text: props.articleId ? '更新文章' : '发布文章',
-    title: props.articleId ? '更新文章' : '发布文章',
+    text: '发布',
+    title: '发布',
     action(editor) {
-      if (!mackdown.value) {
-        ElMessage.warning('嘿！一个字都没写休想发布');
+      if (!createStore?.createInfo?.content) {
+        ElMessage({
+          message: '嘿！一个字都没写休想发布',
+          type: 'warning',
+          offset: 80,
+        });
         return;
       }
-      props.onPublish && props.onPublish(mackdown.value);
+      props.onPublish && props.onPublish();
+    },
+  },
+  clear: {
+    text: '清空',
+    title: '清空',
+    action(editor) {
+      props.onClear && props.onClear();
     },
   },
 });
 
-watchEffect(() => {
-  if (props.mackdown) {
-    mackdown.value = props.mackdown;
-  }
-});
-
 // 上传图片事件
-const onUploadImage = (event: Event, insertImage: Function, files: File) => {
+const onUploadImage = async (event: Event, insertImage: Function, files: File) => {
   // 拿到 files 之后上传到文件服务器，然后向编辑框中插入对应的内容
-  console.log(files);
-
+  const res = await uploadStore.uploadFile(files[0]);
   insertImage({
-    url: 'https://pic1.zhimg.com/80/v2-32af95c7b9bb7da9e9f9f3e2601cc46c_720w.webp?source=1940ef5c',
-    desc: '养眼',
+    url: res,
+    desc: files[0]?.name,
     width: '100%',
     height: 'auto',
   });
@@ -117,6 +127,11 @@ const onUploadImage = (event: Event, insertImage: Function, files: File) => {
     }
     .v-md-editor__toolbar-item-create {
       color: @theme-blue;
+      font-size: 14px;
+      line-height: 30px;
+    }
+    .v-md-editor__toolbar-item-clear {
+      color: @font-warning;
       font-size: 14px;
       line-height: 30px;
     }

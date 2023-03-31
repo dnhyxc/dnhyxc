@@ -8,6 +8,10 @@
   <div class="word-cloud">
     <div class="title">{{ title }}</div>
     <div ref="charts" :style="{ ...styles }" />
+    <div v-if="loading !== null && !loading && !data?.length" class="empty-wrap">
+      <img :src="EMPTY" />
+      <span class="empty-text">空空如也</span>
+    </div>
   </div>
 </template>
 
@@ -15,13 +19,14 @@
 import { ref, onMounted, nextTick, onUnmounted, watch, computed } from 'vue';
 import * as echarts from 'echarts';
 import 'echarts-wordcloud';
-import { BIRD_BASE64 } from '@/constant';
+import { SEA_BASE64, EMPTY } from '@/constant';
 
 interface IProps {
   data: { name: string; value: number }[];
+  callback: (name: string) => void;
   title?: string;
   styles?: any;
-  callback?: Function;
+  loading?: boolean | null;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
@@ -31,7 +36,7 @@ const props = withDefaults(defineProps<IProps>(), {
     with: '100%',
     height: '100%',
   },
-  callback: () => { },
+  loading: null,
 });
 
 // 图表元素
@@ -77,8 +82,6 @@ watch(
 
 // 绘制图表事件
 const drawChart = () => {
-  console.log(props.data, 'aaa');
-
   const maskImage = new Image();
   // 配置
   const option = {
@@ -146,7 +149,7 @@ const drawChart = () => {
   };
 
   // 放在 public 的img资源使用绝对路径引入有效，或先 import 引入图片资源，再赋值也有效。
-  maskImage.src = BIRD_BASE64; // 小鸟
+  maskImage.src = SEA_BASE64; // 海岛
 };
 
 // 重新设置图表的尺寸
@@ -172,6 +175,23 @@ const resize = () => {
     font-size: 18px;
     color: @active;
     .textLg();
+  }
+
+  .empty-wrap {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    transform: translate(-50%, -50%);
+    display: flex;
+    .clickNoSelectText();
+
+    .empty-text {
+      color: @font-3;
+    }
   }
 }
 </style>

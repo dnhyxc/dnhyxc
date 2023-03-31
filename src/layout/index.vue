@@ -8,7 +8,7 @@
             <LeftMenu />
           </el-aside>
           <div class="right">
-            <RouterView v-slot="{ Component }">
+            <RouterView v-if="isRouterAlive" v-slot="{ Component }">
               <!-- 定义缓存组件：注意include="Create"，Create 组件内部必须声明组件名称 -->
               <KeepAlive include="Create">
                 <component :is="Component" />
@@ -22,9 +22,23 @@
 </template>
 
 <script setup lang="ts">
+import { ref, nextTick, provide } from 'vue';
 import Header from '@/components/Header/index.vue';
 import LeftMenu from '@/components/LeftMenu/index.vue';
 import { checkOS } from '@/utils';
+
+const isRouterAlive = ref<boolean>(true);
+
+// 刷新当前页面
+const reload = () => {
+  isRouterAlive.value = false;
+  nextTick(() => {
+    isRouterAlive.value = true;
+  });
+};
+
+// 父组件注册刷新当前页面的方法
+provide('reload', reload);
 </script>
 
 <style lang="less" scoped>
@@ -37,7 +51,8 @@ import { checkOS } from '@/utils';
   height: 100vh;
   box-sizing: border-box;
   background-color: @theme;
-  // background-color: @menu-weak;
+  overflow: hidden;
+
   .el-main {
     display: flex;
     flex-direction: column;
@@ -57,8 +72,6 @@ import { checkOS } from '@/utils';
     .right {
       flex: 1;
       border-radius: 5px;
-      // box-shadow: 0 0 10px @menu-weak;
-      // padding: 10px;
     }
   }
   .mac-content {

@@ -8,10 +8,13 @@
   <div class="card-wrap" @click="toDetail(data)">
     <div class="card">
       <div class="card-top">
-        <img class="img" :src="IMG1" />
+        <div v-if="data?.isDelete" class="mask">
+          <span class="mask-text">已下架</span>
+        </div>
+        <Image :url="data.coverImage || IMG1" :transition-img="IMG1" class="img" />
         <div class="info">
           <div class="desc">
-            我希望有个如你一般的人，如山间清爽的风，如古城温暖的光，从清晨到夜晚，由山野到书房，等待，不怕岁月蹉跎，不怕路途遥远，只要最后是你就好！
+            {{ data.abstract }}
           </div>
         </div>
       </div>
@@ -19,23 +22,41 @@
         <slot>
           <div class="header">
             <div class="title">
-              {{ data + '我的酒馆作者作者作者作者作者作者作者作者作者作者作者作者作者作者作者' }}
-            </div>
-            <div class="actions">
-              <span class="edit" @click="(e) => toEdit(e, data)">编辑</span>
-              <span class="del" @click="(e) => onReomve(e, data)">下架</span>
+              {{ data.title }}
             </div>
           </div>
           <div class="art-info">
             <div class="create-info">
-              <span class="author" @click="toPersonal"
-                >作者作者作者作者作者作者作者作者作者作者作者作者作者作者作者</span
-              >
-              <span class="date">2023-09-02 02:09</span>
+              <span class="author" @click.stop="toPersonal(data.authorId!)">{{ data.authorName }}</span>
+              <span class="date">{{ data.createTime ? formatDate(data.createTime) : '-' }}</span>
             </div>
             <div class="tags">
-              <span class="classify" @click="(e) => toClassify(e, 'electron')">分类分类分类分类分类分类分类</span>
-              <span class="tag" @click="(e) => toTag(e, 'electron')">标签标签标签</span>
+              <span class="classify" @click.stop="toClassify(data.classify!)">分类: {{ data.classify }}</span>
+              <span class="tag" @click.stop="toTag(data.tag!)">标签: {{ data.tag }}</span>
+            </div>
+            <div class="actions">
+              <div class="action-icons">
+                <div class="action like" @click.stop="onLike(data)">
+                  <i
+                    :class="`font like-icon iconfont ${data.isLike ? 'icon-24gf-thumbsUp2' : 'icon-24gl-thumbsUp2'}`"
+                  />
+                  <span>{{ data.likeCount || '点赞' }}</span>
+                </div>
+                <div class="action comment" @click.stop="onComment(data)">
+                  <i class="font comment-icon iconfont icon-pinglun" />
+                  <span>{{ data.commentCount || '评论' }}</span>
+                </div>
+                <div class="action read-count">
+                  <i class="font read-icon iconfont icon-yanjing" />
+                  <span class="text">{{ data.readCount || '阅读' }}</span>
+                </div>
+              </div>
+              <slot name="actions">
+                <div v-if="loginStore?.userInfo?.userId === data.authorId" class="action art-action">
+                  <span class="edit" @click.stop="toEdit(data)">编辑</span>
+                  <span class="del" @click.stop="onReomve(data)">下架</span>
+                </div>
+              </slot>
             </div>
           </div>
         </slot>
@@ -46,67 +67,68 @@
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
-import { ElMessage } from 'element-plus';
-import { Message } from '@/utils';
-import IMG1 from '@/assets/images/1.jpg';
+import { formatDate, chackIsDelete } from '@/utils';
+import { ArticleItem } from '@/typings/common';
+import { IMG1 } from '@/constant';
+import { loginStore } from '@/store';
+import Image from '@/components/Image/index.vue';
 
 const router = useRouter();
 
 interface IProps {
-  data: any;
+  data: ArticleItem;
+  deleteArticle?: Function;
+  likeListArticle?: Function;
 }
 
-withDefaults(defineProps<IProps>(), {
-  data: {},
+const props = withDefaults(defineProps<IProps>(), {
+  deleteArticle: () => {},
+  likeListArticle: () => {},
 });
 
+// 点赞
+const onLike = async (data: ArticleItem) => {
+  await chackIsDelete(data);
+  props.likeListArticle?.(data.id);
+};
+
+// 评论
+const onComment = async (data: ArticleItem) => {
+  await chackIsDelete(data);
+  router.push(`/detail/${data.id}?scrollTo=1`);
+};
+
 // 编辑
-const toEdit = (e: Event, id: string) => {
-  e.stopPropagation();
-  console.log(id, 'id');
-  router.push(`/create?id=${id}`);
+const toEdit = async (data: ArticleItem) => {
+  await chackIsDelete(data);
+  router.push(`/create?id=${data.id}`);
 };
 
 // 下架
-const onReomve = async (e: Event, id: string) => {
-  e.stopPropagation();
-  console.log(id, 'id');
-  Message('确定下架该文章吗', '下架文章')
-    .then(() => {
-      ElMessage({
-        type: 'success',
-        message: '删除成功',
-      });
-    })
-    .catch(() => {
-      ElMessage({
-        type: 'error',
-        message: '删除失败',
-      });
-    });
+const onReomve = async (data: ArticleItem) => {
+  await chackIsDelete(data);
+  props.deleteArticle(data.id);
 };
 
 // 去详情
-const toDetail = (id: string) => {
-  router.push(`/detail/${id}`);
+const toDetail = async (data: ArticleItem) => {
+  await chackIsDelete(data);
+  router.push(`/detail/${data.id}`);
 };
 
 // 去我的主页
-const toPersonal = (e: Event) => {
-  e.stopPropagation();
-  router.push('/personal?id=111');
+const toPersonal = (id: string) => {
+  router.push(`/personal?authorId=${id}`);
 };
 
 // 去分类
-const toClassify = (e: Event, name: string) => {
-  e.stopPropagation();
-  router.push(`/classify?name=${name}`);
+const toClassify = (name: string) => {
+  router.push(`/classify?classify=${name}`);
 };
 
-// 去标签页
-const toTag = (e: Event, name: string) => {
-  e.stopPropagation();
-  router.push(`/tag?name=${name}`);
+// 去标签列表
+const toTag = (name: string) => {
+  router.push(`/tag/list?tag=${name}`);
 };
 </script>
 
@@ -119,6 +141,7 @@ const toTag = (e: Event, name: string) => {
   align-items: center;
   flex-wrap: wrap;
   border-radius: 5px;
+  box-shadow: @shadow-mack;
 
   .card {
     position: relative;
@@ -136,7 +159,6 @@ const toTag = (e: Event, name: string) => {
     .card-top {
       position: relative;
       width: 100%;
-      height: 100%;
       border-top-left-radius: 5px;
       border-top-right-radius: 5px;
       overflow: hidden;
@@ -144,12 +166,26 @@ const toTag = (e: Event, name: string) => {
       .img {
         display: block;
         position: relative;
-        height: 100%;
         width: 100%;
-        object-fit: cover;
         border-top-left-radius: 5px;
         border-top-right-radius: 5px;
-        transition: all 0.3s;
+        .imgStyle();
+      }
+
+      .mask {
+        position: absolute;
+        top: 10px;
+        right: 5px;
+        color: @font-warning;
+        z-index: 9;
+
+        .mask-text {
+          display: table-cell;
+          vertical-align: middle;
+          font-size: 14px;
+          backdrop-filter: blur(3px);
+          padding: 0 5px 2px 5px;
+        }
       }
 
       .info {
@@ -157,14 +193,13 @@ const toTag = (e: Event, name: string) => {
         align-items: center;
         box-sizing: border-box;
         position: absolute;
-        bottom: 0;
+        bottom: 5px;
         left: 0;
         width: 100%;
-        height: 42%;
+        max-height: 42%;
         padding: 5px;
         border-bottom-left-radius: 5px;
         border-bottom-right-radius: 5px;
-        background-color: rgba(0, 0, 0, 0.28);
         color: @fff;
         overflow: hidden;
 
@@ -173,48 +208,27 @@ const toTag = (e: Event, name: string) => {
           vertical-align: middle;
           .ellipsisMore(3);
           font-size: 14px;
+          backdrop-filter: blur(2px);
+          padding: 0 5px 2px 5px;
         }
       }
     }
 
     .card-bottom {
       padding: 8px 10px;
-      // background-color: @card-bg;
-      background-image: @card-lg;
+      box-shadow: 0 0 2px @shadow-color inset;
+      background-blend-mode: multiply, multiply;
       border-bottom-left-radius: 5px;
       border-bottom-right-radius: 5px;
+      background-image: @card-lg-2;
+
       .header {
         display: flex;
-        justify-content: space-between;
         align-items: center;
 
         .title {
-          flex: 1;
-          margin-right: 5px;
           font-size: 16px;
           .ellipsisMore(1);
-        }
-
-        .actions {
-          display: flex;
-          align-items: center;
-          font-size: 14px;
-
-          .edit {
-            margin-right: 10px;
-            color: @theme-blue;
-          }
-
-          .del {
-            color: @font-danger;
-          }
-
-          .edit,
-          .del {
-            &:hover {
-              color: @active;
-            }
-          }
         }
       }
 
@@ -226,6 +240,7 @@ const toTag = (e: Event, name: string) => {
           display: flex;
           justify-content: space-between;
           align-items: center;
+          margin: 8px 0;
 
           .author,
           .date {
@@ -264,6 +279,77 @@ const toTag = (e: Event, name: string) => {
 
           .classify {
             margin-right: 5px;
+          }
+        }
+
+        .actions {
+          display: flex;
+          justify-content: space-between;
+          font-size: 13px;
+          margin-top: 8px;
+          color: @font-2;
+
+          .action-icons {
+            display: flex;
+            align-items: center;
+          }
+
+          .action {
+            display: flex;
+            align-items: center;
+            margin-right: 15px;
+
+            .font {
+              font-size: 15px;
+              margin-right: 5px;
+            }
+
+            .like-icon {
+              margin-bottom: 2px;
+            }
+
+            .icon-24gf-thumbsUp2 {
+              color: @theme-blue;
+            }
+
+            .comment-icon {
+              font-size: 16px;
+            }
+
+            .read-icon {
+              font-size: 18px;
+            }
+
+            .edit {
+              margin-right: 10px;
+              color: @theme-blue;
+              font-size: 14px;
+            }
+
+            .del {
+              color: @font-danger;
+              font-size: 14px;
+            }
+
+            .edit,
+            .del {
+              &:hover {
+                color: @active;
+              }
+            }
+
+            &:last-child {
+              margin-right: 0;
+            }
+          }
+
+          .like,
+          .comment,
+          .read-count {
+            cursor: pointer;
+            &:hover {
+              color: @sub-2-blue;
+            }
           }
         }
       }

@@ -7,7 +7,13 @@
 <template>
   <div :class="`${checkOS() === 'mac' && 'mac-left-menu-wrap'} left-menu-wrap`">
     <el-scrollbar ref="scrollRef">
-      <div v-for="menu in menuList" :key="menu.key" class="menu-list" @click="onSelectMenu(menu)">
+      <div
+        v-for="menu in menuList"
+        v-show="!menu.hide"
+        :key="menu.key"
+        class="menu-list"
+        @click="(e) => onSelectMenu(e, menu)"
+      >
         <el-tooltip class="box-item" effect="light" :content="menu.name" placement="right">
           <i
             :class="`${
@@ -20,8 +26,15 @@
       </div>
     </el-scrollbar>
     <div class="setting">
-      <el-dropdown>
-        <el-avatar shape="square" :size="checkOS() === 'mac' ? 45 : 38" fit="cover" :src="PAGESVG" class="avatar" />
+      <el-dropdown v-if="loginStore?.userInfo?.userId">
+        <el-avatar
+          shape="square"
+          :size="checkOS() === 'mac' ? 45 : 38"
+          fit="cover"
+          :src="loginStore.userInfo?.headUrl || HEAD_IMG"
+          class="avatar"
+          @click.stop="toPersonal"
+        />
         <template #dropdown>
           <el-dropdown-menu>
             <el-dropdown-item @click="toPersonal">
@@ -30,7 +43,7 @@
                 <span class="dropdown-text">我的主页</span>
               </div>
             </el-dropdown-item>
-            <el-dropdown-item @click="onLogout">
+            <el-dropdown-item @click="onQuit">
               <div class="dropdown">
                 <i class="iconfont icon-tuichu1" />
                 <span class="dropdown-text">退出登录</span>
@@ -39,14 +52,17 @@
           </el-dropdown-menu>
         </template>
       </el-dropdown>
+      <div v-else class="login-btn">
+        <div class="login" @click.stop="onLogin">登录</div>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, watchEffect } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
-import { MENULIST, PAGESVG } from '@/constant';
+import { MENULIST, HEAD_IMG } from '@/constant';
 import { MenuListParams } from '@/typings/common';
 import { commonStore, loginStore } from '@/store';
 import { checkOS } from '@/utils';
@@ -58,11 +74,24 @@ const activeMenu = ref<MenuListParams>(MENULIST[0]);
 
 // 计算菜单
 const menuList = computed(() => {
-  return MENULIST.filter((i) => i.show);
+  const { token } = loginStore;
+  const list = token ? MENULIST : MENULIST.filter((i) => i.show);
+  return list;
+});
+
+// 监听路由变化
+watchEffect(() => {
+  if (route.path.includes('/tag/list')) {
+    const menu = MENULIST.find((i) => route.path.includes(i.path));
+    if (menu) {
+      activeMenu.value = menu;
+    }
+  }
 });
 
 // 选中菜单
-const onSelectMenu = (menu: MenuListParams) => {
+const onSelectMenu = (e: Event, menu: MenuListParams) => {
+  e.stopPropagation();
   activeMenu.value = menu;
   commonStore.setCrumbsInfo({
     crumbsName: menu.name,
@@ -81,13 +110,18 @@ const toPersonal = () => {
   router.push('/personal');
 };
 
+// 登录
+const onLogin = () => {
+  router.push('/login');
+};
+
 // 退出登录
-const onLogout = () => {
+const onQuit = () => {
   commonStore.setCrumbsInfo({
     crumbsName: MENULIST[0].name,
     crumbsPath: MENULIST[0].path,
   });
-  loginStore.onLogout();
+  loginStore.onQuit();
   router.push('/login');
 };
 </script>
@@ -136,8 +170,23 @@ const onLogout = () => {
     justify-content: center;
     margin-top: 20px;
 
+    .login-btn {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 38px;
+      height: 38px;
+      border-radius: 5px;
+      .clickNoSelectText();
+      .bgMoveColor(135deg);
+      .bgKeyframes(bgmove);
+      font-size: 14px;
+      cursor: pointer;
+      color: @theme-blue;
+      box-shadow: 0 0 2px @shadow-color inset;
+    }
+
     .avatar {
-      color: @sub-2-blue;
       cursor: pointer;
     }
 

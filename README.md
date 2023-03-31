@@ -14,12 +14,8 @@ electron_mirror=https://cdn.npm.taobao.org/dist/electron/
 
 开启 DevTools：Shift + Ctrl + D + N + H。
 
-### keep-alive
+### dialog.showOpenDialog
 
-https://blog.csdn.net/m0_46309087/article/details/109403655 keep-alive
+- openDirectory：允许选择文件夹。
 
-### vue-cropper
-
-https://juejin.cn/post/7032295846658097159
-https://juejin.cn/post/7189548709456773179
-https://blog.csdn.net/qq_41107231/article/details/109725839
+- res.filePaths[0]：选择的文件夹路径。

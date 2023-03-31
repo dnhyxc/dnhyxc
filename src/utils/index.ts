@@ -1,11 +1,15 @@
-import { ElMessageBox } from 'element-plus';
+import { ElMessageBox, ElMessage } from 'element-plus';
 import type { ElMessageBoxOptions } from 'element-plus';
 import moment from 'moment';
-import { MSG_CONFIG } from '@/constant';
+import { MSG_CONFIG, CODE_CONTROL } from '@/constant';
+import { ArticleItem } from '@/typings/common';
 import { usePlugins } from './plugins';
 import { normalizeResult } from './result';
 import { decrypt, encrypt } from './crypto';
 import request from './request';
+import { shareQQ, shareQZon, shareSinaWeiBo } from './share';
+import { mountDirectives } from './directive';
+import EventBus from './eventBus';
 import { locSetItem, locGetItem, locRemoveItem, ssnGetItem, ssnSetItem, ssnRemoveItem } from './storage';
 
 // 判断系统类型
@@ -23,9 +27,15 @@ export const checkOS = () => {
   }
 };
 
+// 数组去重方法
+export const uniqueFunc = (arr: any, uniId: string) => {
+  const res = new Map();
+  return arr.filter((item: any) => !res.has(item[uniId]) && res.set(item[uniId], 1));
+};
+
 // 二次确认弹窗
 export const Message = (title: string = '确定下架该文章吗？', content: string = '下架文章') => {
-  return ElMessageBox.confirm(title, content, MSG_CONFIG as ElMessageBoxOptions);
+  return ElMessageBox.confirm(title, content, MSG_CONFIG() as ElMessageBoxOptions);
 };
 
 // 格式化时间
@@ -83,13 +93,14 @@ export const scrollToTop = (ref: any, time: number = 500, position: number = 0) 
   rAF(frameFunc);
 };
 
-export const scrollTo = (ref: any, position: number) => {
+// 滚动到某位置
+export const scrollTo = (ref: any, position: number, time = 20) => {
   // el-scrollbar 容器
   const el = ref.value?.wrapRef as HTMLDivElement;
   // 使用requestAnimationFrame，如果没有则使用setTimeOut
   if (!window.requestAnimationFrame) {
     window.requestAnimationFrame = (callback) => {
-      return setTimeout(callback, 20);
+      return setTimeout(callback, time);
     };
   }
   // 获取当前元素滚动的距离
@@ -110,6 +121,101 @@ export const scrollTo = (ref: any, position: number) => {
   requestAnimationFrame(smoothScroll);
 };
 
+// 处理键盘快捷键输入
+export const setShortcutKey = (e: KeyboardEvent, addHotkey: Function) => {
+  const { altKey, ctrlKey, shiftKey, key, code } = e;
+  if (!CODE_CONTROL.includes(key)) {
+    let controlKey = '';
+    [
+      { key: shiftKey, text: 'Shift' },
+      { key: ctrlKey, text: 'Ctrl' },
+      { key: altKey, text: 'Alt' },
+    ].forEach((curKey) => {
+      if (curKey.key) {
+        if (controlKey) controlKey += ' + ';
+        controlKey += curKey.text;
+      }
+    });
+    if (key) {
+      if (controlKey) controlKey += ' + ';
+      controlKey += key.toUpperCase();
+    }
+
+    addHotkey({
+      text: controlKey,
+      controlKey: { altKey, ctrlKey, shiftKey, key, code },
+    });
+  }
+};
+
+export const getImgInfo = (url: string) => {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.crossOrigin = '*';
+    img.onload = function () {
+      const width = img.width;
+      const height = img.height;
+      resolve({
+        width,
+        height,
+      });
+    };
+    img.onerror = function () {
+      reject(new Error('图片加载失败'));
+    };
+    img.src = url;
+  });
+};
+
+// 设置头像base64
+export const url2Base64 = (src: string) => {
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+    // 处理缓存
+    image.src = src + '?v=' + Math.random();
+    // 支持跨域图片
+    image.crossOrigin = '*';
+    image.onload = () => {
+      const base64 = image2Base64(image);
+      resolve(base64);
+    };
+  });
+};
+
+// 将网络图片转换成base64格式
+export const image2Base64 = (image: any) => {
+  const canvas = document.createElement('canvas');
+  canvas.width = image.width;
+  canvas.height = image.height;
+  const ctx = canvas.getContext('2d');
+  ctx?.drawImage(image, 0, 0, image.width, image.height);
+  // 可选其他值 image/jpeg
+  return canvas.toDataURL('image/png');
+};
+
+// 校验文章是否下架
+export const chackIsDelete = (data: ArticleItem) => {
+  return new Promise((resolve, reject) => {
+    if (data?.isDelete) {
+      ElMessage({
+        message: '文章已下架，无法操作',
+        type: 'warning',
+        offset: 80,
+      });
+      reject(new Error('文章已下架，无法操作'));
+    } else {
+      resolve(true);
+    }
+  });
+};
+
+// 校验是否是正常的url
+export const checkUrl = (url: string) => {
+  const Expression = /http(s)?:\/\/([\w-]+\.)+[\w-]+(\/[\w- ./?%&=]*)?/;
+  const objExp = new RegExp(Expression);
+  return objExp.test(url);
+};
+
 export {
   request,
   normalizeResult,
@@ -124,4 +230,9 @@ export {
   ssnRemoveItem,
   formatGapTime,
   usePlugins,
+  mountDirectives,
+  shareQQ,
+  shareQZon,
+  shareSinaWeiBo,
+  EventBus,
 };

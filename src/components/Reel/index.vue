@@ -9,7 +9,17 @@
     <el-scrollbar ref="scrollRef">
       <div ref="cardList" class="card-list">
         <slot name="card">
-          <div v-for="i in 20" :key="i" class="card" @click="onClick(i)">分类{{ i }}{{ moveInfo.scrollWidth }}</div>
+          <div
+            v-for="(i, index) in classifys"
+            :key="index"
+            :class="`${currentClassify === i.name && 'active'} card`"
+            @click="onClick(i.name!)"
+          >
+            <div class="content">
+              <div class="name">{{ i.name }}</div>
+              <div class="count"><span class="text text-left">共</span>{{ i.value }}<span class="text">篇</span></div>
+            </div>
+          </div>
         </slot>
       </div>
     </el-scrollbar>
@@ -17,30 +27,43 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, reactive } from 'vue';
+import { ref, onMounted, reactive, watchEffect, onUnmounted } from 'vue';
+import { Classifys } from '@/typings/common';
+import { commonStore } from '@/store';
 
 interface IProps {
-  dataSource: any[];
-  onCheckClassify: (id: number) => void;
+  classifys: Classifys[]; // 分类
+  onCheckClassify: (name: string) => void;
   width?: string;
+  currentClassify?: string;
 }
+
+const props = withDefaults(defineProps<IProps>(), {
+  dataSource: () => [],
+  onCheckClassify: () => {},
+  width: 'calc(100vw - 80px)',
+  currentClassify: '',
+});
 
 const moveInfo = reactive<{ x: number; scrollWidth: number }>({ x: 0, scrollWidth: 0 });
 const scrollWrap = ref<any>(null);
 const cardList = ref<HTMLDivElement | null>(null);
 const scrollRef = ref<any>(null);
 
-const props = withDefaults(defineProps<IProps>(), {
-  dataSource: () => [],
-  onCheckClassify: () => { },
-  width: 'calc(100vw - 80px)',
-});
-
 onMounted(() => {
+  // 保存滚动容器
+  watchEffect(() => {
+    commonStore.reelScrollRef = scrollRef.value?.wrapRef;
+  });
   onMouseDown();
   onMouseUp();
   onMouseLeave();
   onSwill();
+});
+
+onUnmounted(() => {
+  commonStore.reelScrollRef = null;
+  commonStore.reelScrollScale = 0;
 });
 
 // 监听鼠标滚轮事件
@@ -54,6 +77,10 @@ const wheelEvent = (e: WheelEvent) => {
   const startLeft = Math.ceil(scrollRef.value?.wrapRef?.scrollLeft);
   // 如果滚动距离小于0，则将值赋值成0
   moveInfo.scrollWidth = startLeft + Math.ceil(e.deltaY) < 0 ? 0 : startLeft + Math.ceil(e.deltaY);
+  // 计算滚动比例
+  commonStore.reelScrollScale = Number(
+    ((startLeft * 1.0) / (scrollRef.value?.wrapRef?.scrollWidth - scrollRef.value?.wrapRef?.offsetWidth)).toFixed(2),
+  );
   scrollRef.value?.setScrollLeft(moveInfo.scrollWidth);
 };
 
@@ -78,11 +105,19 @@ const onMouseMove = (e: MouseEvent) => {
   if (clientX < moveInfo.x) {
     if (startLeft + scrollWrapWidth >= cardListWidth) return;
     moveInfo.scrollWidth = startLeft + (moveInfo.x - clientX);
+    // 计算滚动比例
+    commonStore.reelScrollScale = Number(
+      ((startLeft * 1.0) / (scrollRef.value?.wrapRef?.scrollWidth - scrollRef.value?.wrapRef?.offsetWidth)).toFixed(2),
+    );
     scrollRef.value?.setScrollLeft(moveInfo.scrollWidth);
   } else {
     if (startLeft <= 0) return;
     // 如果滚动距离小于0，则将值赋值成0
     moveInfo.scrollWidth = startLeft - (clientX - moveInfo.x) < 0 ? 0 : startLeft - (clientX - moveInfo.x);
+    // 计算滚动比例
+    commonStore.reelScrollScale = Number(
+      ((startLeft * 1.0) / (scrollRef.value?.wrapRef?.scrollWidth - scrollRef.value?.wrapRef?.offsetWidth)).toFixed(2),
+    );
     scrollRef.value?.setScrollLeft(moveInfo.scrollWidth);
   }
 };
@@ -105,9 +140,9 @@ const onMouseLeave = () => {
 };
 
 // 点击卡片事件
-const onClick = (id: number) => {
+const onClick = (name: string) => {
   const { onCheckClassify } = props;
-  onCheckClassify && onCheckClassify(id);
+  onCheckClassify && onCheckClassify(name);
 };
 </script>
 
@@ -136,15 +171,57 @@ const onClick = (id: number) => {
       height: 100%;
       margin-right: 12px;
       box-shadow: @shadow-mack;
-      background-image: @card-lg;
+      background-image: @bg-lg;
       border-radius: 5px;
       -webkit-user-drag: none;
       cursor: pointer;
-      .clickNoSelectText();
 
       &:last-child {
         margin-right: 0;
       }
+
+      .content {
+        display: flex;
+        justify-content: space-between;
+        flex-direction: column;
+        width: 100%;
+        height: 100%;
+        box-sizing: border-box;
+        border-radius: 5px;
+        padding: 10px 15px;
+
+        .name {
+          font-size: 18px;
+          margin-bottom: 30px;
+        }
+
+        .count {
+          font-size: 28px;
+          font-weight: 700;
+          color: @theme-blue;
+          text-align: right;
+
+          .text {
+            display: inline-block;
+            font-size: 16px;
+            font-weight: 300;
+            color: @font-3;
+            vertical-align: middle;
+            margin-left: 5px;
+          }
+
+          .text-left {
+            margin-left: 0;
+            margin-right: 5px;
+          }
+        }
+      }
+    }
+
+    .active {
+      .clickNoSelectText();
+      .bgMoveColor(135deg);
+      .bgKeyframes(bgmove);
     }
   }
 }
