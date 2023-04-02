@@ -27,7 +27,7 @@
     <div class="search-tag-list">
       <div class="label" @click="onShowMore">
         <i :class="`iconfont ${!showMore ? 'icon-xiajiantou' : 'icon-shangjiantou'}`" />
-        <span class="view-more-info">更多选项：</span>
+        <span class="view-more-info">更多搜索条件</span>
       </div>
       <div class="radio-group">
         <div
@@ -240,16 +240,17 @@ const onScrollTo = () => {
     .label {
       display: flex;
       align-items: center;
+      justify-content: center;
       margin-right: 5px;
       text-align: center;
       background-image: @bg-lg-2;
-      padding-left: 8px;
-      min-width: 130px;
+      min-width: 140px;
       border-radius: 5px;
       cursor: pointer;
       border: 1px solid @card-border;
 
       .view-more-info {
+        text-align: center;
         margin-left: 5px;
       }
     }

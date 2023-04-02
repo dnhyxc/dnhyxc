@@ -156,7 +156,6 @@ const likeListArticle = (id: string) => {
     .scrollbar-wrapper();
   }
 
-  .loading,
   .no-more {
     text-align: center;
     padding-top: 2px;

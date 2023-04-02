@@ -501,6 +501,12 @@ export const CODE_CONTROL = [
   'Enter',
 ]; // ShiftKey Control(Ctrl) Alt
 
+// 保存草稿、编辑草稿api
+export const ARTICLE_DRAFT = {
+  1: API.CREATE_DRAFT,
+  2: API.UPDATE_DRAFT,
+};
+
 // 关于博主页面接口path
 export const AUTHOR_API_PATH = {
   0: API.GET_AUTHOR_ARTICLE_LIST,

@@ -95,6 +95,7 @@ export interface CreateArticleParams {
   coverImage?: string;
   abstract?: string;
   articleId?: string;
+  originalArticleId?: string;
 }
 
 // 创建收藏集返回值
@@ -331,4 +332,13 @@ export interface AdvancedSearchParams {
   pageSize: number;
   userId?: string;
   filterList?: string[];
+}
+
+// 保存草稿参数
+export interface CreateDraftParamsResult {
+  id: string;
+  authorId: string;
+  authorName: string;
+  content: string;
+  createTime: number;
 }

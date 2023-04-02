@@ -285,3 +285,16 @@ export const advancedSearch = async (params: AdvancedSearchParams) => {
   const res = await post(API.ADVANCED_SEARCH, copeParams(params));
   return res;
 };
+
+// 保存草稿
+
+export const articleDraft = async (params: CreateArticleParams, path: string) => {
+  const res = await post(path, copeParams(params));
+  return res;
+};
+
+// 获取草稿列表
+export const getDraftList = async (params: GetArticleListParams) => {
+  const res = await post(API.GET_DRAFT_LIST, copeParams(params));
+  return res;
+};

@@ -7,7 +7,7 @@
       autofocus
       :height="height"
       :disabled-menus="[]"
-      left-toolbar="undo redo | h bold italic | quote code | strikethrough hr | emoji link image | ul ol table | clear | create"
+      left-toolbar="undo redo | h bold italic | quote code | strikethrough hr | emoji link image | ul ol table | clear | draft | save | create"
       :toolbar="toolbar"
       @upload-image="onUploadImage"
     />
@@ -42,31 +42,45 @@ interface Toolbar {
     action?: (editor?: any) => void;
     menus?: ToolbarItem[];
   };
+  save?: {
+    title?: string;
+    text?: string;
+    icon?: string;
+    action?: (editor?: any) => void;
+    menus?: ToolbarItem[];
+  };
+  draft?: {
+    title?: string;
+    text?: string;
+    icon?: string;
+    action?: (editor?: any) => void;
+    menus?: ToolbarItem[];
+  };
 }
 
 interface IProps {
   articleId?: string;
   height?: string;
-  onSaveMackdown?: (html: string) => void;
-  onEditChange?: (html: string) => void;
   onPublish?: () => void;
   onClear?: () => void;
+  onShowDraft?: () => void;
+  onSaveDraft?: () => void;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
   articleId: '',
   height: 'calc(100vh - 75px)',
-  onSaveMackdown: () => {},
-  onEditChange: () => {},
   onPublish: () => {},
   onClear: () => {},
+  onShowDraft: () => {},
+  onSaveDraft: () => {},
 });
 
 // 自定义工具栏配置
 const toolbar = reactive<Toolbar>({
   create: {
-    text: '发布',
-    title: '发布',
+    text: '发',
+    title: '发布文章',
     action(editor) {
       if (!createStore?.createInfo?.content) {
         ElMessage({
@@ -80,10 +94,32 @@ const toolbar = reactive<Toolbar>({
     },
   },
   clear: {
-    text: '清空',
-    title: '清空',
+    text: '清',
+    title: '清空内容',
     action(editor) {
       props.onClear && props.onClear();
+    },
+  },
+  save: {
+    text: '存',
+    title: '保存草稿',
+    action(editor) {
+      if (!createStore?.createInfo?.content) {
+        ElMessage({
+          message: '嘿！一个字都没写休想发布',
+          type: 'warning',
+          offset: 80,
+        });
+        return;
+      }
+      props?.onSaveDraft?.();
+    },
+  },
+  draft: {
+    text: '稿',
+    title: '草稿列表',
+    action(editor) {
+      props?.onShowDraft?.();
     },
   },
 });
@@ -132,6 +168,16 @@ const onUploadImage = async (event: Event, insertImage: Function, files: File) =
     }
     .v-md-editor__toolbar-item-clear {
       color: @font-warning;
+      font-size: 14px;
+      line-height: 30px;
+    }
+    .v-md-editor__toolbar-item-save {
+      color: @theme-blue;
+      font-size: 14px;
+      line-height: 30px;
+    }
+    .v-md-editor__toolbar-item-draft {
+      color: @theme-blue;
       font-size: 14px;
       line-height: 30px;
     }

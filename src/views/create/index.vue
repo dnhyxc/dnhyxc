@@ -6,22 +6,31 @@
 -->
 <template>
   <div class="edit-wrap">
-    <Editor :on-publish="onPublish" :on-clear="onClear" :article-id="(route?.query?.id as string)" />
+    <Editor
+      :on-publish="onPublish"
+      :on-clear="onClear"
+      :on-show-draft="showDraft"
+      :article-id="(route?.query?.id as string)"
+      :on-save-draft="onSaveDraft"
+    />
     <CreateDrawer v-model="visible" :article-id="(route?.query?.id as string)" />
+    <DraftModal v-model:draft-visible="draftVisible" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onActivated } from 'vue';
+import { ref, onActivated, onDeactivated } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import Editor from '@/components/Editor/index.vue';
-import CreateDrawer from './CreateDrawer/index.vue';
+import CreateDrawer from './Create/index.vue';
+import DraftModal from './Draft/index.vue';
 import { articleStore, createStore } from '@/store';
 
 const route = useRoute();
 const router = useRouter();
 
 const visible = ref<boolean>(false); // 权限设置弹窗的状态
+const draftVisible = ref<boolean>(false); // 草稿箱弹窗状态
 
 // 组件启用时，如果有文章id，则请求文章详情
 onActivated(() => {
@@ -29,9 +38,19 @@ onActivated(() => {
   articleStore?.getArticleDetail(route.query.id as string, true);
 });
 
+// 组件弃用时，关闭草稿列表弹窗
+onDeactivated(() => {
+  draftVisible.value = false;
+});
+
 // 点击编辑器header发布文章按钮
 const onPublish = () => {
   visible.value = true;
+};
+
+// 保存草稿
+const onSaveDraft = () => {
+  createStore.articleDraft();
 };
 
 // 清空编辑内容
@@ -39,6 +58,11 @@ const onClear = () => {
   // 手动去除query articleId 参数
   router.push('/create');
   createStore?.clearCreateInfo(true);
+};
+
+// 弹窗显示、隐藏
+const showDraft = () => {
+  draftVisible.value = true;
 };
 </script>
 
