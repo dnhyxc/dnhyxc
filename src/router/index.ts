@@ -183,6 +183,15 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('@/views/login/index.vue'),
   },
   {
+    path: '/article/:id',
+    name: 'article',
+    meta: {
+      title: '文章详情',
+      keepAlive: false,
+    },
+    component: () => import('@/views/article/index.vue'),
+  },
+  {
     path: '/:pathMatch(.*)*',
     component: () => import('@/views/404/index.vue'),
   },

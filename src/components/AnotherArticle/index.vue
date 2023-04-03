@@ -60,7 +60,8 @@ onMounted(() => {
 
 // 跳转详情
 const toDetail = (id: string) => {
-  router.push(`/detail/${id}`);
+  router.push(`/article/${id}`);
+  // router.push(`/detail/${id}`);
   setTimeout(() => {
     reload && reload();
   }, 100);

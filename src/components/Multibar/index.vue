@@ -8,25 +8,29 @@
   <div class="multibar-wrap">
     <div class="action like-wrap" @click="likeArticle">
       <i :class="`like-font iconfont ${articleStore?.articleDetail?.isLike && 'is-like'} icon-24gf-thumbsUp2`" />
-      <span v-if="articleStore?.detailArtLikeCount > 0" class="count">{{
-        articleStore?.detailArtLikeCount > 999
-          ? `${String(articleStore?.detailArtLikeCount).slice(0, 3)}+`
-          : articleStore?.detailArtLikeCount
-      }}</span>
+      <span v-if="articleStore?.detailArtLikeCount > 0" class="count">
+        {{
+          articleStore?.detailArtLikeCount > 999
+            ? `${String(articleStore?.detailArtLikeCount).slice(0, 3)}+`
+            : articleStore?.detailArtLikeCount
+        }}
+      </span>
     </div>
     <div class="action comment-wrap" @click="toComment">
       <i class="comment-font iconfont icon-pinglun1" />
-      <span v-if="commentCount > 0" class="count">{{
-        commentCount > 999 ? `${String(commentCount).slice(0, 3)}+` : commentCount
-      }}</span>
+      <span v-if="commentCount > 0" class="count">
+        {{ commentCount > 999 ? `${String(commentCount).slice(0, 3)}+` : commentCount }}
+      </span>
     </div>
     <div class="action collect-wrap" @click="onCollect">
       <i :class="`collect-font iconfont ${collectStore?.collectStatus && 'active-collect'} icon-31shoucangxuanzhong`" />
-      <span v-if="articleStore?.articleDetail?.collectCount! > 0" class="count">{{
-        articleStore?.articleDetail?.collectCount! > 999
-          ? `${String(articleStore?.articleDetail?.collectCount).slice(0, 3)}+`
-          : articleStore?.articleDetail?.collectCount
-      }}</span>
+      <span v-if="articleStore?.articleDetail?.collectCount! > 0" class="count">
+        {{
+          articleStore?.articleDetail?.collectCount! > 999
+            ? `${String(articleStore?.articleDetail?.collectCount).slice(0, 3)}+`
+            : articleStore?.articleDetail?.collectCount
+        }}
+      </span>
     </div>
     <el-popover placement="top-start" :width="130" trigger="hover" popper-style="min-width: 130px">
       <template #default>
@@ -186,6 +190,10 @@ const onCollect = () => {
     .share-font {
       font-size: 26px;
     }
+  }
+
+  .share-wrap {
+    margin-right: 0;
   }
 }
 

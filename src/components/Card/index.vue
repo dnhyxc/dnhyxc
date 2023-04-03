@@ -66,6 +66,7 @@
 </template>
 
 <script setup lang="ts">
+import { ipcRenderer } from 'electron';
 import { useRouter } from 'vue-router';
 import { formatDate, chackIsDelete } from '@/utils';
 import { ArticleItem } from '@/typings/common';
@@ -113,7 +114,8 @@ const onReomve = async (data: ArticleItem) => {
 // 去详情
 const toDetail = async (data: ArticleItem) => {
   await chackIsDelete(data);
-  router.push(`/detail/${data.id}`);
+  // router.push(`/detail/${data.id}`);
+  ipcRenderer.send('new-win', `article/${data.id}`);
 };
 
 // 去我的主页

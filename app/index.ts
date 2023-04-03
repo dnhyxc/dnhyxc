@@ -5,6 +5,11 @@ import { registerShortcut, unRegisterShortcut } from './shortcut';
 import { createContextMenu, getIconPath } from './tray';
 
 let win: BrowserWindow | null = null;
+let newWin: BrowserWindow | null = null;
+let newWins: {
+  id: string;
+  win: BrowserWindow | null;
+}[] = [];
 
 let tray: Tray | null = null;
 
@@ -101,6 +106,13 @@ ipcMain.on('window-max', () => {
 // 关闭窗口
 ipcMain.on('window-close', () => {
   win?.hide();
+  // 当主窗口关闭时，关闭所有的子窗口
+  if (newWins?.length) {
+    newWins.forEach((i) => {
+      i?.win?.close();
+    });
+    newWins = [];
+  }
 });
 
 // 退出程序
@@ -140,6 +152,93 @@ ipcMain.on('download', (event, url) => {
         win?.webContents.send('download-file', false);
       }
     });
+  });
+});
+
+// 监听最大化事件
+const newWinMax = (win) => {
+  win?.webContents.send('newWin-max', true);
+};
+
+// 监听最小化事件
+const newWinMin = (win) => {
+  win?.webContents.send('newWin-max', false);
+};
+
+// 监听渲染进程请求获取electron的用户目录
+ipcMain.on('new-win', (event, pathname) => {
+  const index = pathname.lastIndexOf('/');
+  const id = pathname.substring(index + 1, pathname.length);
+  // 查询当前id窗口是否存在，如果存在则不重新创建
+  const findWin = newWins.find((i) => i.id === id);
+  if (findWin) {
+    findWin?.win?.focus(); // 存在则直接聚焦，不重新创建
+    return;
+  }
+
+  newWin = new BrowserWindow({
+    width: 1000,
+    height: 690,
+    minWidth: 1000,
+    minHeight: 690,
+    titleBarStyle: 'hidden',
+    autoHideMenuBar: true,
+    webPreferences: {
+      contextIsolation: false,
+      nodeIntegration: true,
+      partition: String(+new Date()), // 防止加载线上项目地址缓存在磁盘中
+    },
+    icon: path.join(__dirname, getIconPath({ isDev, isMac })),
+  });
+
+  // 存储每个newWin
+  newWins.push({
+    id,
+    win: newWin,
+  });
+
+  if (!isDev) {
+    newWin?.loadURL(`http://43.143.114.71:80/${pathname}`);
+  } else {
+    newWin?.webContents.openDevTools();
+    newWin?.loadURL(`${process.env.VITE_DEV_SERVER_URL!}${pathname}`);
+  }
+
+  newWins.forEach((i) => {
+    // 监听窗口最大化事件
+    i?.win?.on('maximize', () => newWinMax(i.win));
+
+    // 监听窗口最小化事件
+    i?.win?.on('unmaximize', () => newWinMin(i.win));
+  });
+});
+
+// 监听子窗口关闭
+ipcMain.on('new-win-out', (event, id) => {
+  const index = newWins.findIndex((i) => i.id === id);
+  newWins[index]?.win?.close();
+  newWins.splice(index, 1);
+});
+
+// 监听子窗口最大/最小化
+ipcMain.on('new-win-max', (event, id) => {
+  newWins.forEach((i) => {
+    if (i.id === id) {
+      if (i?.win?.isMaximized()) {
+        i?.win?.restore();
+      } else {
+        i?.win?.maximize();
+      }
+    }
+  });
+});
+
+// 监听子窗口最小化
+ipcMain.on('new-win-min', (e, id) => {
+  newWins.forEach((i) => {
+    if (i.id === id) {
+      i?.win?.minimize();
+    }
   });
 });
 
