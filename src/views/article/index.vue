@@ -149,8 +149,9 @@ const updateFocus = (value: boolean) => {
 
 // 置顶
 const onSticky = () => {
+  const { id } = route.params;
   stickyStatus.value = !stickyStatus.value;
-  ipcRenderer.send('new-win-show', stickyStatus.value);
+  ipcRenderer.send('new-win-show', stickyStatus.value, id);
 };
 
 // 最小化程序

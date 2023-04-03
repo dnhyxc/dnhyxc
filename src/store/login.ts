@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia';
+import Store from 'electron-store';
 import { Router } from 'vue-router';
 import { ElMessage } from 'element-plus';
 import { LoginParams, UserLoginParams, UserInfoParams, registerRes } from '@/typings/common';
@@ -13,10 +14,13 @@ interface IProps {
   userInfo: UserInfoParams;
 }
 
+const store = new Store();
+
 export const useLoginStore = defineStore('login', {
   state: (): IProps => ({
-    token: locGetItem('token'),
-    userInfo: JSON.parse(locGetItem('userInfo')!) || {
+    token: locGetItem('token') || (store.get('token') && JSON.parse(store.get('token')! as string)),
+    userInfo: JSON.parse(locGetItem('userInfo')!) ||
+      (store.get('userInfo') && JSON.parse(store.get('userInfo') as string)) || {
       userId: '',
       username: '',
       job: '',
@@ -80,7 +84,9 @@ export const useLoginStore = defineStore('login', {
           this.token = token;
           this.userInfo = userInfo as UserInfoParams;
           locSetItem('token', token!);
+          store.set('token', JSON.stringify(token));
           locSetItem('userInfo', JSON.stringify(userInfo));
+          store.set('userInfo', JSON.stringify(userInfo));
           // 登陆成功后返回到上一页面
           router?.push(commonStore.backPath);
         } else {
@@ -168,11 +174,16 @@ export const useLoginStore = defineStore('login', {
             ...params,
           }),
         );
+
+        store.set('userInfo', JSON.stringify({ ...this.userInfo, ...params }));
+
         // 判断是否是个人资料页面修改了用户名或者在账号设置页面中修改了密码
         if ((params.username && params.username !== username) || params.password) {
           this.token = '';
           locRemoveItem('token');
+          store.delete('token');
           locRemoveItem('userInfo');
+          store.delete('userInfo');
           ElMessage({
             message: `${params.password ? '密码已重置' : '用户名称已修改'}，请重新登录`,
             type: 'success',
@@ -200,7 +211,9 @@ export const useLoginStore = defineStore('login', {
       this.token = '';
       this.userInfo = {};
       locRemoveItem('token');
+      store.delete('token');
       locRemoveItem('userInfo');
+      store.delete('userInfo');
     },
   },
 });

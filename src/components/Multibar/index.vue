@@ -76,7 +76,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { HEAD_IMG } from '@/constant';
-import { shareQQ, shareSinaWeiBo } from '@/utils';
+import { shareQQ, shareSinaWeiBo, getStoreUserInfo } from '@/utils';
 import { articleStore, collectStore, loginStore } from '@/store';
 import { useCommentCount } from '@/hooks';
 import Qrcode from '@/components/Qrcode/index.vue';
@@ -116,7 +116,12 @@ const toComment = () => {
 
 // 收藏
 const onCollect = () => {
-  if (!loginStore?.userInfo?.userId) {
+  // 获取存储在硬盘store中的登录信息
+  const userInfo = getStoreUserInfo();
+
+  console.log(userInfo, 'userInfo>>>>>');
+
+  if (!loginStore?.userInfo?.userId && !userInfo?.userId) {
     return ElMessage({
       message: '请先登录后再操作哦！',
       type: 'warning',

@@ -1,5 +1,6 @@
 import { ElMessageBox, ElMessage } from 'element-plus';
 import type { ElMessageBoxOptions } from 'element-plus';
+import Store from 'electron-store';
 import moment from 'moment';
 import { MSG_CONFIG, CODE_CONTROL } from '@/constant';
 import { ArticleItem } from '@/typings/common';
@@ -11,6 +12,8 @@ import { shareQQ, shareQZon, shareSinaWeiBo } from './share';
 import { mountDirectives } from './directive';
 import EventBus from './eventBus';
 import { locSetItem, locGetItem, locRemoveItem, ssnGetItem, ssnSetItem, ssnRemoveItem } from './storage';
+
+const store = new Store();
 
 // 判断系统类型
 export const checkOS = () => {
@@ -214,6 +217,13 @@ export const checkUrl = (url: string) => {
   const Expression = /http(s)?:\/\/([\w-]+\.)+[\w-]+(\/[\w- ./?%&=]*)?/;
   const objExp = new RegExp(Expression);
   return objExp.test(url);
+};
+
+export const getStoreUserInfo = () => {
+  // 获取存储在硬盘store中的登录信息
+  const storeUserInfo = store.get('userInfo') && JSON.parse(store.get('userInfo') as string);
+  console.log(storeUserInfo, 'storeUserInfo');
+  return storeUserInfo;
 };
 
 export {

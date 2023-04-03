@@ -242,6 +242,12 @@ ipcMain.on('new-win-min', (e, id) => {
   });
 });
 
+// 窗口置顶
+ipcMain.on('new-win-show', (_, status, id) => {
+  const index = newWins.findIndex((i) => i.id === id);
+  newWins[index]?.win?.setAlwaysOnTop(status);
+});
+
 // 在Electron完成初始化时被触发
 app
   .whenReady()

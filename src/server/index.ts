@@ -12,12 +12,16 @@ import {
   AdvancedSearchParams,
 } from '@/typings/common';
 import { loginStore } from '@/store';
+import { getStoreUserInfo } from '@/utils';
 import * as API from './api';
 
 // 处理请求参数，为请求自动加上userId
 const copeParams = (params?: any) => {
   const { userInfo } = loginStore;
-  const data = params?.userId ? params : { ...params, userId: userInfo?.userId };
+  const storeUserInfo = getStoreUserInfo();
+  console.log(storeUserInfo, 'storeUserInfo>>>copeParams');
+
+  const data = params?.userId ? params : { ...params, userId: userInfo?.userId || storeUserInfo?.userId };
   return data;
 };
 
