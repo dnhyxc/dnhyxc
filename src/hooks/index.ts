@@ -22,7 +22,7 @@ export const useGetRoutePath = () => {
 };
 
 // 监听滚动条事件hooks
-export const useScroller = () => {
+export const useScroller = (visible?: boolean) => {
   const scrollRef = ref<any>();
   const scrollTop = ref<number>(0);
 

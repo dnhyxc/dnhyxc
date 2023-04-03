@@ -19,7 +19,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onActivated, onDeactivated } from 'vue';
+import { ref, onActivated, onDeactivated, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import Editor from '@/components/Editor/index.vue';
 import CreateDrawer from './Create/index.vue';
@@ -38,9 +38,20 @@ onActivated(() => {
   articleStore?.getArticleDetail(route.query.id as string, true);
 });
 
+watch(
+  () => createStore.draftArticleId,
+  (newVal) => {
+    if (newVal) {
+      createStore.getDraftDetail(newVal as string);
+    }
+  },
+);
+
 // 组件弃用时，关闭草稿列表弹窗
 onDeactivated(() => {
   draftVisible.value = false;
+  // 清空草稿信息
+  createStore.clearCreateDraftInfo();
 });
 
 // 点击编辑器header发布文章按钮
@@ -51,12 +62,13 @@ const onPublish = () => {
 // 保存草稿
 const onSaveDraft = () => {
   createStore.articleDraft();
+  createStore.clearCreateInfo(true);
 };
 
 // 清空编辑内容
 const onClear = () => {
   // 手动去除query articleId 参数
-  router.push('/create');
+  router.replace('/create');
   createStore?.clearCreateInfo(true);
 };
 

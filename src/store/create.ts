@@ -1,7 +1,13 @@
 import { defineStore } from 'pinia';
 import { Router } from 'vue-router';
 import { ElMessage } from 'element-plus';
-import { ArticleItem, CreateArticleParams, ArticleListResult, CreateDraftParamsResult } from '@/typings/common';
+import {
+  ArticleItem,
+  CreateArticleParams,
+  ArticleListResult,
+  CreateDraftParamsResult,
+  ArticleDetailParams,
+} from '@/typings/common';
 import * as Service from '@/server';
 import { normalizeResult } from '@/utils';
 import { useCheckUserId } from '@/hooks';
@@ -15,7 +21,8 @@ interface IProps {
   draftList: ArticleItem[];
   total: number; // 列表总数
   loading: boolean | null;
-  draftArticleId: string;
+  draftArticleId: string; // 草稿id
+  draftInfo: ArticleDetailParams;
 }
 
 export const useCreateStore = defineStore('create', {
@@ -37,6 +44,7 @@ export const useCreateStore = defineStore('create', {
     draftList: [],
     loading: null,
     draftArticleId: '',
+    draftInfo: {},
   }),
 
   actions: {
@@ -53,6 +61,8 @@ export const useCreateStore = defineStore('create', {
           }),
         );
         if (res.success) {
+          // 如果使用的是草稿发布的文章，则发布成功之后，需要删除当前草稿
+          this.deleteDraft('', true);
           ElMessage({
             message: res.message,
             type: 'success',
@@ -74,11 +84,12 @@ export const useCreateStore = defineStore('create', {
     },
 
     // 文章草稿的创建及更新接口
-    async articleDraft(draftId?: string) {
+    async articleDraft(props?: CreateArticleParams) {
       const params = {
         ...this.createInfo,
         authorId: loginStore.userInfo?.userId,
-        articleId: draftId || this.draftArticleId,
+        articleId: props?.draftId || this.draftArticleId,
+        ...props,
       };
 
       // 当没有标题时，自动截取内容的前十个字符作为标题
@@ -87,11 +98,12 @@ export const useCreateStore = defineStore('create', {
       }
 
       const res = normalizeResult<CreateDraftParamsResult>(
-        await Service.articleDraft(params, ARTICLE_DRAFT[this.draftArticleId || draftId ? 2 : 1]),
+        await Service.articleDraft(params, ARTICLE_DRAFT[this.draftArticleId || props?.draftId ? 2 : 1]),
       );
 
       if (res.success) {
-        this.draftArticleId = res.data?.id;
+        // 保存、编辑成功后，清除存储的draftId
+        this.clearCreateDraftInfo();
         ElMessage({
           message: res.message,
           type: 'success',
@@ -133,6 +145,52 @@ export const useCreateStore = defineStore('create', {
       }
     },
 
+    // 获取草稿详情
+    async getDraftDetail(draftId: string) {
+      if (!draftId && !this.draftArticleId) return;
+      const res = normalizeResult<ArticleDetailParams>(
+        await Service.getDraftInfoById({ id: draftId! || this.draftArticleId }),
+      );
+      if (res.success) {
+        this.createInfo = res.data as CreateArticleParams;
+        this.draftArticleId = res.data.id!;
+        this.draftInfo = res.data;
+      } else {
+        ElMessage({
+          message: res.message,
+          type: 'error',
+          offset: 80,
+        });
+      }
+    },
+
+    // 删除草稿
+    async deleteDraft(draftId?: string, noMsg?: boolean) {
+      if (!draftId && !this.draftArticleId) return;
+      const res = normalizeResult<string>(await Service.deleteDraft({ id: draftId || this.draftArticleId }));
+      if (res.success) {
+        // 如果是使用草稿创建文章，则不需要提示
+        if (noMsg) return;
+        // 获取删除时拉取的文章总数，用于取消点赞时，拉取对应的数量
+        const total = this.total;
+        // 删除草稿后，清除原本的草稿数据，重新获取草稿列表
+        this.clearDraftListInfo();
+        this.pageSize = total;
+        this.getDraftList();
+        ElMessage({
+          message: res.message,
+          type: 'success',
+          offset: 80,
+        });
+      } else {
+        ElMessage({
+          message: res.message,
+          type: 'error',
+          offset: 80,
+        });
+      }
+    },
+
     // 清除编辑内容
     clearCreateInfo(clearAll?: boolean) {
       this.createInfo = {
@@ -154,6 +212,11 @@ export const useCreateStore = defineStore('create', {
       this.draftList = [];
       this.total = 0;
       this.loading = null;
+    },
+
+    // 清空草稿相关数据
+    clearCreateDraftInfo() {
+      this.draftArticleId = '';
     },
   },
 });

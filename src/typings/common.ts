@@ -96,6 +96,7 @@ export interface CreateArticleParams {
   abstract?: string;
   articleId?: string;
   originalArticleId?: string;
+  draftId?: string;
 }
 
 // 创建收藏集返回值
@@ -341,4 +342,26 @@ export interface CreateDraftParamsResult {
   authorName: string;
   content: string;
   createTime: number;
+}
+
+// 草稿详情
+export interface ArticleDetailParams {
+  id?: string;
+  title?: string;
+  content?: string;
+  classify?: string;
+  tag?: string;
+  coverImage?: string;
+  headUrl?: string;
+  abstract?: string;
+  createTime?: number;
+  comments?: CommentParams[];
+  authorName?: string;
+  authorId?: string;
+  replyCount?: number;
+  likeCount?: number;
+  readCount?: number;
+  isLike?: boolean;
+  originalArticleId?: string | number;
+  isDelete?: boolean;
 }

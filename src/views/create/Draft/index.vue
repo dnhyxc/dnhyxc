@@ -23,7 +23,7 @@
                 :key="data.id"
                 :data="data"
                 class="line-card"
-                @click.stop="toEdit(data.id!)"
+                :to-edit="toEdit"
               >
                 <template #title>
                   <div class="left">{{ data.title }}</div>
@@ -80,20 +80,20 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch, nextTick, onUnmounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
-import { useScroller } from '@/hooks';
 import { createStore } from '@/store';
-import { scrollTo } from '@/utils';
+import { scrollTo, Message } from '@/utils';
 import Loading from '@/components/Loading/index.vue';
 import ToTopIcon from '@/components/ToTopIcon/index.vue';
 import Empty from '@/components/Empty/index.vue';
 
 const router = useRouter();
 const route = useRoute();
-const { scrollRef, scrollTop } = useScroller();
 
 const isMounted = ref<boolean>(false);
+const scrollRef = ref<any>(null);
+const scrollTop = ref<number>(0);
 const noMore = computed(() => {
   const { draftList, total } = createStore;
   return draftList.length >= total && draftList.length;
@@ -124,16 +124,31 @@ onMounted(() => {
   isMounted.value = true;
 });
 
+// 滚动事件
+const onScroll = (e: any) => {
+  scrollTop.value = e.target.scrollTop;
+};
+
+// 监听弹窗显示状态，实时拉取草稿列表
 watch(
   () => visible.value,
   (newVal) => {
     if (newVal) {
+      nextTick(() => {
+        scrollRef.value?.wrapRef?.addEventListener('scroll', onScroll);
+      });
       // 清空拉取草稿数据相关缓存
       createStore.clearDraftListInfo();
       onGetDraftList();
+    } else {
+      scrollRef.value?.wrapRef.removeEventListener('scroll', onScroll);
     }
   },
 );
+
+onUnmounted(() => {
+  scrollRef.value?.wrapRef.removeEventListener('scroll', onScroll);
+});
 
 // 获取草稿列表
 const onGetDraftList = () => {
@@ -142,12 +157,19 @@ const onGetDraftList = () => {
 
 // 编辑
 const toEdit = (id: string) => {
-  router.push(`/create?draftId=${id}`);
+  // 保存草稿id
+  createStore.draftArticleId = id;
+  emit('update:draftVisible', false);
 };
 
 // 删除
 const onReomve = (id: string) => {
-  console.log(id, '删除');
+  Message('', '确定删除该草稿吗？').then(async () => {
+    // 调用接口，移除收藏集中收藏的文章
+    await createStore?.deleteDraft(id);
+    // 删除之后，自动跳转到原来所在位置
+    onScrollTo(scrollTop.value);
+  });
 };
 
 // 去作者主页
@@ -168,8 +190,8 @@ const toTag = (tag: string) => {
 };
 
 // 置顶
-const onScrollTo = () => {
-  scrollTo(scrollRef, 0);
+const onScrollTo = (to?: number) => {
+  scrollTo(scrollRef, to || 0);
 };
 </script>
 

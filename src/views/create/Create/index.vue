@@ -132,7 +132,8 @@
       <template #footer>
         <div class="footer">
           <el-button @click="onCancel">取消</el-button>
-          <el-button type="primary" @click="onSubmit">{{ articleId ? '更新' : '确定' }}</el-button>
+          <el-button type="primary" @click="onSaveDraft">保存</el-button>
+          <el-button type="primary" @click="onSubmit">{{ articleId ? '更新' : '发布' }}</el-button>
         </div>
       </template>
     </el-drawer>
@@ -211,6 +212,21 @@ const onSubmit = () => {
         },
         router,
       );
+      createStore.clearCreateInfo(true);
+      formRef.value?.resetFields();
+      emit('update:modelValue', false);
+    } else {
+      return false;
+    }
+  });
+};
+
+// 保存草稿
+const onSaveDraft = () => {
+  if (!formRef.value) return;
+  formRef.value.validate(async (valid) => {
+    if (valid) {
+      createStore.articleDraft();
       createStore.clearCreateInfo(true);
       formRef.value?.resetFields();
       emit('update:modelValue', false);

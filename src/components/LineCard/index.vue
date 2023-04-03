@@ -69,11 +69,13 @@ interface IProps {
   data: TimelineArticles;
   likeListArticle?: (id: string) => void;
   deleteArticle?: (id: string) => void;
+  toEdit?: (id: string) => void;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
   likeListArticle: () => {},
   deleteArticle: () => {},
+  toEdit: () => {},
 });
 
 // 编辑
@@ -110,7 +112,11 @@ const onLike = (id: string) => {
 
 // 前往首页
 const toDetail = (id: string) => {
-  router.push(`/detail/${id}`);
+  if (props.toEdit) {
+    props.toEdit(id);
+  } else {
+    router.push(`/detail/${id}`);
+  }
 };
 
 // 评论

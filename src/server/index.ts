@@ -298,3 +298,15 @@ export const getDraftList = async (params: GetArticleListParams) => {
   const res = await post(API.GET_DRAFT_LIST, copeParams(params));
   return res;
 };
+
+// 获取草稿详情
+export const getDraftInfoById = async (params: { id: string }) => {
+  const res = await post(API.GET_DRAFT_BY_ID, copeParams(params));
+  return res;
+};
+
+// 删除草稿
+export const deleteDraft = async (params: { id: string | null }) => {
+  const res = await post(API.DELETE_DRAFT, copeParams(params));
+  return res;
+};
