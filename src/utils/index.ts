@@ -257,7 +257,7 @@ export const getParamListFromStore = (from: string) => {
   const data = store.get('paramList');
   if (data && JSON.parse(data as string)) {
     const findData = JSON.parse(data as string).find((i: any) => i.from === from);
-    return findData.data;
+    return findData?.data;
   } else {
     return {};
   }

@@ -9,8 +9,14 @@
     v-if="articleStore.anotherArticleList[0]?.id || articleStore.anotherArticleList[1]?.id"
     class="another-article-wrap"
   >
-    <div v-for="(i, index) in articleStore.anotherArticleList" :key="i.id || index" class="list">
-      <div v-show="i?.id" class="article" @click="toDetail(i?.id)">
+    <div class="list">
+      <div
+        v-for="(i, index) in articleStore.anotherArticleList"
+        v-show="i?.id"
+        :key="i.id || index"
+        class="article"
+        @click="toDetail(i?.id)"
+      >
         <div class="item">
           <div class="prev">
             <span class="left">
@@ -100,7 +106,7 @@ const onJump = (name: string, type: string) => {
       align-items: center;
       padding: 10px;
       width: 100%;
-      margin-bottom: 10px;
+      margin-top: 10px;
       border-radius: 5px;
       box-shadow: @shadow-mack;
 

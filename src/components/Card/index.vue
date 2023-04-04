@@ -77,8 +77,6 @@ import Image from '@/components/Image/index.vue';
 const router = useRouter();
 const route = useRoute();
 
-console.log(route.name, 'route.name');
-
 interface IProps {
   data: ArticleItem;
   deleteArticle?: Function;
