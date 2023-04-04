@@ -48,8 +48,6 @@ export const useScroller = (visible?: boolean) => {
 export const useCheckUserId = (needMsg: boolean = true) => {
   // 获取存储在硬盘store中的登录信息
   const storeUserInfo = getStoreUserInfo()
-  console.log(storeUserInfo, 'storeUserInfo');
-
   const { userInfo } = loginStore;
   if (!userInfo?.userId && !storeUserInfo?.userId && needMsg) {
     ElMessage({

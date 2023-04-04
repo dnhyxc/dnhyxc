@@ -1,10 +1,7 @@
 <template>
   <!-- <RouterView /> -->
   <RouterView v-if="isRouterAlive" v-slot="{ Component }">
-    <!-- 定义缓存组件：注意include="Create"，Create 组件内部必须声明组件名称 -->
-    <KeepAlive include="Create">
-      <component :is="Component" />
-    </KeepAlive>
+    <component :is="Component" />
   </RouterView>
 </template>
 

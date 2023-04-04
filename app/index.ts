@@ -210,6 +210,11 @@ ipcMain.on('new-win', (event, pathname) => {
 
     // 监听窗口最小化事件
     i?.win?.on('unmaximize', () => newWinMin(i.win));
+
+    // 监听页面是否刷新，页面刷新时，取消窗口置顶
+    i?.win?.webContents.addListener('did-start-loading', () => {
+      i?.win?.setAlwaysOnTop(false);
+    });
   });
 });
 

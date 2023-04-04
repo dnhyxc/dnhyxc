@@ -3,7 +3,7 @@ import { Router } from 'vue-router';
 import type { Ref } from 'vue';
 import { ElMessage } from 'element-plus';
 import * as Service from '@/server';
-import { normalizeResult, Message } from '@/utils';
+import { normalizeResult, Message, getStoreUserInfo } from '@/utils';
 import { useCheckUserId } from '@/hooks';
 import {
   ArticleListResult,
@@ -42,6 +42,9 @@ interface IProps {
   detailArtLikeCount: number; // 详情文章点赞数量
   hot?: boolean; // 是否查询最热文章
 }
+
+// 获取用户信息
+const userInfo = getStoreUserInfo();
 
 export const useArticleStore = defineStore('article', {
   state: (): IProps => ({
@@ -430,10 +433,9 @@ export const useArticleStore = defineStore('article', {
     async releaseComment(data: ReplayComment) {
       // 检验是否有userId，如果没有禁止发送请求
       if (!useCheckUserId()) return;
-
       const params = {
-        userId: loginStore?.userInfo?.userId,
-        username: loginStore?.userInfo?.username,
+        userId: loginStore?.userInfo?.userId || userInfo?.userId,
+        username: loginStore?.userInfo?.username || userInfo?.username,
         articleId: data?.articleId || '',
         date: new Date().valueOf(),
         content: data.keyword,
@@ -477,11 +479,11 @@ export const useArticleStore = defineStore('article', {
         ? {
             commentId: data.commentId!,
             fromCommentId: data.commentId!,
-            userId: loginStore?.userInfo?.userId,
+            userId: loginStore?.userInfo?.userId || userInfo?.userId,
           }
         : {
             commentId: data.commentId!,
-            userId: loginStore?.userInfo?.userId,
+            userId: loginStore?.userInfo?.userId || userInfo?.userId,
           };
       this.likeLoading = true;
       const res = normalizeResult<{ status: number }>(await Service.giveCommentLike(params));

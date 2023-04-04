@@ -19,8 +19,6 @@ import * as API from './api';
 const copeParams = (params?: any) => {
   const { userInfo } = loginStore;
   const storeUserInfo = getStoreUserInfo();
-  console.log(storeUserInfo, 'storeUserInfo>>>copeParams');
-
   const data = params?.userId ? params : { ...params, userId: userInfo?.userId || storeUserInfo?.userId };
   return data;
 };

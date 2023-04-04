@@ -18,9 +18,8 @@ const store = new Store();
 
 export const useLoginStore = defineStore('login', {
   state: (): IProps => ({
-    token: locGetItem('token') || (store.get('token') && JSON.parse(store.get('token')! as string)),
-    userInfo: JSON.parse(locGetItem('userInfo')!) ||
-      (store.get('userInfo') && JSON.parse(store.get('userInfo') as string)) || {
+    token: locGetItem('token'),
+    userInfo: JSON.parse(locGetItem('userInfo')!) || {
       userId: '',
       username: '',
       job: '',

@@ -222,7 +222,6 @@ export const checkUrl = (url: string) => {
 export const getStoreUserInfo = () => {
   // 获取存储在硬盘store中的登录信息
   const storeUserInfo = store.get('userInfo') && JSON.parse(store.get('userInfo') as string);
-  console.log(storeUserInfo, 'storeUserInfo');
   return storeUserInfo;
 };
 
