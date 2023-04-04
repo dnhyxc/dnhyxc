@@ -87,7 +87,7 @@ export const getArticleDetail = async (id: string) => {
 
 // 获取上一篇文章
 export const getPrevArticle = async (params: AnotherParams) => {
-  const res = await post(API.GET_PREV_ARTICLE, params);
+  const res = await post(API.GET_PREV_ARTICLE, copeParams(params));
   return res;
 };
 

@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import { Classifys, ArticleItem, ArticleListResult } from '@/typings/common';
 import { ElMessage } from 'element-plus';
 import * as Service from '@/server';
-import { normalizeResult, locSetItem } from '@/utils';
+import { normalizeResult, locSetItem, setParamsToStore, getStoreUserInfo } from '@/utils';
 import { commonStore, loginStore } from '@/store';
 import { PAGESIZE } from '@/constant';
 
@@ -62,6 +62,18 @@ export const useTagStore = defineStore('tag', {
           from: 'tag',
         }),
       );
+
+      const userInfo = getStoreUserInfo();
+
+      const storeParams = {
+        from: 'tagList',
+        tagName: this.currentTag || this.tags[0]?.name,
+        userId: loginStore.userInfo?.userId || userInfo?.userId,
+      };
+
+      // 将页面搜索信息保存到electron-store中
+      setParamsToStore('tagList', storeParams);
+
       const res = normalizeResult<ArticleListResult>(await Service.searchArticle(params));
       this.loading = false;
       if (res.success) {

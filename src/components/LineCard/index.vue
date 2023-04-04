@@ -5,13 +5,13 @@
  * index.vue
 -->
 <template>
-  <div class="timeline-card" @click.stop="toDetail(data.id!)">
+  <div class="timeline-card" @click.stop="toDetail(data)">
     <div class="title">
       <slot name="title">
         <div class="left">{{ data.title }}</div>
         <div v-if="data.authorId === loginStore.userInfo?.userId" class="right">
-          <span class="edit" @click.stop="toEdit(data.id!)">编辑</span>
-          <span class="del" @click.stop="onReomve(data.id!)">下架</span>
+          <span class="edit" @click.stop="toEdit(data)">编辑</span>
+          <span class="del" @click.stop="onReomve(data)">下架</span>
         </div>
       </slot>
     </div>
@@ -33,11 +33,11 @@
             </div>
           </div>
           <div class="actions">
-            <div class="action like" @click.stop="onLike(data.id!)">
+            <div class="action like" @click.stop="onLike(data)">
               <i :class="`font like-icon iconfont ${data.isLike ? 'icon-24gf-thumbsUp2' : 'icon-24gl-thumbsUp2'}`" />
               <span>{{ data.likeCount || '点赞' }}</span>
             </div>
-            <div class="action comment" @click.stop="onComment(data.id!)">
+            <div class="action comment" @click.stop="onComment(data)">
               <i class="font comment-icon iconfont icon-pinglun" />
               <span>{{ data.replyCount || '评论' }}</span>
             </div>
@@ -56,9 +56,11 @@
 </template>
 
 <script setup lang="ts">
+import { ipcRenderer } from 'electron';
 import { useRouter, useRoute } from 'vue-router';
 import { IMG1 } from '@/constant';
-import { TimelineArticles } from '@/typings/common';
+import { chackIsDelete } from '@/utils';
+import { TimelineArticles, ArticleItem } from '@/typings/common';
 import Image from '@/components/Image/index.vue';
 import { loginStore } from '@/store';
 
@@ -79,13 +81,15 @@ const props = withDefaults(defineProps<IProps>(), {
 });
 
 // 编辑
-const toEdit = (id: string) => {
-  router.push(`/create?id=${id}`);
+const toEdit = async (data: ArticleItem | TimelineArticles) => {
+  await chackIsDelete(data as ArticleItem);
+  router.push(`/create?id=${data.id}`);
 };
 
 // 删除
-const onReomve = (id: string) => {
-  props?.deleteArticle?.(id);
+const onReomve = async (data: ArticleItem | TimelineArticles) => {
+  await chackIsDelete(data as ArticleItem);
+  props?.deleteArticle?.(data?.id!);
 };
 
 // 去作者主页
@@ -106,22 +110,23 @@ const toTag = (tag: string) => {
 };
 
 // 点赞
-const onLike = (id: string) => {
-  props?.likeListArticle?.(id);
+const onLike = async (data: ArticleItem | TimelineArticles) => {
+  await chackIsDelete(data as ArticleItem);
+  props?.likeListArticle?.(data?.id!);
 };
 
-// 前往首页
-const toDetail = (id: string) => {
-  if (props.toEdit) {
-    props.toEdit(id);
-  } else {
-    router.push(`/detail/${id}`);
-  }
+// 前往详情/编辑
+const toDetail = async (data: ArticleItem | TimelineArticles) => {
+  await chackIsDelete(data as ArticleItem);
+  // router.push(`/detail/${data?.id}`);
+  ipcRenderer.send('new-win', `article/${data.id}?from=${route.name as string}`, data.id);
 };
 
 // 评论
-const onComment = (id: string) => {
-  router.push(`/detail/${id}?scrollTo=1`);
+const onComment = async (data: ArticleItem | TimelineArticles) => {
+  await chackIsDelete(data as ArticleItem);
+  // router.push(`/detail/${data?.id}?scrollTo=1`);
+  ipcRenderer.send('new-win', `article/${data.id}?scrollTo=1&from=${route.name as string}`, data.id);
 };
 </script>
 

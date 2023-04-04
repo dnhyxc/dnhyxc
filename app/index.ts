@@ -166,9 +166,7 @@ const newWinMin = (win) => {
 };
 
 // 监听渲染进程请求获取electron的用户目录
-ipcMain.on('new-win', (event, pathname) => {
-  const index = pathname.lastIndexOf('/');
-  const id = pathname.substring(index + 1, pathname.length);
+ipcMain.on('new-win', (event, pathname, id, prevId) => {
   // 查询当前id窗口是否存在，如果存在则不重新创建
   const findWin = newWins.find((i) => i.id === id);
   if (findWin) {
@@ -179,8 +177,8 @@ ipcMain.on('new-win', (event, pathname) => {
   newWin = new BrowserWindow({
     width: 1000,
     height: 690,
-    minWidth: 1000,
-    minHeight: 690,
+    minWidth: 800,
+    minHeight: 600,
     titleBarStyle: 'hidden',
     autoHideMenuBar: true,
     webPreferences: {
@@ -190,6 +188,13 @@ ipcMain.on('new-win', (event, pathname) => {
     },
     icon: path.join(__dirname, getIconPath({ isDev, isMac })),
   });
+
+  // 如果传入了上一篇文章的id、则说明是点击详情上下页切换的id，则需要关闭上一个文章的窗口
+  if (prevId) {
+    const findIndex = newWins.findIndex((i) => i.id === prevId);
+    newWins[findIndex]?.win?.close();
+    newWins.splice(findIndex, 1);
+  }
 
   // 存储每个newWin
   newWins.push({
@@ -204,7 +209,16 @@ ipcMain.on('new-win', (event, pathname) => {
     newWin?.loadURL(`${process.env.VITE_DEV_SERVER_URL!}${pathname}`);
   }
 
-  newWins.forEach((i) => {
+  newWins.forEach((i, index) => {
+    // 关闭按钮处理 - Mac是点击最小化
+    i?.win?.on('closed', () => {
+      i.win = null;
+    });
+
+    i?.win?.on('close', (event) => {
+      i.win = null;
+    });
+
     // 监听窗口最大化事件
     i?.win?.on('maximize', () => newWinMax(i.win));
 
@@ -212,7 +226,7 @@ ipcMain.on('new-win', (event, pathname) => {
     i?.win?.on('unmaximize', () => newWinMin(i.win));
 
     // 监听页面是否刷新，页面刷新时，取消窗口置顶
-    i?.win?.webContents.addListener('did-start-loading', () => {
+    i?.win?.webContents?.addListener('did-start-loading', () => {
       i?.win?.setAlwaysOnTop(false);
     });
   });

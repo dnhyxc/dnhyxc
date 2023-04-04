@@ -67,7 +67,7 @@
 
 <script setup lang="ts">
 import { ipcRenderer } from 'electron';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 import { formatDate, chackIsDelete } from '@/utils';
 import { ArticleItem } from '@/typings/common';
 import { IMG1 } from '@/constant';
@@ -75,6 +75,9 @@ import { loginStore } from '@/store';
 import Image from '@/components/Image/index.vue';
 
 const router = useRouter();
+const route = useRoute();
+
+console.log(route.name, 'route.name');
 
 interface IProps {
   data: ArticleItem;
@@ -96,7 +99,8 @@ const onLike = async (data: ArticleItem) => {
 // 评论
 const onComment = async (data: ArticleItem) => {
   await chackIsDelete(data);
-  router.push(`/detail/${data.id}?scrollTo=1`);
+  // router.push(`/detail/${data.id}?scrollTo=1`);
+  ipcRenderer.send('new-win', `article/${data.id}?scrollTo=1&from=${route.name as string}`, data.id);
 };
 
 // 编辑
@@ -115,7 +119,7 @@ const onReomve = async (data: ArticleItem) => {
 const toDetail = async (data: ArticleItem) => {
   await chackIsDelete(data);
   // router.push(`/detail/${data.id}`);
-  ipcRenderer.send('new-win', `article/${data.id}`);
+  ipcRenderer.send('new-win', `article/${data.id}?from=${route.name as string}`, data.id);
 };
 
 // 去我的主页

@@ -36,35 +36,40 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, inject } from 'vue';
-import { useRouter } from 'vue-router';
+import { ipcRenderer } from 'electron';
+import { onMounted } from 'vue';
+// import { onMounted, inject } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
 import { articleStore } from '@/store';
-import { formatGapTime, locGetItem } from '@/utils';
+import { formatGapTime, locGetItem, getParamListFromStore } from '@/utils';
 import { AnotherParams } from '@/typings/common';
 
-const reload = inject<Function>('reload');
+// const reload = inject<Function>('reload');
 
 interface IProps {
   id: string;
 }
 
 const router = useRouter();
+const route = useRoute();
 
 const props = defineProps<IProps>();
 
 onMounted(() => {
-  // 获取从哪个页面跳转到详情的参数，用户获取对应页面的上篇文章详情
-  const params: AnotherParams = (locGetItem('params') && JSON.parse(locGetItem('params')!)) || {};
+  // 获取从哪个页面跳转到详情的参数
+  const firstParam = getParamListFromStore(route.query.from as string);
+  const params: AnotherParams = (locGetItem('params') && JSON.parse(locGetItem('params')!)) || firstParam || {};
   articleStore.getAnotherArticles({ id: props.id, ...params });
 });
 
 // 跳转详情
 const toDetail = (id: string) => {
-  router.push(`/article/${id}`);
+  // router.push(`/article/${id}`);
   // router.push(`/detail/${id}`);
-  setTimeout(() => {
-    reload && reload();
-  }, 100);
+  // setTimeout(() => {
+  //   reload && reload();
+  // }, 100);
+  ipcRenderer.send('new-win', `article/${id}?from=${route.query.from}`, id, props.id);
 };
 
 // 去分类或者标签列表

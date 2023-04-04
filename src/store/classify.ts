@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import { Classifys, ArticleItem, ArticleListResult } from '@/typings/common';
 import { ElMessage } from 'element-plus';
 import * as Service from '@/server';
-import { normalizeResult, locSetItem } from '@/utils';
+import { normalizeResult, locSetItem, getStoreUserInfo, setParamsToStore } from '@/utils';
 import { commonStore, loginStore } from '@/store';
 import { PAGESIZE } from '@/constant';
 
@@ -62,6 +62,18 @@ export const useClassifyStore = defineStore('classify', {
           from: 'classify',
         }),
       );
+
+      const userInfo = getStoreUserInfo();
+
+      const storeParams = {
+        from: 'classify',
+        classify: this.currentClassify || this.classifys[0]?.name,
+        userId: loginStore.userInfo?.userId || userInfo?.userId,
+      };
+
+      // 将storeParams存到electron-store中
+      setParamsToStore('classify', storeParams);
+
       const res = normalizeResult<ArticleListResult>(await Service.getClassifyList(params));
       this.loading = false;
       if (res.success) {

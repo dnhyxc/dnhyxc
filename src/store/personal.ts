@@ -3,7 +3,7 @@ import { ElMessage } from 'element-plus';
 import { UserInfoParams, ArticleListResult, ArticleItem, TimelineResult, PerGetArticlesParams } from '@/typings/common';
 import * as Service from '@/server';
 import { useCheckUserId } from '@/hooks';
-import { normalizeResult, locSetItem, uniqueFunc, Message } from '@/utils';
+import { normalizeResult, locSetItem, uniqueFunc, Message, setParamsToStore, getStoreUserInfo } from '@/utils';
 import { loginStore } from '@/store';
 import { PAGESIZE, ABOUT_ME_API_PATH } from '@/constant';
 
@@ -98,6 +98,18 @@ export const usePersonalStore = defineStore('personal', {
           from: 'personal',
         }),
       );
+
+      const userInfo = getStoreUserInfo();
+
+      const storeParams = {
+        from: 'personal',
+        userId: this.userInfo.userId,
+        accessUserId: loginStore.userInfo?.userId || userInfo?.userId,
+        selectKey: this.currentTabKey,
+      };
+
+      // 将页面搜索信息保存到electron-store中
+      setParamsToStore('personal', storeParams);
 
       const res = normalizeResult<ArticleListResult>(
         await Service.getMyArticleList(params, ABOUT_ME_API_PATH[this.currentTabKey]),

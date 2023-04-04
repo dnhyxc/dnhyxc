@@ -139,7 +139,8 @@ const onScrollTo = (height?: number) => {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    width: 260px;
+    max-width: 260px;
+    width: 30%;
     box-sizing: border-box;
     border-radius: 5px;
     max-height: calc(100vh - 75px);
