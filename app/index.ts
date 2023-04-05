@@ -48,7 +48,7 @@ const createWindow = () => {
 
   if (!isDev) {
     // win?.loadFile(path.join(__dirname, '../dist/index.html'));
-    win?.loadURL('http://43.143.114.71:80');
+    win?.loadURL('http://43.143.27.249:80');
   } else {
     win?.webContents.openDevTools();
     win?.loadURL(process.env.VITE_DEV_SERVER_URL!);
