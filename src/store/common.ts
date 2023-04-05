@@ -66,5 +66,11 @@ export const useCommonStore = defineStore('common', {
     clearBackPath() {
       this.backPath = '/';
     },
+
+    // 清除右键菜单设置
+    clearContentmenuInfo() {
+      this.showContextmenu = false;
+      this.currentArticleId = '';
+    },
   },
 });

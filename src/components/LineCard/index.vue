@@ -5,7 +5,7 @@
  * index.vue
 -->
 <template>
-  <div class="timeline-card" @click.stop="toDetail(data)">
+  <div class="timeline-card" @click.stop="toDetail(data)" @mousedown.stop="(e) => onMouseDown(e, data)">
     <div class="title">
       <slot name="title">
         <div class="left">{{ data.title }}</div>
@@ -50,6 +50,12 @@
         <div class="img-wrap">
           <Image :url="data.coverImage || IMG1" :transition-img="IMG1" class="img" />
         </div>
+        <ContentMenu
+          v-show="commonStore.showContextmenu && commonStore.currentArticleId === data.id"
+          :data="data"
+          :on-open-new-window="onOpenNewWindow"
+          :to-detail="toDetail"
+        />
       </slot>
     </div>
   </div>
@@ -60,9 +66,9 @@ import { ipcRenderer } from 'electron';
 import { useRouter, useRoute } from 'vue-router';
 import { IMG1 } from '@/constant';
 import { chackIsDelete } from '@/utils';
+import { loginStore, commonStore } from '@/store';
 import { TimelineArticles, ArticleItem } from '@/typings/common';
 import Image from '@/components/Image/index.vue';
-import { loginStore } from '@/store';
 
 const router = useRouter();
 const route = useRoute();
@@ -72,12 +78,14 @@ interface IProps {
   likeListArticle?: (id: string) => void;
   deleteArticle?: (id: string) => void;
   toEdit?: (id: string) => void;
+  isCollect?: boolean;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
   likeListArticle: () => {},
   deleteArticle: () => {},
   toEdit: () => {},
+  isCollect: false,
 });
 
 // 编辑
@@ -117,16 +125,35 @@ const onLike = async (data: ArticleItem | TimelineArticles) => {
 
 // 前往详情/编辑
 const toDetail = async (data: ArticleItem | TimelineArticles) => {
+  if (props.isCollect) return;
+  if (props.toEdit) {
+    props.toEdit(data.id!);
+    return;
+  }
   await chackIsDelete(data as ArticleItem);
-  // router.push(`/detail/${data?.id}`);
-  ipcRenderer.send('new-win', `article/${data.id}?from=${route.name as string}`, data.id);
+  router.push(`/detail/${data?.id}`);
 };
 
 // 评论
 const onComment = async (data: ArticleItem | TimelineArticles) => {
   await chackIsDelete(data as ArticleItem);
-  // router.push(`/detail/${data?.id}?scrollTo=1`);
-  ipcRenderer.send('new-win', `article/${data.id}?scrollTo=1&from=${route.name as string}`, data.id);
+  router.push(`/detail/${data?.id}?scrollTo=1`);
+  // ipcRenderer.send('new-win', `article/${data.id}?scrollTo=1&from=${route.name as string}`, data.id);
+};
+
+// 监听鼠标右键，分别进行不同的操作
+const onMouseDown = async (e: MouseEvent, data: ArticleItem | TimelineArticles) => {
+  // 使用新窗口打开
+  if (e.button === 2) {
+    commonStore.showContextmenu = true;
+    commonStore.currentArticleId = data.id!;
+  }
+};
+
+// 新窗口打开
+const onOpenNewWindow = async (data: ArticleItem) => {
+  await chackIsDelete(data as ArticleItem);
+  ipcRenderer.send('new-win', `article/${data.id}?from=${route.name as string}`, data.id);
 };
 </script>
 
@@ -134,6 +161,7 @@ const onComment = async (data: ArticleItem | TimelineArticles) => {
 @import '@/styles/index.less';
 
 .timeline-card {
+  position: relative;
   box-sizing: border-box;
   color: @font-3;
   cursor: pointer;

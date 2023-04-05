@@ -13,6 +13,7 @@ declare module '@vue/runtime-core' {
     Carousel: typeof import('./src/components/Carousel/index.vue')['default']
     CollectModel: typeof import('./src/components/CollectModel/index.vue')['default']
     Comment: typeof import('./src/components/Comment/index.vue')['default']
+    ContentMenu: typeof import('./src/components/ContentMenu/index.vue')['default']
     DraftInput: typeof import('./src/components/DraftInput/index.vue')['default']
     Editor: typeof import('./src/components/Editor/index.vue')['default']
     ElAside: typeof import('element-plus/es')['ElAside']

@@ -17,11 +17,10 @@ onMounted(() => {
   document.body.addEventListener('click', onBodyClick);
 });
 
-// body点击事件
+// body点击事件，清除右键菜单设置
 const onBodyClick = (e: MouseEvent) => {
   e.stopPropagation();
-  console.log(e.target);
-  commonStore.showContextmenu = false;
+  commonStore.clearContentmenuInfo();
 };
 
 // 刷新当前页面

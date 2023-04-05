@@ -1,8 +1,8 @@
 import { createRouter, RouteRecordRaw, createWebHistory } from 'vue-router';
 import { ElMessage } from 'element-plus';
 import { useCommonStore } from '@/store/common';
-import { locGetItem, eStore, locRemoveItem } from '@/utils';
-import { WITH_AUTH_ROUTES } from '@/constant';
+import { locGetItem, locRemoveItem, clearParamListFromStore } from '@/utils';
+import { WITH_AUTH_ROUTES, CLEAR_PARAMS_LIST_ROUTES } from '@/constant';
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -212,16 +212,16 @@ const router = createRouter({
 
 // 全局守卫：登录拦截 本地没有存token,请重新登录
 router.beforeEach(async (to, from, next) => {
-  if (to.path === '/home') {
-    eStore.delete('params');
+  // 清除上下页搜索条件
+  if (CLEAR_PARAMS_LIST_ROUTES.includes(to.path)) {
+    clearParamListFromStore();
     locRemoveItem('params');
   }
   const commonStore = useCommonStore();
   // 切换路由时，隐藏页面头部搜索输入框，并清空搜索输入框内容
   commonStore.showSearch = false;
   // 清除选中卡片的状态，关闭右键菜单
-  commonStore.currentArticleId = '';
-  commonStore.showContextmenu = false;
+  commonStore.clearContentmenuInfo();
 
   if (to.path === '/login') {
     commonStore.setBackPath(from.path);

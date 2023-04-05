@@ -1,9 +1,9 @@
 import { defineStore } from 'pinia';
 import { ElMessage } from 'element-plus';
 import { CollectListRes, AddCollectionRes, CollectParams, ArticleItem, ArticleListResult } from '@/typings/common';
-import { articleStore, personalStore } from '@/store';
+import { articleStore, personalStore, loginStore } from '@/store';
 import * as Service from '@/server';
-import { normalizeResult, Message } from '@/utils';
+import { normalizeResult, Message, locSetItem, getStoreUserInfo, setParamsToStore } from '@/utils';
 import { useCheckUserId } from '@/hooks';
 import { PAGESIZE } from '@/constant';
 
@@ -207,6 +207,30 @@ export const useCollectStore = defineStore('collect', {
       if (this.collectList.length !== 0 && this.collectList.length >= this.total) return;
       this.pageNo = this.pageNo + 1;
       this.loading = true;
+
+      if (this.pageNo === 1) {
+        // 保存至storage用于根据不同页面进入详情时，针对性的进行上下篇文章的获取（如：分类页面上下篇、标签页面上下篇）
+        locSetItem(
+          'params',
+          JSON.stringify({
+            userId: loginStore.userInfo?.userId,
+            from: 'collect',
+            articleIds: this.collectInfo?.articleIds,
+          }),
+        );
+
+        const userInfo = getStoreUserInfo();
+
+        const storeParams = {
+          from: 'collect',
+          userId: loginStore.userInfo?.userId || userInfo?.userId,
+          articleIds: this.collectInfo?.articleIds,
+        };
+
+        // 将页面搜索信息保存到electron-store中
+        setParamsToStore('collect', storeParams);
+      }
+
       const res = normalizeResult<ArticleListResult>(
         await Service.getCollectArticles({
           pageNo: this.pageNo,

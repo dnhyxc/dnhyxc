@@ -43,17 +43,16 @@
 
 <script setup lang="ts">
 import { ipcRenderer } from 'electron';
-import { onMounted } from 'vue';
-// import { onMounted, inject } from 'vue';
+import { onMounted, inject } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { articleStore } from '@/store';
 import { formatGapTime, locGetItem, getParamListFromStore } from '@/utils';
 import { AnotherParams } from '@/typings/common';
 
-// const reload = inject<Function>('reload');
+const reload = inject<Function>('reload');
 
 interface IProps {
-  id: string;
+  id: string; // 文章id
 }
 
 const router = useRouter();
@@ -70,12 +69,15 @@ onMounted(() => {
 
 // 跳转详情
 const toDetail = (id: string) => {
-  // router.push(`/article/${id}`);
-  // router.push(`/detail/${id}`);
-  // setTimeout(() => {
-  //   reload && reload();
-  // }, 100);
-  ipcRenderer.send('new-win', `article/${id}?from=${route.query.from}`, id, props.id);
+  // 如果是/detail，则说明是当前页打开，直接在当前页访问下一篇即可，否则新窗口打开
+  if (route.path.includes('detail')) {
+    router.push(`/detail/${id}`);
+    setTimeout(() => {
+      reload && reload();
+    }, 100);
+  } else {
+    ipcRenderer.send('new-win', `article/${id}?from=${route.query.from}`, id, props.id);
+  }
 };
 
 // 去分类或者标签列表

@@ -70,6 +70,12 @@ const createWindow = () => {
 
   // 只有显式调用quit才退出系统，区分MAC系统程序坞退出和点击X关闭退出
   app.on('before-quit', () => {
+    const store = new Store();
+    // 退出时，清除用户信息
+    store.delete('token');
+    store.delete('userInfo');
+    // 退出时，清除保存的上下页搜索条件
+    store.delete('paramList');
     willQuitApp = true;
   });
 
@@ -205,7 +211,7 @@ ipcMain.on('new-win', (event, pathname, id, prevId) => {
   if (!isDev) {
     newWin?.loadURL(`http://43.143.114.71:80/${pathname}`);
   } else {
-    newWin?.webContents.openDevTools();
+    // newWin?.webContents.openDevTools();
     newWin?.loadURL(`${process.env.VITE_DEV_SERVER_URL!}${pathname}`);
   }
 

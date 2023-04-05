@@ -39,6 +39,11 @@ export const useScroller = (visible?: boolean) => {
   // 滚动事件
   const onScroll = (e: any) => {
     scrollTop.value = e.target.scrollTop;
+
+    // 滚动时隐藏右侧菜单，清除选中文章
+    if (commonStore.showContextmenu && commonStore.currentArticleId) {
+      commonStore.clearContentmenuInfo();
+    }
   };
 
   return { scrollRef, scrollTop };
@@ -47,7 +52,7 @@ export const useScroller = (visible?: boolean) => {
 // 判断是否存在userId的hooks
 export const useCheckUserId = (needMsg: boolean = true) => {
   // 获取存储在硬盘store中的登录信息
-  const storeUserInfo = getStoreUserInfo()
+  const storeUserInfo = getStoreUserInfo();
   const { userInfo } = loginStore;
   if (!userInfo?.userId && !storeUserInfo?.userId && needMsg) {
     ElMessage({

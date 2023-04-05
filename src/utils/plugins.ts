@@ -9,6 +9,7 @@ import createLineNumbertPlugin from '@kangc/v-md-editor/lib/plugins/line-number/
 import createAlignPlugin from '@kangc/v-md-editor/lib/plugins/align';
 import createCopyCodePlugin from '@kangc/v-md-editor/lib/plugins/copy-code/index';
 import createHighlightLinesPlugin from '@kangc/v-md-editor/lib/plugins/highlight-lines/index';
+import createKatexPlugin from '@kangc/v-md-editor/lib/plugins/katex/cdn';
 import Prism from 'prismjs';
 
 import '@kangc/v-md-editor/lib/plugins/highlight-lines/highlight-lines.css';
@@ -42,12 +43,14 @@ export const usePlugins = <T>(app: T | any) => {
   VMdPreview.use(createCopyCodePlugin());
   // 预览组件支持表情
   VMdPreview.use(createEmojiPlugin());
+  VMdPreview.use(createKatexPlugin());
 
   // 表情（注意：plugin use 必须放在 Theme 之后，否则不生效）
   VueMarkdownEditor.use(createEmojiPlugin());
   VueMarkdownEditor.use(createLineNumbertPlugin());
   VueMarkdownEditor.use(createAlignPlugin());
   VueMarkdownEditor.use(createCopyCodePlugin());
+  VueMarkdownEditor.use(createKatexPlugin());
 };
 
 export {

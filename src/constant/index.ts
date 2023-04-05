@@ -198,6 +198,9 @@ export const NEED_HEAD_SEARCH = ['/home', '/classify', '/tag/list'];
 // 需要登陆权限的路由
 export const WITH_AUTH_ROUTES = ['/create', '/timeline', '/personal'];
 
+// 需要清除上下页搜索条件的路由
+export const CLEAR_PARAMS_LIST_ROUTES = ['/home', '/seach'];
+
 // 二次确认弹窗配置
 export const MSG_CONFIG = () => ({
   confirmButtonText: '确定',

@@ -74,26 +74,28 @@ export const useAuthorStore = defineStore('author', {
         accessUserId: loginStore.userInfo?.userId,
       };
 
-      // 保存至storage用于根据不同页面进入详情时，针对性的进行上下篇文章的获取（如：分类页面上下篇、标签页面上下篇）
-      locSetItem(
-        'params',
-        JSON.stringify({
-          accessUserId: loginStore.userInfo?.userId,
-          selectKey: this.currentTabKey,
+      if (this.pageNo === 1) {
+        // 保存至storage用于根据不同页面进入详情时，针对性的进行上下篇文章的获取（如：分类页面上下篇、标签页面上下篇）
+        locSetItem(
+          'params',
+          JSON.stringify({
+            accessUserId: loginStore.userInfo?.userId,
+            selectKey: `${Number(this.currentTabKey) + 1}`,
+            from: 'author',
+          }),
+        );
+
+        const userInfo = getStoreUserInfo();
+
+        const storeParams = {
           from: 'author',
-        }),
-      );
+          accessUserId: loginStore.userInfo?.userId || userInfo?.userId,
+          selectKey: `${Number(this.currentTabKey) + 1}`,
+        };
 
-      const userInfo = getStoreUserInfo();
-
-      const storeParams = {
-        from: 'author',
-        accessUserId: loginStore.userInfo?.userId || userInfo?.userId,
-        selectKey: this.currentTabKey,
-      };
-
-      // 将页面搜索信息保存到electron-store中
-      setParamsToStore('author', storeParams);
+        // 将页面搜索信息保存到electron-store中
+        setParamsToStore('author', storeParams);
+      }
 
       const res = normalizeResult<ArticleListResult>(
         await Service.getAuthorArticleList(params, AUTHOR_API_PATH[this.currentTabKey]),

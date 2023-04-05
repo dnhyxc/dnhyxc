@@ -53,26 +53,29 @@ export const useTagStore = defineStore('tag', {
         tagName: this.currentTag || tagName || this.tags[0]?.name!,
         keyword: commonStore.keyword, // 头部搜索关键词
       };
-      // 保存至storage用于根据不同页面进入详情时，针对性的进行上下篇文章的获取（如：分类页面上下篇、标签页面上下篇）
-      locSetItem(
-        'params',
-        JSON.stringify({
+
+      if (this.pageNo === 1) {
+        // 保存至storage用于根据不同页面进入详情时，针对性的进行上下篇文章的获取（如：分类页面上下篇、标签页面上下篇）
+        locSetItem(
+          'params',
+          JSON.stringify({
+            tagName: this.currentTag || this.tags[0]?.name,
+            userId: loginStore.userInfo?.userId,
+            from: 'tag',
+          }),
+        );
+
+        const userInfo = getStoreUserInfo();
+
+        const storeParams = {
+          from: 'tagList',
           tagName: this.currentTag || this.tags[0]?.name,
-          userId: loginStore.userInfo?.userId,
-          from: 'tag',
-        }),
-      );
+          userId: loginStore.userInfo?.userId || userInfo?.userId,
+        };
 
-      const userInfo = getStoreUserInfo();
-
-      const storeParams = {
-        from: 'tagList',
-        tagName: this.currentTag || this.tags[0]?.name,
-        userId: loginStore.userInfo?.userId || userInfo?.userId,
-      };
-
-      // 将页面搜索信息保存到electron-store中
-      setParamsToStore('tagList', storeParams);
+        // 将页面搜索信息保存到electron-store中
+        setParamsToStore('tagList', storeParams);
+      }
 
       const res = normalizeResult<ArticleListResult>(await Service.searchArticle(params));
       this.loading = false;

@@ -5,7 +5,7 @@
  * index.vue
 -->
 <template>
-  <div class="card-wrap" @mousedown.stop="(e) => onMouseDown(e, data)">
+  <div class="card-wrap" @click.stop="toDetail(data)" @mousedown.stop="(e) => onMouseDown(e, data)">
     <div class="card">
       <div class="card-top">
         <div v-if="data?.isDelete" class="mask">
@@ -17,10 +17,12 @@
             {{ data.abstract }}
           </div>
         </div>
-        <div v-show="commonStore.showContextmenu && commonStore.currentArticleId === data.id" class="content-menu">
-          <span class="menu-item" @click.stop="onOpenNewWindow(data)">新窗口打开</span>
-          <span class="menu-item" @click.stop="toDetail(data)">当前页打开</span>
-        </div>
+        <ContentMenu
+          v-show="commonStore.showContextmenu && commonStore.currentArticleId === data.id"
+          :data="data"
+          :on-open-new-window="onOpenNewWindow"
+          :to-detail="toDetail"
+        />
       </div>
       <div class="card-bottom">
         <slot>
@@ -77,6 +79,7 @@ import { ArticleItem } from '@/typings/common';
 import { IMG1 } from '@/constant';
 import { commonStore, loginStore } from '@/store';
 import Image from '@/components/Image/index.vue';
+import ContentMenu from '@/components/ContentMenu/index.vue';
 
 const router = useRouter();
 const route = useRoute();
@@ -120,29 +123,25 @@ const onReomve = async (data: ArticleItem) => {
 // 监听鼠标右键，分别进行不同的操作
 const onMouseDown = async (e: MouseEvent, data: ArticleItem) => {
   await chackIsDelete(data);
-  // 点击左键直接跳转到详情路由
-  if (e.button === 0) {
-    // router.push(`/detail/${data.id}?from=${route.name as string}`);
-    return;
-  }
   // 使用新窗口打开
   if (e.button === 2) {
     commonStore.showContextmenu = true;
     commonStore.currentArticleId = data.id;
-    // ipcRenderer.send('new-win', `article/${data.id}?from=${route.name as string}`, data.id);
   }
 };
 
 // 新窗口打开
 const onOpenNewWindow = (data: ArticleItem) => {
-  console.log(data, 'data');
-
   ipcRenderer.send('new-win', `article/${data.id}?from=${route.name as string}`, data.id);
+  // 清除右键菜单选项
+  commonStore.clearContentmenuInfo();
 };
 
 // 当前页打开
 const toDetail = (data: ArticleItem) => {
   router.push(`/detail/${data.id}?from=${route.name as string}`);
+  // 清除右键菜单选项
+  commonStore.clearContentmenuInfo();
 };
 
 // 去我的主页
@@ -382,30 +381,6 @@ const toTag = (name: string) => {
             }
           }
         }
-      }
-    }
-  }
-
-  .content-menu {
-    position: absolute;
-    bottom: 10px;
-    right: 10px;
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
-    background-color: @theme;
-    backdrop-filter: blur(2px);
-    border-radius: 5px;
-    padding: 5px;
-
-    .menu-item {
-      font-size: 14px;
-      padding: 10px;
-      border-radius: 5px;
-
-      &:hover {
-        background-image: @head-lg;
-        color: @theme-blue;
       }
     }
   }
