@@ -7,8 +7,11 @@
 <template>
   <div class="login-content">
     <div class="title">账号密码登录</div>
-    <el-form ref="formRef" :model="loginForm" class="form-wrap">
-      <el-form-item
+    <el-form ref="formRef" :rules="rules" :model="loginForm" class="form-wrap">
+      <el-form-item prop="username" class="form-item">
+        <el-input v-model="loginForm.username" size="large" placeholder="请输入用户名" @keyup.enter="onEnter" />
+      </el-form-item>
+      <!-- <el-form-item
         prop="username"
         :rules="[
           {
@@ -20,16 +23,8 @@
         class="form-item"
       >
         <el-input v-model="loginForm.username" size="large" placeholder="请输入用户名" @keyup.enter="onEnter" />
-      </el-form-item>
-      <el-form-item
-        prop="password"
-        :rules="{
-          required: true,
-          message: '密码不能为空',
-          trigger: 'blur',
-        }"
-        class="form-item"
-      >
+      </el-form-item> -->
+      <el-form-item prop="password" class="form-item">
         <el-input
           v-model="loginForm.password"
           size="large"
@@ -53,12 +48,41 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
 import { ref, reactive } from 'vue';
-import { FormInstance } from 'element-plus';
+import type { FormInstance, FormRules } from 'element-plus';
 import { loginStore } from '@/store';
+import { verifyUsername, verifyPassword } from '@/utils';
 
 const router = useRouter();
 
 const formRef = ref<FormInstance>();
+
+const validateUsername = (rule: any, value: any, callback: any) => {
+  const { msg, status } = verifyUsername(value);
+  if (value === '') {
+    callback(new Error('用户名不能为空'));
+  } else if (!status) {
+    callback(new Error(msg));
+  } else {
+    callback();
+  }
+};
+
+const validatePassword = (rule: any, value: any, callback: any) => {
+  const { msg, status } = verifyPassword(value);
+  if (value === '') {
+    callback(new Error('用户名不能为空'));
+  } else if (!status) {
+    console.log(msg, 'msg');
+    callback(new Error(msg));
+  } else {
+    callback();
+  }
+};
+
+const rules = reactive<FormRules>({
+  username: [{ validator: validateUsername, trigger: 'blur', required: true }],
+  password: [{ validator: validatePassword, trigger: 'blur', required: true }],
+});
 
 const loginForm = reactive<{
   username: string;

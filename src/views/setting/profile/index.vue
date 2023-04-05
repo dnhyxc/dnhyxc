@@ -32,17 +32,8 @@
       </div>
     </div>
     <div class="content">
-      <el-form ref="formRef" :model="profileForm" label-width="100px" class="form-wrap">
-        <el-form-item
-          label="用户名"
-          prop="username"
-          :rules="[
-            {
-              trigger: 'blur',
-            },
-          ]"
-          class="form-item"
-        >
+      <el-form ref="formRef" :rules="rules" :model="profileForm" label-width="100px" class="form-wrap">
+        <el-form-item label="用户名" prop="username" class="form-item">
           <el-input
             v-model.trim="profileForm.username"
             v-focus
@@ -69,7 +60,14 @@
           }"
           class="form-item"
         >
-          <el-input v-model.trim="profileForm.motto" size="large" placeholder="请输入座右铭" @keyup.enter="onEnter" />
+          <el-input
+            v-model.trim="profileForm.motto"
+            size="large"
+            maxlength="50"
+            placeholder="请输入座右铭"
+            show-word-limit
+            @keyup.enter="onEnter"
+          />
         </el-form-item>
         <el-form-item
           label="个人介绍"
@@ -100,9 +98,10 @@
 <script setup lang="ts">
 import { ref, reactive } from 'vue';
 import { useRouter } from 'vue-router';
-import { FormInstance } from 'element-plus';
+import type { FormInstance, FormRules } from 'element-plus';
 import { HEAD_IMG, IMG1 } from '@/constant';
 import { loginStore } from '@/store';
+import { verifyUsername } from '@/utils';
 import Upload from '@/components/Upload/index.vue';
 
 const router = useRouter();
@@ -122,6 +121,21 @@ const profileForm = reactive<{
   job: loginStore.userInfo?.job || '',
   motto: loginStore.userInfo?.motto || '',
   introduce: loginStore.userInfo?.introduce || '',
+});
+
+const validateUsername = (rule: any, value: any, callback: any) => {
+  const { msg, status } = verifyUsername(value);
+  if (value === '') {
+    callback(new Error('用户名不能为空'));
+  } else if (!status) {
+    callback(new Error(msg));
+  } else {
+    callback();
+  }
+};
+
+const rules = reactive<FormRules>({
+  username: [{ validator: validateUsername, trigger: 'blur' }],
 });
 
 // 确定更新用户信息
