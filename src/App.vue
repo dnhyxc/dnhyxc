@@ -6,9 +6,23 @@
 </template>
 
 <script setup lang="ts">
-import { ref, nextTick, provide } from 'vue';
+import { ref, nextTick, provide, onMounted } from 'vue';
+import { useCommonStore } from '@/store/common';
 
 const isRouterAlive = ref<boolean>(true);
+
+const commonStore = useCommonStore();
+
+onMounted(() => {
+  document.body.addEventListener('click', onBodyClick);
+});
+
+// body点击事件
+const onBodyClick = (e: MouseEvent) => {
+  e.stopPropagation();
+  console.log(e.target);
+  commonStore.showContextmenu = false;
+};
 
 // 刷新当前页面
 const reload = () => {

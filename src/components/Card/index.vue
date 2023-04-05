@@ -5,7 +5,7 @@
  * index.vue
 -->
 <template>
-  <div class="card-wrap" @click="toDetail(data)">
+  <div class="card-wrap" @mousedown.stop="(e) => onMouseDown(e, data)">
     <div class="card">
       <div class="card-top">
         <div v-if="data?.isDelete" class="mask">
@@ -16,6 +16,10 @@
           <div class="desc">
             {{ data.abstract }}
           </div>
+        </div>
+        <div v-show="commonStore.showContextmenu && commonStore.currentArticleId === data.id" class="content-menu">
+          <span class="menu-item" @click.stop="onOpenNewWindow(data)">新窗口打开</span>
+          <span class="menu-item" @click.stop="toDetail(data)">当前页打开</span>
         </div>
       </div>
       <div class="card-bottom">
@@ -71,7 +75,7 @@ import { useRouter, useRoute } from 'vue-router';
 import { formatDate, chackIsDelete } from '@/utils';
 import { ArticleItem } from '@/typings/common';
 import { IMG1 } from '@/constant';
-import { loginStore } from '@/store';
+import { commonStore, loginStore } from '@/store';
 import Image from '@/components/Image/index.vue';
 
 const router = useRouter();
@@ -97,8 +101,8 @@ const onLike = async (data: ArticleItem) => {
 // 评论
 const onComment = async (data: ArticleItem) => {
   await chackIsDelete(data);
-  // router.push(`/detail/${data.id}?scrollTo=1`);
-  ipcRenderer.send('new-win', `article/${data.id}?scrollTo=1&from=${route.name as string}`, data.id);
+  router.push(`/detail/${data.id}?scrollTo=1&from=${route.name as string}`);
+  // ipcRenderer.send('new-win', `article/${data.id}?scrollTo=1&from=${route.name as string}`, data.id);
 };
 
 // 编辑
@@ -113,11 +117,32 @@ const onReomve = async (data: ArticleItem) => {
   props.deleteArticle(data.id);
 };
 
-// 去详情
-const toDetail = async (data: ArticleItem) => {
+// 监听鼠标右键，分别进行不同的操作
+const onMouseDown = async (e: MouseEvent, data: ArticleItem) => {
   await chackIsDelete(data);
-  // router.push(`/detail/${data.id}`);
+  // 点击左键直接跳转到详情路由
+  if (e.button === 0) {
+    // router.push(`/detail/${data.id}?from=${route.name as string}`);
+    return;
+  }
+  // 使用新窗口打开
+  if (e.button === 2) {
+    commonStore.showContextmenu = true;
+    commonStore.currentArticleId = data.id;
+    // ipcRenderer.send('new-win', `article/${data.id}?from=${route.name as string}`, data.id);
+  }
+};
+
+// 新窗口打开
+const onOpenNewWindow = (data: ArticleItem) => {
+  console.log(data, 'data');
+
   ipcRenderer.send('new-win', `article/${data.id}?from=${route.name as string}`, data.id);
+};
+
+// 当前页打开
+const toDetail = (data: ArticleItem) => {
+  router.push(`/detail/${data.id}?from=${route.name as string}`);
 };
 
 // 去我的主页
@@ -140,6 +165,7 @@ const toTag = (name: string) => {
 @import '@/styles/index.less';
 
 .card-wrap {
+  position: relative;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -356,6 +382,30 @@ const toTag = (name: string) => {
             }
           }
         }
+      }
+    }
+  }
+
+  .content-menu {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    background-color: @theme;
+    backdrop-filter: blur(2px);
+    border-radius: 5px;
+    padding: 5px;
+
+    .menu-item {
+      font-size: 14px;
+      padding: 10px;
+      border-radius: 5px;
+
+      &:hover {
+        background-image: @head-lg;
+        color: @theme-blue;
       }
     }
   }
