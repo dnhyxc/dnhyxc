@@ -78,7 +78,6 @@ const validatePassword = (rule: any, value: any, callback: any) => {
   if (value === '') {
     callback(new Error('密码不能为空'));
   } else if (!status) {
-    console.log(msg, 'msg');
     callback(new Error(msg));
   } else {
     callback();
@@ -90,7 +89,6 @@ const validateConfirmPwd = (rule: any, value: any, callback: any) => {
   if (value === '') {
     callback(new Error('确认密码不能为空'));
   } else if (!status) {
-    console.log(msg, 'msg');
     callback(new Error(msg));
   } else {
     callback();

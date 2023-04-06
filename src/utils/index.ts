@@ -319,8 +319,6 @@ export const verifyPassword = (value: string) => {
 
 // 密码校验
 export const verifyResetPassword = (value: string, newPwd: string) => {
-  console.log(newPwd, 'newPwd');
-
   const pwdRegex = /(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[^a-zA-Z0-9]).{8,20}/;
   if (value.length > 20) {
     return {
@@ -350,6 +348,44 @@ export const verifyResetPassword = (value: string, newPwd: string) => {
     msg: '必须包含字母、数字、特称字符',
     status: false,
   };
+};
+
+// 识别图片主色的方法
+export const getImageColor = (img: HTMLImageElement) => {
+  // 创建画布
+  const canvas = document.createElement('canvas');
+
+  canvas.width = img.width;
+  canvas.height = img.height;
+
+  const context = canvas.getContext('2d');
+
+  context?.drawImage(img, 0, 0);
+
+  const pxArr = Array.from(context?.getImageData(0, 0, img.width, img.height).data!);
+
+  const colorList = {};
+  let i = 0;
+  while (i < pxArr?.length!) {
+    const r = pxArr?.[i];
+    const g = pxArr?.[i + 1];
+    const b = pxArr?.[i + 2];
+    const a = pxArr?.[i + 3];
+    i = i + 4; // 最后 +4 比每次 i++ 快 10ms 左右性能
+    const key = [r, g, b, a].join(',');
+    key in colorList ? ++colorList[key] : (colorList[key] = 1);
+  }
+
+  let arr = [];
+  for (const key in colorList) {
+    arr.push({
+      rgba: `rgba(${key})`,
+      num: colorList[key],
+    });
+  }
+  arr = arr.sort((a, b) => b.num - a.num);
+
+  return arr;
 };
 
 export {

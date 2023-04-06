@@ -6,7 +6,7 @@
 -->
 <template>
   <div class="image-wrap-style" @click="onClickImg">
-    <img v-if="url" :src="loaded ? loadUrl : transitionImg" alt="" class="image-item" @error="onError" />
+    <img v-if="url" ref="imgRef" :src="loaded ? loadUrl : transitionImg" alt="" class="image-item" @error="onError" />
     <div v-else class="loading-img">
       <div class="loading">loading...</div>
     </div>
@@ -15,25 +15,33 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watchEffect } from 'vue';
+import { ref, onMounted, watchEffect, nextTick } from 'vue';
 
 const loadUrl = ref<string | undefined>('');
 const loaded = ref<boolean>(false);
+const imgRef = ref<HTMLImageElement | null>(null);
 
 interface IProps {
   url: string;
   urls?: string[];
   onClick?: Function;
   transitionImg?: string;
+  needColor?: boolean;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
   urls: () => [],
   onClick: () => {},
   transitionImg: '',
+  needColor: false,
 });
 
 onMounted(() => {
+  nextTick(() => {
+    if (props.needColor) {
+      console.log(imgRef.value, 'imgRef');
+    }
+  });
   watchEffect(() => {
     loadImage();
   });

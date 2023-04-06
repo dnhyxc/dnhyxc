@@ -72,7 +72,6 @@ const validatePassword = (rule: any, value: any, callback: any) => {
   if (value === '') {
     callback(new Error('用户名不能为空'));
   } else if (!status) {
-    console.log(msg, 'msg');
     callback(new Error(msg));
   } else {
     callback();

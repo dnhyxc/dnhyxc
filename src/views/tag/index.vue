@@ -54,8 +54,6 @@ const onScrollTo = () => {
 
 // 选中标签
 const onCheckTag = (tag: string) => {
-  console.log(tag, 'attatatata');
-
   // 保存当前选中标签
   tagStore.currentTag = tag;
   router.push(`/tag/list?tag=${tag}`);

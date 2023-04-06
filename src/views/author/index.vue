@@ -121,7 +121,9 @@ const noMore = computed(() => {
 const disabled = computed(() => authorStore.loading || noMore.value);
 const showEmpty = computed(() => {
   const { timelineList, articleList, currentTabKey, loading } = authorStore;
-  if (loading !== null && !loading && ((currentTabKey === '2' && !timelineList.length) || !articleList.length)) {
+  if (loading !== null && !loading && currentTabKey === '2' && !timelineList.length) {
+    return true;
+  } else if (loading !== null && !loading && currentTabKey !== '2' && !articleList.length) {
     return true;
   } else {
     return false;
