@@ -209,7 +209,7 @@ ipcMain.on('new-win', (event, pathname, id, prevId) => {
   });
 
   if (!isDev) {
-    newWin?.loadURL(`http://43.143.27.249:80/${pathname}`);
+    newWin?.loadURL(`http://43.143.27.249/${pathname}`);
   } else {
     // newWin?.webContents.openDevTools();
     newWin?.loadURL(`${process.env.VITE_DEV_SERVER_URL!}${pathname}`);
