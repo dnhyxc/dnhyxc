@@ -28,6 +28,7 @@ import Timeline from '@/components/Timeline/index.vue';
 import ToTopIcon from '@/components/ToTopIcon/index.vue';
 import Loading from '@/components/Loading/index.vue';
 import Empty from '@/components/Empty/index.vue';
+import { ArticleItem } from '@/typings/common';
 
 // scrollRef：el-scrollbar ref，scrollTop：滚动距离
 const { scrollRef, scrollTop } = useScroller();
@@ -41,8 +42,8 @@ onMounted(async () => {
 });
 
 // 文章点赞
-const likeListArticle = (id: string) => {
-  articleStore.likeListArticle({ id, isTimeLine: true });
+const likeListArticle = (id: string, data?: ArticleItem) => {
+  articleStore.likeListArticle({ id, isTimeLine: true, data });
 };
 
 // 删除文章

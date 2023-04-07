@@ -138,8 +138,8 @@ const getCollectArticleList = () => {
 };
 
 // 文章点赞
-const likeListArticle = (id: string) => {
-  articleStore.likeListArticle({ id, pageType: 'collect' });
+const likeListArticle = (id: string, data?: ArticleItem) => {
+  articleStore.likeListArticle({ id, pageType: 'collect', data });
 };
 
 // 返回我的主页

@@ -6,6 +6,7 @@ import * as Service from '@/server';
 import { normalizeResult, Message, locSetItem, getStoreUserInfo, setParamsToStore } from '@/utils';
 import { useCheckUserId } from '@/hooks';
 import { PAGESIZE } from '@/constant';
+import { sendMessage } from '@/socket';
 
 interface IProps {
   loading: boolean | null;
@@ -145,6 +146,20 @@ export const useCollectStore = defineStore('collect', {
         if (!this.checkedCollectIds.includes(this.collectInfo.id)) {
           this.removeCollectArticle(articleId, this.collectInfo.id);
         }
+        // 收藏成功之后推送消息
+        sendMessage(
+          JSON.stringify({
+            action: 'push',
+            data: {
+              ...articleStore?.articleDetail,
+              toUserId: articleStore?.articleDetail?.authorId,
+              action: 'COLLECT',
+              fromUsername: loginStore.userInfo?.username,
+              fromUserId: loginStore.userInfo?.userId,
+            },
+            userId: loginStore.userInfo?.userId!,
+          }),
+        );
         ElMessage({
           message: res.message,
           type: 'success',
@@ -176,6 +191,19 @@ export const useCollectStore = defineStore('collect', {
           articleStore.articleDetail.collectCount -= 1;
         }
         this.collectStatus = false;
+        sendMessage(
+          JSON.stringify({
+            action: 'push',
+            data: {
+              ...articleStore?.articleDetail,
+              toUserId: articleStore?.articleDetail?.authorId,
+              action: 'CANCEL_COLLECT',
+              fromUsername: loginStore.userInfo?.username,
+              fromUserId: loginStore.userInfo?.userId,
+            },
+            userId: loginStore.userInfo?.userId!,
+          }),
+        );
         ElMessage({
           message: res.message,
           type: 'success',

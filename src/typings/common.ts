@@ -139,6 +139,9 @@ export interface ArticleItem extends AddCollectionRes {
   commentCount?: number;
   isDelete?: boolean;
   collectCount?: number;
+  toUserId?: string;
+  action?: string;
+  fromUsername?: string;
 }
 
 // 文章列表返回值

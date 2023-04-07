@@ -54,6 +54,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { scrollTo } from '@/utils';
 import { useScroller, useDeleteArticle } from '@/hooks';
 import { classifyStore, commonStore, articleStore } from '@/store';
+import { ArticleItem } from '@/typings/common';
 import Reel from '@/components/Reel/index.vue';
 import Card from '@/components/Card/index.vue';
 import ToTopIcon from '@/components/ToTopIcon/index.vue';
@@ -144,8 +145,8 @@ const onCheckClassify = (name: string) => {
 };
 
 // 文章点赞
-const likeListArticle = (id: string) => {
-  articleStore.likeListArticle({ id, pageType: 'classify' });
+const likeListArticle = (id: string, data?: ArticleItem) => {
+  articleStore.likeListArticle({ id, pageType: 'classify', data });
 };
 </script>
 

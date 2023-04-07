@@ -98,14 +98,13 @@ const props = withDefaults(defineProps<IProps>(), {
 // 点赞
 const onLike = async (data: ArticleItem) => {
   await chackIsDelete(data);
-  props.likeListArticle?.(data.id);
+  props.likeListArticle?.(data.id, data);
 };
 
 // 评论
 const onComment = async (data: ArticleItem) => {
   await chackIsDelete(data);
   router.push(`/detail/${data.id}?scrollTo=1&from=${route.name as string}`);
-  // ipcRenderer.send('new-win', `article/${data.id}?scrollTo=1&from=${route.name as string}`, data.id);
 };
 
 // 编辑

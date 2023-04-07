@@ -12,6 +12,9 @@ import * as API from '@/server/api';
 // 滚动加载每页加载数量
 export const PAGESIZE = 20;
 
+// 线上域名
+export const DOMAIN_URL = '43.143.27.249';
+
 // 左侧菜单配置
 export const MENULIST = [
   {
@@ -527,6 +530,15 @@ export const ABOUT_ME_API_PATH = {
 export const UPDATE_INFO_API_PATH = {
   1: API.UPDATE_INFO,
   2: API.RESET_PASSWORD,
+};
+
+// 消息类型
+export const MESSAGE_ACTIONS = {
+  LIKE_ARTICLE: '给你的文章点赞了',
+  CANCEL_LIKE_ARTICLE: '取消了给你的文章点赞',
+  COMMENT: '评论了你的文章',
+  COLLECT: '收藏了你的文章',
+  CANCEL_COLLECT: '取消收藏了你的文章',
 };
 
 export const BIRD_BASE64 =

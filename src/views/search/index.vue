@@ -67,6 +67,7 @@ import { searchStore, articleStore } from '@/store';
 import { SEARCH_TYPE } from '@/constant';
 import { useScroller, useDeleteArticle } from '@/hooks';
 import { scrollTo } from '@/utils';
+import { ArticleItem } from '@/typings/common';
 import Empty from '@/components/Empty/index.vue';
 
 const { scrollRef, scrollTop } = useScroller();
@@ -175,8 +176,8 @@ const onSelectChange = (value: string) => {
 };
 
 // 文章点赞
-const likeListArticle = (id: string) => {
-  articleStore.likeListArticle({ id, pageType: 'search' });
+const likeListArticle = (id: string, data?: ArticleItem) => {
+  articleStore.likeListArticle({ id, pageType: 'search', data });
 };
 
 // 置顶

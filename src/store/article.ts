@@ -26,6 +26,7 @@ import {
   tagStore,
   timelineStore,
 } from '@/store';
+import { sendMessage } from '@/socket';
 import { PAGESIZE } from '@/constant';
 
 interface IProps {
@@ -292,12 +293,36 @@ export const useArticleStore = defineStore('article', {
     },
 
     // 列表文章点赞
-    async likeListArticle({ id, isTimeLine, pageType }: { id: string; pageType?: string; isTimeLine?: boolean }) {
+    async likeListArticle({
+      id,
+      isTimeLine,
+      pageType,
+      data,
+    }: {
+      id: string; // 文章id
+      pageType?: string;
+      isTimeLine?: boolean;
+      data?: ArticleItem; // 文章信息
+    }) {
       const res = normalizeResult<{ id: string; isLike: boolean; nextPageOne: ArticleItem[]; total: number }>(
         await Service.likeArticle({ id }),
       );
       if (res.success) {
         const { id, isLike } = res.data;
+        // 点赞或取消点赞之后推送websocket消息
+        sendMessage(
+          JSON.stringify({
+            action: 'push',
+            data: {
+              ...data,
+              toUserId: data?.authorId,
+              fromUsername: loginStore.userInfo?.username,
+              fromUserId: loginStore.userInfo?.userId,
+              action: isLike ? 'LIKE_ARTICLE' : 'CANCEL_LIKE_ARTICLE',
+            },
+            userId: loginStore.userInfo?.userId!,
+          }),
+        );
         // 时间轴页面
         if (isTimeLine || authorStore.currentTabKey === '2') {
           const cloneArticles: TimelineResult[] =
@@ -446,6 +471,7 @@ export const useArticleStore = defineStore('article', {
         fromCommentId: data?.selectComment?.commentId,
       };
 
+      // 如果有 commentId 说明时第二层，isThreeTier 为 true 说明是第三层
       if (!data?.isThreeTier) {
         delete params.fromUsername;
         delete params.fromUserId;
@@ -456,6 +482,22 @@ export const useArticleStore = defineStore('article', {
       const res = normalizeResult<{ commentId: string }>(await Service.releaseComment(params));
 
       if (res?.success) {
+        // 只在评论文章时推送消息，回复评论不推送
+        if (!data?.isThreeTier && !data?.selectComment?.commentId) {
+          sendMessage(
+            JSON.stringify({
+              action: 'push',
+              data: {
+                ...this.articleDetail,
+                toUserId: this.articleDetail?.authorId,
+                fromUsername: loginStore.userInfo?.username,
+                fromUserId: loginStore.userInfo?.userId,
+                action: 'COMMENT',
+              },
+              userId: loginStore.userInfo?.userId!,
+            }),
+          );
+        }
         ElMessage({
           message: res.message,
           type: 'success',
@@ -553,6 +595,19 @@ export const useArticleStore = defineStore('article', {
       if (!res.success) {
         ElMessage.error(res.message);
       } else {
+        sendMessage(
+          JSON.stringify({
+            action: 'push',
+            data: {
+              ...this.articleDetail,
+              toUserId: this.articleDetail?.authorId,
+              fromUsername: loginStore.userInfo?.username,
+              fromUserId: loginStore.userInfo?.userId,
+              action: res.data.isLike ? 'LIKE_ARTICLE' : 'CANCEL_LIKE_ARTICLE',
+            },
+            userId: loginStore.userInfo?.userId!,
+          }),
+        );
         // 点赞后将原本的点赞数自动加减 1
         if (res.data.isLike) {
           this.detailArtLikeCount += 1;

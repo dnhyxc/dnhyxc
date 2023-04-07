@@ -66,6 +66,7 @@ import { scrollTo } from '@/utils';
 import { useScroller, useDeleteArticle } from '@/hooks';
 import { tagStore, articleStore, commonStore } from '@/store';
 import Loading from '@/components/Loading/index.vue';
+import { ArticleItem } from '@/typings/common';
 
 const route = useRoute();
 const router = useRouter();
@@ -149,8 +150,8 @@ const onCheckTag = (tag: string) => {
 };
 
 // 文章点赞
-const likeListArticle = (id: string) => {
-  articleStore.likeListArticle({ id, pageType: 'tag' });
+const likeListArticle = (id: string, data?: ArticleItem) => {
+  articleStore.likeListArticle({ id, pageType: 'tag', data });
 };
 </script>
 

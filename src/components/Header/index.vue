@@ -58,12 +58,30 @@
           </template>
         </el-input>
       </div>
-      <el-tooltip effect="light" content="消息" placement="bottom">
-        <div class="bell">
-          <span class="msg-count">99+</span>
-          <i class="bell-font iconfont icon-notification" />
-        </div>
-      </el-tooltip>
+      <el-popover
+        placement="bottom"
+        title="我的消息列表"
+        :width="300"
+        trigger="click"
+        popper-class="msg-popover"
+      >
+        <Messages />
+        <template #reference>
+          <div class="bell">
+            <el-tooltip effect="light" content="消息" placement="bottom">
+              <div class="msg">
+                <span
+                  v-if="messageStore.msgList?.length"
+                  :class="`${messageStore.msgList?.length > 99 && 'max-msg-count'} msg-count`"
+                >
+                  {{ messageStore.msgList?.length > 99 ? '99+' : messageStore.msgList?.length }}
+                </span>
+                <i class="bell-font iconfont icon-notification" />
+              </div>
+            </el-tooltip>
+          </div>
+        </template>
+      </el-popover>
       <div class="setting">
         <el-tooltip effect="light" content="设置" placement="bottom">
           <i class="font iconfont icon-shezhi" @click="toSetting" />
@@ -119,8 +137,9 @@ import { useRouter, useRoute } from 'vue-router';
 import { ipcRenderer } from 'electron';
 import { Search } from '@element-plus/icons-vue';
 import { ACTION_SVGS, MENULIST, CLOSE_CONFIG, CLOSE_PROMPT, NEED_HEAD_SEARCH } from '@/constant';
-import { commonStore } from '@/store';
+import { commonStore, messageStore } from '@/store';
 import { checkOS, clearParamListFromStore } from '@/utils';
+import Messages from '@/components/Messages/index.vue';
 
 const router = useRouter();
 const route = useRoute();
@@ -148,6 +167,8 @@ watchEffect(() => {
   if (remindStatus.value !== (store.get(CLOSE_PROMPT) as boolean)) {
     store.set(CLOSE_PROMPT, remindStatus.value);
   }
+
+  console.log(messageStore.msgList, '>>>>>>msgList');
 });
 
 onMounted(() => {
@@ -295,6 +316,7 @@ const onEnter = async (e: Event) => {
 @import '@/styles/index.less';
 
 .header-wrap {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -384,13 +406,18 @@ const onEnter = async (e: Event) => {
       margin-left: 15px;
       .msg-count {
         position: absolute;
-        top: -6px;
-        right: -12px;
-        font-size: 13px;
+        top: -5px;
+        right: -5px;
+        font-size: 12px;
         color: @font-danger;
         font-weight: 700;
         cursor: pointer;
       }
+
+      .max-msg-count {
+        right: -12px;
+      }
+
       .bell-font {
         font-size: 17px;
         cursor: pointer;
@@ -406,7 +433,7 @@ const onEnter = async (e: Event) => {
         font-size: 16px;
         cursor: pointer;
         margin-left: 15px;
-        margin-top: 2px;
+        margin-top: 1px;
         color: @font-3;
       }
       .active {
@@ -481,6 +508,7 @@ const onEnter = async (e: Event) => {
     }
   }
 }
+
 .mac-header-wrap {
   padding: 10 12px;
 }

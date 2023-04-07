@@ -143,7 +143,7 @@ import { ElMessage } from 'element-plus';
 import { useDeleteArticle, useScroller } from '@/hooks';
 import { articleStore, loginStore, personalStore } from '@/store';
 import { formatDate, scrollTo, checkUrl } from '@/utils';
-import { CollectParams } from '@/typings/common';
+import { ArticleItem, CollectParams } from '@/typings/common';
 import { HEAD_IMG, ICONLINKS, ABOUT_ME_TABS, ABOUT_TABS } from '@/constant';
 import AddCollectModel from '@/components/AddCollectModel/index.vue';
 import Empty from '@/components/Empty/index.vue';
@@ -242,8 +242,8 @@ const onTabChange = (value: string) => {
 };
 
 // 文章点赞
-const likeListArticle = async (id: string) => {
-  await articleStore.likeListArticle({ id, pageType: 'personal' });
+const likeListArticle = async (id: string, data?: ArticleItem) => {
+  await articleStore.likeListArticle({ id, pageType: 'personal', data });
   // 取消点赞文章重新刷新列表之后，自动滚动到之前查看页面的位置
   if (personalStore.currentTabKey === '2') {
     onScrollTo(scrollTop.value);

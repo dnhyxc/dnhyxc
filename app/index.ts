@@ -3,6 +3,7 @@ import { app, BrowserWindow, ipcMain, Tray, dialog } from 'electron';
 import Store from 'electron-store';
 import { registerShortcut, unRegisterShortcut } from './shortcut';
 import { createContextMenu, getIconPath } from './tray';
+import { DOMAIN_URL } from './constant';
 
 let win: BrowserWindow | null = null;
 let newWin: BrowserWindow | null = null;
@@ -30,8 +31,10 @@ const createWindow = () => {
   win = new BrowserWindow({
     width: 1080,
     height: 750,
-    minWidth: 1080,
-    minHeight: 750,
+    // minWidth: 1080,
+    // minHeight: 750,
+    minWidth: 800,
+    minHeight: 600,
     titleBarStyle: 'hidden',
     webPreferences: {
       contextIsolation: false,
@@ -48,7 +51,7 @@ const createWindow = () => {
 
   if (!isDev) {
     // win?.loadFile(path.join(__dirname, '../dist/index.html'));
-    win?.loadURL('http://43.143.27.249:80');
+    win?.loadURL(DOMAIN_URL);
   } else {
     win?.webContents.openDevTools();
     win?.loadURL(process.env.VITE_DEV_SERVER_URL!);
@@ -209,7 +212,7 @@ ipcMain.on('new-win', (event, pathname, id, prevId) => {
   });
 
   if (!isDev) {
-    newWin?.loadURL(`http://43.143.27.249/${pathname}`);
+    newWin?.loadURL(`${DOMAIN_URL}/${pathname}`);
   } else {
     // newWin?.webContents.openDevTools();
     newWin?.loadURL(`${process.env.VITE_DEV_SERVER_URL!}${pathname}`);

@@ -50,6 +50,7 @@ import Carousel from '@/components/Carousel/index.vue';
 import Card from '@/components/Card/index.vue';
 import ToTopIcon from '@/components/ToTopIcon/index.vue';
 import Empty from '@/components/Empty/index.vue';
+import { ArticleItem } from '@/typings/common';
 
 const searchType = ref<number>(1); // 1：推荐，2：最新，3：最热
 const isMounted = ref<boolean>(false);
@@ -116,8 +117,8 @@ const searchHotArticles = () => {
 };
 
 // 文章点赞
-const likeListArticle = (id: string) => {
-  articleStore.likeListArticle({ id, pageType: 'home' });
+const likeListArticle = (id: string, data: ArticleItem) => {
+  articleStore.likeListArticle({ id, pageType: 'home', data });
 };
 </script>
 

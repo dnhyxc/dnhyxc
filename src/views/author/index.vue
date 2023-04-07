@@ -109,6 +109,7 @@ import Timeline from '@/components/Timeline/index.vue';
 import Image from '@/components/Image/index.vue';
 import Loading from '@/components/Loading/index.vue';
 import Empty from '@/components/Empty/index.vue';
+import { ArticleItem } from '@/typings/common';
 
 const { scrollRef, scrollTop } = useScroller();
 
@@ -165,8 +166,8 @@ const onTabChange = (name: string) => {
 };
 
 // 文章点赞
-const likeListArticle = async (id: string) => {
-  await articleStore.likeListArticle({ id, pageType: 'author' });
+const likeListArticle = async (id: string, data?: ArticleItem) => {
+  await articleStore.likeListArticle({ id, pageType: 'author', data });
   // 取消点赞文章重新刷新列表之后，自动滚动到之前查看页面的位置
   if (authorStore.currentTabKey === '1') {
     onScrollTo(scrollTop.value);

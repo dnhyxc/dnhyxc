@@ -75,7 +75,7 @@ const route = useRoute();
 
 interface IProps {
   data: TimelineArticles;
-  likeListArticle?: (id: string) => void;
+  likeListArticle?: (id: string, data?: ArticleItem) => void;
   deleteArticle?: (id: string) => void;
   toEdit?: (id: string) => void;
   isCollect?: boolean;
@@ -120,7 +120,7 @@ const toTag = (tag: string) => {
 // 点赞
 const onLike = async (data: ArticleItem | TimelineArticles) => {
   await chackIsDelete(data as ArticleItem);
-  props?.likeListArticle?.(data?.id!);
+  props?.likeListArticle?.(data?.id!, data as ArticleItem);
 };
 
 // 前往详情/编辑
