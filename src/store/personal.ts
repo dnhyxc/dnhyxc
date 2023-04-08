@@ -18,6 +18,8 @@ interface IProps {
   currentTabKey: string; // 0：我/他的文章，1：我的收藏，2：点赞文章
   collectTotal: number;
   collectedCount: number;
+  noLoading: boolean;
+  scrollToPageSize: number;
 }
 
 export const usePersonalStore = defineStore('personal', {
@@ -44,6 +46,8 @@ export const usePersonalStore = defineStore('personal', {
     currentTabKey: '0',
     collectTotal: 0,
     collectedCount: 0,
+    noLoading: false,
+    scrollToPageSize: 0,
   }),
 
   getters: {
@@ -186,6 +190,7 @@ export const usePersonalStore = defineStore('personal', {
       this.timelineList = [];
       this.total = 0;
       this.pageNo = 0;
+      this.pageSize = PAGESIZE;
       this.collectTotal = 0;
       this.collectedCount = 0;
     },

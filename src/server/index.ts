@@ -312,3 +312,33 @@ export const deleteDraft = async (params: { id: string | null }) => {
   const res = await post(API.DELETE_DRAFT, copeParams(params));
   return res;
 };
+
+// 获取消息列表
+export const getMessageList = async (params: { pageNo: number; pageSize: number }) => {
+  const res = await post(API.GET_MESSAGE_LIST, copeParams(params));
+  return res;
+};
+
+// 设置消息阅读状态
+export const setReadStatus = async (params: { msgIds: string[] }) => {
+  const res = await post(API.SET_READ_STATUS, copeParams(params));
+  return res;
+};
+
+// 获取未读消息数量
+export const getNoReadMsgCount = async () => {
+  const res = await post(API.GET_NO_READ_MSG_COUNT, copeParams({}));
+  return res;
+};
+
+// 删除消息
+export const deleteMessage = async (id: string) => {
+  const res = await post(API.DELETE_MESSAGE, copeParams({ id }));
+  return res;
+};
+
+// 删除全部消息
+export const deleteAllMessage = async () => {
+  const res = await post(API.DELETE_ALL_MESSAGE, copeParams({}));
+  return res;
+};

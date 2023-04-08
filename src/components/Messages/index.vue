@@ -5,7 +5,8 @@
  * index.vue
 -->
 <template>
-  <Loading :loading="false" class="message-wrap">
+  <Loading :loading="messageStore.loading" class="message-wrap">
+    <span v-if="messageStore.msgList?.length" class="delAll" @click="onDeleteAll">全部删除</span>
     <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
       <div
         v-if="isMounted"
@@ -42,7 +43,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import { messageStore } from '@/store';
 import { useScroller } from '@/hooks';
 import { scrollTo } from '@/utils';
@@ -62,17 +63,38 @@ const showEmpty = computed(
 
 onMounted(() => {
   isMounted.value = true;
-  onGetMsgList();
+  // 获取未读消息数量
+  messageStore.getNoReadMsgCount();
 });
 
+watch(
+  () => messageStore.visible,
+  (newVal) => {
+    if (newVal) {
+      // 消息弹出框显示的时候，清除消息数据
+      messageStore.msgCount = 0;
+      onGetMsgList();
+    } else {
+      messageStore.clearMessageInfo();
+    }
+  },
+);
+
 // 获取消息列表
-const onGetMsgList = () => {
-  console.log('获取消息列表');
+const onGetMsgList = async () => {
+  await messageStore.getMessageList();
 };
 
 // 删除消息
-const onDelete = (id: string) => {
-  console.log(id, 'id');
+const onDelete = async (id: string) => {
+  await messageStore.deleteMessage(id);
+  // 删除之后，自动跳转到原来所在位置
+  onScrollTo(scrollTop.value);
+};
+
+// 删除全部消息
+const onDeleteAll = async () => {
+  await messageStore.deleteAllMessage();
 };
 
 // 置顶
@@ -89,6 +111,19 @@ const onScrollTo = (to?: number) => {
   flex-direction: column;
   height: 300px;
   overflow: auto;
+
+  .delAll {
+    position: absolute;
+    top: 10px;
+    right: 13px;
+    color: @theme-blue;
+    cursor: pointer;
+    .clickNoSelectText();
+
+    &:hover {
+      color: @active;
+    }
+  }
 
   .list-wrap {
     display: flex;

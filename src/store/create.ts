@@ -172,7 +172,7 @@ export const useCreateStore = defineStore('create', {
         // 如果是使用草稿创建文章，则不需要提示
         if (noMsg) return;
         // 获取删除时拉取的文章总数，用于取消点赞时，拉取对应的数量
-        const total = this.total;
+        const total = this.draftList?.length;
         // 删除草稿后，清除原本的草稿数据，重新获取草稿列表
         this.clearDraftListInfo();
         this.pageSize = total;

@@ -304,6 +304,8 @@ export const useArticleStore = defineStore('article', {
       isTimeLine?: boolean;
       data?: ArticleItem; // 文章信息
     }) {
+      // 检验是否有userId，如果没有禁止发送请求
+      if (!useCheckUserId()) return;
       const res = normalizeResult<{ id: string; isLike: boolean; nextPageOne: ArticleItem[]; total: number }>(
         await Service.likeArticle({ id }),
       );
@@ -390,7 +392,7 @@ export const useArticleStore = defineStore('article', {
               // 取消点赞之后，重新获取点赞文章列表
               if (loginStore.userInfo?.auth === 1 && authorStore.currentTabKey === '1') {
                 // 获取删除时拉取的文章总数，用于取消点赞时，拉取对应的数量
-                const total = authorStore.total;
+                const total = authorStore.articleList?.length;
                 authorStore.clearArticleList();
                 authorStore.pageSize = total;
                 authorStore.getAuthorArticles();
@@ -402,7 +404,7 @@ export const useArticleStore = defineStore('article', {
               // 取消点赞之后，重新获取点赞文章列表
               if (personalStore.currentTabKey === '2') {
                 // 获取删除时拉取的文章总数，用于取消点赞时，拉取对应的数量
-                const total = personalStore.total;
+                const total = personalStore.articleList?.length;
                 personalStore.clearArticleList();
                 personalStore.pageSize = total;
                 personalStore.getMyArticleList();
@@ -601,11 +603,11 @@ export const useArticleStore = defineStore('article', {
             data: {
               ...this.articleDetail,
               toUserId: this.articleDetail?.authorId,
-              fromUsername: loginStore.userInfo?.username,
-              fromUserId: loginStore.userInfo?.userId,
+              fromUsername: loginStore.userInfo?.username || userInfo?.username,
+              fromUserId: loginStore.userInfo?.userId || userInfo?.userId,
               action: res.data.isLike ? 'LIKE_ARTICLE' : 'CANCEL_LIKE_ARTICLE',
             },
-            userId: loginStore.userInfo?.userId!,
+            userId: loginStore.userInfo?.userId! || userInfo?.userId,
           }),
         );
         // 点赞后将原本的点赞数自动加减 1

@@ -59,6 +59,7 @@
         </el-input>
       </div>
       <el-popover
+        v-model:visible="messageStore.visible"
         placement="bottom"
         title="我的消息列表"
         :width="300"
@@ -71,10 +72,10 @@
             <el-tooltip effect="light" content="消息" placement="bottom">
               <div class="msg">
                 <span
-                  v-if="messageStore.msgList?.length"
-                  :class="`${messageStore.msgList?.length > 99 && 'max-msg-count'} msg-count`"
+                  v-if="messageStore.msgCount"
+                  :class="`${messageStore.msgCount > 99 && 'max-msg-count'} msg-count`"
                 >
-                  {{ messageStore.msgList?.length > 99 ? '99+' : messageStore.msgList?.length }}
+                  {{ messageStore.msgCount > 99 ? '99+' : messageStore.msgCount }}
                 </span>
                 <i class="bell-font iconfont icon-notification" />
               </div>
@@ -167,8 +168,6 @@ watchEffect(() => {
   if (remindStatus.value !== (store.get(CLOSE_PROMPT) as boolean)) {
     store.set(CLOSE_PROMPT, remindStatus.value);
   }
-
-  console.log(messageStore.msgList, '>>>>>>msgList');
 });
 
 onMounted(() => {

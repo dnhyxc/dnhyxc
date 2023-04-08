@@ -1,5 +1,5 @@
 import { messageStore } from '@/store';
-import { locGetItem } from '@/utils';
+import { locGetItem, getStoreUserInfo } from '@/utils';
 import { DOMAIN_URL } from '@/constant';
 
 export let ws: any;
@@ -29,7 +29,9 @@ export const DELETE_FRAME = {
 
 // 创建websocket
 export function createWebSocket() {
-  const userInfo = locGetItem('userInfo') ? JSON.parse(locGetItem('userInfo')!) : {};
+  const storeUserInfo = getStoreUserInfo();
+
+  const userInfo = (locGetItem('userInfo') && JSON.parse(locGetItem('userInfo')!)) || storeUserInfo || {};
 
   if (!userInfo?.userId) return;
 
@@ -133,7 +135,11 @@ function onMessage(event: any) {
       } else {
         // 解析处理数据
         if (parseData.action === 'push') {
-          messageStore.setMsgList(parseData.data);
+          messageStore.setMsgCount();
+          // 只在消息弹出框显示的时候才添加数据
+          if (messageStore.visible) {
+            messageStore.addMessage(parseData.data);
+          }
         }
       }
     } else {

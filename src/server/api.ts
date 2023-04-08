@@ -105,3 +105,18 @@ export const GET_COLLECTED_TOTAL = '/api/getCollectedTotal';
 
 // 获取收藏集总数
 export const GET_COLLECT_TOTAL = '/api/getCollectTotal';
+
+// 获取消息列表
+export const GET_MESSAGE_LIST = '/api/getMessageList';
+
+// 设置消息阅读状态
+export const SET_READ_STATUS = '/api/setReadStatus';
+
+// 获取未读消息数量
+export const GET_NO_READ_MSG_COUNT = '/api/getNoReadMsgCount';
+
+// 删除消息
+export const DELETE_MESSAGE = '/api/deleteMessage';
+
+// 删除全部消息
+export const DELETE_ALL_MESSAGE = '/api/deleteAllMessage';

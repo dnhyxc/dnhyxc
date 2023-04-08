@@ -103,7 +103,6 @@ export const useAuthorStore = defineStore('author', {
       this.loading = false;
       if (res.success) {
         const { total, list } = res.data;
-        // 使用ref暂存list，防止滚动加载时，list添加错乱问题
         this.articleList = [...this.articleList, ...list];
         this.total = total;
       } else {
@@ -186,6 +185,7 @@ export const useAuthorStore = defineStore('author', {
       this.timelineList = [];
       this.total = 0;
       this.pageNo = 0;
+      this.pageSize = PAGESIZE;
     },
   },
 });
