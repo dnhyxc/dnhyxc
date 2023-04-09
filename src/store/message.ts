@@ -3,6 +3,7 @@ import { defineStore } from 'pinia';
 import { normalizeResult } from '@/utils';
 import * as Service from '@/server';
 import { PAGESIZE } from '@/constant';
+import { loginStore } from '@/store';
 import { ArticleItem, ArticleListResult } from '@/typings/common';
 
 interface IProps {
@@ -67,6 +68,7 @@ export const useMessageStore = defineStore('message', {
 
     // 获取未读消息数量
     async getNoReadMsgCount() {
+      if (!loginStore?.userInfo?.userId) return;
       const res = normalizeResult<number>(await Service.getNoReadMsgCount());
       if (res.success) {
         this.msgCount = res.data;

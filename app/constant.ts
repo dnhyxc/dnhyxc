@@ -1,1 +1,1 @@
-export const DOMAIN_URL = 'www.dnhyxc.cn';
+export const DOMAIN_URL = 'http://43.143.27.249';
