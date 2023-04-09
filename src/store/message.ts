@@ -30,6 +30,10 @@ export const useMessageStore = defineStore('message', {
   actions: {
     // 获取消息列表
     async getMessageList() {
+      if (!loginStore?.userInfo?.userId) {
+        this.loading = false;
+        return;
+      }
       if (this.msgList.length !== 0 && this.msgList.length >= this.total) return;
       this.pageNo = this.pageNo + 1;
       this.loading = true;
@@ -60,6 +64,8 @@ export const useMessageStore = defineStore('message', {
         .filter((i) => !i.isReaded)
         .map((i) => i.id)
         .slice((this.pageNo - 1) * this.pageSize, this.pageNo * this.pageSize + this.pageSize); // 0 => 20, 20 => 40, 40 => 60
+
+      console.log(msgIds, 'msgIds');
 
       if (!msgIds?.length) return;
 

@@ -165,7 +165,12 @@ const onCollect = () => {
     }
 
     &:hover {
-      color: @theme-blue;
+      color: @active;
+
+      .is-like,
+      .active-collect {
+        color: @active;
+      }
     }
 
     .like-font {

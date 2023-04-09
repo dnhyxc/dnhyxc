@@ -59,6 +59,7 @@
         </el-input>
       </div>
       <el-popover
+        v-if="loginStore.userInfo?.userId"
         v-model:visible="messageStore.visible"
         placement="bottom"
         title="我的消息列表"
@@ -138,7 +139,7 @@ import { useRouter, useRoute } from 'vue-router';
 import { ipcRenderer } from 'electron';
 import { Search } from '@element-plus/icons-vue';
 import { ACTION_SVGS, MENULIST, CLOSE_CONFIG, CLOSE_PROMPT, NEED_HEAD_SEARCH } from '@/constant';
-import { commonStore, messageStore } from '@/store';
+import { commonStore, messageStore, loginStore } from '@/store';
 import { checkOS, clearParamListFromStore } from '@/utils';
 import Messages from '@/components/Messages/index.vue';
 
@@ -182,6 +183,7 @@ onUnmounted(() => {
   if (timerRef.value) {
     clearTimeout(timerRef.value);
   }
+  messageStore.visible = false;
 });
 
 // 监听页面搜索关键词，如果articleStore.keyword为空，则清除输入框内容

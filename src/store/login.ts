@@ -3,7 +3,7 @@ import Store from 'electron-store';
 import { Router } from 'vue-router';
 import { ElMessage } from 'element-plus';
 import { LoginParams, UserLoginParams, UserInfoParams, registerRes } from '@/typings/common';
-import { commonStore } from '@/store';
+import { commonStore, messageStore } from '@/store';
 import * as Service from '@/server';
 import { useCheckUserId } from '@/hooks';
 import { normalizeResult, Message, encrypt, locSetItem, locGetItem, locRemoveItem } from '@/utils';
@@ -216,6 +216,8 @@ export const useLoginStore = defineStore('login', {
       store.delete('token');
       locRemoveItem('userInfo');
       store.delete('userInfo');
+      // 退出时清除消息条数，防止推出后头部小铃铛处还是显示消息条数
+      messageStore.msgCount = 0;
     },
   },
 });

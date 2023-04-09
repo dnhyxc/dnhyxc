@@ -44,9 +44,6 @@ interface IProps {
   hot?: boolean; // 是否查询最热文章
 }
 
-// 获取用户信息
-const userInfo = getStoreUserInfo();
-
 export const useArticleStore = defineStore('article', {
   state: (): IProps => ({
     // 首页、标签列表、分类列表文章列表数据
@@ -460,6 +457,9 @@ export const useArticleStore = defineStore('article', {
     async releaseComment(data: ReplayComment) {
       // 检验是否有userId，如果没有禁止发送请求
       if (!useCheckUserId()) return;
+
+      const userInfo = getStoreUserInfo();
+
       const params = {
         userId: loginStore?.userInfo?.userId || userInfo?.userId,
         username: loginStore?.userInfo?.username || userInfo?.username,
@@ -492,11 +492,11 @@ export const useArticleStore = defineStore('article', {
               data: {
                 ...this.articleDetail,
                 toUserId: this.articleDetail?.authorId,
-                fromUsername: loginStore.userInfo?.username,
-                fromUserId: loginStore.userInfo?.userId,
+                fromUsername: loginStore.userInfo?.username || userInfo?.username,
+                fromUserId: loginStore.userInfo?.userId || userInfo?.userId,
                 action: 'COMMENT',
               },
-              userId: loginStore.userInfo?.userId!,
+              userId: loginStore.userInfo?.userId! || userInfo?.userId,
             }),
           );
         }
@@ -519,6 +519,7 @@ export const useArticleStore = defineStore('article', {
     async onGiveLikeToComment(data: { commentId: string; isThreeTier?: boolean; getCommentList?: Function }) {
       // 检验是否有userId，如果没有禁止发送请求
       if (!useCheckUserId()) return;
+      const userInfo = getStoreUserInfo();
       const params = data.isThreeTier
         ? {
             commentId: data.commentId!,
@@ -597,6 +598,8 @@ export const useArticleStore = defineStore('article', {
       if (!res.success) {
         ElMessage.error(res.message);
       } else {
+        const userInfo = getStoreUserInfo();
+        console.log(userInfo, 'userInfo');
         sendMessage(
           JSON.stringify({
             action: 'push',

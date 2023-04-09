@@ -93,6 +93,7 @@ import { useScroller } from '@/hooks';
 import { articleStore, commonStore } from '@/store';
 import { scrollTo, checkOS } from '@/utils';
 import { ACTION_SVGS } from '@/constant';
+import { createWebSocket } from '@/socket';
 import PageHeader from '@/components/PreviewHeader/index.vue';
 import Preview from '@/components/Preview/index.vue';
 import Multibar from '@/components/Multibar/index.vue';
@@ -133,6 +134,11 @@ onMounted(async () => {
   if (route.query?.scrollTo) {
     onScrollTo(articleInfoRef.value?.offsetHeight);
   }
+
+  // 监听主进程发布的重连ws的推送
+  ipcRenderer.on('connect-ws', () => {
+    createWebSocket();
+  });
 });
 
 // 组件卸载前，清楚store中的详情信息

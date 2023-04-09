@@ -239,6 +239,11 @@ ipcMain.on('new-win', (event, pathname, id, prevId) => {
       i?.win?.setAlwaysOnTop(false);
     });
   });
+
+  // 监听窗口是否获取焦点，如果获取焦点则让获取焦点的子窗口触发立即重新连接ws的消息
+  newWin.on('focus', (event) => {
+    event.sender.send('connect-ws');
+  });
 });
 
 // 监听子窗口关闭

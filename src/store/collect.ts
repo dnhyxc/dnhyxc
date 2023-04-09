@@ -146,6 +146,8 @@ export const useCollectStore = defineStore('collect', {
         if (!this.checkedCollectIds.includes(this.collectInfo.id)) {
           this.removeCollectArticle(articleId, this.collectInfo.id);
         }
+
+        const userInfo = getStoreUserInfo();
         // 收藏成功之后推送消息
         sendMessage(
           JSON.stringify({
@@ -154,10 +156,10 @@ export const useCollectStore = defineStore('collect', {
               ...articleStore?.articleDetail,
               toUserId: articleStore?.articleDetail?.authorId,
               action: 'COLLECT',
-              fromUsername: loginStore.userInfo?.username,
-              fromUserId: loginStore.userInfo?.userId,
+              fromUsername: loginStore.userInfo?.username || userInfo?.username,
+              fromUserId: loginStore.userInfo?.userId || userInfo?.userId,
             },
-            userId: loginStore.userInfo?.userId!,
+            userId: loginStore.userInfo?.userId! || userInfo?.userId,
           }),
         );
         ElMessage({
@@ -191,6 +193,9 @@ export const useCollectStore = defineStore('collect', {
           articleStore.articleDetail.collectCount -= 1;
         }
         this.collectStatus = false;
+
+        const userInfo = getStoreUserInfo();
+
         sendMessage(
           JSON.stringify({
             action: 'push',
@@ -198,10 +203,10 @@ export const useCollectStore = defineStore('collect', {
               ...articleStore?.articleDetail,
               toUserId: articleStore?.articleDetail?.authorId,
               action: 'CANCEL_COLLECT',
-              fromUsername: loginStore.userInfo?.username,
-              fromUserId: loginStore.userInfo?.userId,
+              fromUsername: loginStore.userInfo?.username || userInfo?.username,
+              fromUserId: loginStore.userInfo?.userId || userInfo?.userId,
             },
-            userId: loginStore.userInfo?.userId!,
+            userId: loginStore.userInfo?.userId! || userInfo?.userId,
           }),
         );
         ElMessage({
