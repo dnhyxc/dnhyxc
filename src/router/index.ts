@@ -230,8 +230,8 @@ router.beforeEach(async (to, from, next) => {
     commonStore.setBackPath(from.path);
   }
 
-  // 检测是否登录，如果没有登录，需要及时清空存储在store中的用户信息
-  if (!locGetItem('token')) {
+  // 检测是否登录，如果没有登录，需要及时清空存储在store中的用户信息，注意在页面是article的时候，去要排除，因为article一直就获取不到token
+  if (!locGetItem('token') && to.name !== 'article') {
     clearUserInfoFromStore();
   }
 

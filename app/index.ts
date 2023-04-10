@@ -214,7 +214,7 @@ ipcMain.on('new-win', (event, pathname, id, prevId) => {
   if (!isDev) {
     newWin?.loadURL(`${DOMAIN_URL}/${pathname}`);
   } else {
-    // newWin?.webContents.openDevTools();
+    newWin?.webContents.openDevTools();
     newWin?.loadURL(`${process.env.VITE_DEV_SERVER_URL!}${pathname}`);
   }
 
