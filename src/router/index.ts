@@ -1,7 +1,7 @@
 import { createRouter, RouteRecordRaw, createWebHistory } from 'vue-router';
 import { ElMessage } from 'element-plus';
 import { useCommonStore } from '@/store/common';
-import { locGetItem, locRemoveItem, clearParamListFromStore } from '@/utils';
+import { locGetItem, locRemoveItem, clearParamListFromStore, clearUserInfoFromStore } from '@/utils';
 import { WITH_AUTH_ROUTES, CLEAR_PARAMS_LIST_ROUTES } from '@/constant';
 import eventBus from '@/utils/eventBus';
 
@@ -228,6 +228,11 @@ router.beforeEach(async (to, from, next) => {
 
   if (to.path === '/login') {
     commonStore.setBackPath(from.path);
+  }
+
+  // 检测是否登录，如果没有登录，需要及时清空存储在store中的用户信息
+  if (!locGetItem('token')) {
+    clearUserInfoFromStore();
   }
 
   if (WITH_AUTH_ROUTES.includes(to.path) && !locGetItem('token')) {

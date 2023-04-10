@@ -253,6 +253,12 @@ export const clearParamListFromStore = () => {
   store.delete('paramList');
 };
 
+// 清空存储在electron store中的用户信息
+export const clearUserInfoFromStore = () => {
+  store.delete('token');
+  store.delete('userInfo');
+};
+
 // 获取保存在store中的paramList
 export const getParamListFromStore = (from: string) => {
   const data = store.get('paramList');

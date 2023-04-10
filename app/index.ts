@@ -126,8 +126,6 @@ ipcMain.on('window-close', () => {
 
 // 退出程序
 ipcMain.on('window-out', () => {
-  console.log('window-out');
-
   if (!isMac) {
     app.quit();
   }
@@ -304,8 +302,6 @@ ipcMain.on('refresh', (event, id, pageType, isLike) => {
 // 监听子窗口点赞，刷新主窗口文章列表
 ipcMain.on('restore', () => {
   newWins.forEach((i, index) => {
-    console.log(index, 'restore>>>>indexindexindex');
-
     i.win?.webContents.send('restore');
   });
 });
@@ -359,11 +355,4 @@ app.on('activate', () => {
 // 应用关闭时，注销所有快捷键
 app.on('will-quit', () => {
   unRegisterShortcut();
-  const store = new Store();
-  console.log('will-quit>>>>crashed');
-  // 退出时，清除用户信息
-  store.delete('token');
-  store.delete('userInfo');
-  // 退出时，清除保存的上下页搜索条件
-  store.delete('paramList');
 });
