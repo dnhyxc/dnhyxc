@@ -1,9 +1,10 @@
+// import { ipcRenderer } from 'electron';
 import { defineStore } from 'pinia';
 import { Router } from 'vue-router';
 import type { Ref } from 'vue';
 import { ElMessage } from 'element-plus';
 import * as Service from '@/server';
-import { normalizeResult, Message, getStoreUserInfo } from '@/utils';
+import { normalizeResult, Message, getStoreUserInfo, ipcRenderers } from '@/utils';
 import { useCheckUserId } from '@/hooks';
 import {
   ArticleListResult,
@@ -34,7 +35,7 @@ interface IProps {
   likeLoading: boolean;
   pageNo: number;
   pageSize: number;
-  articleList: ArticleItem[]; // 文章列表数据（首页、分类页等）
+  articleList: ArticleItem[]; // 文章列表数据
   total: number; // 文章列表总数
   articleDetail: ArticleItem; // 文章详情
   anotherArticleList: ArticleItem[]; // 详情上下篇文章列表
@@ -308,20 +309,23 @@ export const useArticleStore = defineStore('article', {
       );
       if (res.success) {
         const { id, isLike } = res.data;
-        // 点赞或取消点赞之后推送websocket消息
-        sendMessage(
-          JSON.stringify({
-            action: 'push',
-            data: {
-              ...data,
-              toUserId: data?.authorId,
-              fromUsername: loginStore.userInfo?.username,
-              fromUserId: loginStore.userInfo?.userId,
-              action: isLike ? 'LIKE_ARTICLE' : 'CANCEL_LIKE_ARTICLE',
-            },
-            userId: loginStore.userInfo?.userId!,
-          }),
-        );
+        const { userId, username } = loginStore.userInfo;
+        // 给别人点赞或取消点赞之后推送websocket消息
+        if (data?.authorId !== userId) {
+          sendMessage(
+            JSON.stringify({
+              action: 'push',
+              data: {
+                ...data,
+                toUserId: data?.authorId,
+                fromUsername: username,
+                fromUserId: userId,
+                action: isLike ? 'LIKE_ARTICLE' : 'CANCEL_LIKE_ARTICLE',
+              },
+              userId: userId!,
+            }),
+          );
+        }
         // 时间轴页面
         if (isTimeLine || authorStore.currentTabKey === '2') {
           const cloneArticles: TimelineResult[] =
@@ -420,6 +424,8 @@ export const useArticleStore = defineStore('article', {
               break;
           }
         }
+        // 列表点赞之后推送刷新消息给主进程，让主进程推送消息给article页面，刷新页面
+        ipcRenderers.sendRefresh(id);
       } else {
         ElMessage({
           message: res.message,
@@ -484,22 +490,35 @@ export const useArticleStore = defineStore('article', {
       const res = normalizeResult<{ commentId: string }>(await Service.releaseComment(params));
 
       if (res?.success) {
-        // 只在评论文章时推送消息，回复评论不推送
-        if (!data?.isThreeTier && !data?.selectComment?.commentId) {
+        // 只在评论别人的文章时推送消息，回复评论不推送
+        const { authorId } = this.articleDetail;
+        const { username, userId } = loginStore.userInfo;
+        if (
+          !data?.isThreeTier &&
+          !data?.selectComment?.commentId &&
+          userId! !== authorId &&
+          userInfo?.userId !== authorId
+        ) {
           sendMessage(
             JSON.stringify({
               action: 'push',
               data: {
                 ...this.articleDetail,
-                toUserId: this.articleDetail?.authorId,
-                fromUsername: loginStore.userInfo?.username || userInfo?.username,
-                fromUserId: loginStore.userInfo?.userId || userInfo?.userId,
+                toUserId: authorId,
+                fromUsername: username || userInfo?.username,
+                fromUserId: userId || userInfo?.userId,
                 action: 'COMMENT',
               },
-              userId: loginStore.userInfo?.userId! || userInfo?.userId,
+              userId: userId || userInfo?.userId,
             }),
           );
         }
+
+        const { pathname } = window.location;
+
+        // 判断是article还是detail、分别推送刷新消息给主进程，用于通知子窗口或者详情页更新评论列表
+        ipcRenderers.sendRefresh(data?.articleId, pathname);
+
         ElMessage({
           message: res.message,
           type: 'success',
@@ -516,7 +535,12 @@ export const useArticleStore = defineStore('article', {
     },
 
     // 评论点赞
-    async onGiveLikeToComment(data: { commentId: string; isThreeTier?: boolean; getCommentList?: Function }) {
+    async onGiveLikeToComment(data: {
+      commentId: string;
+      isThreeTier?: boolean;
+      getCommentList?: Function;
+      articleId?: string;
+    }) {
       // 检验是否有userId，如果没有禁止发送请求
       if (!useCheckUserId()) return;
       const userInfo = getStoreUserInfo();
@@ -535,6 +559,10 @@ export const useArticleStore = defineStore('article', {
       this.likeLoading = false;
       if (res.success) {
         data.getCommentList && data.getCommentList();
+
+        // 判断是article还是detail、分别推送刷新消息给主进程，用于通知子窗口或者详情页更新评论列表
+        const { pathname } = window.location;
+        ipcRenderers.sendRefresh(data?.articleId!, pathname, false);
       } else {
         ElMessage({
           message: res.message,
@@ -580,6 +608,9 @@ export const useArticleStore = defineStore('article', {
             offset: 80,
           });
           getCommentList && getCommentList();
+          // 判断是article还是detail、分别推送刷新消息给主进程，用于通知子窗口或者详情页更新评论列表
+          const { pathname } = window.location;
+          ipcRenderers.sendRefresh(articleId!, pathname);
         } else {
           ElMessage({
             message: res.message,
@@ -599,20 +630,29 @@ export const useArticleStore = defineStore('article', {
         ElMessage.error(res.message);
       } else {
         const userInfo = getStoreUserInfo();
-        console.log(userInfo, 'userInfo');
-        sendMessage(
-          JSON.stringify({
-            action: 'push',
-            data: {
-              ...this.articleDetail,
-              toUserId: this.articleDetail?.authorId,
-              fromUsername: loginStore.userInfo?.username || userInfo?.username,
-              fromUserId: loginStore.userInfo?.userId || userInfo?.userId,
-              action: res.data.isLike ? 'LIKE_ARTICLE' : 'CANCEL_LIKE_ARTICLE',
-            },
-            userId: loginStore.userInfo?.userId! || userInfo?.userId,
-          }),
-        );
+        const { username, userId } = loginStore.userInfo;
+        const { authorId } = this.articleDetail;
+        const { pathname } = window.location;
+
+        // 判断是article还是detail、分别推送刷新消息给主进程，使主进程推送消息给个文章列表页面更新列表点赞状态
+        ipcRenderers.sendRefresh(id, pathname);
+
+        // 给别人文章点赞时推送消息
+        if (authorId !== userId && authorId !== userInfo?.userId) {
+          sendMessage(
+            JSON.stringify({
+              action: 'push',
+              data: {
+                ...this.articleDetail,
+                toUserId: authorId,
+                fromUsername: username || userInfo?.username,
+                fromUserId: userId || userInfo?.userId,
+                action: res.data.isLike ? 'LIKE_ARTICLE' : 'CANCEL_LIKE_ARTICLE',
+              },
+              userId: userId || userInfo?.userId,
+            }),
+          );
+        }
         // 点赞后将原本的点赞数自动加减 1
         if (res.data.isLike) {
           this.detailArtLikeCount += 1;
@@ -622,6 +662,16 @@ export const useArticleStore = defineStore('article', {
           this.articleDetail.isLike = false;
         }
         return res.data;
+      }
+    },
+
+    // 更改详情点赞状态
+    updateDetailLikeStatus() {
+      this.articleDetail.isLike = !this.articleDetail.isLike;
+      if (this.articleDetail.isLike) {
+        this.detailArtLikeCount = Number(this.detailArtLikeCount) + 1;
+      } else {
+        this.detailArtLikeCount = Number(this.detailArtLikeCount) - 1;
       }
     },
 

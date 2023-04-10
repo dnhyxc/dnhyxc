@@ -87,7 +87,7 @@
 
 <script setup lang="ts">
 import { ipcRenderer } from 'electron';
-import { onMounted, onUnmounted, nextTick, ref } from 'vue';
+import { onMounted, onUnmounted, nextTick, ref, inject } from 'vue';
 import { useRoute } from 'vue-router';
 import { useScroller } from '@/hooks';
 import { articleStore, commonStore } from '@/store';
@@ -102,6 +102,8 @@ import ToTopIcon from '@/components/ToTopIcon/index.vue';
 import AnotherArticle from '@/components/AnotherArticle/index.vue';
 import Comment from '@/components/Comment/index.vue';
 import Loading from '@/components/Loading/index.vue';
+
+const reload = inject<Function>('reload');
 
 const route = useRoute();
 
@@ -138,6 +140,18 @@ onMounted(async () => {
   // 监听主进程发布的重连ws的推送
   ipcRenderer.on('connect-ws', () => {
     createWebSocket();
+  });
+
+  // 监听主进程发布的刷新页面的消息
+  ipcRenderer.on('refresh', (_, id, pageType) => {
+    if (pageType !== 'article' && id === route.params.id) {
+      reload && reload();
+    }
+  });
+
+  // 登录或者退出时刷新页面
+  ipcRenderer.on('restore', () => {
+    reload && reload();
   });
 });
 

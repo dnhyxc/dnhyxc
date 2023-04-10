@@ -44,7 +44,8 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, onUnmounted, nextTick, ref } from 'vue';
+import { ipcRenderer } from 'electron';
+import { onMounted, onUnmounted, nextTick, ref, inject } from 'vue';
 import { useRoute } from 'vue-router';
 import { useScroller } from '@/hooks';
 import { scrollTo } from '@/utils';
@@ -57,6 +58,8 @@ import ToTopIcon from '@/components/ToTopIcon/index.vue';
 import AnotherArticle from '@/components/AnotherArticle/index.vue';
 import Comment from '@/components/Comment/index.vue';
 import Loading from '@/components/Loading/index.vue';
+
+const reload = inject<Function>('reload');
 
 const route = useRoute();
 
@@ -77,6 +80,14 @@ onMounted(async () => {
   if (route.query?.scrollTo) {
     onScrollTo(articleInfoRef.value?.offsetHeight);
   }
+
+  // 监听主进程发布的刷新页面的消息
+  ipcRenderer.on('refresh', (_, id, pageType) => {
+    // 需要判断是否是属于当前活动页面，并且pageType不等于detail，防止重复触发
+    if (pageType !== 'detail' && id === route.params.id) {
+      reload && reload();
+    }
+  });
 });
 
 // 组件卸载前，清楚store中的详情信息

@@ -135,7 +135,7 @@ function onMessage(event: any) {
       } else {
         // 解析处理数据
         if (parseData.action === 'push') {
-          messageStore.setMsgCount();
+          messageStore.setMsgCount(parseData.data);
           // 只在消息弹出框显示的时候才添加数据
           if (messageStore.visible) {
             messageStore.addMessage(parseData.data);

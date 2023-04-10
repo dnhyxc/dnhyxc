@@ -3,6 +3,7 @@ import { ElMessage } from 'element-plus';
 import { useCommonStore } from '@/store/common';
 import { locGetItem, locRemoveItem, clearParamListFromStore } from '@/utils';
 import { WITH_AUTH_ROUTES, CLEAR_PARAMS_LIST_ROUTES } from '@/constant';
+import eventBus from '@/utils/eventBus';
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -222,6 +223,8 @@ router.beforeEach(async (to, from, next) => {
   commonStore.showSearch = false;
   // 清除选中卡片的状态，关闭右键菜单
   commonStore.clearContentmenuInfo();
+
+  eventBus.emit('hide-msg-popover', false);
 
   if (to.path === '/login') {
     commonStore.setBackPath(from.path);

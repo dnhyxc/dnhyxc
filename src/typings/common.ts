@@ -142,6 +142,7 @@ export interface ArticleItem extends AddCollectionRes {
   toUserId?: string;
   action?: string;
   fromUsername?: string;
+  fromUserId?: string;
   isReaded?: boolean;
 }
 
@@ -251,7 +252,7 @@ export interface ReplayComment {
 // 事件总线类型
 export interface Events {
   events: Object;
-  emit: <T>(eventName: string, data: T) => void;
+  emit: <T>(eventName: string, data?: T) => void;
   on: (eventName: string, fn: Function) => void;
   off: (eventName: string, fn: Function) => void;
 }

@@ -15,7 +15,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watchEffect, nextTick } from 'vue';
+import { ref, onMounted, watchEffect } from 'vue';
 
 const loadUrl = ref<string | undefined>('');
 const loaded = ref<boolean>(false);
@@ -37,11 +37,6 @@ const props = withDefaults(defineProps<IProps>(), {
 });
 
 onMounted(() => {
-  nextTick(() => {
-    if (props.needColor) {
-      console.log(imgRef.value, 'imgRef');
-    }
-  });
   watchEffect(() => {
     loadImage();
   });

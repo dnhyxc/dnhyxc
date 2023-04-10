@@ -3,7 +3,7 @@ import { ElMessage } from 'element-plus';
 import { CollectListRes, AddCollectionRes, CollectParams, ArticleItem, ArticleListResult } from '@/typings/common';
 import { articleStore, personalStore, loginStore } from '@/store';
 import * as Service from '@/server';
-import { normalizeResult, Message, locSetItem, getStoreUserInfo, setParamsToStore } from '@/utils';
+import { normalizeResult, Message, locSetItem, getStoreUserInfo, setParamsToStore, ipcRenderers } from '@/utils';
 import { useCheckUserId } from '@/hooks';
 import { PAGESIZE } from '@/constant';
 import { sendMessage } from '@/socket';
@@ -148,20 +148,31 @@ export const useCollectStore = defineStore('collect', {
         }
 
         const userInfo = getStoreUserInfo();
-        // 收藏成功之后推送消息
-        sendMessage(
-          JSON.stringify({
-            action: 'push',
-            data: {
-              ...articleStore?.articleDetail,
-              toUserId: articleStore?.articleDetail?.authorId,
-              action: 'COLLECT',
-              fromUsername: loginStore.userInfo?.username || userInfo?.username,
-              fromUserId: loginStore.userInfo?.userId || userInfo?.userId,
-            },
-            userId: loginStore.userInfo?.userId! || userInfo?.userId,
-          }),
-        );
+        // 收藏别人文章成功之后推送消息
+        const { username, userId } = loginStore.userInfo;
+
+        const { authorId } = articleStore?.articleDetail;
+
+        if (userInfo?.userId !== authorId && authorId !== userId) {
+          sendMessage(
+            JSON.stringify({
+              action: 'push',
+              data: {
+                ...articleStore?.articleDetail,
+                toUserId: authorId,
+                action: 'COLLECT',
+                fromUsername: username || userInfo?.username,
+                fromUserId: userId || userInfo?.userId,
+              },
+              userId: userId || userInfo?.userId,
+            }),
+          );
+        }
+
+        // 判断是article还是detail、分别推送刷新消息给主进程
+        const { pathname } = window.location;
+        ipcRenderers.sendRefresh(articleId, pathname, false);
+
         ElMessage({
           message: res.message,
           type: 'success',
@@ -196,19 +207,30 @@ export const useCollectStore = defineStore('collect', {
 
         const userInfo = getStoreUserInfo();
 
-        sendMessage(
-          JSON.stringify({
-            action: 'push',
-            data: {
-              ...articleStore?.articleDetail,
-              toUserId: articleStore?.articleDetail?.authorId,
-              action: 'CANCEL_COLLECT',
-              fromUsername: loginStore.userInfo?.username || userInfo?.username,
-              fromUserId: loginStore.userInfo?.userId || userInfo?.userId,
-            },
-            userId: loginStore.userInfo?.userId! || userInfo?.userId,
-          }),
-        );
+        const { username, userId } = loginStore.userInfo;
+
+        const { authorId } = articleStore?.articleDetail;
+
+        if (userId !== authorId && authorId !== userInfo?.userId) {
+          sendMessage(
+            JSON.stringify({
+              action: 'push',
+              data: {
+                ...articleStore?.articleDetail,
+                toUserId: authorId,
+                action: 'CANCEL_COLLECT',
+                fromUsername: username || userInfo?.username,
+                fromUserId: userId || userInfo?.userId,
+              },
+              userId: userId! || userInfo?.userId,
+            }),
+          );
+        }
+
+        const { pathname } = window.location;
+        // 判断是article还是detail、分别推送刷新消息给主进程
+        ipcRenderers.sendRefresh(articleId, pathname, false);
+
         ElMessage({
           message: res.message,
           type: 'success',

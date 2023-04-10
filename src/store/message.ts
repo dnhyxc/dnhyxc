@@ -1,6 +1,6 @@
 import { ElMessage } from 'element-plus';
 import { defineStore } from 'pinia';
-import { normalizeResult } from '@/utils';
+import { normalizeResult, getStoreUserInfo } from '@/utils';
 import * as Service from '@/server';
 import { PAGESIZE } from '@/constant';
 import { loginStore } from '@/store';
@@ -65,8 +65,6 @@ export const useMessageStore = defineStore('message', {
         .map((i) => i.id)
         .slice((this.pageNo - 1) * this.pageSize, this.pageNo * this.pageSize + this.pageSize); // 0 => 20, 20 => 40, 40 => 60
 
-      console.log(msgIds, 'msgIds');
-
       if (!msgIds?.length) return;
 
       normalizeResult<number>(await Service.setReadStatus({ msgIds }));
@@ -130,8 +128,17 @@ export const useMessageStore = defineStore('message', {
     },
 
     // 计算消息数量
-    setMsgCount() {
-      this.msgCount += 1;
+    setMsgCount(data: ArticleItem) {
+      const { pathname } = window.location;
+
+      const userInfo = getStoreUserInfo();
+
+      if (
+        (data?.fromUserId !== loginStore.userInfo?.userId && !pathname.includes('/article')) ||
+        (pathname.includes('/article') && userInfo?.userId !== data?.fromUserId)
+      ) {
+        this.msgCount += 1;
+      }
     },
 
     // 清除消息列表

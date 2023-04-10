@@ -6,7 +6,7 @@ import { LoginParams, UserLoginParams, UserInfoParams, registerRes } from '@/typ
 import { commonStore, messageStore } from '@/store';
 import * as Service from '@/server';
 import { useCheckUserId } from '@/hooks';
-import { normalizeResult, Message, encrypt, locSetItem, locGetItem, locRemoveItem } from '@/utils';
+import { normalizeResult, Message, encrypt, locSetItem, locGetItem, locRemoveItem, ipcRenderers } from '@/utils';
 import { createWebSocket } from '@/socket';
 import { UPDATE_INFO_API_PATH } from '@/constant';
 
@@ -87,6 +87,7 @@ export const useLoginStore = defineStore('login', {
           store.set('token', JSON.stringify(token));
           locSetItem('userInfo', JSON.stringify(userInfo));
           store.set('userInfo', JSON.stringify(userInfo));
+          ipcRenderers.restore();
           // 登陆成功之后创建websocket
           createWebSocket();
           // 登陆成功后返回到上一页面
@@ -218,6 +219,7 @@ export const useLoginStore = defineStore('login', {
       store.delete('userInfo');
       // 退出时清除消息条数，防止推出后头部小铃铛处还是显示消息条数
       messageStore.msgCount = 0;
+      ipcRenderers.restore();
     },
   },
 });

@@ -12,6 +12,7 @@ import { shareQQ, shareQZon, shareSinaWeiBo } from './share';
 import { mountDirectives } from './directive';
 import EventBus from './eventBus';
 import { locSetItem, locGetItem, locRemoveItem, ssnGetItem, ssnSetItem, ssnRemoveItem } from './storage';
+import * as ipcRenderers from './ipcRenderer';
 
 const store = new Store();
 
@@ -389,6 +390,7 @@ export const getImageColor = (img: HTMLImageElement) => {
 };
 
 export {
+  ipcRenderers,
   request,
   normalizeResult,
   decrypt,

@@ -27,7 +27,7 @@
             <template #content>
               <div class="art-info">
                 <div class="desc">
-                  <span class="username">{{ data?.fromUsername }}</span>
+                  <span class="username" @click.stop="toPersonal(data?.fromUserId!)">{{ data?.fromUsername }}</span>
                   <span class="action-type">{{ MESSAGE_ACTIONS[data?.action!] }}</span>
                 </div>
               </div>
@@ -44,12 +44,17 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue';
-import { messageStore } from '@/store';
+import { useRouter } from 'vue-router';
+import { useMessageStore } from '@/store/message';
 import { useScroller } from '@/hooks';
 import { scrollTo } from '@/utils';
+import eventBus from '@/utils/eventBus';
 import { MESSAGE_ACTIONS } from '@/constant';
 
+const messageStore = useMessageStore();
+
 const { scrollRef, scrollTop } = useScroller();
+const router = useRouter();
 
 const isMounted = ref<boolean>(false);
 const noMore = computed(() => {
@@ -65,6 +70,10 @@ onMounted(() => {
   isMounted.value = true;
   // 获取未读消息数量
   messageStore.getNoReadMsgCount();
+  // 接受前置路由守卫发送的消息，关闭消息列表
+  eventBus.on('hide-msg-popover', (status: boolean) => {
+    messageStore.visible = status;
+  });
 });
 
 watch(
@@ -95,6 +104,11 @@ const onDelete = async (id: string) => {
 // 删除全部消息
 const onDeleteAll = async () => {
   await messageStore.deleteAllMessage();
+};
+
+// 前往操作人主页
+const toPersonal = (userId: string) => {
+  router.push(`/personal?authorId=${userId}`);
 };
 
 // 置顶
@@ -131,8 +145,10 @@ const onScrollTo = (to?: number) => {
     padding: 5px 3px;
 
     .left {
+      flex: 1;
       font-weight: 700;
       color: @font-3;
+      margin-right: 10px;
       .ellipsisMore(1);
     }
 

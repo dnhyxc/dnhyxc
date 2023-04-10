@@ -51,7 +51,7 @@
                 </i>
               </div>
               <el-button
-                v-if="loginStore?.userInfo.userId === i.userId"
+                v-if="loginStore?.userInfo.userId === i.userId || getStoreUserInfo()?.userId === i.userId"
                 type="primary"
                 link
                 class="deleteComment"
@@ -117,7 +117,7 @@
                     </i>
                   </div>
                   <el-button
-                    v-if="loginStore?.userInfo.userId === j.userId"
+                    v-if="loginStore?.userInfo.userId === j.userId || getStoreUserInfo()?.userId === j.userId"
                     type="primary"
                     link
                     class="deleteComment"
@@ -161,7 +161,7 @@ import { useRouter } from 'vue-router';
 import { CommentParams } from '@/typings/common';
 import { HEAD_IMG } from '@/constant';
 import { loginStore, articleStore } from '@/store';
-import { formatGapTime } from '@/utils';
+import { formatGapTime, getStoreUserInfo } from '@/utils';
 import Image from '@/components/Image/index.vue';
 import DraftInput from '@/components/DraftInput/index.vue';
 import { ElMessage } from 'element-plus';
@@ -232,6 +232,7 @@ const onGiveLike = (comment: CommentParams, isThreeTier?: boolean) => {
     isThreeTier,
     commentId: comment?.commentId!,
     getCommentList,
+    articleId: props?.id,
   });
 };
 
