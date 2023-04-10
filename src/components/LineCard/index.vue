@@ -39,7 +39,7 @@
             </div>
             <div class="action comment" @click.stop="onComment(data)">
               <i class="font comment-icon iconfont icon-pinglun" />
-              <span>{{ data.replyCount || '评论' }}</span>
+              <span>{{ data.commentCount || '评论' }}</span>
             </div>
             <div class="action read-count">
               <i class="font read-icon iconfont icon-yanjing" />

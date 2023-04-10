@@ -49,7 +49,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue';
+import { ipcRenderer } from 'electron';
+import { ref, computed, onMounted, onUnmounted, watch, nextTick, inject } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { scrollTo } from '@/utils';
 import { useScroller, useDeleteArticle } from '@/hooks';
@@ -59,6 +60,8 @@ import Reel from '@/components/Reel/index.vue';
 import Card from '@/components/Card/index.vue';
 import ToTopIcon from '@/components/ToTopIcon/index.vue';
 import Empty from '@/components/Empty/index.vue';
+
+const reload = inject<Function>('reload');
 
 const route = useRoute();
 const router = useRouter();
@@ -85,6 +88,14 @@ onMounted(async () => {
   // 获取分类信息
   await classifyStore.getClassifys();
   onFetchData();
+
+  // 监听详情点赞状态，实时更改列表对应文章的点赞状态
+  ipcRenderer.on('refresh', (_, id, pageType, isLike = true) => {
+    // 需要判断是否是属于当前活动页面，并且只是点击点赞而不是收藏或评论防止重复触发
+    if (route.name === 'classify' && pageType !== 'list' && isLike) {
+      reload && reload();
+    }
+  });
 });
 
 onUnmounted(() => {
