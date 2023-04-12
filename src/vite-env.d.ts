@@ -1,5 +1,7 @@
 /// <reference types="vite/client" />
 
+declare module 'qrcode';
+
 declare module 'element-plus/dist/locale/zh-cn.mjs';
 
 declare module '@kangc/v-md-editor';
@@ -24,4 +26,6 @@ declare module '@kangc/v-md-editor/lib/plugins/copy-code/index';
 
 declare module '@kangc/v-md-editor/lib/plugins/copy-code/preview';
 
-declare module 'vue-cropper';
+declare module '@kangc/v-md-editor/lib/plugins/highlight-lines/index';
+
+declare module '*';

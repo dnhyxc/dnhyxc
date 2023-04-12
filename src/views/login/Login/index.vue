@@ -7,8 +7,11 @@
 <template>
   <div class="login-content">
     <div class="title">账号密码登录</div>
-    <el-form ref="formRef" :model="loginForm" class="form-wrap">
-      <el-form-item
+    <el-form ref="formRef" :rules="rules" :model="loginForm" class="form-wrap">
+      <el-form-item prop="username" class="form-item">
+        <el-input v-model="loginForm.username" size="large" placeholder="请输入用户名" @keyup.enter="onEnter" />
+      </el-form-item>
+      <!-- <el-form-item
         prop="username"
         :rules="[
           {
@@ -19,17 +22,9 @@
         ]"
         class="form-item"
       >
-        <el-input v-model="loginForm.username" size="large" placeholder="请输入用户名" />
-      </el-form-item>
-      <el-form-item
-        prop="password"
-        :rules="{
-          required: true,
-          message: '密码不能为空',
-          trigger: 'blur',
-        }"
-        class="form-item"
-      >
+        <el-input v-model="loginForm.username" size="large" placeholder="请输入用户名" @keyup.enter="onEnter" />
+      </el-form-item> -->
+      <el-form-item prop="password" class="form-item">
         <el-input
           v-model="loginForm.password"
           size="large"
@@ -53,18 +48,46 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
 import { ref, reactive } from 'vue';
-import { FormInstance } from 'element-plus';
+import type { FormInstance, FormRules } from 'element-plus';
 import { loginStore } from '@/store';
+import { verifyUsername, verifyPassword } from '@/utils';
 
 const router = useRouter();
 
 const formRef = ref<FormInstance>();
 
+const validateUsername = (rule: any, value: any, callback: any) => {
+  const { msg, status } = verifyUsername(value);
+  if (value === '') {
+    callback(new Error('用户名不能为空'));
+  } else if (!status) {
+    callback(new Error(msg));
+  } else {
+    callback();
+  }
+};
+
+const validatePassword = (rule: any, value: any, callback: any) => {
+  const { msg, status } = verifyPassword(value);
+  if (value === '') {
+    callback(new Error('用户名不能为空'));
+  } else if (!status) {
+    callback(new Error(msg));
+  } else {
+    callback();
+  }
+};
+
+const rules = reactive<FormRules>({
+  username: [{ validator: validateUsername, trigger: 'blur', required: true }],
+  password: [{ validator: validatePassword, trigger: 'blur', required: true }],
+});
+
 const loginForm = reactive<{
   username: string;
   password: string;
 }>({
-  username: '',
+  username: loginStore.userInfo?.username || '',
   password: '',
 });
 
@@ -77,7 +100,6 @@ const onSubmit = (formEl: FormInstance, type: string) => {
       if (type === 'login') {
         await loginStore.onLogin(loginForm, router);
       } else {
-        console.log('注册', loginForm);
         loginStore.onRegister(loginForm);
       }
     } else {
@@ -100,16 +122,14 @@ const onLogin = (formEl: FormInstance | undefined) => {
 
 // 登陆注册回车事件
 const onEnter = () => {
-  // if (!formRef.value) return;
-  // formRef.value.validate(async (valid) => {
-  //   if (valid) {
-  //     console.log(commonStore, '登录', commonStore.backPath);
-  //     router.push(commonStore.backPath);
-  //   } else {
-  //     console.log(loginForm, 'error submit!');
-  //     return false;
-  //   }
-  // });
+  if (!formRef.value) return;
+  formRef.value.validate(async (valid) => {
+    if (valid) {
+      await loginStore.onLogin(loginForm, router);
+    } else {
+      return false;
+    }
+  });
 };
 
 // 返回首页
@@ -119,7 +139,6 @@ const onBackHome = () => {
 
 // 点击忘记密码切换组件
 const onForgetPwd = () => {
-  console.log('忘记密码');
   emit('switchDom', 'Reset');
 };
 </script>
@@ -136,7 +155,7 @@ const onForgetPwd = () => {
   padding: 20px;
   border-radius: 5px;
   background: rgba(225, 225, 225, 0.1);
-  box-shadow: 0 0 1px @page-color inset;
+  box-shadow: 0 0 2px @page-color inset;
   backdrop-filter: blur(1px);
   .title {
     height: 50px;

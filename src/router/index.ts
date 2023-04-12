@@ -1,6 +1,9 @@
 import { createRouter, RouteRecordRaw, createWebHistory } from 'vue-router';
+import { ElMessage } from 'element-plus';
 import { useCommonStore } from '@/store/common';
-// import { AUTH_CONFIG } from '@/constant';
+import { locGetItem, locRemoveItem, clearParamListFromStore } from '@/utils';
+import { WITH_AUTH_ROUTES, CLEAR_PARAMS_LIST_ROUTES } from '@/constant';
+import eventBus from '@/utils/eventBus';
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -17,8 +20,7 @@ const routes: Array<RouteRecordRaw> = [
         name: 'home',
         meta: {
           title: '文章列表',
-          keepAlive: true,
-          requireAuth: true,
+          keepAlive: false,
         },
         component: () => import('@/views/home/index.vue'),
       },
@@ -27,8 +29,7 @@ const routes: Array<RouteRecordRaw> = [
         name: 'classify',
         meta: {
           title: '文章分类',
-          keepAlive: true,
-          requireAuth: true,
+          keepAlive: false,
         },
         component: () => import('@/views/classify/index.vue'),
       },
@@ -37,18 +38,26 @@ const routes: Array<RouteRecordRaw> = [
         name: 'tag',
         meta: {
           title: '文章标签',
-          keepAlive: true,
-          requireAuth: true,
+          keepAlive: false,
         },
         component: () => import('@/views/tag/index.vue'),
+      },
+      {
+        path: '/tag/list',
+        name: 'tagList',
+        meta: {
+          title: '标签列表',
+          keepAlive: false,
+        },
+        component: () => import('@/views/tag/articles/index.vue'),
       },
       {
         path: '/timeline',
         name: 'timeline',
         meta: {
           title: '时间轴线',
-          keepAlive: true,
-          requireAuth: true,
+          keepAlive: false,
+          auth: true,
         },
         component: () => import('@/views/timeline/index.vue'),
       },
@@ -58,7 +67,7 @@ const routes: Array<RouteRecordRaw> = [
         meta: {
           title: '发布文章',
           keepAlive: true,
-          requireAuth: true,
+          auth: true,
         },
         component: () => import('@/views/create/index.vue'),
       },
@@ -67,8 +76,7 @@ const routes: Array<RouteRecordRaw> = [
         name: 'author',
         meta: {
           title: '关于博主',
-          keepAlive: true,
-          requireAuth: true,
+          keepAlive: false,
         },
         component: () => import('@/views/author/index.vue'),
       },
@@ -77,18 +85,38 @@ const routes: Array<RouteRecordRaw> = [
         name: 'personal',
         meta: {
           title: '我的主页',
-          keepAlive: true,
-          requireAuth: false,
+          keepAlive: false,
+          auth: true,
         },
         component: () => import('@/views/personal/index.vue'),
+      },
+      {
+        path: '/collect/:id',
+        name: 'collect',
+        meta: {
+          title: '收藏信息',
+          keepAlive: false,
+          auth: true,
+        },
+        component: () => import('@/views/collect/index.vue'),
+      },
+      {
+        path: '/search',
+        name: 'search',
+        meta: {
+          title: '高级搜索',
+          keepAlive: false,
+          auth: true,
+        },
+        component: () => import('@/views/search'),
       },
       {
         path: '/setting',
         name: 'setting',
         meta: {
           title: '账号设置',
-          keepAlive: true,
-          requireAuth: false,
+          keepAlive: false,
+          auth: true,
         },
         component: () => import('@/views/setting/index.vue'),
         children: [
@@ -97,8 +125,8 @@ const routes: Array<RouteRecordRaw> = [
             name: 'profile',
             meta: {
               title: '个人资料',
-              keepAlive: true,
-              requireAuth: true,
+              keepAlive: false,
+              auth: true,
             },
             component: () => import('@/views/setting/profile/index.vue'),
           },
@@ -107,10 +135,29 @@ const routes: Array<RouteRecordRaw> = [
             name: 'account',
             meta: {
               title: '账号设置',
-              keepAlive: true,
-              requireAuth: true,
+              keepAlive: false,
+              auth: true,
             },
             component: () => import('@/views/setting/account/index.vue'),
+          },
+          {
+            path: '/theme',
+            name: 'theme',
+            meta: {
+              title: '主题设置',
+              keepAlive: false,
+              auth: true,
+            },
+            component: () => import('@/views/setting/theme/index.vue'),
+          },
+          {
+            path: '/system',
+            name: 'system',
+            meta: {
+              title: '系统设置',
+              keepAlive: false,
+            },
+            component: () => import('@/views/setting/system/index.vue'),
           },
         ],
         redirect: { name: 'profile' },
@@ -120,8 +167,7 @@ const routes: Array<RouteRecordRaw> = [
         name: 'detail',
         meta: {
           title: '文章详情',
-          keepAlive: true,
-          requireAuth: false,
+          keepAlive: false,
         },
         component: () => import('@/views/detail/index.vue'),
       },
@@ -133,10 +179,18 @@ const routes: Array<RouteRecordRaw> = [
     name: 'login',
     meta: {
       title: '登录',
-      keepAlive: true,
-      requireAuth: false,
+      keepAlive: false,
     },
     component: () => import('@/views/login/index.vue'),
+  },
+  {
+    path: '/article/:id',
+    name: 'article',
+    meta: {
+      title: '文章详情',
+      keepAlive: false,
+    },
+    component: () => import('@/views/article/index.vue'),
   },
   {
     path: '/:pathMatch(.*)*',
@@ -159,44 +213,33 @@ const router = createRouter({
 
 // 全局守卫：登录拦截 本地没有存token,请重新登录
 router.beforeEach(async (to, from, next) => {
-  if (to.path === '/login') {
-    const commonStore = useCommonStore();
-    console.log(from.path, 'from.path');
+  // 清除上下页搜索条件
+  if (CLEAR_PARAMS_LIST_ROUTES.includes(to.path)) {
+    clearParamListFromStore();
+    locRemoveItem('params');
+  }
+  const commonStore = useCommonStore();
+  // 切换路由时，隐藏页面头部搜索输入框，并清空搜索输入框内容
+  commonStore.showSearch = false;
+  // 清除选中卡片的状态，关闭右键菜单
+  commonStore.clearContentmenuInfo();
 
+  eventBus.emit('hide-msg-popover', false);
+
+  if (to.path === '/login') {
     commonStore.setBackPath(from.path);
   }
 
-  // 判断有没有登录
-  // if (!userStore.token) {
-  //   if (to.name === 'login') {
-  //     next();
-  //   } else {
-  //     router.push('/login');
-  //   }
-  //   // 如果不是超级管理员，禁止访问后台账户管理
-  // } else {
-  //   if (userStore.auth === AUTH_CONFIG.SUPER) {
-  //     next();
-  //   } else {
-  //     if (to.name === 'users' || to.name === 'account' || to.name === 'home') {
-  //       if (userStore.auth === AUTH_CONFIG.ADMIN) {
-  //         if (to.name !== 'home') {
-  //           router.push('/home');
-  //         } else {
-  //           next();
-  //         }
-  //       } else {
-  //         router.push('/article');
-  //       }
-  //     } else {
-  //       if (userStore.bindAccount?.length) {
-  //         to.name === 'bind' ? router.push('/article') : next();
-  //       } else {
-  //         to.name === 'bind' ? next() : router.push('/bind');
-  //       }
-  //     }
-  //   }
-  // }
+  if (WITH_AUTH_ROUTES.includes(to.path) && !locGetItem('token')) {
+    ElMessage({
+      message: '请先登录后再操作哦！',
+      type: 'warning',
+      offset: 80,
+      duration: 2000,
+    });
+    router.push(from.path);
+  }
+
   next();
 });
 

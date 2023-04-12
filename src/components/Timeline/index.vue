@@ -6,12 +6,12 @@
 -->
 <template>
   <div class="timeline">
-    <div v-for="item in dataSource" :key="item.date" class="timeline-item">
+    <div v-for="item in dataSource" v-show="item.articles?.length" :key="item.date" class="timeline-item">
       <div class="year">{{ item.date }}</div>
       <div class="card">
-        <div v-for="card in item.articles" :key="card.id" class="card-item" @click="(e) => onClickCard(e, card.id!)">
+        <div v-for="card in item.articles" :key="card.id" class="card-item" @click.stop="onClickCard(card.id!)">
           <div class="date">{{ formatDate(card.createTime!) }}</div>
-          <LineCard :data="card" />
+          <LineCard :data="card" :delete-article="deleteArticle" :like-list-article="likeListArticle" />
         </div>
       </div>
     </div>
@@ -28,17 +28,17 @@ const router = useRouter();
 
 interface IProps {
   dataSource: TimelineResult[];
+  deleteArticle?: (id: string) => void;
+  likeListArticle?: (id: string) => void;
 }
 
-const props = withDefaults(defineProps<IProps>(), {
+withDefaults(defineProps<IProps>(), {
   dataSource: () => [],
+  deleteArticle: () => {},
+  likeListArticle: () => {},
 });
 
-console.log(props, 'props');
-
-const onClickCard = (e: Event, id: string) => {
-  e.stopPropagation();
-  console.log(id, 'item');
+const onClickCard = (id: string) => {
   router.push(`/detail/${id}`);
 };
 </script>
@@ -48,7 +48,7 @@ const onClickCard = (e: Event, id: string) => {
 
 .timeline {
   position: relative;
-  padding: 20px 0;
+  padding: 20px 0 0;
 
   .timeline-item {
     box-sizing: border-box;
@@ -113,7 +113,7 @@ const onClickCard = (e: Event, id: string) => {
         position: relative;
 
         .card-item {
-          background-image: @card-odd-lg;
+          background-image: @bg-lg-2;
         }
 
         &::before {
@@ -123,7 +123,7 @@ const onClickCard = (e: Event, id: string) => {
           content: '';
           width: 0;
           height: 0;
-          border-left: 12px solid @blue-1;
+          border-left: 12px solid @card-border;
           border-top: 12px solid transparent;
           border-bottom: 12px solid transparent;
         }
@@ -174,7 +174,7 @@ const onClickCard = (e: Event, id: string) => {
         position: relative;
 
         .card-item {
-          background-image: @card-lg;
+          background-image: @bg-lg--2;
         }
 
         &::before {
@@ -184,7 +184,7 @@ const onClickCard = (e: Event, id: string) => {
           content: '';
           width: 0;
           height: 0;
-          border-right: 12px solid @pink-1;
+          border-right: 12px solid @card-border;
           border-top: 12px solid transparent;
           border-bottom: 12px solid transparent;
         }
@@ -196,6 +196,18 @@ const onClickCard = (e: Event, id: string) => {
         left: -95px;
         font-size: 25px;
         font-weight: 700;
+      }
+    }
+
+    &:nth-child(odd) {
+      &:last-child {
+        padding: 0 50px 0 20px;
+      }
+    }
+
+    &:nth-child(even) {
+      &:last-child {
+        padding: 0 20px 0 50px;
       }
     }
   }

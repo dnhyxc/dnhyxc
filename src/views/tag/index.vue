@@ -6,17 +6,7 @@
 -->
 <template>
   <div class="tag-wrap">
-    <WordCloud
-      :data="[
-        { value: 1, name: 'Vue3' },
-        { value: 2, name: 'Electron' },
-        { value: 3, name: 'React' },
-        { value: 4, name: 'webpack' },
-        { value: 5, name: 'node' },
-        { value: 6, name: 'vite' },
-      ]"
-      class="word-cloud-wrap"
-    />
+    <WordCloud :data="tagStore.tags" class="word-cloud-wrap" :callback="onCheckTag" :loading="tagStore.loading" />
     <div class="tag-list">
       <div class="title">
         <span>文章标签列表</span>
@@ -26,22 +16,35 @@
         />
       </div>
       <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
-        <div v-for="i in 100" :key="i" :class="`${currentTag === i && 'active'} tag`" @click="onCheckTag(i)">
-          tag - {{ i }}
+        <div v-for="i in tagStore.tags" :key="i.name" class="tag" @click="onCheckTag(i.name)">
+          {{ i.name }}
+          <span class="count">({{ i.value }} 篇)</span>
         </div>
       </el-scrollbar>
     </div>
   </div>
+  <RouterView />
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { onMounted, onUnmounted } from 'vue';
+import { useRouter } from 'vue-router';
 import { scrollTo } from '@/utils';
 import { useScroller } from '@/hooks';
+import { tagStore } from '@/store';
 import WordCloud from '@/components/WordCloud/index.vue';
+
+const router = useRouter();
 const { scrollRef, scrollTop } = useScroller();
 
-const currentTag = ref<number>();
+onMounted(async () => {
+  // 获取标签信息
+  tagStore.getTags();
+});
+
+onUnmounted(() => {
+  tagStore.tags = [];
+});
 
 // 滚动到某位置
 const onScrollTo = () => {
@@ -50,8 +53,10 @@ const onScrollTo = () => {
 };
 
 // 选中标签
-const onCheckTag = (tag: number) => {
-  currentTag.value = tag;
+const onCheckTag = (tag: string) => {
+  // 保存当前选中标签
+  tagStore.currentTag = tag;
+  router.push(`/tag/list?tag=${tag}`);
 };
 </script>
 
@@ -111,28 +116,35 @@ const onCheckTag = (tag: number) => {
     .tag {
       position: relative;
       margin-right: 13px;
-      padding: 3px 0 3px 13px;
+      padding: 8px 0 8px 13px;
       cursor: pointer;
+      color: @font-1;
+      .ellipsisMore(1);
 
       &:hover {
         color: @active;
+        &::before {
+          position: absolute;
+          top: 50%;
+          left: 0;
+          transform: translateY(-50%);
+          content: '';
+          width: 4px;
+          height: 50%;
+          border-top-right-radius: 5px;
+          border-bottom-right-radius: 5px;
+          background-color: @active;
+        }
+        .count {
+          color: @active;
+        }
       }
     }
 
-    .active {
-      color: @active;
-      &::before {
-        position: absolute;
-        top: 50%;
-        left: 0;
-        transform: translateY(-50%);
-        content: '';
-        width: 4px;
-        height: 60%;
-        border-top-right-radius: 5px;
-        border-bottom-right-radius: 5px;
-        background-color: @active;
-      }
+    .count {
+      margin-left: 5px;
+      font-size: 14px;
+      color: @font-3;
     }
   }
 }

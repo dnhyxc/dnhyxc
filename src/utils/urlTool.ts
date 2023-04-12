@@ -2,7 +2,6 @@
  * new URL() 不好用，不支持非完成的 url，所以还是需要第三方库。
  */
 import qs, { parseUrl, stringify } from 'query-string';
-import { GATEWAY_HOST } from '@/constant';
 
 /**
  * 判断 URL 是不是 m3u8 资源
@@ -84,14 +83,5 @@ export function replaceWithCurrentProtocal(url: string) {
 }
 
 export function addGatewayPattern(url: string) {
-  if (url.startsWith('/api/user')) {
-    return `${GATEWAY_HOST}/web/mediax-ucenter${url}`;
-  }
-  if (url.startsWith('/onlinePreview')) {
-    return `${GATEWAY_HOST}/web/online-preview${url}`;
-  }
-  if (url.startsWith('/access/message')) {
-    return `${GATEWAY_HOST}${url}`;
-  }
   return url;
 }

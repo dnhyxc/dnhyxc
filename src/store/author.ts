@@ -1,0 +1,191 @@
+import { defineStore } from 'pinia';
+import { ElMessage } from 'element-plus';
+import { UserInfoParams, ArticleListResult, ArticleItem, TimelineResult } from '@/typings/common';
+import * as Service from '@/server';
+import { useCheckUserId } from '@/hooks';
+import { normalizeResult, locSetItem, Message, getStoreUserInfo, setParamsToStore } from '@/utils';
+import { loginStore } from '@/store';
+import { AUTHOR_API_PATH, PAGESIZE } from '@/constant';
+
+interface IProps {
+  loading: boolean | null;
+  userInfo: UserInfoParams;
+  pageNo: number;
+  pageSize: number;
+  articleList: ArticleItem[];
+  timelineList: TimelineResult[];
+  total: number;
+  currentTabKey: string;
+}
+
+export const useAuthorStore = defineStore('author', {
+  state: (): IProps => ({
+    loading: null,
+    userInfo: {
+      userId: '',
+      username: '',
+      job: '',
+      motto: '',
+      introduce: '',
+      headUrl: '',
+      mainCover: '',
+      juejin: '',
+      zhihu: '',
+      github: '',
+      blog: '',
+    }, // 博主的用户信息
+    pageNo: 0,
+    pageSize: PAGESIZE,
+    articleList: [],
+    timelineList: [],
+    total: 0,
+    currentTabKey: '0',
+  }),
+
+  getters: {},
+
+  actions: {
+    // 获取用户信息
+    async getUserInfo() {
+      try {
+        const res = normalizeResult<UserInfoParams>(await Service.getUserInfo({ auth: 1 }));
+        if (res.success) {
+          this.userInfo = res.data;
+        } else {
+          ElMessage({
+            message: res.message,
+            type: 'error',
+            offset: 80,
+          });
+        }
+      } catch (error) {
+        throw error;
+      }
+    },
+
+    // 获取博主的文章及点赞文章列表
+    async getAuthorArticles() {
+      if (this.articleList.length !== 0 && this.articleList.length >= this.total) return;
+      this.pageNo = this.pageNo + 1;
+      this.loading = true;
+      const params = {
+        pageNo: this.pageNo,
+        pageSize: this.pageSize,
+        accessUserId: loginStore.userInfo?.userId,
+      };
+
+      if (this.pageNo === 1) {
+        // 保存至storage用于根据不同页面进入详情时，针对性的进行上下篇文章的获取（如：分类页面上下篇、标签页面上下篇）
+        locSetItem(
+          'params',
+          JSON.stringify({
+            accessUserId: loginStore.userInfo?.userId,
+            selectKey: `${Number(this.currentTabKey) + 1}`,
+            from: 'author',
+          }),
+        );
+
+        const { userInfo } = getStoreUserInfo();
+
+        const storeParams = {
+          from: 'author',
+          accessUserId: loginStore.userInfo?.userId || userInfo?.userId,
+          selectKey: `${Number(this.currentTabKey) + 1}`,
+        };
+
+        // 将页面搜索信息保存到electron-store中
+        setParamsToStore('author', storeParams);
+      }
+
+      const res = normalizeResult<ArticleListResult>(
+        await Service.getAuthorArticleList(params, AUTHOR_API_PATH[this.currentTabKey]),
+      );
+      this.loading = false;
+      if (res.success) {
+        const { total, list } = res.data;
+        this.articleList = [...this.articleList, ...list];
+        this.total = total;
+      } else {
+        ElMessage({
+          message: res.message,
+          type: 'error',
+          offset: 80,
+        });
+      }
+    },
+
+    // 获取时间轴列表
+    async getAuthorTimeline() {
+      // 保存至storage用于根据不同页面进入详情时，针对性的进行上下篇文章的获取（如：分类页面上下篇、标签页面上下篇）
+      locSetItem(
+        'params',
+        JSON.stringify({ accessUserId: loginStore.userInfo?.userId, selectKey: this.currentTabKey, from: 'author' }),
+      );
+      const { userInfo } = getStoreUserInfo();
+
+      const storeParams = {
+        from: 'author',
+        data: {
+          accessUserId: loginStore.userInfo?.userId || userInfo?.userId,
+          selectKey: this.currentTabKey,
+          from: 'author',
+        },
+      };
+
+      // 将页面搜索信息保存到electron-store中
+      setParamsToStore('author', storeParams);
+
+      this.loading = true;
+      const res = normalizeResult<TimelineResult[]>(
+        await Service.getAuthorTimeline({ accessUserId: loginStore.userInfo?.userId }),
+      );
+      this.loading = false;
+      if (res.success) {
+        this.timelineList = res.data;
+      } else {
+        ElMessage({
+          message: res.message,
+          type: 'error',
+          offset: 80,
+        });
+      }
+    },
+
+    // 删除timeline文章hooks
+    async deleteTimelineArticle(articleId: string) {
+      if (!useCheckUserId(false)) return;
+      Message('', '确定删除该文章吗？').then(async () => {
+        const res = normalizeResult<{ id: string }>(await Service.deleteArticle({ articleId, type: 'timeline' }));
+        if (res.success) {
+          const list = this.timelineList.map((i) => {
+            if (i.articles.length) {
+              const filterList = i.articles.filter((j) => j.id !== articleId);
+              return {
+                ...i,
+                count: filterList.length,
+                articles: filterList,
+              };
+            }
+            return { ...i };
+          });
+          this.timelineList = list;
+        } else {
+          ElMessage({
+            message: res.message,
+            type: 'error',
+            offset: 80,
+          });
+        }
+      });
+    },
+
+    // 清除文章列表数据
+    clearArticleList() {
+      this.articleList = [];
+      this.timelineList = [];
+      this.total = 0;
+      this.pageNo = 0;
+      this.pageSize = PAGESIZE;
+    },
+  },
+});

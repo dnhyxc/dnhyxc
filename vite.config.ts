@@ -7,9 +7,11 @@ import AutoImport from 'unplugin-auto-import/vite';
 import Components from 'unplugin-vue-components/vite';
 import ElementPlus from 'unplugin-element-plus/vite';
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers';
+import visualizer from 'rollup-plugin-visualizer';
 
 export default defineConfig({
-  base: './', // 打包路径
+  // Failed to load module script: Expected a JavaScript module script but the server responded with a MIME type of "text/html". Strict MIME type checking is enforced for module scripts per HTML spec.
+  base: '/', // 线上打包路径改为绝对路径，防止打包后，资源文件路径出现上述错误
   plugins: [
     vue(),
     electron({
@@ -23,6 +25,12 @@ export default defineConfig({
       resolvers: [ElementPlusResolver()],
     }),
     ElementPlus(),
+    visualizer({
+      filename: 'report.html',
+      open: true,
+      gzipSize: true,
+      brotliSize: true,
+    }),
   ],
   resolve: {
     // 设置别名
@@ -62,6 +70,9 @@ export default defineConfig({
         chunkFileNames: 'assets/js/[name]-[hash].js',
         entryFileNames: 'assets/js/[name]-[hash].js',
         assetFileNames: 'assets/[ext]/[name]-[hash].[ext]',
+        manualChunks: {
+          echarts: ['echarts'],
+        },
       },
     },
   },

@@ -5,107 +5,161 @@
  * index.vue
 -->
 <template>
-  <div class="timeline-card">
+  <div class="timeline-card" @click.stop="toDetail(data)" @mousedown.stop="(e) => onMouseDown(e, data)">
     <div class="title">
-      <div class="left">{{ data.title }}</div>
-      <div class="right">
-        <span class="edit" @click="(e) => toEdit(e, data)">编辑</span>
-        <span class="del" @click="(e) => onReomve(e, data)">下架</span>
-      </div>
+      <slot name="title">
+        <div class="left">{{ data.title }}</div>
+        <div v-if="data.authorId === loginStore.userInfo?.userId" class="right">
+          <span class="edit" @click.stop="toEdit(data)">编辑</span>
+          <span class="del" @click.stop="onReomve(data)">下架</span>
+        </div>
+      </slot>
     </div>
     <div class="content">
-      <div class="art-info">
-        <div class="desc">
-          {{ data.abstract }}
-        </div>
-        <div class="tags">
-          <div class="author" @click="(e) => toPersonal(e, 'author')">{{ data.authorName }}</div>
-          <div class="right">
-            <el-tooltip class="box-item" effect="light" :content="`分类：${data.classify}`" placement="bottom">
-              <div class="classify" @click="(e) => toClassify(e, 'classify')">{{ data.classify }}</div>
-            </el-tooltip>
-            <el-tooltip class="box-item" effect="light" :content="`标签：${data.tag}`" placement="bottom">
-              <div class="tag" @click="(e) => toTag(e, 'tag')">{{ data.tag }}dsadsa</div>
-            </el-tooltip>
+      <slot name="content">
+        <div class="art-info">
+          <div class="desc">
+            {{ data.abstract }}
+          </div>
+          <div class="tags">
+            <div class="author" @click.stop="toPersonal(data.authorId!)">{{ data.authorName }}</div>
+            <div class="right">
+              <el-tooltip class="box-item" effect="light" :content="`分类：${data.classify}`" placement="bottom">
+                <div class="classify" @click.stop="toClassify(data.classify!)">{{ data.classify }}</div>
+              </el-tooltip>
+              <el-tooltip class="box-item" effect="light" :content="`标签：${data.tag}`" placement="bottom">
+                <div class="tag" @click.stop="toTag(data.tag!)">{{ data.tag }}</div>
+              </el-tooltip>
+            </div>
+          </div>
+          <div class="actions">
+            <div class="action like" @click.stop="onLike(data)">
+              <i :class="`font like-icon iconfont ${data.isLike ? 'icon-24gf-thumbsUp2' : 'icon-24gl-thumbsUp2'}`" />
+              <span>{{ data.likeCount || '点赞' }}</span>
+            </div>
+            <div class="action comment" @click.stop="onComment(data)">
+              <i class="font comment-icon iconfont icon-pinglun" />
+              <span>{{ data.commentCount || '评论' }}</span>
+            </div>
+            <div class="action read-count">
+              <i class="font read-icon iconfont icon-yanjing" />
+              <span class="text read">{{ data.readCount || '阅读' }}</span>
+            </div>
           </div>
         </div>
-        <div class="actions">
-          <div class="action like" @click="(e) => onLike(e, '点赞')">
-            <i :class="`font like-icon iconfont ${data.isLike ? 'icon-24gf-thumbsUp2' : 'icon-24gl-thumbsUp2'}`" />
-            <span>{{ data.likeCount || '点赞' }}</span>
-          </div>
-          <div class="action comment" @click="(e) => onComment(e, '评论')">
-            <i class="font comment-icon iconfont icon-pinglun" />
-            <span>{{ data.replyCount || '评论' }}</span>
-          </div>
-          <div class="action read-count">
-            <i class="font read-icon iconfont icon-yanjing" />
-            <span class="text">{{ data.readCount || '阅读' }}</span>
-          </div>
+        <div class="img-wrap">
+          <Image :url="data.coverImage || IMG1" :transition-img="IMG1" class="img" />
         </div>
-      </div>
-      <div class="img-wrap">
-        <img
-          class="img"
-          src="https://pic1.zhimg.com/80/v2-c2b64233c64c7703f4b84f8d839d0078_1440w.webp?source=1940ef5c"
-          alt=""
+        <ContentMenu
+          v-show="commonStore.showContextmenu && commonStore.currentArticleId === data.id"
+          :data="data"
+          :on-open-new-window="onOpenNewWindow"
+          :to-detail="toDetail"
         />
-      </div>
+      </slot>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { TimelineArticles } from '@/typings/common';
+import { ipcRenderer } from 'electron';
+import { useRouter, useRoute } from 'vue-router';
+import { IMG1 } from '@/constant';
+import { chackIsDelete } from '@/utils';
+import { loginStore, commonStore } from '@/store';
+import { TimelineArticles, ArticleItem } from '@/typings/common';
+import Image from '@/components/Image/index.vue';
+
+const router = useRouter();
+const route = useRoute();
 
 interface IProps {
   data: TimelineArticles;
+  likeListArticle?: (id: string, data?: ArticleItem) => void;
+  deleteArticle?: (id: string) => void;
+  toEdit?: (id: string) => void;
+  isCollect?: boolean;
 }
 
-const props = withDefaults(defineProps<IProps>(), {});
-
-console.log(props, 'props');
+const props = withDefaults(defineProps<IProps>(), {
+  likeListArticle: () => {},
+  deleteArticle: () => {},
+  toEdit: () => {},
+  isCollect: false,
+});
 
 // 编辑
-const toEdit = (e: Event, item: any) => {
-  e.stopPropagation();
-  console.log(item, '编辑');
+const toEdit = async (data: ArticleItem | TimelineArticles) => {
+  await chackIsDelete(data as ArticleItem);
+  router.push(`/create?id=${data.id}`);
 };
 
 // 删除
-const onReomve = (e: Event, item: any) => {
-  e.stopPropagation();
-  console.log(item, '编辑');
+const onReomve = async (data: ArticleItem | TimelineArticles) => {
+  await chackIsDelete(data as ArticleItem);
+  props?.deleteArticle?.(data?.id!);
 };
 
 // 去作者主页
-const toPersonal = (e: Event, item: any) => {
-  e.stopPropagation();
-  console.log(item, 'item');
+const toPersonal = (id: string) => {
+  router.push(`/personal?authorId=${id}`);
 };
 
 // 去分类页
-const toClassify = (e: Event, item: any) => {
-  e.stopPropagation();
-  console.log(item, 'toClassify');
+const toClassify = (classify: string) => {
+  router.push(`/classify?classify=${classify}`);
 };
 
 // 去标签
-const toTag = (e: Event, item: any) => {
-  e.stopPropagation();
-  console.log(item, 'toTag');
+const toTag = (tag: string) => {
+  if (route.path !== '/tag/list') {
+    router.push(`/tag/list?tag=${tag}`);
+  }
 };
 
 // 点赞
-const onLike = (e: Event, item: any) => {
-  e.stopPropagation();
-  console.log(item, 'onLike');
+const onLike = async (data: ArticleItem | TimelineArticles) => {
+  await chackIsDelete(data as ArticleItem);
+  props?.likeListArticle?.(data?.id!, data as ArticleItem);
+};
+
+// 前往详情/编辑
+const toDetail = async (data: ArticleItem | TimelineArticles) => {
+  if (props.isCollect) return;
+  if (props.toEdit) {
+    props.toEdit(data.id!);
+    return;
+  }
+  await chackIsDelete(data as ArticleItem);
+  router.push(`/detail/${data?.id}`);
 };
 
 // 评论
-const onComment = (e: Event, item: any) => {
-  e.stopPropagation();
-  console.log(item, 'onComment');
+const onComment = async (data: ArticleItem | TimelineArticles) => {
+  await chackIsDelete(data as ArticleItem);
+  router.push(`/detail/${data?.id}?scrollTo=1`);
+  // ipcRenderer.send('new-win', `article/${data.id}?scrollTo=1&from=${route.name as string}`, data.id);
+};
+
+// 监听鼠标右键，分别进行不同的操作
+const onMouseDown = async (e: MouseEvent, data: ArticleItem | TimelineArticles) => {
+  // 使用新窗口打开
+  if (e.button === 2) {
+    commonStore.showContextmenu = true;
+    commonStore.currentArticleId = data.id!;
+  }
+};
+
+// 新窗口打开
+const onOpenNewWindow = async (data: ArticleItem) => {
+  await chackIsDelete(data as ArticleItem);
+  const { userInfo, token } = loginStore;
+  ipcRenderer.send(
+    'new-win',
+    `article/${data.id}?from=${route.name as string}`,
+    data.id,
+    JSON.stringify({ userInfo, token }),
+  );
 };
 </script>
 
@@ -113,6 +167,7 @@ const onComment = (e: Event, item: any) => {
 @import '@/styles/index.less';
 
 .timeline-card {
+  position: relative;
   box-sizing: border-box;
   color: @font-3;
   cursor: pointer;
@@ -122,7 +177,7 @@ const onComment = (e: Event, item: any) => {
     justify-content: space-between;
     align-items: center;
     font-size: 16px;
-    margin-bottom: 5px;
+    margin-bottom: 10px;
     color: @font-1;
 
     .left {
@@ -163,7 +218,7 @@ const onComment = (e: Event, item: any) => {
       margin-right: 10px;
       .desc {
         .ellipsisMore(1);
-        margin-bottom: 5px;
+        margin-bottom: 10px;
         font-size: 14px;
       }
 
@@ -171,7 +226,7 @@ const onComment = (e: Event, item: any) => {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 5px;
+        margin-bottom: 10px;
         font-size: 14px;
 
         .author {
@@ -192,9 +247,9 @@ const onComment = (e: Event, item: any) => {
 
           .classify,
           .tag {
-            background-image: @card-lg;
+            background-image: @bg-lg-2;
             box-shadow: 0 0 3px @shadow-color;
-            padding: 2px 3px 0 3px;
+            padding: 1px 5px 3px;
             border-radius: 5px;
             min-width: 28px;
             .ellipsisMore(1);
@@ -230,21 +285,30 @@ const onComment = (e: Event, item: any) => {
             margin-bottom: 2px;
           }
 
+          .icon-24gf-thumbsUp2 {
+            color: @theme-blue;
+          }
+
           .comment-icon {
             font-size: 16px;
           }
 
           .read-icon {
-            font-size: 18px;
+            font-size: 17px;
           }
 
           .text {
             margin-top: 2px;
           }
+
+          .read {
+            margin-top: 0;
+          }
         }
 
         .like,
-        .comment {
+        .comment,
+        .read-count {
           cursor: pointer;
           &:hover {
             color: @sub-2-blue;
@@ -256,16 +320,20 @@ const onComment = (e: Event, item: any) => {
     .img-wrap {
       box-sizing: border-box;
       display: flex;
-      width: 20%;
-      min-width: 135px;
-
+      flex: 0.6;
       .img {
         display: block;
         width: 100%;
         height: auto;
         max-height: 85px;
-        object-fit: cover;
         border-radius: 5px;
+        .imgStyle();
+
+        :deep {
+          .image-item {
+            border-radius: 5px;
+          }
+        }
       }
     }
   }

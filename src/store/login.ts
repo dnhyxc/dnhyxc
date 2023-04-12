@@ -1,20 +1,37 @@
 import { defineStore } from 'pinia';
 import { Router } from 'vue-router';
 import { ElMessage } from 'element-plus';
-import { LoginParams, UserLoginParams, UserInfoParams } from '@/typings/common';
-import { commonStore } from '@/store';
+import { LoginParams, UserLoginParams, UserInfoParams, registerRes } from '@/typings/common';
+import { commonStore, messageStore } from '@/store';
 import * as Service from '@/server';
-import { normalizeResult, encrypt, locSetItem, locGetItem, locRemoveItem } from '@/utils';
+import { useCheckUserId } from '@/hooks';
+import { normalizeResult, Message, encrypt, locSetItem, locGetItem, locRemoveItem, ipcRenderers } from '@/utils';
+import { createWebSocket, closeSocket } from '@/socket';
+import { UPDATE_INFO_API_PATH } from '@/constant';
 
 interface IProps {
   token: string | undefined | null;
   userInfo: UserInfoParams;
+  timer: ReturnType<typeof setTimeout> | null;
 }
 
 export const useLoginStore = defineStore('login', {
   state: (): IProps => ({
     token: locGetItem('token'),
-    userInfo: JSON.parse(locGetItem('userInfo')!), // 当前登录人用户信息
+    userInfo: JSON.parse(locGetItem('userInfo')!) || {
+      userId: '',
+      username: '',
+      job: '',
+      motto: '',
+      introduce: '',
+      headUrl: '',
+      mainCover: '',
+      juejin: '',
+      zhihu: '',
+      github: '',
+      blog: '',
+    }, // 当前登录人用户信息
+    timer: null,
   }),
 
   getters: {},
@@ -32,9 +49,17 @@ export const useLoginStore = defineStore('login', {
           }),
         );
         if (res.success) {
-          ElMessage.success(res.message);
+          ElMessage({
+            message: res.message,
+            type: 'success',
+            offset: 80,
+          });
         } else {
-          ElMessage.error(res.message);
+          ElMessage({
+            message: res.message,
+            type: 'error',
+            offset: 80,
+          });
         }
         return res;
       } catch (error) {
@@ -59,10 +84,20 @@ export const useLoginStore = defineStore('login', {
           this.userInfo = userInfo as UserInfoParams;
           locSetItem('token', token!);
           locSetItem('userInfo', JSON.stringify(userInfo));
+          // 登陆成功之后创建websocket
+          ipcRenderers.restore(JSON.stringify({ userInfo: this.userInfo, token: this.token }));
+          // article 页面不立即创建，因为 article 页面加载之后自动会创建
+          if (!window.location.pathname.includes('/article')) {
+            createWebSocket();
+          }
           // 登陆成功后返回到上一页面
           router?.push(commonStore.backPath);
         } else {
-          ElMessage.error(res.message);
+          ElMessage({
+            message: res.message,
+            type: 'error',
+            offset: 80,
+          });
         }
         return res;
       } catch (error) {
@@ -78,13 +113,45 @@ export const useLoginStore = defineStore('login', {
       // 重置成功后直接登录
       if (res.success) {
         await this.onLogin(params, router);
+        ElMessage({
+          message: res.message,
+          type: 'success',
+          offset: 80,
+        });
       } else {
-        ElMessage.error(res.message);
+        ElMessage({
+          message: res.message,
+          type: 'error',
+          offset: 80,
+        });
       }
+    },
+
+    // 账号注销
+    async onLogout(router: Router) {
+      Message('', '确定要注销该账号吗？').then(async () => {
+        const res = normalizeResult<string>(await Service.logout());
+        if (res.success) {
+          this.onQuit();
+          ElMessage({
+            message: res.message,
+            type: 'success',
+            offset: 80,
+          });
+          router.push('/home');
+        } else {
+          ElMessage({
+            message: res.message,
+            type: 'error',
+            offset: 80,
+          });
+        }
+      });
     },
 
     // 获取用户信息
     async getUserInfo() {
+      if (!useCheckUserId(false)) return;
       try {
         const res = normalizeResult<UserInfoParams>(await Service.getUserInfo());
         return res.data;
@@ -93,25 +160,67 @@ export const useLoginStore = defineStore('login', {
       }
     },
 
-    // 验证token是否过期
-    // async verifyToken() {
-    //   try {
-    //     const res = normalizeResult<number>(await Service.verify());
-    //     if (!res.success) {
-    //       ElMessage.warning(res.message);
-    //       this.onLogout();
-    //     }
-    //   } catch (error) {
-    //     throw error;
-    //   }
-    // },
+    // 修改用户信息
+    async updateUserInfo(params: UserInfoParams, pageType: number, router?: Router) {
+      if (!useCheckUserId(false)) return;
+      const { username } = this.userInfo;
+      const res = normalizeResult<registerRes>(await Service.updateUserInfo(params, UPDATE_INFO_API_PATH[pageType]));
+      if (res.success) {
+        this.userInfo = {
+          ...this.userInfo,
+          ...params,
+        };
+        locSetItem(
+          'userInfo',
+          JSON.stringify({
+            ...this.userInfo,
+            ...params,
+          }),
+        );
+
+        // 判断是否是个人资料页面修改了用户名或者在账号设置页面中修改了密码
+        if ((params.username && params.username !== username) || params.password) {
+          // 清空所有用户信息
+          this.onQuit();
+          ElMessage({
+            message: `${params.password ? '密码已重置' : '用户名称已修改'}，请重新登录`,
+            type: 'success',
+            offset: 80,
+          });
+          this.timer = setTimeout(() => {
+            if (this.timer) {
+              clearTimeout(this.timer);
+              this.timer = null;
+            }
+            router?.replace('/login');
+          }, 100);
+        } else {
+          ElMessage({
+            message: res.message,
+            type: 'success',
+            offset: 80,
+          });
+        }
+      } else {
+        ElMessage({
+          message: res.message,
+          type: 'warning',
+          offset: 80,
+        });
+      }
+    },
 
     // 退出登录
-    onLogout() {
+    onQuit() {
       this.token = '';
       this.userInfo = {};
       locRemoveItem('token');
       locRemoveItem('userInfo');
+      // 退出时清除消息条数，防止推出后头部小铃铛处还是显示消息条数
+      messageStore.msgCount = 0;
+      ipcRenderers.restore('');
+      // 关闭ws链接
+      closeSocket();
     },
   },
 });

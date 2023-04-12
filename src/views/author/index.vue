@@ -5,143 +5,200 @@
  * index.vue
 -->
 <template>
-  <div class="author-wrap">
-    <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
-      <div class="cover">
-        <div class="img-wrap">
-          <img
-            src="https://pic2.zhimg.com/80/v2-ff0d35d4dcad8e7e1623ef1c294651c1_1440w.webp"
-            alt=""
-            class="cover-img"
-          />
-        </div>
-        <div class="author-info">
-          <div class="head-img-wrap">
-            <img :src="HEAD_IMG" alt="" class="head-img" />
+  <Loading :loading="authorStore.loading" class="author-wrap">
+    <template #default>
+      <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
+        <div
+          v-if="isMounted"
+          v-infinite-scroll="getAuthorArticles"
+          :infinite-scroll-delay="300"
+          :infinite-scroll-disabled="disabled"
+          :infinite-scroll-distance="2"
+          class="pullup-content"
+        >
+          <div class="cover">
+            <div class="img-wrap">
+              <Image :url="authorStore.userInfo?.mainCover || IMG1" :transition-img="IMG1" class="cover-img" />
+            </div>
+            <div class="author-info">
+              <div class="head-img-wrap">
+                <Image :url="authorStore.userInfo?.headUrl || HEAD_IMG" :transition-img="HEAD_IMG" class="head-img" />
+              </div>
+              <div class="infos">
+                <div class="username">{{ authorStore.userInfo?.username }}</div>
+                <div class="job">{{ authorStore.userInfo?.job }}</div>
+                <div :class="`${viewMore ? 'all-user-detail' : 'user-detail'}`">
+                  <div class="motto">
+                    座右铭：
+                    <span class="desc-text">{{ authorStore.userInfo?.motto }}</span>
+                  </div>
+                  <div class="desc">
+                    个人介绍：
+                    <span class="desc-text">
+                      {{ authorStore.userInfo?.introduce }}
+                    </span>
+                  </div>
+                  <div class="github">
+                    github：
+                    <span class="link">{{ authorStore.userInfo?.github }}</span>
+                  </div>
+                  <div class="juejin">
+                    掘金：
+                    <span class="link">{{ authorStore.userInfo?.juejin }}</span>
+                  </div>
+                  <div class="zhihu">
+                    知乎：
+                    <span class="link">{{ authorStore.userInfo?.zhihu }}</span>
+                  </div>
+                  <div class="blog">
+                    博客：
+                    <span class="link">{{ authorStore.userInfo?.blog }}</span>
+                  </div>
+                </div>
+                <div class="view-more" @click="onShowMore">
+                  <i :class="`font iconfont ${viewMore ? 'icon-arrow-up-bold' : 'icon-arrow-down-bold'}`" />
+                  <span>查看更多资料</span>
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="infos">
-            <div class="username">dnhyxc</div>
-            <div class="job">前端工程师</div>
-            <div v-if="viewMore" class="user-detail">
-              <div class="motto">
-                座右铭：
-                <span class="desc-text">行到水穷处，坐看云起时！</span>
-              </div>
-              <div class="desc">
-                个人介绍：
-                <span class="desc-text">
-                  我希望有个如你一般的人，如山间清爽的风，如古城温暖的光，从清晨到夜晚，由山野到书房，等待，不怕岁月蹉跎，不怕路途遥远，只要最后是你就好！
-                  明天会更好
-                </span>
-              </div>
-              <div class="github">
-                github：
-                <span class="link">https://github.com/dnhyxc</span>
-              </div>
-              <div class="juejin">
-                知乎：
-                <span class="link">https://github.com/dnhyxc</span>
-              </div>
-              <div class="zhihu">
-                知乎：
-                <span class="link">https://github.com/dnhyxc</span>
-              </div>
-              <div class="blog">
-                博客：
-                <span class="link">https://github.com/dnhyxc</span>
-              </div>
-            </div>
-            <div class="view-more" @click="onShowMore">
-              <i :class="`font iconfont ${viewMore ? 'icon-arrow-up-bold' : 'icon-arrow-down-bold'}`" />
-              <span>查看更多资料</span>
-            </div>
+          <div class="content">
+            <el-tabs type="border-card" class="el-tabs" @tab-change="onTabChange">
+              <el-tab-pane
+                v-for="tab in AUTHOR_TABS"
+                :key="tab.value"
+                :label="tab.name"
+                :class="`${showEmpty && 'tab-pane'}`"
+              >
+                <div v-if="tab.value !== '3'" class="list-wrap">
+                  <LineCard
+                    v-for="data in authorStore.articleList"
+                    :key="data.id"
+                    :data="data"
+                    class="author-line-card"
+                    :delete-article="deleteArticle"
+                    :like-list-article="likeListArticle"
+                  />
+                </div>
+                <Timeline
+                  v-if="tab.value === '3'"
+                  :data-source="authorStore.timelineList"
+                  :delete-article="deleteTimeLineArticle"
+                  :like-list-article="likeListArticle"
+                />
+                <div v-if="noMore" class="no-more">没有更多了～～～</div>
+                <Empty v-if="showEmpty" />
+              </el-tab-pane>
+            </el-tabs>
           </div>
+          <ToTopIcon v-if="scrollTop >= 500" :on-scroll-to="onScrollTo" class="to-top" />
         </div>
-      </div>
-      <div class="content">
-        <el-tabs type="border-card" class="el-tabs">
-          <el-tab-pane v-for="tab in AUTHOR_TABS" :key="tab.value" :label="tab.name">
-            <div class="list-wrap">
-              <LineCard
-                v-for="data in dataSource"
-                :key="data.id"
-                :data="data"
-                class="author-line-card"
-                @click="(e) => onClickCard(e, data.id!)"
-              />
-            </div>
-          </el-tab-pane>
-        </el-tabs>
-      </div>
-    </el-scrollbar>
-  </div>
+      </el-scrollbar>
+    </template>
+  </Loading>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
-import { HEAD_IMG, AUTHOR_TABS } from '@/constant';
-import { TimelineArticles } from '@/typings/common';
+import { ipcRenderer } from 'electron';
+import { ref, onMounted, computed, inject } from 'vue';
+import { useRoute } from 'vue-router';
+import { HEAD_IMG, AUTHOR_TABS, IMG1 } from '@/constant';
+import { authorStore, articleStore } from '@/store';
+import { useDeleteArticle, useScroller } from '@/hooks';
+import { scrollTo } from '@/utils';
 import LineCard from '@/components/LineCard/index.vue';
+import Timeline from '@/components/Timeline/index.vue';
+import Image from '@/components/Image/index.vue';
+import Loading from '@/components/Loading/index.vue';
+import Empty from '@/components/Empty/index.vue';
+import { ArticleItem } from '@/typings/common';
 
-const router = useRouter();
+const reload = inject<Function>('reload');
 
-const dataSource = ref<TimelineArticles[]>([
-  {
-    title: 'react webpac5 项目搭建',
-    id: '63e3187be2d6bf53efaa6a3c',
-    classify: '架构',
-    tag: '前端框架',
-    abstract: '项目搭建',
-    authorId: '63e24c3be2d6bf53efaa69a9',
-    authorName: 'dnhyxc',
-    isLike: false,
-    likeCount: 0,
-    createTime: 1675827289879,
-    readCount: 6,
-    commentCount: 0,
-  },
-  {
-    title: 'react webpac5 项目搭建',
-    id: '63e3187be2d6bf53efaa6a3d',
-    classify: '架构',
-    tag: '前端框架',
-    abstract: '项目搭建',
-    authorId: '63e24c3be2d6bf53efaa69a9',
-    authorName: 'dnhyxc',
-    isLike: false,
-    likeCount: 0,
-    createTime: 1675827289879,
-    readCount: 6,
-    commentCount: 0,
-  },
-  {
-    title: 'react webpac5 项目搭建',
-    id: '63e3187be2d6bf53efaa6a3a',
-    classify: '架构',
-    tag: '前端框架',
-    abstract: '项目搭建',
-    authorId: '63e24c3be2d6bf53efaa69a9',
-    authorName: 'dnhyxc',
-    isLike: false,
-    likeCount: 0,
-    createTime: 1675827289879,
-    readCount: 6,
-    commentCount: 0,
-  },
-]);
+const route = useRoute();
+const { scrollRef, scrollTop } = useScroller();
 
 const viewMore = ref<boolean>(false);
+const isMounted = ref<boolean>(false);
+const noMore = computed(() => {
+  const { articleList, total, timelineList, currentTabKey } = authorStore;
+  return currentTabKey === '2' ? timelineList?.length : articleList.length && articleList.length >= total;
+});
+const disabled = computed(() => authorStore.loading || noMore.value);
+const showEmpty = computed(() => {
+  const { timelineList, articleList, currentTabKey, loading } = authorStore;
+  if (loading !== null && !loading && currentTabKey === '2' && !timelineList.length) {
+    return true;
+  } else if (loading !== null && !loading && currentTabKey !== '2' && !articleList.length) {
+    return true;
+  } else {
+    return false;
+  }
+});
 
-// 点击卡片
-const onClickCard = (e: Event, id: string) => {
-  e.stopPropagation();
-  router.push(`/detail/${id}`);
+const { deleteArticle } = useDeleteArticle({ pageType: 'author' });
+
+onMounted(async () => {
+  // 监听详情点赞状态，实时更改列表对应文章的点赞状态
+  ipcRenderer.on('refresh', (_, id, pageType, isLike = true) => {
+    // 需要判断是否是属于当前活动页面，并且只是点击点赞而不是收藏或评论防止重复触发
+    if (route.name === 'author' && pageType !== 'list' && isLike) {
+      reload && reload();
+    }
+  });
+  // 防止页面加载报错
+  isMounted.value = true;
+  // 重置选中tab key 为 0
+  authorStore.currentTabKey = '0';
+  // 清空原始数据
+  authorStore.clearArticleList();
+  // 获取博主信息
+  await authorStore.getUserInfo();
+  getAuthorArticles();
+});
+
+// 获取各tab文章列表
+const getAuthorArticles = async () => {
+  await authorStore.getAuthorArticles();
+};
+
+// tab 切换
+const onTabChange = (name: string) => {
+  // name: 0：博主文章、name: 1：博主点赞、name: 2：时间轴
+  if (name !== '2') {
+    // 设置选中tab
+    authorStore.currentTabKey = name;
+    authorStore.clearArticleList();
+    getAuthorArticles();
+  } else {
+    authorStore.clearArticleList();
+    authorStore.currentTabKey = name;
+    authorStore.getAuthorTimeline();
+  }
+};
+
+// 文章点赞
+const likeListArticle = async (id: string, data?: ArticleItem) => {
+  await articleStore.likeListArticle({ id, pageType: 'author', data });
+  // 取消点赞文章重新刷新列表之后，自动滚动到之前查看页面的位置
+  if (authorStore.currentTabKey === '1') {
+    onScrollTo(scrollTop.value);
+  }
+};
+
+// 删除博主页面时间轴
+const deleteTimeLineArticle = (id: string) => {
+  authorStore.deleteTimelineArticle(id);
 };
 
 // 查看更多信息
 const onShowMore = () => {
   viewMore.value = !viewMore.value;
+};
+
+// 置顶
+const onScrollTo = (to?: number) => {
+  scrollTo(scrollRef, to || 0);
 };
 </script>
 
@@ -155,10 +212,11 @@ const onShowMore = () => {
   .cover {
     width: 100%;
     height: auto;
-    background-image: linear-gradient(135deg, #e9defa 10%, #ace0f9 100%);
+    background-image: @bg-lg-2;
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
-    padding-bottom: 12px;
+    padding-bottom: 20px;
+
     .img-wrap {
       width: 100%;
       height: 200px;
@@ -166,9 +224,16 @@ const onShowMore = () => {
       .cover-img {
         width: 100%;
         height: 100%;
-        object-fit: cover;
         border-top-left-radius: 5px;
         border-top-right-radius: 5px;
+        .imgStyle();
+      }
+
+      :deep {
+        .image-item {
+          border-top-left-radius: 5px;
+          border-top-right-radius: 5px;
+        }
       }
     }
 
@@ -177,6 +242,7 @@ const onShowMore = () => {
       display: flex;
       justify-content: flex-start;
       width: 100%;
+
       .head-img-wrap {
         position: absolute;
         top: -70px;
@@ -192,8 +258,8 @@ const onShowMore = () => {
           display: block;
           width: 100%;
           height: 100%;
-          object-fit: cover;
           border-radius: 5px;
+          .imgStyle();
         }
       }
 
@@ -217,19 +283,31 @@ const onShowMore = () => {
         .user-detail {
           font-size: 14px;
           color: @font-4;
+          transition: all 0.35s ease-in-out;
+          max-height: 0;
+          overflow: hidden;
+        }
+
+        .all-user-detail {
+          font-size: 14px;
+          color: @font-4;
+          max-height: 100vh;
+          transition: all 0.35s ease-in-out;
         }
 
         .view-more {
           font-size: 14px;
           color: @font-4;
           width: 110px;
+          margin-top: 5px;
           cursor: pointer;
           .font {
             margin-right: 5px;
           }
         }
 
-        .user-detail {
+        .user-detail,
+        .all-user-detail {
           .motto,
           .desc,
           .github,
@@ -243,6 +321,7 @@ const onShowMore = () => {
             .desc-text,
             .link {
               text-indent: 28px;
+              margin-top: 5px;
             }
 
             .desc-text {
@@ -261,10 +340,36 @@ const onShowMore = () => {
   .content {
     margin-top: 10px;
     border-radius: 5px;
-
     .el-tabs {
       border: 1px solid @card-border;
       border-radius: 5px;
+
+      :deep {
+        .el-tabs__content {
+          padding: 10px;
+        }
+
+        .el-tabs__header,
+        .el-tabs__nav-wrap {
+          border-top-left-radius: 5px;
+          border-top-right-radius: 5px;
+        }
+
+        .el-tabs__header {
+          border-bottom: 1px solid @card-border;
+          .el-tabs__item.is-active {
+            border-left-color: @card-border;
+          }
+          .el-tabs__item.is-active {
+            border-right-color: @card-border;
+          }
+        }
+      }
+
+      .tab-pane {
+        position: relative;
+        min-height: 200px;
+      }
 
       .list-wrap {
         display: flex;
@@ -275,7 +380,7 @@ const onShowMore = () => {
           width: calc(50% - 5px);
           padding: 10px 10px;
           box-shadow: 0 0 5px @shadow-color;
-          background-image: @card-lg;
+          background-image: @bg-lg-2;
           margin-bottom: 10px;
           border-radius: 5px;
           margin-right: 10px;
@@ -286,8 +391,20 @@ const onShowMore = () => {
             }
           }
 
+          &:nth-child(odd) {
+            &:nth-last-child(2) {
+              margin-bottom: 0;
+            }
+            &:last-child {
+              margin-bottom: 0;
+            }
+          }
+
           &:nth-child(even) {
             margin-right: 0;
+            &:last-child {
+              margin-bottom: 0;
+            }
           }
 
           .img-wrap {
@@ -299,12 +416,18 @@ const onShowMore = () => {
               display: block;
               width: 100%;
               height: auto;
-              object-fit: cover;
               border-radius: 5px;
+              .imgStyle();
             }
           }
         }
       }
+    }
+
+    .no-more {
+      text-align: center;
+      color: @font-4;
+      margin: 15px 0 5px;
     }
   }
 }

@@ -1,5 +1,16 @@
 @import '@/styles/color.less';
 
+// 图片显示方式
+.imgStyle(@time: 0.3s, @position1: top left, @position2: bottom right) {
+  object-fit: cover;
+  object-position: @position1;
+  transition: all @time ease-in-out;
+
+  &:hover {
+    object-position: @position2;
+  }
+}
+
 .textLg() {
   @supports (-webkit-background-clip: text) or (background-clip: text) {
     background-image: linear-gradient(
@@ -84,6 +95,7 @@
   -webkit-box-orient: vertical;
   /* autoprefixer: on */
   -webkit-line-clamp: @count;
+  word-break: break-all;
   line-clamp: @count;
   vertical-align: middle;
 }
@@ -111,5 +123,26 @@
   ::-webkit-scrollbar-thumb {
     background-color: @fc;
     border-radius: 5px;
+  }
+}
+
+.bgMoveColor(@pos:29deg) {
+  background: linear-gradient(@pos, #e9defa, #fbfcdb, #a8edea, #e0c3fc, #d1e8f3);
+  background-size: 200% 200%;
+  animation: bgmove 10s infinite;
+}
+
+// 动态背景动画
+.bgKeyframes (@name: bgMove) {
+  @keyframes @name {
+    0% {
+      background-position: 0% 0%;
+    }
+    50% {
+      background-position: 100% 100%;
+    }
+    100% {
+      background-position: 0% 0%;
+    }
   }
 }
