@@ -88,8 +88,8 @@ export const useLoginStore = defineStore('login', {
           locSetItem('userInfo', JSON.stringify(userInfo));
           store.set('userInfo', JSON.stringify(userInfo));
           // 登陆成功之后创建websocket
+          ipcRenderers.restore(JSON.stringify({ userInfo: this.userInfo, token: this.token }));
           createWebSocket();
-          ipcRenderers.restore();
           // 登陆成功后返回到上一页面
           router?.push(commonStore.backPath);
         } else {
@@ -219,7 +219,7 @@ export const useLoginStore = defineStore('login', {
       store.delete('userInfo');
       // 退出时清除消息条数，防止推出后头部小铃铛处还是显示消息条数
       messageStore.msgCount = 0;
-      ipcRenderers.restore();
+      ipcRenderers.restore('');
     },
   },
 });

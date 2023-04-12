@@ -88,10 +88,10 @@
 <script setup lang="ts">
 import { ipcRenderer } from 'electron';
 import { onMounted, onUnmounted, nextTick, ref, inject } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { useRoute } from 'vue-router';
 import { useScroller } from '@/hooks';
 import { articleStore, commonStore } from '@/store';
-import { scrollTo, checkOS, getStoreUserInfo } from '@/utils';
+import { scrollTo, checkOS, locSetItem, locRemoveItem } from '@/utils';
 import { ACTION_SVGS } from '@/constant';
 // import { createWebSocket, ws } from '@/socket';
 import PageHeader from '@/components/PreviewHeader/index.vue';
@@ -106,7 +106,7 @@ import Loading from '@/components/Loading/index.vue';
 const reload = inject<Function>('reload');
 
 const route = useRoute();
-const router = useRouter();
+// const router = useRouter();
 
 const articleInfoRef = ref<HTMLDivElement | null>(null);
 
@@ -146,11 +146,23 @@ onMounted(async () => {
   });
 
   // 登录或者退出时刷新页面
-  ipcRenderer.on('restore', (_, id) => {
-    const storeUserInfo = getStoreUserInfo();
-    if (id === route.params.id && storeUserInfo?.userId) {
-      router.go(0);
+  ipcRenderer.on('restore', (_, data, id) => {
+    const info = data && JSON.parse(data);
+    console.log(info, 'info>>>>info');
+    if (info.token) {
+      locSetItem('userInfo', JSON.stringify(info.userInfo));
+      locSetItem('token', info.token);
+    } else {
+      locRemoveItem('userInfo');
+      locRemoveItem('token');
     }
+
+    reload && reload();
+
+    // const storeUserInfo = getStoreUserInfo();
+    // if (id === route.params.id && storeUserInfo?.userId) {
+    //   router.go(0);
+    // }
 
     // if (storeUserInfo?.userId && id === route.params.id) {
     //   console.log(ws, 'ws>>>middle');
@@ -158,6 +170,22 @@ onMounted(async () => {
     // }
 
     // console.log(ws, 'ws>>>aftre');
+  });
+
+  // 登录或者退出时刷新页面
+  ipcRenderer.send('userInfo', route.params.id);
+
+  // 接受主进程传送的用户信息
+  ipcRenderer.once('userInfo', (_, data) => {
+    const info = data && JSON.parse(data);
+    if (info.token) {
+      locSetItem('userInfo', JSON.stringify(info.userInfo));
+      locSetItem('token', info.token);
+      console.log(info, 'info');
+    } else {
+      // locRemoveItem('userInfo');
+      // locRemoveItem('token');
+    }
   });
 });
 

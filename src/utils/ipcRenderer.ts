@@ -13,6 +13,6 @@ export const sendRefresh = (articleId: string, pathname?: string, isLike?: boole
 };
 
 // 登录、退出推送消息给主进程，用户刷新子窗口详情
-export const restore = () => {
-  ipcRenderer.send('restore');
+export const restore = (info: string) => {
+  ipcRenderer.send('restore', info);
 };

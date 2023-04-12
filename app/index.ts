@@ -9,6 +9,8 @@ import { globalChildWins } from './global';
 let win: BrowserWindow | null = null;
 let newWin: BrowserWindow | null = null;
 let tray: Tray | null = null;
+// 保存用户信息
+let userInfo = '';
 
 // 控制是否退出
 let willQuitApp = false;
@@ -75,6 +77,8 @@ const createWindow = () => {
     store.delete('userInfo');
     // 退出时，清除保存的上下页搜索条件
     store.delete('paramList');
+    // 清空用户信息
+    userInfo = '';
     willQuitApp = true;
   });
 
@@ -119,6 +123,7 @@ ipcMain.on('window-close', () => {
   });
   // 所有子窗口关闭之后，删除存储的全部 wins id
   globalChildWins.newWins.clear();
+  userInfo = '';
 });
 
 // 退出程序
@@ -236,7 +241,7 @@ const createChildWin = (pathname, id) => {
 };
 
 // 监听主窗口推送新建窗口的消息
-ipcMain.on('new-win', (event, pathname, id, prevId) => {
+ipcMain.on('new-win', (event, pathname, id, prevId, info) => {
   const childWinKeys = globalChildWins.newWins.keys();
   const keys = Array.from(childWinKeys);
   // 如果子窗口超过3个，则删除最早创建的那个子窗口
@@ -257,14 +262,26 @@ ipcMain.on('new-win', (event, pathname, id, prevId) => {
       delete globalChildWins['independentWindow-' + winId];
     }
   }
-  
+
   // 判断窗口是否存在，如果存在则直接显示，不再重新创建
   if (globalChildWins.newWins.has(id)) {
     const winId = globalChildWins.newWins.get(id);
     globalChildWins['independentWindow-' + winId]?.show();
   } else {
-    createChildWin(pathname, id);
+    app
+      .whenReady()
+      .then(() => createChildWin(pathname, id))
+      .then(() => {
+        console.log(info, 'info>>>>info', id);
+        userInfo = info;
+      });
   }
+});
+
+// 监听子窗口获取用户信息
+ipcMain.on('userInfo', (event, id) => {
+  const winId = globalChildWins.newWins.get(id);
+  globalChildWins['independentWindow-' + winId]?.webContents.send('userInfo', userInfo);
 });
 
 // 监听子窗口关闭
@@ -322,9 +339,18 @@ ipcMain.on('refresh', (event, id, pageType, isLike) => {
 });
 
 // 监听子窗口点赞，刷新主窗口文章列表
-ipcMain.on('restore', () => {
+ipcMain.on('restore', (event, info) => {
   globalChildWins.newWins.forEach((value, key) => {
-    globalChildWins['independentWindow-' + value].send('restore', key);
+    if (info) {
+      globalChildWins['independentWindow-' + value]?.webContents.send('restore', info, key);
+    } else {
+      userInfo = '';
+      globalChildWins['independentWindow-' + value]?.webContents.send(
+        'restore',
+        JSON.stringify({ userInfo: {}, token: '' }),
+        key,
+      );
+    }
   });
 });
 
