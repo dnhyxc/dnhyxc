@@ -223,8 +223,12 @@ export const checkUrl = (url: string) => {
 // 获取存储在electron-store中的登录信息
 export const getStoreUserInfo = () => {
   // 获取存储在硬盘store中的登录信息
-  const storeUserInfo = store.get('userInfo') && JSON.parse(store.get('userInfo') as string);
-  return storeUserInfo;
+  const userInfo = locGetItem('userInfo') && JSON.parse(locGetItem('userInfo') as string);
+  const token = locGetItem('token');
+  return {
+    userInfo,
+    token,
+  };
 };
 
 // 返回 electron-store 的实例
@@ -251,12 +255,6 @@ export const setParamsToStore = (from: string, data: any) => {
 // 清除保存在store中的paramList
 export const clearParamListFromStore = () => {
   store.delete('paramList');
-};
-
-// 清空存储在electron store中的用户信息
-export const clearUserInfoFromStore = () => {
-  store.delete('token');
-  store.delete('userInfo');
 };
 
 // 获取保存在store中的paramList

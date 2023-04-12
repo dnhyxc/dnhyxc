@@ -104,7 +104,7 @@ export const usePersonalStore = defineStore('personal', {
           }),
         );
 
-        const userInfo = getStoreUserInfo();
+        const { userInfo } = getStoreUserInfo();
 
         const storeParams = {
           from: 'personal',

@@ -63,7 +63,7 @@ export const useClassifyStore = defineStore('classify', {
         }),
       );
 
-      const userInfo = getStoreUserInfo();
+      const { userInfo } = getStoreUserInfo();
 
       const storeParams = {
         from: 'classify',

@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia';
-import Store from 'electron-store';
 import { Router } from 'vue-router';
 import { ElMessage } from 'element-plus';
 import { LoginParams, UserLoginParams, UserInfoParams, registerRes } from '@/typings/common';
@@ -7,15 +6,14 @@ import { commonStore, messageStore } from '@/store';
 import * as Service from '@/server';
 import { useCheckUserId } from '@/hooks';
 import { normalizeResult, Message, encrypt, locSetItem, locGetItem, locRemoveItem, ipcRenderers } from '@/utils';
-import { createWebSocket } from '@/socket';
+import { createWebSocket, closeSocket } from '@/socket';
 import { UPDATE_INFO_API_PATH } from '@/constant';
 
 interface IProps {
   token: string | undefined | null;
   userInfo: UserInfoParams;
+  timer: ReturnType<typeof setTimeout> | null;
 }
-
-const store = new Store();
 
 export const useLoginStore = defineStore('login', {
   state: (): IProps => ({
@@ -33,6 +31,7 @@ export const useLoginStore = defineStore('login', {
       github: '',
       blog: '',
     }, // 当前登录人用户信息
+    timer: null,
   }),
 
   getters: {},
@@ -84,12 +83,13 @@ export const useLoginStore = defineStore('login', {
           this.token = token;
           this.userInfo = userInfo as UserInfoParams;
           locSetItem('token', token!);
-          store.set('token', JSON.stringify(token));
           locSetItem('userInfo', JSON.stringify(userInfo));
-          store.set('userInfo', JSON.stringify(userInfo));
           // 登陆成功之后创建websocket
           ipcRenderers.restore(JSON.stringify({ userInfo: this.userInfo, token: this.token }));
-          createWebSocket();
+          // article 页面不立即创建，因为 article 页面加载之后自动会创建
+          if (!window.location.pathname.includes('/article')) {
+            createWebSocket();
+          }
           // 登陆成功后返回到上一页面
           router?.push(commonStore.backPath);
         } else {
@@ -178,21 +178,22 @@ export const useLoginStore = defineStore('login', {
           }),
         );
 
-        store.set('userInfo', JSON.stringify({ ...this.userInfo, ...params }));
-
         // 判断是否是个人资料页面修改了用户名或者在账号设置页面中修改了密码
         if ((params.username && params.username !== username) || params.password) {
-          this.token = '';
-          locRemoveItem('token');
-          store.delete('token');
-          locRemoveItem('userInfo');
-          store.delete('userInfo');
+          // 清空所有用户信息
+          this.onQuit();
           ElMessage({
             message: `${params.password ? '密码已重置' : '用户名称已修改'}，请重新登录`,
             type: 'success',
             offset: 80,
           });
-          router?.replace('/login');
+          this.timer = setTimeout(() => {
+            if (this.timer) {
+              clearTimeout(this.timer);
+              this.timer = null;
+            }
+            router?.replace('/login');
+          }, 100);
         } else {
           ElMessage({
             message: res.message,
@@ -214,12 +215,12 @@ export const useLoginStore = defineStore('login', {
       this.token = '';
       this.userInfo = {};
       locRemoveItem('token');
-      store.delete('token');
       locRemoveItem('userInfo');
-      store.delete('userInfo');
       // 退出时清除消息条数，防止推出后头部小铃铛处还是显示消息条数
       messageStore.msgCount = 0;
       ipcRenderers.restore('');
+      // 关闭ws链接
+      closeSocket();
     },
   },
 });

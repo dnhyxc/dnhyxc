@@ -131,14 +131,12 @@ const onMouseDown = async (e: MouseEvent, data: ArticleItem) => {
 
 // 新窗口打开
 const onOpenNewWindow = (data: ArticleItem) => {
-  console.log(loginStore.userInfo, 'loginStore.userInfo');
-
+  const { userInfo, token } = loginStore;
   ipcRenderer.send(
     'new-win',
     `article/${data.id}?from=${route.name as string}`,
     data.id, // articleId
-    '', // prevId
-    JSON.stringify({ userInfo: loginStore.userInfo, token: loginStore.token }), // 用户信息
+    JSON.stringify({ userInfo, token }), // 用户信息
   );
   // 清除右键菜单选项
   commonStore.clearContentmenuInfo();

@@ -51,7 +51,7 @@
                 </i>
               </div>
               <el-button
-                v-if="loginStore?.userInfo.userId === i.userId || getStoreUserInfo()?.userId === i.userId"
+                v-if="loginStore?.userInfo.userId === i.userId || getStoreUserInfo()?.userInfo?.userId === i.userId"
                 type="primary"
                 link
                 class="deleteComment"
@@ -117,7 +117,7 @@
                     </i>
                   </div>
                   <el-button
-                    v-if="loginStore?.userInfo.userId === j.userId || getStoreUserInfo()?.userId === j.userId"
+                    v-if="loginStore?.userInfo.userId === j.userId || getStoreUserInfo()?.userInfo?.userId === j.userId"
                     type="primary"
                     link
                     class="deleteComment"

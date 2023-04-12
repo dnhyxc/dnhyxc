@@ -85,7 +85,7 @@ export const useAuthorStore = defineStore('author', {
           }),
         );
 
-        const userInfo = getStoreUserInfo();
+        const { userInfo } = getStoreUserInfo();
 
         const storeParams = {
           from: 'author',
@@ -121,7 +121,7 @@ export const useAuthorStore = defineStore('author', {
         'params',
         JSON.stringify({ accessUserId: loginStore.userInfo?.userId, selectKey: this.currentTabKey, from: 'author' }),
       );
-      const userInfo = getStoreUserInfo();
+      const { userInfo } = getStoreUserInfo();
 
       const storeParams = {
         from: 'author',

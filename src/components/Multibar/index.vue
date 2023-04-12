@@ -117,7 +117,10 @@ const toComment = () => {
 // 收藏
 const onCollect = () => {
   // 获取存储在硬盘store中的登录信息
-  const userInfo = getStoreUserInfo();
+  const { userInfo } = getStoreUserInfo();
+
+  console.log(userInfo, 'userInfo');
+
   if (!loginStore?.userInfo?.userId && !userInfo?.userId) {
     return ElMessage({
       message: '请先登录后再操作哦！',

@@ -153,7 +153,13 @@ const onMouseDown = async (e: MouseEvent, data: ArticleItem | TimelineArticles) 
 // 新窗口打开
 const onOpenNewWindow = async (data: ArticleItem) => {
   await chackIsDelete(data as ArticleItem);
-  ipcRenderer.send('new-win', `article/${data.id}?from=${route.name as string}`, data.id);
+  const { userInfo, token } = loginStore;
+  ipcRenderer.send(
+    'new-win',
+    `article/${data.id}?from=${route.name as string}`,
+    data.id,
+    JSON.stringify({ userInfo, token }),
+  );
 };
 </script>
 

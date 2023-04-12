@@ -46,7 +46,7 @@ import { ipcRenderer } from 'electron';
 import { onMounted, inject } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { articleStore } from '@/store';
-import { formatGapTime, locGetItem, getParamListFromStore } from '@/utils';
+import { formatGapTime, locGetItem, getParamListFromStore, getStoreUserInfo } from '@/utils';
 import { AnotherParams } from '@/typings/common';
 
 const reload = inject<Function>('reload');
@@ -76,7 +76,14 @@ const toDetail = (id: string) => {
       reload && reload();
     }, 100);
   } else {
-    ipcRenderer.send('new-win', `article/${id}?from=${route.query.from}`, id, props.id);
+    const { userInfo, token } = getStoreUserInfo();
+    ipcRenderer.send(
+      'new-win',
+      `article/${id}?from=${route.query.from}`,
+      id,
+      JSON.stringify({ userInfo, token }), // 用户信息;
+      props.id,
+    );
   }
 };
 

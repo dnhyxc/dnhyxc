@@ -131,7 +131,7 @@ export const useMessageStore = defineStore('message', {
     setMsgCount(data: ArticleItem) {
       const { pathname } = window.location;
 
-      const userInfo = getStoreUserInfo();
+      const { userInfo } = getStoreUserInfo();
 
       if (
         (data?.fromUserId !== loginStore.userInfo?.userId && !pathname.includes('/article')) ||

@@ -464,7 +464,7 @@ export const useArticleStore = defineStore('article', {
       // 检验是否有userId，如果没有禁止发送请求
       if (!useCheckUserId()) return;
 
-      const userInfo = getStoreUserInfo();
+      const { userInfo } = getStoreUserInfo();
 
       const params = {
         userId: loginStore?.userInfo?.userId || userInfo?.userId,
@@ -543,7 +543,7 @@ export const useArticleStore = defineStore('article', {
     }) {
       // 检验是否有userId，如果没有禁止发送请求
       if (!useCheckUserId()) return;
-      const userInfo = getStoreUserInfo();
+      const { userInfo } = getStoreUserInfo();
       const params = data.isThreeTier
         ? {
             commentId: data.commentId!,
@@ -629,7 +629,10 @@ export const useArticleStore = defineStore('article', {
       if (!res.success) {
         ElMessage.error(res.message);
       } else {
-        const userInfo = getStoreUserInfo();
+        const { userInfo } = getStoreUserInfo();
+
+        console.log(userInfo, '>>>>>>>>getStoreUserInfo文章点赞');
+
         const { username, userId } = loginStore.userInfo;
         const { authorId } = this.articleDetail;
         const { pathname } = window.location;

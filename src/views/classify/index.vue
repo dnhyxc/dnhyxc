@@ -83,12 +83,6 @@ const dotRef = ref<any>(null);
 const scrollLeft = ref<string>('');
 
 onMounted(async () => {
-  // 初始化时，将scrollLeft设置为0px
-  isMounted.value = true;
-  // 获取分类信息
-  await classifyStore.getClassifys();
-  onFetchData();
-
   // 监听详情点赞状态，实时更改列表对应文章的点赞状态
   ipcRenderer.on('refresh', (_, id, pageType, isLike = true) => {
     // 需要判断是否是属于当前活动页面，并且只是点击点赞而不是收藏或评论防止重复触发
@@ -96,6 +90,11 @@ onMounted(async () => {
       reload && reload();
     }
   });
+  // 初始化时，将scrollLeft设置为0px
+  isMounted.value = true;
+  // 获取分类信息
+  await classifyStore.getClassifys();
+  onFetchData();
 });
 
 onUnmounted(() => {

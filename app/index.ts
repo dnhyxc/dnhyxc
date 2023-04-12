@@ -72,9 +72,6 @@ const createWindow = () => {
   // 只有显式调用quit才退出系统，区分MAC系统程序坞退出和点击X关闭退出
   app.on('before-quit', () => {
     const store = new Store();
-    // 退出时，清除用户信息
-    store.delete('token');
-    store.delete('userInfo');
     // 退出时，清除保存的上下页搜索条件
     store.delete('paramList');
     // 清空用户信息
@@ -229,19 +226,14 @@ const createChildWin = (pathname, id) => {
     newWinMin(globalChildWins['independentWindow-' + winId]),
   );
 
-  // 监听页面是否刷新，页面刷新时，取消窗口置顶
-  globalChildWins['independentWindow-' + winId]?.webContents?.addListener('did-start-loading', () => {
-    globalChildWins['independentWindow-' + winId]?.setAlwaysOnTop(false);
-  });
-
   // 监听窗口是否获取焦点，如果获取焦点则让获取焦点的子窗口触发立即重新连接ws的消息
   // globalChildWins['independentWindow-' + winId]?.on('focus', (event) => {
   //   event.sender.send('connect-ws', id);
   // });
 };
 
-// 监听主窗口推送新建窗口的消息
-ipcMain.on('new-win', (event, pathname, id, prevId, info) => {
+// 监听主窗口推送新建窗口的消息，pathname：路由路径、id：文章id、info：用户信息、prevId：详情点击上下篇时传入的上一篇的文章id
+ipcMain.on('new-win', (event, pathname, id, info, prevId) => {
   const childWinKeys = globalChildWins.newWins.keys();
   const keys = Array.from(childWinKeys);
   // 如果子窗口超过3个，则删除最早创建的那个子窗口
@@ -272,14 +264,18 @@ ipcMain.on('new-win', (event, pathname, id, prevId, info) => {
       .whenReady()
       .then(() => createChildWin(pathname, id))
       .then(() => {
-        console.log(info, 'info>>>>info', id);
         userInfo = info;
+        // 监听页面是否刷新，页面刷新时，取消窗口置顶
+        const winId = globalChildWins.newWins.get(id);
+        globalChildWins['independentWindow-' + winId]?.webContents?.addListener('did-start-loading', () => {
+          globalChildWins['independentWindow-' + winId]?.setAlwaysOnTop(false);
+        });
       });
   }
 });
 
 // 监听子窗口获取用户信息
-ipcMain.on('userInfo', (event, id) => {
+ipcMain.handle('userInfo', (event, id) => {
   const winId = globalChildWins.newWins.get(id);
   globalChildWins['independentWindow-' + winId]?.webContents.send('userInfo', userInfo);
 });
@@ -338,7 +334,7 @@ ipcMain.on('refresh', (event, id, pageType, isLike) => {
   }
 });
 
-// 监听子窗口点赞，刷新主窗口文章列表
+// 监听子窗口点赞，刷新主窗口文章列表，info：用户信息
 ipcMain.on('restore', (event, info) => {
   globalChildWins.newWins.forEach((value, key) => {
     if (info) {

@@ -147,7 +147,7 @@ export const useCollectStore = defineStore('collect', {
           this.removeCollectArticle(articleId, this.collectInfo.id);
         }
 
-        const userInfo = getStoreUserInfo();
+        const { userInfo } = getStoreUserInfo();
         // 收藏别人文章成功之后推送消息
         const { username, userId } = loginStore.userInfo;
 
@@ -205,7 +205,7 @@ export const useCollectStore = defineStore('collect', {
         }
         this.collectStatus = false;
 
-        const userInfo = getStoreUserInfo();
+        const { userInfo } = getStoreUserInfo();
 
         const { username, userId } = loginStore.userInfo;
 
@@ -274,7 +274,7 @@ export const useCollectStore = defineStore('collect', {
           }),
         );
 
-        const userInfo = getStoreUserInfo();
+        const { userInfo } = getStoreUserInfo();
 
         const storeParams = {
           from: 'collect',

@@ -1,11 +1,8 @@
 import fetch from 'isomorphic-fetch';
-import Store from 'electron-store';
 import { ElMessage } from 'element-plus';
 import { stringify } from 'query-string';
 import { addGatewayPattern } from './urlTool';
 import { ssnSetItem, locGetItem } from './storage';
-
-const store = new Store();
 
 export interface ICheckStatusProps {
   response: Response;
@@ -93,9 +90,7 @@ export default function request(_url: string, options?: any): FetchResult {
       newOptions.headers = {
         Accept: 'application/json',
         'Content-Type': 'application/json; charset=utf-8',
-        Authorization: `Bearer ${
-          locGetItem('token') || (store.get('token') && JSON.parse(store.get('token')! as string))
-        }`,
+        Authorization: `Bearer ${locGetItem('token')}`,
         ...newOptions.headers,
       };
       newOptions.body = JSON.stringify(newOptions.body);
@@ -103,9 +98,7 @@ export default function request(_url: string, options?: any): FetchResult {
       // NewOptions.body is FormData
       newOptions.headers = {
         Accept: 'application/json',
-        Authorization: `Bearer ${
-          locGetItem('token') || (store.get('token') && JSON.parse(store.get('token')! as string))
-        }`,
+        Authorization: `Bearer ${locGetItem('token')}`,
         ...newOptions.headers,
       };
     }

@@ -65,7 +65,7 @@ export const useTagStore = defineStore('tag', {
           }),
         );
 
-        const userInfo = getStoreUserInfo();
+        const { userInfo } = getStoreUserInfo();
 
         const storeParams = {
           from: 'tagList',

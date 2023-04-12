@@ -87,13 +87,13 @@
 
 <script setup lang="ts">
 import { ipcRenderer } from 'electron';
-import { onMounted, onUnmounted, nextTick, ref, inject } from 'vue';
+import { onMounted, onUnmounted, nextTick, ref, inject, watchEffect } from 'vue';
 import { useRoute } from 'vue-router';
 import { useScroller } from '@/hooks';
 import { articleStore, commonStore } from '@/store';
-import { scrollTo, checkOS, locSetItem, locRemoveItem } from '@/utils';
+import { scrollTo, checkOS, locSetItem, locRemoveItem, getStoreUserInfo } from '@/utils';
 import { ACTION_SVGS } from '@/constant';
-// import { createWebSocket, ws } from '@/socket';
+import { createWebSocket } from '@/socket';
 import PageHeader from '@/components/PreviewHeader/index.vue';
 import Preview from '@/components/Preview/index.vue';
 import Multibar from '@/components/Multibar/index.vue';
@@ -124,19 +124,34 @@ const timerRef = ref<ReturnType<typeof setTimeout> | null>();
 const { scrollRef, scrollTop } = useScroller();
 
 onMounted(async () => {
-  // 渲染进程监听窗口是否最大化
-  ipcRenderer.on('newWin-max', (_, status) => {
-    toggle.value = status;
+  // 登录或者退出时刷新页面
+  ipcRenderer.on('restore', (_, data, id) => {
+    const info = data && JSON.parse(data);
+    if (info.token) {
+      locSetItem('userInfo', JSON.stringify(info.userInfo));
+      locSetItem('token', info.token);
+    } else {
+      locRemoveItem('userInfo');
+      locRemoveItem('token');
+    }
+    // 刷新页面
+    reload && reload();
   });
 
   nextTick(() => {
     commonStore.detailScrollRef = scrollRef.value;
   });
+
   await articleStore.getArticleDetail(route.params.id as string);
   // 在详情获取成功后，如果路由路径中携带了scrollTo参数，则说明是从列表中点击评论进来的，需要跳转到评论
   if (route.query?.scrollTo) {
     onScrollTo(articleInfoRef.value?.offsetHeight);
   }
+
+  // 渲染进程监听窗口是否最大化
+  ipcRenderer.on('newWin-max', (_, status) => {
+    toggle.value = status;
+  });
 
   // 监听主进程发布的刷新页面的消息
   ipcRenderer.on('refresh', (_, id, pageType) => {
@@ -146,34 +161,7 @@ onMounted(async () => {
   });
 
   // 登录或者退出时刷新页面
-  ipcRenderer.on('restore', (_, data, id) => {
-    const info = data && JSON.parse(data);
-    console.log(info, 'info>>>>info');
-    if (info.token) {
-      locSetItem('userInfo', JSON.stringify(info.userInfo));
-      locSetItem('token', info.token);
-    } else {
-      locRemoveItem('userInfo');
-      locRemoveItem('token');
-    }
-
-    reload && reload();
-
-    // const storeUserInfo = getStoreUserInfo();
-    // if (id === route.params.id && storeUserInfo?.userId) {
-    //   router.go(0);
-    // }
-
-    // if (storeUserInfo?.userId && id === route.params.id) {
-    //   console.log(ws, 'ws>>>middle');
-    //   createWebSocket();
-    // }
-
-    // console.log(ws, 'ws>>>aftre');
-  });
-
-  // 登录或者退出时刷新页面
-  ipcRenderer.send('userInfo', route.params.id);
+  ipcRenderer.invoke('userInfo', route.params.id);
 
   // 接受主进程传送的用户信息
   ipcRenderer.once('userInfo', (_, data) => {
@@ -181,10 +169,15 @@ onMounted(async () => {
     if (info.token) {
       locSetItem('userInfo', JSON.stringify(info.userInfo));
       locSetItem('token', info.token);
-      console.log(info, 'info');
-    } else {
-      // locRemoveItem('userInfo');
-      // locRemoveItem('token');
+      // 链接websocket
+      createWebSocket();
+    }
+  });
+
+  watchEffect(() => {
+    const { userInfo } = getStoreUserInfo();
+    if (userInfo?.userId) {
+      createWebSocket();
     }
   });
 });
