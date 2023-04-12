@@ -29,6 +29,8 @@ export const DELETE_FRAME = {
 
 // 创建websocket
 export function createWebSocket() {
+  console.log('创建websocket');
+
   const storeUserInfo = getStoreUserInfo();
 
   const userInfo = (locGetItem('userInfo') && JSON.parse(locGetItem('userInfo')!)) || storeUserInfo || {};
@@ -73,6 +75,7 @@ function closeSocket() {
   if (ws) {
     ws.onclose = function () {};
     ws.close();
+    ws = null;
   }
 }
 

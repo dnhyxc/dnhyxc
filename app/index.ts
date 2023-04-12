@@ -4,14 +4,10 @@ import Store from 'electron-store';
 import { registerShortcut, unRegisterShortcut } from './shortcut';
 import { createContextMenu, getIconPath } from './tray';
 import { DOMAIN_URL } from './constant';
+import { globalChildWins } from './global';
 
 let win: BrowserWindow | null = null;
 let newWin: BrowserWindow | null = null;
-let newWins: {
-  id: string;
-  win: BrowserWindow | null;
-}[] = [];
-
 let tray: Tray | null = null;
 
 // 控制是否退出
@@ -116,12 +112,13 @@ ipcMain.on('window-max', () => {
 ipcMain.on('window-close', () => {
   win?.hide();
   // 当主窗口关闭时，关闭所有的子窗口
-  if (newWins?.length) {
-    newWins.forEach((i) => {
-      i?.win?.close();
-    });
-    newWins = [];
-  }
+  globalChildWins.newWins.forEach((value, key) => {
+    globalChildWins['independentWindow-' + value].close('restore');
+    globalChildWins['independentWindow-' + value] = null;
+    delete globalChildWins['independentWindow-' + value];
+  });
+  // 所有子窗口关闭之后，删除存储的全部 wins id
+  globalChildWins.newWins.clear();
 });
 
 // 退出程序
@@ -174,15 +171,9 @@ const newWinMin = (win) => {
   win?.webContents.send('newWin-max', false);
 };
 
-// 监听渲染进程请求获取electron的用户目录
-ipcMain.on('new-win', (event, pathname, id, prevId) => {
-  // 查询当前id窗口是否存在，如果存在则不重新创建
-  const findWin = newWins.find((i) => i.id === id);
-  if (findWin) {
-    findWin?.win?.focus(); // 存在则直接聚焦，不重新创建
-    return;
-  }
-
+// 创建子窗口的方法
+const createChildWin = (pathname, id) => {
+  // 判断当前窗口是否已经存在， 存在的话 直接唤起
   newWin = new BrowserWindow({
     width: 1000,
     height: 690,
@@ -198,100 +189,131 @@ ipcMain.on('new-win', (event, pathname, id, prevId) => {
     icon: path.join(__dirname, getIconPath({ isDev, isMac })),
   });
 
-  // 如果传入了上一篇文章的id、则说明是点击详情上下页切换的id，则需要关闭上一个文章的窗口
-  if (prevId) {
-    const findIndex = newWins.findIndex((i) => i.id === prevId);
-    newWins[findIndex]?.win?.close();
-    newWins.splice(findIndex, 1);
-  }
-
   // 存储每个newWin
-  newWins.push({
-    id,
-    win: newWin,
-  });
+  globalChildWins.newWins.set(id, newWin?.webContents.id);
+  globalChildWins['independentWindow-' + newWin.webContents.id] = newWin;
 
   if (!isDev) {
-    newWin?.loadURL(`${DOMAIN_URL}/${pathname}`);
+    newWin.loadURL(`${DOMAIN_URL}/${pathname}`);
   } else {
-    newWin?.webContents.openDevTools();
-    newWin?.loadURL(`${process.env.VITE_DEV_SERVER_URL!}${pathname}`);
+    newWin.webContents.openDevTools();
+    newWin.loadURL(`${process.env.VITE_DEV_SERVER_URL!}${pathname}`);
   }
 
-  newWins.forEach((i, index) => {
-    // 关闭按钮处理 - Mac是点击最小化
-    i?.win?.on('closed', () => {
-      i.win = null;
-    });
+  const winId = globalChildWins.newWins.get(id);
 
-    i?.win?.on('close', (event) => {
-      i.win = null;
-    });
+  globalChildWins['independentWindow-' + winId]?.on('closed', () => {
+    globalChildWins.newWins.delete(id);
+    globalChildWins['independentWindow-' + winId] = null;
+    delete globalChildWins['independentWindow-' + winId];
+  });
 
-    // 监听窗口最大化事件
-    i?.win?.on('maximize', () => newWinMax(i.win));
+  globalChildWins['independentWindow-' + winId]?.on('close', (event) => {
+    globalChildWins.newWins.delete(id);
+    globalChildWins['independentWindow-' + winId] = null;
+    delete globalChildWins['independentWindow-' + winId];
+  });
 
-    // 监听窗口最小化事件
-    i?.win?.on('unmaximize', () => newWinMin(i.win));
+  // 监听窗口最大化事件
+  globalChildWins['independentWindow-' + winId]?.on('maximize', () =>
+    newWinMax(globalChildWins['independentWindow-' + winId]),
+  );
 
-    // 监听页面是否刷新，页面刷新时，取消窗口置顶
-    i?.win?.webContents?.addListener('did-start-loading', () => {
-      i?.win?.setAlwaysOnTop(false);
-    });
+  // 监听窗口最小化事件
+  globalChildWins['independentWindow-' + winId]?.on('unmaximize', () =>
+    newWinMin(globalChildWins['independentWindow-' + winId]),
+  );
+
+  // 监听页面是否刷新，页面刷新时，取消窗口置顶
+  globalChildWins['independentWindow-' + winId]?.webContents?.addListener('did-start-loading', () => {
+    globalChildWins['independentWindow-' + winId]?.setAlwaysOnTop(false);
   });
 
   // 监听窗口是否获取焦点，如果获取焦点则让获取焦点的子窗口触发立即重新连接ws的消息
-  newWin.on('focus', (event) => {
-    event.sender.send('connect-ws');
-  });
+  // globalChildWins['independentWindow-' + winId]?.on('focus', (event) => {
+  //   event.sender.send('connect-ws', id);
+  // });
+};
+
+// 监听主窗口推送新建窗口的消息
+ipcMain.on('new-win', (event, pathname, id, prevId) => {
+  const childWinKeys = globalChildWins.newWins.keys();
+  const keys = Array.from(childWinKeys);
+  // 如果子窗口超过3个，则删除最早创建的那个子窗口
+  if (keys?.length > 2) {
+    const winId = globalChildWins.newWins.get(keys?.[0]);
+    globalChildWins['independentWindow-' + winId]?.close();
+    globalChildWins['independentWindow-' + winId] = null;
+    delete globalChildWins['independentWindow-' + winId];
+    globalChildWins.newWins.delete(keys?.[0]);
+  }
+
+  // 如果传入了上一篇文章的id、则说明是点击详情中上下页切换的id，则需要关闭上一个文章的窗口
+  if (prevId) {
+    const winId = globalChildWins.newWins.get(prevId);
+    if (winId) {
+      globalChildWins['independentWindow-' + winId]?.close();
+      globalChildWins['independentWindow-' + winId] = null;
+      delete globalChildWins['independentWindow-' + winId];
+    }
+  }
+  
+  // 判断窗口是否存在，如果存在则直接显示，不再重新创建
+  if (globalChildWins.newWins.has(id)) {
+    const winId = globalChildWins.newWins.get(id);
+    globalChildWins['independentWindow-' + winId]?.show();
+  } else {
+    createChildWin(pathname, id);
+  }
 });
 
 // 监听子窗口关闭
 ipcMain.on('new-win-out', (event, id) => {
-  const index = newWins.findIndex((i) => i.id === id);
-  newWins[index]?.win?.close();
-  newWins.splice(index, 1);
+  const winId = globalChildWins.newWins.get(id);
+  globalChildWins['independentWindow-' + winId]?.close();
+  globalChildWins.newWins.delete(id);
+  globalChildWins['independentWindow-' + winId] = null;
+  delete globalChildWins['independentWindow-' + winId];
 });
 
 // 监听子窗口最大/最小化
 ipcMain.on('new-win-max', (event, id) => {
-  newWins.forEach((i) => {
-    if (i.id === id) {
-      if (i?.win?.isMaximized()) {
-        i?.win?.restore();
-      } else {
-        i?.win?.maximize();
-      }
-    }
-  });
+  const winId = globalChildWins.newWins.get(id);
+  const findWin = globalChildWins['independentWindow-' + winId];
+  if (findWin?.isMaximized()) {
+    findWin?.restore();
+  } else {
+    findWin?.maximize();
+  }
 });
 
 // 监听子窗口最小化
 ipcMain.on('new-win-min', (e, id) => {
-  newWins.forEach((i) => {
-    if (i.id === id) {
-      i?.win?.minimize();
-    }
-  });
+  const winId = globalChildWins.newWins.get(id);
+  const findWin = globalChildWins['independentWindow-' + winId];
+  findWin?.minimize();
 });
 
 // 窗口置顶
 ipcMain.on('new-win-show', (_, status, id) => {
-  const index = newWins.findIndex((i) => i.id === id);
-  newWins[index]?.win?.setAlwaysOnTop(status);
+  const winId = globalChildWins.newWins.get(id);
+  const findWin = globalChildWins['independentWindow-' + winId];
+  findWin?.setAlwaysOnTop(status);
 });
 
 // 监听子窗口点赞，刷新主窗口文章列表
 ipcMain.on('refresh', (event, id, pageType, isLike) => {
+  const winId = globalChildWins.newWins.get(id);
+  const findWin = globalChildWins['independentWindow-' + winId];
   switch (pageType) {
     case 'article':
       win?.webContents.send('refresh', id, pageType, isLike);
       break;
     case 'detail':
-      newWins.find((i) => i.id === id)?.win?.webContents.send('refresh', id, pageType, isLike);
+      findWin?.webContents.send('refresh', id, pageType, isLike);
       break;
     case 'list':
-      newWins.find((i) => i.id === id)?.win?.webContents.send('refresh', id, pageType, isLike);
+      findWin?.webContents.send('refresh', id, pageType, isLike);
       break;
 
     default:
@@ -301,8 +323,8 @@ ipcMain.on('refresh', (event, id, pageType, isLike) => {
 
 // 监听子窗口点赞，刷新主窗口文章列表
 ipcMain.on('restore', () => {
-  newWins.forEach((i, index) => {
-    i.win?.webContents.send('restore');
+  globalChildWins.newWins.forEach((value, key) => {
+    globalChildWins['independentWindow-' + value].send('restore', key);
   });
 });
 

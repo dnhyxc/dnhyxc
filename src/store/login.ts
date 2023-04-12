@@ -87,9 +87,9 @@ export const useLoginStore = defineStore('login', {
           store.set('token', JSON.stringify(token));
           locSetItem('userInfo', JSON.stringify(userInfo));
           store.set('userInfo', JSON.stringify(userInfo));
-          ipcRenderers.restore();
           // 登陆成功之后创建websocket
           createWebSocket();
+          ipcRenderers.restore();
           // 登陆成功后返回到上一页面
           router?.push(commonStore.backPath);
         } else {

@@ -26,6 +26,7 @@
             </template>
             <template #content>
               <div class="art-info">
+                <div class="pushDate">{{ data?.pushDate ? formatDate(data?.pushDate!) : '-' }}</div>
                 <div class="desc">
                   <span class="username" @click.stop="toPersonal(data?.fromUserId!)">{{ data?.fromUsername }}</span>
                   <span class="action-type">{{ MESSAGE_ACTIONS[data?.action!] }}</span>
@@ -47,7 +48,7 @@ import { ref, computed, onMounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { useMessageStore } from '@/store/message';
 import { useScroller } from '@/hooks';
-import { scrollTo } from '@/utils';
+import { scrollTo, formatDate } from '@/utils';
 import eventBus from '@/utils/eventBus';
 import { MESSAGE_ACTIONS } from '@/constant';
 
@@ -180,6 +181,11 @@ const onScrollTo = (to?: number) => {
         .art-info {
           flex: 1;
           margin-right: 0;
+
+          .pushDate {
+            font-size: 14px;
+            margin-bottom: 5px;
+          }
 
           .desc {
             .ellipsisMore(1);

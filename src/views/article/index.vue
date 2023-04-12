@@ -88,12 +88,12 @@
 <script setup lang="ts">
 import { ipcRenderer } from 'electron';
 import { onMounted, onUnmounted, nextTick, ref, inject } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { useScroller } from '@/hooks';
 import { articleStore, commonStore } from '@/store';
-import { scrollTo, checkOS } from '@/utils';
+import { scrollTo, checkOS, getStoreUserInfo } from '@/utils';
 import { ACTION_SVGS } from '@/constant';
-import { createWebSocket } from '@/socket';
+// import { createWebSocket, ws } from '@/socket';
 import PageHeader from '@/components/PreviewHeader/index.vue';
 import Preview from '@/components/Preview/index.vue';
 import Multibar from '@/components/Multibar/index.vue';
@@ -106,6 +106,7 @@ import Loading from '@/components/Loading/index.vue';
 const reload = inject<Function>('reload');
 
 const route = useRoute();
+const router = useRouter();
 
 const articleInfoRef = ref<HTMLDivElement | null>(null);
 
@@ -137,11 +138,6 @@ onMounted(async () => {
     onScrollTo(articleInfoRef.value?.offsetHeight);
   }
 
-  // 监听主进程发布的重连ws的推送
-  ipcRenderer.on('connect-ws', () => {
-    createWebSocket();
-  });
-
   // 监听主进程发布的刷新页面的消息
   ipcRenderer.on('refresh', (_, id, pageType) => {
     if (pageType !== 'article' && id === route.params.id) {
@@ -150,8 +146,18 @@ onMounted(async () => {
   });
 
   // 登录或者退出时刷新页面
-  ipcRenderer.on('restore', () => {
-    reload && reload();
+  ipcRenderer.on('restore', (_, id) => {
+    const storeUserInfo = getStoreUserInfo();
+    if (id === route.params.id && storeUserInfo?.userId) {
+      router.go(0);
+    }
+
+    // if (storeUserInfo?.userId && id === route.params.id) {
+    //   console.log(ws, 'ws>>>middle');
+    //   createWebSocket();
+    // }
+
+    // console.log(ws, 'ws>>>aftre');
   });
 });
 
