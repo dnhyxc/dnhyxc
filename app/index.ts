@@ -29,10 +29,10 @@ const createWindow = () => {
   win = new BrowserWindow({
     width: 1080,
     height: 750,
-    // minWidth: 1080,
-    // minHeight: 750,
-    minWidth: 800,
-    minHeight: 600,
+    minWidth: 1080,
+    minHeight: 750,
+    // minWidth: 800,
+    // minHeight: 600,
     titleBarStyle: 'hidden',
     webPreferences: {
       contextIsolation: false,

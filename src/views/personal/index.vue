@@ -10,7 +10,7 @@
       <div class="header">
         <div class="left">
           <div class="head-wrap">
-            <img :src="HEAD_IMG" alt="头像" class="head-img" />
+            <Image :url="personalStore.userInfo?.headUrl || HEAD_IMG" :transition-img="HEAD_IMG" class="head-img" />
           </div>
         </div>
         <div class="right">

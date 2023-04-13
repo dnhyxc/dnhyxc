@@ -5,7 +5,7 @@ import CLOSESVG from '@/assets/svg/close.svg';
 import RESTORESVG from '@/assets/svg/restore.svg';
 import PAGESVG from '@/assets/svg/page_icon.svg';
 import EMPTY from '@/assets/svg/empty.svg';
-import HEAD_IMG from '@/assets/images/3.jpg';
+import HEAD_IMG from '@/assets/images/404.webp';
 import IMG1 from '@/assets/images/1.jpg';
 import * as API from '@/server/api';
 

@@ -77,14 +77,14 @@ interface IProps {
   data: TimelineArticles;
   likeListArticle?: (id: string, data?: ArticleItem) => void;
   deleteArticle?: (id: string) => void;
-  toEdit?: (id: string) => void;
+  toEdit?: (id: string) => void | null;
   isCollect?: boolean;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
   likeListArticle: () => {},
   deleteArticle: () => {},
-  toEdit: () => {},
+  toEdit: undefined,
   isCollect: false,
 });
 
@@ -125,7 +125,9 @@ const onLike = async (data: ArticleItem | TimelineArticles) => {
 
 // 前往详情/编辑
 const toDetail = async (data: ArticleItem | TimelineArticles) => {
+  // props.isCollect 有值，说明是从我的收藏点击的，需要去收藏页详情
   if (props.isCollect) return;
+  // 如果有props.toEdit，则说明是草稿箱点击的，需要去创建页进行编辑
   if (props.toEdit) {
     props.toEdit(data.id!);
     return;
