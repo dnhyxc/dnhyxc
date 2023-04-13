@@ -14,6 +14,7 @@
             v-if="articleStore.articleDetail.content"
             :mackdown="articleStore.articleDetail.content"
             class="preview-content"
+            :copy-code-success="onCopyCodeSuccess"
           />
         </div>
         <Comment
@@ -47,6 +48,7 @@
 import { ipcRenderer } from 'electron';
 import { onMounted, onUnmounted, nextTick, ref, inject } from 'vue';
 import { useRoute } from 'vue-router';
+import { ElMessage } from 'element-plus';
 import { useScroller } from '@/hooks';
 import { scrollTo } from '@/utils';
 import { articleStore, commonStore } from '@/store';
@@ -100,6 +102,15 @@ onUnmounted(() => {
 // 更改输入框焦点状态
 const updateFocus = (value: boolean) => {
   focus.value = value;
+};
+
+// 复制成功回调
+const onCopyCodeSuccess = (value?: string) => {
+  ElMessage({
+    message: '复制成功',
+    type: 'success',
+    offset: 80,
+  });
 };
 
 // 置顶

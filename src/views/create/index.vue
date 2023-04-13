@@ -12,6 +12,7 @@
       :on-show-draft="showDraft"
       :article-id="(route?.query?.id as string)"
       :on-save-draft="onSaveDraft"
+      :copy-code-success="onCopyCodeSuccess"
     />
     <CreateDrawer v-model="visible" :article-id="(route?.query?.id as string)" />
     <DraftModal v-model:draft-visible="draftVisible" />
@@ -21,6 +22,7 @@
 <script setup lang="ts">
 import { ref, onActivated, onDeactivated, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import { ElMessage } from 'element-plus';
 import Editor from '@/components/Editor/index.vue';
 import CreateDrawer from './Create/index.vue';
 import DraftModal from './Draft/index.vue';
@@ -75,6 +77,15 @@ const onClear = () => {
 // 弹窗显示、隐藏
 const showDraft = () => {
   draftVisible.value = true;
+};
+
+// 复制成功回调
+const onCopyCodeSuccess = (value?: string) => {
+  ElMessage({
+    message: '复制成功',
+    type: 'success',
+    offset: 80,
+  });
 };
 </script>
 

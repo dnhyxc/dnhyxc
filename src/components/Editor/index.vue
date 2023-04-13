@@ -10,6 +10,7 @@
       left-toolbar="undo redo | h bold italic | quote code | strikethrough hr | emoji link image | ul ol table | clear | draft | save | create"
       :toolbar="toolbar"
       @upload-image="onUploadImage"
+      @copy-code-success="onCopyCodeSuccess"
     />
   </div>
 </template>
@@ -65,6 +66,7 @@ interface IProps {
   onClear?: () => void;
   onShowDraft?: () => void;
   onSaveDraft?: () => void;
+  copyCodeSuccess?: (value?: string) => void;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
@@ -74,6 +76,7 @@ const props = withDefaults(defineProps<IProps>(), {
   onClear: () => {},
   onShowDraft: () => {},
   onSaveDraft: () => {},
+  copyCodeSuccess: () => {},
 });
 
 // 自定义工具栏配置
@@ -134,6 +137,11 @@ const onUploadImage = async (event: Event, insertImage: Function, files: File) =
     width: '100%',
     height: 'auto',
   });
+};
+
+// 复制成功回调
+const onCopyCodeSuccess = (value: string) => {
+  props.copyCodeSuccess?.(value);
 };
 </script>
 

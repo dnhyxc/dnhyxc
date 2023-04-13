@@ -6,7 +6,13 @@
 -->
 <template>
   <div class="preview-wrap">
-    <v-md-preview id="__MD_PREVIEW__" ref="previewRef" :text="mackdown" default-show-toc></v-md-preview>
+    <v-md-preview
+      id="__MD_PREVIEW__"
+      ref="previewRef"
+      :text="mackdown"
+      default-show-toc
+      @copy-code-success="onCopyCodeSuccess"
+    ></v-md-preview>
   </div>
 </template>
 
@@ -16,10 +22,12 @@ import { commonStore } from '@/store';
 
 interface IProps {
   mackdown: string;
+  copyCodeSuccess?: (value?: string) => void;
 }
 
-withDefaults(defineProps<IProps>(), {
+const props = withDefaults(defineProps<IProps>(), {
   mackdown: '',
+  copyCodeSuccess: () => {},
 });
 
 const previewRef = ref<any>(null);
@@ -48,6 +56,11 @@ onUnmounted(() => {
   previewRef.value = null;
   commonStore.tocTitles = [];
 });
+
+// 复制成功回调
+const onCopyCodeSuccess = (value: string) => {
+  props.copyCodeSuccess?.(value);
+};
 </script>
 
 <style scoped lang="less">
