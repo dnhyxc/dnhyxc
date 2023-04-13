@@ -234,17 +234,6 @@ const createChildWin = (pathname, id) => {
 
 // 监听主窗口推送新建窗口的消息，pathname：路由路径、id：文章id、info：用户信息、prevId：详情点击上下篇时传入的上一篇的文章id
 ipcMain.on('new-win', (event, pathname, id, info, prevId) => {
-  const childWinKeys = globalChildWins.newWins.keys();
-  const keys = Array.from(childWinKeys);
-  // 如果子窗口超过3个，则删除最早创建的那个子窗口
-  if (keys?.length > 2) {
-    const winId = globalChildWins.newWins.get(keys?.[0]);
-    globalChildWins['independentWindow-' + winId]?.close();
-    globalChildWins['independentWindow-' + winId] = null;
-    delete globalChildWins['independentWindow-' + winId];
-    globalChildWins.newWins.delete(keys?.[0]);
-  }
-
   // 如果传入了上一篇文章的id、则说明是点击详情中上下页切换的id，则需要关闭上一个文章的窗口
   if (prevId) {
     const winId = globalChildWins.newWins.get(prevId);
@@ -260,6 +249,18 @@ ipcMain.on('new-win', (event, pathname, id, info, prevId) => {
     const winId = globalChildWins.newWins.get(id);
     globalChildWins['independentWindow-' + winId]?.show();
   } else {
+    // 创建之前先判断是否超过三个子窗口，如果超过三个，则删除最早创建的那个子窗口
+    const childWinKeys = globalChildWins.newWins.keys();
+    const keys = Array.from(childWinKeys);
+    // 如果子窗口超过3个，则删除最早创建的那个子窗口
+    if (keys?.length > 2) {
+      const winId = globalChildWins.newWins.get(keys?.[0]);
+      globalChildWins['independentWindow-' + winId]?.close();
+      globalChildWins['independentWindow-' + winId] = null;
+      delete globalChildWins['independentWindow-' + winId];
+      globalChildWins.newWins.delete(keys?.[0]);
+    }
+    // 如果没有超过三个子窗口，则创建子窗口
     app
       .whenReady()
       .then(() => createChildWin(pathname, id))
