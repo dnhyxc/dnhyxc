@@ -30,13 +30,16 @@
           />
         </div>
         <div v-if="showIcon || !showAvatar" id="EMOJI_WRAP" class="emojiWrap">
-          <div id="ICONFONT" class="iconfontWrap">
-            <span id="BIAOQING_XUE" class="iconfont">
-              <i id="BIAOQING_XUE" class="font iconfont icon-smile">&nbsp;表情</i>
-            </span>
-            <span id="BIAOQING_XUE" class="iconfont">
-              <i id="CHARUTUPIAN" class="font iconfont icon-charutupian">&nbsp;图片</i>
-            </span>
+          <div id="EMOJI_LIST" class="emoji-list">
+            <div id="ICONFONT" class="iconfontWrap">
+              <span id="BIAOQING_XUE" class="iconfont">
+                <i id="BIAOQING_XUE" class="font iconfont icon-smile">&nbsp;表情</i>
+              </span>
+              <span id="BIAOQING_XUE" class="iconfont">
+                <i id="CHARUTUPIAN" class="font iconfont icon-charutupian">&nbsp;图片</i>
+              </span>
+            </div>
+            <Emoji v-model:showEmoji="showEmoji" class="emojis" />
           </div>
           <div id="ACTION">
             <el-button id="BTN" type="primary" :disabled="!keyword.trim()" @click.stop="submitComment">
@@ -78,6 +81,7 @@ const props = withDefaults(defineProps<IProps>(), {
 const inputRef = ref<HTMLDivElement | null>(null);
 const keyword = ref<string>('');
 const showIcon = ref<boolean>(false);
+const showEmoji = ref<boolean>(true);
 
 onMounted(() => {
   nextTick(() => {
@@ -204,6 +208,16 @@ const submitComment = async () => {
       position: relative;
       margin-top: 10px;
       width: 100%;
+
+      .emoji-list {
+        display: flex;
+        justify-content: flex-start;
+        flex-direction: column;
+
+        .emojis {
+          margin-top: 20px;
+        }
+      }
 
       .iconfontWrap {
         display: flex;
