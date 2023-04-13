@@ -40,19 +40,27 @@
                   </div>
                   <div class="github">
                     github：
-                    <span class="link">{{ authorStore.userInfo?.github }}</span>
+                    <span class="link" @click.stop="onJump(authorStore.userInfo?.github!, 'github')">{{
+                      authorStore.userInfo?.github
+                    }}</span>
                   </div>
                   <div class="juejin">
                     掘金：
-                    <span class="link">{{ authorStore.userInfo?.juejin }}</span>
+                    <span class="link" @click.stop="onJump(authorStore.userInfo?.juejin!, '掘金')">{{
+                      authorStore.userInfo?.juejin
+                    }}</span>
                   </div>
                   <div class="zhihu">
                     知乎：
-                    <span class="link">{{ authorStore.userInfo?.zhihu }}</span>
+                    <span class="link" @click.stop="onJump(authorStore.userInfo?.zhihu!, '知乎')">{{
+                      authorStore.userInfo?.zhihu
+                    }}</span>
                   </div>
                   <div class="blog">
                     博客：
-                    <span class="link">{{ authorStore.userInfo?.blog }}</span>
+                    <span class="link" @click.stop="onJump(authorStore.userInfo?.blog!, '博客')">{{
+                      authorStore.userInfo?.blog
+                    }}</span>
                   </div>
                 </div>
                 <div class="view-more" @click="onShowMore">
@@ -99,13 +107,14 @@
 </template>
 
 <script setup lang="ts">
-import { ipcRenderer } from 'electron';
+import { ipcRenderer, shell } from 'electron';
 import { ref, onMounted, computed, inject } from 'vue';
 import { useRoute } from 'vue-router';
+import { ElMessage } from 'element-plus';
 import { HEAD_IMG, AUTHOR_TABS, IMG1 } from '@/constant';
 import { authorStore, articleStore } from '@/store';
 import { useDeleteArticle, useScroller } from '@/hooks';
-import { scrollTo } from '@/utils';
+import { scrollTo, checkUrl } from '@/utils';
 import LineCard from '@/components/LineCard/index.vue';
 import Timeline from '@/components/Timeline/index.vue';
 import Image from '@/components/Image/index.vue';
@@ -194,6 +203,20 @@ const deleteTimeLineArticle = (id: string) => {
 // 查看更多信息
 const onShowMore = () => {
   viewMore.value = !viewMore.value;
+};
+
+// 跳转到对应的网站
+const onJump = (url: string, name: string) => {
+  if (checkUrl(url)) {
+    // 使用浏览器打开链接
+    shell.openExternal(url);
+  } else {
+    ElMessage({
+      message: `${name} 链接无法使用`,
+      type: 'warning',
+      offset: 80,
+    });
+  }
 };
 
 // 置顶
@@ -322,6 +345,7 @@ const onScrollTo = (to?: number) => {
             .link {
               text-indent: 28px;
               margin-top: 5px;
+              cursor: pointer;
             }
 
             .desc-text {
