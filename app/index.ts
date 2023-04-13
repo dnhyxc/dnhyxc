@@ -281,13 +281,22 @@ ipcMain.handle('userInfo', (event, id) => {
   globalChildWins['independentWindow-' + winId]?.webContents.send('userInfo', userInfo);
 });
 
+// 监听文章下架消息，实时关闭窗口
+ipcMain.on('remove', (event, id) => {
+  const winId = globalChildWins.newWins.get(id);
+  globalChildWins['independentWindow-' + winId]?.close();
+  globalChildWins['independentWindow-' + winId] = null;
+  delete globalChildWins['independentWindow-' + winId];
+  globalChildWins.newWins.delete(id);
+});
+
 // 监听子窗口关闭
 ipcMain.on('new-win-out', (event, id) => {
   const winId = globalChildWins.newWins.get(id);
   globalChildWins['independentWindow-' + winId]?.close();
-  globalChildWins.newWins.delete(id);
   globalChildWins['independentWindow-' + winId] = null;
   delete globalChildWins['independentWindow-' + winId];
+  globalChildWins.newWins.delete(id);
 });
 
 // 监听子窗口最大/最小化

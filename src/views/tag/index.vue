@@ -116,7 +116,9 @@ const onCheckTag = (tag: string) => {
     .tag {
       position: relative;
       margin-right: 13px;
-      padding: 8px 0 8px 13px;
+      padding: 2px 0 2px 13px;
+      height: 35px;
+      line-height: 35px;
       cursor: pointer;
       color: @font-1;
       .ellipsisMore(1);

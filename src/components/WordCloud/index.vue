@@ -97,7 +97,7 @@ const drawChart = () => {
         // 词旋转步长
         rotationStep: 0,
         // 网格大小以像素为单位，用于标记画布的可用性，网格大小越大，词之间的间隙越大。
-        gridSize: 12,
+        gridSize: 8,
         // 把“云”的形状画出来。可以是任何表示为回调函数的极坐标方程，也可以是present的关键字。
         // 有圆形(默认)、心形(苹果或心形曲线，最著名的极坐标方程)、菱形(正方形的别名)、正三角形、
         // 三角形、(直三角形、五边形、星形的别名)。
@@ -113,7 +113,7 @@ const drawChart = () => {
         keepAspect: true,
         // 全局设置词的样式
         textStyle: {
-          // fontWeight: "bold",
+          // fontWeight: 'bold',
           // 配色函数制定配色机制： Math.round() 和 Math.random() 随机给词配色
           color() {
             return `rgb(${[

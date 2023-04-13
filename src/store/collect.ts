@@ -7,6 +7,7 @@ import { normalizeResult, Message, locSetItem, getStoreUserInfo, setParamsToStor
 import { useCheckUserId } from '@/hooks';
 import { PAGESIZE } from '@/constant';
 import { sendMessage } from '@/socket';
+import { ipcRenderer } from 'electron';
 
 interface IProps {
   loading: boolean | null;
@@ -317,6 +318,8 @@ export const useCollectStore = defineStore('collect', {
         }),
       );
       if (res.success) {
+        // 发送删除的文章的消息给主进程，通知主进程及时关闭对应子窗口
+        ipcRenderer.send('remove', articleId);
         this.collectInfo.articleIds = this.collectInfo?.articleIds?.filter((i) => i !== articleId);
         this.clearCollectList();
         // 重新获取收藏集中的文章

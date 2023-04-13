@@ -5,6 +5,7 @@ import { normalizeResult, locSetItem, Message } from '@/utils';
 import { useCheckUserId } from '@/hooks';
 import { TimelineResult } from '@/typings/common';
 import { loginStore } from '@/store';
+import { ipcRenderer } from 'electron';
 
 interface IProps {
   timelineList: TimelineResult[];
@@ -44,6 +45,8 @@ export const useTimelineStore = defineStore('timeline', {
       Message('', '确定删除该文章吗？').then(async () => {
         const res = normalizeResult<{ id: string }>(await Service.deleteArticle({ articleId, type: 'timeline' }));
         if (res.success) {
+          // 发送删除的文章的消息给主进程，通知主进程及时关闭对应子窗口
+          ipcRenderer.send('remove', articleId);
           const list = this.timelineList.map((i) => {
             if (i.articles.length) {
               const filterList = i.articles.filter((j) => j.id !== articleId);

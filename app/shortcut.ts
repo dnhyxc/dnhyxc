@@ -37,7 +37,7 @@ export const registerShortcut = ({ isDev, win, isMac, app }: IParams) => {
       win?.show();
       // 恢复图标在任务栏显示
       win?.setSkipTaskbar(false);
-      return
+      return;
     }
     win?.isVisible() ? win?.hide() : win?.show();
     win?.isVisible() ? win?.setSkipTaskbar(false) : win?.setSkipTaskbar(true);
