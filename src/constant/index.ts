@@ -9,6 +9,40 @@ import HEAD_IMG from '@/assets/images/404.webp';
 import IMG1 from '@/assets/images/1.jpg';
 import * as API from '@/server/api';
 
+// 表情列表
+export const EMOJI_TEXTS = [
+  '衰',
+  '鄙视',
+  '再见',
+  '捂嘴',
+  '皱眉',
+  '奋斗',
+  '白眼',
+  '可怜',
+  '皱眉',
+  '鼓掌',
+  '烦恼',
+  '吐舌',
+  '挖鼻',
+  '委屈',
+  '滑稽',
+  '啊这',
+  '生气',
+  '害羞',
+  '晕',
+  '好色',
+  '流泪',
+  '吐血',
+  '微笑',
+  '酷',
+  '坏笑',
+  '吓',
+  '大兵',
+  '哭笑',
+  '困',
+  '呲牙',
+];
+
 // 滚动加载每页加载数量
 export const PAGESIZE = 20;
 
