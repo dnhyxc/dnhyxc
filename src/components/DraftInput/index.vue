@@ -27,6 +27,7 @@
             class="textArea"
             @focus="onFocus"
             @change="onCommentChange"
+            @keyup.enter="onEnter"
           />
         </div>
         <div v-if="showIcon || !showAvatar" id="EMOJI_WRAP" class="emojiWrap">
@@ -145,6 +146,11 @@ const onFocus = () => {
 // 输入框onchange事件
 const onCommentChange = (word: string) => {
   keyword.value = word.trim();
+};
+
+// 回车事件
+const onEnter = () => {
+  keyword.value += '\n';
 };
 
 // 显示表情

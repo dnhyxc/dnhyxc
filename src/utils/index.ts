@@ -393,6 +393,12 @@ export const getImageColor = (img: HTMLImageElement) => {
   return arr;
 };
 
+// 处理输入的换行符
+export const replaceCommentContent = (content: string, imojiUrls: Object) => {
+  const context = content.replace(/\n/g, '<br/>');
+  return replaceEmojis(context, imojiUrls);
+};
+
 // 表情包转换
 export const replaceEmojis = (content: string, imojiUrls: Object) => {
   content = content.replace(/\[[^[^\]]+\]/g, (word) => {

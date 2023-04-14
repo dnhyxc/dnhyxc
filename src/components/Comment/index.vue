@@ -34,7 +34,7 @@
             <span class="name">{{ i.username }}</span>
             <span class="date">{{ formatGapTime(i?.date!) }}</span>
           </div>
-          <div class="desc" v-html="replaceEmojis(i.content!, IMOJI_URLS)" />
+          <div class="desc" v-html="replaceCommentContent(i.content!, IMOJI_URLS)" />
           <div class="action">
             <div class="actionContent">
               <div class="likeAndReplay">
@@ -97,8 +97,12 @@
                 </span>
                 <span class="date">{{ j.date && formatGapTime(j.date) }}</span>
               </div>
-              <div v-if="j.content" class="desc" v-html="replaceEmojis(j.content!, IMOJI_URLS)" />
-              <div v-if="j.formContent" class="formContent" v-html="replaceEmojis(j.formContent!, IMOJI_URLS)" />
+              <div v-if="j.content" class="desc" v-html="replaceCommentContent(j.content!, IMOJI_URLS)" />
+              <div
+                v-if="j.formContent"
+                class="formContent"
+                v-html="replaceCommentContent(j.formContent!, IMOJI_URLS)"
+              />
               <div id="ON_REPLAY" class="action">
                 <div class="actionContent">
                   <div class="likeAndReplay">
@@ -169,7 +173,7 @@ import { useRouter } from 'vue-router';
 import { CommentParams } from '@/typings/common';
 import { HEAD_IMG } from '@/constant';
 import { loginStore, articleStore } from '@/store';
-import { formatGapTime, getStoreUserInfo, replaceEmojis } from '@/utils';
+import { formatGapTime, getStoreUserInfo, replaceCommentContent } from '@/utils';
 import Image from '@/components/Image/index.vue';
 import DraftInput from '@/components/DraftInput/index.vue';
 import { ElMessage } from 'element-plus';

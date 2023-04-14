@@ -29,8 +29,6 @@ export const DELETE_FRAME = {
 
 // 创建websocket
 export function createWebSocket() {
-  console.log('创建websocket');
-
   const { userInfo: storeUserInfo } = getStoreUserInfo();
 
   const userInfo = (locGetItem('userInfo') && JSON.parse(locGetItem('userInfo')!)) || storeUserInfo || {};
@@ -146,7 +144,7 @@ function onMessage(event: any) {
         }
       }
     } else {
-      console.log('收到非格式化数据');
+      throw new Error('收到非格式化数据');
     }
   } catch (e) {
     console.log(e);
@@ -156,13 +154,9 @@ function onMessage(event: any) {
 }
 
 // 关闭连接
-function onClose(event: any) {
-  console.log(event);
-}
+function onClose(event: any) {}
 
 // 连接出错
-function onError(event: any) {
-  console.log(event);
-}
+function onError(event: any) {}
 
 createWebSocket();
