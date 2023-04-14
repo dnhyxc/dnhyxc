@@ -64,6 +64,7 @@
 import { ref, onMounted, nextTick, onUnmounted, watchEffect } from 'vue';
 import { loginStore, articleStore } from '@/store';
 import { HEAD_IMG } from '@/constant';
+import { insertContent } from '@/utils';
 import { CommentParams } from '@/typings/common';
 
 interface IProps {
@@ -154,13 +155,12 @@ const onShowEmoji = () => {
 // 获取上传成功后的文件url
 const getUploadUrl = (url: string) => {
   const { username } = loginStore?.userInfo;
-  console.log(url, 'getUploadUrl');
-  keyword.value += `<${username},${url}>`;
+  keyword.value = insertContent({ keyword: keyword.value, node: (inputRef?.value as any)?.textarea, username, url });
 };
 
 // 添加表情
 const addEmoji = (key: string) => {
-  keyword.value += key;
+  keyword.value = insertContent({ keyword: keyword.value, node: (inputRef?.value as any)?.textarea, emoji: key });
 };
 
 // 发布评论
@@ -173,6 +173,7 @@ const submitComment = async () => {
     articleId: props?.articleId || '',
     isThreeTier: props?.isThreeTier,
   });
+  showEmoji.value = false;
   props?.onReplay && props?.onReplay({}, true);
   keyword.value = '';
   showIcon.value = false;
@@ -260,6 +261,10 @@ const submitComment = async () => {
         align-items: center;
         cursor: pointer;
         font-size: 16px;
+
+        .icon-charutupian {
+          min-width: 55px;
+        }
       }
 
       #ACTION {

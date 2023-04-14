@@ -422,6 +422,37 @@ export const replacePictures = (content: string) => {
   return content;
 };
 
+// 向光标所在位置插入内容
+export const insertContent = ({
+  keyword,
+  node,
+  username,
+  url,
+  emoji,
+}: {
+  keyword: string; // textarea输入内容
+  node: HTMLTextAreaElement; // textarea输入框元素
+  username?: string; // 用户名称
+  url?: string; // 图片地址
+  emoji?: string; // 表情内容
+}) => {
+  const content = emoji || `<${username},${url}>`;
+  if (keyword.substring(0, node.selectionStart)) {
+    const res = `${keyword.substring(0, node.selectionStart)}${content}${keyword.substring(
+      node.selectionEnd,
+      node.textLength,
+    )}`;
+    return res;
+  } else {
+    // selectionStart 为0时，默认向最后面插入
+    const res = `${keyword.substring(node.selectionEnd, node.textLength)}${content}${keyword.substring(
+      0,
+      node.selectionStart,
+    )}`;
+    return res;
+  }
+};
+
 export {
   ipcRenderers,
   request,
