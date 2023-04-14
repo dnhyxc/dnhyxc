@@ -2,7 +2,7 @@ import { ElMessageBox, ElMessage } from 'element-plus';
 import type { ElMessageBoxOptions } from 'element-plus';
 import Store from 'electron-store';
 import moment from 'moment';
-import { MSG_CONFIG, CODE_CONTROL } from '@/constant';
+import { MSG_CONFIG, CODE_CONTROL, EMOJI_TEXTS } from '@/constant';
 import { ArticleItem } from '@/typings/common';
 import { usePlugins } from './plugins';
 import { normalizeResult } from './result';
@@ -391,6 +391,45 @@ export const getImageColor = (img: HTMLImageElement) => {
   arr = arr.sort((a, b) => b.num - a.num);
 
   return arr;
+};
+
+// 表情包转换
+export const replaceEmojis = (content: string, imojiUrls: Object) => {
+  content = content.replace(/\[[^[^\]]+\]/g, (word) => {
+    const index = EMOJI_TEXTS.indexOf(word.replace('[', '').replace(']', ''));
+    if (index > -1) {
+      return (
+        '<img style="vertical-align: middle;width: 32px;height: 32px" src="' +
+        imojiUrls[index + 1] +
+        '" title="' +
+        word +
+        '"/>'
+      );
+    } else {
+      return word;
+    }
+  });
+  return content;
+};
+
+// 图片转换
+export const replacePictures = (content: string) => {
+  content = content.replace(/<[^<^>]+>/g, (word) => {
+    const index = word.indexOf(',');
+    if (index > -1) {
+      const arr = word.replace('<', '').replace('>', '').split(',');
+      return (
+        '<img style="border-radius: 5px;width: 100%;max-width: 250px;display: block" src="' +
+        arr[1] +
+        '" title="' +
+        arr[0] +
+        '"/>'
+      );
+    } else {
+      return word;
+    }
+  });
+  return content;
 };
 
 export {

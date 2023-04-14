@@ -16,7 +16,7 @@
           <el-input
             id="TEXTAREA_WRAP"
             ref="inputRef"
-            v-model="keyword"
+            v-model.trim="keyword"
             :autosize="{ minRows: 3, maxRows: 10 }"
             type="textarea"
             :placeholder="
@@ -33,13 +33,13 @@
           <div id="EMOJI_LIST" class="emoji-list">
             <div id="ICONFONT" class="iconfontWrap">
               <span id="BIAOQING_XUE" class="iconfont">
-                <i id="BIAOQING_XUE" class="font iconfont icon-smile">&nbsp;表情</i>
+                <i id="BIAOQING_XUE" class="font iconfont icon-smile" @click="onShowEmoji">&nbsp;表情</i>
               </span>
               <span id="BIAOQING_XUE" class="iconfont">
                 <i id="CHARUTUPIAN" class="font iconfont icon-charutupian">&nbsp;图片</i>
               </span>
             </div>
-            <Emoji v-model:showEmoji="showEmoji" class="emojis" />
+            <Emoji v-model:showEmoji="showEmoji" class="emojis" :add-emoji="addEmoji" :imoji-urls="imojiUrls" />
           </div>
           <div id="ACTION">
             <el-button id="BTN" type="primary" :disabled="!keyword.trim()" @click.stop="submitComment">
@@ -68,6 +68,7 @@ interface IProps {
   onReplay?: Function;
   onJump?: Function;
   onHideInput?: Function;
+  imojiUrls?: Object;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
@@ -76,12 +77,13 @@ const props = withDefaults(defineProps<IProps>(), {
   onReplay: () => {},
   onJump: () => {},
   onHideInput: () => {},
+  imojiUrls: () => ({}),
 });
 
 const inputRef = ref<HTMLDivElement | null>(null);
 const keyword = ref<string>('');
 const showIcon = ref<boolean>(false);
-const showEmoji = ref<boolean>(true);
+const showEmoji = ref<boolean>(false);
 
 onMounted(() => {
   nextTick(() => {
@@ -133,6 +135,16 @@ const onFocus = () => {
 // 输入框onchange事件
 const onCommentChange = (word: string) => {
   keyword.value = word.trim();
+};
+
+// 显示表情
+const onShowEmoji = () => {
+  showEmoji.value = !showEmoji.value;
+};
+
+// 添加表情
+const addEmoji = (key: string) => {
+  keyword.value += key;
 };
 
 // 发布评论
