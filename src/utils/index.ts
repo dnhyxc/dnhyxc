@@ -2,7 +2,7 @@ import { ElMessageBox, ElMessage } from 'element-plus';
 import type { ElMessageBoxOptions } from 'element-plus';
 import Store from 'electron-store';
 import moment from 'moment';
-import { MSG_CONFIG, CODE_CONTROL, EMOJI_TEXTS } from '@/constant';
+import { MSG_CONFIG, CODE_CONTROL, EMOJI_TEXTS, EMOJI_URLS } from '@/constant';
 import { ArticleItem } from '@/typings/common';
 import { usePlugins } from './plugins';
 import { normalizeResult } from './result';
@@ -394,18 +394,18 @@ export const getImageColor = (img: HTMLImageElement) => {
 };
 
 // 处理输入的换行符
-export const replaceCommentContent = (content: string, imojiUrls: Object) => {
+export const replaceCommentContent = (content: string) => {
   const context = content.replace(/\n/g, '<br/>');
-  return replaceEmojis(context, imojiUrls);
+  return replaceEmojis(context);
 };
 
 // 表情包转换
-export const replaceEmojis = (content: string, imojiUrls: Object) => {
+export const replaceEmojis = (content: string) => {
   content = content.replace(/\[[^[^\]]+\]/g, (word) => {
     const index = EMOJI_TEXTS.indexOf(word.replace('[', '').replace(']', ''));
     if (index > -1) {
       return `<img style="vertical-align: middle;width: 32px;height: 32px" src="${
-        imojiUrls[index + 1]
+        EMOJI_URLS[index + 1]
       }" title="${word}"/>`;
     } else {
       return word;

@@ -48,7 +48,7 @@
                 </Upload>
               </span>
             </div>
-            <Emoji v-model:showEmoji="showEmoji" class="emojis" :add-emoji="addEmoji" :imoji-urls="imojiUrls" />
+            <Emoji v-model:showEmoji="showEmoji" class="emojis" :add-emoji="addEmoji" />
           </div>
           <div id="ACTION">
             <el-button id="BTN" type="primary" :disabled="!keyword.trim()" @click.stop="submitComment">
@@ -78,7 +78,6 @@ interface IProps {
   onReplay?: Function;
   onJump?: Function;
   onHideInput?: Function;
-  imojiUrls?: Object;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
@@ -87,7 +86,6 @@ const props = withDefaults(defineProps<IProps>(), {
   onReplay: () => {},
   onJump: () => {},
   onHideInput: () => {},
-  imojiUrls: () => ({}),
 });
 
 const inputRef = ref<HTMLDivElement | null>(null);

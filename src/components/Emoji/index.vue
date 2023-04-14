@@ -16,17 +16,15 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import { EMOJI_TEXTS } from '@/constant';
+import { EMOJI_TEXTS, EMOJI_URLS } from '@/constant';
 
 interface IProps {
   showEmoji: boolean;
   addEmoji: (value: string) => void;
-  imojiUrls?: Object;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
   showEmoji: false,
-  imojiUrls: () => ({}),
 });
 
 const emit = defineEmits(['update:showEmoji']);
@@ -44,7 +42,7 @@ const visible = computed({
 const emojiList = computed(() => {
   const result = {};
   EMOJI_TEXTS.forEach((i, index) => {
-    result[`[${i}]`] = props.imojiUrls[index + 1];
+    result[`[${i}]`] = EMOJI_URLS[index + 1];
   });
   return result;
 });
