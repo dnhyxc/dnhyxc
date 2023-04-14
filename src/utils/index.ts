@@ -398,18 +398,14 @@ export const replaceEmojis = (content: string, imojiUrls: Object) => {
   content = content.replace(/\[[^[^\]]+\]/g, (word) => {
     const index = EMOJI_TEXTS.indexOf(word.replace('[', '').replace(']', ''));
     if (index > -1) {
-      return (
-        '<img style="vertical-align: middle;width: 32px;height: 32px" src="' +
-        imojiUrls[index + 1] +
-        '" title="' +
-        word +
-        '"/>'
-      );
+      return `<img style="vertical-align: middle;width: 32px;height: 32px" src="${
+        imojiUrls[index + 1]
+      }" title="${word}"/>`;
     } else {
       return word;
     }
   });
-  return content;
+  return replacePictures(content);
 };
 
 // 图片转换
@@ -418,13 +414,7 @@ export const replacePictures = (content: string) => {
     const index = word.indexOf(',');
     if (index > -1) {
       const arr = word.replace('<', '').replace('>', '').split(',');
-      return (
-        '<img style="border-radius: 5px;width: 100%;max-width: 250px;display: block" src="' +
-        arr[1] +
-        '" title="' +
-        arr[0] +
-        '"/>'
-      );
+      return `<img style="border-radius: 5px;width: 100%;max-width: 250px;height:auto;display: block;padding: 5px 0;" src="${arr[1]}" title="${arr[0]}"/>`;
     } else {
       return word;
     }

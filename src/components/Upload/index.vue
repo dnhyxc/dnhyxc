@@ -84,6 +84,7 @@ interface IProps {
   preview?: boolean;
   showImg?: boolean;
   fixedNumber?: number[];
+  getUploadUrl?: (url: string) => void;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
@@ -91,6 +92,7 @@ const props = withDefaults(defineProps<IProps>(), {
   preview: true,
   showImg: true,
   fixedNumber: () => [600, 338],
+  getUploadUrl: () => {},
 });
 
 const emit = defineEmits(['update:filePath']);
@@ -247,6 +249,7 @@ const onFinish = () => {
     reader.readAsDataURL(blob);
     const res = await uploadStore.uploadFile(blob);
     if (res) {
+      props.getUploadUrl?.(res);
       // 更新父组件传递过来的filePath
       emit('update:filePath', res);
     }

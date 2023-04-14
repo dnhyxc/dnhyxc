@@ -36,7 +36,15 @@
                 <i id="BIAOQING_XUE" class="font iconfont icon-smile" @click="onShowEmoji">&nbsp;表情</i>
               </span>
               <span id="BIAOQING_XUE" class="iconfont">
-                <i id="CHARUTUPIAN" class="font iconfont icon-charutupian">&nbsp;图片</i>
+                <Upload
+                  v-model:file-path="picture"
+                  :preview="false"
+                  :show-img="false"
+                  :fixed-number="[600, 338]"
+                  :get-upload-url="getUploadUrl"
+                >
+                  <i id="CHARUTUPIAN" class="font iconfont icon-charutupian">&nbsp;图片</i>
+                </Upload>
               </span>
             </div>
             <Emoji v-model:showEmoji="showEmoji" class="emojis" :add-emoji="addEmoji" :imoji-urls="imojiUrls" />
@@ -84,6 +92,7 @@ const inputRef = ref<HTMLDivElement | null>(null);
 const keyword = ref<string>('');
 const showIcon = ref<boolean>(false);
 const showEmoji = ref<boolean>(false);
+const picture = ref<string>('');
 
 onMounted(() => {
   nextTick(() => {
@@ -140,6 +149,13 @@ const onCommentChange = (word: string) => {
 // 显示表情
 const onShowEmoji = () => {
   showEmoji.value = !showEmoji.value;
+};
+
+// 获取上传成功后的文件url
+const getUploadUrl = (url: string) => {
+  const { username } = loginStore?.userInfo;
+  console.log(url, 'getUploadUrl');
+  keyword.value += `<${username},${url}>`;
 };
 
 // 添加表情
