@@ -43,7 +43,6 @@ declare module '@vue/runtime-core' {
     ElTabs: typeof import('element-plus/es')['ElTabs']
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
     ElUpload: typeof import('element-plus/es')['ElUpload']
-    Emoje: typeof import('./src/components/Emoje/index.vue')['default']
     Emoji: typeof import('./src/components/Emoji/index.vue')['default']
     Empty: typeof import('./src/components/Empty/index.vue')['default']
     Header: typeof import('./src/components/Header/index.vue')['default']
