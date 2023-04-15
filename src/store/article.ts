@@ -320,6 +320,7 @@ export const useArticleStore = defineStore('article', {
               action: 'push',
               data: {
                 ...data,
+                articleId: id,
                 toUserId: data?.authorId,
                 fromUsername: username,
                 fromUserId: userId,
@@ -508,6 +509,7 @@ export const useArticleStore = defineStore('article', {
               data: {
                 ...this.articleDetail,
                 toUserId: authorId,
+                articleId: data?.articleId,
                 fromUsername: username || userInfo?.username,
                 fromUserId: userId || userInfo?.userId,
                 action: 'COMMENT',
@@ -647,6 +649,7 @@ export const useArticleStore = defineStore('article', {
               action: 'push',
               data: {
                 ...this.articleDetail,
+                articleId: id,
                 toUserId: authorId,
                 fromUsername: username || userInfo?.username,
                 fromUserId: userId || userInfo?.userId,

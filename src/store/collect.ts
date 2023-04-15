@@ -160,6 +160,7 @@ export const useCollectStore = defineStore('collect', {
               action: 'push',
               data: {
                 ...articleStore?.articleDetail,
+                articleId,
                 toUserId: authorId,
                 action: 'COLLECT',
                 fromUsername: username || userInfo?.username,
@@ -218,6 +219,7 @@ export const useCollectStore = defineStore('collect', {
               action: 'push',
               data: {
                 ...articleStore?.articleDetail,
+                articleId,
                 toUserId: authorId,
                 action: 'CANCEL_COLLECT',
                 fromUsername: username || userInfo?.username,

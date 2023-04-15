@@ -145,6 +145,7 @@ export interface ArticleItem extends AddCollectionRes {
   fromUserId?: string;
   isReaded?: boolean;
   pushDate?: number;
+  articleId?: number;
 }
 
 // 文章列表返回值

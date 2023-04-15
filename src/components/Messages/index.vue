@@ -17,7 +17,14 @@
         class="pullup-content"
       >
         <div class="list-wrap">
-          <LineCard v-for="data in messageStore.msgList" :key="data.id" :data="data" class="line-card">
+          <LineCard
+            v-for="data in messageStore.msgList"
+            :key="data.id"
+            :data="data"
+            :is-collect="true"
+            class="line-card"
+            @click.stop="toDetail(data)"
+          >
             <template #title>
               <div class="left">{{ data.title }}</div>
               <div class="right">
@@ -44,13 +51,16 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue';
+import { ref, computed, onMounted, watch, inject } from 'vue';
 import { useRouter } from 'vue-router';
 import { useMessageStore } from '@/store/message';
 import { useScroller } from '@/hooks';
 import { scrollTo, formatDate } from '@/utils';
 import eventBus from '@/utils/eventBus';
+import { ArticleItem } from '@/typings/common';
 import { MESSAGE_ACTIONS } from '@/constant';
+
+const reload = inject<Function>('reload');
 
 const messageStore = useMessageStore();
 
@@ -58,6 +68,7 @@ const { scrollRef, scrollTop } = useScroller();
 const router = useRouter();
 
 const isMounted = ref<boolean>(false);
+const timer = ref<ReturnType<typeof setTimeout> | null>(null);
 const noMore = computed(() => {
   const { msgList, total } = messageStore;
   return msgList.length >= total && msgList.length;
@@ -110,6 +121,20 @@ const onDeleteAll = async () => {
 // 前往操作人主页
 const toPersonal = (userId: string) => {
   router.push(`/personal?authorId=${userId}`);
+};
+
+// 去详情页
+const toDetail = (data: ArticleItem) => {
+  if (data?.articleId) {
+    router.push(`/detail/${data.articleId}`);
+    timer.value = setTimeout(() => {
+      if (timer.value) {
+        clearTimeout(timer.value);
+        timer.value = null;
+      }
+      reload && reload();
+    }, 100);
+  }
 };
 
 // 置顶

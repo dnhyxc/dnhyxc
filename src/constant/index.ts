@@ -13,7 +13,7 @@ import * as API from '@/server/api';
 export const DOMAIN_URL = '43.143.27.249';
 
 // 表情资源路径域名
-export const EMOJI_HOST = `http://${location.hostname === DOMAIN_URL ? DOMAIN_URL : '127.0.0.1'}:9112/image/`;
+export const EMOJI_HOST = `http://${location.hostname === DOMAIN_URL ? DOMAIN_URL : '127.0.0.1:9112'}/image/`;
 
 export const EMOJI_URLS = {
   1: `${EMOJI_HOST}24b6f805c6687e5694cbee718.gif`, // weixiao,
