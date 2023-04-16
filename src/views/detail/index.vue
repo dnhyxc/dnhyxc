@@ -30,7 +30,6 @@
     <div class="right">
       <Multibar
         :id="(route.params.id as string)"
-        class="action-list"
         :scroll-height="articleInfoRef?.offsetHeight"
         :on-scroll-to="() => onScrollTo(articleInfoRef?.offsetHeight)"
       />
@@ -166,10 +165,6 @@ const onScrollTo = (height?: number) => {
     box-sizing: border-box;
     border-radius: 5px;
     max-height: calc(100vh - 75px);
-
-    .action-list {
-      margin-bottom: 10px;
-    }
 
     .toc-list {
       box-sizing: border-box;
