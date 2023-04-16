@@ -85,6 +85,7 @@ interface IProps {
   showImg?: boolean;
   fixedNumber?: number[];
   getUploadUrl?: (url: string) => void;
+  needCropper?: boolean;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
@@ -93,6 +94,7 @@ const props = withDefaults(defineProps<IProps>(), {
   showImg: true,
   fixedNumber: () => [600, 338],
   getUploadUrl: () => {},
+  needCropper: true,
 });
 
 const emit = defineEmits(['update:filePath']);
@@ -161,7 +163,18 @@ const beforeUpload: UploadProps['beforeUpload'] = (rawFile) => {
 };
 
 // 自定义上传
-const onUpload = (event: { file: Blob }) => {
+const onUpload = async (event: { file: Blob }) => {
+  // 不需要进行裁剪
+  if (!props.needCropper) {
+    const res = await uploadStore.uploadFile(event.file as File);
+    if (res) {
+      props.getUploadUrl?.(res);
+      // 更新父组件传递过来的filePath
+      emit('update:filePath', res);
+    }
+    return;
+  }
+  // 需要裁剪
   const reader = new FileReader();
   reader.onload = async (e: Event) => {
     shotVisible.value = true;

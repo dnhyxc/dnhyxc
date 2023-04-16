@@ -41,6 +41,7 @@
                   v-model:file-path="picture"
                   :preview="false"
                   :show-img="false"
+                  :need-cropper="false"
                   :fixed-number="[600, 338]"
                   :get-upload-url="getUploadUrl"
                 >
