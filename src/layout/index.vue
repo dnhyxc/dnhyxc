@@ -50,7 +50,8 @@ provide('reload', reload);
   flex-direction: column;
   height: 100vh;
   box-sizing: border-box;
-  background-color: @theme;
+  background-color: var(--background);
+  // background-color: @theme;
   overflow: hidden;
 
   .el-main {

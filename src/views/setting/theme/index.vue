@@ -7,10 +7,15 @@
 <template>
   <div class="theme-wrap">
     <div class="content">尽情期待</div>
+    <el-button @click="changeTheme">更改背景</el-button>
   </div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+const changeTheme = () => {
+  document.body.style.setProperty('--background', '#b4d4fd');
+};
+</script>
 
 <style scoped lang="less">
 @import '@/styles/index.less';
