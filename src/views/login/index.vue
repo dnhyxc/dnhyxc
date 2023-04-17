@@ -54,7 +54,7 @@ const switchDom = (type: string) => {
   align-items: center;
   justify-content: center;
   height: 100%;
-  color: @font-1;
+  color: var(--font-1);
   background: rgba(0, 0, 0, 0.1);
 
   &::before {

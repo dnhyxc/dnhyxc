@@ -320,7 +320,7 @@ const onScrollTo = (to?: number) => {
     display: flex;
     justify-content: flex-start;
     padding: 10px;
-    background-image: @bg-lg-2;
+    background-image: linear-gradient(225deg, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
     border-radius: 5px;
     margin-bottom: 10px;
 
@@ -405,12 +405,12 @@ const onScrollTo = (to?: number) => {
             justify-content: center;
             align-content: center;
             font-size: 28px;
-            color: @theme-blue;
+            color: var(--theme-blue);
             padding: 2px;
             border-radius: 50px;
 
             &:hover {
-              color: @active;
+              color: var(--active-color);
             }
           }
 
@@ -435,7 +435,7 @@ const onScrollTo = (to?: number) => {
     border-radius: 5px;
     flex: 1;
     .el-tabs {
-      border: 1px solid @card-border;
+      border: 1px solid var(--card-border);
       border-radius: 5px;
       background-color: transparent;
 
@@ -450,13 +450,13 @@ const onScrollTo = (to?: number) => {
           border-top-right-radius: 5px;
         }
         .el-tabs__header {
-          border-bottom: 1px solid @card-border;
+          border-bottom: 1px solid var(--card-border);
 
           .el-tabs__item.is-active {
-            border-left-color: @card-border;
+            border-left-color: var(--card-border);
           }
           .el-tabs__item.is-active {
-            border-right-color: @card-border;
+            border-right-color: var(--card-border);
           }
         }
       }
@@ -474,7 +474,7 @@ const onScrollTo = (to?: number) => {
           width: calc(50% - 5px);
           padding: 10px 10px;
           box-shadow: 0 0 5px @shadow-color;
-          background-image: @bg-lg-2;
+          background-image: linear-gradient(225deg, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
           margin-bottom: 10px;
           border-radius: 5px;
           margin-right: 10px;
@@ -544,7 +544,7 @@ const onScrollTo = (to?: number) => {
             .actions {
               .edit {
                 margin-right: 10px;
-                color: @theme-blue;
+                color: var(--theme-blue);
                 font-size: 14px;
               }
 
@@ -581,17 +581,17 @@ const onScrollTo = (to?: number) => {
 
       .add-collect {
         font-size: 14px;
-        color: @theme-blue;
+        color: var(--theme-blue);
         cursor: pointer;
         .clickNoSelectText();
       }
 
       .collect-count {
         font-size: 14px;
-        background-image: @head-lg;
+        background-image: linear-gradient(135deg, var(--head-lg-color1) 10%, var(--head-lg-color2) 100%);
         padding: 2px 5px 3px;
         border-radius: 5px;
-        color: @font-2;
+        color: var(--font-2);
         margin-left: 10px;
       }
     }
@@ -599,7 +599,7 @@ const onScrollTo = (to?: number) => {
 
   .no-more {
     text-align: center;
-    color: @font-4;
+    color: var(--font-4);
     margin: 15px 0 0;
   }
 }

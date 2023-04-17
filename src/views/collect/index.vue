@@ -214,7 +214,7 @@ const onScrollTo = () => {
     display: flex;
     justify-content: flex-start;
     padding: 10px;
-    background-image: @bg-lg-2;
+    background-image: linear-gradient(225deg, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
     box-shadow: @shadow-mack;
     border-radius: 5px;
     height: 120px;
@@ -280,7 +280,7 @@ const onScrollTo = () => {
             .clickNoSelectText();
 
             .icon-bianji {
-              color: @theme-blue;
+              color: var(--theme-blue);
               margin-left: 10px;
             }
 
@@ -320,7 +320,7 @@ const onScrollTo = () => {
           align-items: center;
           font-size: 14px;
           cursor: pointer;
-          color: @theme-blue;
+          color: var(--theme-blue);
           .clickNoSelectText();
         }
       }
@@ -343,7 +343,7 @@ const onScrollTo = () => {
 
   .move {
     margin-right: 10px;
-    color: @theme-blue;
+    color: var(--theme-blue);
     font-size: 14px;
   }
 
@@ -354,7 +354,7 @@ const onScrollTo = () => {
 
   .no-more {
     text-align: center;
-    color: @font-4;
+    color: var(--font-4);
     margin-top: 3px;
     .clickNoSelectText();
   }

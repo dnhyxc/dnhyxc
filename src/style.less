@@ -3,7 +3,38 @@
 .webkitScrollbarStyle(transparent, @gray-1-1);
 
 body {
+  // 默认主题背景颜色
   --background: @theme;
+  // 默认 Card 组件卡片渐变背景色，@bg-lg-2
+  --bg-lg-color1: @bg-lg-color1;
+  --bg-lg-color2: @bg-lg-color2;
+  // 默认我的分类 Reel 组件卡片渐变背景色
+  --reel-lg-color1: @reel-lg-color1;
+  --reel-lg-color2: @reel-lg-color2;
+  // 时间轴奇数项渐变颜色
+  --timeline-lg-color1: @timeline-lg-color1;
+  --timeline-lg-color2: @timeline-lg-color2;
+  // 通用（时间轴、博主主页）渐变背景颜色
+  --card-lg-color1: @card-lg-color1;
+  --card-lg-color2: @card-lg-color2;
+  --head-lg-color1: @head-lg-color1;
+  --head-lg-color2: @reel-lg-color2;
+  // 全局选中颜色
+  --active-color: @active;
+  // 主题文字颜色
+  --theme-blue: @theme-blue;
+  --card-border: @card-border;
+  // 字体颜色
+  --font-1: @font-1;
+  --font-2: @font-2;
+  --font-3: @font-3;
+  --font-4: @font-4;
+  --font-5: @font-5;
+  --font-6: @font-6;
+  --fff: @fff;
+  // tab 背景颜色
+  --tab-color: @tab-color;
+  --theme: @theme;
 
   margin: 0;
   padding: 0;
@@ -35,21 +66,21 @@ ul {
 // 更改全局弹窗/抽屉背景颜色
 .el-dialog,
 .el-drawer {
-  background-color: @theme !important;
+  background-color: var(--background) !important;
 }
 
 .msg-popover {
-  background: @theme !important;
+  background: var(--background) !important;
 
   .el-popper__arrow {
     &::before {
-      background: @theme !important;
+      background: var(--background) !important;
     }
   }
 }
 
 .MSG_CONFIG {
-  background-color: @theme;
+  background-color: var(--background);
   .el-button {
     padding-top: 10px;
     width: 88px;

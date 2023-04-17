@@ -90,7 +90,7 @@ const onScrollTo = () => {
 
   .no-more {
     text-align: center;
-    color: @font-4;
+    color: var(--font-4);
     margin: 15px 0 0;
   }
 }

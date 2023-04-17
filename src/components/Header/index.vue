@@ -350,10 +350,10 @@ const onEnter = async (e: Event) => {
       margin-right: 20px;
       cursor: pointer;
       -webkit-app-region: no-drag;
-      color: @font-2;
+      color: var(--font-2);
 
       &:hover {
-        color: @active;
+        color: var(--active-color);
         font-weight: 700;
       }
     }
@@ -373,11 +373,11 @@ const onEnter = async (e: Event) => {
         font-size: 15px;
         cursor: pointer;
         -webkit-app-region: no-drag;
-        color: @font-3;
+        color: var(--font-3);
       }
 
       .icon-qiehuan {
-        color: @font-4;
+        color: var(--font-4);
         font-size: 20px;
         cursor: pointer;
       }
@@ -422,7 +422,7 @@ const onEnter = async (e: Event) => {
       .bell-font {
         font-size: 17px;
         cursor: pointer;
-        color: @font-3;
+        color: var(--font-3);
       }
     }
     .sticky {
@@ -435,7 +435,7 @@ const onEnter = async (e: Event) => {
         cursor: pointer;
         margin-left: 15px;
         margin-top: 1px;
-        color: @font-3;
+        color: var(--font-3);
       }
       .active {
         color: @sub-2-blue;
@@ -450,7 +450,7 @@ const onEnter = async (e: Event) => {
         font-size: 19px;
         cursor: pointer;
         margin-left: 15px;
-        color: @font-3;
+        color: var(--font-3);
       }
     }
     .page-actions {
@@ -484,7 +484,7 @@ const onEnter = async (e: Event) => {
 
       .font {
         margin-right: 10px;
-        color: @theme-blue;
+        color: var(--theme-blue);
       }
 
       .out-icon {

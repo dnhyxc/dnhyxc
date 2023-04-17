@@ -228,10 +228,10 @@ const submitComment = async () => {
       .textArea {
         border: none;
         border-radius: 5px;
-        background-color: @background;
+        background-color: var(--background);
 
         &:focus {
-          background-color: @fff;
+          background-color: var(--fff);
         }
       }
     }
@@ -279,7 +279,7 @@ const submitComment = async () => {
 
       .enter {
         margin-right: 15px;
-        color: @font-3;
+        color: var(--font-3);
       }
     }
   }

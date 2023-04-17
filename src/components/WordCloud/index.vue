@@ -173,7 +173,7 @@ const resize = () => {
     top: 10px;
     right: 15px;
     font-size: 18px;
-    color: @active;
+    color: var(--active-color);
     .textLg();
   }
 
@@ -190,7 +190,7 @@ const resize = () => {
     .clickNoSelectText();
 
     .empty-text {
-      color: @font-3;
+      color: var(--font-3);
     }
   }
 }

@@ -109,7 +109,7 @@ const onScrollTo = () => {
     padding: 10px;
     font-size: 18px;
     font-weight: 700;
-    border-bottom: 1px solid @card-border;
+    border-bottom: 1px solid var(--card-border);
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
 
@@ -152,14 +152,14 @@ const onScrollTo = () => {
       content: '';
       height: 65%;
       width: 4px;
-      background-color: @theme-blue;
+      background-color: var(--theme-blue);
       border-top-right-radius: 5px;
       border-bottom-right-radius: 5px;
     }
   }
 
   .active {
-    color: @theme-blue;
+    color: var(--theme-blue);
   }
 }
 </style>

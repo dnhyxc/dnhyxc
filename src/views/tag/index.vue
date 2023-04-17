@@ -98,8 +98,8 @@ const onCheckTag = (tag: string) => {
       display: flex;
       justify-content: space-between;
       font-size: 18px;
-      color: @active;
-      border-bottom: 1px solid @card-border;
+      color: var(--active-color);
+      border-bottom: 1px solid var(--card-border);
       margin-left: 13px;
       margin-right: 13px;
       margin-bottom: 6px;
@@ -120,11 +120,11 @@ const onCheckTag = (tag: string) => {
       height: 35px;
       line-height: 35px;
       cursor: pointer;
-      color: @font-1;
+      color: var(--font-1);
       .ellipsisMore(1);
 
       &:hover {
-        color: @active;
+        color: var(--active-color);
         &::before {
           position: absolute;
           top: 50%;
@@ -135,10 +135,10 @@ const onCheckTag = (tag: string) => {
           height: 50%;
           border-top-right-radius: 5px;
           border-bottom-right-radius: 5px;
-          background-color: @active;
+          background-color: var(--active-color);
         }
         .count {
-          color: @active;
+          color: var(--active-color);
         }
       }
     }
@@ -146,7 +146,7 @@ const onCheckTag = (tag: string) => {
     .count {
       margin-left: 5px;
       font-size: 14px;
-      color: @font-3;
+      color: var(--font-3);
     }
   }
 }

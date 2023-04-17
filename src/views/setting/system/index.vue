@@ -226,7 +226,7 @@ const handleKeydown = (e: KeyboardEvent) => {
   .shortcuts,
   .file-config,
   .close-config {
-    border-bottom: 1px solid @card-border;
+    border-bottom: 1px solid var(--card-border);
     padding: 20px 0;
     width: 80%;
 
@@ -243,12 +243,12 @@ const handleKeydown = (e: KeyboardEvent) => {
         margin-left: 10px;
         font-size: 14px;
         font-weight: 400;
-        color: @theme-blue;
+        color: var(--theme-blue);
         cursor: pointer;
         .clickNoSelectText();
 
         &:hover {
-          color: @active;
+          color: var(--active-color);
         }
       }
     }
@@ -284,29 +284,29 @@ const handleKeydown = (e: KeyboardEvent) => {
 
       .key {
         box-sizing: border-box;
-        background-color: @tab-color;
+        background-color: var(--tab-color);
         padding: 3px 15px 2px;
         border-radius: 5px;
         margin-right: 10px;
-        border: 1px solid @card-border;
+        border: 1px solid var(--card-border);
       }
 
       .font {
-        color: @theme-blue;
+        color: var(--theme-blue);
         cursor: pointer;
 
         &:hover {
-          color: @active;
+          color: var(--active-color);
         }
       }
 
       .btn {
-        color: @theme-blue;
+        color: var(--theme-blue);
         cursor: pointer;
         .clickNoSelectText();
 
         &:hover {
-          color: @active;
+          color: var(--active-color);
         }
       }
     }
@@ -341,9 +341,9 @@ const handleKeydown = (e: KeyboardEvent) => {
     }
 
     .radio-close {
-      background-color: @tab-color;
+      background-color: var(--tab-color);
       border-radius: 5px;
-      border: 1px solid @card-border;
+      border: 1px solid var(--card-border);
       height: 30px;
       line-height: 30px;
       padding: 0 15px;

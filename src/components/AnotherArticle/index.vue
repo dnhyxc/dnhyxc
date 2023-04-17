@@ -143,7 +143,7 @@ const onJump = (name: string, type: string) => {
           justify-content: space-between;
           align-items: center;
           margin-bottom: 10px;
-          color: @font-4;
+          color: var(--font-4);
 
           .right {
             transform: rotate(90deg);
@@ -173,7 +173,7 @@ const onJump = (name: string, type: string) => {
           align-items: center;
           margin-top: 5px;
           font-size: 14px;
-          color: @theme-blue;
+          color: var(--theme-blue);
 
           .classify,
           .tag {
@@ -181,7 +181,7 @@ const onJump = (name: string, type: string) => {
             .ellipsisMore(1);
 
             &:hover {
-              color: @active;
+              color: var(--active-color);
             }
           }
 

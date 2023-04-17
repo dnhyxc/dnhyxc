@@ -329,15 +329,15 @@ const onDelImage = () => {
       font-size: 20px;
       width: 100%;
       height: 100%;
-      color: @font-4;
+      color: var(--font-4);
       text-align: center;
       box-sizing: border-box;
       border: 1px dashed @border;
       border-radius: 4px;
 
       &:hover {
-        color: @theme-blue;
-        border: 1px dashed @theme-blue;
+        color: var(--theme-blue);
+        border: 1px dashed var(--theme-blue);
       }
     }
   }
@@ -360,7 +360,7 @@ const onDelImage = () => {
       justify-content: center;
       border-radius: 4px;
       background-color: @shade-1;
-      color: @fff;
+      color: var(--fff);
       display: none;
       z-index: 99;
       .view {

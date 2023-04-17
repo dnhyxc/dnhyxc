@@ -227,7 +227,7 @@ const onEnter = () => {
             font-size: 16px;
 
             &:hover {
-              color: @theme-blue;
+              color: var(--theme-blue);
               .textLg();
             }
 
@@ -253,7 +253,7 @@ const onEnter = () => {
           height: 130px;
           border-radius: 5px;
           padding: 5px;
-          background-image: @card-lg;
+          background-image: linear-gradient(120deg, var(--card-lg-color1) 0%, var(--card-lg-color2) 100%);
           box-shadow: 0 0 10px @shadow-color;
 
           .cover-img {

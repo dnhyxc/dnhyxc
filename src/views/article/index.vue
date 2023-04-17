@@ -283,17 +283,6 @@ const onScrollTo = (height?: number) => {
           .textLg();
         }
       }
-      .font {
-        margin-right: 20px;
-        cursor: pointer;
-        -webkit-app-region: no-drag;
-        color: @font-2;
-
-        &:hover {
-          color: @active;
-          font-weight: 700;
-        }
-      }
       .title {
         font-size: 18px;
         font-weight: 700;
@@ -313,7 +302,7 @@ const onScrollTo = (height?: number) => {
           cursor: pointer;
           margin-left: 15px;
           margin-top: 2px;
-          color: @font-3;
+          color: var(--font-3);
         }
         .active {
           color: @sub-2-blue;
@@ -352,7 +341,7 @@ const onScrollTo = (height?: number) => {
 
         .font {
           margin-right: 10px;
-          color: @theme-blue;
+          color: var(--theme-blue);
         }
 
         .out-icon {

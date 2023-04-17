@@ -33,7 +33,7 @@ defineProps<IProps>();
   display: flex;
   justify-content: center;
   flex-direction: column;
-  background-color: @theme;
+  background-color: var(--theme);
   backdrop-filter: blur(2px);
   border-radius: 5px;
   padding: 5px;
@@ -44,8 +44,8 @@ defineProps<IProps>();
     border-radius: 5px;
 
     &:hover {
-      background-image: @head-lg;
-      color: @theme-blue;
+      background-image: linear-gradient(135deg, var(--head-lg-color1) 10%, var(--head-lg-color2) 100%);
+      color: var(--theme-blue);
     }
   }
 }

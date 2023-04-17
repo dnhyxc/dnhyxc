@@ -171,7 +171,7 @@ const onClick = (name: string) => {
       height: 100%;
       margin-right: 12px;
       box-shadow: @shadow-mack;
-      background-image: @bg-lg;
+      background-image: linear-gradient(to bottom, var(--reel-lg-color1) 0%, var(--reel-lg-color2) 100%);
       border-radius: 5px;
       -webkit-user-drag: none;
       cursor: pointer;
@@ -198,14 +198,14 @@ const onClick = (name: string) => {
         .count {
           font-size: 28px;
           font-weight: 700;
-          color: @theme-blue;
+          color: var(--theme-blue);
           text-align: right;
 
           .text {
             display: inline-block;
             font-size: 16px;
             font-weight: 300;
-            color: @font-3;
+            color: var(--font-3);
             vertical-align: middle;
             margin-left: 5px;
           }

@@ -235,7 +235,7 @@ const onScrollTo = (to?: number) => {
   .cover {
     width: 100%;
     height: auto;
-    background-image: @bg-lg-2;
+    background-image: linear-gradient(225deg, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
     padding-bottom: 20px;
@@ -274,7 +274,7 @@ const onScrollTo = (to?: number) => {
         height: 150px;
         border-radius: 5px;
         padding: 5px;
-        background-image: @card-lg;
+        background-image: linear-gradient(120deg, var(--card-lg-color1) 0%, var(--card-lg-color2) 100%);
         box-shadow: 0 0 10px @shadow-color;
 
         .head-img {
@@ -300,12 +300,12 @@ const onScrollTo = (to?: number) => {
         .job {
           padding: 5px 0 3px 0;
           font-size: 14px;
-          color: @font-1;
+          color: var(--font-1);
         }
 
         .user-detail {
           font-size: 14px;
-          color: @font-4;
+          color: var(--font-4);
           transition: all 0.35s ease-in-out;
           max-height: 0;
           overflow: hidden;
@@ -313,14 +313,14 @@ const onScrollTo = (to?: number) => {
 
         .all-user-detail {
           font-size: 14px;
-          color: @font-4;
+          color: var(--font-4);
           max-height: 100vh;
           transition: all 0.35s ease-in-out;
         }
 
         .view-more {
           font-size: 14px;
-          color: @font-4;
+          color: var(--font-4);
           width: 110px;
           margin-top: 5px;
           cursor: pointer;
@@ -349,11 +349,11 @@ const onScrollTo = (to?: number) => {
             }
 
             .desc-text {
-              color: @font-1;
+              color: var(--font-1);
             }
 
             .link {
-              color: @theme-blue;
+              color: var(--theme-blue);
             }
           }
         }
@@ -365,7 +365,7 @@ const onScrollTo = (to?: number) => {
     margin-top: 10px;
     border-radius: 5px;
     .el-tabs {
-      border: 1px solid @card-border;
+      border: 1px solid var(--card-border);
       border-radius: 5px;
 
       :deep {
@@ -380,12 +380,12 @@ const onScrollTo = (to?: number) => {
         }
 
         .el-tabs__header {
-          border-bottom: 1px solid @card-border;
+          border-bottom: 1px solid var(--card-border);
           .el-tabs__item.is-active {
-            border-left-color: @card-border;
+            border-left-color: var(--card-border);
           }
           .el-tabs__item.is-active {
-            border-right-color: @card-border;
+            border-right-color: var(--card-border);
           }
         }
       }
@@ -404,7 +404,7 @@ const onScrollTo = (to?: number) => {
           width: calc(50% - 5px);
           padding: 10px 10px;
           box-shadow: 0 0 5px @shadow-color;
-          background-image: @bg-lg-2;
+          background-image: linear-gradient(225deg, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
           margin-bottom: 10px;
           border-radius: 5px;
           margin-right: 10px;
@@ -450,7 +450,7 @@ const onScrollTo = (to?: number) => {
 
     .no-more {
       text-align: center;
-      color: @font-4;
+      color: var(--font-4);
       margin: 15px 0 5px;
     }
   }

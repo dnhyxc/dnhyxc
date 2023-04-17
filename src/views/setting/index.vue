@@ -63,10 +63,10 @@ const onClick = (menu: MenuListParams) => {
     align-items: center;
     box-sizing: border-box;
     width: 100%;
-    border: 1px solid @card-border;
+    border: 1px solid var(--card-border);
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
-    background-color: @tab-color;
+    background-color: var(--tab-color);
 
     .menu-item {
       box-sizing: border-box;
@@ -82,8 +82,8 @@ const onClick = (menu: MenuListParams) => {
 
     .active {
       position: relative;
-      color: @theme-blue;
-      background-color: @fff;
+      color: var(--theme-blue);
+      background-color: var(--fff);
 
       &:first-child {
         border-left: none;
@@ -96,7 +96,7 @@ const onClick = (menu: MenuListParams) => {
         content: '';
         height: 2px;
         width: 100%;
-        background-color: @theme-blue;
+        background-color: var(--theme-blue);
         border-radius: 2px;
       }
     }
@@ -105,9 +105,9 @@ const onClick = (menu: MenuListParams) => {
   .content {
     box-sizing: border-box;
     height: calc(100vh - 112px);
-    border-left: 1px solid @card-border;
-    border-right: 1px solid @card-border;
-    border-bottom: 1px solid @card-border;
+    border-left: 1px solid var(--card-border);
+    border-right: 1px solid var(--card-border);
+    border-bottom: 1px solid var(--card-border);
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
   }

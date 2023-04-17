@@ -171,7 +171,7 @@ const onOpenNewWindow = async (data: ArticleItem) => {
 .timeline-card {
   position: relative;
   box-sizing: border-box;
-  color: @font-3;
+  color: var(--font-3);
   cursor: pointer;
 
   .title {
@@ -180,7 +180,7 @@ const onOpenNewWindow = async (data: ArticleItem) => {
     align-items: center;
     font-size: 16px;
     margin-bottom: 10px;
-    color: @font-1;
+    color: var(--font-1);
 
     .left {
       font-weight: 700;
@@ -194,7 +194,7 @@ const onOpenNewWindow = async (data: ArticleItem) => {
 
       .edit {
         margin-right: 10px;
-        color: @theme-blue;
+        color: var(--theme-blue);
       }
 
       .del {
@@ -204,7 +204,7 @@ const onOpenNewWindow = async (data: ArticleItem) => {
       .edit,
       .del {
         &:hover {
-          color: @active;
+          color: var(--active-color);
         }
       }
     }
@@ -249,7 +249,7 @@ const onOpenNewWindow = async (data: ArticleItem) => {
 
           .classify,
           .tag {
-            background-image: @bg-lg-2;
+            background-image: linear-gradient(225deg, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
             box-shadow: 0 0 3px @shadow-color;
             padding: 1px 5px 3px;
             border-radius: 5px;
@@ -288,7 +288,7 @@ const onOpenNewWindow = async (data: ArticleItem) => {
           }
 
           .icon-24gf-thumbsUp2 {
-            color: @theme-blue;
+            color: var(--theme-blue);
           }
 
           .comment-icon {

@@ -7,12 +7,7 @@
 <template>
   <div ref="commentsRef" class="Comments">
     <div class="draftInputWrap">
-      <DraftInput
-        :get-comment-list="getCommentList"
-        :focus="focus"
-        :article-id="id"
-        :on-hide-input="onHideInput"
-      />
+      <DraftInput :get-comment-list="getCommentList" :focus="focus" :article-id="id" :on-hide-input="onHideInput" />
     </div>
     <div v-if="articleStore?.commentList?.length > 0" class="title">
       全部评论
@@ -96,11 +91,7 @@
                 <span class="date">{{ j.date && formatGapTime(j.date) }}</span>
               </div>
               <div v-if="j.content" class="desc" v-html="replaceCommentContent(j.content!)" />
-              <div
-                v-if="j.formContent"
-                class="formContent"
-                v-html="replaceCommentContent(j.formContent!)"
-              />
+              <div v-if="j.formContent" class="formContent" v-html="replaceCommentContent(j.formContent!)" />
               <div id="ON_REPLAY" class="action">
                 <div class="actionContent">
                   <div class="likeAndReplay">
@@ -319,7 +310,7 @@ const onViewMoreReply = (commentId: string) => {
       font-size: 15px;
 
       &:hover {
-        color: @theme-blue;
+        color: var(--theme-blue);
       }
       cursor: pointer;
       .clickNoSelectText();
@@ -330,7 +321,7 @@ const onViewMoreReply = (commentId: string) => {
     }
 
     .is-like {
-      color: @theme-blue;
+      color: var(--theme-blue);
     }
 
     .commentContent {
@@ -374,7 +365,7 @@ const onViewMoreReply = (commentId: string) => {
         }
 
         .date {
-          color: @font-4;
+          color: var(--font-4);
         }
       }
 
@@ -382,7 +373,7 @@ const onViewMoreReply = (commentId: string) => {
         margin-top: 10px;
         border: 1px solid @layer-3-border;
         padding: 5px 20px 6px 20px;
-        background-color: @background;
+        background-color: var(--background);
         border-radius: 5px;
       }
 
@@ -416,7 +407,7 @@ const onViewMoreReply = (commentId: string) => {
         }
 
         .cancelReplay {
-          color: @theme-blue;
+          color: var(--theme-blue);
         }
       }
 

@@ -187,7 +187,7 @@ const likeListArticle = (id: string, data?: ArticleItem) => {
         display: inline-block;
         font-size: 20px;
         margin-right: 10px;
-        color: @theme-blue;
+        color: var(--theme-blue);
       }
 
       .current-classify {
@@ -195,13 +195,13 @@ const likeListArticle = (id: string, data?: ArticleItem) => {
         align-items: center;
         font-size: 18px;
         font-weight: 700;
-        color: @active;
+        color: var(--active-color);
         padding-right: 10px;
 
         .label {
           font-size: 13px;
           font-weight: 300;
-          color: @font-3;
+          color: var(--font-3);
         }
       }
 

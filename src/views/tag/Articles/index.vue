@@ -196,7 +196,7 @@ const likeListArticle = (id: string, data?: ArticleItem) => {
       justify-content: space-between;
       align-items: center;
       font-size: 18px;
-      color: @active;
+      color: var(--active-color);
       margin-bottom: 6px;
       padding-bottom: 9px;
       border-radius: 5px;
@@ -223,18 +223,18 @@ const likeListArticle = (id: string, data?: ArticleItem) => {
 
       &:nth-child(odd) {
         .tag {
-          background-image: @bg-lg-2;
+          background-image: linear-gradient(225deg, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
         }
       }
 
       &:nth-child(even) {
         .tag {
-          background-image: @bg-lg--2;
+          background-image: linear-gradient(-225deg, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
         }
       }
 
       &:hover {
-        color: @active;
+        color: var(--active-color);
       }
 
       .tag {
@@ -245,7 +245,7 @@ const likeListArticle = (id: string, data?: ArticleItem) => {
         margin-left: 5px;
         border-radius: 5px;
         cursor: pointer;
-        border-bottom: 1px solid @card-border;
+        border-bottom: 1px solid var(--card-border);
         box-shadow: 0 0 5px @shadow-color;
 
         .tag-name {
@@ -261,7 +261,7 @@ const likeListArticle = (id: string, data?: ArticleItem) => {
       }
 
       .active {
-        color: @theme-blue;
+        color: var(--theme-blue);
         &::before {
           position: absolute;
           top: 50%;
@@ -272,7 +272,7 @@ const likeListArticle = (id: string, data?: ArticleItem) => {
           height: 60%;
           border-top-right-radius: 5px;
           border-bottom-right-radius: 5px;
-          background-color: @theme-blue;
+          background-color: var(--theme-blue);
         }
       }
     }
@@ -289,7 +289,7 @@ const likeListArticle = (id: string, data?: ArticleItem) => {
       display: inline-block;
       font-size: 18px;
       font-weight: 700;
-      color: @active;
+      color: var(--active-color);
       padding-top: 2px;
       padding-bottom: 8px;
       border-radius: 5px;
@@ -314,11 +314,11 @@ const likeListArticle = (id: string, data?: ArticleItem) => {
           margin: 5px;
 
           &:nth-child(odd) {
-            background-image: @bg-lg-2;
+            background-image: linear-gradient(225deg, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
           }
 
           &:nth-child(even) {
-            background-image: @bg-lg--2;
+            background-image: linear-gradient(-225deg, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
           }
 
           :deep {
@@ -337,7 +337,7 @@ const likeListArticle = (id: string, data?: ArticleItem) => {
       .loading,
       .no-more {
         text-align: center;
-        color: @font-4;
+        color: var(--font-4);
         padding: 10px 0 5px 0;
       }
     }

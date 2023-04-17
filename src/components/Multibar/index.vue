@@ -150,7 +150,7 @@ const onCollect = () => {
     border-radius: 5px;
     margin-right: 10px;
     box-shadow: @shadow-mack;
-    color: @font-3;
+    color: var(--font-3);
     cursor: pointer;
 
     .count {
@@ -165,11 +165,11 @@ const onCollect = () => {
     }
 
     &:hover {
-      color: @active;
+      color: var(--active-color);
 
       .is-like,
       .active-collect {
-        color: @active;
+        color: var(--active-color);
       }
     }
 
@@ -178,7 +178,7 @@ const onCollect = () => {
     }
 
     .is-like {
-      color: @theme-blue;
+      color: var(--theme-blue);
     }
 
     .comment-font {
@@ -191,7 +191,7 @@ const onCollect = () => {
     }
 
     .active-collect {
-      color: @theme-blue;
+      color: var(--theme-blue);
     }
 
     .share-font {
@@ -216,7 +216,7 @@ const onCollect = () => {
     cursor: pointer;
 
     &:hover {
-      color: @theme-blue;
+      color: var(--theme-blue);
     }
 
     .text {

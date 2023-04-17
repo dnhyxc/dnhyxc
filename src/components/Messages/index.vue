@@ -156,12 +156,12 @@ const onScrollTo = (to?: number) => {
     position: absolute;
     top: 10px;
     right: 13px;
-    color: @theme-blue;
+    color: var(--theme-blue);
     cursor: pointer;
     .clickNoSelectText();
 
     &:hover {
-      color: @active;
+      color: var(--active-color);
     }
   }
 
@@ -173,7 +173,7 @@ const onScrollTo = (to?: number) => {
     .left {
       flex: 1;
       font-weight: 700;
-      color: @font-3;
+      color: var(--font-3);
       margin-right: 10px;
       .ellipsisMore(1);
     }
@@ -189,7 +189,7 @@ const onScrollTo = (to?: number) => {
 
       .del {
         &:hover {
-          color: @active;
+          color: var(--active-color);
         }
       }
     }
@@ -198,7 +198,7 @@ const onScrollTo = (to?: number) => {
       width: 100%;
       padding: 5px;
       box-shadow: 0 0 5px @shadow-color;
-      background-image: @bg-lg-2;
+      background-image: linear-gradient(225deg, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
       margin-bottom: 10px;
       border-radius: 5px;
 
@@ -218,7 +218,7 @@ const onScrollTo = (to?: number) => {
 
             .username {
               margin-right: 5px;
-              color: @theme-blue;
+              color: var(--theme-blue);
             }
           }
 
@@ -247,7 +247,7 @@ const onScrollTo = (to?: number) => {
 
   .no-more {
     text-align: center;
-    color: @font-4;
+    color: var(--font-4);
     margin: 0 0 5px;
     .clickNoSelectText();
   }

@@ -88,7 +88,7 @@ const onClickCard = (id: string) => {
         content: '';
         width: 0;
         height: 100%;
-        border-left: 2px solid @card-border;
+        border-left: 2px solid var(--card-border);
       }
 
       &:last-child {
@@ -105,7 +105,11 @@ const onClickCard = (id: string) => {
         width: 15px;
         height: 15px;
         border-radius: 15px;
-        background-image: @card-lg;
+        background-image: linear-gradient(
+          120deg,
+          var(--card-lg-color1) 0%,
+          var(--card-lg-color2) 100%
+        );
         z-index: 1;
       }
 
@@ -113,7 +117,7 @@ const onClickCard = (id: string) => {
         position: relative;
 
         .card-item {
-          background-image: @bg-lg-2;
+          background-image: linear-gradient(225deg, var(--timeline-lg-color1) 0%, var(--timeline-lg-color2) 100%);
         }
 
         &::before {
@@ -123,7 +127,7 @@ const onClickCard = (id: string) => {
           content: '';
           width: 0;
           height: 0;
-          border-left: 12px solid @card-border;
+          border-left: 12px solid var(--card-border);
           border-top: 12px solid transparent;
           border-bottom: 12px solid transparent;
         }
@@ -150,7 +154,11 @@ const onClickCard = (id: string) => {
         width: 15px;
         height: 15px;
         border-radius: 15px;
-        background-image: @card-lg;
+        background-image: linear-gradient(
+          120deg,
+          var(--card-lg-color1) 0%,
+          var(--card-lg-color2) 100%
+        );
         z-index: 1;
       }
 
@@ -161,7 +169,7 @@ const onClickCard = (id: string) => {
         content: '';
         width: 0;
         height: 100%;
-        border-left: 2px solid @card-border;
+        border-left: 2px solid var(--card-border);
       }
 
       &:last-child {
@@ -174,7 +182,7 @@ const onClickCard = (id: string) => {
         position: relative;
 
         .card-item {
-          background-image: @bg-lg--2;
+          background-image: linear-gradient(-225deg, var(--timeline-lg-color1) 0%, var(--timeline-lg-color2) 100%);
         }
 
         &::before {
@@ -184,7 +192,7 @@ const onClickCard = (id: string) => {
           content: '';
           width: 0;
           height: 0;
-          border-right: 12px solid @card-border;
+          border-right: 12px solid var(--card-border);
           border-top: 12px solid transparent;
           border-bottom: 12px solid transparent;
         }

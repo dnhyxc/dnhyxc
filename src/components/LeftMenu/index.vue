@@ -159,7 +159,7 @@ const onQuit = () => {
     }
 
     .active {
-      color: @active;
+      color: var(--active-color);
       .textLgActive();
     }
   }
@@ -182,7 +182,7 @@ const onQuit = () => {
       .bgKeyframes(bgmove);
       font-size: 14px;
       cursor: pointer;
-      color: @theme-blue;
+      color: var(--theme-blue);
       box-shadow: 0 0 2px @shadow-color inset;
     }
 

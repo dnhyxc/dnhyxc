@@ -111,7 +111,7 @@ const toTag = (name: string) => {
               backdrop-filter: blur(3px);
               padding: 0 5px 2px 5px;
               border-radius: 5px;
-              color: @fff;
+              color: var(--fff);
               .ellipsisMore(1);
             }
           }
@@ -122,7 +122,7 @@ const toTag = (name: string) => {
 
             .author,
             .date {
-              color: @fff;
+              color: var(--fff);
               backdrop-filter: blur(3px);
               padding: 0 5px 2px 5px;
               border-radius: 5px;
@@ -134,7 +134,7 @@ const toTag = (name: string) => {
               padding: 0 5px 2px 5px;
 
               &:hover {
-                color: @theme-blue;
+                color: var(--theme-blue);
                 background-color: rgba(225, 225, 225, 0.85);
               }
             }
@@ -149,12 +149,12 @@ const toTag = (name: string) => {
           .tag {
             display: inline-block;
             backdrop-filter: blur(3px);
-            color: @fff;
+            color: var(--fff);
             padding: 0 5px 2px 5px;
             border-radius: 5px;
 
             &:hover {
-              color: @theme-blue;
+              color: var(--theme-blue);
               background-color: rgba(225, 225, 225, 0.85);
             }
           }
@@ -174,7 +174,7 @@ const toTag = (name: string) => {
 
     :deep {
       .is-active {
-        box-shadow: 0 0 5px @card-border;
+        box-shadow: 0 0 5px var(--card-border);
         border-radius: 5px;
       }
     }
@@ -187,7 +187,7 @@ const toTag = (name: string) => {
         box-shadow: none;
 
         button {
-          background-color: @theme-blue;
+          background-color: var(--theme-blue);
         }
       }
     }

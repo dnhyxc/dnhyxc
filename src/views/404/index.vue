@@ -63,7 +63,7 @@ const backHome = () => {
     right: 20%;
     font-size: 25px;
     font-weight: 700;
-    color: @theme-blue;
+    color: var(--theme-blue);
     cursor: pointer;
     text-shadow: 0 0 0.5em #e0c3fc, 0 0 0.2em #d7fffe;
   }

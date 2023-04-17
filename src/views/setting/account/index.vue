@@ -248,7 +248,7 @@ const onCancelResetPwd = (Form: FormData<FormInstance>) => {
     justify-content: center;
     width: 600px;
     padding: 20px 5px 25px 0;
-    border-bottom: 1px solid @card-border;
+    border-bottom: 1px solid var(--card-border);
 
     &:last-child {
       border-bottom: none;
@@ -260,7 +260,7 @@ const onCancelResetPwd = (Form: FormData<FormInstance>) => {
       padding-top: 5px;
       text-align: right;
       min-width: 70px;
-      color: @font-3;
+      color: var(--font-3);
     }
 
     .el-input {
@@ -289,7 +289,7 @@ const onCancelResetPwd = (Form: FormData<FormInstance>) => {
       }
 
       .font {
-        color: @theme-blue;
+        color: var(--theme-blue);
         cursor: pointer;
         padding-top: 5px;
         .clickNoSelectText();
@@ -297,7 +297,7 @@ const onCancelResetPwd = (Form: FormData<FormInstance>) => {
         margin-left: -2px;
 
         &:hover {
-          color: @active;
+          color: var(--active-color);
         }
       }
 
@@ -325,11 +325,11 @@ const onCancelResetPwd = (Form: FormData<FormInstance>) => {
 
       .font {
         font-size: 14px;
-        color: @theme-blue;
+        color: var(--theme-blue);
         cursor: pointer;
 
         &:hover {
-          color: @active;
+          color: var(--active-color);
         }
       }
 

@@ -225,7 +225,7 @@ const onScrollTo = () => {
 
     .icon-sousuo2,
     .text {
-      color: @fff;
+      color: var(--fff);
       font-size: 14px;
     }
 
@@ -236,8 +236,8 @@ const onScrollTo = () => {
 
   :deep {
     .el-input-group__append {
-      background-color: @theme-blue;
-      box-shadow: 0 1px 0 0 @theme-blue inset, 0 -1px 0 0 @theme-blue inset, -1px 0 0 0 @theme-blue inset;
+      background-color: var(--theme-blue);
+      box-shadow: 0 1px 0 0 var(--theme-blue) inset, 0 -1px 0 0 @theme-blue inset, -1px 0 0 0 var(--theme-blue) inset;
     }
 
     .scrollbar-wrapper(12px);
@@ -256,11 +256,11 @@ const onScrollTo = () => {
       justify-content: center;
       margin-right: 5px;
       text-align: center;
-      background-image: @bg-lg-2;
+      background-image: linear-gradient(225deg, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
       min-width: 140px;
       border-radius: 5px;
       cursor: pointer;
-      border: 1px solid @card-border;
+      border: 1px solid var(--card-border);
 
       .view-more-info {
         text-align: center;
@@ -283,8 +283,8 @@ const onScrollTo = () => {
       text-align: center;
       border: none;
       border-radius: 3px;
-      background-color: @fff;
-      border: 1px solid @card-border;
+      background-color: var(--fff);
+      border: 1px solid var(--card-border);
       box-sizing: border-box;
       cursor: pointer;
 
@@ -306,14 +306,14 @@ const onScrollTo = () => {
     }
 
     .active {
-      background-color: @theme-blue;
-      color: @fff;
+      background-color: var(--theme-blue);
+      color: var(--fff);
     }
   }
 
   .no-more {
     text-align: center;
-    color: @font-4;
+    color: var(--font-4);
     margin-top: 3px;
     .clickNoSelectText();
   }

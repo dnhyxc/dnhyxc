@@ -153,7 +153,7 @@ const likeListArticle = (id: string, data: ArticleItem) => {
       bottom: 16px;
 
       .active {
-        color: @active;
+        color: var(--active-color);
       }
     }
 
@@ -161,7 +161,7 @@ const likeListArticle = (id: string, data: ArticleItem) => {
       position: absolute;
       right: 11px;
       bottom: 16px;
-      color: @active;
+      color: var(--active-color);
     }
   }
 
@@ -172,7 +172,7 @@ const likeListArticle = (id: string, data: ArticleItem) => {
   .no-more {
     text-align: center;
     padding-top: 2px;
-    color: @font-4;
+    color: var(--font-4);
   }
 }
 </style>

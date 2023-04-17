@@ -254,7 +254,7 @@ const toTag = (name: string) => {
       background-blend-mode: multiply, multiply;
       border-bottom-left-radius: 5px;
       border-bottom-right-radius: 5px;
-      background-image: @card-lg-2;
+      background-image: linear-gradient(to bottom, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
 
       .header {
         display: flex;
@@ -288,7 +288,7 @@ const toTag = (name: string) => {
             margin-right: 5px;
 
             &:hover {
-              color: @theme-blue;
+              color: var(--theme-blue);
             }
           }
         }
@@ -307,7 +307,7 @@ const toTag = (name: string) => {
             .ellipsisMore(1);
 
             &:hover {
-              color: @theme-blue;
+              color: var(--theme-blue);
             }
           }
 
@@ -343,7 +343,7 @@ const toTag = (name: string) => {
             }
 
             .icon-24gf-thumbsUp2 {
-              color: @theme-blue;
+              color: var(--theme-blue);
             }
 
             .comment-icon {
@@ -356,7 +356,7 @@ const toTag = (name: string) => {
 
             .edit {
               margin-right: 10px;
-              color: @theme-blue;
+              color: var(--theme-blue);
               font-size: 14px;
             }
 

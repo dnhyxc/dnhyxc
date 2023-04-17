@@ -219,7 +219,7 @@ const onScrollTo = (to?: number) => {
     width: 100%;
     font-size: 16px;
     margin-bottom: 10px;
-    color: @font-1;
+    color: var(--font-1);
 
     .left {
       font-weight: 700;
@@ -263,7 +263,7 @@ const onScrollTo = (to?: number) => {
         width: calc(50% - 5px);
         padding: 10px 10px;
         box-shadow: 0 0 5px @shadow-color;
-        background-image: @bg-lg-2;
+        background-image: linear-gradient(225deg, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
         margin-bottom: 10px;
         border-radius: 5px;
         margin-right: 10px;
@@ -304,7 +304,7 @@ const onScrollTo = (to?: number) => {
 
                 .classify,
                 .tag {
-                  background-image: @bg-lg-2;
+                  background-image: linear-gradient(225deg, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
                   box-shadow: 0 0 3px @shadow-color;
                   padding: 1px 5px 3px;
                   border-radius: 5px;
@@ -346,7 +346,7 @@ const onScrollTo = (to?: number) => {
 
   .no-more {
     text-align: center;
-    color: @font-4;
+    color: var(--font-4);
     margin: 15px 0 6px;
     .clickNoSelectText();
   }

@@ -33,7 +33,7 @@ const changeTheme = () => {
     transform: translate(-50%, -50%);
     font-size: 25px;
     font-weight: 700;
-    color: @active;
+    color: var(--active-color);
   }
 }
 </style>

@@ -149,7 +149,7 @@ const onCopyCodeSuccess = (value: string) => {
 @import '@/styles/index.less';
 
 .container {
-  background-color: @fff;
+  background-color: var(--fff);
   :deep {
     .v-md-editor {
       border-radius: 5px;
@@ -157,7 +157,7 @@ const onCopyCodeSuccess = (value: string) => {
     }
     .v-md-textarea-editor pre,
     .v-md-textarea-editor textarea {
-      background-color: @fff;
+      background-color: var(--fff);
       border-bottom-left-radius: 5px;
     }
     .vuepress-markdown-body:not(.custom) {
@@ -170,7 +170,7 @@ const onCopyCodeSuccess = (value: string) => {
       min-width: 125px;
     }
     .v-md-editor__toolbar-item-create {
-      color: @theme-blue;
+      color: var(--theme-blue);
       font-size: 14px;
       line-height: 30px;
     }
@@ -180,12 +180,12 @@ const onCopyCodeSuccess = (value: string) => {
       line-height: 30px;
     }
     .v-md-editor__toolbar-item-save {
-      color: @theme-blue;
+      color: var(--theme-blue);
       font-size: 14px;
       line-height: 30px;
     }
     .v-md-editor__toolbar-item-draft {
-      color: @theme-blue;
+      color: var(--theme-blue);
       font-size: 14px;
       line-height: 30px;
     }

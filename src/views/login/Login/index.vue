@@ -196,7 +196,7 @@ const onForgetPwd = () => {
     margin-top: 10px;
 
     .action {
-      color: @theme-blue;
+      color: var(--theme-blue);
     }
   }
 }
