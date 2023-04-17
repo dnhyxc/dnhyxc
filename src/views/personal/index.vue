@@ -360,6 +360,7 @@ const onScrollTo = (to?: number) => {
         justify-content: space-between;
         flex-direction: column;
         margin-right: 10px;
+        color: var(--font-2);
 
         .username {
           font-size: 18px;
@@ -440,6 +441,10 @@ const onScrollTo = (to?: number) => {
       background-color: transparent;
 
       :deep {
+        .el-tabs__item.is-active {
+          background-color: transparent;
+          font-weight: 700;
+        }
         .el-tabs__content {
           padding: 10px;
         }
@@ -448,6 +453,7 @@ const onScrollTo = (to?: number) => {
         .el-tabs__nav-wrap {
           border-top-left-radius: 5px;
           border-top-right-radius: 5px;
+          background-color: transparent;
         }
         .el-tabs__header {
           border-bottom: 1px solid var(--card-border);
@@ -591,7 +597,7 @@ const onScrollTo = (to?: number) => {
         background-image: linear-gradient(135deg, var(--head-lg-color1) 10%, var(--head-lg-color2) 100%);
         padding: 2px 5px 3px;
         border-radius: 5px;
-        color: var(--font-2);
+        color: @font-2;
         margin-left: 10px;
       }
     }

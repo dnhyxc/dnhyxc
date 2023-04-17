@@ -12,8 +12,10 @@
 </template>
 
 <script setup lang="ts">
+import { modifyTheme } from '@/utils';
+
 const changeTheme = () => {
-  document.body.style.setProperty('--background', '#b4d4fd');
+  modifyTheme();
 };
 </script>
 

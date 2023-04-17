@@ -122,6 +122,14 @@ const onEnter = () => {
   justify-content: center;
   width: 500px;
 
+  :deep {
+    .el-input__wrapper,
+    .el-input__inner {
+      color: var(--font-2);
+      background-color: var(--input-bg-color);
+    }
+  }
+
   .form-item {
     margin-bottom: 30px;
     padding: 0 50px;

@@ -144,6 +144,7 @@ const onSubmit = async () => {
   .header {
     display: flex;
     align-items: center;
+    color: var(--font-1);
 
     .title {
       font-size: 18px;
@@ -178,6 +179,7 @@ const onSubmit = async () => {
 
       .left {
         flex: 1;
+        color: var(--font-2);
 
         .collect-name {
           display: flex;

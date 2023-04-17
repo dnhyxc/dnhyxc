@@ -136,6 +136,7 @@ const onClickCard = (id: string) => {
         right: -95px;
         font-size: 25px;
         font-weight: 700;
+        color: var(--font-1);
       }
     }
 

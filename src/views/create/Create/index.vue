@@ -268,7 +268,7 @@ const onSaveDraft = () => {
       }
 
       .el-textarea .el-input__count {
-        background-color: var(--menu-weak);
+        background-color: transparent;
       }
 
       .el-select {

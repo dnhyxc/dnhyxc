@@ -371,6 +371,10 @@ const onScrollTo = (to?: number) => {
       background-color: transparent;
 
       :deep {
+        .el-tabs__item.is-active {
+          background-color: transparent;
+          font-weight: 700;
+        }
         .el-tabs__content {
           padding: 10px;
         }
@@ -379,6 +383,7 @@ const onScrollTo = (to?: number) => {
         .el-tabs__nav-wrap {
           border-top-left-radius: 5px;
           border-top-right-radius: 5px;
+          background-color: transparent;
         }
 
         .el-tabs__header {

@@ -271,6 +271,15 @@ const onCancelResetPwd = (Form: FormData<FormInstance>) => {
       flex: 1;
       display: flex;
       align-items: flex-start;
+      color: var(--font-2);
+
+      :deep {
+        .el-input__wrapper,
+        .el-input__inner {
+          color: var(--font-1);
+          background-color: var(--input-bg-color);
+        }
+      }
 
       .edit-font {
         font-size: 15px;

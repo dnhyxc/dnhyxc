@@ -74,6 +74,7 @@ const toSetting = (authorId: string | undefined) => {
   width: 100%;
   padding: 20px 20px 0;
   box-sizing: border-box;
+  color: var(--font-1);
 
   .title {
     font-size: 32px;

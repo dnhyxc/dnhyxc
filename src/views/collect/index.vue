@@ -71,8 +71,17 @@
       </el-scrollbar>
     </template>
   </Loading>
-  <AddCollectModel v-model:build-visible="buildVisible" :default-values="currentCollectValues" :is-edit="isEdit" />
-  <CollectModel v-model:collect-visible="collectVisible" :article-id="moveArticleId" />
+  <AddCollectModel
+    v-model:build-visible="buildVisible"
+    v-model:collect-visible="collectVisible"
+    :default-values="currentCollectValues"
+    :is-edit="isEdit"
+  />
+  <CollectModel
+    v-model:collect-visible="collectVisible"
+    v-model:build-visible="buildVisible"
+    :article-id="moveArticleId"
+  />
 </template>
 
 <script setup lang="ts">
@@ -109,6 +118,8 @@ const currentCollectValues = ref<CollectParams>({
   desc: '',
   status: '1',
 });
+// 判断是否是点击的编辑打开的新建收藏集
+const fromEdit = ref<boolean>(false);
 
 const noMore = computed(() => {
   const { articleList, total } = collectStore;
@@ -181,6 +192,7 @@ const onEditCollect = () => {
   const { desc = '', name = '', status = '', id = '' } = collectStore.collectInfo;
   buildVisible.value = true;
   isEdit.value = true;
+  fromEdit.value = true;
   // 设置新建弹窗初始化内容
   currentCollectValues.value = {
     desc,
@@ -248,6 +260,7 @@ const onScrollTo = () => {
       .collect-info {
         display: flex;
         flex-direction: column;
+        color: var(--font-2);
 
         .collect-title {
           display: flex;
@@ -306,6 +319,7 @@ const onScrollTo = () => {
         align-items: center;
         vertical-align: middle;
         width: 100%;
+        color: var(--font-2);
 
         .username {
           flex: 1;

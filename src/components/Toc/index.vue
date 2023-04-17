@@ -98,9 +98,10 @@ const onScrollTo = () => {
   // height: calc(100vh - 345px);
   border-radius: 5px;
   overflow: hidden;
-  box-shadow: 0 0 8px 0 var(--shadow-mack);;
+  box-shadow: 0 0 8px 0 var(--shadow-mack);
   padding-bottom: 10px;
   margin-top: 10px;
+  color: var(--font-2);
 
   .title {
     display: flex;

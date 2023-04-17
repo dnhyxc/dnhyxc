@@ -66,11 +66,12 @@ const onClick = (menu: MenuListParams) => {
     border: 1px solid var(--card-border);
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
-    background-color: var(--tab-color);
+    background-color: transparent;
+    color: var(--font-2);
 
     .menu-item {
       box-sizing: border-box;
-      padding: 6px 15px;
+      padding: 5px 15px 6px;
       cursor: pointer;
 
       .clickNoSelectText();
@@ -83,7 +84,6 @@ const onClick = (menu: MenuListParams) => {
     .active {
       position: relative;
       color: var(--theme-blue);
-      background-color: var(--fff);
 
       &:first-child {
         border-left: none;

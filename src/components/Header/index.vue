@@ -360,6 +360,7 @@ const onEnter = async (e: Event) => {
     .title {
       font-size: 18px;
       font-weight: 700;
+      color: var(--font-1);
     }
   }
   .right {

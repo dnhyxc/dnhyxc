@@ -267,6 +267,7 @@ const onViewMoreReply = (commentId: string) => {
 .Comments {
   padding: 0 20px 20px 20px;
   border-radius: 5px;
+  color: var(--font-2);
 
   .draftInputWrap {
     border-top-left-radius: 5px;
@@ -412,7 +413,7 @@ const onViewMoreReply = (commentId: string) => {
       }
 
       .commentChild {
-        background-color: @layer-2-2;
+        background-color: var(--layer-2-2);
         margin-top: 15px;
         padding: 15px;
         border-radius: 5px;

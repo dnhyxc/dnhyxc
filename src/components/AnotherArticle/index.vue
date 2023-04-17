@@ -114,6 +114,7 @@ const onJump = (name: string, type: string) => {
     align-items: center;
     padding: 0 10px;
     border-radius: 5px;
+    color: var(--font-2);
 
     .article {
       display: flex;
@@ -126,7 +127,7 @@ const onJump = (name: string, type: string) => {
       box-shadow: 0 0 8px 0 var(--shadow-mack);
 
       &:hover {
-        background-image: @card-lg-2;
+        background-image: linear-gradient(to bottom, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
       }
 
       &:last-child {

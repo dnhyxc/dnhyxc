@@ -195,6 +195,13 @@ const submitComment = async () => {
   width: 100%;
   height: 100%;
 
+  :deep {
+    .el-textarea__inner {
+      color: var(--font-1);
+      background-color: var(--input-bg-color);
+    }
+  }
+
   .comments {
     padding-top: 20px;
     font-size: 18px;
@@ -255,6 +262,7 @@ const submitComment = async () => {
 
       .iconfontWrap {
         display: flex;
+        color: var(--font-2);
 
         & > span:first-child {
           margin-right: 20px;

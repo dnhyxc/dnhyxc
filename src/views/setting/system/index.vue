@@ -229,6 +229,7 @@ const handleKeydown = (e: KeyboardEvent) => {
     border-bottom: 1px solid var(--card-border);
     padding: 20px 0;
     width: 80%;
+    color: var(--font-1);
 
     .label {
       font-size: 16px;
@@ -332,6 +333,12 @@ const handleKeydown = (e: KeyboardEvent) => {
       }
     }
 
+    .el-input__wrapper,
+    .el-input__inner {
+      color: var(--font-1);
+      background-color: var(--input-bg-color);
+    }
+
     .el-dialog__header {
       margin-right: 0;
     }
@@ -347,6 +354,10 @@ const handleKeydown = (e: KeyboardEvent) => {
       height: 30px;
       line-height: 30px;
       padding: 0 15px;
+    }
+
+    .el-radio__label {
+      color: var(--font-2);
     }
   }
 }

@@ -26,4 +26,7 @@ export const modifyTheme = () => {
   body.style.setProperty('--card-border', '#555');
   body.style.setProperty('--fff', '#1e1e20');
   body.style.setProperty('--shadow-mack', 'rgba(225, 225, 225, 0.28)');
+  body.style.setProperty('--tab-color', '#555');
+  body.style.setProperty('--to-top-bg-color', 'rgba(38, 42, 51, 0.28)');
+  body.style.setProperty('--layer-2-2', 'rgba(38, 42, 51, 0.98)');
 };

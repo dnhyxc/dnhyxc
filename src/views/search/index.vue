@@ -241,6 +241,16 @@ const onScrollTo = () => {
     }
 
     .scrollbar-wrapper(12px);
+
+    .el-input__wrapper {
+      box-shadow: 0 0 0 1px var(--card-border) inset;
+    }
+
+    .el-input__wrapper,
+    .el-input__inner {
+      color: var(--font-1);
+      background-color: var(--input-bg-color);
+    }
   }
 
   .search-tag-list {
@@ -261,6 +271,7 @@ const onScrollTo = () => {
       border-radius: 5px;
       cursor: pointer;
       border: 1px solid var(--card-border);
+      color: var(--font-2);
 
       .view-more-info {
         text-align: center;
@@ -285,6 +296,7 @@ const onScrollTo = () => {
       border-radius: 3px;
       background-color: var(--fff);
       border: 1px solid var(--card-border);
+      color: var(--font-2);
       box-sizing: border-box;
       cursor: pointer;
 
@@ -307,7 +319,7 @@ const onScrollTo = () => {
 
     .active {
       background-color: var(--theme-blue);
-      color: var(--fff);
+      color: @fff;
     }
   }
 

@@ -31,7 +31,7 @@ const onScroll = () => {
   position: absolute;
   right: 10px;
   bottom: 10px;
-  background-color: rgba(249, 255, 249, 0.9);
+  background-color: var(--to-top-bg-color);
   box-shadow: 0 0 10px var(--theme-blue);
   padding: 5px;
   border-radius: 8px;

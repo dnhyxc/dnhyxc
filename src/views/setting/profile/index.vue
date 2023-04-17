@@ -270,6 +270,7 @@ const onEnter = () => {
           padding: 15px 15px 15px 180px;
           font-size: 20px;
           font-weight: 700;
+          color: var(--font-1);
         }
       }
     }
@@ -285,6 +286,31 @@ const onEnter = () => {
         .el-form-item__content {
           justify-content: flex-end;
         }
+      }
+    }
+
+    :deep {
+      .el-input__wrapper,
+      .el-input__inner {
+        color: var(--font-1);
+        background-color: var(--input-bg-color);
+      }
+
+      .el-textarea__inner {
+        color: var(--font-1);
+        background-color: var(--input-bg-color);
+      }
+
+      .el-textarea .el-input__count {
+        background-color: transparent;
+      }
+
+      .el-form-item__label {
+        color: var(--font-1);
+      }
+
+      .el-input__count-inner {
+        background-color: transparent;
       }
     }
   }

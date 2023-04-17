@@ -73,6 +73,11 @@ const onCopyCodeSuccess = (value: string) => {
     .vuepress-markdown-body {
       padding: 20px;
       background-color: transparent;
+      color: var(--font-2);
+
+      code {
+        color: var(--code-color);
+      }
     }
   }
 }
