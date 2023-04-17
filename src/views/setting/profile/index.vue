@@ -254,7 +254,7 @@ const onEnter = () => {
           border-radius: 5px;
           padding: 5px;
           background-image: linear-gradient(120deg, var(--card-lg-color1) 0%, var(--card-lg-color2) 100%);
-          box-shadow: 0 0 10px @shadow-color;
+          box-shadow: 0 0 10px var(--shadow-color);
 
           .cover-img {
             display: block;

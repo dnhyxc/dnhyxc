@@ -175,7 +175,7 @@ const toTag = (name: string) => {
   align-items: center;
   flex-wrap: wrap;
   border-radius: 5px;
-  box-shadow: @shadow-mack;
+  box-shadow: 0 0 8px 0 var(--shadow-mack);
 
   .card {
     position: relative;
@@ -234,7 +234,6 @@ const toTag = (name: string) => {
         padding: 5px;
         border-bottom-left-radius: 5px;
         border-bottom-right-radius: 5px;
-        color: @fff;
         overflow: hidden;
 
         .desc {
@@ -244,13 +243,14 @@ const toTag = (name: string) => {
           font-size: 14px;
           backdrop-filter: blur(2px);
           padding: 0 5px 2px 5px;
+          color: @fff;
         }
       }
     }
 
     .card-bottom {
       padding: 8px 10px;
-      box-shadow: 0 0 2px @shadow-color inset;
+      box-shadow: 0 0 2px var(--shadow-color) inset;
       background-blend-mode: multiply, multiply;
       border-bottom-left-radius: 5px;
       border-bottom-right-radius: 5px;
@@ -263,6 +263,7 @@ const toTag = (name: string) => {
         .title {
           font-size: 16px;
           .ellipsisMore(1);
+          color: var(--font-2);
         }
       }
 
@@ -280,7 +281,7 @@ const toTag = (name: string) => {
           .date {
             max-width: 50%;
             font-size: 13px;
-            color: @font-2;
+            color: var(--font-2);
             .ellipsisMore(1);
           }
 
@@ -303,7 +304,7 @@ const toTag = (name: string) => {
             max-width: 50%;
             font-size: 13px;
             border-radius: 5px;
-            color: @font-2;
+            color: var(--font-2);
             .ellipsisMore(1);
 
             &:hover {
@@ -321,7 +322,7 @@ const toTag = (name: string) => {
           justify-content: space-between;
           font-size: 13px;
           margin-top: 8px;
-          color: @font-2;
+          color: var(--font-2);
 
           .action-icons {
             display: flex;
@@ -368,7 +369,7 @@ const toTag = (name: string) => {
             .edit,
             .del {
               &:hover {
-                color: @active;
+                color: var(--active-color);
               }
             }
 

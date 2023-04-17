@@ -203,6 +203,9 @@ const onScrollTo = (to?: number) => {
     .el-dialog__header {
       -webkit-app-region: no-drag;
     }
+    .el-dialog__title {
+      color: var(--font-1);
+    }
     .el-dialog__body {
       padding: 5px 10px;
     }
@@ -262,7 +265,7 @@ const onScrollTo = (to?: number) => {
       .line-card {
         width: calc(50% - 5px);
         padding: 10px 10px;
-        box-shadow: 0 0 5px @shadow-color;
+        box-shadow: 0 0 5px var(--shadow-color);
         background-image: linear-gradient(225deg, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
         margin-bottom: 10px;
         border-radius: 5px;
@@ -305,7 +308,7 @@ const onScrollTo = (to?: number) => {
                 .classify,
                 .tag {
                   background-image: linear-gradient(225deg, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
-                  box-shadow: 0 0 3px @shadow-color;
+                  box-shadow: 0 0 3px var(--shadow-color);
                   padding: 1px 5px 3px;
                   border-radius: 5px;
                   min-width: 28px;

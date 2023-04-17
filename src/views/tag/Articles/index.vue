@@ -181,7 +181,7 @@ const likeListArticle = (id: string, data?: ArticleItem) => {
     box-sizing: border-box;
     width: 220px;
     height: 100%;
-    box-shadow: @shadow-mack;
+    box-shadow: 0 0 8px 0 var(--shadow-mack);
     border-radius: 5px;
     padding: 5px;
 
@@ -212,6 +212,7 @@ const likeListArticle = (id: string, data?: ArticleItem) => {
     .tag-wrap {
       margin-bottom: 10px;
       border-radius: 5px;
+      color: var(--font-3);
 
       &:first-child {
         margin-top: 5px;
@@ -246,7 +247,7 @@ const likeListArticle = (id: string, data?: ArticleItem) => {
         border-radius: 5px;
         cursor: pointer;
         border-bottom: 1px solid var(--card-border);
-        box-shadow: 0 0 5px @shadow-color;
+        box-shadow: 0 0 5px var(--shadow-color);
 
         .tag-name {
           font-size: 16px;
@@ -281,7 +282,7 @@ const likeListArticle = (id: string, data?: ArticleItem) => {
   .right {
     flex: 1;
     margin-left: 10px;
-    box-shadow: @shadow-mack;
+    box-shadow: 0 0 8px 0 var(--shadow-mack);
     border-radius: 5px;
     padding: 5px 5px;
 
@@ -309,7 +310,7 @@ const likeListArticle = (id: string, data?: ArticleItem) => {
         .author-line-card {
           width: calc(50% - 10px);
           padding: 10px;
-          box-shadow: 0 0 5px @shadow-color;
+          box-shadow: 0 0 5px var(--shadow-color);
           border-radius: 5px;
           margin: 5px;
 

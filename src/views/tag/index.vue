@@ -74,7 +74,7 @@ const onCheckTag = (tag: string) => {
   .word-cloud-wrap {
     box-sizing: border-box;
     flex: 1;
-    box-shadow: @shadow-mack;
+    box-shadow: 0 0 8px 0 var(--shadow-mack);
     border-radius: 5px;
   }
 
@@ -85,7 +85,7 @@ const onCheckTag = (tag: string) => {
     margin-left: 10px;
     padding: 10px 0;
     width: 220px;
-    box-shadow: @shadow-mack;
+    box-shadow: 0 0 8px 0 var(--shadow-mack);
     border-radius: 5px;
 
     :deep {

@@ -13,6 +13,7 @@ import { mountDirectives } from './directive';
 import EventBus from './eventBus';
 import { locSetItem, locGetItem, locRemoveItem, ssnGetItem, ssnSetItem, ssnRemoveItem } from './storage';
 import * as ipcRenderers from './ipcRenderer';
+import { modifyTheme } from './theme';
 
 const store = new Store();
 
@@ -479,4 +480,5 @@ export {
   shareQZon,
   shareSinaWeiBo,
   EventBus,
+  modifyTheme,
 };

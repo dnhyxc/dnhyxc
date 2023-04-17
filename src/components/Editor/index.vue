@@ -151,14 +151,82 @@ const onCopyCodeSuccess = (value: string) => {
 .container {
   background-color: var(--fff);
   :deep {
+    .v-md-editor__right-area {
+      background-color: var(--fff);
+    }
+
+    .v-md-editor__left-area {
+      background-color: var(--fff);
+      border-right: 1px solid var(--card-border);
+    }
+
+    .v-md-editor__left-area-title {
+      color: var(--font-1);
+      &::after {
+        border-bottom: 1px solid var(--card-border);
+      }
+    }
+
+    .v-md-editor__menu-item {
+      color: var(--font-2);
+    }
+
+    .v-md-editor__menu-item:hover {
+      background-color: var(--card-border);
+    }
+
+    .v-md-editor__toc-nav-item {
+      color: var(--font-2);
+    }
+
+    .v-md-editor__preview-wrapper,
+    .vuepress-markdown-body {
+      color: var(--font-2);
+      background-color: var(--fff);
+
+      code {
+        color: var(--code-color);
+      }
+    }
+
+    .v-md-editor__menu {
+      background-color: var(--fff);
+      border: 1px solid var(--card-border);
+    }
+
+    .v-md-editor__toolbar {
+      border-bottom: 1px solid var(--card-border);
+    }
+    .v-md-editor__editor-wrapper {
+      border-right: 1px solid var(--card-border);
+    }
+
+    .v-md-editor__toolbar-item {
+      color: var(--font-4);
+
+      &:hover {
+        background-color: var(--bg-lg-color1);
+        color: var(--font-4);
+      }
+    }
+
+    .v-md-editor__toolbar-item--active {
+      background-color: var(--bg-lg-color1);
+      color: var(--font-4);
+      &:hover {
+        background-color: var(--bg-lg-color1);
+      }
+    }
+
     .v-md-editor {
       border-radius: 5px;
-      box-shadow: @shadow-mack;
+      box-shadow: 0 0 8px 0 var(--shadow-mack);
     }
     .v-md-textarea-editor pre,
     .v-md-textarea-editor textarea {
       background-color: var(--fff);
       border-bottom-left-radius: 5px;
+      color: var(--font-2);
     }
     .vuepress-markdown-body:not(.custom) {
       padding: 16px 20px;

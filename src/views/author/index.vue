@@ -275,7 +275,7 @@ const onScrollTo = (to?: number) => {
         border-radius: 5px;
         padding: 5px;
         background-image: linear-gradient(120deg, var(--card-lg-color1) 0%, var(--card-lg-color2) 100%);
-        box-shadow: 0 0 10px @shadow-color;
+        box-shadow: 0 0 10px var(--shadow-color);
 
         .head-img {
           display: block;
@@ -295,6 +295,7 @@ const onScrollTo = (to?: number) => {
           font-size: 18px;
           font-weight: 700;
           margin-top: 10px;
+          color: var(--font-1);
         }
 
         .job {
@@ -367,6 +368,7 @@ const onScrollTo = (to?: number) => {
     .el-tabs {
       border: 1px solid var(--card-border);
       border-radius: 5px;
+      background-color: transparent;
 
       :deep {
         .el-tabs__content {
@@ -403,7 +405,7 @@ const onScrollTo = (to?: number) => {
         .author-line-card {
           width: calc(50% - 5px);
           padding: 10px 10px;
-          box-shadow: 0 0 5px @shadow-color;
+          box-shadow: 0 0 5px var(--shadow-color);
           background-image: linear-gradient(225deg, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
           margin-bottom: 10px;
           border-radius: 5px;

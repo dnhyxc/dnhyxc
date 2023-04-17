@@ -8,6 +8,7 @@ body {
   // 默认 Card 组件卡片渐变背景色，@bg-lg-2
   --bg-lg-color1: @bg-lg-color1;
   --bg-lg-color2: @bg-lg-color2;
+  --shadow-color: @shadow-color;
   // 默认我的分类 Reel 组件卡片渐变背景色
   --reel-lg-color1: @reel-lg-color1;
   --reel-lg-color2: @reel-lg-color2;
@@ -35,6 +36,13 @@ body {
   // tab 背景颜色
   --tab-color: @tab-color;
   --theme: @theme;
+  --loading-color: @loading-color;
+  // @menu-weak
+  --menu-weak: @menu-weak;
+  --shadow-mack: @shadow-mack-color;
+  --code-color: @code-color;
+  --modal-bg-color: @theme;
+  --input-bg-color: @fff;
 
   margin: 0;
   padding: 0;
@@ -66,21 +74,35 @@ ul {
 // 更改全局弹窗/抽屉背景颜色
 .el-dialog,
 .el-drawer {
-  background-color: var(--background) !important;
+  background-color: var(--modal-bg-color) !important;
 }
 
+.el-drawer__header {
+  color: var(--font-1) !important;
+}
+
+// .el-dropdown-menu {
+//   background-color: var(--modal-bg-color) !important;
+// }
+
+// .el-dropdown__popper.el-popper {
+//   border: 1px solid var(--card-border) !important;
+// }
+
 .msg-popover {
-  background: var(--background) !important;
+  background: var(--modal-bg-color) !important;
+  border: 1px solid var(--card-border) !important;
 
   .el-popper__arrow {
     &::before {
-      background: var(--background) !important;
+      background: var(--modal-bg-color) !important;
+      border: 1px solid var(--card-border) !important;
     }
   }
 }
 
 .MSG_CONFIG {
-  background-color: var(--background);
+  background-color: var(--modal-bg-color);
   .el-button {
     padding-top: 10px;
     width: 88px;

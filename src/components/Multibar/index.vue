@@ -149,7 +149,7 @@ const onCollect = () => {
     height: 50px;
     border-radius: 5px;
     margin-right: 10px;
-    box-shadow: @shadow-mack;
+    box-shadow: 0 0 8px 0 var(--shadow-mack);
     color: var(--font-3);
     cursor: pointer;
 

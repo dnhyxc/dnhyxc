@@ -4,7 +4,7 @@ import VueMarkdownEditor from '@kangc/v-md-editor';
 import createEmojiPlugin from '@kangc/v-md-editor/lib/plugins/emoji/index';
 import VMdPreview from '@kangc/v-md-editor/lib/preview';
 // 代码行号
-import createLineNumbertPlugin from '@kangc/v-md-editor/lib/plugins/line-number/index';
+// import createLineNumbertPlugin from '@kangc/v-md-editor/lib/plugins/line-number/index';
 // 内容定位
 import createAlignPlugin from '@kangc/v-md-editor/lib/plugins/align';
 import createCopyCodePlugin from '@kangc/v-md-editor/lib/plugins/copy-code/index';
@@ -39,6 +39,8 @@ export const usePlugins = <T>(app: T | any) => {
     Prism,
   });
 
+  // 显示行号
+  // VMdPreview.use(createLineNumbertPlugin());
   // 为预览组件增加复制功能
   VMdPreview.use(createCopyCodePlugin());
   // 预览组件支持表情
@@ -47,7 +49,7 @@ export const usePlugins = <T>(app: T | any) => {
 
   // 表情（注意：plugin use 必须放在 Theme 之后，否则不生效）
   VueMarkdownEditor.use(createEmojiPlugin());
-  VueMarkdownEditor.use(createLineNumbertPlugin());
+  // VueMarkdownEditor.use(createLineNumbertPlugin());
   VueMarkdownEditor.use(createAlignPlugin());
   VueMarkdownEditor.use(createCopyCodePlugin());
   VueMarkdownEditor.use(createKatexPlugin());
@@ -58,7 +60,7 @@ export {
   VueMarkdownEditor,
   createEmojiPlugin,
   VMdPreview,
-  createLineNumbertPlugin,
+  // createLineNumbertPlugin,
   createAlignPlugin,
   createCopyCodePlugin,
 };

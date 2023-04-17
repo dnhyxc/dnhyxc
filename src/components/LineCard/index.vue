@@ -250,7 +250,7 @@ const onOpenNewWindow = async (data: ArticleItem) => {
           .classify,
           .tag {
             background-image: linear-gradient(225deg, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
-            box-shadow: 0 0 3px @shadow-color;
+            box-shadow: 0 0 3px var(--shadow-color);
             padding: 1px 5px 3px;
             border-radius: 5px;
             min-width: 28px;

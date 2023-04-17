@@ -123,7 +123,7 @@ const onJump = (name: string, type: string) => {
       width: 100%;
       margin-top: 10px;
       border-radius: 5px;
-      box-shadow: @shadow-mack;
+      box-shadow: 0 0 8px 0 var(--shadow-mack);
 
       &:hover {
         background-image: @card-lg-2;

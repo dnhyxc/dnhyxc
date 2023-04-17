@@ -170,7 +170,7 @@ const onClick = (name: string) => {
       width: calc((100vw - 116px) / 4);
       height: 100%;
       margin-right: 12px;
-      box-shadow: @shadow-mack;
+      box-shadow: 0 0 8px 0 var(--shadow-mack);
       background-image: linear-gradient(to bottom, var(--reel-lg-color1) 0%, var(--reel-lg-color2) 100%);
       border-radius: 5px;
       -webkit-user-drag: none;

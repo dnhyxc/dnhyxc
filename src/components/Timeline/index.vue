@@ -56,7 +56,7 @@ const onClickCard = (id: string) => {
     width: 50%;
 
     .card {
-      box-shadow: @shadow-mack;
+      box-shadow: 0 0 8px 0 var(--shadow-mack);
       border-radius: 5px;
       padding: 10px;
 
@@ -74,6 +74,7 @@ const onClickCard = (id: string) => {
           font-size: 18px;
           font-weight: 700;
           margin-bottom: 10px;
+          color: var(--font-1);
         }
       }
     }
@@ -105,11 +106,7 @@ const onClickCard = (id: string) => {
         width: 15px;
         height: 15px;
         border-radius: 15px;
-        background-image: linear-gradient(
-          120deg,
-          var(--card-lg-color1) 0%,
-          var(--card-lg-color2) 100%
-        );
+        background-image: linear-gradient(120deg, var(--card-lg-color1) 0%, var(--card-lg-color2) 100%);
         z-index: 1;
       }
 
@@ -154,11 +151,7 @@ const onClickCard = (id: string) => {
         width: 15px;
         height: 15px;
         border-radius: 15px;
-        background-image: linear-gradient(
-          120deg,
-          var(--card-lg-color1) 0%,
-          var(--card-lg-color2) 100%
-        );
+        background-image: linear-gradient(120deg, var(--card-lg-color1) 0%, var(--card-lg-color2) 100%);
         z-index: 1;
       }
 

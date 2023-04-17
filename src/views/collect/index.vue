@@ -215,7 +215,7 @@ const onScrollTo = () => {
     justify-content: flex-start;
     padding: 10px;
     background-image: linear-gradient(225deg, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
-    box-shadow: @shadow-mack;
+    box-shadow: 0 0 8px 0 var(--shadow-mack);
     border-radius: 5px;
     height: 120px;
     margin-bottom: 10px;

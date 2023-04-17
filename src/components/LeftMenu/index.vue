@@ -183,7 +183,7 @@ const onQuit = () => {
       font-size: 14px;
       cursor: pointer;
       color: var(--theme-blue);
-      box-shadow: 0 0 2px @shadow-color inset;
+      box-shadow: 0 0 2px var(--shadow-color) inset;
     }
 
     .avatar {

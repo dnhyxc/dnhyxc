@@ -393,8 +393,11 @@ const onEnter = async (e: Event) => {
 
         :deep {
           .el-input__wrapper {
-            background-color: @menu-weak;
+            background-color: var(--input-bg-color);
             border-radius: 30px;
+          }
+          .el-input__inner {
+            color: var(--font-1);
           }
         }
       }
@@ -462,6 +465,8 @@ const onEnter = async (e: Event) => {
     .icon {
       -webkit-app-region: no-drag;
       cursor: pointer;
+      color: var(--font-1);
+
       .icon-text {
         margin-left: 15px;
         font-size: 16px;

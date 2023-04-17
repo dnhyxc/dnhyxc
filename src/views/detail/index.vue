@@ -139,7 +139,7 @@ const onScrollTo = (height?: number) => {
     margin-right: 10px;
     .pageHeight();
     border-radius: 5px;
-    box-shadow: @shadow-mack;
+    box-shadow: 0 0 8px 0 var(--shadow-mack);
 
     :deep {
       .el-scrollbar {

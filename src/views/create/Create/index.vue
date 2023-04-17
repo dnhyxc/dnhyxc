@@ -256,8 +256,27 @@ const onSaveDraft = () => {
         }
       }
 
+      .el-input__wrapper,
+      .el-input__inner {
+        color: var(--font-1);
+        background-color: var(--input-bg-color);
+      }
+
+      .el-textarea__inner {
+        color: var(--font-1);
+        background-color: var(--input-bg-color);
+      }
+
+      .el-textarea .el-input__count {
+        background-color: var(--menu-weak);
+      }
+
       .el-select {
         flex: 1;
+      }
+
+      .el-form-item__label {
+        color: var(--font-1);
       }
     }
 
