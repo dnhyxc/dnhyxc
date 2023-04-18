@@ -51,8 +51,11 @@ provide('reload', reload);
   height: 100vh;
   box-sizing: border-box;
   background-color: var(--background);
-  // background-color: @theme;
   overflow: hidden;
+  background: var(--bg-image);
+  background-size: var(--bg-size);
+  animation: var(--bg-animation);
+  .bgKeyframes(bgmove);
 
   .el-main {
     display: flex;

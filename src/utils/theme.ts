@@ -1,3 +1,13 @@
+// 公共字体设置
+const fontStyle = {
+  '--font-1': '#252933',
+  '--font-2': '#515767',
+  '--font-3': '#4e5969',
+  '--font-4': '#8a919f',
+  '--font-5': '#c2c8d1',
+  '--font-6': '#f2f3f5',
+};
+
 // 清新绿（默认主题）
 const freshGreen = {
   // 主题背景颜色
@@ -15,12 +25,7 @@ const freshGreen = {
   // 各组件阴影颜色
   '--shadow-color': '#b8eaff',
   // 字体颜色
-  '--font-1': '#252933',
-  '--font-2': '#515767',
-  '--font-3': '#4e5969',
-  '--font-4': '#8a919f',
-  '--font-5': '#c2c8d1',
-  '--font-6': '#f2f3f5',
+  ...fontStyle,
   // loading 背景颜色
   '--loading-color': 'rgba(249, 255, 249, 0.8)',
   // 组件边框颜色
@@ -34,6 +39,10 @@ const freshGreen = {
   '--to-top-bg-color': 'rgba(249, 255, 249, 0.9)',
   // 子级评论背景颜色
   '--layer-2-2': 'rgba(247, 248, 250, 0.7)',
+  // 去除炫彩背景设置
+  '--bg-image': 'none',
+  '--bg-size': 'auto',
+  '--bg-animation': 'none',
 };
 
 // 黑色主题
@@ -72,6 +81,10 @@ const black = {
   '--to-top-bg-color': 'rgba(38, 42, 51, 0.28)',
   // 子级评论背景颜色
   '--layer-2-2': 'rgba(38, 42, 51, 0.98)',
+  // 去除炫彩背景设置
+  '--bg-image': 'none',
+  '--bg-size': 'auto',
+  '--bg-animation': 'none',
 };
 
 // 亮青色
@@ -95,12 +108,7 @@ const lightcyan = {
   // 各组件外阴影
   '--shadow-mack': 'rgba(225, 225, 225, 0.58)',
   // 字体颜色
-  '--font-1': '#252933',
-  '--font-2': '#515767',
-  '--font-3': '#4e5969',
-  '--font-4': '#8a919f',
-  '--font-5': '#c2c8d1',
-  '--font-6': '#f2f3f5',
+  ...fontStyle,
   // loading 背景颜色
   '--loading-color': 'rgba(249, 255, 249, 0.8)',
   // 组件边框颜色
@@ -112,12 +120,91 @@ const lightcyan = {
   '--to-top-bg-color': 'rgba(249, 255, 249, 0.9)',
   // 子级评论背景颜色
   '--layer-2-2': 'rgba(240, 255, 255, 0.6)',
+  // 去除炫彩背景设置
+  '--bg-image': 'none',
+  '--bg-size': 'auto',
+  '--bg-animation': 'none',
+};
+
+// 晶莹白
+const light = {
+  // 主题背景颜色
+  '--background': '#fff',
+  // 弹窗背景颜色
+  '--modal-bg-color': '#fff',
+  // 输入框背景颜色
+  '--input-bg-color': '#fff',
+  // 文章各种卡片渐变颜色
+  '--bg-lg-color1': '#fff',
+  '--bg-lg-color2': '#ebfcfc',
+  // 时间轴背景颜色
+  '--timeline-lg-color1': '#fff',
+  '--timeline-lg-color2': '#ebfcfc',
+  // 各组件阴影颜色
+  '--shadow-color': '#b8eaff',
+  // 字体颜色
+  ...fontStyle,
+  // loading 背景颜色
+  '--loading-color': 'rgba(255, 255, 255, 0.8)',
+  // 组件边框颜色
+  '--card-border': '#ddf5ff',
+  '--fff': '#fff',
+  // 各组件外阴影
+  '--shadow-mack': 'rgb(0 0 0 / 10%)',
+  // 系统设置快捷键显示背景颜色
+  '--tab-color': '#f5f7fa',
+  // 滚动到顶部组件背景颜色
+  '--to-top-bg-color': 'rgba(255, 255, 255, 0.9)',
+  // 子级评论背景颜色
+  '--layer-2-2': 'rgba(255, 255, 255, 0.7)',
+  // 去除炫彩背景设置
+  '--bg-image': 'none',
+  '--bg-size': 'auto',
+  '--bg-animation': 'none',
+};
+
+// 炫彩
+const colorful = {
+  // 主题背景颜色
+  '--background': '#f9fff9',
+  // 弹窗背景颜色
+  '--modal-bg-color': '#f9fff9',
+  // 输入框背景颜色
+  '--input-bg-color': '#fff',
+  // 文章各种卡片渐变颜色
+  '--bg-lg-color1': '#fffeff',
+  '--bg-lg-color2': '#d7fffe',
+  // 时间轴背景颜色
+  '--timeline-lg-color1': '#fffeff',
+  '--timeline-lg-color2': '#d7fffe',
+  // 各组件阴影颜色
+  '--shadow-color': '#b8eaff',
+  // 字体颜色
+  ...fontStyle,
+  // loading 背景颜色
+  '--loading-color': 'rgba(249, 255, 249, 0.8)',
+  // 组件边框颜色
+  '--card-border': '#ddf5ff',
+  '--fff': '#fff',
+  // 各组件外阴影
+  '--shadow-mack': 'rgb(0 0 0 / 10%)',
+  // 系统设置快捷键显示背景颜色
+  '--tab-color': '#f5f7fa',
+  // 滚动到顶部组件背景颜色
+  '--to-top-bg-color': 'rgba(249, 255, 249, 0.9)',
+  // 子级评论背景颜色
+  '--layer-2-2': 'rgba(247, 248, 250, 0.7)',
+  '--bg-image': 'linear-gradient(126deg, #e9defa, #fbfcdb, #a8edea, #f3e6ff, #d1e8f3)',
+  '--bg-size': '180%',
+  '--bg-animation': 'bgmove 10s infinite',
 };
 
 const themeTypes = {
   freshGreen,
   black,
   lightcyan,
+  light,
+  colorful,
 };
 
 // 设置背景颜色

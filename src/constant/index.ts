@@ -86,16 +86,24 @@ export const EMOJI_TEXTS = [
 // 主题类型
 export const THEME_TYPES = [
   {
-    key: 'freshGreen',
-    name: '清新绿',
+    key: 'light',
+    name: '晶莹白',
   },
   {
     key: 'black',
     name: '暗夜黑',
   },
   {
+    key: 'freshGreen',
+    name: '清新绿',
+  },
+  {
     key: 'lightcyan',
     name: '极光绿',
+  },
+  {
+    key: 'colorful',
+    name: '炫彩',
   },
 ];
 
@@ -224,7 +232,7 @@ export const SETTING_MENU = [
     name: '主题设置',
     key: 'theme',
     path: '/theme',
-    show: false,
+    show: true,
   },
 ];
 

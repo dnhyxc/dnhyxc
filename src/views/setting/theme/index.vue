@@ -48,16 +48,22 @@ const changeTheme = (key: string) => {
 @import '@/styles/index.less';
 
 .theme-wrap {
+  display: flex;
+  justify-content: center;
+  box-sizing: border-box;
   height: 100%;
-  padding: 10px;
+  padding: 30px 10px 10px;
 
   .content {
+    width: 80%;
+
     .default-wrap {
       margin-bottom: 20px;
       .label {
-        margin-bottom: 10px;
-        font-size: 16px;
+        margin-bottom: 15px;
+        font-size: 18px;
         font-weight: 700;
+        color: var(--font-1);
       }
 
       .themes {
@@ -93,6 +99,17 @@ const changeTheme = (key: string) => {
 
         .lightcyan {
           background-color: #d7fffe;
+          color: @font-1;
+        }
+
+        .light {
+          background-color: #fff;
+          color: @font-1;
+        }
+
+        .colorful {
+          .bgMoveColor(126deg);
+          .bgKeyframes(bgmove);
           color: @font-1;
         }
 
