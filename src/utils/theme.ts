@@ -194,7 +194,10 @@ const colorful = {
   '--to-top-bg-color': 'rgba(249, 255, 249, 0.9)',
   // 子级评论背景颜色
   '--layer-2-2': 'rgba(247, 248, 250, 0.7)',
-  '--bg-image': 'linear-gradient(126deg, #e9defa, #fbfcdb, #a8edea, #f3e6ff, #d1e8f3)',
+  // 动态背景颜色
+  '--bg-image': 'linear-gradient(126deg, #e0c3fc, #d7fffe, #f9fff9, #f8fded, #f9fff9, #d7fffe, #f5ccec)',
+  // '--bg-image': 'linear-gradient(126deg, #e0c3fc, #d7fffe, #f9fff9, #fefffa, #f9fff9, #d7fffe, #f5ccec)',
+  // '--bg-image': 'linear-gradient(126deg, #e0c3fc, #d7fffe, #f9fff9, #fbfcdb, #f9fff9, #d7fffe, #f5ccec)',
   '--bg-size': '180%',
   '--bg-animation': 'bgmove 10s infinite',
 };
