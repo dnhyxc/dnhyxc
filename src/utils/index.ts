@@ -1,6 +1,5 @@
 import { ElMessageBox, ElMessage } from 'element-plus';
 import type { ElMessageBoxOptions } from 'element-plus';
-import Store from 'electron-store';
 import moment from 'moment';
 import { MSG_CONFIG, CODE_CONTROL, EMOJI_TEXTS, EMOJI_URLS } from '@/constant';
 import { ArticleItem } from '@/typings/common';
@@ -14,8 +13,43 @@ import EventBus from './eventBus';
 import { locSetItem, locGetItem, locRemoveItem, ssnGetItem, ssnSetItem, ssnRemoveItem } from './storage';
 import * as ipcRenderers from './ipcRenderer';
 import { modifyTheme } from './theme';
+import {
+  setParamsToStore,
+  clearParamListFromStore,
+  getParamListFromStore,
+  eStore,
+  setTheme,
+  getTheme,
+  removeTheme,
+} from './store';
 
-const store = new Store();
+export {
+  ipcRenderers,
+  request,
+  normalizeResult,
+  decrypt,
+  encrypt,
+  locSetItem,
+  locGetItem,
+  locRemoveItem,
+  ssnGetItem,
+  ssnSetItem,
+  ssnRemoveItem,
+  usePlugins,
+  mountDirectives,
+  shareQQ,
+  shareQZon,
+  shareSinaWeiBo,
+  EventBus,
+  modifyTheme,
+  setParamsToStore,
+  clearParamListFromStore,
+  getParamListFromStore,
+  eStore,
+  setTheme,
+  getTheme,
+  removeTheme,
+};
 
 // 判断系统类型
 export const checkOS = () => {
@@ -44,14 +78,14 @@ export const Message = (title: string = '确定下架该文章吗？', content: 
 };
 
 // 格式化时间
-const formatDate = (date: number, format = 'YYYY/MM/DD HH:mm:ss') => {
+export const formatDate = (date: number, format = 'YYYY/MM/DD HH:mm:ss') => {
   if (!date) return;
 
   return moment(date).format(format);
 };
 
 // 转化距离当前时间的间隔时长
-const formatGapTime = (date: number) => {
+export const formatGapTime = (date: number) => {
   const ms = Date.now() - date;
   const seconds = Math.round(ms / 1000);
   const minutes = Math.round(ms / 60000);
@@ -230,43 +264,6 @@ export const getStoreUserInfo = () => {
     userInfo,
     token,
   };
-};
-
-// 返回 electron-store 的实例
-export const eStore = store;
-
-// 处理各页面存储在store的数据
-export const setParamsToStore = (from: string, data: any) => {
-  const paramList = (store.get('paramList') && JSON.parse(store.get('paramList') as string)) || [];
-  const params = {
-    from,
-    data,
-  };
-  const index = paramList.findIndex((i: any) => i.from === from);
-  if (index > -1) {
-    // 先删除原来的数据，然后再向最前面添加，保持最新添加的始终在最前面
-    paramList.splice(index, 1);
-    paramList.unshift(params);
-  } else {
-    paramList.unshift(params);
-  }
-  store.set('paramList', JSON.stringify(paramList));
-};
-
-// 清除保存在store中的paramList
-export const clearParamListFromStore = () => {
-  store.delete('paramList');
-};
-
-// 获取保存在store中的paramList
-export const getParamListFromStore = (from: string) => {
-  const data = store.get('paramList');
-  if (data && JSON.parse(data as string)) {
-    const findData = JSON.parse(data as string).find((i: any) => i.from === from);
-    return findData?.data;
-  } else {
-    return {};
-  }
 };
 
 // 账号校验
@@ -458,27 +455,4 @@ export const insertContent = ({
     )}`;
     return res;
   }
-};
-
-export {
-  ipcRenderers,
-  request,
-  normalizeResult,
-  decrypt,
-  encrypt,
-  formatDate,
-  locSetItem,
-  locGetItem,
-  locRemoveItem,
-  ssnGetItem,
-  ssnSetItem,
-  ssnRemoveItem,
-  formatGapTime,
-  usePlugins,
-  mountDirectives,
-  shareQQ,
-  shareQZon,
-  shareSinaWeiBo,
-  EventBus,
-  modifyTheme,
 };

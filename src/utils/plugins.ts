@@ -30,6 +30,14 @@ export const usePlugins = <T>(app: T | any) => {
   // 编辑mackdown配置
   VueMarkdownEditor.use(vuepressTheme, {
     Prism,
+    // 扩展高亮语言
+    codeHighlightExtensionMap: {
+      vue: 'html',
+      react: 'js',
+      json: 'js',
+      ts: 'js',
+      typescript: 'js',
+    },
   });
 
   VueMarkdownEditor.use(createHighlightLinesPlugin());
@@ -37,6 +45,14 @@ export const usePlugins = <T>(app: T | any) => {
   // 预览mackdown配置
   VMdPreview.use(vuepressTheme, {
     Prism,
+    // 扩展高亮语言
+    codeHighlightExtensionMap: {
+      vue: 'html',
+      react: 'js',
+      json: 'js',
+      ts: 'js',
+      typescript: 'js',
+    },
   });
 
   // 显示行号

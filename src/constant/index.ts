@@ -15,6 +15,7 @@ export const DOMAIN_URL = '43.143.27.249';
 // 表情资源路径域名
 export const EMOJI_HOST = `http://${location.hostname === DOMAIN_URL ? DOMAIN_URL : '127.0.0.1:9112'}/image/`;
 
+// 表情图片链接
 export const EMOJI_URLS = {
   1: `${EMOJI_HOST}24b6f805c6687e5694cbee718.gif`, // weixiao,
   2: `${EMOJI_HOST}24b6f805c6687e5694cbee703.gif`, // baiyan,
@@ -80,6 +81,22 @@ export const EMOJI_TEXTS = [
   '眨眼',
   '皱眉',
   '大兵',
+];
+
+// 主题类型
+export const THEME_TYPES = [
+  {
+    key: 'freshGreen',
+    name: '清新绿',
+  },
+  {
+    key: 'black',
+    name: '暗夜黑',
+  },
+  {
+    key: 'lightcyan',
+    name: '极光绿',
+  },
 ];
 
 // 滚动加载每页加载数量

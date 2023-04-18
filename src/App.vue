@@ -8,7 +8,7 @@
 <script setup lang="ts">
 import { ref, nextTick, provide, onMounted, onBeforeMount } from 'vue';
 import { useCommonStore } from '@/store/common';
-// import { modifyTheme } from '@/utils';
+import { modifyTheme, getTheme } from '@/utils';
 
 const isRouterAlive = ref<boolean>(true);
 
@@ -16,7 +16,11 @@ const commonStore = useCommonStore();
 
 // 修改主题色
 onBeforeMount(() => {
-  // modifyTheme();
+  // 获取存储在electron store中的主题颜色
+  const theme = getTheme();
+  if (theme) {
+    modifyTheme(theme);
+  }
 });
 
 onMounted(() => {
