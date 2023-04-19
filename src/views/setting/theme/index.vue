@@ -145,7 +145,7 @@ const changeTheme = (key: string) => {
         }
 
         .beauty {
-          background-image: url('@/assets/images/3.jpg');
+          background-image: url('@/assets/images/2.jpg');
           .bgStyles;
           color: @font-1;
         }

@@ -1,4 +1,4 @@
-import { IMG1, IMG3, IMG4, IMG5, HEAD_IMG } from '@/constant';
+import { IMG1, IMG2, IMG4, IMG5, HEAD_IMG } from '@/constant';
 
 // 公共字体设置
 const fontStyle = {
@@ -277,10 +277,10 @@ const ShaoSiming = {
   '--bg-image-url': `url(${IMG1})`,
 };
 
-// 侧脸
+// 美女
 const beauty = {
   ...imageStyles,
-  '--bg-image-url': `url(${IMG3})`,
+  '--bg-image-url': `url(${IMG2})`,
 };
 
 // 海岛
