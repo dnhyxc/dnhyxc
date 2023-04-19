@@ -125,7 +125,7 @@ export const IMG_THEME_TYPES = [
   },
   {
     key: 'beauty',
-    name: '美女',
+    name: '动漫',
   },
   {
     key: 'locomotive',

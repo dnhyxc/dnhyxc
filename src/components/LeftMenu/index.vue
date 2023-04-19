@@ -165,10 +165,12 @@ const onQuit = () => {
   }
 
   .setting {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
     margin-top: 20px;
+    z-index: 99;
 
     .login-btn {
       display: flex;

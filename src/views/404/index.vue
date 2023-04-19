@@ -31,7 +31,7 @@ const backHome = () => {
   display: flex;
   justify-content: center;
   flex-direction: column;
-  background: url('@/assets/images/404.webp');
+  background: url('@/assets/images/face.jpg');
   height: 100%;
   background-size: cover;
   background-repeat: repeat;

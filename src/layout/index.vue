@@ -47,7 +47,6 @@ provide('reload', reload);
 @import '@/styles/index.less';
 
 .wrap {
-  position: relative;
   display: flex;
   justify-content: flex-start;
   flex-direction: column;
@@ -55,23 +54,12 @@ provide('reload', reload);
   box-sizing: border-box;
   background-color: var(--background);
   overflow: hidden;
-  background: var(--bg-image);
-  background-size: var(--bg-size);
+  background-image: var(--bg-image-url);
+  background-position: var(--bg-position);
+  background-repeat: var(--bg-repeat);
+  background-size: var(--bg-img-size);
   animation: var(--bg-animation);
   .bgKeyframes(bgmove);
-
-  &::before {
-    content: '';
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    background-image: var(--bg-image-url);
-    background-position: var(--bg-position);
-    background-repeat: var(--bg-repeat);
-    background-size: var(--bg-img-size);
-  }
 
   .el-container-wrap {
     height: 100vh;

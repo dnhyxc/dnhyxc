@@ -61,9 +61,9 @@ const changeTheme = (key: string) => {
 @import '@/styles/index.less';
 
 .bgStyles {
-  background-position: var(--bg-position);
-  background-repeat: var(--bg-repeat);
-  background-size: var(--bg-img-size);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 .theme-wrap {
@@ -147,7 +147,7 @@ const changeTheme = (key: string) => {
         .beauty {
           background-image: url('@/assets/images/2.jpg');
           .bgStyles;
-          color: @font-1;
+          color: @fff;
         }
 
         .locomotive {

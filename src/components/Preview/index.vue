@@ -70,6 +70,9 @@ const onCopyCodeSuccess = (value: string) => {
   width: 100%;
 
   :deep {
+    .v-md-pre-wrapper {
+      background: var(--pre-bg-color);
+    }
     .vuepress-markdown-body {
       padding: 20px;
       background-color: transparent;

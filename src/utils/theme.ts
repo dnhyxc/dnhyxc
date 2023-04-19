@@ -12,9 +12,6 @@ const fontStyle = {
 
 // 公共需要去除的样式
 const removeStyle = {
-  // 去除炫彩背景设置
-  '--bg-image': 'none',
-  '--bg-size': 'auto',
   '--bg-animation': 'none',
   // 背景图片
   '--bg-image-url': 'none',
@@ -24,6 +21,8 @@ const removeStyle = {
   '--e-form-bg-color': 'initial',
   // 图片背景兼容字体颜色
   '--font-color': '',
+  // 详情代码块背景颜色
+  '--pre-bg-color': '#282c34',
 };
 
 // 背景图片公共配置
@@ -63,9 +62,9 @@ const imageStyles = {
   // 子级评论背景颜色
   '--layer-2-2': 'rgba(0, 0, 0, 0.3)',
   // 动态背景颜色
-  '--bg-image': 'linear-gradient(126deg, #e0c3fc, #d7fffe, #f9fff9, #f8fded, #f9fff9, #d7fffe, #f5ccec)',
-  '--bg-size': '180%',
-  '--bg-animation': 'bgmove 10s infinite',
+  '--bg-img-size': 'cover',
+  '--bg-animation': 'none',
+  // '--bg-animation': 'bgmove 10s infinite',
   '--backdrop-filter': 'blur(2px)',
   // 富文本编辑器字体颜色
   '--e-edit-color': '#fff',
@@ -73,6 +72,8 @@ const imageStyles = {
   '--e-form-bg-color': 'rgba(0, 0, 0, 0.3)',
   // 图片背景兼容字体颜色
   '--font-color': '#000',
+  // 详情代码块背景颜色
+  '--pre-bg-color': 'rgba(0, 0, 0, 0.3)',
 };
 
 // 清新绿（默认主题）
@@ -248,17 +249,16 @@ const colorful = {
   // 子级评论背景颜色
   '--layer-2-2': '#f9fff9',
   // 动态背景颜色
-  '--bg-image': 'linear-gradient(126deg, #e0c3fc, #d7fffe, #f9fff9, #f8fded, #f9fff9, #d7fffe, #f5ccec)',
-  '--bg-size': '180%',
+  '--bg-image-url': 'linear-gradient(126deg, #e0c3fc, #d7fffe, #f9fff9, #f8fded, #f9fff9, #d7fffe, #f5ccec)',
+  '--bg-img-size': '180%',
   '--bg-animation': 'bgmove 10s infinite',
-  // 背景图片
-  '--bg-image-url': 'none',
   // 富文本编辑器字体颜色
   '--e-edit-color': 'auto',
   // 系统设置表单背景颜色
   '--e-form-bg-color': 'initial',
   // 图片背景兼容字体颜色
   '--font-color': '',
+  '--pre-bg-color': '#282c34',
 };
 
 // 侧脸
@@ -269,6 +269,7 @@ const lateralFace = {
   '--e-form-bg-color': 'initial',
   // 图片背景兼容字体颜色
   '--font-color': '#fff',
+  '--pre-bg-color': 'rgba(0, 0, 0, 0.3)',
 };
 
 // 少司命
@@ -277,7 +278,7 @@ const ShaoSiming = {
   '--bg-image-url': `url(${IMG1})`,
 };
 
-// 美女
+// 动漫
 const beauty = {
   ...imageStyles,
   '--bg-image-url': `url(${IMG2})`,
