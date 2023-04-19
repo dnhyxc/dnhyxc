@@ -243,13 +243,13 @@ const onScrollTo = () => {
     .scrollbar-wrapper(12px);
 
     .el-input__wrapper {
+      color: var(--font-1);
+      background-color: var(--input-bg-color);
       box-shadow: 0 0 0 1px var(--card-border) inset;
     }
 
-    .el-input__wrapper,
     .el-input__inner {
-      color: var(--font-1);
-      background-color: var(--input-bg-color);
+      color: var(--font-color);
     }
   }
 

@@ -233,6 +233,9 @@ const onCancelResetPwd = (Form: FormData<FormInstance>) => {
 @import '@/styles/index.less';
 
 .account-wrap {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-55%);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -247,11 +250,13 @@ const onCancelResetPwd = (Form: FormData<FormInstance>) => {
     display: flex;
     justify-content: center;
     width: 600px;
-    padding: 20px 5px 25px 0;
+    padding: 20px 5px 25px 20px;
     border-bottom: 1px solid var(--card-border);
+    background-color: var(--e-form-bg-color);
 
-    &:last-child {
-      border-bottom: none;
+    &:first-child {
+      border-top-left-radius: 5px;
+      border-top-right-radius: 5px;
     }
 
     .label {
@@ -346,6 +351,12 @@ const onCancelResetPwd = (Form: FormData<FormInstance>) => {
         font-size: 15px;
       }
     }
+  }
+
+  .logout-item {
+    border-bottom: none;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
   }
 }
 </style>

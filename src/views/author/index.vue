@@ -388,11 +388,15 @@ const onScrollTo = (to?: number) => {
 
         .el-tabs__header {
           border-bottom: 1px solid var(--card-border);
+
+          .el-tabs__item {
+            color: var(--font-color);
+          }
+
           .el-tabs__item.is-active {
             border-left-color: var(--card-border);
-          }
-          .el-tabs__item.is-active {
             border-right-color: var(--card-border);
+            color: var(--theme-blue);
           }
         }
       }

@@ -213,6 +213,9 @@ const handleKeydown = (e: KeyboardEvent) => {
 @import '@/styles/index.less';
 
 .system-wrap {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-55%);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -227,9 +230,10 @@ const handleKeydown = (e: KeyboardEvent) => {
   .file-config,
   .close-config {
     border-bottom: 1px solid var(--card-border);
-    padding: 20px 0;
+    padding: 20px;
     width: 80%;
     color: var(--font-1);
+    background-color: var(--e-form-bg-color);
 
     .label {
       font-size: 16px;
@@ -317,6 +321,17 @@ const handleKeydown = (e: KeyboardEvent) => {
       align-items: center;
       padding: 10px 0 10px 45px;
     }
+  }
+
+  .shortcuts {
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+  }
+
+  .close-config {
+    border-bottom: none;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
   }
 
   .inp-wrap {

@@ -20,6 +20,19 @@
           </div>
         </div>
       </div>
+      <div class="default-wrap">
+        <div class="label">背景图主题</div>
+        <div class="themes">
+          <div
+            v-for="theme in IMG_THEME_TYPES"
+            :key="theme.key"
+            :class="`${currentTheme === theme.key && 'active'} ${theme.key} theme`"
+            @click.stop="changeTheme(theme.key)"
+          >
+            {{ theme.name }}
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -27,7 +40,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { modifyTheme, setTheme, removeTheme, getTheme } from '@/utils';
-import { THEME_TYPES } from '@/constant';
+import { THEME_TYPES, IMG_THEME_TYPES } from '@/constant';
 
 const currentTheme = ref<string>(getTheme());
 
@@ -46,6 +59,12 @@ const changeTheme = (key: string) => {
 
 <style scoped lang="less">
 @import '@/styles/index.less';
+
+.bgStyles {
+  background-position: var(--bg-position);
+  background-repeat: var(--bg-repeat);
+  background-size: var(--bg-img-size);
+}
 
 .theme-wrap {
   display: flex;
@@ -110,6 +129,36 @@ const changeTheme = (key: string) => {
         .colorful {
           .bgMoveColor(126deg);
           .bgKeyframes(bgmove);
+          color: @font-1;
+        }
+
+        .ShaoSiming {
+          background-image: url('@/assets/images/1.jpg');
+          .bgStyles;
+          color: @font-1;
+        }
+
+        .lateralFace {
+          background-image: url('@/assets/images/face.jpg');
+          .bgStyles;
+          color: @fff;
+        }
+
+        .beauty {
+          background-image: url('@/assets/images/3.jpg');
+          .bgStyles;
+          color: @font-1;
+        }
+
+        .locomotive {
+          background-image: url('@/assets/images/4.jpg');
+          .bgStyles;
+          color: @font-1;
+        }
+
+        .island {
+          background-image: url('@/assets/images/5.jpg');
+          .bgStyles;
           color: @font-1;
         }
 

@@ -149,14 +149,16 @@ const onCopyCodeSuccess = (value: string) => {
 @import '@/styles/index.less';
 
 .container {
-  background-color: var(--fff);
   :deep {
+    .v-md-editor {
+      background-color: var(--fff);
+    }
+
     .v-md-editor__right-area {
       background-color: var(--fff);
     }
 
     .v-md-editor__left-area {
-      background-color: var(--fff);
       border-right: 1px solid var(--card-border);
     }
 
@@ -179,10 +181,13 @@ const onCopyCodeSuccess = (value: string) => {
       color: var(--font-2);
     }
 
-    .v-md-editor__preview-wrapper,
-    .vuepress-markdown-body {
+    .v-md-editor__preview-wrapper {
       color: var(--font-2);
-      background-color: var(--fff);
+    }
+
+    .vuepress-markdown-body {
+      background-color: transparent;
+      color: var(--e-edit-color);
 
       code {
         color: var(--code-color);
@@ -224,7 +229,7 @@ const onCopyCodeSuccess = (value: string) => {
     }
     .v-md-textarea-editor pre,
     .v-md-textarea-editor textarea {
-      background-color: var(--fff);
+      background-color: transparent;
       border-bottom-left-radius: 5px;
       color: var(--font-2);
     }

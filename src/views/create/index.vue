@@ -97,4 +97,8 @@ export default {
 
 <style lang="less" scoped>
 @import '@/styles/index.less';
+
+.edit-wrap {
+  border-radius: 5px;
+}
 </style>

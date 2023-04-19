@@ -5,9 +5,15 @@ import CLOSESVG from '@/assets/svg/close.svg';
 import RESTORESVG from '@/assets/svg/restore.svg';
 import PAGESVG from '@/assets/svg/page_icon.svg';
 import EMPTY from '@/assets/svg/empty.svg';
-import HEAD_IMG from '@/assets/images/404.webp';
+import HEAD_IMG from '@/assets/images/face.jpg';
 import IMG1 from '@/assets/images/1.jpg';
+import IMG2 from '@/assets/images/2.jpg';
+import IMG3 from '@/assets/images/3.jpg';
+import IMG4 from '@/assets/images/4.jpg';
+import IMG5 from '@/assets/images/5.jpg';
 import * as API from '@/server/api';
+
+export { EMPTY, MINSVG, RESTORESVG, MAXSVG, CLOSESVG, HOMESVG, PAGESVG, HEAD_IMG, IMG1, IMG2, IMG3, IMG4, IMG5 };
 
 // 线上域名
 export const DOMAIN_URL = '43.143.27.249';
@@ -104,6 +110,30 @@ export const THEME_TYPES = [
   {
     key: 'colorful',
     name: '炫彩',
+  },
+];
+
+// 背景图片主题
+export const IMG_THEME_TYPES = [
+  {
+    key: 'lateralFace',
+    name: '侧脸',
+  },
+  {
+    key: 'ShaoSiming',
+    name: '少司命',
+  },
+  {
+    key: 'beauty',
+    name: '美女',
+  },
+  {
+    key: 'locomotive',
+    name: '机车',
+  },
+  {
+    key: 'island',
+    name: '海岛',
   },
 ];
 
@@ -642,5 +672,3 @@ export const SEA_BASE64 =
 export const LOADING_SVG = `
 <svg t="1677748747940" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="34693" width="32" height="32"><path d="M512 448c-57.152 0-192-149.952-192-256a192 192 0 0 1 384 0c0 106.048-134.848 256-192 256z m64 64c0-57.152 149.952-192 256-192a192 192 0 0 1 0 384c-106.048 0-256-134.848-256-192zM448 512c0 57.152-149.952 192-256 192a192 192 0 0 1 0-384c106.048 0 256 134.848 256 192z m64 64c57.152 0 192 149.952 192 256a192 192 0 0 1-384 0c0-106.048 134.848-256 192-256z" fill="#57a0ff" p-id="34694"></path></svg>
 `;
-
-export { EMPTY, MINSVG, RESTORESVG, MAXSVG, CLOSESVG, HOMESVG, PAGESVG, HEAD_IMG, IMG1 };

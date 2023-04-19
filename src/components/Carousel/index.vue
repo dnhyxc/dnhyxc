@@ -111,7 +111,7 @@ const toTag = (name: string) => {
               backdrop-filter: blur(3px);
               padding: 0 5px 2px 5px;
               border-radius: 5px;
-              color: var(--fff);
+              color: @fff;
               .ellipsisMore(1);
             }
           }
@@ -122,7 +122,7 @@ const toTag = (name: string) => {
 
             .author,
             .date {
-              color: var(--fff);
+              color: @fff;
               backdrop-filter: blur(3px);
               padding: 0 5px 2px 5px;
               border-radius: 5px;
@@ -149,7 +149,7 @@ const toTag = (name: string) => {
           .tag {
             display: inline-block;
             backdrop-filter: blur(3px);
-            color: var(--fff);
+            color: @fff;
             padding: 0 5px 2px 5px;
             border-radius: 5px;
 

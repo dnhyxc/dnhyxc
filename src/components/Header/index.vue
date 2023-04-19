@@ -328,6 +328,8 @@ const onEnter = async (e: Event) => {
     display: flex;
     align-items: center;
     justify-content: flex-start;
+    color: var(--font-1);
+
     .icon-wrap {
       display: flex;
       align-items: center;
@@ -350,7 +352,7 @@ const onEnter = async (e: Event) => {
       margin-right: 20px;
       cursor: pointer;
       -webkit-app-region: no-drag;
-      color: var(--font-2);
+      color: var(--font-color);
 
       &:hover {
         color: var(--active-color);
@@ -360,12 +362,13 @@ const onEnter = async (e: Event) => {
     .title {
       font-size: 18px;
       font-weight: 700;
-      color: var(--font-1);
+      color: var(--font-color);
     }
   }
   .right {
     display: flex;
     align-items: center;
+    color: var(--font-1);
     .search-wrap {
       display: flex;
       align-items: center;
@@ -374,11 +377,11 @@ const onEnter = async (e: Event) => {
         font-size: 15px;
         cursor: pointer;
         -webkit-app-region: no-drag;
-        color: var(--font-3);
+        color: var(--font-color);
       }
 
       .icon-qiehuan {
-        color: var(--font-4);
+        color: var(--font-color);
         font-size: 20px;
         cursor: pointer;
       }
@@ -398,7 +401,7 @@ const onEnter = async (e: Event) => {
             border-radius: 30px;
           }
           .el-input__inner {
-            color: var(--font-1);
+            color: var(--font-color);
           }
         }
       }
@@ -426,7 +429,7 @@ const onEnter = async (e: Event) => {
       .bell-font {
         font-size: 17px;
         cursor: pointer;
-        color: var(--font-3);
+        color: var(--font-color);
       }
     }
     .sticky {
@@ -439,7 +442,7 @@ const onEnter = async (e: Event) => {
         cursor: pointer;
         margin-left: 15px;
         margin-top: 1px;
-        color: var(--font-3);
+        color: var(--font-color);
       }
       .active {
         color: @sub-2-blue;
@@ -454,7 +457,7 @@ const onEnter = async (e: Event) => {
         font-size: 19px;
         cursor: pointer;
         margin-left: 15px;
-        color: var(--font-3);
+        color: var(--font-color);
       }
     }
     .page-actions {
@@ -466,7 +469,7 @@ const onEnter = async (e: Event) => {
     .icon {
       -webkit-app-region: no-drag;
       cursor: pointer;
-      color: var(--font-1);
+      color: var(--font-color);
 
       .icon-text {
         margin-left: 15px;

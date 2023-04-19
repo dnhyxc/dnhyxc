@@ -140,6 +140,7 @@ const onScrollTo = (height?: number) => {
     .pageHeight();
     border-radius: 5px;
     box-shadow: 0 0 8px 0 var(--shadow-mack);
+    background-color: var(--e-form-bg-color);
 
     :deep {
       .el-scrollbar {
@@ -169,6 +170,7 @@ const onScrollTo = (height?: number) => {
     .toc-list {
       box-sizing: border-box;
       flex: 1;
+      background-color: var(--e-form-bg-color);
     }
   }
 }

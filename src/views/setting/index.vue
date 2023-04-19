@@ -73,6 +73,7 @@ const onClick = (menu: MenuListParams) => {
       box-sizing: border-box;
       padding: 5px 15px 6px;
       cursor: pointer;
+      color: var(--font-color);
 
       .clickNoSelectText();
 

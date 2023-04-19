@@ -1,23 +1,25 @@
 <template>
   <div class="wrap">
-    <el-container>
-      <el-main class="el-main">
-        <Header />
-        <div :class="`${checkOS() === 'mac' && 'mac-content'} content`">
-          <el-aside class="aside-wrap" :width="`${checkOS() === 'mac' ? '68px' : '60px'} `">
-            <LeftMenu />
-          </el-aside>
-          <div class="right">
-            <RouterView v-if="isRouterAlive" v-slot="{ Component }">
-              <!-- 定义缓存组件：注意include="Create"，Create 组件内部必须声明组件名称 -->
-              <KeepAlive include="Create">
-                <component :is="Component" />
-              </KeepAlive>
-            </RouterView>
+    <div class="el-container-wrap">
+      <el-container>
+        <el-main class="el-main">
+          <Header />
+          <div :class="`${checkOS() === 'mac' && 'mac-content'} content`">
+            <el-aside class="aside-wrap" :width="`${checkOS() === 'mac' ? '68px' : '60px'} `">
+              <LeftMenu />
+            </el-aside>
+            <div class="right">
+              <RouterView v-if="isRouterAlive" v-slot="{ Component }">
+                <!-- 定义缓存组件：注意include="Create"，Create 组件内部必须声明组件名称 -->
+                <KeepAlive include="Create">
+                  <component :is="Component" />
+                </KeepAlive>
+              </RouterView>
+            </div>
           </div>
-        </div>
-      </el-main>
-    </el-container>
+        </el-main>
+      </el-container>
+    </div>
   </div>
 </template>
 
@@ -45,6 +47,7 @@ provide('reload', reload);
 @import '@/styles/index.less';
 
 .wrap {
+  position: relative;
   display: flex;
   justify-content: flex-start;
   flex-direction: column;
@@ -56,6 +59,30 @@ provide('reload', reload);
   background-size: var(--bg-size);
   animation: var(--bg-animation);
   .bgKeyframes(bgmove);
+
+  &::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-image: var(--bg-image-url);
+    background-position: var(--bg-position);
+    background-repeat: var(--bg-repeat);
+    background-size: var(--bg-img-size);
+  }
+
+  .el-container-wrap {
+    height: 100vh;
+    backdrop-filter: var(--backdrop-filter);
+
+    :deep {
+      .el-container {
+        height: 100vh;
+      }
+    }
+  }
 
   .el-main {
     display: flex;

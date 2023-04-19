@@ -372,7 +372,7 @@ const onViewMoreReply = (commentId: string) => {
 
       .formContent {
         margin-top: 10px;
-        border: 1px solid @layer-3-border;
+        border: 1px solid var(--card-border);
         padding: 5px 20px 6px 20px;
         background-color: var(--background);
         border-radius: 5px;
