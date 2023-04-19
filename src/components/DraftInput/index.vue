@@ -97,7 +97,7 @@ const picture = ref<string>('');
 
 onMounted(() => {
   nextTick(() => {
-    window.addEventListener('click', onClickNode);
+    document.body.addEventListener('click', onClickNode);
     window.addEventListener('keydown', onKeyDown);
   });
 
@@ -112,7 +112,7 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
-  window.removeEventListener('click', onClickNode);
+  document.body.removeEventListener('click', onClickNode);
   window.removeEventListener('keydown', onKeyDown);
 });
 
