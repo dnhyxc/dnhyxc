@@ -250,8 +250,8 @@ const colorful = {
   '--layer-2-2': '#f9fff9',
   // 动态背景颜色
   '--bg-image-url': 'linear-gradient(126deg, #e0c3fc, #d7fffe, #f9fff9, #f8fded, #f9fff9, #d7fffe, #f5ccec)',
-  '--bg-img-size': '180%',
-  '--bg-animation': 'bgmove 10s infinite',
+  '--bg-img-size': '200%',
+  '--bg-animation': 'bgmove 15s infinite',
   // 富文本编辑器字体颜色
   '--e-edit-color': 'auto',
   // 系统设置表单背景颜色
