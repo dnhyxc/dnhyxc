@@ -78,6 +78,10 @@ const onCopyCodeSuccess = (value: string) => {
       background-color: transparent;
       color: var(--font-2);
 
+      blockquote {
+        color: var(--font-6);
+      }
+
       code {
         color: var(--code-color);
       }

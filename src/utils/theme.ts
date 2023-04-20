@@ -268,6 +268,7 @@ const lateralFace = {
   '--bg-image-url': `url(${HEAD_IMG})`,
   // 系统设置表单背景颜色
   '--e-form-bg-color': 'initial',
+  '--backdrop-filter': 'blur(3px)',
   // 图片背景兼容字体颜色
   '--font-color': '#fff',
   '--pre-bg-color': 'rgba(0, 0, 0, 0.3)',
