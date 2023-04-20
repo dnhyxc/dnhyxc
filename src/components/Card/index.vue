@@ -11,6 +11,14 @@
         <div v-if="data?.isDelete" class="mask">
           <span class="mask-text">已下架</span>
         </div>
+        <div class="art-action">
+          <slot name="actions">
+            <div v-if="loginStore?.userInfo?.userId === data.authorId">
+              <span class="edit" @click.stop="toEdit(data)">编辑</span>
+              <span class="del" @click.stop="onReomve(data)">下架</span>
+            </div>
+          </slot>
+        </div>
         <Image :url="data.coverImage || IMG1" :transition-img="IMG1" class="img" />
         <div class="info">
           <div class="desc">
@@ -34,11 +42,19 @@
           <div class="art-info">
             <div class="create-info">
               <span class="author" @click.stop="toPersonal(data.authorId!)">{{ data.authorName }}</span>
-              <span class="date">{{ data.createTime ? formatDate(data.createTime) : '-' }}</span>
+              <span class="date">{{ data.createTime ? formatDate(data.createTime, 'YYYY/MM/DD') : '-' }}</span>
+            </div>
+            <div class="classifys">
+              <span class="classify" @click.stop="toClassify(data.classify!)">
+                <span class="label">分类: </span>
+                {{ data.classify }}
+              </span>
             </div>
             <div class="tags">
-              <span class="classify" @click.stop="toClassify(data.classify!)">分类: {{ data.classify }}</span>
-              <span class="tag" @click.stop="toTag(data.tag!)">标签: {{ data.tag }}</span>
+              <span class="tag" @click.stop="toTag(data.tag!)">
+                <span class="label">标签: </span>
+                {{ data.tag }}
+              </span>
             </div>
             <div class="actions">
               <div class="action-icons">
@@ -57,12 +73,6 @@
                   <span class="text">{{ data.readCount || '阅读' }}</span>
                 </div>
               </div>
-              <slot name="actions">
-                <div v-if="loginStore?.userInfo?.userId === data.authorId" class="action art-action">
-                  <span class="edit" @click.stop="toEdit(data)">编辑</span>
-                  <span class="del" @click.stop="onReomve(data)">下架</span>
-                </div>
-              </slot>
             </div>
           </div>
         </slot>
@@ -188,6 +198,12 @@ const toTag = (name: string) => {
         transform: scale(1.3);
         transition: all 0.3s;
       }
+
+      .card-top {
+        .art-action {
+          display: block;
+        }
+      }
     }
 
     .card-top {
@@ -196,6 +212,42 @@ const toTag = (name: string) => {
       border-top-left-radius: 5px;
       border-top-right-radius: 5px;
       overflow: hidden;
+
+      .art-action {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        z-index: 29;
+        display: none;
+
+        .edit {
+          display: inline-block;
+          margin-right: 10px;
+          color: var(--theme-blue);
+          font-size: 14px;
+          backdrop-filter: blur(10px);
+          padding: 0px 5px 2px;
+          border-radius: 5px;
+          background-color: @card-action-color;
+        }
+
+        .del {
+          display: inline-block;
+          color: @font-danger;
+          font-size: 14px;
+          backdrop-filter: blur(10px);
+          padding: 0px 5px 2px;
+          border-radius: 5px;
+          background-color: @card-action-color;
+        }
+
+        .edit,
+        .del {
+          &:hover {
+            color: var(--active-color);
+          }
+        }
+      }
 
       .img {
         display: block;
@@ -209,7 +261,7 @@ const toTag = (name: string) => {
       .mask {
         position: absolute;
         top: 10px;
-        right: 5px;
+        left: 5px;
         color: @font-warning;
         z-index: 9;
 
@@ -261,6 +313,7 @@ const toTag = (name: string) => {
         align-items: center;
 
         .title {
+          width: 100%;
           font-size: 16px;
           .ellipsisMore(1);
           color: var(--font-2);
@@ -287,6 +340,7 @@ const toTag = (name: string) => {
 
           .author {
             margin-right: 5px;
+            font-size: 14px;
 
             &:hover {
               color: var(--theme-blue);
@@ -294,14 +348,19 @@ const toTag = (name: string) => {
           }
         }
 
-        .tags {
+        .classifys {
+          margin-bottom: 10px;
+        }
+
+        .tags,
+        .classifys {
           display: flex;
-          justify-content: space-between;
           align-items: center;
+          width: 100%;
 
           .classify,
           .tag {
-            max-width: 50%;
+            max-width: 100%;
             font-size: 13px;
             border-radius: 5px;
             color: var(--font-2);
@@ -310,10 +369,10 @@ const toTag = (name: string) => {
             &:hover {
               color: var(--theme-blue);
             }
-          }
 
-          .classify {
-            margin-right: 5px;
+            .label {
+              color: var(--font-5);
+            }
           }
         }
 
@@ -327,6 +386,8 @@ const toTag = (name: string) => {
           .action-icons {
             display: flex;
             align-items: center;
+            justify-content: space-between;
+            width: 100%;
           }
 
           .action {
@@ -353,24 +414,6 @@ const toTag = (name: string) => {
 
             .read-icon {
               font-size: 18px;
-            }
-
-            .edit {
-              margin-right: 10px;
-              color: var(--theme-blue);
-              font-size: 14px;
-            }
-
-            .del {
-              color: @font-danger;
-              font-size: 14px;
-            }
-
-            .edit,
-            .del {
-              &:hover {
-                color: var(--active-color);
-              }
             }
 
             &:last-child {

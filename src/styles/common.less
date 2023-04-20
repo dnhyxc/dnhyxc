@@ -50,15 +50,10 @@
     flex-wrap: wrap;
 
     .pullup-list-item {
+      box-sizing: border-box;
       border-radius: 5px;
-      list-style: none;
-      width: calc(33.3333333% - 8px);
-      margin-right: @mr;
-      margin-bottom: 11px;
-
-      &:nth-child(3n + 3) {
-        margin-right: 0;
-      }
+      width: 25%;
+      padding: 4px;
     }
   }
 }

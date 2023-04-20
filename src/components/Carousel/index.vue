@@ -76,12 +76,26 @@ const toTag = (name: string) => {
   padding: 0 0 10px 0;
   border-radius: 5px;
 
+  :deep {
+    .el-carousel__mask {
+      background-color: transparent;
+    }
+    .el-carousel__item--card {
+      box-sizing: border-box;
+      border-radius: 5px;
+      box-shadow: 0 0 3px 0 var(--shadow-mack);
+    }
+  }
+
   .carousel {
+    border-radius: 5px;
+
     .carousel-item {
       position: relative;
       box-sizing: border-box;
       height: 100%;
       border-radius: 5px;
+      padding: 5px;
 
       .article-info {
         position: absolute;
@@ -94,6 +108,7 @@ const toTag = (name: string) => {
         height: 100%;
         box-sizing: border-box;
         padding: 6px 5px 5px;
+        border-radius: 5px;
 
         .top {
           box-sizing: border-box;
@@ -164,17 +179,24 @@ const toTag = (name: string) => {
           }
         }
       }
-      .img {
-        width: 100%;
-        height: 210px;
-        border-radius: 5px;
-        .imgStyle();
+
+      :deep {
+        .img {
+          box-sizing: border-box;
+          width: 100%;
+          height: 200px;
+
+          .image-item {
+            border-radius: 5px;
+            .imgStyle();
+          }
+        }
       }
     }
 
     :deep {
       .is-active {
-        box-shadow: 0 0 5px var(--card-border);
+        box-shadow: 0 0 3px var(--shadow-mack);
         border-radius: 5px;
       }
     }

@@ -6,7 +6,7 @@ const fontStyle = {
   '--font-2': '#515767',
   '--font-3': '#4e5969',
   '--font-4': '#8a919f',
-  '--font-5': '#c2c8d1',
+  '--font-5': '#888',
   '--font-6': '#f2f3f5',
 };
 
@@ -44,10 +44,10 @@ const imageStyles = {
   // 字体颜色
   '--font-1': '#fff',
   '--font-2': '#fff',
-  '--font-3': '#fff',
-  '--font-4': '#fff',
-  '--font-5': '#fff',
-  '--font-6': '#fff',
+  '--font-3': '#f5f5f5',
+  '--font-4': '#f5f5f5',
+  '--font-5': '#f2f3f5',
+  '--font-6': '#f2f3f5',
   // loading 背景颜色
   '--loading-color': 'rgba(0, 0, 0, 0.1)',
   // 组件边框颜色
@@ -127,10 +127,10 @@ const black = {
   // 各组件阴影颜色
   '--shadow-color': '#555',
   // 字体颜色
-  '--font-1': '#f2f3f5',
-  '--font-2': '#f2f3f5',
-  '--font-3': '#f2f3f5',
-  '--font-4': '#f2f3f5',
+  '--font-1': '#f5f5f5',
+  '--font-2': '#f5f5f5',
+  '--font-3': '#f5f5f5',
+  '--font-4': '#f5f5f5',
   '--font-5': '#f2f3f5',
   '--font-6': '#f2f3f5',
   // loading 背景颜色

@@ -355,15 +355,27 @@ const onScrollTo = () => {
     }
   }
 
-  .move {
-    margin-right: 10px;
-    color: var(--theme-blue);
-    font-size: 14px;
-  }
+  .art-action {
+    .move {
+      display: inline-block;
+      margin-right: 10px;
+      color: #fff;
+      font-size: 14px;
+      background-color: @card-action-color;
+      backdrop-filter: blur(10px);
+      padding: 0px 5px 2px;
+      border-radius: 5px;
+    }
 
-  .remove {
-    color: @font-danger;
-    font-size: 14px;
+    .remove {
+      display: inline-block;
+      color: @font-danger;
+      background-color: @card-action-color;
+      font-size: 14px;
+      backdrop-filter: blur(10px);
+      padding: 0px 5px 2px;
+      border-radius: 5px;
+    }
   }
 
   .no-more {

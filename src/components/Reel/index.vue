@@ -154,6 +154,7 @@ const onClick = (name: string) => {
   box-sizing: border-box;
   border-radius: 5px;
   -webkit-user-drag: none;
+  padding: 0 5px;
 
   .card-list {
     box-sizing: border-box;
@@ -161,7 +162,7 @@ const onClick = (name: string) => {
     height: 150px;
     border-radius: 5px;
     white-space: nowrap;
-    padding: 0 0 12px;
+    padding: 5px 0 12px;
     -webkit-user-drag: none;
 
     .card {
@@ -170,7 +171,7 @@ const onClick = (name: string) => {
       width: calc((100vw - 116px) / 4);
       height: 100%;
       margin-right: 12px;
-      box-shadow: 0 0 8px 0 var(--shadow-mack);
+      box-shadow: 0 0 8px var(--shadow-mack);
       background-image: linear-gradient(to bottom, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
       border-radius: 5px;
       -webkit-user-drag: none;
