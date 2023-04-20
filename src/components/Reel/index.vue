@@ -16,7 +16,7 @@
             @click="onClick(i.name!)"
           >
             <div class="content">
-              <div class="name">{{ i.name }}</div>
+              <span class="name">{{ i.name }}</span>
               <div class="count"><span class="text text-left">共</span>{{ i.value }}<span class="text">篇</span></div>
             </div>
           </div>
@@ -194,7 +194,7 @@ const onClick = (name: string) => {
 
         .name {
           font-size: 18px;
-          margin-bottom: 30px;
+          .ellipsis();
         }
 
         .count {
