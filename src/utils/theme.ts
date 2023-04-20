@@ -1,4 +1,4 @@
-import { IMG1, IMG2, IMG4, IMG5, HEAD_IMG } from '@/constant';
+import { IMG1, IMG2, IMG3, IMG4, HEAD_IMG } from '@/constant';
 
 // 公共字体设置
 const fontStyle = {
@@ -69,7 +69,7 @@ const imageStyles = {
   // 富文本编辑器字体颜色
   '--e-edit-color': '#fff',
   // 系统设置表单背景颜色
-  '--e-form-bg-color': 'rgba(0, 0, 0, 0.3)',
+  '--e-form-bg-color': 'rgba(0, 0, 0, 0.15)',
   // 图片背景兼容字体颜色
   '--font-color': '#000',
   // 详情代码块背景颜色
@@ -264,6 +264,7 @@ const colorful = {
 // 侧脸
 const lateralFace = {
   ...imageStyles,
+  // 字体颜色
   '--bg-image-url': `url(${HEAD_IMG})`,
   // 系统设置表单背景颜色
   '--e-form-bg-color': 'initial',
@@ -284,17 +285,17 @@ const beauty = {
   '--bg-image-url': `url(${IMG2})`,
 };
 
+// 机车
+const locomotive = {
+  ...imageStyles,
+  '--bg-image-url': `url(${IMG3})`,
+};
+
 // 海岛
 const island = {
   ...imageStyles,
-  '--bg-image-url': `url(${IMG5})`,
-  '--backdrop-filter': 'blur(5px)',
-};
-
-// 侧脸
-const locomotive = {
-  ...imageStyles,
   '--bg-image-url': `url(${IMG4})`,
+  '--backdrop-filter': 'blur(4px)',
 };
 
 const themeTypes = {

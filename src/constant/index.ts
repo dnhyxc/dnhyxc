@@ -10,10 +10,9 @@ import IMG1 from '@/assets/images/1.jpg';
 import IMG2 from '@/assets/images/2.jpg';
 import IMG3 from '@/assets/images/3.jpg';
 import IMG4 from '@/assets/images/4.jpg';
-import IMG5 from '@/assets/images/5.jpg';
 import * as API from '@/server/api';
 
-export { EMPTY, MINSVG, RESTORESVG, MAXSVG, CLOSESVG, HOMESVG, PAGESVG, HEAD_IMG, IMG1, IMG2, IMG3, IMG4, IMG5 };
+export { EMPTY, MINSVG, RESTORESVG, MAXSVG, CLOSESVG, HOMESVG, PAGESVG, HEAD_IMG, IMG1, IMG2, IMG3, IMG4 };
 
 // 线上域名
 export const DOMAIN_URL = '43.143.27.249';

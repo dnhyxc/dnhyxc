@@ -151,13 +151,13 @@ const changeTheme = (key: string) => {
         }
 
         .locomotive {
-          background-image: url('@/assets/images/4.jpg');
+          background-image: url('@/assets/images/3.jpg');
           .bgStyles;
           color: @font-1;
         }
 
         .island {
-          background-image: url('@/assets/images/5.jpg');
+          background-image: url('@/assets/images/4.jpg');
           .bgStyles;
           color: @font-1;
         }

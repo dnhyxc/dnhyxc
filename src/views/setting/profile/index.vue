@@ -278,8 +278,12 @@ const onEnter = () => {
 
   .content {
     margin-right: 10px;
-    padding: 20px 25% 20px 20%;
+    margin: 0 auto;
+    padding: 25px 7% 10px 2%;
+    width: 65%;
+    border-radius: 5px;
     box-sizing: border-box;
+    background-color: var(--e-form-bg-color);
 
     .action-list {
       :deep {

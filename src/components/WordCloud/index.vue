@@ -117,9 +117,9 @@ const drawChart = () => {
           // 配色函数制定配色机制： Math.round() 和 Math.random() 随机给词配色
           color() {
             return `rgb(${[
-              Math.round(Math.random() * 225),
-              Math.round(Math.random() * 225),
-              Math.round(Math.random() * 225),
+              Math.round(Math.random() * 255),
+              Math.round(Math.random() * 255),
+              Math.round(Math.random() * 255),
             ].join(',')})`;
           },
         },
