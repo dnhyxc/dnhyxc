@@ -292,7 +292,7 @@ const toTag = (name: string) => {
           display: table-cell;
           vertical-align: middle;
           .ellipsisMore(3);
-          font-size: 14px;
+          font-size: 13px;
           backdrop-filter: blur(2px);
           padding: 0 5px 2px 5px;
           color: @fff;
