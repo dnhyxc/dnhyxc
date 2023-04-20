@@ -137,7 +137,7 @@ const onJump = () => {
   props.onJump && props.onJump();
 };
 
-// 输入框失去焦点
+// 输入框获取焦点
 const onFocus = () => {
   showIcon.value = false;
 };

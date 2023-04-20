@@ -5,10 +5,16 @@
  * index.vue
 -->
 <template>
-  <div class="emoji-wrap">
+  <div id="EMOJI" class="emoji-wrap">
     <div v-show="visible">
-      <span v-for="(value, key, index) in emojiList" :key="index" class="emoji-item" @click="addEmoji(key)">
-        <img class="emoji" :src="value" :title="key" width="24px" height="24px" />
+      <span
+        v-for="(value, key, index) in emojiList"
+        id="EMOJI_ITEM"
+        :key="index"
+        class="emoji-item"
+        @click="addEmoji(key)"
+      >
+        <img id="EMOJI_IMG" class="emoji" :src="value" :title="key" width="24px" height="24px" />
       </span>
     </div>
   </div>
