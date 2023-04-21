@@ -30,7 +30,7 @@ const imageStyles = {
   // 主题背景颜色
   '--background': 'transparent',
   // 弹窗背景颜色
-  '--modal-bg-color': 'rgba(245, 250, 248, 0.2)',
+  '--modal-bg-color': 'rgba(225, 225, 225, 0.2)',
   // 输入框背景颜色
   '--input-bg-color': 'transparent',
   // 文章各种卡片渐变颜色

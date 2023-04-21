@@ -84,6 +84,7 @@ const onCopyCodeSuccess = (value: string) => {
 
       code {
         color: var(--code-color);
+        font-size: 15px;
       }
     }
   }
