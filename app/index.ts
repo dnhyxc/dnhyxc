@@ -31,8 +31,6 @@ const createWindow = () => {
     height: 750,
     minWidth: 1080,
     minHeight: 750,
-    // minWidth: 800,
-    // minHeight: 600,
     titleBarStyle: 'hidden',
     webPreferences: {
       contextIsolation: false,
@@ -177,10 +175,10 @@ const newWinMin = (win) => {
 const createChildWin = (pathname, id) => {
   // 判断当前窗口是否已经存在， 存在的话 直接唤起
   newWin = new BrowserWindow({
-    width: 1000,
-    height: 690,
-    minWidth: 800,
-    minHeight: 600,
+    width: 1028,
+    height: 700,
+    minWidth: 1028,
+    minHeight: 700,
     titleBarStyle: 'hidden',
     autoHideMenuBar: true,
     webPreferences: {

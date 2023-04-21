@@ -414,7 +414,12 @@ const onScrollTo = (height?: number) => {
         }
       }
       .preview-content {
-        max-width: calc(100vw - 308px);
+        // max-width: calc(100vw - 308px);
+        :deep {
+          .vuepress-markdown-body {
+            max-width: calc(100vw - 308px);
+          }
+        }
       }
     }
     .right {

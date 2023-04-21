@@ -13,7 +13,6 @@
           <Preview
             v-if="articleStore.articleDetail.content"
             :mackdown="articleStore.articleDetail.content"
-            class="preview-content"
             :copy-code-success="onCopyCodeSuccess"
           />
         </div>
@@ -158,9 +157,6 @@ const onScrollTo = (height?: number) => {
         height: 100%;
         border-radius: 5px;
       }
-    }
-    .preview-content {
-      max-width: calc(100vw - 352px);
     }
   }
   .right {

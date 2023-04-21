@@ -73,7 +73,10 @@ const onCopyCodeSuccess = (value: string) => {
     .v-md-pre-wrapper {
       background: var(--pre-bg-color);
     }
+
     .vuepress-markdown-body {
+      box-sizing: border-box;
+      max-width: calc(100vw - 350px);
       padding: 20px;
       background-color: transparent;
       color: var(--font-2);
