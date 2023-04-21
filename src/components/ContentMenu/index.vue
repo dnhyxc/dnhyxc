@@ -33,15 +33,30 @@ defineProps<IProps>();
   display: flex;
   justify-content: center;
   flex-direction: column;
-  background-color: var(--theme);
   backdrop-filter: blur(2px);
   border-radius: 5px;
   padding: 5px;
+  z-index: 92;
+  background-color: var(--modal-bg-color);
+  color: var(--font-1);
+
+  &::before {
+    position: absolute;
+    top: 0;
+    left: 0;
+    content: '';
+    width: 100%;
+    height: 100%;
+    background: var(--shade-2);
+    border-radius: 5px;
+  }
 
   .menu-item {
+    position: relative;
     font-size: 13px;
     padding: 8px;
     border-radius: 5px;
+    z-index: 1;
 
     &:hover {
       background-image: linear-gradient(135deg, var(--head-lg-color1) 10%, var(--head-lg-color2) 100%);

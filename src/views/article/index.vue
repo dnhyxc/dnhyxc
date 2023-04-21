@@ -6,80 +6,82 @@
 -->
 <template>
   <Loading :loading="articleStore.loading" class="detail-wrap">
-    <div :class="`${checkOS() === 'mac' && 'mac-header-wrap'} header-wrap`" @dblclick="onDblclick">
-      <div class="left">
-        <div class="icon-wrap">
-          <i class="page-icon iconfont icon-haidao_" />
+    <div class="container">
+      <div :class="`${checkOS() === 'mac' && 'mac-header-wrap'} header-wrap`" @dblclick="onDblclick">
+        <div class="left">
+          <div class="icon-wrap">
+            <i class="page-icon iconfont icon-haidao_" />
+          </div>
+          <div class="title">{{ commonStore.crumbsInfo.crumbsName }}</div>
         </div>
-        <div class="title">{{ commonStore.crumbsInfo.crumbsName }}</div>
-      </div>
-      <div class="right">
-        <div class="sticky">
-          <el-tooltip effect="light" content="置顶" placement="bottom">
-            <i :class="`${stickyStatus && 'active'} font iconfont icon-pin1`" @click="onSticky" />
-          </el-tooltip>
-        </div>
-        <div v-if="checkOS() !== 'mac'" class="page-actions">
-          <div v-for="svg in ACTION_SVGS" :key="svg.title" class="icon" @click="onClick(svg)">
-            <el-tooltip
-              effect="light"
-              :content="svg.title === '最大化' ? (toggle ? '还原' : svg.title) : svg.title"
-              placement="bottom"
-            >
-              <div
-                :class="`icon-text iconfont ${
-                  svg.title === '最大化' ? (toggle ? 'icon-3zuidahua-3' : 'icon-3zuidahua-1') : svg.icon
-                }`"
-              />
+        <div class="right">
+          <div class="sticky">
+            <el-tooltip effect="light" content="置顶" placement="bottom">
+              <i :class="`${stickyStatus && 'active'} font iconfont icon-pin1`" @click="onSticky" />
             </el-tooltip>
           </div>
-        </div>
-      </div>
-      <el-dialog v-model="closeVisible" title="关闭应用" width="380">
-        <div class="dl-content">
-          <div class="actions">
-            <el-button link class="radio-close" @click.stop="onAppClose">
-              <i class="font out-icon iconfont icon-tuichu1" />
-              退出程序
-            </el-button>
+          <div v-if="checkOS() !== 'mac'" class="page-actions">
+            <div v-for="svg in ACTION_SVGS" :key="svg.title" class="icon" @click="onClick(svg)">
+              <el-tooltip
+                effect="light"
+                :content="svg.title === '最大化' ? (toggle ? '还原' : svg.title) : svg.title"
+                placement="bottom"
+              >
+                <div
+                  :class="`icon-text iconfont ${
+                    svg.title === '最大化' ? (toggle ? 'icon-3zuidahua-3' : 'icon-3zuidahua-1') : svg.icon
+                  }`"
+                />
+              </el-tooltip>
+            </div>
           </div>
         </div>
-      </el-dialog>
-    </div>
-    <div class="content-wrap">
-      <div class="content">
-        <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
-          <div ref="articleInfoRef" class="articleInfo">
-            <PageHeader />
-            <Preview
-              v-if="articleStore.articleDetail.content"
-              :mackdown="articleStore.articleDetail.content"
-              class="preview-content"
+        <el-dialog v-model="closeVisible" title="关闭应用" width="380">
+          <div class="dl-content">
+            <div class="actions">
+              <el-button link class="radio-close" @click.stop="onAppClose">
+                <i class="font out-icon iconfont icon-tuichu1" />
+                退出程序
+              </el-button>
+            </div>
+          </div>
+        </el-dialog>
+      </div>
+      <div class="content-wrap">
+        <div class="content">
+          <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
+            <div ref="articleInfoRef" class="articleInfo">
+              <PageHeader />
+              <Preview
+                v-if="articleStore.articleDetail.content"
+                :mackdown="articleStore.articleDetail.content"
+                class="preview-content"
+              />
+            </div>
+            <Comment
+              v-if="articleStore.articleDetail.authorId"
+              :id="(route.params.id as string)"
+              :author-id="articleStore.articleDetail.authorId!"
+              :focus="focus"
+              @update-focus="updateFocus"
             />
-          </div>
-          <Comment
-            v-if="articleStore.articleDetail.authorId"
+          </el-scrollbar>
+          <ToTopIcon v-if="scrollTop >= 500" :on-scroll-to="onScrollTo" />
+        </div>
+        <div class="right">
+          <Multibar
             :id="(route.params.id as string)"
-            :author-id="articleStore.articleDetail.authorId!"
-            :focus="focus"
-            @update-focus="updateFocus"
+            class="action-list"
+            :scroll-height="articleInfoRef?.offsetHeight"
+            :on-scroll-to="() => onScrollTo(articleInfoRef?.offsetHeight)"
           />
-        </el-scrollbar>
-        <ToTopIcon v-if="scrollTop >= 500" :on-scroll-to="onScrollTo" />
-      </div>
-      <div class="right">
-        <Multibar
-          :id="(route.params.id as string)"
-          class="action-list"
-          :scroll-height="articleInfoRef?.offsetHeight"
-          :on-scroll-to="() => onScrollTo(articleInfoRef?.offsetHeight)"
-        />
-        <Toc class="toc-list" />
-        <AnotherArticle
-          v-if="articleStore.articleDetail.content"
-          :id="(route.params.id as string)"
-          class="another-list"
-        />
+          <Toc class="toc-list" />
+          <AnotherArticle
+            v-if="articleStore.articleDetail.content"
+            :id="(route.params.id as string)"
+            class="another-list"
+          />
+        </div>
       </div>
     </div>
   </Loading>
@@ -253,6 +255,19 @@ const onScrollTo = (height?: number) => {
   justify-content: center;
   flex-direction: column;
   box-sizing: border-box;
+  height: 100%;
+  background-color: var(--e-form-bg-color);
+  background-image: var(--bg-image-url);
+  background-position: var(--bg-position);
+  background-repeat: var(--bg-repeat);
+  background-size: var(--bg-img-size);
+  animation: var(--bg-animation);
+  .bgKeyframes(bgmove);
+
+  .container {
+    height: 100%;
+    backdrop-filter: var(--backdrop-filter);
+  }
 
   .header-wrap {
     display: flex;
@@ -265,6 +280,8 @@ const onScrollTo = (height?: number) => {
       display: flex;
       align-items: center;
       justify-content: flex-start;
+      color: var(--font-1);
+
       .icon-wrap {
         display: flex;
         align-items: center;
@@ -283,14 +300,18 @@ const onScrollTo = (height?: number) => {
           .textLg();
         }
       }
+
       .title {
         font-size: 18px;
         font-weight: 700;
+        color: var(--font-color);
       }
     }
+
     .right {
       display: flex;
       align-items: center;
+      color: var(--font-1);
 
       .sticky {
         display: flex;
@@ -302,7 +323,7 @@ const onScrollTo = (height?: number) => {
           cursor: pointer;
           margin-left: 15px;
           margin-top: 2px;
-          color: var(--font-3);
+          color: var(--font-color);
         }
         .active {
           color: @sub-2-blue;
@@ -318,6 +339,8 @@ const onScrollTo = (height?: number) => {
       .icon {
         -webkit-app-region: no-drag;
         cursor: pointer;
+        color: var(--font-color);
+
         .icon-text {
           margin-left: 15px;
           font-size: 16px;
@@ -359,6 +382,7 @@ const onScrollTo = (height?: number) => {
     justify-content: center;
     box-sizing: border-box;
     padding: 0 20px 0 18px;
+    height: 100%;
 
     .content {
       position: relative;
@@ -370,6 +394,13 @@ const onScrollTo = (height?: number) => {
       .pageHeight();
       border-radius: 5px;
       box-shadow: 0 0 8px 0 var(--shadow-mack);
+      background-color: var(--e-form-bg-color);
+      transition: background-color 0.35s ease-in-out;
+
+      &:hover {
+        background-color: var(--pre-hover-bg);
+        transition: background-color 0.35s ease-in-out;
+      }
 
       :deep {
         .el-scrollbar {
@@ -383,7 +414,7 @@ const onScrollTo = (height?: number) => {
         }
       }
       .preview-content {
-        max-width: calc(100vw - 352px);
+        max-width: calc(100vw - 308px);
       }
     }
     .right {
@@ -403,6 +434,7 @@ const onScrollTo = (height?: number) => {
       .toc-list {
         box-sizing: border-box;
         flex: 1;
+        background-color: var(--e-form-bg-color);
       }
     }
   }

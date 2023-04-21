@@ -25,6 +25,8 @@ const removeStyle = {
   '--pre-bg-color': '#282c34',
   // 文章预览背景颜色
   '--pre-hover-bg': 'initial',
+  // 右键菜单背景颜色
+  '--shade-2': 'transparent',
 };
 
 // 背景图片公共配置
@@ -46,8 +48,8 @@ const imageStyles = {
   // 字体颜色
   '--font-1': '#fff',
   '--font-2': '#fff',
-  '--font-3': '#f5f5f5',
-  '--font-4': '#f5f5f5',
+  '--font-3': '#fff',
+  '--font-4': '#fff',
   '--font-5': '#f2f3f5',
   '--font-6': '#f2f3f5',
   // loading 背景颜色
@@ -78,6 +80,8 @@ const imageStyles = {
   '--pre-bg-color': 'rgba(0, 0, 0, 0.3)',
   // 文章预览背景颜色
   '--pre-hover-bg': 'rgba(0, 0, 0, 0.15)',
+  // 右键菜单背景颜色
+  '--shade-2': 'rgba(0, 0, 0, 0.3)',
 };
 
 // 清新绿（默认主题）
@@ -301,7 +305,7 @@ const locomotive = {
 const island = {
   ...imageStyles,
   '--bg-image-url': `url(${IMG4})`,
-  '--backdrop-filter': 'blur(4px)',
+  '--backdrop-filter': 'blur(3px)',
 };
 
 const themeTypes = {
