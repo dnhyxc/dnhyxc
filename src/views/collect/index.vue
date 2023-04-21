@@ -359,7 +359,7 @@ const onScrollTo = () => {
     .move {
       display: inline-block;
       margin-right: 10px;
-      color: #fff;
+      color: var(--font-1);
       font-size: 14px;
       background-color: @card-action-color;
       backdrop-filter: blur(10px);
@@ -375,6 +375,13 @@ const onScrollTo = () => {
       backdrop-filter: blur(10px);
       padding: 0px 5px 2px;
       border-radius: 5px;
+    }
+
+    .move,
+    .remove {
+      &:hover {
+        color: var(--active-color);
+      }
     }
   }
 

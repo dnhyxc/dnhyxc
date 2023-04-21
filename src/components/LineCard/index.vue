@@ -202,7 +202,7 @@ const onOpenNewWindow = async (data: ArticleItem) => {
 
       .edit {
         margin-right: 10px;
-        color: var(--theme-blue);
+        color: var(--font-1);
       }
 
       .del {
@@ -211,6 +211,11 @@ const onOpenNewWindow = async (data: ArticleItem) => {
 
       .edit,
       .del {
+        backdrop-filter: blur(10px);
+        padding: 0px 5px 2px;
+        border-radius: 5px;
+        background-color: @card-action-color;
+
         &:hover {
           color: var(--active-color);
         }
