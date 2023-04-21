@@ -275,6 +275,7 @@ const lateralFace = {
   // 图片背景兼容字体颜色
   '--font-color': '#fff',
   '--pre-bg-color': 'rgba(0, 0, 0, 0.3)',
+  // 文章预览背景图片
   '--pre-hover-bg': 'rgba(0, 0, 0, 0.3)',
 };
 
