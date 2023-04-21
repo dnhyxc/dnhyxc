@@ -23,6 +23,8 @@ const removeStyle = {
   '--font-color': '',
   // 详情代码块背景颜色
   '--pre-bg-color': '#282c34',
+  // 文章预览背景颜色
+  '--pre-hover-bg': 'initial',
 };
 
 // 背景图片公共配置
@@ -74,6 +76,8 @@ const imageStyles = {
   '--font-color': '#000',
   // 详情代码块背景颜色
   '--pre-bg-color': 'rgba(0, 0, 0, 0.3)',
+  // 文章预览背景颜色
+  '--pre-hover-bg': 'rgba(0, 0, 0, 0.15)',
 };
 
 // 清新绿（默认主题）
@@ -268,10 +272,10 @@ const lateralFace = {
   '--bg-image-url': `url(${HEAD_IMG})`,
   // 系统设置表单背景颜色
   '--e-form-bg-color': 'initial',
-  '--backdrop-filter': 'blur(3px)',
   // 图片背景兼容字体颜色
   '--font-color': '#fff',
   '--pre-bg-color': 'rgba(0, 0, 0, 0.3)',
+  '--pre-hover-bg': 'rgba(0, 0, 0, 0.3)',
 };
 
 // 少司命
