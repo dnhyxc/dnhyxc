@@ -174,6 +174,14 @@ const onOpenNewWindow = async (data: ArticleItem) => {
   color: var(--font-3);
   cursor: pointer;
 
+  &:hover {
+    .title {
+      .right {
+        display: block;
+      }
+    }
+  }
+
   .title {
     display: flex;
     justify-content: space-between;
@@ -181,7 +189,6 @@ const onOpenNewWindow = async (data: ArticleItem) => {
     font-size: 16px;
     margin-bottom: 10px;
     color: var(--font-1);
-
     .left {
       font-weight: 700;
       .ellipsisMore(1);
@@ -191,6 +198,7 @@ const onOpenNewWindow = async (data: ArticleItem) => {
       display: flex;
       align-items: center;
       font-size: 14px;
+      display: none;
 
       .edit {
         margin-right: 10px;
