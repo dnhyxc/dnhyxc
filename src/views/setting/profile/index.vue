@@ -11,7 +11,7 @@
         <div class="img-wrap">
           <Image :url="mainCover || IMG1" :transition-img="IMG1" class="cover-img" />
           <div class="upload-cover-wrap">
-            <Upload v-model:file-path="mainCover" :preview="false" :show-img="false" :fixed-number="[800, 200]">
+            <Upload v-model:file-path="mainCover" :preview="false" :show-img="false" :fixed-number="[800, 320]">
               <el-button type="primary" link class="action">
                 <i class="font iconfont icon-19shuxie3x" />
                 编辑封面图
