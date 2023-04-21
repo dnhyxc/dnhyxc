@@ -141,11 +141,11 @@ const onScrollTo = (height?: number) => {
     border-radius: 5px;
     box-shadow: 0 0 8px 0 var(--shadow-mack);
     background-color: var(--e-form-bg-color);
-    transition: all 0.35s ease-in-out;
+    transition: background-color 0.35s ease-in-out;
 
     &:hover {
       background-color: var(--pre-hover-bg);
-      transition: all 0.35s ease-in-out;
+      transition: background-color 0.35s ease-in-out;
     }
 
     :deep {
