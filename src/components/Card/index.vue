@@ -49,8 +49,6 @@
                 <span class="label">分类: </span>
                 {{ data.classify }}
               </span>
-            </div>
-            <div class="tags">
               <span class="tag" @click.stop="toTag(data.tag!)">
                 <span class="label">标签: </span>
                 {{ data.tag }}
@@ -349,14 +347,12 @@ const toTag = (name: string) => {
         }
 
         .classifys {
-          margin-bottom: 10px;
-        }
-
-        .tags,
-        .classifys {
           display: flex;
           align-items: center;
+          justify-content: space-between;
           width: 100%;
+          margin-top: 5px;
+          margin-bottom: 5px;
 
           .classify,
           .tag {
@@ -373,6 +369,10 @@ const toTag = (name: string) => {
             .label {
               color: var(--font-5);
             }
+          }
+
+          .classify {
+            margin-right: 6px;
           }
         }
 
