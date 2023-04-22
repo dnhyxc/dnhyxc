@@ -27,6 +27,8 @@ const removeStyle = {
   '--pre-hover-bg': 'initial',
   // 右键菜单背景颜色
   '--shade-2': 'transparent',
+  // 右键菜单背景颜色
+  '--shade-3': 'transparent',
 };
 
 // 背景图片公共配置
@@ -82,6 +84,8 @@ const imageStyles = {
   '--pre-hover-bg': 'rgba(0, 0, 0, 0.15)',
   // 右键菜单背景颜色
   '--shade-2': 'rgba(0, 0, 0, 0.3)',
+  // 右键菜单背景颜色
+  '--shade-3': 'rgba(0, 0, 0, 0.1)',
 };
 
 // 清新绿（默认主题）

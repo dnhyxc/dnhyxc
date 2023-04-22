@@ -223,7 +223,7 @@ const toTag = (name: string) => {
         .edit {
           display: inline-block;
           margin-right: 10px;
-          color: var(--font-1);
+          color: @fff;
           font-size: 14px;
           backdrop-filter: blur(10px);
           padding: 0px 5px 2px;

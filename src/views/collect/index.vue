@@ -359,7 +359,7 @@ const onScrollTo = () => {
     .move {
       display: inline-block;
       margin-right: 10px;
-      color: var(--font-1);
+      color: @fff;
       font-size: 14px;
       background-color: @card-action-color;
       backdrop-filter: blur(10px);
