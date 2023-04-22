@@ -17,6 +17,7 @@
 </template>
 
 <script setup lang="ts">
+import { shell } from 'electron';
 import { ref, onMounted, onUnmounted } from 'vue';
 import { commonStore } from '@/store';
 
@@ -47,6 +48,20 @@ onMounted(() => {
         lineIndex: el.getAttribute('data-v-md-line'),
         indent: hTags.indexOf(el.tagName),
       }));
+    }
+    // 获取所有的链接，使用默认浏览器打开
+    const links: HTMLAnchorElement[] = previewRef.value.$el.querySelectorAll('a');
+    if (links?.length) {
+      Array.from(links).forEach((i) => {
+        i.addEventListener(
+          'click',
+          (e) => {
+            e.preventDefault();
+            shell.openExternal(i.href);
+          },
+          false,
+        );
+      });
     }
   }
 });
