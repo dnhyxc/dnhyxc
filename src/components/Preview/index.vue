@@ -82,7 +82,7 @@ const onCopyCodeSuccess = (value: string) => {
       color: var(--font-2);
 
       blockquote {
-        color: var(--font-6);
+        color: var(--font-5);
       }
 
       code {
