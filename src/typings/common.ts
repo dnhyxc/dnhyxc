@@ -206,15 +206,6 @@ export interface TocTitlesParams {
   indent: number;
 }
 
-// 上下页参数定义
-export interface AnotherParams {
-  id?: string;
-  userId?: string;
-  from?: string;
-  accessUserId?: string;
-  selectKey?: string;
-}
-
 /**
  * 第一层区别方式
  *  - id: 0，formContent: ''

@@ -79,6 +79,8 @@
           <AnotherArticle
             v-if="articleStore.articleDetail.content"
             :id="(route.params.id as string)"
+            :classify="articleStore.articleDetail?.classify!"
+            :tag="articleStore.articleDetail?.tag!"
             class="another-list"
           />
         </div>

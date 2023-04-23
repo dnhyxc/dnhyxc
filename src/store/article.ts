@@ -9,7 +9,6 @@ import { useCheckUserId } from '@/hooks';
 import {
   ArticleListResult,
   ArticleItem,
-  AnotherParams,
   CommentParams,
   ReplayComment,
   DeleteArticleParams,
@@ -129,32 +128,18 @@ export const useArticleStore = defineStore('article', {
       }
     },
 
-    // 获取上一篇文章
-    async getPrevArticle(params: AnotherParams) {
-      const res = normalizeResult<ArticleItem>(await Service.getPrevArticle(params));
-      return res.data;
-    },
-
-    // 获取下一篇文章
-    async getNextArticle(params: AnotherParams) {
-      const res = normalizeResult<ArticleItem>(await Service.getNextArticle(params));
-      return res.data;
-    },
-
-    // 获取上下篇文章
-    async getAnotherArticles(params: AnotherParams) {
-      if (!params.id) {
+    // 获取相似文章文章
+    async getLikenessArticles(params: { classify: string; tag: string; id: string }) {
+      const res = normalizeResult<ArticleItem[]>(await Service.getLikenessArticles(params));
+      this.loading = false;
+      if (res.success) {
+        this.anotherArticleList = res.data;
+      } else {
         ElMessage({
-          message: '哦豁！文章不翼而飞了',
+          message: res.message,
           type: 'error',
           offset: 80,
         });
-        return;
-      }
-      const res = await Promise.all([this.getPrevArticle(params), this.getNextArticle(params)]);
-      this.loading = false;
-      if (res?.length) {
-        this.anotherArticleList = res;
       }
     },
 

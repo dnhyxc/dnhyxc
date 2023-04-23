@@ -4,7 +4,7 @@ import { ElMessage } from 'element-plus';
 import { UserInfoParams, ArticleListResult, ArticleItem, TimelineResult } from '@/typings/common';
 import * as Service from '@/server';
 import { useCheckUserId } from '@/hooks';
-import { normalizeResult, locSetItem, Message, getStoreUserInfo, setParamsToStore } from '@/utils';
+import { normalizeResult, Message } from '@/utils';
 import { loginStore } from '@/store';
 import { AUTHOR_API_PATH, PAGESIZE } from '@/constant';
 
@@ -75,29 +75,6 @@ export const useAuthorStore = defineStore('author', {
         accessUserId: loginStore.userInfo?.userId,
       };
 
-      if (this.pageNo === 1) {
-        // 保存至storage用于根据不同页面进入详情时，针对性的进行上下篇文章的获取（如：分类页面上下篇、标签页面上下篇）
-        locSetItem(
-          'params',
-          JSON.stringify({
-            accessUserId: loginStore.userInfo?.userId,
-            selectKey: `${Number(this.currentTabKey) + 1}`,
-            from: 'author',
-          }),
-        );
-
-        const { userInfo } = getStoreUserInfo();
-
-        const storeParams = {
-          from: 'author',
-          accessUserId: loginStore.userInfo?.userId || userInfo?.userId,
-          selectKey: `${Number(this.currentTabKey) + 1}`,
-        };
-
-        // 将页面搜索信息保存到electron-store中
-        setParamsToStore('author', storeParams);
-      }
-
       const res = normalizeResult<ArticleListResult>(
         await Service.getAuthorArticleList(params, AUTHOR_API_PATH[this.currentTabKey]),
       );
@@ -117,25 +94,6 @@ export const useAuthorStore = defineStore('author', {
 
     // 获取时间轴列表
     async getAuthorTimeline() {
-      // 保存至storage用于根据不同页面进入详情时，针对性的进行上下篇文章的获取（如：分类页面上下篇、标签页面上下篇）
-      locSetItem(
-        'params',
-        JSON.stringify({ accessUserId: loginStore.userInfo?.userId, selectKey: this.currentTabKey, from: 'author' }),
-      );
-      const { userInfo } = getStoreUserInfo();
-
-      const storeParams = {
-        from: 'author',
-        data: {
-          accessUserId: loginStore.userInfo?.userId || userInfo?.userId,
-          selectKey: this.currentTabKey,
-          from: 'author',
-        },
-      };
-
-      // 将页面搜索信息保存到electron-store中
-      setParamsToStore('author', storeParams);
-
       this.loading = true;
       const res = normalizeResult<TimelineResult[]>(
         await Service.getAuthorTimeline({ accessUserId: loginStore.userInfo?.userId }),

@@ -3,7 +3,6 @@ import {
   LoginParams,
   CreateArticleParams,
   GetArticleListParams,
-  AnotherParams,
   CommentParams,
   DeleteArticleParams,
   SearchArticleParams,
@@ -85,15 +84,9 @@ export const getArticleDetail = async (id: string) => {
   return res;
 };
 
-// 获取上一篇文章
-export const getPrevArticle = async (params: AnotherParams) => {
-  const res = await post(API.GET_PREV_ARTICLE, copeParams(params));
-  return res;
-};
-
-// 获取下一篇文章
-export const getNextArticle = async (params: AnotherParams) => {
-  const res = await post(API.GET_NEXT_ARTICLE, copeParams(params));
+// 获取相似的文章
+export const getLikenessArticles = async (params: { classify: string; tag: string; id: string }) => {
+  const res = await post(API.GET_LIKENESS_ARTICLES, copeParams(params));
   return res;
 };
 

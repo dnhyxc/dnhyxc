@@ -69,9 +69,6 @@ const createWindow = () => {
 
   // 只有显式调用quit才退出系统，区分MAC系统程序坞退出和点击X关闭退出
   app.on('before-quit', () => {
-    const store = new Store();
-    // 退出时，清除保存的上下页搜索条件
-    store.delete('paramList');
     // 清空用户信息
     userInfo = '';
     willQuitApp = true;

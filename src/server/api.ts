@@ -45,10 +45,8 @@ export const ADVANCED_SEARCH = '/api/advancedSearch';
 // 获取文章分类
 export const GET_TIMELINE_LIST = '/api/getTimelineList';
 
-// 获取上一篇文章
-export const GET_PREV_ARTICLE = '/api/getPrevArticle';
-// 获取下一篇文章
-export const GET_NEXT_ARTICLE = '/api/getNextArticle';
+// 获取相似的文章
+export const GET_LIKENESS_ARTICLES = '/api/getLikenessArticles';
 
 // 获取评论
 export const GET_COMMENT_LIST = '/api/getCommentList';

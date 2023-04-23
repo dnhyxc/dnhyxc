@@ -19,9 +19,7 @@
       >
         <div class="item">
           <div class="prev">
-            <span class="left">
-              {{ index === 0 ? '上一篇' : '下一篇' }}
-            </span>
+            <span class="left">相似文章</span>
             <span class="right">
               <i v-if="index === 0 && i?.id" class="font-top iconfont icon-shuangjiantouzuo" />
               <i v-if="index > 0 && i?.id" class="font iconfont icon-shuangjiantouyou" />
@@ -46,13 +44,14 @@ import { ipcRenderer } from 'electron';
 import { onMounted, inject, ref } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { articleStore } from '@/store';
-import { formatGapTime, locGetItem, getParamListFromStore, getStoreUserInfo } from '@/utils';
-import { AnotherParams } from '@/typings/common';
+import { formatGapTime, getStoreUserInfo } from '@/utils';
 
 const reload = inject<Function>('reload');
 
 interface IProps {
   id: string; // 文章id
+  classify: string;
+  tag: string;
 }
 
 const router = useRouter();
@@ -63,10 +62,8 @@ const timer = ref<ReturnType<typeof setTimeout> | null>(null);
 const props = defineProps<IProps>();
 
 onMounted(() => {
-  // 获取从哪个页面跳转到详情的参数
-  const firstParam = getParamListFromStore(route.query.from as string);
-  const params: AnotherParams = (locGetItem('params') && JSON.parse(locGetItem('params')!)) || firstParam || {};
-  articleStore.getAnotherArticles({ id: props.id, ...params });
+  // 获取相似文章
+  articleStore.getLikenessArticles({ classify: props.classify, tag: props.tag, id: props.id });
 });
 
 // 跳转详情

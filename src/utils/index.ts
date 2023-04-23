@@ -14,9 +14,6 @@ import { locSetItem, locGetItem, locRemoveItem, ssnGetItem, ssnSetItem, ssnRemov
 import * as ipcRenderers from './ipcRenderer';
 import { modifyTheme } from './theme';
 import {
-  setParamsToStore,
-  clearParamListFromStore,
-  getParamListFromStore,
   eStore,
   setTheme,
   getTheme,
@@ -42,9 +39,6 @@ export {
   shareSinaWeiBo,
   EventBus,
   modifyTheme,
-  setParamsToStore,
-  clearParamListFromStore,
-  getParamListFromStore,
   eStore,
   setTheme,
   getTheme,

@@ -140,7 +140,7 @@ import { ipcRenderer } from 'electron';
 import { Search } from '@element-plus/icons-vue';
 import { ACTION_SVGS, MENULIST, CLOSE_CONFIG, CLOSE_PROMPT, NEED_HEAD_SEARCH } from '@/constant';
 import { commonStore, messageStore, loginStore } from '@/store';
-import { checkOS, clearParamListFromStore } from '@/utils';
+import { checkOS } from '@/utils';
 import Messages from '@/components/Messages/index.vue';
 
 const router = useRouter();
@@ -224,8 +224,6 @@ const onClick = (item: { title: string; svg: string }) => {
   }
 
   if (item.title === '关闭') {
-    // 清空electron-store中的paramList
-    clearParamListFromStore();
     const closeConfig = store.get(CLOSE_CONFIG);
     const closePrompt = store.get(CLOSE_PROMPT);
     if (!closePrompt) {
