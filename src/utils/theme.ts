@@ -29,6 +29,10 @@ const removeStyle = {
   '--shade-2': 'transparent',
   // 右键菜单背景颜色
   '--shade-3': 'transparent',
+  // 卡片操作字体颜色
+  '--card-action-font-color': '#57a0ff',
+  // 卡片操作背景颜色
+  '--card-action-color': 'transparent',
 };
 
 // 背景图片公共配置
@@ -86,6 +90,10 @@ const imageStyles = {
   '--shade-2': 'rgba(0, 0, 0, 0.3)',
   // 右键菜单背景颜色
   '--shade-3': 'rgba(0, 0, 0, 0.1)',
+  // 卡片操作字体颜色
+  '--card-action-font-color': '#fff',
+  // 卡片操作背景颜色
+  '--card-action-color': 'rgba(0, 0, 0, 0.2)',
 };
 
 // 清新绿（默认主题）
@@ -247,6 +255,7 @@ const colorful = {
   '--shadow-color': '#b8eaff',
   // 字体颜色
   ...fontStyle,
+  ...removeStyle,
   // loading 背景颜色
   '--loading-color': 'rgba(249, 255, 249, 0.8)',
   // 组件边框颜色
@@ -264,13 +273,6 @@ const colorful = {
   '--bg-image-url': 'linear-gradient(126deg, #e0c3fc, #d7fffe, #f9fff9, #f8fded, #f9fff9, #d7fffe, #f5ccec)',
   '--bg-img-size': '200%',
   '--bg-animation': 'bgmove 15s infinite',
-  // 富文本编辑器字体颜色
-  '--e-edit-color': 'auto',
-  // 系统设置表单背景颜色
-  '--e-form-bg-color': 'initial',
-  // 图片背景兼容字体颜色
-  '--font-color': '',
-  '--pre-bg-color': '#282c34',
 };
 
 // 侧脸

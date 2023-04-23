@@ -190,6 +190,7 @@ const onOpenNewWindow = async (data: ArticleItem) => {
     margin-bottom: 10px;
     color: var(--font-1);
     .left {
+      max-width: calc(100% - 90px);
       font-weight: 700;
       .ellipsisMore(1);
     }
@@ -202,7 +203,7 @@ const onOpenNewWindow = async (data: ArticleItem) => {
 
       .edit {
         margin-right: 10px;
-        color: var(--font-1);
+        color: var(--card-action-font-color);
       }
 
       .del {
@@ -214,7 +215,7 @@ const onOpenNewWindow = async (data: ArticleItem) => {
         backdrop-filter: blur(10px);
         padding: 0px 5px 2px;
         border-radius: 5px;
-        background-color: @card-action-color;
+        background-color: var(--card-action-color);
 
         &:hover {
           color: var(--active-color);

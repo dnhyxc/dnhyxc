@@ -8,13 +8,27 @@
   <Loading :loading="articleStore.loading" class="detail-wrap">
     <div class="content">
       <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
-        <div ref="articleInfoRef" class="articleInfo">
+        <div ref="articleInfoRef" class="article-info">
           <PageHeader />
           <Preview
             v-if="articleStore.articleDetail.content"
             :mackdown="articleStore.articleDetail.content"
             :copy-code-success="onCopyCodeSuccess"
           />
+          <div v-if="articleStore.articleDetail.content" class="classifys">
+            <div class="classify">
+              <span class="label">分类：</span>
+              <span class="tag_item" @click.stop="toClassify(articleStore.articleDetail.classify!)">{{
+                articleStore.articleDetail.classify
+              }}</span>
+            </div>
+            <div class="classify tag">
+              <span class="label">标签：</span>
+              <span class="tag_item" @click.stop="toTag(articleStore.articleDetail.tag!)">{{
+                articleStore.articleDetail.tag
+              }}</span>
+            </div>
+          </div>
         </div>
         <Comment
           v-if="articleStore.articleDetail.authorId"
@@ -47,7 +61,7 @@
 <script setup lang="ts">
 import { ipcRenderer } from 'electron';
 import { onMounted, onUnmounted, nextTick, ref, inject } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { ElMessage } from 'element-plus';
 import { useScroller } from '@/hooks';
 import { scrollTo } from '@/utils';
@@ -63,6 +77,7 @@ import Loading from '@/components/Loading/index.vue';
 
 const reload = inject<Function>('reload');
 
+const router = useRouter();
 const route = useRoute();
 
 const articleInfoRef = ref<HTMLDivElement | null>(null);
@@ -113,6 +128,18 @@ const onCopyCodeSuccess = (value?: string) => {
   });
 };
 
+// 去分类页
+const toClassify = (classify: string) => {
+  router.push(`/classify?classify=${classify}`);
+};
+
+// 去标签
+const toTag = (tag: string) => {
+  if (route.path !== '/tag/list') {
+    router.push(`/tag/list?tag=${tag}`);
+  }
+};
+
 // 置顶
 const onScrollTo = (height?: number) => {
   // height 有值说明是点击评论滑动到评论区域，默认使最外层输入框获取焦点
@@ -158,6 +185,39 @@ const onScrollTo = (height?: number) => {
         box-sizing: border-box;
         height: 100%;
         border-radius: 5px;
+      }
+    }
+
+    .article-info {
+      .classifys {
+        display: flex;
+        justify-content: flex-start;
+        padding: 5px 20px 15px;
+        color: var(--card-action-font-color);
+
+        .classify {
+          .label {
+            font-size: 13px;
+            color: var(--font-5);
+          }
+
+          .tag_item {
+            font-size: 14px;
+            padding: 3px 10px 5px;
+            border-radius: 5px;
+            background-image: linear-gradient(225deg, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
+            .ellipsis();
+            cursor: pointer;
+
+            &:hover {
+              color: var(--active-color);
+            }
+          }
+        }
+
+        .tag {
+          margin-left: 30px;
+        }
       }
     }
   }
