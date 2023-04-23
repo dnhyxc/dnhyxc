@@ -26,7 +26,7 @@
           content="搜索"
           placement="bottom"
         >
-          <i class="font iconfont icon-sousuo2" @click="onClickSearch" />
+          <i class="font iconfont icon-sousuo2 search-icon" @click="onClickSearch" />
           <template #dropdown>
             <el-dropdown-menu>
               <el-dropdown-item @click="onCheckSearchType(1)">普通搜索</el-dropdown-item>
@@ -40,7 +40,7 @@
           content="高级搜索"
           placement="bottom"
         >
-          <i class="font iconfont icon-sousuo2" @click="onClickSearch" />
+          <i class="font iconfont icon-sousuo2 senior-search" @click="onClickSearch" />
         </el-tooltip>
         <el-tooltip v-if="commonStore.showSearch" effect="light" content="高级搜索" placement="bottom">
           <i class="iconfont icon-qiehuan" @click="onCheckSearchType(2)" />
@@ -371,11 +371,23 @@ const onEnter = async (e: Event) => {
       display: flex;
       align-items: center;
       -webkit-app-region: no-drag;
+      color: var(--font-1);
+
+      :deep {
+        .el-dropdown {
+          color: var(--font-1);
+        }
+      }
+
       .font {
         font-size: 15px;
         cursor: pointer;
         -webkit-app-region: no-drag;
         color: var(--font-color);
+      }
+
+      .senior-search {
+        margin-top: -1px;
       }
 
       .icon-qiehuan {

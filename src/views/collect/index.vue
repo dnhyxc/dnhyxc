@@ -388,7 +388,7 @@ const onScrollTo = () => {
   .no-more {
     text-align: center;
     color: var(--font-4);
-    margin-top: 3px;
+    padding-top: 12px;
     .clickNoSelectText();
   }
 }

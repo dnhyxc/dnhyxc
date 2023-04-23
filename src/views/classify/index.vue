@@ -246,7 +246,7 @@ const likeListArticle = (id: string, data?: ArticleItem) => {
   }
 
   .no-more {
-    margin-top: 3px;
+    padding-top: 12px;
     text-align: center;
     color: @font-4;
   }
