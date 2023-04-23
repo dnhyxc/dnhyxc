@@ -78,17 +78,18 @@ const toTag = (name: string) => {
 
   :deep {
     .el-carousel__mask {
-      background-color: transparent;
+      background-color: @carousel-bg-color;
     }
     .el-carousel__item--card {
       box-sizing: border-box;
       border-radius: 5px;
-      box-shadow: 0 0 3px 0 var(--shadow-mack);
+      // box-shadow: 0 0 1px 0 var(--shadow-mack);
     }
   }
 
   .carousel {
     border-radius: 5px;
+    padding-top: 2px;
 
     .carousel-item {
       position: relative;
