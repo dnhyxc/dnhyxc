@@ -91,7 +91,17 @@ export const useArticleStore = defineStore('article', {
     },
 
     // 获取文章详情
-    async getArticleDetail(id: string, store?: true) {
+    async getArticleDetail({
+      id,
+      isEdit,
+      router,
+      toHome,
+    }: {
+      id: string;
+      isEdit?: true;
+      router?: Router;
+      toHome?: boolean;
+    }) {
       if (!id) {
         ElMessage.error('哦豁！文章不翼而飞了！');
         return;
@@ -101,8 +111,8 @@ export const useArticleStore = defineStore('article', {
       if (res.success) {
         this.detailArtLikeCount = res.data?.likeCount!;
         this.articleDetail = res.data;
-        // store 为 true，则说明是编辑，需要缓存编辑内容
-        if (store) {
+        // isEdit 为 true，则说明是编辑，需要缓存编辑内容
+        if (isEdit) {
           createStore.createInfo = {
             authorId: res.data.authorId,
             title: res.data.title,
@@ -125,6 +135,12 @@ export const useArticleStore = defineStore('article', {
           type: 'error',
           offset: 80,
         });
+
+        if (toHome) {
+          router?.push('/home');
+        } else {
+          router?.go(-1);
+        }
       }
     },
 

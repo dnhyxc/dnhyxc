@@ -119,7 +119,7 @@ const onJump = (name: string, type: string) => {
       align-items: center;
       padding: 10px;
       width: 100%;
-      margin-top: 10px;
+      margin-bottom: 10px;
       border-radius: 5px;
       box-shadow: 0 0 8px 0 var(--shadow-mack);
       background-color: var(--e-form-bg-color);
@@ -129,6 +129,7 @@ const onJump = (name: string, type: string) => {
       }
 
       &:last-child {
+        margin-bottom: 0;
         padding: 10px;
       }
 
@@ -188,12 +189,6 @@ const onJump = (name: string, type: string) => {
             text-align: right;
           }
         }
-      }
-    }
-
-    &:last-child {
-      .article {
-        margin-bottom: 0;
       }
     }
   }

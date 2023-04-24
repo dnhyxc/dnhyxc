@@ -37,7 +37,7 @@ const draftVisible = ref<boolean>(false); // 草稿箱弹窗状态
 // 组件启用时，如果有文章id，则请求文章详情
 onActivated(() => {
   if (!route.query.id) return;
-  articleStore?.getArticleDetail(route.query.id as string, true);
+  articleStore?.getArticleDetail({ id: route.query.id as string, isEdit: true, router, toHome: !!route.query?.toHome });
 });
 
 watch(

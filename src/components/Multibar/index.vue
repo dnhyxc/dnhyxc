@@ -140,6 +140,7 @@ const onCollect = () => {
 .multibar-wrap {
   display: flex;
   justify-content: space-between;
+  margin-bottom: 10px;
   .action {
     position: relative;
     flex: 1;

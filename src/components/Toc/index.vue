@@ -100,7 +100,7 @@ const onScrollTo = () => {
   overflow: hidden;
   box-shadow: 0 0 8px 0 var(--shadow-mack);
   padding-bottom: 10px;
-  margin-top: 10px;
+  margin-bottom: 10px;
   color: var(--font-2);
 
   .title {

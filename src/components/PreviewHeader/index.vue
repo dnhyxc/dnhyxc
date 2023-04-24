@@ -58,7 +58,7 @@ const onEditArticle = () => {
     ...createStore.createInfo,
     content: articleStore?.articleDetail?.content!,
   };
-  router.push(`/create?id=${route.params.id}`);
+  router.push(`/create?id=${route.params.id}&toHome=1`);
 };
 
 // 去我的主页
