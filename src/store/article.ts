@@ -42,6 +42,7 @@ interface IProps {
   commentList: CommentParams[]; // 评论列表
   detailArtLikeCount: number; // 详情文章点赞数量
   hot?: boolean; // 是否查询最热文章
+  articleLikeStatus?: boolean; // 文章点赞状态
 }
 
 export const useArticleStore = defineStore('article', {
@@ -61,6 +62,7 @@ export const useArticleStore = defineStore('article', {
     commentList: [],
     detailArtLikeCount: 0,
     hot: false,
+    articleLikeStatus: false,
   }),
 
   actions: {
@@ -665,10 +667,22 @@ export const useArticleStore = defineStore('article', {
           this.detailArtLikeCount += 1;
           this.articleDetail.isLike = true;
         } else {
+          this.articleLikeStatus = false;
+
           this.detailArtLikeCount -= 1;
           this.articleDetail.isLike = false;
         }
         return res.data;
+      }
+    },
+
+    // 校验文章点赞状态
+    async checkArticleLikeStatus(id: string) {
+      // 检验是否有userId，如果没有禁止发送请求
+      if (!useCheckUserId(false)) return;
+      const res = normalizeResult<{ id: string; isLike: boolean }>(await Service.checkArticleLikeStatus(id));
+      if (res.success) {
+        this.articleLikeStatus = res.data.isLike;
       }
     },
 

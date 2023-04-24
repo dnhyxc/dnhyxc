@@ -7,7 +7,11 @@
 <template>
   <div class="multibar-wrap">
     <div class="action like-wrap" @click="likeArticle">
-      <i :class="`like-font iconfont ${articleStore?.articleDetail?.isLike && 'is-like'} icon-24gf-thumbsUp2`" />
+      <i
+        :class="`like-font iconfont ${
+          (articleStore?.articleDetail?.isLike || articleStore?.articleLikeStatus) && 'is-like'
+        } icon-24gf-thumbsUp2`"
+      />
       <span v-if="articleStore?.detailArtLikeCount > 0" class="count">
         {{
           articleStore?.detailArtLikeCount > 999
@@ -87,6 +91,7 @@ import { ElMessage } from 'element-plus';
 interface IProps {
   id: string;
   onScrollTo: Function;
+  fromPath?: string;
 }
 
 const props = defineProps<IProps>();
@@ -102,6 +107,10 @@ const commentCount = useCommentCount;
 onMounted(() => {
   // 获取收藏状态
   collectStore?.getCollectStatus(props.id);
+  // 从 article 页面进入时检验文章点赞状态
+  if (props.fromPath) {
+    articleStore.checkArticleLikeStatus(props.id);
+  }
 });
 
 // 文章点赞

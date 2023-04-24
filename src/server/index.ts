@@ -132,6 +132,12 @@ export const likeArticle = async (params: { id: string; authorId?: string | null
   return res;
 };
 
+// 校验文章点赞点赞状态
+export const checkArticleLikeStatus = async (id: string) => {
+  const res = await post(API.CHECK_ARTICLE_LIKE_STATUS, copeParams({ id }));
+  return res;
+};
+
 // 新建收藏集
 export const createCollection = async (params: CollectParams) => {
   const res = await post(API.CREATE_COLLECTION, copeParams(params));

@@ -54,6 +54,8 @@ export const GET_COMMENT_LIST = '/api/getCommentList';
 /* ==========文章操作相关========== */
 // 文章点赞
 export const LIKE_ARTICLE = '/api/likeArticle';
+// 校验文章点赞状态
+export const CHECK_ARTICLE_LIKE_STATUS = '/api/checkArticleLikeStatus';
 // 发布评论
 export const COMMENTS = '/api/comments';
 // 评论点赞
