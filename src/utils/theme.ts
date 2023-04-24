@@ -33,6 +33,8 @@ const removeStyle = {
   '--card-action-font-color': '#57a0ff',
   // 卡片操作背景颜色
   '--card-action-color': 'transparent',
+  // 弹窗before背景颜色
+  '--pop-before-bg-color': 'transparent',
 };
 
 // 背景图片公共配置
@@ -94,6 +96,8 @@ const imageStyles = {
   '--card-action-font-color': '#fff',
   // 卡片操作背景颜色
   '--card-action-color': 'rgba(0, 0, 0, 0.2)',
+  // 弹窗before背景颜色
+  '--pop-before-bg-color': 'rgba(0, 0, 0, 0.5)',
 };
 
 // 清新绿（默认主题）
