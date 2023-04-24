@@ -133,10 +133,15 @@ export const useCollectStore = defineStore('collect', {
     // 收藏文章
     async collectArticles(articleId: string) {
       if (!useCheckUserId()) return;
+
+      // 判断是article还是detail、分别推送刷新消息给主进程
+      const { pathname } = window.location;
+
       const res = normalizeResult<string>(
         await Service.collectArticles({
           ids: this.checkedCollectIds,
           articleId,
+          isMove: pathname.includes('/collect'), // 如果是true，说明是从我的收藏集中点的转移按钮进行文章的转移
         }),
       );
       if (res.success) {
@@ -144,8 +149,11 @@ export const useCollectStore = defineStore('collect', {
           articleStore.articleDetail.collectCount += 1;
         }
         this.collectStatus = true;
-        if (!this.checkedCollectIds.includes(this.collectInfo.id)) {
-          this.removeCollectArticle(articleId, this.collectInfo.id);
+
+        // 如果所选择的收藏集不包含当前需要转移文章的收藏集，就需要将该文章移除当前收藏集
+        if (!this.checkedCollectIds.includes(this.collectInfo.id) && pathname.includes('/collect')) {
+          // 第三个参数 true，说明是点击转移按钮转移收藏的文章，告诉后端不需要增减收藏数
+          this.removeCollectArticle(articleId, this.collectInfo.id, true);
         }
 
         const { userInfo } = getStoreUserInfo();
@@ -171,8 +179,6 @@ export const useCollectStore = defineStore('collect', {
           );
         }
 
-        // 判断是article还是detail、分别推送刷新消息给主进程
-        const { pathname } = window.location;
         ipcRenderers.sendRefresh(articleId, pathname, false);
 
         ElMessage({
@@ -287,13 +293,14 @@ export const useCollectStore = defineStore('collect', {
     },
 
     // 移除收藏集中的文章
-    async removeCollectArticle(articleId: string, collectId: string) {
+    async removeCollectArticle(articleId: string, collectId: string, isMove?: boolean) {
       if (!collectId) return;
       this.loading = true;
       const res = normalizeResult<number>(
         await Service.removeCollectArticle({
           id: collectId,
           articleId,
+          isMove,
         }),
       );
       if (res.success) {

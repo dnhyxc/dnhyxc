@@ -151,7 +151,7 @@ export const getCollectionList = async (params: { pageNo: number; pageSize: numb
 };
 
 // 收藏文章
-export const collectArticles = async (params: { ids: string[]; articleId: string }) => {
+export const collectArticles = async (params: { ids: string[]; articleId: string; isMove?: boolean }) => {
   const res = await post(API.COLLECT_ARTICLES, copeParams(params));
   return res;
 };
@@ -264,6 +264,7 @@ export const getCollectInfo = async (id: string) => {
 export const removeCollectArticle = async (params: {
   articleId: string;
   id: string; // 收藏集id
+  isMove?: boolean; // s标识是否是转移，不需要增减收藏数
 }) => {
   const res = await post(API.REMOVE_COLLECT_ARTICLE, copeParams(params));
   return res;
