@@ -236,6 +236,10 @@ const onScrollTo = (height?: number) => {
       flex: 1;
       background-color: var(--e-form-bg-color);
     }
+
+    & > :last-child {
+      margin-bottom: 0;
+    }
   }
 }
 </style>
