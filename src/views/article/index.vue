@@ -75,7 +75,6 @@
             class="action-list"
             :scroll-height="articleInfoRef?.offsetHeight"
             :on-scroll-to="() => onScrollTo(articleInfoRef?.offsetHeight)"
-            from-path="article"
           />
           <Toc class="toc-list" />
           <AnotherArticle
