@@ -6,6 +6,13 @@
 -->
 <template>
   <div ref="commentsRef" class="Comments">
+    <el-dialog v-model="previewVisible" draggable align-center title="图片预览" width="70%">
+      <div class="preview-dialog">
+        <el-scrollbar class="scroll-wrap" max-height="70vh">
+          <img :src="filePath" alt="" class="prew-img" />
+        </el-scrollbar>
+      </div>
+    </el-dialog>
     <div class="draftInputWrap">
       <DraftInput :get-comment-list="getCommentList" :focus="focus" :article-id="id" :on-hide-input="onHideInput" />
     </div>
@@ -28,7 +35,7 @@
             <span class="name">{{ i.username }}</span>
             <span class="date">{{ formatGapTime(i?.date!) }}</span>
           </div>
-          <div class="desc" v-html="replaceCommentContent(i.content!)" />
+          <div class="desc" @click.stop="onPreviewImage" v-html="replaceCommentContent(i.content!)" />
           <div class="action">
             <div class="actionContent">
               <div class="likeAndReplay">
@@ -90,8 +97,18 @@
                 </span>
                 <span class="date">{{ j.date && formatGapTime(j.date) }}</span>
               </div>
-              <div v-if="j.content" class="desc" v-html="replaceCommentContent(j.content!)" />
-              <div v-if="j.formContent" class="formContent" v-html="replaceCommentContent(j.formContent!)" />
+              <div
+                v-if="j.content"
+                class="desc"
+                @click.stop="onPreviewImage"
+                v-html="replaceCommentContent(j.content!)"
+              />
+              <div
+                v-if="j.formContent"
+                class="formContent"
+                @click.stop="onPreviewImage"
+                v-html="replaceCommentContent(j.formContent!)"
+              />
               <div id="ON_REPLAY" class="action">
                 <div class="actionContent">
                   <div class="likeAndReplay">
@@ -183,6 +200,10 @@ const emit = defineEmits(['updateFocus']);
 const selectComment = ref<CommentParams>();
 // 显示更多评论状态
 const viewMoreComments = ref<string[]>([]);
+// 图片预览状态
+const previewVisible = ref<boolean>(false);
+// 图片预览路径
+const filePath = ref<string>('');
 
 const commentsRef = ref<HTMLDivElement | null>(null);
 
@@ -259,6 +280,15 @@ const checkReplyList = (replyList: CommentParams[], commentId: string) => {
 const onViewMoreReply = (commentId: string) => {
   viewMoreComments.value = [...viewMoreComments.value, commentId];
 };
+
+const onPreviewImage = (e: Event) => {
+  const target = e.target as HTMLImageElement;
+  if (target.id === '__COMMENT_IMG__') {
+    previewVisible.value = true;
+    console.log(target.src, 'essss');
+    filePath.value = target.src;
+  }
+};
 </script>
 
 <style scoped lang="less">
@@ -268,6 +298,22 @@ const onViewMoreReply = (commentId: string) => {
   padding: 0 20px 20px 20px;
   border-radius: 5px;
   color: var(--font-2);
+
+  :deep {
+    .el-dialog__body {
+      padding: 10px;
+    }
+  }
+
+  .preview-dialog {
+    display: flex;
+
+    .prew-img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+  }
 
   .draftInputWrap {
     border-top-left-radius: 5px;
