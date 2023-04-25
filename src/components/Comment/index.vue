@@ -9,7 +9,14 @@
     <el-dialog v-model="previewVisible" draggable align-center title="图片预览" width="70%">
       <div class="preview-dialog">
         <el-scrollbar class="scroll-wrap" max-height="70vh">
-          <img :src="filePath" alt="" class="prew-img" />
+          <el-image class="prew-img" :src="filePath" fit="cover">
+            <template #placeholder>
+              <div class="image-slot">Loading...</div>
+            </template>
+            <template #error>
+              <div class="image-slot">图片加载失败</div>
+            </template>
+          </el-image>
         </el-scrollbar>
       </div>
     </el-dialog>
@@ -312,6 +319,12 @@ const onPreviewImage = (e: Event) => {
       display: block;
       width: 100%;
       height: auto;
+
+      .image-slot {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
     }
   }
 
