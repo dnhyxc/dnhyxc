@@ -13,6 +13,7 @@ interface IProps {
   token: string | undefined | null;
   userInfo: UserInfoParams;
   timer: ReturnType<typeof setTimeout> | null;
+  logoutStatus: boolean; // 登出状态
 }
 
 export const useLoginStore = defineStore('login', {
@@ -32,6 +33,7 @@ export const useLoginStore = defineStore('login', {
       blog: '',
     }, // 当前登录人用户信息
     timer: null,
+    logoutStatus: false,
   }),
 
   getters: {},

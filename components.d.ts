@@ -46,6 +46,7 @@ declare module '@vue/runtime-core' {
     ElUpload: typeof import('element-plus/es')['ElUpload']
     Emoji: typeof import('./src/components/Emoji/index.vue')['default']
     Empty: typeof import('./src/components/Empty/index.vue')['default']
+    ExitReminder: typeof import('./src/components/ExitReminder/index.vue')['default']
     Header: typeof import('./src/components/Header/index.vue')['default']
     Image: typeof import('./src/components/Image/index.vue')['default']
     LeftMenu: typeof import('./src/components/LeftMenu/index.vue')['default']

@@ -1,5 +1,6 @@
 <template>
   <div class="wrap">
+    <ExitReminder v-if="loginStore.logoutStatus" />
     <div class="el-container-wrap">
       <el-container>
         <el-main class="el-main">
@@ -25,9 +26,11 @@
 
 <script setup lang="ts">
 import { ref, nextTick, provide } from 'vue';
+import { loginStore } from '@/store';
+import { checkOS } from '@/utils';
 import Header from '@/components/Header/index.vue';
 import LeftMenu from '@/components/LeftMenu/index.vue';
-import { checkOS } from '@/utils';
+import ExitReminder from '@/components/ExitReminder/index.vue';
 
 const isRouterAlive = ref<boolean>(true);
 
