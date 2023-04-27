@@ -96,12 +96,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue';
+import { ref, reactive, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import type { FormInstance, FormRules } from 'element-plus';
 import { HEAD_IMG, IMG1 } from '@/constant';
-import { loginStore } from '@/store';
-import { verifyUsername } from '@/utils';
+import { loginStore, uploadStore } from '@/store';
+import { verifyUsername, checkImgUrlType } from '@/utils';
 import Upload from '@/components/Upload/index.vue';
 
 const router = useRouter();
@@ -138,17 +138,41 @@ const rules = reactive<FormRules>({
   username: [{ validator: validateUsername, trigger: 'blur' }],
 });
 
+// 监听头像url，实时更改用户头像信息
+watch(headUrl, async (newVal) => {
+  if (newVal && checkImgUrlType(newVal) === 'URL') {
+    const oldUserInfo = JSON.parse(JSON.stringify(loginStore?.userInfo));
+    await loginStore.updateUserInfo(
+      {
+        headUrl: headUrl.value,
+      },
+      1, // 1 标识更改用户信息，2 标识更改用户密码
+    );
+    uploadStore.removeFile(oldUserInfo?.headUrl!);
+  }
+});
+
+// 监听封面图url，实时更改用户封面图信息
+watch(mainCover, async (newVal) => {
+  if (newVal && checkImgUrlType(newVal) === 'URL') {
+    const oldUserInfo = JSON.parse(JSON.stringify(loginStore?.userInfo));
+    await loginStore.updateUserInfo(
+      {
+        mainCover: mainCover.value,
+      },
+      1, // 1 标识更改用户信息，2 标识更改用户密码
+    );
+    uploadStore.removeFile(oldUserInfo?.mainCover!);
+  }
+});
+
 // 确定更新用户信息
 const onUpdateInfo = (formEl: FormInstance | undefined) => {
   if (!formEl) return;
   formEl.validate(async (valid) => {
     if (valid) {
       loginStore.updateUserInfo(
-        {
-          ...profileForm,
-          headUrl: headUrl.value,
-          mainCover: mainCover.value,
-        },
+        profileForm,
         1, // 1 标识更改用户信息，2 标识更改用户密码
         router,
       );
@@ -164,11 +188,7 @@ const onEnter = () => {
   formRef.value.validate(async (valid) => {
     if (valid) {
       loginStore.updateUserInfo(
-        {
-          ...profileForm,
-          headUrl: headUrl.value,
-          mainCover: mainCover.value,
-        },
+        profileForm,
         1, // 1 标识更改用户信息，2 标识更改用户密码
         router,
       );

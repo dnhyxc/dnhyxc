@@ -1,5 +1,7 @@
 // 上传文件
 export const UPLOAD = '/api/upload';
+// 删除文件
+export const REMOVE_FILE = '/api/removeFile';
 
 /* ==========用户信息相关========== */
 // 登录

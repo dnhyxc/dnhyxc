@@ -28,6 +28,12 @@ export const uploadFile = async (params?: any) => {
   return res;
 };
 
+// 删除文件
+export const removeFile = async (url: string) => {
+  const res = await post(API.REMOVE_FILE, copeParams({ url }));
+  return res;
+};
+
 // 登录
 export const login = async (params: LoginParams) => {
   try {

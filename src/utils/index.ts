@@ -13,12 +13,7 @@ import EventBus from './eventBus';
 import { locSetItem, locGetItem, locRemoveItem, ssnGetItem, ssnSetItem, ssnRemoveItem } from './storage';
 import * as ipcRenderers from './ipcRenderer';
 import { modifyTheme } from './theme';
-import {
-  eStore,
-  setTheme,
-  getTheme,
-  removeTheme,
-} from './store';
+import { eStore, setTheme, getTheme, removeTheme } from './store';
 
 export {
   ipcRenderers,
@@ -247,6 +242,18 @@ export const checkUrl = (url: string) => {
   const Expression = /http(s)?:\/\/([\w-]+\.)+[\w-]+(\/[\w- ./?%&=]*)?/;
   const objExp = new RegExp(Expression);
   return objExp.test(url);
+};
+
+// 判断图片是否是base64
+export const checkImgUrlType = (url: string) => {
+  const reg =
+    /^\s*data:([a-z]+\/[a-z0-9-+.]+(;[a-z-]+=[a-z0-9-]+)?)?(;base64)?,([a-z0-9!$&',()*+;=\-._~:@/?%\s]*?)\s*$/i;
+
+  if (reg.test(url)) {
+    return 'BASE64';
+  } else {
+    return 'URL';
+  }
 };
 
 // 获取存储在electron-store中的登录信息
