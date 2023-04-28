@@ -6,7 +6,7 @@
 -->
 <template>
   <div class="edit-wrap">
-    <Editor
+    <MackdownEditor
       :on-publish="onPublish"
       :on-clear="onClear"
       :on-show-draft="showDraft"
@@ -23,7 +23,7 @@
 import { ref, onActivated, onDeactivated, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { ElMessage } from 'element-plus';
-import Editor from '@/components/Editor/index.vue';
+import MackdownEditor from '@/components/MackdownEditor/index.vue';
 import CreateDrawer from './Create/index.vue';
 import DraftModal from './Draft/index.vue';
 import { articleStore, createStore } from '@/store';

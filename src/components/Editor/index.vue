@@ -1,267 +1,143 @@
+<!--
+ * 评论输入框
+ * @author: dnhyxc
+ * @since: 2023-04-28
+ * index.vue
+-->
 <template>
-  <div class="container">
-    <!-- 上传图片菜单默认为禁用状态 设置 disabled-menus 为空数组可以开启 -->
-    <v-md-editor
-      v-model.trim="createStore.createInfo.content"
-      placeholder="编辑内容"
-      autofocus
-      :height="height"
-      :disabled-menus="[]"
-      left-toolbar="undo redo | h bold italic | quote code | strikethrough hr | emoji link image | ul ol table | clear | draft | save | create"
-      :toolbar="toolbar"
-      @upload-image="onUploadImage"
-      @copy-code-success="onCopyCodeSuccess"
-    />
+  <div class="editor-wrap">
+    <pre ref="editorRef" class="editor" tabindex="0" contenteditable></pre>
+    <el-button id="emoji" @click="addEmoji">emoji</el-button>
+    <el-button id="reply" @click="onReplay">reply</el-button>
   </div>
 </template>
 
 <script setup lang="ts">
-import { reactive } from 'vue';
-import { ElMessage } from 'element-plus';
-import { createStore, uploadStore } from '@/store';
+import { onMounted, ref } from 'vue';
+import Editor from '@/utils/editor';
 
-interface ToolbarItem {
-  action?: (editor: any) => void;
-  title?: string;
-  icon?: string;
-  name?: string;
-  text?: string;
-}
+const editorRef = ref<HTMLElement | null>(null);
 
-interface Toolbar {
-  create?: {
-    title?: string;
-    text?: string;
-    icon?: string;
-    action?: (editor?: any) => void;
-    menus?: ToolbarItem[];
-  };
-  clear?: {
-    title?: string;
-    text?: string;
-    icon?: string;
-    action?: (editor?: any) => void;
-    menus?: ToolbarItem[];
-  };
-  save?: {
-    title?: string;
-    text?: string;
-    icon?: string;
-    action?: (editor?: any) => void;
-    menus?: ToolbarItem[];
-  };
-  draft?: {
-    title?: string;
-    text?: string;
-    icon?: string;
-    action?: (editor?: any) => void;
-    menus?: ToolbarItem[];
-  };
-}
+let editor: any = null;
 
-interface IProps {
-  articleId?: string;
-  height?: string;
-  onPublish?: () => void;
-  onClear?: () => void;
-  onShowDraft?: () => void;
-  onSaveDraft?: () => void;
-  copyCodeSuccess?: (value?: string) => void;
-}
-
-const props = withDefaults(defineProps<IProps>(), {
-  articleId: '',
-  height: 'calc(100vh - 75px)',
-  onPublish: () => {},
-  onClear: () => {},
-  onShowDraft: () => {},
-  onSaveDraft: () => {},
-  copyCodeSuccess: () => {},
-});
-
-// 自定义工具栏配置
-const toolbar = reactive<Toolbar>({
-  create: {
-    text: '发',
-    title: '发布文章',
-    action(editor) {
-      if (!createStore?.createInfo?.content) {
-        ElMessage({
-          message: '嘿！一个字都没写休想发布',
-          type: 'warning',
-          offset: 80,
-        });
-        return;
-      }
-      props.onPublish && props.onPublish();
+console.log(Editor, 'Editor');
+onMounted(() => {
+  const atList = document.createElement('div');
+  atList.className = 'at-list';
+  atList.innerHTML = `
+  <div>susan</div>
+  <div>jim</div>
+`;
+  editor = new Editor(editorRef.value!, {
+    submit: {
+      will: (e) => e.key === 'Enter' && !e.ctrlKey && !e.altKey,
+      done: console.log,
     },
-  },
-  clear: {
-    text: '清',
-    title: '清空内容',
-    action(editor) {
-      props.onClear && props.onClear();
+    emoji: {
+      render(emoji) {
+        const img = document.createElement('img');
+        img.className = 'emoji';
+        img.src = 'http://43.143.27.249/image/24b6f805c6687e5694cbee718.gif';
+        return img;
+      },
     },
-  },
-  save: {
-    text: '存',
-    title: '保存草稿',
-    action(editor) {
-      if (!createStore?.createInfo?.content) {
-        ElMessage({
-          message: '嘿！一个字都没写休想发布',
-          type: 'warning',
-          offset: 80,
-        });
-        return;
-      }
-      props?.onSaveDraft?.();
+    file: {
+      // @ts-ignore
+      format(data) {
+        return true;
+      },
+      render(data) {
+        const div = document.createElement('div');
+        div.innerText = '文件...';
+        return div;
+      },
     },
-  },
-  draft: {
-    text: '稿',
-    title: '草稿列表',
-    action(editor) {
-      props?.onShowDraft?.();
+    reply: {
+      render() {
+        const div = document.createElement('section');
+        div.className = 'reply';
+        div.innerText = '回复...';
+        return div;
+      },
     },
-  },
-});
-
-// 上传图片事件
-const onUploadImage = async (event: Event, insertImage: Function, files: File) => {
-  // 拿到 files 之后上传到文件服务器，然后向编辑框中插入对应的内容
-  const res = await uploadStore.uploadFile(files[0]);
-  insertImage({
-    url: res,
-    desc: files[0]?.name,
-    width: '100%',
-    height: 'auto',
+    at: {
+      async find() {
+        return [
+          { id: 1, name: 'susan' },
+          { id: 2, name: 'jim' },
+        ];
+      },
+      show({ bottom, left }) {
+        atList.style.display = 'block';
+        atList.style.left = `${left}px`;
+        atList.style.top = `${bottom}px`;
+      },
+      hide() {
+        atList.style.display = 'none';
+      },
+    },
+    onValidChange(text) {
+      // submit.disabled = !/\S/.test(text as string);
+    },
   });
+});
+
+const addEmoji = () => {
+  editor.insert([{ type: 'emoji' }]);
 };
 
-// 复制成功回调
-const onCopyCodeSuccess = (value: string) => {
-  props.copyCodeSuccess?.(value);
+const onReplay = () => {
+  editor.insert([{ type: 'reply' }]);
 };
 </script>
 
-<style lang="less" scoped>
+<style scoped lang="less">
 @import '@/styles/index.less';
 
-.container {
-  :deep {
-    .v-md-editor {
-      background-color: var(--fff);
-    }
+.editor-wrap {
+  .editor {
+    padding: 8px;
+    height: 200px;
+    margin: 0;
+    box-sizing: border-box;
+    white-space: pre-wrap;
+    border: solid 1px #d8d8d8;
+    border-radius: 4px;
+    outline: none;
+    font-size: 18px;
+    font-family: system-ui;
+    overflow-y: auto;
+  }
 
-    .v-md-editor__right-area {
-      background-color: var(--fff);
-    }
+  .at-list {
+    position: fixed;
+    display: none;
+    width: 120px;
+    background: #fff;
+    border: solid 1px #d8d8d8;
+    padding: 6px;
+    cursor: pointer;
+    transform: translateY(-100%);
+  }
 
-    .v-md-editor__left-area {
-      border-right: 1px solid var(--card-border);
-    }
+  .emoji {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    margin: 0 2px;
+    border-radius: 50%;
+    vertical-align: middle;
+  }
 
-    .v-md-editor__left-area-title {
-      color: var(--font-1);
-      &::after {
-        border-bottom: 1px solid var(--card-border);
-      }
-    }
+  .file {
+    background: #d8d8d8;
+    padding: 6px;
+  }
 
-    .v-md-editor__menu-item {
-      color: var(--font-2);
-    }
-
-    .v-md-editor__menu-item:hover {
-      background-color: var(--card-border);
-    }
-
-    .v-md-editor__toc-nav-item {
-      color: var(--font-2);
-    }
-
-    .v-md-editor__preview-wrapper {
-      color: var(--font-2);
-    }
-
-    .vuepress-markdown-body {
-      background-color: transparent;
-      color: var(--e-edit-color);
-
-      code {
-        color: var(--code-color);
-      }
-    }
-
-    .v-md-editor__menu {
-      background-color: var(--fff);
-      border: 1px solid var(--card-border);
-    }
-
-    .v-md-editor__toolbar {
-      border-bottom: 1px solid var(--card-border);
-    }
-    .v-md-editor__editor-wrapper {
-      border-right: 1px solid var(--card-border);
-    }
-
-    .v-md-editor__toolbar-item {
-      color: var(--font-4);
-
-      &:hover {
-        background-color: var(--bg-lg-color1);
-        color: var(--font-4);
-      }
-    }
-
-    .v-md-editor__toolbar-item--active {
-      background-color: var(--bg-lg-color1);
-      color: var(--font-4);
-      &:hover {
-        background-color: var(--bg-lg-color1);
-      }
-    }
-
-    .v-md-editor {
-      border-radius: 5px;
-      box-shadow: 0 0 8px 0 var(--shadow-mack);
-    }
-    .v-md-textarea-editor pre,
-    .v-md-textarea-editor textarea {
-      background-color: transparent;
-      border-bottom-left-radius: 5px;
-      color: var(--font-2);
-    }
-    .vuepress-markdown-body:not(.custom) {
-      padding: 16px 20px;
-    }
-    .v-md-editor__toolbar-left {
-      min-width: 200px;
-    }
-    .v-md-editor__toolbar-right {
-      min-width: 125px;
-    }
-    .v-md-editor__toolbar-item-create {
-      color: var(--theme-blue);
-      font-size: 14px;
-      line-height: 30px;
-    }
-    .v-md-editor__toolbar-item-clear {
-      color: @font-warning;
-      font-size: 14px;
-      line-height: 30px;
-    }
-    .v-md-editor__toolbar-item-save {
-      color: var(--theme-blue);
-      font-size: 14px;
-      line-height: 30px;
-    }
-    .v-md-editor__toolbar-item-draft {
-      color: var(--theme-blue);
-      font-size: 14px;
-      line-height: 30px;
-    }
+  .reply {
+    width: calc(100% - 12px);
+    background: #d8d8d8;
+    padding: 6px;
   }
 }
 </style>

@@ -182,13 +182,13 @@
 <script setup lang="ts">
 import { onMounted, ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
+import { ElMessage } from 'element-plus';
 import { CommentParams } from '@/typings/common';
 import { HEAD_IMG } from '@/constant';
 import { loginStore, articleStore } from '@/store';
 import { formatGapTime, getStoreUserInfo, replaceCommentContent } from '@/utils';
 import Image from '@/components/Image/index.vue';
 import DraftInput from '@/components/DraftInput/index.vue';
-import { ElMessage } from 'element-plus';
 
 const router = useRouter();
 
