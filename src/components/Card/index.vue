@@ -213,8 +213,8 @@ const toTag = (name: string) => {
 
       .art-action {
         position: absolute;
-        top: 10px;
-        right: 10px;
+        top: 5px;
+        right: 7px;
         z-index: 29;
         display: none;
 
@@ -277,11 +277,10 @@ const toTag = (name: string) => {
         align-items: center;
         box-sizing: border-box;
         position: absolute;
-        bottom: 5px;
+        bottom: 0;
         left: 0;
         width: 100%;
         max-height: 42%;
-        padding: 5px;
         border-bottom-left-radius: 5px;
         border-bottom-right-radius: 5px;
         overflow: hidden;
@@ -292,7 +291,8 @@ const toTag = (name: string) => {
           .ellipsisMore(3);
           font-size: 13px;
           backdrop-filter: blur(2px);
-          padding: 0 5px 2px 5px;
+          padding: 4px 5px 5px 5px;
+          line-height: 18px;
           color: @fff;
         }
       }
