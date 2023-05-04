@@ -52,7 +52,7 @@
             <el-radio-group v-model="addCollectForm.status">
               <el-radio label="1">
                 <span class="radio-label">公开</span>
-                <span class="radio-info">当其他人关注此收藏集后不可再更改为隐私</span>
+                <span class="radio-info">所有人可见</span>
               </el-radio>
               <el-radio label="2">
                 <span class="radio-label">隐私</span>

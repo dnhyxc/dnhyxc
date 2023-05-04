@@ -11,7 +11,7 @@
         <h3 :id="titleId" :class="titleClass">{{ articleId ? '更新文章' : '发布文章' }}</h3>
       </template>
       <div class="content">
-        <el-form ref="formRef" label-width="52px" :model="createStore?.createInfo" class="form-wrap">
+        <el-form ref="formRef" label-width="52px" :model="createStore?.createInfo">
           <el-form-item
             prop="title"
             label="标题"
@@ -22,7 +22,6 @@
                 trigger: 'change',
               },
             ]"
-            class="form-item"
           >
             <el-input v-model="createStore.createInfo.title" placeholder="请输入文章标题" />
           </el-form-item>
@@ -36,7 +35,6 @@
                 trigger: 'change',
               },
             ]"
-            class="form-item"
           >
             <div class="classify">
               <el-input v-model="createStore.createInfo.classify" placeholder="请输入文章分类" />
@@ -62,7 +60,6 @@
                 trigger: 'change',
               },
             ]"
-            class="form-item"
           >
             <div class="classify">
               <el-input v-model="createStore.createInfo.tag" placeholder="请输入文章标签" />
@@ -88,7 +85,6 @@
                 trigger: 'change',
               },
             ]"
-            class="form-item"
           >
             <el-date-picker
               v-model="createStore.createInfo.createTime"
@@ -116,7 +112,6 @@
                 trigger: 'change',
               },
             ]"
-            class="form-item"
           >
             <el-input
               v-model="createStore.createInfo.abstract"
