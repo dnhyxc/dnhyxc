@@ -373,14 +373,14 @@ const onDelImage = () => {
       .del {
         font-size: 20px;
         cursor: pointer;
-        color: var(--font-2);
+        color: @fff;
       }
 
       .download,
       .shot,
       .view {
         margin-right: 15px;
-        color: var(--font-2);
+        color: @fff;
       }
     }
 
