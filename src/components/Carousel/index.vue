@@ -126,6 +126,7 @@ const toTag = (name: string) => {
               font-size: 18px;
               backdrop-filter: blur(3px);
               padding: 0 5px 2px 5px;
+              margin: 5px 0 0 5px;
               border-radius: 5px;
               color: @fff;
               .ellipsisMore(1);
@@ -146,8 +147,8 @@ const toTag = (name: string) => {
 
             .author {
               display: inline-block;
-              margin-right: 10px;
               padding: 0 5px 2px 5px;
+              margin: 0 10px 0 5px;
 
               &:hover {
                 color: var(--theme-blue);
@@ -167,6 +168,7 @@ const toTag = (name: string) => {
             backdrop-filter: blur(3px);
             color: @fff;
             padding: 0 5px 2px 5px;
+            margin: 0 5px 5px 0;
             border-radius: 5px;
 
             &:hover {
