@@ -355,6 +355,21 @@ ipcMain.on('restore', (event, info) => {
   });
 });
 
+// 限制只能启动一个应用
+const gotTheLock = app.requestSingleInstanceLock();
+
+if (!gotTheLock) {
+  app.quit();
+} else {
+  app.on('second-instance', (event, commandLine, workingDirectory) => {
+    if (win) {
+      if (win.isMinimized()) win.restore();
+      win.focus();
+      win.show();
+    }
+  });
+}
+
 // 在Electron完成初始化时被触发
 app
   .whenReady()
