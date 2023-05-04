@@ -128,7 +128,8 @@ const onScrollTo = () => {
     }
 
     .el-scrollbar__view {
-      height: 100%;
+      box-sizing: border-box;
+      height: calc(100% - 20px);
     }
   }
 

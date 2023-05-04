@@ -310,6 +310,10 @@ const onPreviewImage = (e: Event) => {
     .el-dialog__body {
       padding: 10px;
     }
+
+    .el-dialog__close {
+      color: var(--font-1);
+    }
   }
 
   .preview-dialog {
@@ -325,6 +329,7 @@ const onPreviewImage = (e: Event) => {
         justify-content: center;
         align-items: center;
         height: 100%;
+        color: var(--font-1);
       }
     }
   }
