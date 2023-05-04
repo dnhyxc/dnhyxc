@@ -413,6 +413,10 @@ const onDelImage = () => {
     .el-dialog__body {
       padding: 0 20px 20px 20px;
     }
+
+    .el-dialog__close {
+      color: var(--font-1);
+    }
   }
 }
 </style>
