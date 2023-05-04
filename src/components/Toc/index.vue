@@ -18,7 +18,7 @@
         <div
           v-for="(anchor, index) in commonStore.tocTitles"
           :key="index"
-          :style="{ padding: `3px 10px 3px ${anchor.indent * 20 + 15}px`, margin: '10px 0' }"
+          :style="{ padding: `2px 10px 2px ${anchor.indent * 20 + 15}px`, margin: '10px 0' }"
           :class="`${checkTocTitle === anchor.title + index && 'toc-item'} item`"
           @click="handleAnchorClick(anchor, index)"
         >
