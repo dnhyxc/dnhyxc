@@ -19,9 +19,3 @@ electron_mirror=https://cdn.npm.taobao.org/dist/electron/
 - openDirectory：允许选择文件夹。
 
 - res.filePaths[0]：选择的文件夹路径。
-
-### BUG 记录
-
-评论：如果第一级评论中输入了内容，再打开子级评论输入框输入内容，此时会同时提交两次评论，即；内外评论都会提交。
-
-上下篇：需要先根据时间排序，再获取上下篇文章。
