@@ -6,7 +6,7 @@
 -->
 <template>
   <Loading :loading="messageStore.loading" class="message-wrap">
-    <span v-if="messageStore.msgList?.length" class="delAll" @click="onDeleteAll">全部删除</span>
+    <span v-if="!messageStore.msgList?.length" class="delAll" @click="onDeleteAll">全部删除</span>
     <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
       <div
         v-if="isMounted"
@@ -159,6 +159,7 @@ const onScrollTo = (to?: number) => {
     color: var(--theme-blue);
     cursor: pointer;
     .clickNoSelectText();
+    z-index: 99;
 
     &:hover {
       color: var(--active-color);
