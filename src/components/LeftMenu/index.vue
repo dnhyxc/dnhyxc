@@ -52,8 +52,8 @@
           </el-dropdown-menu>
         </template>
       </el-dropdown>
-      <div v-else class="login-btn">
-        <div class="login" @click.stop="onLogin">登录</div>
+      <div v-else class="login-btn" @click.stop="onLogin">
+        <div class="login">登录</div>
       </div>
     </div>
   </div>
