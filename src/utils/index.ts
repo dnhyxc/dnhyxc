@@ -457,3 +457,77 @@ export const insertContent = ({
     return res;
   }
 };
+
+/**
+ * @param {图片路径} url
+ * @param {图片宽度} width
+ * @param {图片高度} height
+ * @param {水印文字} watermarkText
+ */
+export const addWatermark = async ({
+  url,
+  width,
+  height,
+  markText = 'dnhyxc',
+}: {
+  url: string;
+  markText: string;
+  width?: number;
+  height?: number;
+}) => {
+  // 1. 根据图片路径获取图片数据，转成blob类型
+  const fileBlob = await fetch(url)
+    .then((r) => r.blob())
+    .then((file) => file);
+
+  // 2. 用`FileReader`读取图片blob数据为dataURL
+  const reader = new FileReader();
+  reader.readAsDataURL(fileBlob);
+
+  // 3. 创建img标签，src属性为dataURL
+  const tempImg: HTMLImageElement = await new Promise((resolve) => {
+    reader.onload = () => {
+      const img = document.createElement('img');
+      img.setAttribute('crossOrigin', 'anonymous');
+      img.src = reader.result as string;
+      resolve(img);
+    };
+  });
+
+  // 4. 监听`img.onload`, 创建canvas,将img对象`draw`在canvas里
+  const canvas: HTMLCanvasElement = await new Promise((resolve) => {
+    const canvas = document.createElement('canvas');
+
+    canvas.width = width || tempImg.width;
+    canvas.height = height || tempImg.height;
+
+    tempImg.onload = () => {
+      const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+      ctx.drawImage(tempImg, 0, 0);
+
+      // 5. 添加水印
+      ctx.fillStyle = 'red';
+      ctx.textBaseline = 'middle';
+      ctx.font = '15px Arial';
+      ctx.fillText(markText, 10, 15);
+
+      resolve(canvas);
+    };
+  });
+
+  // 6. 使用`canvas.toBlob`转成最终图像
+  const imgUrl = await new Promise((resolve) => {
+    canvas.toBlob((canvasBlob) => {
+      const newImg = document.createElement('img');
+      const url = URL.createObjectURL(canvasBlob as Blob);
+      newImg.onload = function () {
+        // 图片加载完成后销毁objectUrl
+        URL.revokeObjectURL(url);
+      };
+      newImg.src = url;
+      resolve(url);
+    });
+  });
+
+  return imgUrl;
+};
