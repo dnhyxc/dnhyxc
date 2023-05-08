@@ -109,7 +109,7 @@ export const useArticleStore = defineStore('article', {
         return;
       }
       this.loading = true;
-      const res = normalizeResult<ArticleItem>(await Service.getArticleDetail(id));
+      const res = normalizeResult<ArticleItem>(await Service.getArticleDetail(id, isEdit));
       if (res.success) {
         this.detailArtLikeCount = res.data?.likeCount!;
         this.articleDetail = res.data;
