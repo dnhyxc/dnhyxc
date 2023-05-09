@@ -95,7 +95,11 @@
           </el-form-item>
           <el-form-item prop="cover" label="封面" class="form-item-cover">
             <div class="cover-wrap">
-              <Upload v-model:file-path="createStore.createInfo.coverImage">
+              <Upload
+                v-model:file-path="createStore.createInfo.coverImage"
+                :delete="!articleId"
+                :get-upload-url="getUploadUrl"
+              >
                 <template #preview>
                   <img :src="uploadPath || createStore.createInfo?.coverImage!" class="cover-img" />
                 </template>
@@ -140,7 +144,8 @@ import { ref, computed, onDeactivated } from 'vue';
 import { useRouter } from 'vue-router';
 import type { FormInstance } from 'element-plus';
 import { ARTICLE_CLASSIFY, ARTICLE_TAG } from '@/constant';
-import { createStore } from '@/store';
+import { createStore, uploadStore } from '@/store';
+import { checkImgUrlType } from '@/utils';
 import Upload from '@/components/Upload/index.vue';
 
 const router = useRouter();
@@ -170,6 +175,30 @@ const visible = computed({
   },
 });
 
+// 获取上传的封面图url
+const getUploadUrl = async (url: string) => {
+  if (url && checkImgUrlType(url) === 'URL' && props.articleId) {
+    const oldUrl = createStore.oldCoverImage;
+
+    console.log({
+      url,
+      oldUrl,
+    });
+
+    await createStore.createArticle(
+      {
+        coverImage: url,
+        articleId: createStore?.createInfo?.articleId,
+      },
+      undefined, // router
+      false, // 是否需要提示
+    );
+    // 删除上传的老的封面图
+    oldUrl && (await uploadStore.removeFile(oldUrl));
+    createStore.oldCoverImage = url;
+  }
+};
+
 // 组件弃用时，如果有文章 id 则清除 createStore 中的 createInfo 属性，并且重置表单数据
 onDeactivated(() => {
   if (createStore?.createInfo?.articleId) {
@@ -193,7 +222,7 @@ const onCancel = () => {
   emit('update:modelValue', false);
 };
 
-// 确认
+// 新建/更新文章
 const onSubmit = () => {
   if (!formRef.value) return;
   formRef.value.validate(async (valid) => {

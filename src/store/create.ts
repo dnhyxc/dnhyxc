@@ -23,6 +23,7 @@ interface IProps {
   loading: boolean | null;
   draftArticleId: string; // 草稿id
   draftInfo: ArticleDetailParams;
+  oldCoverImage: string; // 保存老的文章封面图
 }
 
 export const useCreateStore = defineStore('create', {
@@ -38,6 +39,7 @@ export const useCreateStore = defineStore('create', {
       abstract: '',
       articleId: '',
     },
+    oldCoverImage: '',
     pageNo: 0,
     pageSize: PAGESIZE,
     total: 0,
@@ -49,7 +51,7 @@ export const useCreateStore = defineStore('create', {
 
   actions: {
     // 创建文章
-    async createArticle(params: CreateArticleParams, router?: Router) {
+    async createArticle(params: CreateArticleParams, router?: Router, needMsg = true) {
       const { userInfo } = loginStore;
       try {
         // 检验是否有userId，如果没有禁止发送请求
@@ -63,12 +65,13 @@ export const useCreateStore = defineStore('create', {
         if (res.success) {
           // 如果使用的是草稿发布的文章，则发布成功之后，需要删除当前草稿
           this.deleteDraft('', true);
-          ElMessage({
-            message: res.message,
-            type: 'success',
-            offset: 80,
-            duration: 2000,
-          });
+          needMsg &&
+            ElMessage({
+              message: res.message,
+              type: 'success',
+              offset: 80,
+              duration: 2000,
+            });
           router?.push('/home');
         } else {
           ElMessage({
