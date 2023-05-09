@@ -86,7 +86,7 @@ interface IProps {
   fixedNumber?: number[];
   getUploadUrl?: (url: string) => void;
   needCropper?: boolean;
-  delete?: boolean;
+  delete?: boolean; // 控制点击删除图标时，是否删除数据库中的图片
 }
 
 const props = withDefaults(defineProps<IProps>(), {
