@@ -177,6 +177,7 @@ const toTag = (name: string) => {
 @import '@/styles/index.less';
 
 .card-wrap {
+  box-sizing: border-box;
   position: relative;
   display: flex;
   justify-content: space-between;
