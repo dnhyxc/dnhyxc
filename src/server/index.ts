@@ -85,8 +85,8 @@ export const getArticleList = async (params: GetArticleListParams) => {
 };
 
 // 获取文章详情
-export const getArticleDetail = async (id: string) => {
-  const res = await post(API.ARTICLE_DETAIL, { id });
+export const getArticleDetail = async (id: string, isEdit?: boolean) => {
+  const res = await post(API.ARTICLE_DETAIL, { id, isEdit });
   return res;
 };
 

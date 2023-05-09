@@ -177,6 +177,7 @@ const toTag = (name: string) => {
 @import '@/styles/index.less';
 
 .card-wrap {
+  box-sizing: border-box;
   position: relative;
   display: flex;
   justify-content: space-between;
@@ -193,8 +194,8 @@ const toTag = (name: string) => {
 
     &:hover {
       .img {
-        transform: scale(1.3);
-        transition: all 0.3s;
+        transform: scale(1.5);
+        transition: scale 0.5s;
       }
 
       .card-top {

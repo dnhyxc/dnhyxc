@@ -109,7 +109,7 @@ export const useArticleStore = defineStore('article', {
         return;
       }
       this.loading = true;
-      const res = normalizeResult<ArticleItem>(await Service.getArticleDetail(id));
+      const res = normalizeResult<ArticleItem>(await Service.getArticleDetail(id, isEdit));
       if (res.success) {
         this.detailArtLikeCount = res.data?.likeCount!;
         this.articleDetail = res.data;
@@ -126,6 +126,7 @@ export const useArticleStore = defineStore('article', {
             abstract: res.data.abstract,
             articleId: res.data.id,
           };
+          createStore.oldCoverImage = res.data.coverImage as string;
           // 如果是创建页调用获取详情的接口，则需要清除文章详情的缓存。防止再次进入详情时文章目录出现错乱
           this.articleDetail = { id: '' };
           this.detailArtLikeCount = 0;

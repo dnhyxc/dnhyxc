@@ -73,7 +73,7 @@ import { ElMessage } from 'element-plus';
 import { Plus } from '@element-plus/icons-vue';
 import type { UploadProps } from 'element-plus';
 import { VueCropper } from 'vue-cropper';
-import { uploadStore } from '@/store';
+import { createStore, uploadStore } from '@/store';
 import { FILE_TYPE } from '@/constant';
 import { getImgInfo, url2Base64 } from '@/utils';
 
@@ -86,6 +86,7 @@ interface IProps {
   fixedNumber?: number[];
   getUploadUrl?: (url: string) => void;
   needCropper?: boolean;
+  delete?: boolean; // 控制点击删除图标时，是否删除数据库中的图片
 }
 
 const props = withDefaults(defineProps<IProps>(), {
@@ -95,6 +96,7 @@ const props = withDefaults(defineProps<IProps>(), {
   fixedNumber: () => [600, 338],
   getUploadUrl: () => {},
   needCropper: true,
+  delete: false,
 });
 
 const emit = defineEmits(['update:filePath']);
@@ -263,6 +265,10 @@ const onFinish = () => {
     const res = await uploadStore.uploadFile(blob);
     if (res) {
       props.getUploadUrl?.(res);
+      // 保存老封面图
+      if (props.delete) {
+        createStore.oldCoverImage = createStore.createInfo?.coverImage as string;
+      }
       // 更新父组件传递过来的filePath
       emit('update:filePath', res);
     }
@@ -286,8 +292,13 @@ const onPreview = () => {
 
 // 清除图片
 const onDelImage = () => {
+  console.log(props.filePath, 'props.filePath', props.delete);
   // 清空父组件传递过来的filePath
   emit('update:filePath', '');
+  // 删除上传的原图片
+  if (props.delete) {
+    uploadStore.removeFile(props.filePath);
+  }
 };
 </script>
 
