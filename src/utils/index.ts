@@ -1,7 +1,7 @@
 import { ElMessageBox, ElMessage } from 'element-plus';
 import type { ElMessageBoxOptions } from 'element-plus';
 import moment from 'moment';
-import { MSG_CONFIG, CODE_CONTROL } from '@/constant';
+import { MSG_CONFIG, CODE_CONTROL, EMOJI_TEXTS, EMOJI_URLS } from '@/constant';
 import { ArticleItem } from '@/typings/common';
 import { usePlugins } from './plugins';
 import { normalizeResult } from './result';
@@ -11,6 +11,34 @@ import { shareQQ, shareQZon, shareSinaWeiBo } from './share';
 import { mountDirectives } from './directive';
 import EventBus from './eventBus';
 import { locSetItem, locGetItem, locRemoveItem, ssnGetItem, ssnSetItem, ssnRemoveItem } from './storage';
+import * as ipcRenderers from './ipcRenderer';
+import { modifyTheme } from './theme';
+import { eStore, setTheme, getTheme, removeTheme } from './store';
+
+export {
+  ipcRenderers,
+  request,
+  normalizeResult,
+  decrypt,
+  encrypt,
+  locSetItem,
+  locGetItem,
+  locRemoveItem,
+  ssnGetItem,
+  ssnSetItem,
+  ssnRemoveItem,
+  usePlugins,
+  mountDirectives,
+  shareQQ,
+  shareQZon,
+  shareSinaWeiBo,
+  EventBus,
+  modifyTheme,
+  eStore,
+  setTheme,
+  getTheme,
+  removeTheme,
+};
 
 // 判断系统类型
 export const checkOS = () => {
@@ -39,14 +67,14 @@ export const Message = (title: string = '确定下架该文章吗？', content: 
 };
 
 // 格式化时间
-const formatDate = (date: number, format = 'YYYY/MM/DD HH:mm:ss') => {
+export const formatDate = (date: number, format = 'YYYY/MM/DD HH:mm:ss') => {
   if (!date) return;
 
   return moment(date).format(format);
 };
 
 // 转化距离当前时间的间隔时长
-const formatGapTime = (date: number) => {
+export const formatGapTime = (date: number) => {
   const ms = Date.now() - date;
   const seconds = Math.round(ms / 1000);
   const minutes = Math.round(ms / 60000);
@@ -216,23 +244,290 @@ export const checkUrl = (url: string) => {
   return objExp.test(url);
 };
 
-export {
-  request,
-  normalizeResult,
-  decrypt,
-  encrypt,
-  formatDate,
-  locSetItem,
-  locGetItem,
-  locRemoveItem,
-  ssnGetItem,
-  ssnSetItem,
-  ssnRemoveItem,
-  formatGapTime,
-  usePlugins,
-  mountDirectives,
-  shareQQ,
-  shareQZon,
-  shareSinaWeiBo,
-  EventBus,
+// 判断图片是否是base64
+export const checkImgUrlType = (url: string) => {
+  const reg =
+    /^\s*data:([a-z]+\/[a-z0-9-+.]+(;[a-z-]+=[a-z0-9-]+)?)?(;base64)?,([a-z0-9!$&',()*+;=\-._~:@/?%\s]*?)\s*$/i;
+
+  if (reg.test(url)) {
+    return 'BASE64';
+  } else {
+    return 'URL';
+  }
+};
+
+// 获取存储在electron-store中的登录信息
+export const getStoreUserInfo = () => {
+  // 获取存储在硬盘store中的登录信息
+  const userInfo = locGetItem('userInfo') && JSON.parse(locGetItem('userInfo') as string);
+  const token = locGetItem('token');
+  return {
+    userInfo,
+    token,
+  };
+};
+
+// 账号校验
+export const verifyUsername = (value: string) => {
+  const usrRegex = /^((?!\\|\/|\(|\)|\+|-|=|~|～|`|!|！|:|\*|\?|<|>|\||'|%|#|&|\$|\^|&|\*).){1,20}$/;
+  if (usrRegex.test(value)) {
+    return {
+      msg: '',
+      status: true,
+    };
+  }
+  if (value.length < 1) {
+    return {
+      msg: '用户名不能少于1位',
+      status: false,
+    };
+  }
+  if (value.length > 15) {
+    return {
+      msg: '用户名不能大于15位',
+      status: false,
+    };
+  }
+  return {
+    msg: '用户名不能包含特殊字符',
+    status: false,
+  };
+};
+
+// 密码校验
+export const verifyPassword = (value: string) => {
+  const pwdRegex = /(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[^a-zA-Z0-9]).{8,20}/;
+  if (value.length > 20) {
+    return {
+      msg: '密码不能不大于20位',
+      status: false,
+    };
+  }
+  if (value.length < 8) {
+    return {
+      msg: '密码不能少于8位',
+      status: false,
+    };
+  }
+  if (pwdRegex.test(value)) {
+    return {
+      msg: '',
+      status: true,
+    };
+  }
+  return {
+    msg: '必须包含字母、数字、特称字符',
+    status: false,
+  };
+};
+
+// 密码校验
+export const verifyResetPassword = (value: string, newPwd: string) => {
+  const pwdRegex = /(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[^a-zA-Z0-9]).{8,20}/;
+  if (value.length > 20) {
+    return {
+      msg: '密码不能不大于20位',
+      status: false,
+    };
+  }
+  if (value.length < 8) {
+    return {
+      msg: '密码不能少于8位',
+      status: false,
+    };
+  }
+  if (value !== newPwd) {
+    return {
+      msg: '两次输入的密码不一致',
+      status: false,
+    };
+  }
+  if (pwdRegex.test(value)) {
+    return {
+      msg: '',
+      status: true,
+    };
+  }
+  return {
+    msg: '必须包含字母、数字、特称字符',
+    status: false,
+  };
+};
+
+// 识别图片主色的方法
+export const getImageColor = (img: HTMLImageElement) => {
+  // 创建画布
+  const canvas = document.createElement('canvas');
+
+  canvas.width = img.width;
+  canvas.height = img.height;
+
+  const context = canvas.getContext('2d');
+
+  context?.drawImage(img, 0, 0);
+
+  const pxArr = Array.from(context?.getImageData(0, 0, img.width, img.height).data!);
+
+  const colorList = {};
+  let i = 0;
+  while (i < pxArr?.length!) {
+    const r = pxArr?.[i];
+    const g = pxArr?.[i + 1];
+    const b = pxArr?.[i + 2];
+    const a = pxArr?.[i + 3];
+    i = i + 4; // 最后 +4 比每次 i++ 快 10ms 左右性能
+    const key = [r, g, b, a].join(',');
+    key in colorList ? ++colorList[key] : (colorList[key] = 1);
+  }
+
+  let arr = [];
+  for (const key in colorList) {
+    arr.push({
+      rgba: `rgba(${key})`,
+      num: colorList[key],
+    });
+  }
+  arr = arr.sort((a, b) => b.num - a.num);
+
+  return arr;
+};
+
+// 处理输入的换行符
+export const replaceCommentContent = (content: string) => {
+  const context = content.replace(/\n/g, '<br/>');
+  return replaceEmojis(context);
+};
+
+// 表情包转换
+export const replaceEmojis = (content: string) => {
+  content = content.replace(/\[[^[^\]]+\]/g, (word) => {
+    const index = EMOJI_TEXTS.indexOf(word.replace('[', '').replace(']', ''));
+    if (index > -1) {
+      return `<img style="vertical-align: middle;width: 32px;height: 32px" src="${
+        EMOJI_URLS[index + 1]
+      }" title="${word}"/>`;
+    } else {
+      return word;
+    }
+  });
+  return replacePictures(content);
+};
+
+// 图片转换
+export const replacePictures = (content: string) => {
+  content = content.replace(/<[^<^>]+>/g, (word) => {
+    const index = word.indexOf(',');
+    if (index > -1) {
+      const arr = word.replace('<', '').replace('>', '').split(',');
+      return `<img id="__COMMENT_IMG__" style="border-radius: 5px;width: 100%;max-width: 250px;height:auto;display: block;padding: 5px 0;cursor: pointer;" src="${arr[1]}" title="${arr[0]}"/>`;
+    } else {
+      return word;
+    }
+  });
+  return content;
+};
+
+// 向光标所在位置插入内容
+export const insertContent = ({
+  keyword,
+  node,
+  username,
+  url,
+  emoji,
+}: {
+  keyword: string; // textarea输入内容
+  node: HTMLTextAreaElement; // textarea输入框元素
+  username?: string; // 用户名称
+  url?: string; // 图片地址
+  emoji?: string; // 表情内容
+}) => {
+  const content = emoji || `<${username},${url}>`;
+  if (keyword.substring(0, node.selectionStart)) {
+    const res = `${keyword.substring(0, node.selectionStart)}${content}${keyword.substring(
+      node.selectionEnd,
+      node.textLength,
+    )}`;
+    return res;
+  } else {
+    // selectionStart 为0时，默认向最后面插入
+    const res = `${keyword.substring(node.selectionEnd, node.textLength)}${content}${keyword.substring(
+      0,
+      node.selectionStart,
+    )}`;
+    return res;
+  }
+};
+
+/**
+ * @param {图片路径} url
+ * @param {图片宽度} width
+ * @param {图片高度} height
+ * @param {水印文字} watermarkText
+ */
+export const addWatermark = async ({
+  url,
+  width,
+  height,
+  markText = 'dnhyxc',
+}: {
+  url: string;
+  markText: string;
+  width?: number;
+  height?: number;
+}) => {
+  // 1. 根据图片路径获取图片数据，转成blob类型
+  const fileBlob = await fetch(url)
+    .then((r) => r.blob())
+    .then((file) => file);
+
+  // 2. 用`FileReader`读取图片blob数据为dataURL
+  const reader = new FileReader();
+  reader.readAsDataURL(fileBlob);
+
+  // 3. 创建img标签，src属性为dataURL
+  const tempImg: HTMLImageElement = await new Promise((resolve) => {
+    reader.onload = () => {
+      const img = document.createElement('img');
+      img.setAttribute('crossOrigin', 'anonymous');
+      img.src = reader.result as string;
+      resolve(img);
+    };
+  });
+
+  // 4. 监听`img.onload`, 创建canvas,将img对象`draw`在canvas里
+  const canvas: HTMLCanvasElement = await new Promise((resolve) => {
+    const canvas = document.createElement('canvas');
+
+    canvas.width = width || tempImg.width;
+    canvas.height = height || tempImg.height;
+
+    tempImg.onload = () => {
+      const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+      ctx.drawImage(tempImg, 0, 0);
+
+      // 5. 添加水印
+      ctx.fillStyle = 'red';
+      ctx.textBaseline = 'middle';
+      ctx.font = '15px Arial';
+      ctx.fillText(markText, 10, 15);
+
+      resolve(canvas);
+    };
+  });
+
+  // 6. 使用`canvas.toBlob`转成最终图像
+  const imgUrl = await new Promise((resolve) => {
+    canvas.toBlob((canvasBlob) => {
+      const newImg = document.createElement('img');
+      const url = URL.createObjectURL(canvasBlob as Blob);
+      newImg.onload = function () {
+        // 图片加载完成后销毁objectUrl
+        URL.revokeObjectURL(url);
+      };
+      newImg.src = url;
+      resolve(url);
+    });
+  });
+
+  return imgUrl;
 };

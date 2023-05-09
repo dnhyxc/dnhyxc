@@ -10,6 +10,7 @@ import { useTimelineStore } from './timeline';
 import { useAuthorStore } from './author';
 import { usePersonalStore } from './personal';
 import { useSearchStore } from './search';
+import { useMessageStore } from './message';
 
 // 公共store
 export const commonStore = useCommonStore();
@@ -46,3 +47,6 @@ export const personalStore = usePersonalStore();
 
 // 高级搜索
 export const searchStore = useSearchStore();
+
+// 消息列表
+export const messageStore = useMessageStore();

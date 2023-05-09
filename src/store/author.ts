@@ -1,9 +1,10 @@
+import { ipcRenderer } from 'electron';
 import { defineStore } from 'pinia';
 import { ElMessage } from 'element-plus';
 import { UserInfoParams, ArticleListResult, ArticleItem, TimelineResult } from '@/typings/common';
 import * as Service from '@/server';
 import { useCheckUserId } from '@/hooks';
-import { normalizeResult, locSetItem, Message } from '@/utils';
+import { normalizeResult, Message } from '@/utils';
 import { loginStore } from '@/store';
 import { AUTHOR_API_PATH, PAGESIZE } from '@/constant';
 
@@ -73,22 +74,13 @@ export const useAuthorStore = defineStore('author', {
         pageSize: this.pageSize,
         accessUserId: loginStore.userInfo?.userId,
       };
-      // 保存至storage用于根据不同页面进入详情时，针对性的进行上下篇文章的获取（如：分类页面上下篇、标签页面上下篇）
-      locSetItem(
-        'params',
-        JSON.stringify({
-          accessUserId: loginStore.userInfo?.userId,
-          selectKey: this.currentTabKey,
-          from: 'author',
-        }),
-      );
+
       const res = normalizeResult<ArticleListResult>(
         await Service.getAuthorArticleList(params, AUTHOR_API_PATH[this.currentTabKey]),
       );
       this.loading = false;
       if (res.success) {
         const { total, list } = res.data;
-        // 使用ref暂存list，防止滚动加载时，list添加错乱问题
         this.articleList = [...this.articleList, ...list];
         this.total = total;
       } else {
@@ -102,11 +94,6 @@ export const useAuthorStore = defineStore('author', {
 
     // 获取时间轴列表
     async getAuthorTimeline() {
-      // 保存至storage用于根据不同页面进入详情时，针对性的进行上下篇文章的获取（如：分类页面上下篇、标签页面上下篇）
-      locSetItem(
-        'params',
-        JSON.stringify({ accessUserId: loginStore.userInfo?.userId, selectKey: this.currentTabKey, from: 'author' }),
-      );
       this.loading = true;
       const res = normalizeResult<TimelineResult[]>(
         await Service.getAuthorTimeline({ accessUserId: loginStore.userInfo?.userId }),
@@ -129,6 +116,8 @@ export const useAuthorStore = defineStore('author', {
       Message('', '确定删除该文章吗？').then(async () => {
         const res = normalizeResult<{ id: string }>(await Service.deleteArticle({ articleId, type: 'timeline' }));
         if (res.success) {
+          // 发送删除的文章的消息给主进程，通知主进程及时关闭对应子窗口
+          ipcRenderer.send('remove', articleId);
           const list = this.timelineList.map((i) => {
             if (i.articles.length) {
               const filterList = i.articles.filter((j) => j.id !== articleId);
@@ -157,6 +146,7 @@ export const useAuthorStore = defineStore('author', {
       this.timelineList = [];
       this.total = 0;
       this.pageNo = 0;
+      this.pageSize = PAGESIZE;
     },
   },
 });

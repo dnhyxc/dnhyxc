@@ -31,7 +31,7 @@ import { EMPTY } from '@/constant';
   .clickNoSelectText();
 
   .empty-text {
-    color: @font-3;
+    color: var(--font-3);
   }
 }
 </style>

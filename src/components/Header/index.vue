@@ -26,7 +26,7 @@
           content="搜索"
           placement="bottom"
         >
-          <i class="font iconfont icon-sousuo2" @click="onClickSearch" />
+          <i class="font iconfont icon-sousuo2 search-icon" @click="onClickSearch" />
           <template #dropdown>
             <el-dropdown-menu>
               <el-dropdown-item @click="onCheckSearchType(1)">普通搜索</el-dropdown-item>
@@ -40,7 +40,7 @@
           content="高级搜索"
           placement="bottom"
         >
-          <i class="font iconfont icon-sousuo2" @click="onClickSearch" />
+          <i class="font iconfont icon-sousuo2 senior-search" @click="onClickSearch" />
         </el-tooltip>
         <el-tooltip v-if="commonStore.showSearch" effect="light" content="高级搜索" placement="bottom">
           <i class="iconfont icon-qiehuan" @click="onCheckSearchType(2)" />
@@ -60,12 +60,32 @@
           </template>
         </el-input>
       </div>
-      <el-tooltip effect="light" content="消息" placement="bottom">
-        <div class="bell">
-          <span class="msg-count">99+</span>
-          <i class="bell-font iconfont icon-notification" />
-        </div>
-      </el-tooltip>
+      <el-popover
+        v-if="loginStore.userInfo?.userId"
+        v-model:visible="messageStore.visible"
+        placement="bottom"
+        title="我的消息列表"
+        :width="300"
+        trigger="click"
+        popper-class="msg-popover"
+      >
+        <Messages />
+        <template #reference>
+          <div class="bell">
+            <el-tooltip effect="light" content="消息" placement="bottom">
+              <div class="msg">
+                <span
+                  v-if="messageStore.msgCount"
+                  :class="`${messageStore.msgCount > 99 && 'max-msg-count'} msg-count`"
+                >
+                  {{ messageStore.msgCount > 99 ? '99+' : messageStore.msgCount }}
+                </span>
+                <i class="bell-font iconfont icon-notification" />
+              </div>
+            </el-tooltip>
+          </div>
+        </template>
+      </el-popover>
       <div class="setting">
         <el-tooltip effect="light" content="设置" placement="bottom">
           <i class="font iconfont icon-shezhi" @click="toSetting" />
@@ -121,8 +141,9 @@ import { useRouter, useRoute } from 'vue-router';
 import { ipcRenderer } from 'electron';
 import { Search } from '@element-plus/icons-vue';
 import { ACTION_SVGS, MENULIST, CLOSE_CONFIG, CLOSE_PROMPT, NEED_HEAD_SEARCH } from '@/constant';
-import { commonStore } from '@/store';
+import { commonStore, messageStore, loginStore } from '@/store';
 import { checkOS } from '@/utils';
+import Messages from '@/components/Messages/index.vue';
 
 const router = useRouter();
 const route = useRoute();
@@ -164,6 +185,7 @@ onUnmounted(() => {
   if (timerRef.value) {
     clearTimeout(timerRef.value);
   }
+  messageStore.visible = false;
 });
 
 // 监听页面搜索关键词，如果articleStore.keyword为空，则清除输入框内容
@@ -295,6 +317,7 @@ const onEnter = async (e: Event) => {
 @import '@/styles/index.less';
 
 .header-wrap {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -306,6 +329,8 @@ const onEnter = async (e: Event) => {
     display: flex;
     align-items: center;
     justify-content: flex-start;
+    color: var(--font-1);
+
     .icon-wrap {
       display: flex;
       align-items: center;
@@ -328,10 +353,10 @@ const onEnter = async (e: Event) => {
       margin-right: 20px;
       cursor: pointer;
       -webkit-app-region: no-drag;
-      color: @font-2;
+      color: var(--font-color);
 
       &:hover {
-        color: @active;
+        color: var(--active-color);
         font-weight: 700;
       }
     }
@@ -339,27 +364,39 @@ const onEnter = async (e: Event) => {
     .title {
       font-size: 18px;
       font-weight: 700;
+      color: var(--font-color);
     }
   }
 
   .right {
     display: flex;
     align-items: center;
-
+    color: var(--font-1);
     .search-wrap {
       display: flex;
       align-items: center;
       -webkit-app-region: no-drag;
+      color: var(--font-1);
+
+      :deep {
+        .el-dropdown {
+          color: var(--font-1);
+        }
+      }
 
       .font {
         font-size: 15px;
         cursor: pointer;
         -webkit-app-region: no-drag;
-        color: @font-3;
+        color: var(--font-color);
+      }
+
+      .senior-search {
+        margin-top: -1px;
       }
 
       .icon-qiehuan {
-        color: @font-4;
+        color: var(--font-color);
         font-size: 20px;
         cursor: pointer;
       }
@@ -375,8 +412,11 @@ const onEnter = async (e: Event) => {
 
         :deep {
           .el-input__wrapper {
-            background-color: @menu-weak;
+            background-color: var(--input-bg-color);
             border-radius: 30px;
+          }
+          .el-input__inner {
+            color: var(--font-color);
           }
         }
       }
@@ -391,18 +431,22 @@ const onEnter = async (e: Event) => {
 
       .msg-count {
         position: absolute;
-        top: -6px;
-        right: -12px;
-        font-size: 13px;
+        top: -5px;
+        right: -5px;
+        font-size: 12px;
         color: @font-danger;
         font-weight: 700;
         cursor: pointer;
       }
 
+      .max-msg-count {
+        right: -12px;
+      }
+
       .bell-font {
         font-size: 17px;
         cursor: pointer;
-        color: @font-3;
+        color: var(--font-color);
       }
     }
 
@@ -416,8 +460,8 @@ const onEnter = async (e: Event) => {
         font-size: 16px;
         cursor: pointer;
         margin-left: 15px;
-        margin-top: 2px;
-        color: @font-3;
+        margin-top: 1px;
+        color: var(--font-color);
       }
 
       .active {
@@ -435,7 +479,7 @@ const onEnter = async (e: Event) => {
         font-size: 19px;
         cursor: pointer;
         margin-left: 15px;
-        color: @font-3;
+        color: var(--font-color);
       }
     }
 
@@ -449,6 +493,7 @@ const onEnter = async (e: Event) => {
     .icon {
       -webkit-app-region: no-drag;
       cursor: pointer;
+      color: var(--font-color);
 
       .icon-text {
         margin-left: 15px;
@@ -472,7 +517,7 @@ const onEnter = async (e: Event) => {
 
       .font {
         margin-right: 10px;
-        color: @theme-blue;
+        color: var(--theme-blue);
       }
 
       .out-icon {

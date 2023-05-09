@@ -54,6 +54,8 @@ const onScrollTo = () => {
 
 // 选中标签
 const onCheckTag = (tag: string) => {
+  // 保存当前选中标签
+  tagStore.currentTag = tag;
   router.push(`/tag/list?tag=${tag}`);
 };
 </script>
@@ -72,8 +74,9 @@ const onCheckTag = (tag: string) => {
   .word-cloud-wrap {
     box-sizing: border-box;
     flex: 1;
-    box-shadow: @shadow-mack;
+    box-shadow: 0 0 8px 0 var(--shadow-mack);
     border-radius: 5px;
+    background-color: var(--e-form-bg-color);
   }
 
   .tag-list {
@@ -83,8 +86,9 @@ const onCheckTag = (tag: string) => {
     margin-left: 10px;
     padding: 10px 0;
     width: 220px;
-    box-shadow: @shadow-mack;
+    box-shadow: 0 0 8px 0 var(--shadow-mack);
     border-radius: 5px;
+    background-color: var(--e-form-bg-color);
 
     :deep {
       .scrollbar-wrapper {
@@ -96,8 +100,8 @@ const onCheckTag = (tag: string) => {
       display: flex;
       justify-content: space-between;
       font-size: 18px;
-      color: @active;
-      border-bottom: 1px solid @card-border;
+      color: var(--active-color);
+      border-bottom: 1px solid var(--card-border);
       margin-left: 13px;
       margin-right: 13px;
       margin-bottom: 6px;
@@ -114,13 +118,15 @@ const onCheckTag = (tag: string) => {
     .tag {
       position: relative;
       margin-right: 13px;
-      padding: 8px 0 8px 13px;
+      padding: 2px 0 2px 13px;
+      height: 35px;
+      line-height: 35px;
       cursor: pointer;
-      color: @font-1;
+      color: var(--font-1);
       .ellipsisMore(1);
 
       &:hover {
-        color: @active;
+        color: var(--active-color);
         &::before {
           position: absolute;
           top: 50%;
@@ -131,10 +137,10 @@ const onCheckTag = (tag: string) => {
           height: 50%;
           border-top-right-radius: 5px;
           border-bottom-right-radius: 5px;
-          background-color: @active;
+          background-color: var(--active-color);
         }
         .count {
-          color: @active;
+          color: var(--active-color);
         }
       }
     }
@@ -142,7 +148,7 @@ const onCheckTag = (tag: string) => {
     .count {
       margin-left: 5px;
       font-size: 14px;
-      color: @font-3;
+      color: var(--font-3);
     }
   }
 }

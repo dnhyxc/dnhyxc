@@ -26,5 +26,12 @@ export const useUploadStore = defineStore('upload', {
         return res.data.filePath;
       }
     },
+
+    // 删除文件
+    async removeFile(url: string) {
+      // 检验是否有userId，如果没有禁止发送请求
+      if (!useCheckUserId()) return;
+      normalizeResult<{ filePath: string }>(await Service.removeFile(url));
+    },
   },
 });

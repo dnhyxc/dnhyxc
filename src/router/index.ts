@@ -3,6 +3,7 @@ import { ElMessage } from 'element-plus';
 import { useCommonStore } from '@/store/common';
 import { locGetItem } from '@/utils';
 import { WITH_AUTH_ROUTES } from '@/constant';
+import eventBus from '@/utils/eventBus';
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -183,6 +184,15 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('@/views/login/index.vue'),
   },
   {
+    path: '/article/:id',
+    name: 'article',
+    meta: {
+      title: '文章详情',
+      keepAlive: false,
+    },
+    component: () => import('@/views/article/index.vue'),
+  },
+  {
     path: '/:pathMatch(.*)*',
     component: () => import('@/views/404/index.vue'),
   },
@@ -206,6 +216,10 @@ router.beforeEach(async (to, from, next) => {
   const commonStore = useCommonStore();
   // 切换路由时，隐藏页面头部搜索输入框，并清空搜索输入框内容
   commonStore.showSearch = false;
+  // 清除选中卡片的状态，关闭右键菜单
+  commonStore.clearContentmenuInfo();
+
+  eventBus.emit('hide-msg-popover', false);
 
   if (to.path === '/login') {
     commonStore.setBackPath(from.path);

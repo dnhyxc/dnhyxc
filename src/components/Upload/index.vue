@@ -73,7 +73,7 @@ import { ElMessage } from 'element-plus';
 import { Plus } from '@element-plus/icons-vue';
 import type { UploadProps } from 'element-plus';
 import { VueCropper } from 'vue-cropper';
-import { uploadStore } from '@/store';
+import { createStore, uploadStore } from '@/store';
 import { FILE_TYPE } from '@/constant';
 import { getImgInfo, url2Base64 } from '@/utils';
 
@@ -84,6 +84,9 @@ interface IProps {
   preview?: boolean;
   showImg?: boolean;
   fixedNumber?: number[];
+  getUploadUrl?: (url: string) => void;
+  needCropper?: boolean;
+  delete?: boolean; // 控制点击删除图标时，是否删除数据库中的图片
 }
 
 const props = withDefaults(defineProps<IProps>(), {
@@ -91,6 +94,9 @@ const props = withDefaults(defineProps<IProps>(), {
   preview: true,
   showImg: true,
   fixedNumber: () => [600, 338],
+  getUploadUrl: () => {},
+  needCropper: true,
+  delete: false,
 });
 
 const emit = defineEmits(['update:filePath']);
@@ -159,7 +165,18 @@ const beforeUpload: UploadProps['beforeUpload'] = (rawFile) => {
 };
 
 // 自定义上传
-const onUpload = (event: { file: Blob }) => {
+const onUpload = async (event: { file: Blob }) => {
+  // 不需要进行裁剪
+  if (!props.needCropper) {
+    const res = await uploadStore.uploadFile(event.file as File);
+    if (res) {
+      props.getUploadUrl?.(res);
+      // 更新父组件传递过来的filePath
+      emit('update:filePath', res);
+    }
+    return;
+  }
+  // 需要裁剪
   const reader = new FileReader();
   reader.onload = async (e: Event) => {
     shotVisible.value = true;
@@ -247,6 +264,11 @@ const onFinish = () => {
     reader.readAsDataURL(blob);
     const res = await uploadStore.uploadFile(blob);
     if (res) {
+      props.getUploadUrl?.(res);
+      // 保存老封面图
+      if (props.delete) {
+        createStore.oldCoverImage = createStore.createInfo?.coverImage as string;
+      }
       // 更新父组件传递过来的filePath
       emit('update:filePath', res);
     }
@@ -270,8 +292,13 @@ const onPreview = () => {
 
 // 清除图片
 const onDelImage = () => {
+  console.log(props.filePath, 'props.filePath', props.delete);
   // 清空父组件传递过来的filePath
   emit('update:filePath', '');
+  // 删除上传的原图片
+  if (props.delete) {
+    uploadStore.removeFile(props.filePath);
+  }
 };
 </script>
 
@@ -313,15 +340,15 @@ const onDelImage = () => {
       font-size: 20px;
       width: 100%;
       height: 100%;
-      color: @font-4;
+      color: var(--font-4);
       text-align: center;
       box-sizing: border-box;
       border: 1px dashed @border;
       border-radius: 4px;
 
       &:hover {
-        color: @theme-blue;
-        border: 1px dashed @theme-blue;
+        color: var(--theme-blue);
+        border: 1px dashed var(--theme-blue);
       }
     }
   }
@@ -344,7 +371,7 @@ const onDelImage = () => {
       justify-content: center;
       border-radius: 4px;
       background-color: @shade-1;
-      color: @fff;
+      color: var(--fff);
       display: none;
       z-index: 99;
       .view {
@@ -357,12 +384,14 @@ const onDelImage = () => {
       .del {
         font-size: 20px;
         cursor: pointer;
+        color: @fff;
       }
 
       .download,
       .shot,
       .view {
         margin-right: 15px;
+        color: @fff;
       }
     }
 
@@ -394,6 +423,10 @@ const onDelImage = () => {
     }
     .el-dialog__body {
       padding: 0 20px 20px 20px;
+    }
+
+    .el-dialog__close {
+      color: var(--font-1);
     }
   }
 }

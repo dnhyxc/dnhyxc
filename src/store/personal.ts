@@ -3,7 +3,7 @@ import { ElMessage } from 'element-plus';
 import { UserInfoParams, ArticleListResult, ArticleItem, TimelineResult, PerGetArticlesParams } from '@/typings/common';
 import * as Service from '@/server';
 import { useCheckUserId } from '@/hooks';
-import { normalizeResult, locSetItem, uniqueFunc, Message } from '@/utils';
+import { normalizeResult, uniqueFunc, Message } from '@/utils';
 import { loginStore } from '@/store';
 import { PAGESIZE, ABOUT_ME_API_PATH } from '@/constant';
 
@@ -18,6 +18,8 @@ interface IProps {
   currentTabKey: string; // 0：我/他的文章，1：我的收藏，2：点赞文章
   collectTotal: number;
   collectedCount: number;
+  noLoading: boolean;
+  scrollToPageSize: number;
 }
 
 export const usePersonalStore = defineStore('personal', {
@@ -44,6 +46,8 @@ export const usePersonalStore = defineStore('personal', {
     currentTabKey: '0',
     collectTotal: 0,
     collectedCount: 0,
+    noLoading: false,
+    scrollToPageSize: 0,
   }),
 
   getters: {
@@ -87,17 +91,6 @@ export const usePersonalStore = defineStore('personal', {
       if (this.userInfo.userId !== loginStore.userInfo?.userId) {
         params.isVisitor = true;
       }
-
-      // 保存至storage用于根据不同页面进入详情时，针对性的进行上下篇文章的获取（如：分类页面上下篇、标签页面上下篇）
-      locSetItem(
-        'params',
-        JSON.stringify({
-          userId: this.userInfo.userId,
-          accessUserId: loginStore.userInfo?.userId,
-          selectKey: this.currentTabKey,
-          from: 'personal',
-        }),
-      );
 
       const res = normalizeResult<ArticleListResult>(
         await Service.getMyArticleList(params, ABOUT_ME_API_PATH[this.currentTabKey]),
@@ -172,6 +165,7 @@ export const usePersonalStore = defineStore('personal', {
       this.timelineList = [];
       this.total = 0;
       this.pageNo = 0;
+      this.pageSize = PAGESIZE;
       this.collectTotal = 0;
       this.collectedCount = 0;
     },

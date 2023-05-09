@@ -7,26 +7,34 @@
 <template>
   <div class="multibar-wrap">
     <div class="action like-wrap" @click="likeArticle">
-      <i :class="`like-font iconfont ${articleStore?.articleDetail?.isLike && 'is-like'} icon-24gf-thumbsUp2`" />
-      <span v-if="articleStore?.detailArtLikeCount > 0" class="count">{{
-        articleStore?.detailArtLikeCount > 999
-          ? `${String(articleStore?.detailArtLikeCount).slice(0, 3)}+`
-          : articleStore?.detailArtLikeCount
-      }}</span>
+      <i
+        :class="`like-font iconfont ${
+          (articleStore?.articleDetail?.isLike || articleStore?.articleLikeStatus) && 'is-like'
+        } icon-24gf-thumbsUp2`"
+      />
+      <span v-if="articleStore?.detailArtLikeCount > 0" class="count">
+        {{
+          articleStore?.detailArtLikeCount > 999
+            ? `${String(articleStore?.detailArtLikeCount).slice(0, 3)}+`
+            : articleStore?.detailArtLikeCount
+        }}
+      </span>
     </div>
     <div class="action comment-wrap" @click="toComment">
       <i class="comment-font iconfont icon-pinglun1" />
-      <span v-if="commentCount > 0" class="count">{{
-        commentCount > 999 ? `${String(commentCount).slice(0, 3)}+` : commentCount
-      }}</span>
+      <span v-if="commentCount > 0" class="count">
+        {{ commentCount > 999 ? `${String(commentCount).slice(0, 3)}+` : commentCount }}
+      </span>
     </div>
     <div class="action collect-wrap" @click="onCollect">
       <i :class="`collect-font iconfont ${collectStore?.collectStatus && 'active-collect'} icon-31shoucangxuanzhong`" />
-      <span v-if="articleStore?.articleDetail?.collectCount! > 0" class="count">{{
-        articleStore?.articleDetail?.collectCount! > 999
-          ? `${String(articleStore?.articleDetail?.collectCount).slice(0, 3)}+`
-          : articleStore?.articleDetail?.collectCount
-      }}</span>
+      <span v-if="articleStore?.articleDetail?.collectCount! > 0" class="count">
+        {{
+          articleStore?.articleDetail?.collectCount! > 999
+            ? `${String(articleStore?.articleDetail?.collectCount).slice(0, 3)}+`
+            : articleStore?.articleDetail?.collectCount
+        }}
+      </span>
     </div>
     <el-popover placement="top-start" :width="130" trigger="hover" popper-style="min-width: 130px">
       <template #default>
@@ -72,7 +80,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { HEAD_IMG } from '@/constant';
-import { shareQQ, shareSinaWeiBo } from '@/utils';
+import { shareQQ, shareSinaWeiBo, getStoreUserInfo } from '@/utils';
 import { articleStore, collectStore, loginStore } from '@/store';
 import { useCommentCount } from '@/hooks';
 import Qrcode from '@/components/Qrcode/index.vue';
@@ -98,6 +106,8 @@ const commentCount = useCommentCount;
 onMounted(() => {
   // 获取收藏状态
   collectStore?.getCollectStatus(props.id);
+  // 从 article 页面进入时检验文章点赞状态
+  articleStore.checkArticleLikeStatus(props.id);
 });
 
 // 文章点赞
@@ -112,7 +122,9 @@ const toComment = () => {
 
 // 收藏
 const onCollect = () => {
-  if (!loginStore?.userInfo?.userId) {
+  // 获取存储在硬盘store中的登录信息
+  const { userInfo } = getStoreUserInfo();
+  if (!loginStore?.userInfo?.userId && !userInfo?.userId) {
     return ElMessage({
       message: '请先登录后再操作哦！',
       type: 'warning',
@@ -134,6 +146,7 @@ const onCollect = () => {
 .multibar-wrap {
   display: flex;
   justify-content: space-between;
+  margin-bottom: 10px;
   .action {
     position: relative;
     flex: 1;
@@ -143,9 +156,10 @@ const onCollect = () => {
     height: 50px;
     border-radius: 5px;
     margin-right: 10px;
-    box-shadow: @shadow-mack;
-    color: @font-3;
+    box-shadow: 0 0 8px 0 var(--shadow-mack);
+    color: var(--font-3);
     cursor: pointer;
+    background-color: var(--e-form-bg-color);
 
     .count {
       position: absolute;
@@ -159,7 +173,12 @@ const onCollect = () => {
     }
 
     &:hover {
-      color: @theme-blue;
+      color: var(--active-color);
+
+      .is-like,
+      .active-collect {
+        color: var(--active-color);
+      }
     }
 
     .like-font {
@@ -167,7 +186,7 @@ const onCollect = () => {
     }
 
     .is-like {
-      color: @theme-blue;
+      color: var(--theme-blue);
     }
 
     .comment-font {
@@ -180,12 +199,16 @@ const onCollect = () => {
     }
 
     .active-collect {
-      color: @theme-blue;
+      color: var(--theme-blue);
     }
 
     .share-font {
       font-size: 26px;
     }
+  }
+
+  .share-wrap {
+    margin-right: 0;
   }
 }
 
@@ -201,7 +224,7 @@ const onCollect = () => {
     cursor: pointer;
 
     &:hover {
-      color: @theme-blue;
+      color: var(--theme-blue);
     }
 
     .text {

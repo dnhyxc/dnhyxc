@@ -27,7 +27,7 @@
     <div class="search-tag-list">
       <div class="label" @click="onShowMore">
         <i :class="`iconfont ${!showMore ? 'icon-xiajiantou' : 'icon-shangjiantou'}`" />
-        <span class="view-more-info">更多选项：</span>
+        <span class="view-more-info">更多搜索条件</span>
       </div>
       <div class="radio-group">
         <div
@@ -61,14 +61,20 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
+import { ipcRenderer } from 'electron';
+import { ref, computed, onMounted, onUnmounted, watch, inject } from 'vue';
+import { useRoute } from 'vue-router';
 import { ElMessage } from 'element-plus';
 import { searchStore, articleStore } from '@/store';
 import { SEARCH_TYPE } from '@/constant';
 import { useScroller, useDeleteArticle } from '@/hooks';
 import { scrollTo } from '@/utils';
+import { ArticleItem } from '@/typings/common';
 import Empty from '@/components/Empty/index.vue';
 
+const reload = inject<Function>('reload');
+
+const route = useRoute();
 const { scrollRef, scrollTop } = useScroller();
 const { deleteArticle } = useDeleteArticle({ pageType: 'search' });
 
@@ -91,6 +97,13 @@ const conditions = computed(() => {
 });
 
 onMounted(() => {
+  // 监听详情点赞状态，实时更改列表对应文章的点赞状态
+  ipcRenderer.on('refresh', (_, id, pageType, isLike = true) => {
+    // 需要判断是否是属于当前活动页面，并且只是点击点赞而不是收藏或评论防止重复触发
+    if (route.name === 'search' && pageType !== 'list' && isLike) {
+      reload && reload();
+    }
+  });
   isMounted.value = true;
   getSearchArticleList();
 });
@@ -175,8 +188,8 @@ const onSelectChange = (value: string) => {
 };
 
 // 文章点赞
-const likeListArticle = (id: string) => {
-  articleStore.likeListArticle({ id, pageType: 'search' });
+const likeListArticle = (id: string, data?: ArticleItem) => {
+  articleStore.likeListArticle({ id, pageType: 'search', data });
 };
 
 // 置顶
@@ -212,7 +225,7 @@ const onScrollTo = () => {
 
     .icon-sousuo2,
     .text {
-      color: @fff;
+      color: var(--fff);
       font-size: 14px;
     }
 
@@ -223,11 +236,21 @@ const onScrollTo = () => {
 
   :deep {
     .el-input-group__append {
-      background-color: @theme-blue;
-      box-shadow: 0 1px 0 0 @theme-blue inset, 0 -1px 0 0 @theme-blue inset, -1px 0 0 0 @theme-blue inset;
+      background-color: var(--theme-blue);
+      box-shadow: 0 1px 0 0 var(--theme-blue) inset, 0 -1px 0 0 @theme-blue inset, -1px 0 0 0 var(--theme-blue) inset;
     }
 
     .scrollbar-wrapper(12px);
+
+    .el-input__wrapper {
+      color: var(--font-1);
+      background-color: var(--input-bg-color);
+      box-shadow: 0 0 0 1px var(--card-border) inset;
+    }
+
+    .el-input__inner {
+      color: var(--font-color);
+    }
   }
 
   .search-tag-list {
@@ -240,16 +263,18 @@ const onScrollTo = () => {
     .label {
       display: flex;
       align-items: center;
+      justify-content: center;
       margin-right: 5px;
       text-align: center;
-      background-image: @bg-lg-2;
-      padding-left: 8px;
-      min-width: 130px;
+      background-image: linear-gradient(225deg, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
+      min-width: 140px;
       border-radius: 5px;
       cursor: pointer;
-      border: 1px solid @card-border;
+      border: 1px solid var(--card-border);
+      color: var(--font-2);
 
       .view-more-info {
+        text-align: center;
         margin-left: 5px;
       }
     }
@@ -269,8 +294,9 @@ const onScrollTo = () => {
       text-align: center;
       border: none;
       border-radius: 3px;
-      background-color: @fff;
-      border: 1px solid @card-border;
+      background-color: var(--fff);
+      border: 1px solid var(--card-border);
+      color: var(--font-2);
       box-sizing: border-box;
       cursor: pointer;
 
@@ -292,14 +318,14 @@ const onScrollTo = () => {
     }
 
     .active {
-      background-color: @theme-blue;
+      background-color: var(--theme-blue);
       color: @fff;
     }
   }
 
   .no-more {
     text-align: center;
-    color: @font-4;
+    color: var(--font-4);
     margin-top: 3px;
     .clickNoSelectText();
   }

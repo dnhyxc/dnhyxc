@@ -1,14 +1,14 @@
+import { ipcRenderer } from 'electron';
 import { defineStore } from 'pinia';
 import { Router } from 'vue-router';
 import type { Ref } from 'vue';
 import { ElMessage } from 'element-plus';
 import * as Service from '@/server';
-import { normalizeResult, Message } from '@/utils';
+import { normalizeResult, Message, getStoreUserInfo, ipcRenderers } from '@/utils';
 import { useCheckUserId } from '@/hooks';
 import {
   ArticleListResult,
   ArticleItem,
-  AnotherParams,
   CommentParams,
   ReplayComment,
   DeleteArticleParams,
@@ -26,6 +26,7 @@ import {
   tagStore,
   timelineStore,
 } from '@/store';
+import { sendMessage } from '@/socket';
 import { PAGESIZE } from '@/constant';
 
 interface IProps {
@@ -33,7 +34,7 @@ interface IProps {
   likeLoading: boolean;
   pageNo: number;
   pageSize: number;
-  articleList: ArticleItem[]; // 文章列表数据（首页、分类页等）
+  articleList: ArticleItem[]; // 文章列表数据
   total: number; // 文章列表总数
   articleDetail: ArticleItem; // 文章详情
   anotherArticleList: ArticleItem[]; // 详情上下篇文章列表
@@ -41,6 +42,7 @@ interface IProps {
   commentList: CommentParams[]; // 评论列表
   detailArtLikeCount: number; // 详情文章点赞数量
   hot?: boolean; // 是否查询最热文章
+  articleLikeStatus?: boolean; // 文章点赞状态
 }
 
 export const useArticleStore = defineStore('article', {
@@ -60,6 +62,7 @@ export const useArticleStore = defineStore('article', {
     commentList: [],
     detailArtLikeCount: 0,
     hot: false,
+    articleLikeStatus: false,
   }),
 
   actions: {
@@ -90,18 +93,28 @@ export const useArticleStore = defineStore('article', {
     },
 
     // 获取文章详情
-    async getArticleDetail(id: string, store?: true) {
+    async getArticleDetail({
+      id,
+      isEdit,
+      router,
+      toHome,
+    }: {
+      id: string;
+      isEdit?: true;
+      router?: Router;
+      toHome?: boolean;
+    }) {
       if (!id) {
         ElMessage.error('哦豁！文章不翼而飞了！');
         return;
       }
       this.loading = true;
-      const res = normalizeResult<ArticleItem>(await Service.getArticleDetail(id));
+      const res = normalizeResult<ArticleItem>(await Service.getArticleDetail(id, isEdit));
       if (res.success) {
         this.detailArtLikeCount = res.data?.likeCount!;
         this.articleDetail = res.data;
-        // store 为 true，则说明是编辑，需要缓存编辑内容
-        if (store) {
+        // isEdit 为 true，则说明是编辑，需要缓存编辑内容
+        if (isEdit) {
           createStore.createInfo = {
             authorId: res.data.authorId,
             title: res.data.title,
@@ -113,6 +126,7 @@ export const useArticleStore = defineStore('article', {
             abstract: res.data.abstract,
             articleId: res.data.id,
           };
+          createStore.oldCoverImage = res.data.coverImage as string;
           // 如果是创建页调用获取详情的接口，则需要清除文章详情的缓存。防止再次进入详情时文章目录出现错乱
           this.articleDetail = { id: '' };
           this.detailArtLikeCount = 0;
@@ -124,35 +138,27 @@ export const useArticleStore = defineStore('article', {
           type: 'error',
           offset: 80,
         });
+
+        if (toHome) {
+          router?.push('/home');
+        } else {
+          router?.go(-1);
+        }
       }
     },
 
-    // 获取上一篇文章
-    async getPrevArticle(params: AnotherParams) {
-      const res = normalizeResult<ArticleItem>(await Service.getPrevArticle(params));
-      return res.data;
-    },
-
-    // 获取下一篇文章
-    async getNextArticle(params: AnotherParams) {
-      const res = normalizeResult<ArticleItem>(await Service.getNextArticle(params));
-      return res.data;
-    },
-
-    // 获取上下篇文章
-    async getAnotherArticles(params: AnotherParams) {
-      if (!params.id) {
+    // 获取相似文章文章
+    async getLikenessArticles(params: { classify: string; tag: string; id: string }) {
+      const res = normalizeResult<ArticleItem[]>(await Service.getLikenessArticles(params));
+      this.loading = false;
+      if (res.success) {
+        this.anotherArticleList = res.data;
+      } else {
         ElMessage({
-          message: '哦豁！文章不翼而飞了',
+          message: res.message,
           type: 'error',
           offset: 80,
         });
-        return;
-      }
-      const res = await Promise.all([this.getPrevArticle(params), this.getNextArticle(params)]);
-      this.loading = false;
-      if (res?.length) {
-        this.anotherArticleList = res;
       }
     },
 
@@ -274,6 +280,9 @@ export const useArticleStore = defineStore('article', {
             break;
         }
 
+        // 发送删除的文章的消息给主进程，通知主进程及时关闭对应子窗口
+        ipcRenderer.send('remove', params.articleId);
+
         ElMessage({
           message: res.message,
           type: 'success',
@@ -289,12 +298,42 @@ export const useArticleStore = defineStore('article', {
     },
 
     // 列表文章点赞
-    async likeListArticle({ id, isTimeLine, pageType }: { id: string; pageType?: string; isTimeLine?: boolean }) {
+    async likeListArticle({
+      id,
+      isTimeLine,
+      pageType,
+      data,
+    }: {
+      id: string; // 文章id
+      pageType?: string;
+      isTimeLine?: boolean;
+      data?: ArticleItem; // 文章信息
+    }) {
+      // 检验是否有userId，如果没有禁止发送请求
+      if (!useCheckUserId()) return;
       const res = normalizeResult<{ id: string; isLike: boolean; nextPageOne: ArticleItem[]; total: number }>(
         await Service.likeArticle({ id }),
       );
       if (res.success) {
         const { id, isLike } = res.data;
+        const { userId, username } = loginStore.userInfo;
+        // 给别人点赞或取消点赞之后推送websocket消息
+        if (data?.authorId !== userId) {
+          sendMessage(
+            JSON.stringify({
+              action: 'push',
+              data: {
+                ...data,
+                articleId: id,
+                toUserId: data?.authorId,
+                fromUsername: username,
+                fromUserId: userId,
+                action: isLike ? 'LIKE_ARTICLE' : 'CANCEL_LIKE_ARTICLE',
+              },
+              userId: userId!,
+            }),
+          );
+        }
         // 时间轴页面
         if (isTimeLine || authorStore.currentTabKey === '2') {
           const cloneArticles: TimelineResult[] =
@@ -362,7 +401,7 @@ export const useArticleStore = defineStore('article', {
               // 取消点赞之后，重新获取点赞文章列表
               if (loginStore.userInfo?.auth === 1 && authorStore.currentTabKey === '1') {
                 // 获取删除时拉取的文章总数，用于取消点赞时，拉取对应的数量
-                const total = authorStore.total;
+                const total = authorStore.articleList?.length;
                 authorStore.clearArticleList();
                 authorStore.pageSize = total;
                 authorStore.getAuthorArticles();
@@ -374,7 +413,7 @@ export const useArticleStore = defineStore('article', {
               // 取消点赞之后，重新获取点赞文章列表
               if (personalStore.currentTabKey === '2') {
                 // 获取删除时拉取的文章总数，用于取消点赞时，拉取对应的数量
-                const total = personalStore.total;
+                const total = personalStore.articleList?.length;
                 personalStore.clearArticleList();
                 personalStore.pageSize = total;
                 personalStore.getMyArticleList();
@@ -393,6 +432,8 @@ export const useArticleStore = defineStore('article', {
               break;
           }
         }
+        // 列表点赞之后推送刷新消息给主进程，让主进程推送消息给article页面，刷新页面
+        ipcRenderers.sendRefresh(id);
       } else {
         ElMessage({
           message: res.message,
@@ -431,9 +472,11 @@ export const useArticleStore = defineStore('article', {
       // 检验是否有userId，如果没有禁止发送请求
       if (!useCheckUserId()) return;
 
+      const { userInfo } = getStoreUserInfo();
+
       const params = {
-        userId: loginStore?.userInfo?.userId,
-        username: loginStore?.userInfo?.username,
+        userId: loginStore?.userInfo?.userId || userInfo?.userId,
+        username: loginStore?.userInfo?.username || userInfo?.username,
         articleId: data?.articleId || '',
         date: new Date().valueOf(),
         content: data.keyword,
@@ -444,6 +487,7 @@ export const useArticleStore = defineStore('article', {
         fromCommentId: data?.selectComment?.commentId,
       };
 
+      // 如果有 commentId 说明时第二层，isThreeTier 为 true 说明是第三层
       if (!data?.isThreeTier) {
         delete params.fromUsername;
         delete params.fromUserId;
@@ -454,6 +498,36 @@ export const useArticleStore = defineStore('article', {
       const res = normalizeResult<{ commentId: string }>(await Service.releaseComment(params));
 
       if (res?.success) {
+        // 只在评论别人的文章时推送消息，回复评论不推送
+        const { authorId } = this.articleDetail;
+        const { username, userId } = loginStore.userInfo;
+        if (
+          !data?.isThreeTier &&
+          !data?.selectComment?.commentId &&
+          userId! !== authorId &&
+          userInfo?.userId !== authorId
+        ) {
+          sendMessage(
+            JSON.stringify({
+              action: 'push',
+              data: {
+                ...this.articleDetail,
+                toUserId: authorId,
+                articleId: data?.articleId,
+                fromUsername: username || userInfo?.username,
+                fromUserId: userId || userInfo?.userId,
+                action: 'COMMENT',
+              },
+              userId: userId || userInfo?.userId,
+            }),
+          );
+        }
+
+        const { pathname } = window.location;
+
+        // 判断是article还是detail、分别推送刷新消息给主进程，用于通知子窗口或者详情页更新评论列表
+        ipcRenderers.sendRefresh(data?.articleId, pathname);
+
         ElMessage({
           message: res.message,
           type: 'success',
@@ -470,24 +544,34 @@ export const useArticleStore = defineStore('article', {
     },
 
     // 评论点赞
-    async onGiveLikeToComment(data: { commentId: string; isThreeTier?: boolean; getCommentList?: Function }) {
+    async onGiveLikeToComment(data: {
+      commentId: string;
+      isThreeTier?: boolean;
+      getCommentList?: Function;
+      articleId?: string;
+    }) {
       // 检验是否有userId，如果没有禁止发送请求
       if (!useCheckUserId()) return;
+      const { userInfo } = getStoreUserInfo();
       const params = data.isThreeTier
         ? {
             commentId: data.commentId!,
             fromCommentId: data.commentId!,
-            userId: loginStore?.userInfo?.userId,
+            userId: loginStore?.userInfo?.userId || userInfo?.userId,
           }
         : {
             commentId: data.commentId!,
-            userId: loginStore?.userInfo?.userId,
+            userId: loginStore?.userInfo?.userId || userInfo?.userId,
           };
       this.likeLoading = true;
       const res = normalizeResult<{ status: number }>(await Service.giveCommentLike(params));
       this.likeLoading = false;
       if (res.success) {
         data.getCommentList && data.getCommentList();
+
+        // 判断是article还是detail、分别推送刷新消息给主进程，用于通知子窗口或者详情页更新评论列表
+        const { pathname } = window.location;
+        ipcRenderers.sendRefresh(data?.articleId!, pathname, false);
       } else {
         ElMessage({
           message: res.message,
@@ -533,6 +617,9 @@ export const useArticleStore = defineStore('article', {
             offset: 80,
           });
           getCommentList && getCommentList();
+          // 判断是article还是detail、分别推送刷新消息给主进程，用于通知子窗口或者详情页更新评论列表
+          const { pathname } = window.location;
+          ipcRenderers.sendRefresh(articleId!, pathname);
         } else {
           ElMessage({
             message: res.message,
@@ -551,15 +638,62 @@ export const useArticleStore = defineStore('article', {
       if (!res.success) {
         ElMessage.error(res.message);
       } else {
+        const { userInfo } = getStoreUserInfo();
+        const { username, userId } = loginStore.userInfo;
+        const { authorId } = this.articleDetail;
+        const { pathname } = window.location;
+
+        // 判断是article还是detail、分别推送刷新消息给主进程，使主进程推送消息给个文章列表页面更新列表点赞状态
+        ipcRenderers.sendRefresh(id, pathname);
+
+        // 给别人文章点赞时推送消息
+        if (authorId !== userId && authorId !== userInfo?.userId) {
+          sendMessage(
+            JSON.stringify({
+              action: 'push',
+              data: {
+                ...this.articleDetail,
+                articleId: id,
+                toUserId: authorId,
+                fromUsername: username || userInfo?.username,
+                fromUserId: userId || userInfo?.userId,
+                action: res.data.isLike ? 'LIKE_ARTICLE' : 'CANCEL_LIKE_ARTICLE',
+              },
+              userId: userId || userInfo?.userId,
+            }),
+          );
+        }
         // 点赞后将原本的点赞数自动加减 1
         if (res.data.isLike) {
           this.detailArtLikeCount += 1;
           this.articleDetail.isLike = true;
         } else {
+          this.articleLikeStatus = false;
+
           this.detailArtLikeCount -= 1;
           this.articleDetail.isLike = false;
         }
         return res.data;
+      }
+    },
+
+    // 校验文章点赞状态
+    async checkArticleLikeStatus(id: string) {
+      // 检验是否有userId，如果没有禁止发送请求
+      if (!useCheckUserId(false)) return;
+      const res = normalizeResult<{ id: string; isLike: boolean }>(await Service.checkArticleLikeStatus(id));
+      if (res.success) {
+        this.articleLikeStatus = res.data.isLike;
+      }
+    },
+
+    // 更改详情点赞状态
+    updateDetailLikeStatus() {
+      this.articleDetail.isLike = !this.articleDetail.isLike;
+      if (this.articleDetail.isLike) {
+        this.detailArtLikeCount = Number(this.detailArtLikeCount) + 1;
+      } else {
+        this.detailArtLikeCount = Number(this.detailArtLikeCount) - 1;
       }
     },
 

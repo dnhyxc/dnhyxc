@@ -6,6 +6,7 @@
 -->
 <template>
   <div class="login">
+    <div class="header" />
     <component :is="currentDom.dom" @switch-dom="switchDom"></component>
   </div>
 </template>
@@ -48,11 +49,12 @@ const switchDom = (type: string) => {
 @import '@/styles/index.less';
 
 .login {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   height: 100%;
-  color: @font-1;
+  color: var(--font-1);
   background: rgba(0, 0, 0, 0.1);
 
   &::before {
@@ -67,6 +69,16 @@ const switchDom = (type: string) => {
     background-size: 100% 100%;
     background-repeat: no-repeat;
     background-size: cover;
+  }
+
+  .header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 35px;
+    width: 100%;
+    padding: 10px 18px 10px 12px;
+    -webkit-app-region: drag;
   }
 }
 </style>

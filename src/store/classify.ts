@@ -2,8 +2,8 @@ import { defineStore } from 'pinia';
 import { Classifys, ArticleItem, ArticleListResult } from '@/typings/common';
 import { ElMessage } from 'element-plus';
 import * as Service from '@/server';
-import { normalizeResult, locSetItem } from '@/utils';
-import { commonStore, loginStore } from '@/store';
+import { normalizeResult} from '@/utils';
+import { commonStore } from '@/store';
 import { PAGESIZE } from '@/constant';
 
 interface IProps {
@@ -53,15 +53,7 @@ export const useClassifyStore = defineStore('classify', {
         classify: this.currentClassify || classify || this.classifys[0]?.name!,
         filter: commonStore.keyword, // 头部搜索关键词
       };
-      // 保存至storage用于根据不同页面进入详情时，针对性的进行上下篇文章的获取（如：分类页面上下篇、标签页面上下篇）
-      locSetItem(
-        'params',
-        JSON.stringify({
-          classify: this.currentClassify || this.classifys[0]?.name,
-          userId: loginStore.userInfo?.userId,
-          from: 'classify',
-        }),
-      );
+
       const res = normalizeResult<ArticleListResult>(await Service.getClassifyList(params));
       this.loading = false;
       if (res.success) {

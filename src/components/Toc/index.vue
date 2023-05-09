@@ -18,7 +18,7 @@
         <div
           v-for="(anchor, index) in commonStore.tocTitles"
           :key="index"
-          :style="{ padding: `3px 10px 3px ${anchor.indent * 20 + 15}px`, margin: '10px 0' }"
+          :style="{ padding: `2px 10px 2px ${anchor.indent * 20 + 15}px`, margin: '10px 0' }"
           :class="`${checkTocTitle === anchor.title + index && 'toc-item'} item`"
           @click="handleAnchorClick(anchor, index)"
         >
@@ -98,9 +98,10 @@ const onScrollTo = () => {
   // height: calc(100vh - 345px);
   border-radius: 5px;
   overflow: hidden;
-  box-shadow: @shadow-mack;
+  box-shadow: 0 0 8px 0 var(--shadow-mack);
   padding-bottom: 10px;
   margin-bottom: 10px;
+  color: var(--font-2);
 
   .title {
     display: flex;
@@ -109,7 +110,7 @@ const onScrollTo = () => {
     padding: 10px;
     font-size: 18px;
     font-weight: 700;
-    border-bottom: 1px solid @card-border;
+    border-bottom: 1px solid var(--card-border);
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
 
@@ -124,6 +125,11 @@ const onScrollTo = () => {
     .scrollbar-wrapper {
       box-sizing: border-box;
       height: 100%;
+    }
+
+    .el-scrollbar__view {
+      box-sizing: border-box;
+      height: calc(100% - 20px);
     }
   }
 
@@ -148,14 +154,14 @@ const onScrollTo = () => {
       content: '';
       height: 65%;
       width: 4px;
-      background-color: @theme-blue;
+      background-color: var(--theme-blue);
       border-top-right-radius: 5px;
       border-bottom-right-radius: 5px;
     }
   }
 
   .active {
-    color: @theme-blue;
+    color: var(--theme-blue);
   }
 }
 </style>

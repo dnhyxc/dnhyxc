@@ -5,11 +5,19 @@
  * index.vue
 -->
 <template>
-  <div class="card-wrap" @click="toDetail(data)">
+  <div class="card-wrap" @click.stop="toDetail(data)" @mousedown.stop="(e) => onMouseDown(e, data)">
     <div class="card">
       <div class="card-top">
         <div v-if="data?.isDelete" class="mask">
           <span class="mask-text">已下架</span>
+        </div>
+        <div class="art-action">
+          <slot name="actions">
+            <div v-if="loginStore?.userInfo?.userId === data.authorId">
+              <span class="edit" @click.stop="toEdit(data)">编辑</span>
+              <span class="del" @click.stop="onReomve(data)">下架</span>
+            </div>
+          </slot>
         </div>
         <Image :url="data.coverImage || IMG1" :transition-img="IMG1" class="img" />
         <div class="info">
@@ -17,6 +25,12 @@
             {{ data.abstract }}
           </div>
         </div>
+        <ContentMenu
+          v-show="commonStore.showContextmenu && commonStore.currentArticleId === data.id"
+          :data="data"
+          :on-open-new-window="onOpenNewWindow"
+          :to-detail="toDetail"
+        />
       </div>
       <div class="card-bottom">
         <slot>
@@ -28,11 +42,17 @@
           <div class="art-info">
             <div class="create-info">
               <span class="author" @click.stop="toPersonal(data.authorId!)">{{ data.authorName }}</span>
-              <span class="date">{{ data.createTime ? formatDate(data.createTime) : '-' }}</span>
+              <span class="date">{{ data.createTime ? formatDate(data.createTime, 'YYYY/MM/DD') : '-' }}</span>
             </div>
-            <div class="tags">
-              <span class="classify" @click.stop="toClassify(data.classify!)">分类: {{ data.classify }}</span>
-              <span class="tag" @click.stop="toTag(data.tag!)">标签: {{ data.tag }}</span>
+            <div class="classifys">
+              <span class="classify" @click.stop="toClassify(data.classify!)">
+                <span class="label">分类: </span>
+                {{ data.classify }}
+              </span>
+              <span class="tag" @click.stop="toTag(data.tag!)">
+                <span class="label">标签: </span>
+                {{ data.tag }}
+              </span>
             </div>
             <div class="actions">
               <div class="action-icons">
@@ -51,12 +71,6 @@
                   <span class="text">{{ data.readCount || '阅读' }}</span>
                 </div>
               </div>
-              <slot name="actions">
-                <div v-if="loginStore?.userInfo?.userId === data.authorId" class="action art-action">
-                  <span class="edit" @click.stop="toEdit(data)">编辑</span>
-                  <span class="del" @click.stop="onReomve(data)">下架</span>
-                </div>
-              </slot>
             </div>
           </div>
         </slot>
@@ -66,14 +80,17 @@
 </template>
 
 <script setup lang="ts">
-import { useRouter } from 'vue-router';
+import { ipcRenderer } from 'electron';
+import { useRouter, useRoute } from 'vue-router';
 import { formatDate, chackIsDelete } from '@/utils';
 import { ArticleItem } from '@/typings/common';
 import { IMG1 } from '@/constant';
-import { loginStore } from '@/store';
+import { commonStore, loginStore } from '@/store';
 import Image from '@/components/Image/index.vue';
+import ContentMenu from '@/components/ContentMenu/index.vue';
 
 const router = useRouter();
+const route = useRoute();
 
 interface IProps {
   data: ArticleItem;
@@ -89,13 +106,13 @@ const props = withDefaults(defineProps<IProps>(), {
 // 点赞
 const onLike = async (data: ArticleItem) => {
   await chackIsDelete(data);
-  props.likeListArticle?.(data.id);
+  props.likeListArticle?.(data.id, data);
 };
 
 // 评论
 const onComment = async (data: ArticleItem) => {
   await chackIsDelete(data);
-  router.push(`/detail/${data.id}?scrollTo=1`);
+  router.push(`/detail/${data.id}?scrollTo=1&from=${route.name as string}`);
 };
 
 // 编辑
@@ -110,10 +127,34 @@ const onReomve = async (data: ArticleItem) => {
   props.deleteArticle(data.id);
 };
 
-// 去详情
-const toDetail = async (data: ArticleItem) => {
+// 监听鼠标右键，分别进行不同的操作
+const onMouseDown = async (e: MouseEvent, data: ArticleItem) => {
   await chackIsDelete(data);
-  router.push(`/detail/${data.id}`);
+  // 使用新窗口打开
+  if (e.button === 2) {
+    commonStore.showContextmenu = true;
+    commonStore.currentArticleId = data.id;
+  }
+};
+
+// 新窗口打开
+const onOpenNewWindow = (data: ArticleItem) => {
+  const { userInfo, token } = loginStore;
+  ipcRenderer.send(
+    'new-win',
+    `article/${data.id}?from=${route.name as string}`,
+    data.id, // articleId
+    JSON.stringify({ userInfo, token }), // 用户信息
+  );
+  // 清除右键菜单选项
+  commonStore.clearContentmenuInfo();
+};
+
+// 当前页打开
+const toDetail = (data: ArticleItem) => {
+  router.push(`/detail/${data.id}?from=${route.name as string}`);
+  // 清除右键菜单选项
+  commonStore.clearContentmenuInfo();
 };
 
 // 去我的主页
@@ -136,12 +177,14 @@ const toTag = (name: string) => {
 @import '@/styles/index.less';
 
 .card-wrap {
+  box-sizing: border-box;
+  position: relative;
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
   border-radius: 5px;
-  box-shadow: @shadow-mack;
+  box-shadow: 0 0 8px 0 var(--card-shadow);
 
   .card {
     position: relative;
@@ -151,8 +194,14 @@ const toTag = (name: string) => {
 
     &:hover {
       .img {
-        transform: scale(1.3);
-        transition: all 0.3s;
+        transform: scale(1.5);
+        transition: scale 0.5s;
+      }
+
+      .card-top {
+        .art-action {
+          display: block;
+        }
       }
     }
 
@@ -162,6 +211,42 @@ const toTag = (name: string) => {
       border-top-left-radius: 5px;
       border-top-right-radius: 5px;
       overflow: hidden;
+
+      .art-action {
+        position: absolute;
+        top: 5px;
+        right: 7px;
+        z-index: 29;
+        display: none;
+
+        .edit {
+          display: inline-block;
+          margin-right: 10px;
+          color: @fff;
+          font-size: 14px;
+          backdrop-filter: blur(10px);
+          padding: 0px 5px 2px;
+          border-radius: 5px;
+          background-color: @card-action-color;
+        }
+
+        .del {
+          display: inline-block;
+          color: @font-danger;
+          font-size: 14px;
+          backdrop-filter: blur(10px);
+          padding: 0px 5px 2px;
+          border-radius: 5px;
+          background-color: @card-action-color;
+        }
+
+        .edit,
+        .del {
+          &:hover {
+            color: var(--active-color);
+          }
+        }
+      }
 
       .img {
         display: block;
@@ -175,7 +260,7 @@ const toTag = (name: string) => {
       .mask {
         position: absolute;
         top: 10px;
-        right: 5px;
+        left: 5px;
         color: @font-warning;
         z-index: 9;
 
@@ -193,42 +278,44 @@ const toTag = (name: string) => {
         align-items: center;
         box-sizing: border-box;
         position: absolute;
-        bottom: 5px;
+        bottom: 0;
         left: 0;
         width: 100%;
         max-height: 42%;
-        padding: 5px;
         border-bottom-left-radius: 5px;
         border-bottom-right-radius: 5px;
-        color: @fff;
         overflow: hidden;
 
         .desc {
           display: table-cell;
           vertical-align: middle;
           .ellipsisMore(3);
-          font-size: 14px;
+          font-size: 13px;
           backdrop-filter: blur(2px);
-          padding: 0 5px 2px 5px;
+          padding: 4px 5px 5px 5px;
+          line-height: 18px;
+          color: @fff;
         }
       }
     }
 
     .card-bottom {
       padding: 8px 10px;
-      box-shadow: 0 0 2px @shadow-color inset;
+      // box-shadow: 0 0 1px var(--shadow-color) inset;
       background-blend-mode: multiply, multiply;
       border-bottom-left-radius: 5px;
       border-bottom-right-radius: 5px;
-      background-image: @card-lg-2;
+      background-image: linear-gradient(to bottom, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
 
       .header {
         display: flex;
         align-items: center;
 
         .title {
+          width: 100%;
           font-size: 16px;
           .ellipsisMore(1);
+          color: var(--font-2);
         }
       }
 
@@ -246,39 +333,47 @@ const toTag = (name: string) => {
           .date {
             max-width: 50%;
             font-size: 13px;
-            color: @font-2;
+            color: var(--font-2);
             .ellipsisMore(1);
           }
 
           .author {
             margin-right: 5px;
+            font-size: 14px;
 
             &:hover {
-              color: @theme-blue;
+              color: var(--theme-blue);
             }
           }
         }
 
-        .tags {
+        .classifys {
           display: flex;
-          justify-content: space-between;
           align-items: center;
+          justify-content: space-between;
+          width: 100%;
+          margin-top: 5px;
+          margin-bottom: 5px;
 
           .classify,
           .tag {
-            max-width: 50%;
+            max-width: 100%;
             font-size: 13px;
             border-radius: 5px;
-            color: @font-2;
+            color: var(--font-2);
             .ellipsisMore(1);
 
             &:hover {
-              color: @theme-blue;
+              color: var(--theme-blue);
+            }
+
+            .label {
+              color: var(--font-5);
             }
           }
 
           .classify {
-            margin-right: 5px;
+            margin-right: 6px;
           }
         }
 
@@ -287,11 +382,13 @@ const toTag = (name: string) => {
           justify-content: space-between;
           font-size: 13px;
           margin-top: 8px;
-          color: @font-2;
+          color: var(--font-2);
 
           .action-icons {
             display: flex;
             align-items: center;
+            justify-content: space-between;
+            width: 100%;
           }
 
           .action {
@@ -309,7 +406,7 @@ const toTag = (name: string) => {
             }
 
             .icon-24gf-thumbsUp2 {
-              color: @theme-blue;
+              color: var(--theme-blue);
             }
 
             .comment-icon {
@@ -318,24 +415,6 @@ const toTag = (name: string) => {
 
             .read-icon {
               font-size: 18px;
-            }
-
-            .edit {
-              margin-right: 10px;
-              color: @theme-blue;
-              font-size: 14px;
-            }
-
-            .del {
-              color: @font-danger;
-              font-size: 14px;
-            }
-
-            .edit,
-            .del {
-              &:hover {
-                color: @active;
-              }
             }
 
             &:last-child {

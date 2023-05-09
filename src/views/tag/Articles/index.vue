@@ -60,12 +60,16 @@
 </template>
 
 <script setup lang="ts">
-import { ref, Ref, computed, onMounted, onUnmounted, watch, watchEffect } from 'vue';
+import { ipcRenderer } from 'electron';
+import { ref, Ref, computed, onMounted, onUnmounted, watch, watchEffect, inject } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { scrollTo } from '@/utils';
 import { useScroller, useDeleteArticle } from '@/hooks';
 import { tagStore, articleStore, commonStore } from '@/store';
 import Loading from '@/components/Loading/index.vue';
+import { ArticleItem } from '@/typings/common';
+
+const reload = inject<Function>('reload');
 
 const route = useRoute();
 const router = useRouter();
@@ -100,6 +104,14 @@ onMounted(async () => {
   // 获取标签信息
   await tagStore.getTags();
   onFetchData();
+
+  // 监听详情点赞状态，实时更改列表对应文章的点赞状态
+  ipcRenderer.on('refresh', (_, id, pageType, isLike = true) => {
+    // 需要判断是否是属于当前活动页面，并且只是点击点赞而不是收藏或评论防止重复触发
+    if (route.name === 'tagList' && pageType !== 'list' && isLike) {
+      reload && reload();
+    }
+  });
 });
 
 onUnmounted(() => {
@@ -149,8 +161,8 @@ const onCheckTag = (tag: string) => {
 };
 
 // 文章点赞
-const likeListArticle = (id: string) => {
-  articleStore.likeListArticle({ id, pageType: 'tag' });
+const likeListArticle = (id: string, data?: ArticleItem) => {
+  articleStore.likeListArticle({ id, pageType: 'tag', data });
 };
 </script>
 
@@ -169,7 +181,7 @@ const likeListArticle = (id: string) => {
     box-sizing: border-box;
     width: 220px;
     height: 100%;
-    box-shadow: @shadow-mack;
+    box-shadow: 0 0 8px 0 var(--shadow-mack);
     border-radius: 5px;
     padding: 5px;
 
@@ -184,7 +196,7 @@ const likeListArticle = (id: string) => {
       justify-content: space-between;
       align-items: center;
       font-size: 18px;
-      color: @active;
+      color: var(--active-color);
       margin-bottom: 6px;
       padding-bottom: 9px;
       border-radius: 5px;
@@ -200,6 +212,7 @@ const likeListArticle = (id: string) => {
     .tag-wrap {
       margin-bottom: 10px;
       border-radius: 5px;
+      color: var(--font-3);
 
       &:first-child {
         margin-top: 5px;
@@ -211,18 +224,18 @@ const likeListArticle = (id: string) => {
 
       &:nth-child(odd) {
         .tag {
-          background-image: @bg-lg-2;
+          background-image: linear-gradient(225deg, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
         }
       }
 
       &:nth-child(even) {
         .tag {
-          background-image: @bg-lg--2;
+          background-image: linear-gradient(-225deg, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
         }
       }
 
       &:hover {
-        color: @active;
+        color: var(--active-color);
       }
 
       .tag {
@@ -233,8 +246,8 @@ const likeListArticle = (id: string) => {
         margin-left: 5px;
         border-radius: 5px;
         cursor: pointer;
-        border-bottom: 1px solid @card-border;
-        box-shadow: 0 0 5px @shadow-color;
+        border-bottom: 1px solid var(--card-border);
+        box-shadow: 0 0 5px var(--shadow-color);
 
         .tag-name {
           font-size: 16px;
@@ -249,7 +262,7 @@ const likeListArticle = (id: string) => {
       }
 
       .active {
-        color: @theme-blue;
+        color: var(--theme-blue);
         &::before {
           position: absolute;
           top: 50%;
@@ -260,7 +273,7 @@ const likeListArticle = (id: string) => {
           height: 60%;
           border-top-right-radius: 5px;
           border-bottom-right-radius: 5px;
-          background-color: @theme-blue;
+          background-color: var(--theme-blue);
         }
       }
     }
@@ -269,7 +282,7 @@ const likeListArticle = (id: string) => {
   .right {
     flex: 1;
     margin-left: 10px;
-    box-shadow: @shadow-mack;
+    box-shadow: 0 0 8px 0 var(--shadow-mack);
     border-radius: 5px;
     padding: 5px 5px;
 
@@ -277,7 +290,7 @@ const likeListArticle = (id: string) => {
       display: inline-block;
       font-size: 18px;
       font-weight: 700;
-      color: @active;
+      color: var(--active-color);
       padding-top: 2px;
       padding-bottom: 8px;
       border-radius: 5px;
@@ -297,16 +310,16 @@ const likeListArticle = (id: string) => {
         .author-line-card {
           width: calc(50% - 10px);
           padding: 10px;
-          box-shadow: 0 0 5px @shadow-color;
+          box-shadow: 0 0 5px var(--shadow-color);
           border-radius: 5px;
           margin: 5px;
 
           &:nth-child(odd) {
-            background-image: @bg-lg-2;
+            background-image: linear-gradient(225deg, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
           }
 
           &:nth-child(even) {
-            background-image: @bg-lg--2;
+            background-image: linear-gradient(-225deg, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
           }
 
           :deep {
@@ -325,7 +338,7 @@ const likeListArticle = (id: string) => {
       .loading,
       .no-more {
         text-align: center;
-        color: @font-4;
+        color: var(--font-4);
         padding: 10px 0 5px 0;
       }
     }

@@ -95,6 +95,8 @@ export interface CreateArticleParams {
   coverImage?: string;
   abstract?: string;
   articleId?: string;
+  originalArticleId?: string;
+  draftId?: string;
 }
 
 // 创建收藏集返回值
@@ -137,6 +139,13 @@ export interface ArticleItem extends AddCollectionRes {
   commentCount?: number;
   isDelete?: boolean;
   collectCount?: number;
+  toUserId?: string;
+  action?: string;
+  fromUsername?: string;
+  fromUserId?: string;
+  isReaded?: boolean;
+  pushDate?: number;
+  articleId?: number;
 }
 
 // 文章列表返回值
@@ -197,15 +206,6 @@ export interface TocTitlesParams {
   indent: number;
 }
 
-// 上下页参数定义
-export interface AnotherParams {
-  id?: string;
-  userId?: string;
-  from?: string;
-  accessUserId?: string;
-  selectKey?: string;
-}
-
 /**
  * 第一层区别方式
  *  - id: 0，formContent: ''
@@ -245,7 +245,7 @@ export interface ReplayComment {
 // 事件总线类型
 export interface Events {
   events: Object;
-  emit: <T>(eventName: string, data: T) => void;
+  emit: <T>(eventName: string, data?: T) => void;
   on: (eventName: string, fn: Function) => void;
   off: (eventName: string, fn: Function) => void;
 }
@@ -331,4 +331,35 @@ export interface AdvancedSearchParams {
   pageSize: number;
   userId?: string;
   filterList?: string[];
+}
+
+// 保存草稿参数
+export interface CreateDraftParamsResult {
+  id: string;
+  authorId: string;
+  authorName: string;
+  content: string;
+  createTime: number;
+}
+
+// 草稿详情
+export interface ArticleDetailParams {
+  id?: string;
+  title?: string;
+  content?: string;
+  classify?: string;
+  tag?: string;
+  coverImage?: string;
+  headUrl?: string;
+  abstract?: string;
+  createTime?: number;
+  comments?: CommentParams[];
+  authorName?: string;
+  authorId?: string;
+  replyCount?: number;
+  likeCount?: number;
+  readCount?: number;
+  isLike?: boolean;
+  originalArticleId?: string | number;
+  isDelete?: boolean;
 }

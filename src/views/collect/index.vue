@@ -71,12 +71,22 @@
       </el-scrollbar>
     </template>
   </Loading>
-  <AddCollectModel v-model:build-visible="buildVisible" :default-values="currentCollectValues" :is-edit="isEdit" />
-  <CollectModel v-model:collect-visible="collectVisible" :article-id="moveArticleId" />
+  <AddCollectModel
+    v-model:build-visible="buildVisible"
+    v-model:collect-visible="collectVisible"
+    :default-values="currentCollectValues"
+    :is-edit="isEdit"
+  />
+  <CollectModel
+    v-model:collect-visible="collectVisible"
+    v-model:build-visible="buildVisible"
+    :article-id="moveArticleId"
+  />
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { ipcRenderer } from 'electron';
+import { ref, computed, onMounted, onUnmounted, inject } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useScroller } from '@/hooks';
 import { articleStore, collectStore, loginStore, personalStore } from '@/store';
@@ -87,6 +97,8 @@ import Card from '@/components/Card/index.vue';
 import CollectModel from '@/components/CollectModel/index.vue';
 import AddCollectModel from '@/components/AddCollectModel/index.vue';
 import Empty from '@/components/Empty/index.vue';
+
+const reload = inject<Function>('reload');
 
 const route = useRoute();
 const router = useRouter();
@@ -106,6 +118,8 @@ const currentCollectValues = ref<CollectParams>({
   desc: '',
   status: '1',
 });
+// 判断是否是点击的编辑打开的新建收藏集
+const fromEdit = ref<boolean>(false);
 
 const noMore = computed(() => {
   const { articleList, total } = collectStore;
@@ -117,6 +131,13 @@ const showEmpty = computed(
 );
 
 onMounted(async () => {
+  // 监听详情点赞状态，实时更改列表对应文章的点赞状态
+  ipcRenderer.on('refresh', (_, id, pageType, isLike = true) => {
+    // 需要判断是否是属于当前活动页面，并且只是点击点赞而不是收藏或评论防止重复触发
+    if (route.name === 'collect' && pageType !== 'list' && isLike) {
+      reload && reload();
+    }
+  });
   // 防止页面加载报错
   isMounted.value = true;
   if (!personalStore.userInfo?.userId) {
@@ -138,8 +159,8 @@ const getCollectArticleList = () => {
 };
 
 // 文章点赞
-const likeListArticle = (id: string) => {
-  articleStore.likeListArticle({ id, pageType: 'collect' });
+const likeListArticle = (id: string, data?: ArticleItem) => {
+  articleStore.likeListArticle({ id, pageType: 'collect', data });
 };
 
 // 返回我的主页
@@ -171,6 +192,7 @@ const onEditCollect = () => {
   const { desc = '', name = '', status = '', id = '' } = collectStore.collectInfo;
   buildVisible.value = true;
   isEdit.value = true;
+  fromEdit.value = true;
   // 设置新建弹窗初始化内容
   currentCollectValues.value = {
     desc,
@@ -204,8 +226,8 @@ const onScrollTo = () => {
     display: flex;
     justify-content: flex-start;
     padding: 10px;
-    background-image: @bg-lg-2;
-    box-shadow: @shadow-mack;
+    background-image: linear-gradient(225deg, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
+    box-shadow: 0 0 8px 0 var(--shadow-mack);
     border-radius: 5px;
     height: 120px;
     margin-bottom: 10px;
@@ -238,6 +260,7 @@ const onScrollTo = () => {
       .collect-info {
         display: flex;
         flex-direction: column;
+        color: var(--font-2);
 
         .collect-title {
           display: flex;
@@ -270,7 +293,7 @@ const onScrollTo = () => {
             .clickNoSelectText();
 
             .icon-bianji {
-              color: @theme-blue;
+              color: var(--theme-blue);
               margin-left: 10px;
             }
 
@@ -296,6 +319,7 @@ const onScrollTo = () => {
         align-items: center;
         vertical-align: middle;
         width: 100%;
+        color: var(--font-2);
 
         .username {
           flex: 1;
@@ -310,7 +334,7 @@ const onScrollTo = () => {
           align-items: center;
           font-size: 14px;
           cursor: pointer;
-          color: @theme-blue;
+          color: var(--theme-blue);
           .clickNoSelectText();
         }
       }
@@ -331,21 +355,40 @@ const onScrollTo = () => {
     }
   }
 
-  .move {
-    margin-right: 10px;
-    color: @theme-blue;
-    font-size: 14px;
-  }
+  .art-action {
+    .move {
+      display: inline-block;
+      margin-right: 10px;
+      color: @fff;
+      font-size: 14px;
+      background-color: @card-action-color;
+      backdrop-filter: blur(10px);
+      padding: 0px 5px 2px;
+      border-radius: 5px;
+    }
 
-  .remove {
-    color: @font-danger;
-    font-size: 14px;
+    .remove {
+      display: inline-block;
+      color: @font-danger;
+      background-color: @card-action-color;
+      font-size: 14px;
+      backdrop-filter: blur(10px);
+      padding: 0px 5px 2px;
+      border-radius: 5px;
+    }
+
+    .move,
+    .remove {
+      &:hover {
+        color: var(--active-color);
+      }
+    }
   }
 
   .no-more {
     text-align: center;
-    color: @font-4;
-    margin-top: 3px;
+    color: var(--font-4);
+    padding-top: 12px;
     .clickNoSelectText();
   }
 }

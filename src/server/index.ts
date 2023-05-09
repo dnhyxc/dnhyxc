@@ -3,7 +3,6 @@ import {
   LoginParams,
   CreateArticleParams,
   GetArticleListParams,
-  AnotherParams,
   CommentParams,
   DeleteArticleParams,
   SearchArticleParams,
@@ -12,18 +11,26 @@ import {
   AdvancedSearchParams,
 } from '@/typings/common';
 import { loginStore } from '@/store';
+import { getStoreUserInfo } from '@/utils';
 import * as API from './api';
 
 // 处理请求参数，为请求自动加上userId
 const copeParams = (params?: any) => {
-  const { userInfo } = loginStore;
-  const data = params?.userId ? params : { ...params, userId: userInfo?.userId };
+  const userInfo = loginStore?.userInfo;
+  const { userInfo: storeUserInfo } = getStoreUserInfo();
+  const data = params?.userId ? params : { ...params, userId: userInfo?.userId || storeUserInfo?.userId };
   return data;
 };
 
 // 自定义文件上传路径
 export const uploadFile = async (params?: any) => {
   const res = await post(API.UPLOAD, params);
+  return res;
+};
+
+// 删除文件
+export const removeFile = async (url: string) => {
+  const res = await post(API.REMOVE_FILE, copeParams({ url }));
   return res;
 };
 
@@ -78,20 +85,14 @@ export const getArticleList = async (params: GetArticleListParams) => {
 };
 
 // 获取文章详情
-export const getArticleDetail = async (id: string) => {
-  const res = await post(API.ARTICLE_DETAIL, { id });
+export const getArticleDetail = async (id: string, isEdit?: boolean) => {
+  const res = await post(API.ARTICLE_DETAIL, { id, isEdit });
   return res;
 };
 
-// 获取上一篇文章
-export const getPrevArticle = async (params: AnotherParams) => {
-  const res = await post(API.GET_PREV_ARTICLE, params);
-  return res;
-};
-
-// 获取下一篇文章
-export const getNextArticle = async (params: AnotherParams) => {
-  const res = await post(API.GET_NEXT_ARTICLE, copeParams(params));
+// 获取相似的文章
+export const getLikenessArticles = async (params: { classify: string; tag: string; id: string }) => {
+  const res = await post(API.GET_LIKENESS_ARTICLES, copeParams(params));
   return res;
 };
 
@@ -137,6 +138,12 @@ export const likeArticle = async (params: { id: string; authorId?: string | null
   return res;
 };
 
+// 校验文章点赞点赞状态
+export const checkArticleLikeStatus = async (id: string) => {
+  const res = await post(API.CHECK_ARTICLE_LIKE_STATUS, copeParams({ id }));
+  return res;
+};
+
 // 新建收藏集
 export const createCollection = async (params: CollectParams) => {
   const res = await post(API.CREATE_COLLECTION, copeParams(params));
@@ -156,7 +163,7 @@ export const getCollectionList = async (params: { pageNo: number; pageSize: numb
 };
 
 // 收藏文章
-export const collectArticles = async (params: { ids: string[]; articleId: string }) => {
+export const collectArticles = async (params: { ids: string[]; articleId: string; isMove?: boolean }) => {
   const res = await post(API.COLLECT_ARTICLES, copeParams(params));
   return res;
 };
@@ -269,6 +276,7 @@ export const getCollectInfo = async (id: string) => {
 export const removeCollectArticle = async (params: {
   articleId: string;
   id: string; // 收藏集id
+  isMove?: boolean; // s标识是否是转移，不需要增减收藏数
 }) => {
   const res = await post(API.REMOVE_COLLECT_ARTICLE, copeParams(params));
   return res;
@@ -283,5 +291,60 @@ export const updateUserInfo = async (params: UserInfoParams, path: string) => {
 // 高级搜索
 export const advancedSearch = async (params: AdvancedSearchParams) => {
   const res = await post(API.ADVANCED_SEARCH, copeParams(params));
+  return res;
+};
+
+// 保存草稿
+
+export const articleDraft = async (params: CreateArticleParams, path: string) => {
+  const res = await post(path, copeParams(params));
+  return res;
+};
+
+// 获取草稿列表
+export const getDraftList = async (params: GetArticleListParams) => {
+  const res = await post(API.GET_DRAFT_LIST, copeParams(params));
+  return res;
+};
+
+// 获取草稿详情
+export const getDraftInfoById = async (params: { id: string }) => {
+  const res = await post(API.GET_DRAFT_BY_ID, copeParams(params));
+  return res;
+};
+
+// 删除草稿
+export const deleteDraft = async (params: { id: string | null }) => {
+  const res = await post(API.DELETE_DRAFT, copeParams(params));
+  return res;
+};
+
+// 获取消息列表
+export const getMessageList = async (params: { pageNo: number; pageSize: number }) => {
+  const res = await post(API.GET_MESSAGE_LIST, copeParams(params));
+  return res;
+};
+
+// 设置消息阅读状态
+export const setReadStatus = async (params: { msgIds: string[] }) => {
+  const res = await post(API.SET_READ_STATUS, copeParams(params));
+  return res;
+};
+
+// 获取未读消息数量
+export const getNoReadMsgCount = async () => {
+  const res = await post(API.GET_NO_READ_MSG_COUNT, copeParams({}));
+  return res;
+};
+
+// 删除消息
+export const deleteMessage = async (id: string) => {
+  const res = await post(API.DELETE_MESSAGE, copeParams({ id }));
+  return res;
+};
+
+// 删除全部消息
+export const deleteAllMessage = async () => {
+  const res = await post(API.DELETE_ALL_MESSAGE, copeParams({}));
   return res;
 };

@@ -52,7 +52,7 @@
             <el-radio-group v-model="addCollectForm.status">
               <el-radio label="1">
                 <span class="radio-label">公开</span>
-                <span class="radio-info">当其他人关注此收藏集后不可再更改为隐私</span>
+                <span class="radio-info">所有人可见</span>
               </el-radio>
               <el-radio label="2">
                 <span class="radio-label">隐私</span>
@@ -128,6 +128,8 @@ watch(
 const onCancel = () => {
   formRef.value?.resetFields();
   emit('update:buildVisible', false);
+  // 如果是从收藏集点击编辑进来时，点击取消不打开收藏集列表弹窗
+  if (props.isEdit) return;
   emit('update:collectVisible', true);
 };
 
@@ -140,6 +142,8 @@ const onSubmit = async () => {
   }
   formRef.value?.resetFields();
   emit('update:buildVisible', false);
+  // 如果是从收藏集点击编辑进来时，点击确定不打开收藏集列表弹窗
+  if (props.isEdit) return;
   emit('update:collectVisible', true);
 };
 </script>
@@ -150,6 +154,7 @@ const onSubmit = async () => {
 .dialog-build-content {
   .header {
     font-size: 18px;
+    color: var(--font-1);
   }
 
   .radio-info {
@@ -160,6 +165,29 @@ const onSubmit = async () => {
   :deep {
     .el-dialog__body {
       padding: 15px 15px 0;
+    }
+
+    .el-input__wrapper,
+    .el-input__inner {
+      color: var(--font-1);
+      background-color: var(--input-bg-color);
+    }
+
+    .el-textarea__inner {
+      color: var(--font-1);
+      background-color: var(--input-bg-color);
+    }
+
+    .el-textarea .el-input__count {
+      background-color: transparent;
+    }
+
+    .el-form-item__label {
+      color: var(--font-1);
+    }
+
+    .el-radio {
+      color: var(--font-3);
     }
   }
 }

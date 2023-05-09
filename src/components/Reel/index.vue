@@ -16,7 +16,7 @@
             @click="onClick(i.name!)"
           >
             <div class="content">
-              <div class="name">{{ i.name }}</div>
+              <span class="name">{{ i.name }}</span>
               <div class="count"><span class="text text-left">共</span>{{ i.value }}<span class="text">篇</span></div>
             </div>
           </div>
@@ -154,6 +154,7 @@ const onClick = (name: string) => {
   box-sizing: border-box;
   border-radius: 5px;
   -webkit-user-drag: none;
+  padding: 0 5px;
 
   .card-list {
     box-sizing: border-box;
@@ -161,7 +162,7 @@ const onClick = (name: string) => {
     height: 150px;
     border-radius: 5px;
     white-space: nowrap;
-    padding: 0 0 12px;
+    padding: 5px 0 12px;
     -webkit-user-drag: none;
 
     .card {
@@ -170,8 +171,8 @@ const onClick = (name: string) => {
       width: calc((100vw - 116px) / 4);
       height: 100%;
       margin-right: 12px;
-      box-shadow: @shadow-mack;
-      background-image: @bg-lg;
+      box-shadow: 0 0 8px var(--shadow-mack);
+      background-image: linear-gradient(to bottom, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
       border-radius: 5px;
       -webkit-user-drag: none;
       cursor: pointer;
@@ -189,23 +190,24 @@ const onClick = (name: string) => {
         box-sizing: border-box;
         border-radius: 5px;
         padding: 10px 15px;
+        color: var(--font-1);
 
         .name {
           font-size: 18px;
-          margin-bottom: 30px;
+          .ellipsis();
         }
 
         .count {
           font-size: 28px;
           font-weight: 700;
-          color: @theme-blue;
+          color: var(--theme-blue);
           text-align: right;
 
           .text {
             display: inline-block;
             font-size: 16px;
             font-weight: 300;
-            color: @font-3;
+            color: var(--font-3);
             vertical-align: middle;
             margin-left: 5px;
           }

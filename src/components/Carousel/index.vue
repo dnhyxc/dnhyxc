@@ -76,12 +76,27 @@ const toTag = (name: string) => {
   padding: 0 0 10px 0;
   border-radius: 5px;
 
+  :deep {
+    .el-carousel__mask {
+      background-color: @carousel-bg-color;
+    }
+    .el-carousel__item--card {
+      box-sizing: border-box;
+      border-radius: 5px;
+      // box-shadow: 0 0 1px 0 var(--shadow-mack);
+    }
+  }
+
   .carousel {
+    border-radius: 5px;
+    padding-top: 2px;
+
     .carousel-item {
       position: relative;
       box-sizing: border-box;
       height: 100%;
       border-radius: 5px;
+      padding: 5px;
 
       .article-info {
         position: absolute;
@@ -94,6 +109,7 @@ const toTag = (name: string) => {
         height: 100%;
         box-sizing: border-box;
         padding: 6px 5px 5px;
+        border-radius: 5px;
 
         .top {
           box-sizing: border-box;
@@ -110,6 +126,7 @@ const toTag = (name: string) => {
               font-size: 18px;
               backdrop-filter: blur(3px);
               padding: 0 5px 2px 5px;
+              margin: 5px 0 0 5px;
               border-radius: 5px;
               color: @fff;
               .ellipsisMore(1);
@@ -130,11 +147,11 @@ const toTag = (name: string) => {
 
             .author {
               display: inline-block;
-              margin-right: 10px;
               padding: 0 5px 2px 5px;
+              margin: 0 10px 0 5px;
 
               &:hover {
-                color: @theme-blue;
+                color: var(--theme-blue);
                 background-color: rgba(225, 225, 225, 0.85);
               }
             }
@@ -151,10 +168,11 @@ const toTag = (name: string) => {
             backdrop-filter: blur(3px);
             color: @fff;
             padding: 0 5px 2px 5px;
+            margin: 0 5px 5px 0;
             border-radius: 5px;
 
             &:hover {
-              color: @theme-blue;
+              color: var(--theme-blue);
               background-color: rgba(225, 225, 225, 0.85);
             }
           }
@@ -164,17 +182,24 @@ const toTag = (name: string) => {
           }
         }
       }
-      .img {
-        width: 100%;
-        height: 210px;
-        border-radius: 5px;
-        .imgStyle();
+
+      :deep {
+        .img {
+          box-sizing: border-box;
+          width: 100%;
+          height: 200px;
+
+          .image-item {
+            border-radius: 5px;
+            .imgStyle();
+          }
+        }
       }
     }
 
     :deep {
       .is-active {
-        box-shadow: 0 0 5px @card-border;
+        box-shadow: 0 0 3px var(--shadow-mack);
         border-radius: 5px;
       }
     }
@@ -187,7 +212,7 @@ const toTag = (name: string) => {
         box-shadow: none;
 
         button {
-          background-color: @theme-blue;
+          background-color: var(--theme-blue);
         }
       }
     }

@@ -11,7 +11,7 @@
         <div class="img-wrap">
           <Image :url="mainCover || IMG1" :transition-img="IMG1" class="cover-img" />
           <div class="upload-cover-wrap">
-            <Upload v-model:file-path="mainCover" :preview="false" :show-img="false" :fixed-number="[800, 200]">
+            <Upload v-model:file-path="mainCover" :preview="false" :show-img="false" :fixed-number="[800, 320]">
               <el-button type="primary" link class="action">
                 <i class="font iconfont icon-19shuxie3x" />
                 编辑封面图
@@ -32,17 +32,8 @@
       </div>
     </div>
     <div class="content">
-      <el-form ref="formRef" :model="profileForm" label-width="100px" class="form-wrap">
-        <el-form-item
-          label="用户名"
-          prop="username"
-          :rules="[
-            {
-              trigger: 'blur',
-            },
-          ]"
-          class="form-item"
-        >
+      <el-form ref="formRef" :rules="rules" :model="profileForm" label-width="100px" class="form-wrap">
+        <el-form-item label="用户名" prop="username" class="form-item">
           <el-input
             v-model.trim="profileForm.username"
             v-focus
@@ -69,7 +60,14 @@
           }"
           class="form-item"
         >
-          <el-input v-model.trim="profileForm.motto" size="large" placeholder="请输入座右铭" @keyup.enter="onEnter" />
+          <el-input
+            v-model.trim="profileForm.motto"
+            size="large"
+            maxlength="50"
+            placeholder="请输入座右铭"
+            show-word-limit
+            @keyup.enter="onEnter"
+          />
         </el-form-item>
         <el-form-item
           label="个人介绍"
@@ -98,11 +96,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue';
+import { ref, reactive, watch } from 'vue';
 import { useRouter } from 'vue-router';
-import { FormInstance } from 'element-plus';
+import type { FormInstance, FormRules } from 'element-plus';
 import { HEAD_IMG, IMG1 } from '@/constant';
-import { loginStore } from '@/store';
+import { loginStore, uploadStore } from '@/store';
+import { verifyUsername, checkImgUrlType } from '@/utils';
 import Upload from '@/components/Upload/index.vue';
 
 const router = useRouter();
@@ -124,17 +123,56 @@ const profileForm = reactive<{
   introduce: loginStore.userInfo?.introduce || '',
 });
 
+const validateUsername = (rule: any, value: any, callback: any) => {
+  const { msg, status } = verifyUsername(value);
+  if (value === '') {
+    callback(new Error('用户名不能为空'));
+  } else if (!status) {
+    callback(new Error(msg));
+  } else {
+    callback();
+  }
+};
+
+const rules = reactive<FormRules>({
+  username: [{ validator: validateUsername, trigger: 'blur' }],
+});
+
+// 监听头像url，实时更改用户头像信息
+watch(headUrl, async (newVal) => {
+  if (newVal && checkImgUrlType(newVal) === 'URL') {
+    const oldUserInfo = JSON.parse(JSON.stringify(loginStore?.userInfo));
+    await loginStore.updateUserInfo(
+      {
+        headUrl: headUrl.value,
+      },
+      1, // 1 标识更改用户信息，2 标识更改用户密码
+    );
+    uploadStore.removeFile(oldUserInfo?.headUrl!);
+  }
+});
+
+// 监听封面图url，实时更改用户封面图信息
+watch(mainCover, async (newVal) => {
+  if (newVal && checkImgUrlType(newVal) === 'URL') {
+    const oldUserInfo = JSON.parse(JSON.stringify(loginStore?.userInfo));
+    await loginStore.updateUserInfo(
+      {
+        mainCover: mainCover.value,
+      },
+      1, // 1 标识更改用户信息，2 标识更改用户密码
+    );
+    uploadStore.removeFile(oldUserInfo?.mainCover!);
+  }
+});
+
 // 确定更新用户信息
 const onUpdateInfo = (formEl: FormInstance | undefined) => {
   if (!formEl) return;
   formEl.validate(async (valid) => {
     if (valid) {
       loginStore.updateUserInfo(
-        {
-          ...profileForm,
-          headUrl: headUrl.value,
-          mainCover: mainCover.value,
-        },
+        profileForm,
         1, // 1 标识更改用户信息，2 标识更改用户密码
         router,
       );
@@ -150,11 +188,7 @@ const onEnter = () => {
   formRef.value.validate(async (valid) => {
     if (valid) {
       loginStore.updateUserInfo(
-        {
-          ...profileForm,
-          headUrl: headUrl.value,
-          mainCover: mainCover.value,
-        },
+        profileForm,
         1, // 1 标识更改用户信息，2 标识更改用户密码
         router,
       );
@@ -213,7 +247,7 @@ const onEnter = () => {
             font-size: 16px;
 
             &:hover {
-              color: @theme-blue;
+              color: var(--theme-blue);
               .textLg();
             }
 
@@ -239,8 +273,8 @@ const onEnter = () => {
           height: 130px;
           border-radius: 5px;
           padding: 5px;
-          background-image: @card-lg;
-          box-shadow: 0 0 10px @shadow-color;
+          background-image: linear-gradient(120deg, var(--card-lg-color1) 0%, var(--card-lg-color2) 100%);
+          box-shadow: 0 0 10px var(--shadow-color);
 
           .cover-img {
             display: block;
@@ -256,6 +290,7 @@ const onEnter = () => {
           padding: 15px 15px 15px 180px;
           font-size: 20px;
           font-weight: 700;
+          color: var(--font-1);
         }
       }
     }
@@ -263,14 +298,43 @@ const onEnter = () => {
 
   .content {
     margin-right: 10px;
-    padding: 20px 25% 20px 20%;
+    margin: 0 auto;
+    padding: 25px 7% 10px 2%;
+    width: 65%;
+    border-radius: 5px;
     box-sizing: border-box;
+    background-color: var(--e-form-bg-color);
 
     .action-list {
       :deep {
         .el-form-item__content {
           justify-content: flex-end;
         }
+      }
+    }
+
+    :deep {
+      .el-input__wrapper,
+      .el-input__inner {
+        color: var(--font-1);
+        background-color: var(--input-bg-color);
+      }
+
+      .el-textarea__inner {
+        color: var(--font-1);
+        background-color: var(--input-bg-color);
+      }
+
+      .el-textarea .el-input__count {
+        background-color: transparent;
+      }
+
+      .el-form-item__label {
+        color: var(--font-1);
+      }
+
+      .el-input__count-inner {
+        background-color: transparent;
       }
     }
   }

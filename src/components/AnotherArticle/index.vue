@@ -9,13 +9,17 @@
     v-if="articleStore.anotherArticleList[0]?.id || articleStore.anotherArticleList[1]?.id"
     class="another-article-wrap"
   >
-    <div v-for="(i, index) in articleStore.anotherArticleList" :key="i.id || index" class="list">
-      <div v-show="i?.id" class="article" @click="toDetail(i?.id)">
+    <div class="list">
+      <div
+        v-for="(i, index) in articleStore.anotherArticleList"
+        v-show="i?.id"
+        :key="i.id || index"
+        class="article"
+        @click="toDetail(i?.id)"
+      >
         <div class="item">
           <div class="prev">
-            <span class="left">
-              {{ index === 0 ? '上一篇' : '下一篇' }}
-            </span>
+            <span class="left">相似文章</span>
             <span class="right">
               <i v-if="index === 0 && i?.id" class="font-top iconfont icon-shuangjiantouzuo" />
               <i v-if="index > 0 && i?.id" class="font iconfont icon-shuangjiantouyou" />
@@ -36,34 +40,54 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, inject } from 'vue';
-import { useRouter } from 'vue-router';
+import { ipcRenderer } from 'electron';
+import { onMounted, inject, ref } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
 import { articleStore } from '@/store';
-import { formatGapTime, locGetItem } from '@/utils';
-import { AnotherParams } from '@/typings/common';
+import { formatGapTime, getStoreUserInfo } from '@/utils';
 
 const reload = inject<Function>('reload');
 
 interface IProps {
-  id: string;
+  id: string; // 文章id
+  classify: string;
+  tag: string;
 }
 
 const router = useRouter();
+const route = useRoute();
+
+const timer = ref<ReturnType<typeof setTimeout> | null>(null);
 
 const props = defineProps<IProps>();
 
 onMounted(() => {
-  // 获取从哪个页面跳转到详情的参数，用户获取对应页面的上篇文章详情
-  const params: AnotherParams = (locGetItem('params') && JSON.parse(locGetItem('params')!)) || {};
-  articleStore.getAnotherArticles({ id: props.id, ...params });
+  // 获取相似文章
+  articleStore.getLikenessArticles({ classify: props.classify, tag: props.tag, id: props.id });
 });
 
 // 跳转详情
 const toDetail = (id: string) => {
-  router.push(`/detail/${id}`);
-  setTimeout(() => {
-    reload && reload();
-  }, 100);
+  // 如果是/detail，则说明是当前页打开，直接在当前页访问下一篇即可，否则新窗口打开
+  if (route.path.includes('detail')) {
+    router.push(`/detail/${id}`);
+    timer.value = setTimeout(() => {
+      if (timer.value) {
+        clearTimeout(timer.value);
+        timer.value = null;
+      }
+      reload && reload();
+    }, 100);
+  } else {
+    const { userInfo, token } = getStoreUserInfo();
+    ipcRenderer.send(
+      'new-win',
+      `article/${id}?from=${route.query.from}`,
+      id,
+      JSON.stringify({ userInfo, token }), // 用户信息;
+      props.id,
+    );
+  }
 };
 
 // 去分类或者标签列表
@@ -87,6 +111,7 @@ const onJump = (name: string, type: string) => {
     align-items: center;
     padding: 0 10px;
     border-radius: 5px;
+    color: var(--font-2);
 
     .article {
       display: flex;
@@ -96,13 +121,15 @@ const onJump = (name: string, type: string) => {
       width: 100%;
       margin-bottom: 10px;
       border-radius: 5px;
-      box-shadow: @shadow-mack;
+      box-shadow: 0 0 8px 0 var(--shadow-mack);
+      background-color: var(--e-form-bg-color);
 
       &:hover {
-        background-image: @card-lg-2;
+        background-image: linear-gradient(to bottom, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
       }
 
       &:last-child {
+        margin-bottom: 0;
         padding: 10px;
       }
 
@@ -116,7 +143,7 @@ const onJump = (name: string, type: string) => {
           justify-content: space-between;
           align-items: center;
           margin-bottom: 10px;
-          color: @font-4;
+          color: var(--font-4);
 
           .right {
             transform: rotate(90deg);
@@ -146,7 +173,7 @@ const onJump = (name: string, type: string) => {
           align-items: center;
           margin-top: 5px;
           font-size: 14px;
-          color: @theme-blue;
+          color: var(--theme-blue);
 
           .classify,
           .tag {
@@ -154,7 +181,7 @@ const onJump = (name: string, type: string) => {
             .ellipsisMore(1);
 
             &:hover {
-              color: @active;
+              color: var(--active-color);
             }
           }
 
@@ -162,12 +189,6 @@ const onJump = (name: string, type: string) => {
             text-align: right;
           }
         }
-      }
-    }
-
-    &:last-child {
-      .article {
-        margin-bottom: 0;
       }
     }
   }

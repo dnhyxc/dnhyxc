@@ -49,15 +49,19 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue';
+import { ipcRenderer } from 'electron';
+import { ref, computed, onMounted, onUnmounted, watch, nextTick, inject } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { scrollTo } from '@/utils';
 import { useScroller, useDeleteArticle } from '@/hooks';
 import { classifyStore, commonStore, articleStore } from '@/store';
+import { ArticleItem } from '@/typings/common';
 import Reel from '@/components/Reel/index.vue';
 import Card from '@/components/Card/index.vue';
 import ToTopIcon from '@/components/ToTopIcon/index.vue';
 import Empty from '@/components/Empty/index.vue';
+
+const reload = inject<Function>('reload');
 
 const route = useRoute();
 const router = useRouter();
@@ -79,6 +83,13 @@ const dotRef = ref<any>(null);
 const scrollLeft = ref<string>('');
 
 onMounted(async () => {
+  // 监听详情点赞状态，实时更改列表对应文章的点赞状态
+  ipcRenderer.on('refresh', (_, id, pageType, isLike = true) => {
+    // 需要判断是否是属于当前活动页面，并且只是点击点赞而不是收藏或评论防止重复触发
+    if (route.name === 'classify' && pageType !== 'list' && isLike) {
+      reload && reload();
+    }
+  });
   // 初始化时，将scrollLeft设置为0px
   isMounted.value = true;
   // 获取分类信息
@@ -144,8 +155,8 @@ const onCheckClassify = (name: string) => {
 };
 
 // 文章点赞
-const likeListArticle = (id: string) => {
-  articleStore.likeListArticle({ id, pageType: 'classify' });
+const likeListArticle = (id: string, data?: ArticleItem) => {
+  articleStore.likeListArticle({ id, pageType: 'classify', data });
 };
 </script>
 
@@ -176,7 +187,7 @@ const likeListArticle = (id: string) => {
         display: inline-block;
         font-size: 20px;
         margin-right: 10px;
-        color: @theme-blue;
+        color: var(--theme-blue);
       }
 
       .current-classify {
@@ -184,13 +195,13 @@ const likeListArticle = (id: string) => {
         align-items: center;
         font-size: 18px;
         font-weight: 700;
-        color: @active;
+        color: var(--active-color);
         padding-right: 10px;
 
         .label {
           font-size: 13px;
           font-weight: 300;
-          color: @font-3;
+          color: var(--font-3);
         }
       }
 
@@ -203,7 +214,7 @@ const likeListArticle = (id: string) => {
         .clickNoSelectText();
         .bgMoveColor(135deg);
         .bgKeyframes(bgmove);
-        box-shadow: 0 0 3px @shadow-color;
+        box-shadow: 0 0 3px var(--shadow-color);
 
         .dot {
           box-sizing: border-box;
@@ -216,7 +227,7 @@ const likeListArticle = (id: string) => {
           .bgMoveColor(135deg);
           .bgKeyframes(bgmove);
           border-radius: 10px;
-          border: 1px solid @shadow-color;
+          border: 1px solid var(--shadow-color);
         }
       }
     }
@@ -235,7 +246,7 @@ const likeListArticle = (id: string) => {
   }
 
   .no-more {
-    margin-top: 3px;
+    padding-top: 12px;
     text-align: center;
     color: @font-4;
   }

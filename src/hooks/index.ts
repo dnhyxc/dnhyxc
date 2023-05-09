@@ -13,7 +13,7 @@ import {
   searchStore,
 } from '@/store';
 import { CommentParams, useDeleteArticleParams, DeleteArticleParams } from '@/typings/common';
-import { Message } from '@/utils';
+import { Message, getStoreUserInfo } from '@/utils';
 
 const router = useRouter();
 
@@ -22,7 +22,7 @@ export const useGetRoutePath = () => {
 };
 
 // 监听滚动条事件hooks
-export const useScroller = () => {
+export const useScroller = (visible?: boolean) => {
   const scrollRef = ref<any>();
   const scrollTop = ref<number>(0);
 
@@ -39,6 +39,11 @@ export const useScroller = () => {
   // 滚动事件
   const onScroll = (e: any) => {
     scrollTop.value = e.target.scrollTop;
+
+    // 滚动时隐藏右侧菜单，清除选中文章
+    if (commonStore.showContextmenu && commonStore.currentArticleId) {
+      commonStore.clearContentmenuInfo();
+    }
   };
 
   return { scrollRef, scrollTop };
@@ -46,8 +51,10 @@ export const useScroller = () => {
 
 // 判断是否存在userId的hooks
 export const useCheckUserId = (needMsg: boolean = true) => {
+  // 获取存储在localstorage中的登录信息
+  const { userInfo: storeUserInfo } = getStoreUserInfo();
   const { userInfo } = loginStore;
-  if (!userInfo?.userId && needMsg) {
+  if (!userInfo?.userId && !storeUserInfo?.userId && needMsg) {
     ElMessage({
       message: '请先登录后再操作哦！',
       type: 'warning',

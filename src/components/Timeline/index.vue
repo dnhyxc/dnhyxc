@@ -56,7 +56,7 @@ const onClickCard = (id: string) => {
     width: 50%;
 
     .card {
-      box-shadow: @shadow-mack;
+      box-shadow: 0 0 8px 0 var(--shadow-mack);
       border-radius: 5px;
       padding: 10px;
 
@@ -74,6 +74,7 @@ const onClickCard = (id: string) => {
           font-size: 18px;
           font-weight: 700;
           margin-bottom: 10px;
+          color: var(--font-1);
         }
       }
     }
@@ -88,7 +89,7 @@ const onClickCard = (id: string) => {
         content: '';
         width: 0;
         height: 100%;
-        border-left: 2px solid @card-border;
+        border-left: 2px solid var(--card-border);
       }
 
       &:last-child {
@@ -105,7 +106,7 @@ const onClickCard = (id: string) => {
         width: 15px;
         height: 15px;
         border-radius: 15px;
-        background-image: @card-lg;
+        background-image: linear-gradient(120deg, var(--card-lg-color1) 0%, var(--card-lg-color2) 100%);
         z-index: 1;
       }
 
@@ -113,7 +114,7 @@ const onClickCard = (id: string) => {
         position: relative;
 
         .card-item {
-          background-image: @bg-lg-2;
+          background-image: linear-gradient(225deg, var(--timeline-lg-color1) 0%, var(--timeline-lg-color2) 100%);
         }
 
         &::before {
@@ -123,7 +124,7 @@ const onClickCard = (id: string) => {
           content: '';
           width: 0;
           height: 0;
-          border-left: 12px solid @card-border;
+          border-left: 12px solid var(--card-border);
           border-top: 12px solid transparent;
           border-bottom: 12px solid transparent;
         }
@@ -135,6 +136,7 @@ const onClickCard = (id: string) => {
         right: -95px;
         font-size: 25px;
         font-weight: 700;
+        color: var(--font-1);
       }
     }
 
@@ -150,7 +152,7 @@ const onClickCard = (id: string) => {
         width: 15px;
         height: 15px;
         border-radius: 15px;
-        background-image: @card-lg;
+        background-image: linear-gradient(120deg, var(--card-lg-color1) 0%, var(--card-lg-color2) 100%);
         z-index: 1;
       }
 
@@ -161,7 +163,7 @@ const onClickCard = (id: string) => {
         content: '';
         width: 0;
         height: 100%;
-        border-left: 2px solid @card-border;
+        border-left: 2px solid var(--card-border);
       }
 
       &:last-child {
@@ -174,7 +176,7 @@ const onClickCard = (id: string) => {
         position: relative;
 
         .card-item {
-          background-image: @bg-lg--2;
+          background-image: linear-gradient(-225deg, var(--timeline-lg-color1) 0%, var(--timeline-lg-color2) 100%);
         }
 
         &::before {
@@ -184,7 +186,7 @@ const onClickCard = (id: string) => {
           content: '';
           width: 0;
           height: 0;
-          border-right: 12px solid @card-border;
+          border-right: 12px solid var(--card-border);
           border-top: 12px solid transparent;
           border-bottom: 12px solid transparent;
         }
@@ -196,6 +198,7 @@ const onClickCard = (id: string) => {
         left: -95px;
         font-size: 25px;
         font-weight: 700;
+        color: var(--font-1);
       }
     }
 

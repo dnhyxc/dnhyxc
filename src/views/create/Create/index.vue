@@ -11,7 +11,7 @@
         <h3 :id="titleId" :class="titleClass">{{ articleId ? '更新文章' : '发布文章' }}</h3>
       </template>
       <div class="content">
-        <el-form ref="formRef" label-width="52px" :model="createStore?.createInfo" class="form-wrap">
+        <el-form ref="formRef" label-width="52px" :model="createStore?.createInfo">
           <el-form-item
             prop="title"
             label="标题"
@@ -22,7 +22,6 @@
                 trigger: 'change',
               },
             ]"
-            class="form-item"
           >
             <el-input v-model="createStore.createInfo.title" placeholder="请输入文章标题" />
           </el-form-item>
@@ -36,7 +35,6 @@
                 trigger: 'change',
               },
             ]"
-            class="form-item"
           >
             <div class="classify">
               <el-input v-model="createStore.createInfo.classify" placeholder="请输入文章分类" />
@@ -62,7 +60,6 @@
                 trigger: 'change',
               },
             ]"
-            class="form-item"
           >
             <div class="classify">
               <el-input v-model="createStore.createInfo.tag" placeholder="请输入文章标签" />
@@ -88,7 +85,6 @@
                 trigger: 'change',
               },
             ]"
-            class="form-item"
           >
             <el-date-picker
               v-model="createStore.createInfo.createTime"
@@ -99,7 +95,11 @@
           </el-form-item>
           <el-form-item prop="cover" label="封面" class="form-item-cover">
             <div class="cover-wrap">
-              <Upload v-model:file-path="createStore.createInfo.coverImage">
+              <Upload
+                v-model:file-path="createStore.createInfo.coverImage"
+                :delete="!articleId"
+                :get-upload-url="getUploadUrl"
+              >
                 <template #preview>
                   <img :src="uploadPath || createStore.createInfo?.coverImage!" class="cover-img" />
                 </template>
@@ -116,7 +116,6 @@
                 trigger: 'change',
               },
             ]"
-            class="form-item"
           >
             <el-input
               v-model="createStore.createInfo.abstract"
@@ -132,7 +131,8 @@
       <template #footer>
         <div class="footer">
           <el-button @click="onCancel">取消</el-button>
-          <el-button type="primary" @click="onSubmit">{{ articleId ? '更新' : '确定' }}</el-button>
+          <el-button type="primary" @click="onSaveDraft">保存</el-button>
+          <el-button type="primary" @click="onSubmit">{{ articleId ? '更新' : '发布' }}</el-button>
         </div>
       </template>
     </el-drawer>
@@ -144,7 +144,8 @@ import { ref, computed, onDeactivated } from 'vue';
 import { useRouter } from 'vue-router';
 import type { FormInstance } from 'element-plus';
 import { ARTICLE_CLASSIFY, ARTICLE_TAG } from '@/constant';
-import { createStore } from '@/store';
+import { createStore, uploadStore } from '@/store';
+import { checkImgUrlType } from '@/utils';
 import Upload from '@/components/Upload/index.vue';
 
 const router = useRouter();
@@ -174,6 +175,30 @@ const visible = computed({
   },
 });
 
+// 获取上传的封面图url
+const getUploadUrl = async (url: string) => {
+  if (url && checkImgUrlType(url) === 'URL' && props.articleId) {
+    const oldUrl = createStore.oldCoverImage;
+
+    console.log({
+      url,
+      oldUrl,
+    });
+
+    await createStore.createArticle(
+      {
+        coverImage: url,
+        articleId: createStore?.createInfo?.articleId,
+      },
+      undefined, // router
+      false, // 是否需要提示
+    );
+    // 删除上传的老的封面图
+    oldUrl && (await uploadStore.removeFile(oldUrl));
+    createStore.oldCoverImage = url;
+  }
+};
+
 // 组件弃用时，如果有文章 id 则清除 createStore 中的 createInfo 属性，并且重置表单数据
 onDeactivated(() => {
   if (createStore?.createInfo?.articleId) {
@@ -197,7 +222,7 @@ const onCancel = () => {
   emit('update:modelValue', false);
 };
 
-// 确认
+// 新建/更新文章
 const onSubmit = () => {
   if (!formRef.value) return;
   formRef.value.validate(async (valid) => {
@@ -211,6 +236,21 @@ const onSubmit = () => {
         },
         router,
       );
+      createStore.clearCreateInfo(true);
+      formRef.value?.resetFields();
+      emit('update:modelValue', false);
+    } else {
+      return false;
+    }
+  });
+};
+
+// 保存草稿
+const onSaveDraft = () => {
+  if (!formRef.value) return;
+  formRef.value.validate(async (valid) => {
+    if (valid) {
+      createStore.articleDraft();
       createStore.clearCreateInfo(true);
       formRef.value?.resetFields();
       emit('update:modelValue', false);
@@ -240,8 +280,27 @@ const onSubmit = () => {
         }
       }
 
+      .el-input__wrapper,
+      .el-input__inner {
+        color: var(--font-1);
+        background-color: var(--input-bg-color);
+      }
+
+      .el-textarea__inner {
+        color: var(--font-1);
+        background-color: var(--input-bg-color);
+      }
+
+      .el-textarea .el-input__count {
+        background-color: transparent;
+      }
+
       .el-select {
         flex: 1;
+      }
+
+      .el-form-item__label {
+        color: var(--font-1);
       }
     }
 
@@ -288,9 +347,11 @@ const onSubmit = () => {
   }
 
   .footer {
+    position: relative;
     display: flex;
     justify-content: flex-end;
     align-items: center;
+    z-index: 92;
   }
 }
 </style>

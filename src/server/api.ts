@@ -1,5 +1,7 @@
 // 上传文件
 export const UPLOAD = '/api/upload';
+// 删除文件
+export const REMOVE_FILE = '/api/removeFile';
 
 /* ==========用户信息相关========== */
 // 登录
@@ -45,10 +47,8 @@ export const ADVANCED_SEARCH = '/api/advancedSearch';
 // 获取文章分类
 export const GET_TIMELINE_LIST = '/api/getTimelineList';
 
-// 获取上一篇文章
-export const GET_PREV_ARTICLE = '/api/getPrevArticle';
-// 获取下一篇文章
-export const GET_NEXT_ARTICLE = '/api/getNextArticle';
+// 获取相似的文章
+export const GET_LIKENESS_ARTICLES = '/api/getLikenessArticles';
 
 // 获取评论
 export const GET_COMMENT_LIST = '/api/getCommentList';
@@ -56,6 +56,8 @@ export const GET_COMMENT_LIST = '/api/getCommentList';
 /* ==========文章操作相关========== */
 // 文章点赞
 export const LIKE_ARTICLE = '/api/likeArticle';
+// 校验文章点赞状态
+export const CHECK_ARTICLE_LIKE_STATUS = '/api/checkArticleLikeStatus';
 // 发布评论
 export const COMMENTS = '/api/comments';
 // 评论点赞
@@ -105,3 +107,18 @@ export const GET_COLLECTED_TOTAL = '/api/getCollectedTotal';
 
 // 获取收藏集总数
 export const GET_COLLECT_TOTAL = '/api/getCollectTotal';
+
+// 获取消息列表
+export const GET_MESSAGE_LIST = '/api/getMessageList';
+
+// 设置消息阅读状态
+export const SET_READ_STATUS = '/api/setReadStatus';
+
+// 获取未读消息数量
+export const GET_NO_READ_MSG_COUNT = '/api/getNoReadMsgCount';
+
+// 删除消息
+export const DELETE_MESSAGE = '/api/deleteMessage';
+
+// 删除全部消息
+export const DELETE_ALL_MESSAGE = '/api/deleteAllMessage';

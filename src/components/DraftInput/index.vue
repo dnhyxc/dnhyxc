@@ -16,7 +16,7 @@
           <el-input
             id="TEXTAREA_WRAP"
             ref="inputRef"
-            v-model="keyword"
+            v-model.trim="keyword"
             :autosize="{ minRows: 3, maxRows: 10 }"
             type="textarea"
             :placeholder="
@@ -27,16 +27,29 @@
             class="textArea"
             @focus="onFocus"
             @change="onCommentChange"
+            @keyup.enter="onEnter"
           />
         </div>
         <div v-if="showIcon || !showAvatar" id="EMOJI_WRAP" class="emojiWrap">
-          <div id="ICONFONT" class="iconfontWrap">
-            <span id="BIAOQING_XUE" class="iconfont">
-              <i id="BIAOQING_XUE" class="font iconfont icon-smile">&nbsp;表情</i>
-            </span>
-            <span id="BIAOQING_XUE" class="iconfont">
-              <i id="CHARUTUPIAN" class="font iconfont icon-charutupian">&nbsp;图片</i>
-            </span>
+          <div id="EMOJI_LIST" class="emoji-list">
+            <div id="ICONFONT" class="iconfontWrap">
+              <span id="BIAOQING_XUE" class="iconfont">
+                <i id="BIAOQING_XUE" class="font iconfont icon-smile" @click="onShowEmoji">&nbsp;表情</i>
+              </span>
+              <span id="BIAOQING_XUE" class="iconfont">
+                <Upload
+                  v-model:file-path="picture"
+                  :preview="false"
+                  :show-img="false"
+                  :need-cropper="false"
+                  :fixed-number="[600, 338]"
+                  :get-upload-url="getUploadUrl"
+                >
+                  <i id="CHARUTUPIAN" class="font iconfont icon-charutupian">&nbsp;图片</i>
+                </Upload>
+              </span>
+            </div>
+            <Emoji v-model:showEmoji="showEmoji" class="emojis" :add-emoji="addEmoji" />
           </div>
           <div id="ACTION">
             <el-button id="BTN" type="primary" :disabled="!keyword.trim()" @click.stop="submitComment">
@@ -53,6 +66,7 @@
 import { ref, onMounted, nextTick, onUnmounted, watchEffect } from 'vue';
 import { loginStore, articleStore } from '@/store';
 import { HEAD_IMG } from '@/constant';
+import { insertContent } from '@/utils';
 import { CommentParams } from '@/typings/common';
 
 interface IProps {
@@ -78,10 +92,12 @@ const props = withDefaults(defineProps<IProps>(), {
 const inputRef = ref<HTMLDivElement | null>(null);
 const keyword = ref<string>('');
 const showIcon = ref<boolean>(false);
+const showEmoji = ref<boolean>(false);
+const picture = ref<string>('');
 
 onMounted(() => {
   nextTick(() => {
-    window.addEventListener('click', onClickNode);
+    document.body.addEventListener('click', onClickNode);
     window.addEventListener('keydown', onKeyDown);
   });
 
@@ -96,7 +112,7 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
-  window.removeEventListener('click', onClickNode);
+  document.body.removeEventListener('click', onClickNode);
   window.removeEventListener('keydown', onKeyDown);
 });
 
@@ -121,7 +137,7 @@ const onJump = () => {
   props.onJump && props.onJump();
 };
 
-// 输入框失去焦点
+// 输入框获取焦点
 const onFocus = () => {
   showIcon.value = false;
 };
@@ -129,6 +145,27 @@ const onFocus = () => {
 // 输入框onchange事件
 const onCommentChange = (word: string) => {
   keyword.value = word.trim();
+};
+
+// 回车事件
+const onEnter = () => {
+  keyword.value += '\n';
+};
+
+// 显示表情
+const onShowEmoji = () => {
+  showEmoji.value = !showEmoji.value;
+};
+
+// 获取上传成功后的文件url
+const getUploadUrl = (url: string) => {
+  const { username } = loginStore?.userInfo;
+  keyword.value = insertContent({ keyword: keyword.value, node: (inputRef?.value as any)?.textarea, username, url });
+};
+
+// 添加表情
+const addEmoji = (key: string) => {
+  keyword.value = insertContent({ keyword: keyword.value, node: (inputRef?.value as any)?.textarea, emoji: key });
 };
 
 // 发布评论
@@ -141,6 +178,7 @@ const submitComment = async () => {
     articleId: props?.articleId || '',
     isThreeTier: props?.isThreeTier,
   });
+  showEmoji.value = false;
   props?.onReplay && props?.onReplay({}, true);
   keyword.value = '';
   showIcon.value = false;
@@ -156,6 +194,13 @@ const submitComment = async () => {
 .DraftInput {
   width: 100%;
   height: 100%;
+
+  :deep {
+    .el-textarea__inner {
+      color: var(--font-1);
+      background-color: var(--input-bg-color);
+    }
+  }
 
   .comments {
     padding-top: 20px;
@@ -190,10 +235,10 @@ const submitComment = async () => {
       .textArea {
         border: none;
         border-radius: 5px;
-        background-color: @background;
+        background-color: var(--background);
 
         &:focus {
-          background-color: @fff;
+          background-color: var(--fff);
         }
       }
     }
@@ -205,8 +250,19 @@ const submitComment = async () => {
       margin-top: 10px;
       width: 100%;
 
+      .emoji-list {
+        display: flex;
+        justify-content: flex-start;
+        flex-direction: column;
+
+        .emojis {
+          margin-top: 20px;
+        }
+      }
+
       .iconfontWrap {
         display: flex;
+        color: var(--font-2);
 
         & > span:first-child {
           margin-right: 20px;
@@ -218,6 +274,10 @@ const submitComment = async () => {
         align-items: center;
         cursor: pointer;
         font-size: 16px;
+
+        .icon-charutupian {
+          min-width: 55px;
+        }
       }
 
       #ACTION {
@@ -227,7 +287,7 @@ const submitComment = async () => {
 
       .enter {
         margin-right: 15px;
-        color: @font-3;
+        color: var(--font-3);
       }
     }
   }

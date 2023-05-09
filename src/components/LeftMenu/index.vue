@@ -159,16 +159,18 @@ const onQuit = () => {
     }
 
     .active {
-      color: @active;
+      color: var(--active-color);
       .textLgActive();
     }
   }
 
   .setting {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
     margin-top: 20px;
+    z-index: 99;
 
     .login-btn {
       display: flex;
@@ -182,8 +184,8 @@ const onQuit = () => {
       .bgKeyframes(bgmove);
       font-size: 14px;
       cursor: pointer;
-      color: @theme-blue;
-      box-shadow: 0 0 2px @shadow-color inset;
+      color: var(--theme-blue);
+      box-shadow: 0 0 2px var(--shadow-color) inset;
     }
 
     .avatar {

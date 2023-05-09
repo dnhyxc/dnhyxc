@@ -130,15 +130,13 @@ const onEdit = (type: string) => {
 
 // 输入框回车事件
 const onEnter = async (type: string) => {
-  console.log(type, 'type>>>onEnter');
-  console.log(accountForm, 'accountForm', accountForm[type]);
-  // loginStore.updateUserInfo(
-  //   {
-  //     [type]: accountForm[type],
-  //   },
-  //   1, // 1 标识更改用户信息，2 标识更改用户密码
-  //   router,
-  // );
+  loginStore.updateUserInfo(
+    {
+      [type]: accountForm[type],
+    },
+    1, // 1 标识更改用户信息，2 标识更改用户密码
+    router,
+  );
   currentEdit.value = '';
 };
 
@@ -151,20 +149,16 @@ const onOk = (type: string) => {
     1, // 1 标识更改用户信息，2 标识更改用户密码
     router,
   );
-
-  console.log(accountForm, 'accountForm', accountForm[type]);
   currentEdit.value = '';
 };
 
 // 取消编辑
 const onCancel = (type: string) => {
-  console.log(accountForm, 'accountForm', type);
   currentEdit.value = '';
 };
 
 // 密码修改/账号注销
 const onReset = (type: string) => {
-  console.log(type);
   resetType.value = type;
   visible.value = true;
 };
@@ -183,7 +177,6 @@ const onResetPwd = (Form: FormData<FormInstance>) => {
         // 成功时关闭弹窗
         visible.value = false;
       } else {
-        console.log(Form.resetForm, 'username', loginStore.userInfo?.username);
         if (username !== loginStore.userInfo?.username) {
           ElMessage({
             message: '您要注销的用户名不是当前登录人的用户名',
@@ -206,13 +199,10 @@ const onResetPwd = (Form: FormData<FormInstance>) => {
 
 // 重置密码、注销回车事件
 const onResetEnter = async (formRef: Ref<FormInstance>, resetForm: ResetFormParams) => {
-  console.log(formRef, resetForm, 'onResetEnter>>>values');
   const { username, confirmPwd } = resetForm;
   if (resetType.value === 'password') {
     await loginStore.onResetPwd({ username, password: confirmPwd! });
   } else {
-    console.log(username, 'username', loginStore.userInfo?.username);
-
     if (username !== loginStore.userInfo?.username) {
       ElMessage({
         message: '您要注销的用户名不是当前登录人的用户名',
@@ -221,11 +211,9 @@ const onResetEnter = async (formRef: Ref<FormInstance>, resetForm: ResetFormPara
       });
       return;
     }
-    console.log(username, confirmPwd, ' username, 账号注销');
     await loginStore.onLogout(router);
   }
-  // 重置密码
-  // 成功时关闭弹窗
+  // 重置密码，成功时关闭弹窗
   formRef.value.resetFields();
   resetForm = { username: '', confirmPwd: '', newPwd: '' };
   setTimeout(() => {
@@ -245,6 +233,9 @@ const onCancelResetPwd = (Form: FormData<FormInstance>) => {
 @import '@/styles/index.less';
 
 .account-wrap {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-55%);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -259,11 +250,13 @@ const onCancelResetPwd = (Form: FormData<FormInstance>) => {
     display: flex;
     justify-content: center;
     width: 600px;
-    padding: 20px 5px 25px 0;
-    border-bottom: 1px solid @card-border;
+    padding: 20px 5px 25px 20px;
+    border-bottom: 1px solid var(--card-border);
+    background-color: var(--e-form-bg-color);
 
-    &:last-child {
-      border-bottom: none;
+    &:first-child {
+      border-top-left-radius: 5px;
+      border-top-right-radius: 5px;
     }
 
     .label {
@@ -272,7 +265,7 @@ const onCancelResetPwd = (Form: FormData<FormInstance>) => {
       padding-top: 5px;
       text-align: right;
       min-width: 70px;
-      color: @font-3;
+      color: var(--font-3);
     }
 
     .el-input {
@@ -283,6 +276,15 @@ const onCancelResetPwd = (Form: FormData<FormInstance>) => {
       flex: 1;
       display: flex;
       align-items: flex-start;
+      color: var(--font-2);
+
+      :deep {
+        .el-input__wrapper,
+        .el-input__inner {
+          color: var(--font-1);
+          background-color: var(--input-bg-color);
+        }
+      }
 
       .edit-font {
         font-size: 15px;
@@ -301,7 +303,7 @@ const onCancelResetPwd = (Form: FormData<FormInstance>) => {
       }
 
       .font {
-        color: @theme-blue;
+        color: var(--theme-blue);
         cursor: pointer;
         padding-top: 5px;
         .clickNoSelectText();
@@ -309,7 +311,7 @@ const onCancelResetPwd = (Form: FormData<FormInstance>) => {
         margin-left: -2px;
 
         &:hover {
-          color: @active;
+          color: var(--active-color);
         }
       }
 
@@ -337,11 +339,11 @@ const onCancelResetPwd = (Form: FormData<FormInstance>) => {
 
       .font {
         font-size: 14px;
-        color: @theme-blue;
+        color: var(--theme-blue);
         cursor: pointer;
 
         &:hover {
-          color: @active;
+          color: var(--active-color);
         }
       }
 
@@ -349,6 +351,12 @@ const onCancelResetPwd = (Form: FormData<FormInstance>) => {
         font-size: 15px;
       }
     }
+  }
+
+  .logout-item {
+    border-bottom: none;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
   }
 }
 </style>

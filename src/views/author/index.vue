@@ -40,19 +40,27 @@
                   </div>
                   <div class="github">
                     github：
-                    <span class="link">{{ authorStore.userInfo?.github }}</span>
+                    <span class="link" @click.stop="onJump(authorStore.userInfo?.github!, 'github')">{{
+                      authorStore.userInfo?.github
+                    }}</span>
                   </div>
                   <div class="juejin">
                     掘金：
-                    <span class="link">{{ authorStore.userInfo?.juejin }}</span>
+                    <span class="link" @click.stop="onJump(authorStore.userInfo?.juejin!, '掘金')">{{
+                      authorStore.userInfo?.juejin
+                    }}</span>
                   </div>
                   <div class="zhihu">
                     知乎：
-                    <span class="link">{{ authorStore.userInfo?.zhihu }}</span>
+                    <span class="link" @click.stop="onJump(authorStore.userInfo?.zhihu!, '知乎')">{{
+                      authorStore.userInfo?.zhihu
+                    }}</span>
                   </div>
                   <div class="blog">
                     博客：
-                    <span class="link">{{ authorStore.userInfo?.blog }}</span>
+                    <span class="link" @click.stop="onJump(authorStore.userInfo?.blog!, '博客')">{{
+                      authorStore.userInfo?.blog
+                    }}</span>
                   </div>
                 </div>
                 <div class="view-more" @click="onShowMore">
@@ -99,17 +107,24 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue';
+import { ipcRenderer, shell } from 'electron';
+import { ref, onMounted, computed, inject } from 'vue';
+import { useRoute } from 'vue-router';
+import { ElMessage } from 'element-plus';
 import { HEAD_IMG, AUTHOR_TABS, IMG1 } from '@/constant';
 import { authorStore, articleStore } from '@/store';
 import { useDeleteArticle, useScroller } from '@/hooks';
-import { scrollTo } from '@/utils';
+import { scrollTo, checkUrl } from '@/utils';
 import LineCard from '@/components/LineCard/index.vue';
 import Timeline from '@/components/Timeline/index.vue';
 import Image from '@/components/Image/index.vue';
 import Loading from '@/components/Loading/index.vue';
 import Empty from '@/components/Empty/index.vue';
+import { ArticleItem } from '@/typings/common';
 
+const reload = inject<Function>('reload');
+
+const route = useRoute();
 const { scrollRef, scrollTop } = useScroller();
 
 const viewMore = ref<boolean>(false);
@@ -121,7 +136,9 @@ const noMore = computed(() => {
 const disabled = computed(() => authorStore.loading || noMore.value);
 const showEmpty = computed(() => {
   const { timelineList, articleList, currentTabKey, loading } = authorStore;
-  if (loading !== null && !loading && ((currentTabKey === '2' && !timelineList.length) || !articleList.length)) {
+  if (loading !== null && !loading && currentTabKey === '2' && !timelineList.length) {
+    return true;
+  } else if (loading !== null && !loading && currentTabKey !== '2' && !articleList.length) {
     return true;
   } else {
     return false;
@@ -131,6 +148,13 @@ const showEmpty = computed(() => {
 const { deleteArticle } = useDeleteArticle({ pageType: 'author' });
 
 onMounted(async () => {
+  // 监听详情点赞状态，实时更改列表对应文章的点赞状态
+  ipcRenderer.on('refresh', (_, id, pageType, isLike = true) => {
+    // 需要判断是否是属于当前活动页面，并且只是点击点赞而不是收藏或评论防止重复触发
+    if (route.name === 'author' && pageType !== 'list' && isLike) {
+      reload && reload();
+    }
+  });
   // 防止页面加载报错
   isMounted.value = true;
   // 重置选中tab key 为 0
@@ -163,8 +187,8 @@ const onTabChange = (name: string) => {
 };
 
 // 文章点赞
-const likeListArticle = async (id: string) => {
-  await articleStore.likeListArticle({ id, pageType: 'author' });
+const likeListArticle = async (id: string, data?: ArticleItem) => {
+  await articleStore.likeListArticle({ id, pageType: 'author', data });
   // 取消点赞文章重新刷新列表之后，自动滚动到之前查看页面的位置
   if (authorStore.currentTabKey === '1') {
     onScrollTo(scrollTop.value);
@@ -179,6 +203,20 @@ const deleteTimeLineArticle = (id: string) => {
 // 查看更多信息
 const onShowMore = () => {
   viewMore.value = !viewMore.value;
+};
+
+// 跳转到对应的网站
+const onJump = (url: string, name: string) => {
+  if (checkUrl(url)) {
+    // 使用浏览器打开链接
+    shell.openExternal(url);
+  } else {
+    ElMessage({
+      message: `${name} 链接无法使用`,
+      type: 'warning',
+      offset: 80,
+    });
+  }
 };
 
 // 置顶
@@ -197,7 +235,7 @@ const onScrollTo = (to?: number) => {
   .cover {
     width: 100%;
     height: auto;
-    background-image: @bg-lg-2;
+    background-image: linear-gradient(225deg, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
     padding-bottom: 20px;
@@ -236,8 +274,8 @@ const onScrollTo = (to?: number) => {
         height: 150px;
         border-radius: 5px;
         padding: 5px;
-        background-image: @card-lg;
-        box-shadow: 0 0 10px @shadow-color;
+        background-image: linear-gradient(120deg, var(--card-lg-color1) 0%, var(--card-lg-color2) 100%);
+        box-shadow: 0 0 10px var(--shadow-color);
 
         .head-img {
           display: block;
@@ -257,17 +295,18 @@ const onScrollTo = (to?: number) => {
           font-size: 18px;
           font-weight: 700;
           margin-top: 10px;
+          color: var(--font-1);
         }
 
         .job {
           padding: 5px 0 3px 0;
           font-size: 14px;
-          color: @font-1;
+          color: var(--font-1);
         }
 
         .user-detail {
           font-size: 14px;
-          color: @font-4;
+          color: var(--font-4);
           transition: all 0.35s ease-in-out;
           max-height: 0;
           overflow: hidden;
@@ -275,14 +314,14 @@ const onScrollTo = (to?: number) => {
 
         .all-user-detail {
           font-size: 14px;
-          color: @font-4;
+          color: var(--font-4);
           max-height: 100vh;
           transition: all 0.35s ease-in-out;
         }
 
         .view-more {
           font-size: 14px;
-          color: @font-4;
+          color: var(--font-4);
           width: 110px;
           margin-top: 5px;
           cursor: pointer;
@@ -307,14 +346,15 @@ const onScrollTo = (to?: number) => {
             .link {
               text-indent: 28px;
               margin-top: 5px;
+              cursor: pointer;
             }
 
             .desc-text {
-              color: @font-1;
+              color: var(--font-1);
             }
 
             .link {
-              color: @theme-blue;
+              color: var(--theme-blue);
             }
           }
         }
@@ -326,10 +366,15 @@ const onScrollTo = (to?: number) => {
     margin-top: 10px;
     border-radius: 5px;
     .el-tabs {
-      border: 1px solid @card-border;
+      border: 1px solid var(--card-border);
       border-radius: 5px;
+      background-color: transparent;
 
       :deep {
+        .el-tabs__item.is-active {
+          background-color: transparent;
+          font-weight: 700;
+        }
         .el-tabs__content {
           padding: 10px;
         }
@@ -338,15 +383,20 @@ const onScrollTo = (to?: number) => {
         .el-tabs__nav-wrap {
           border-top-left-radius: 5px;
           border-top-right-radius: 5px;
+          background-color: transparent;
         }
 
         .el-tabs__header {
-          border-bottom: 1px solid @card-border;
-          .el-tabs__item.is-active {
-            border-left-color: @card-border;
+          border-bottom: 1px solid var(--card-border);
+
+          .el-tabs__item {
+            color: var(--font-color);
           }
+
           .el-tabs__item.is-active {
-            border-right-color: @card-border;
+            border-left-color: var(--card-border);
+            border-right-color: var(--card-border);
+            color: var(--theme-blue);
           }
         }
       }
@@ -364,8 +414,8 @@ const onScrollTo = (to?: number) => {
         .author-line-card {
           width: calc(50% - 5px);
           padding: 10px 10px;
-          box-shadow: 0 0 5px @shadow-color;
-          background-image: @bg-lg-2;
+          box-shadow: 0 0 5px var(--shadow-color);
+          background-image: linear-gradient(225deg, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
           margin-bottom: 10px;
           border-radius: 5px;
           margin-right: 10px;
@@ -411,7 +461,7 @@ const onScrollTo = (to?: number) => {
 
     .no-more {
       text-align: center;
-      color: @font-4;
+      color: var(--font-4);
       margin: 15px 0 5px;
     }
   }

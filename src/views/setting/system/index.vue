@@ -213,6 +213,9 @@ const handleKeydown = (e: KeyboardEvent) => {
 @import '@/styles/index.less';
 
 .system-wrap {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-55%);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -226,9 +229,11 @@ const handleKeydown = (e: KeyboardEvent) => {
   .shortcuts,
   .file-config,
   .close-config {
-    border-bottom: 1px solid @card-border;
-    padding: 20px 0;
+    border-bottom: 1px solid var(--card-border);
+    padding: 20px;
     width: 80%;
+    color: var(--font-1);
+    background-color: var(--e-form-bg-color);
 
     .label {
       font-size: 16px;
@@ -243,12 +248,12 @@ const handleKeydown = (e: KeyboardEvent) => {
         margin-left: 10px;
         font-size: 14px;
         font-weight: 400;
-        color: @theme-blue;
+        color: var(--theme-blue);
         cursor: pointer;
         .clickNoSelectText();
 
         &:hover {
-          color: @active;
+          color: var(--active-color);
         }
       }
     }
@@ -284,29 +289,29 @@ const handleKeydown = (e: KeyboardEvent) => {
 
       .key {
         box-sizing: border-box;
-        background-color: @tab-color;
+        background-color: var(--tab-color);
         padding: 3px 15px 2px;
         border-radius: 5px;
         margin-right: 10px;
-        border: 1px solid @card-border;
+        border: 1px solid var(--card-border);
       }
 
       .font {
-        color: @theme-blue;
+        color: var(--theme-blue);
         cursor: pointer;
 
         &:hover {
-          color: @active;
+          color: var(--active-color);
         }
       }
 
       .btn {
-        color: @theme-blue;
+        color: var(--theme-blue);
         cursor: pointer;
         .clickNoSelectText();
 
         &:hover {
-          color: @active;
+          color: var(--active-color);
         }
       }
     }
@@ -316,6 +321,17 @@ const handleKeydown = (e: KeyboardEvent) => {
       align-items: center;
       padding: 10px 0 10px 45px;
     }
+  }
+
+  .shortcuts {
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+  }
+
+  .close-config {
+    border-bottom: none;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
   }
 
   .inp-wrap {
@@ -332,6 +348,12 @@ const handleKeydown = (e: KeyboardEvent) => {
       }
     }
 
+    .el-input__wrapper,
+    .el-input__inner {
+      color: var(--font-1);
+      background-color: var(--input-bg-color);
+    }
+
     .el-dialog__header {
       margin-right: 0;
     }
@@ -341,12 +363,16 @@ const handleKeydown = (e: KeyboardEvent) => {
     }
 
     .radio-close {
-      background-color: @tab-color;
+      background-color: var(--tab-color);
       border-radius: 5px;
-      border: 1px solid @card-border;
+      border: 1px solid var(--card-border);
       height: 30px;
       line-height: 30px;
       padding: 0 15px;
+    }
+
+    .el-radio__label {
+      color: var(--font-2);
     }
   }
 }

@@ -6,6 +6,20 @@
 -->
 <template>
   <div ref="commentsRef" class="Comments">
+    <el-dialog v-model="previewVisible" draggable align-center title="图片预览" width="70%">
+      <div class="preview-dialog">
+        <el-scrollbar class="scroll-wrap" max-height="70vh">
+          <el-image class="prew-img" :src="filePath" fit="cover">
+            <template #placeholder>
+              <div class="image-slot">Loading...</div>
+            </template>
+            <template #error>
+              <div class="image-slot">图片加载失败</div>
+            </template>
+          </el-image>
+        </el-scrollbar>
+      </div>
+    </el-dialog>
     <div class="draftInputWrap">
       <DraftInput :get-comment-list="getCommentList" :focus="focus" :article-id="id" :on-hide-input="onHideInput" />
     </div>
@@ -28,7 +42,7 @@
             <span class="name">{{ i.username }}</span>
             <span class="date">{{ formatGapTime(i?.date!) }}</span>
           </div>
-          <div class="desc">{{ i.content }}</div>
+          <div class="desc" @click.stop="onPreviewImage" v-html="replaceCommentContent(i.content!)" />
           <div class="action">
             <div class="actionContent">
               <div class="likeAndReplay">
@@ -51,7 +65,7 @@
                 </i>
               </div>
               <el-button
-                v-if="loginStore?.userInfo.userId === i.userId"
+                v-if="loginStore?.userInfo.userId === i.userId || getStoreUserInfo()?.userInfo?.userId === i.userId"
                 type="primary"
                 link
                 class="deleteComment"
@@ -90,8 +104,18 @@
                 </span>
                 <span class="date">{{ j.date && formatGapTime(j.date) }}</span>
               </div>
-              <div v-if="j.content" class="desc">{{ j.content }}</div>
-              <div v-if="j.formContent" class="formContent">{{ `“${j.formContent}”` }}</div>
+              <div
+                v-if="j.content"
+                class="desc"
+                @click.stop="onPreviewImage"
+                v-html="replaceCommentContent(j.content!)"
+              />
+              <div
+                v-if="j.formContent"
+                class="formContent"
+                @click.stop="onPreviewImage"
+                v-html="replaceCommentContent(j.formContent!)"
+              />
               <div id="ON_REPLAY" class="action">
                 <div class="actionContent">
                   <div class="likeAndReplay">
@@ -117,7 +141,7 @@
                     </i>
                   </div>
                   <el-button
-                    v-if="loginStore?.userInfo.userId === j.userId"
+                    v-if="loginStore?.userInfo.userId === j.userId || getStoreUserInfo()?.userInfo?.userId === j.userId"
                     type="primary"
                     link
                     class="deleteComment"
@@ -158,13 +182,13 @@
 <script setup lang="ts">
 import { onMounted, ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
+import { ElMessage } from 'element-plus';
 import { CommentParams } from '@/typings/common';
 import { HEAD_IMG } from '@/constant';
 import { loginStore, articleStore } from '@/store';
-import { formatGapTime } from '@/utils';
+import { formatGapTime, getStoreUserInfo, replaceCommentContent } from '@/utils';
 import Image from '@/components/Image/index.vue';
 import DraftInput from '@/components/DraftInput/index.vue';
-import { ElMessage } from 'element-plus';
 
 const router = useRouter();
 
@@ -183,6 +207,10 @@ const emit = defineEmits(['updateFocus']);
 const selectComment = ref<CommentParams>();
 // 显示更多评论状态
 const viewMoreComments = ref<string[]>([]);
+// 图片预览状态
+const previewVisible = ref<boolean>(false);
+// 图片预览路径
+const filePath = ref<string>('');
 
 const commentsRef = ref<HTMLDivElement | null>(null);
 
@@ -232,6 +260,7 @@ const onGiveLike = (comment: CommentParams, isThreeTier?: boolean) => {
     isThreeTier,
     commentId: comment?.commentId!,
     getCommentList,
+    articleId: props?.id,
   });
 };
 
@@ -258,6 +287,15 @@ const checkReplyList = (replyList: CommentParams[], commentId: string) => {
 const onViewMoreReply = (commentId: string) => {
   viewMoreComments.value = [...viewMoreComments.value, commentId];
 };
+
+const onPreviewImage = (e: Event) => {
+  const target = e.target as HTMLImageElement;
+  if (target.id === '__COMMENT_IMG__') {
+    previewVisible.value = true;
+    console.log(target.src, 'essss');
+    filePath.value = target.src;
+  }
+};
 </script>
 
 <style scoped lang="less">
@@ -266,6 +304,35 @@ const onViewMoreReply = (commentId: string) => {
 .Comments {
   padding: 0 20px 20px 20px;
   border-radius: 5px;
+  color: var(--font-2);
+
+  :deep {
+    .el-dialog__body {
+      padding: 10px;
+    }
+
+    .el-dialog__close {
+      color: var(--font-1);
+    }
+  }
+
+  .preview-dialog {
+    display: flex;
+
+    .prew-img {
+      display: block;
+      width: 100%;
+      height: auto;
+
+      .image-slot {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        color: var(--font-1);
+      }
+    }
+  }
 
   .draftInputWrap {
     border-top-left-radius: 5px;
@@ -309,7 +376,7 @@ const onViewMoreReply = (commentId: string) => {
       font-size: 15px;
 
       &:hover {
-        color: @theme-blue;
+        color: var(--theme-blue);
       }
       cursor: pointer;
       .clickNoSelectText();
@@ -320,7 +387,7 @@ const onViewMoreReply = (commentId: string) => {
     }
 
     .is-like {
-      color: @theme-blue;
+      color: var(--theme-blue);
     }
 
     .commentContent {
@@ -364,15 +431,15 @@ const onViewMoreReply = (commentId: string) => {
         }
 
         .date {
-          color: @font-4;
+          color: var(--font-4);
         }
       }
 
       .formContent {
         margin-top: 10px;
-        border: 1px solid @layer-3-border;
+        border: 1px solid var(--card-border);
         padding: 5px 20px 6px 20px;
-        background-color: @background;
+        background-color: var(--background);
         border-radius: 5px;
       }
 
@@ -406,12 +473,12 @@ const onViewMoreReply = (commentId: string) => {
         }
 
         .cancelReplay {
-          color: @theme-blue;
+          color: var(--theme-blue);
         }
       }
 
       .commentChild {
-        background-color: @layer-2-2;
+        background-color: var(--layer-2-2);
         margin-top: 15px;
         padding: 15px;
         border-radius: 5px;

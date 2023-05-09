@@ -3,6 +3,80 @@
 .webkitScrollbarStyle(transparent, @gray-1-1);
 
 body {
+  // 默认主题背景颜色
+  --background: @theme;
+  // 默认 Card 组件卡片渐变背景色，@bg-lg-2
+  --bg-lg-color1: @bg-lg-color1;
+  --bg-lg-color2: @bg-lg-color2;
+  --shadow-color: @shadow-color;
+  // 默认我的分类 Reel 组件卡片渐变背景色
+  --reel-lg-color1: @reel-lg-color1;
+  --reel-lg-color2: @reel-lg-color2;
+  // 时间轴奇数项渐变颜色
+  --timeline-lg-color1: @timeline-lg-color1;
+  --timeline-lg-color2: @timeline-lg-color2;
+  // 通用（时间轴、博主主页）渐变背景颜色
+  --card-lg-color1: @card-lg-color1;
+  --card-lg-color2: @card-lg-color2;
+  --head-lg-color1: @head-lg-color1;
+  --head-lg-color2: @reel-lg-color2;
+  // 全局选中颜色
+  --active-color: @active;
+  // 主题文字颜色
+  --theme-blue: @theme-blue;
+  --card-border: @card-border;
+  // 字体颜色
+  --font-1: @font-1;
+  --font-2: @font-2;
+  --font-3: @font-3;
+  --font-4: @font-4;
+  --font-5: @font-5;
+  --font-6: @font-6;
+  --fff: @fff;
+  // tab 背景颜色
+  --tab-color: @tab-color;
+  --theme: @theme;
+  --loading-color: @loading-color;
+  // @menu-weak
+  --menu-weak: @menu-weak;
+  --shadow-mack: @shadow-mack-color;
+  --card-shadow: @card-shadow;
+  --code-color: @code-color;
+  --modal-bg-color: @theme;
+  --input-bg-color: @fff;
+  --to-top-bg-color: @to-top-bg-color;
+  --layer-2-2: @layer-2-2;
+  // 背景动画
+  --bg-animation: none;
+  // 背景图片
+  --bg-image-url: none;
+  --bg-position: center;
+  --bg-repeat: no-repeat;
+  // 背景图片缩放大小
+  --bg-img-size: cover;
+  // 背景图片滤镜
+  --backdrop-filter: initial;
+  // 富文本编辑器字体颜色
+  --e-edit-color: auto;
+  // 系统设置表单背景颜色
+  --e-form-bg-color: none;
+  // 图片背景兼容字体颜色
+  --font-color: none;
+  // 文章详情代码块背景颜色
+  --pre-bg-color: @pre-bg-color;
+  // 详情文章预览hover背景颜色
+  --pre-hover-bg: initial;
+  // 右键菜单背景颜色
+  --shade-2: transparent;
+  // 文章说明背景颜色
+  --shade-3: transparent;
+  // 卡片操作字体颜色
+  --card-action-font-color: @theme-blue;
+  // 卡片操作背景颜色
+  --card-action-color: @card-action-color;
+  // 弹窗before背景颜色
+  --pop-before-bg-color: 'transparent';
+
   margin: 0;
   padding: 0;
   display: flex;
@@ -11,7 +85,11 @@ body {
   min-height: 100vh;
   width: 100% !important;
   overflow: hidden;
-  background-color: @theme;
+  background-color: var(--background);
+  background-image: var(--bg-image-url);
+  background-position: var(--bg-position);
+  background-repeat: var(--bg-repeat);
+  background-size: var(--bg-img-size);
 }
 
 ul {
@@ -30,14 +108,76 @@ ul {
   min-width: 120px !important;
 }
 
-// 更改全局弹窗/抽屉背景颜色
-.el-dialog,
+// 更改全局弹窗
+.el-dialog {
+  background-color: var(--modal-bg-color) !important;
+}
+
+// 抽屉背景颜色
 .el-drawer {
-  background-color: @theme !important;
+  background-color: var(--modal-bg-color) !important;
+
+  &::before {
+    position: absolute;
+    top: 0;
+    left: 0;
+    content: '';
+    width: 100%;
+    height: 100%;
+    background: var(--pop-before-bg-color);
+    box-shadow: 2px 0 2px -2px var(--card-border) inset;
+  }
+}
+
+.el-drawer__header,
+.el-dialog__title {
+  color: var(--font-1) !important;
+}
+
+.msg-popover {
+  position: relative;
+  background: var(--modal-bg-color) !important;
+  border: 1px solid var(--card-border) !important;
+
+  &::before {
+    position: absolute;
+    top: 0;
+    left: 0;
+    content: '';
+    width: 100%;
+    height: 100%;
+    background: var(--pop-before-bg-color);
+    border-radius: 5px;
+  }
+
+  .el-popover__title {
+    position: relative;
+    color: var(--font-1);
+    z-index: 29;
+  }
+
+  .el-popper__arrow {
+    &::before {
+      background: var(--modal-bg-color) !important;
+      border: 1px solid var(--card-border) !important;
+    }
+  }
 }
 
 .MSG_CONFIG {
-  background-color: @theme;
+  background-color: var(--modal-bg-color);
+  border: none;
+
+  .el-message-box__title {
+    color: var(--font-1);
+  }
+
+  .el-message-box__message {
+    p {
+      color: var(--font-3);
+    }
+  }
+
   .el-button {
     padding-top: 10px;
     width: 88px;

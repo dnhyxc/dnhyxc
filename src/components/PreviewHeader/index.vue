@@ -58,7 +58,7 @@ const onEditArticle = () => {
     ...createStore.createInfo,
     content: articleStore?.articleDetail?.content!,
   };
-  router.push(`/create?id=${route.params.id}`);
+  router.push(`/create?id=${route.params.id}&toHome=1`);
 };
 
 // 去我的主页
@@ -74,6 +74,7 @@ const toSetting = (authorId: string | undefined) => {
   width: 100%;
   padding: 20px 20px 0;
   box-sizing: border-box;
+  color: var(--font-1);
 
   .title {
     font-size: 32px;

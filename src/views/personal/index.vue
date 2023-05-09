@@ -10,7 +10,7 @@
       <div class="header">
         <div class="left">
           <div class="head-wrap">
-            <img :src="HEAD_IMG" alt="头像" class="head-img" />
+            <Image :url="personalStore.userInfo?.headUrl || HEAD_IMG" :transition-img="HEAD_IMG" class="head-img" />
           </div>
         </div>
         <div class="right">
@@ -136,17 +136,19 @@
 </template>
 
 <script setup lang="ts">
-import { shell } from 'electron';
-import { ref, computed, onMounted, onUnmounted, watchEffect } from 'vue';
+import { shell, ipcRenderer } from 'electron';
+import { ref, computed, onMounted, onUnmounted, watchEffect, inject } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { ElMessage } from 'element-plus';
 import { useDeleteArticle, useScroller } from '@/hooks';
 import { articleStore, loginStore, personalStore } from '@/store';
 import { formatDate, scrollTo, checkUrl } from '@/utils';
-import { CollectParams } from '@/typings/common';
+import { ArticleItem, CollectParams } from '@/typings/common';
 import { HEAD_IMG, ICONLINKS, ABOUT_ME_TABS, ABOUT_TABS } from '@/constant';
 import AddCollectModel from '@/components/AddCollectModel/index.vue';
 import Empty from '@/components/Empty/index.vue';
+
+const reload = inject<Function>('reload');
 
 const route = useRoute();
 const router = useRouter();
@@ -199,6 +201,13 @@ const iconLinks = computed(() => {
 });
 
 onMounted(async () => {
+  // 监听详情点赞状态，实时更改列表对应文章的点赞状态
+  ipcRenderer.on('refresh', (_, id, pageType, isLike = true) => {
+    // 需要判断是否是属于当前活动页面，并且只是点击点赞而不是收藏或评论防止重复触发
+    if (route.name === 'personal' && pageType !== 'list' && isLike) {
+      reload && reload();
+    }
+  });
   // 防止页面加载报错
   isMounted.value = true;
   // 清空原始数据
@@ -242,8 +251,8 @@ const onTabChange = (value: string) => {
 };
 
 // 文章点赞
-const likeListArticle = async (id: string) => {
-  await articleStore.likeListArticle({ id, pageType: 'personal' });
+const likeListArticle = async (id: string, data?: ArticleItem) => {
+  await articleStore.likeListArticle({ id, pageType: 'personal', data });
   // 取消点赞文章重新刷新列表之后，自动滚动到之前查看页面的位置
   if (personalStore.currentTabKey === '2') {
     onScrollTo(scrollTop.value);
@@ -311,7 +320,7 @@ const onScrollTo = (to?: number) => {
     display: flex;
     justify-content: flex-start;
     padding: 10px;
-    background-image: @bg-lg-2;
+    background-image: linear-gradient(225deg, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
     border-radius: 5px;
     margin-bottom: 10px;
 
@@ -331,6 +340,13 @@ const onScrollTo = (to?: number) => {
           border-radius: 5px;
           .imgStyle();
         }
+
+        :deep {
+          .image-item {
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+          }
+        }
       }
     }
 
@@ -344,6 +360,7 @@ const onScrollTo = (to?: number) => {
         justify-content: space-between;
         flex-direction: column;
         margin-right: 10px;
+        color: var(--font-2);
 
         .username {
           font-size: 18px;
@@ -389,12 +406,12 @@ const onScrollTo = (to?: number) => {
             justify-content: center;
             align-content: center;
             font-size: 28px;
-            color: @theme-blue;
+            color: var(--theme-blue);
             padding: 2px;
             border-radius: 50px;
 
             &:hover {
-              color: @active;
+              color: var(--active-color);
             }
           }
 
@@ -419,11 +436,15 @@ const onScrollTo = (to?: number) => {
     border-radius: 5px;
     flex: 1;
     .el-tabs {
-      border: 1px solid @card-border;
+      border: 1px solid var(--card-border);
       border-radius: 5px;
       background-color: transparent;
 
       :deep {
+        .el-tabs__item.is-active {
+          background-color: transparent;
+          font-weight: 700;
+        }
         .el-tabs__content {
           padding: 10px;
         }
@@ -432,15 +453,19 @@ const onScrollTo = (to?: number) => {
         .el-tabs__nav-wrap {
           border-top-left-radius: 5px;
           border-top-right-radius: 5px;
+          background-color: transparent;
         }
         .el-tabs__header {
-          border-bottom: 1px solid @card-border;
+          border-bottom: 1px solid var(--card-border);
+
+          .el-tabs__item {
+            color: var(--font-color);
+          }
 
           .el-tabs__item.is-active {
-            border-left-color: @card-border;
-          }
-          .el-tabs__item.is-active {
-            border-right-color: @card-border;
+            border-left-color: var(--card-border);
+            border-right-color: var(--card-border);
+            color: var(--theme-blue);
           }
         }
       }
@@ -457,8 +482,8 @@ const onScrollTo = (to?: number) => {
         .author-line-card {
           width: calc(50% - 5px);
           padding: 10px 10px;
-          box-shadow: 0 0 5px @shadow-color;
-          background-image: @bg-lg-2;
+          box-shadow: 0 0 5px var(--shadow-color);
+          background-image: linear-gradient(225deg, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
           margin-bottom: 10px;
           border-radius: 5px;
           margin-right: 10px;
@@ -528,7 +553,7 @@ const onScrollTo = (to?: number) => {
             .actions {
               .edit {
                 margin-right: 10px;
-                color: @theme-blue;
+                color: var(--theme-blue);
                 font-size: 14px;
               }
 
@@ -565,14 +590,14 @@ const onScrollTo = (to?: number) => {
 
       .add-collect {
         font-size: 14px;
-        color: @theme-blue;
+        color: var(--theme-blue);
         cursor: pointer;
         .clickNoSelectText();
       }
 
       .collect-count {
         font-size: 14px;
-        background-image: @head-lg;
+        background-image: linear-gradient(135deg, var(--head-lg-color1) 10%, var(--head-lg-color2) 100%);
         padding: 2px 5px 3px;
         border-radius: 5px;
         color: @font-2;
@@ -583,7 +608,7 @@ const onScrollTo = (to?: number) => {
 
   .no-more {
     text-align: center;
-    color: @font-4;
+    color: var(--font-4);
     margin: 15px 0 0;
   }
 }

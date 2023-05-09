@@ -1,31 +1,36 @@
 <template>
   <div class="wrap">
-    <el-container>
-      <el-main class="el-main">
-        <Header />
-        <div :class="`${checkOS() === 'mac' && 'mac-content'} content`">
-          <el-aside class="aside-wrap" :width="`${checkOS() === 'mac' ? '68px' : '60px'} `">
-            <LeftMenu />
-          </el-aside>
-          <div class="right">
-            <RouterView v-if="isRouterAlive" v-slot="{ Component }">
-              <!-- 定义缓存组件：注意include="Create"，Create 组件内部必须声明组件名称 -->
-              <KeepAlive include="Create">
-                <component :is="Component" />
-              </KeepAlive>
-            </RouterView>
+    <ExitReminder v-if="loginStore.logoutStatus" />
+    <div class="el-container-wrap">
+      <el-container>
+        <el-main class="el-main">
+          <Header />
+          <div :class="`${checkOS() === 'mac' && 'mac-content'} content`">
+            <el-aside class="aside-wrap" :width="`${checkOS() === 'mac' ? '68px' : '60px'} `">
+              <LeftMenu />
+            </el-aside>
+            <div class="right">
+              <RouterView v-if="isRouterAlive" v-slot="{ Component }">
+                <!-- 定义缓存组件：注意include="Create"，Create 组件内部必须声明组件名称 -->
+                <KeepAlive include="Create">
+                  <component :is="Component" />
+                </KeepAlive>
+              </RouterView>
+            </div>
           </div>
-        </div>
-      </el-main>
-    </el-container>
+        </el-main>
+      </el-container>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, nextTick, provide } from 'vue';
+import { loginStore } from '@/store';
+import { checkOS } from '@/utils';
 import Header from '@/components/Header/index.vue';
 import LeftMenu from '@/components/LeftMenu/index.vue';
-import { checkOS } from '@/utils';
+import ExitReminder from '@/components/ExitReminder/index.vue';
 
 const isRouterAlive = ref<boolean>(true);
 
@@ -50,8 +55,25 @@ provide('reload', reload);
   flex-direction: column;
   height: 100vh;
   box-sizing: border-box;
-  background-color: @theme;
+  background-color: var(--background);
   overflow: hidden;
+  background-image: var(--bg-image-url);
+  background-position: var(--bg-position);
+  background-repeat: var(--bg-repeat);
+  background-size: var(--bg-img-size);
+  animation: var(--bg-animation);
+  .bgKeyframes(bgmove);
+
+  .el-container-wrap {
+    height: 100vh;
+    backdrop-filter: var(--backdrop-filter);
+
+    :deep {
+      .el-container {
+        height: 100vh;
+      }
+    }
+  }
 
   .el-main {
     display: flex;

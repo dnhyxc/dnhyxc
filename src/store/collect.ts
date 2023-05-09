@@ -1,11 +1,13 @@
 import { defineStore } from 'pinia';
 import { ElMessage } from 'element-plus';
 import { CollectListRes, AddCollectionRes, CollectParams, ArticleItem, ArticleListResult } from '@/typings/common';
-import { articleStore, personalStore } from '@/store';
+import { articleStore, personalStore, loginStore } from '@/store';
 import * as Service from '@/server';
-import { normalizeResult, Message } from '@/utils';
+import { normalizeResult, Message, getStoreUserInfo, ipcRenderers } from '@/utils';
 import { useCheckUserId } from '@/hooks';
 import { PAGESIZE } from '@/constant';
+import { sendMessage } from '@/socket';
+import { ipcRenderer } from 'electron';
 
 interface IProps {
   loading: boolean | null;
@@ -131,10 +133,15 @@ export const useCollectStore = defineStore('collect', {
     // 收藏文章
     async collectArticles(articleId: string) {
       if (!useCheckUserId()) return;
+
+      // 判断是article还是detail、分别推送刷新消息给主进程
+      const { pathname } = window.location;
+
       const res = normalizeResult<string>(
         await Service.collectArticles({
           ids: this.checkedCollectIds,
           articleId,
+          isMove: pathname.includes('/collect'), // 如果是true，说明是从我的收藏集中点的转移按钮进行文章的转移
         }),
       );
       if (res.success) {
@@ -142,9 +149,38 @@ export const useCollectStore = defineStore('collect', {
           articleStore.articleDetail.collectCount += 1;
         }
         this.collectStatus = true;
-        if (!this.checkedCollectIds.includes(this.collectInfo.id)) {
-          this.removeCollectArticle(articleId, this.collectInfo.id);
+
+        // 如果所选择的收藏集不包含当前需要转移文章的收藏集，就需要将该文章移除当前收藏集
+        if (!this.checkedCollectIds.includes(this.collectInfo.id) && pathname.includes('/collect')) {
+          // 第三个参数 true，说明是点击转移按钮转移收藏的文章，告诉后端不需要增减收藏数
+          this.removeCollectArticle(articleId, this.collectInfo.id, true);
         }
+
+        const { userInfo } = getStoreUserInfo();
+        // 收藏别人文章成功之后推送消息
+        const { username, userId } = loginStore.userInfo;
+
+        const { authorId } = articleStore?.articleDetail;
+
+        if (userInfo?.userId !== authorId && authorId !== userId) {
+          sendMessage(
+            JSON.stringify({
+              action: 'push',
+              data: {
+                ...articleStore?.articleDetail,
+                articleId,
+                toUserId: authorId,
+                action: 'COLLECT',
+                fromUsername: username || userInfo?.username,
+                fromUserId: userId || userInfo?.userId,
+              },
+              userId: userId || userInfo?.userId,
+            }),
+          );
+        }
+
+        ipcRenderers.sendRefresh(articleId, pathname, false);
+
         ElMessage({
           message: res.message,
           type: 'success',
@@ -176,6 +212,34 @@ export const useCollectStore = defineStore('collect', {
           articleStore.articleDetail.collectCount -= 1;
         }
         this.collectStatus = false;
+
+        const { userInfo } = getStoreUserInfo();
+
+        const { username, userId } = loginStore.userInfo;
+
+        const { authorId } = articleStore?.articleDetail;
+
+        if (userId !== authorId && authorId !== userInfo?.userId) {
+          sendMessage(
+            JSON.stringify({
+              action: 'push',
+              data: {
+                ...articleStore?.articleDetail,
+                articleId,
+                toUserId: authorId,
+                action: 'CANCEL_COLLECT',
+                fromUsername: username || userInfo?.username,
+                fromUserId: userId || userInfo?.userId,
+              },
+              userId: userId! || userInfo?.userId,
+            }),
+          );
+        }
+
+        const { pathname } = window.location;
+        // 判断是article还是detail、分别推送刷新消息给主进程
+        ipcRenderers.sendRefresh(articleId, pathname, false);
+
         ElMessage({
           message: res.message,
           type: 'success',
@@ -207,6 +271,7 @@ export const useCollectStore = defineStore('collect', {
       if (this.collectList.length !== 0 && this.collectList.length >= this.total) return;
       this.pageNo = this.pageNo + 1;
       this.loading = true;
+
       const res = normalizeResult<ArticleListResult>(
         await Service.getCollectArticles({
           pageNo: this.pageNo,
@@ -228,16 +293,19 @@ export const useCollectStore = defineStore('collect', {
     },
 
     // 移除收藏集中的文章
-    async removeCollectArticle(articleId: string, collectId: string) {
+    async removeCollectArticle(articleId: string, collectId: string, isMove?: boolean) {
       if (!collectId) return;
       this.loading = true;
       const res = normalizeResult<number>(
         await Service.removeCollectArticle({
           id: collectId,
           articleId,
+          isMove,
         }),
       );
       if (res.success) {
+        // 发送删除的文章的消息给主进程，通知主进程及时关闭对应子窗口
+        ipcRenderer.send('remove', articleId);
         this.collectInfo.articleIds = this.collectInfo?.articleIds?.filter((i) => i !== articleId);
         this.clearCollectList();
         // 重新获取收藏集中的文章

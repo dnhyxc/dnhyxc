@@ -30,4 +30,10 @@ defineProps<IProps>();
 
 <style scoped lang="less">
 @import '@/styles/index.less';
+
+:deep {
+  .el-loading-mask {
+    background-color: var(--loading-color) !important;
+  }
+}
 </style>

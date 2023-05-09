@@ -1,10 +1,10 @@
 import { defineStore } from 'pinia';
 import { ElMessage } from 'element-plus';
 import * as Service from '@/server';
-import { normalizeResult, locSetItem, Message } from '@/utils';
+import { normalizeResult, Message } from '@/utils';
 import { useCheckUserId } from '@/hooks';
 import { TimelineResult } from '@/typings/common';
-import { loginStore } from '@/store';
+import { ipcRenderer } from 'electron';
 
 interface IProps {
   timelineList: TimelineResult[];
@@ -23,9 +23,6 @@ export const useTimelineStore = defineStore('timeline', {
       this.loading = true;
       // 检验是否有userId，如果没有禁止发送请求
       if (!useCheckUserId()) return;
-      const params = { userId: loginStore.userInfo?.userId };
-      // 保存至storage用于根据不同页面进入详情时，针对性的进行上下篇文章的获取（如：分类页面上下篇、标签页面上下篇）
-      locSetItem('params', JSON.stringify({ ...params, from: 'timeline' }));
       const res = normalizeResult<TimelineResult[]>(await Service.getTimelineList());
       this.loading = false;
       if (res.success) {
@@ -44,6 +41,8 @@ export const useTimelineStore = defineStore('timeline', {
       Message('', '确定删除该文章吗？').then(async () => {
         const res = normalizeResult<{ id: string }>(await Service.deleteArticle({ articleId, type: 'timeline' }));
         if (res.success) {
+          // 发送删除的文章的消息给主进程，通知主进程及时关闭对应子窗口
+          ipcRenderer.send('remove', articleId);
           const list = this.timelineList.map((i) => {
             if (i.articles.length) {
               const filterList = i.articles.filter((j) => j.id !== articleId);

@@ -44,7 +44,9 @@
           </span>
           <span class="actions">
             <el-button @click="onCancel">取消</el-button>
-            <el-button type="primary" @click="onSubmit">确定</el-button>
+            <el-button type="primary" :disabled="!collectStore.checkedCollectIds?.length" @click="onSubmit">
+              确定
+            </el-button>
           </span>
         </div>
       </template>
@@ -144,6 +146,7 @@ const onSubmit = async () => {
   .header {
     display: flex;
     align-items: center;
+    color: var(--font-1);
 
     .title {
       font-size: 18px;
@@ -151,7 +154,7 @@ const onSubmit = async () => {
 
     .info {
       font-size: 13px;
-      color: @font-2;
+      color: var(--font-2);
     }
   }
 
@@ -172,12 +175,13 @@ const onSubmit = async () => {
       align-items: center;
       padding: 10px 5px;
       margin-right: 5px;
-      border-bottom: 1px solid @card-border;
+      border-bottom: 1px solid var(--card-border);
       cursor: pointer;
       .clickNoSelectText();
 
       .left {
         flex: 1;
+        color: var(--font-2);
 
         .collect-name {
           display: flex;
@@ -198,7 +202,7 @@ const onSubmit = async () => {
     }
 
     .active {
-      background-color: @theme-blue;
+      background-color: var(--theme-blue);
     }
 
     :deep {
@@ -214,7 +218,7 @@ const onSubmit = async () => {
     align-items: center;
 
     .build {
-      color: @theme-blue;
+      color: var(--theme-blue);
       cursor: pointer;
       .clickNoSelectText();
 
@@ -233,7 +237,7 @@ const onSubmit = async () => {
   .loading,
   .no-more {
     text-align: center;
-    color: @font-4;
+    color: var(--font-4);
     padding-top: 15px;
   }
 }
