@@ -35,6 +35,7 @@ const removeStyle = {
   '--card-action-color': 'transparent',
   // 弹窗before背景颜色
   '--pop-before-bg-color': 'transparent',
+  '--h-color': '#00d625',
 };
 
 // 背景图片公共配置
@@ -98,6 +99,7 @@ const imageStyles = {
   '--card-action-color': 'rgba(0, 0, 0, 0.2)',
   // 弹窗before背景颜色
   '--pop-before-bg-color': 'rgba(0, 0, 0, 0.5)',
+  '--h-color': '#00d625',
 };
 
 // 清新绿（默认主题）
@@ -297,6 +299,7 @@ const lateralFace = {
 const ShaoSiming = {
   ...imageStyles,
   '--bg-image-url': `url(${IMG1})`,
+  '--h-color': '#a2ff00',
 };
 
 // 动漫
@@ -316,6 +319,7 @@ const island = {
   ...imageStyles,
   '--bg-image-url': `url(${IMG4})`,
   '--backdrop-filter': 'blur(3px)',
+  '--h-color': '#a2ff00',
 };
 
 const themeTypes = {

@@ -608,6 +608,9 @@ export const SHORTCUT_KEYS = {
   4: 'OUT_SHORTCUT',
 };
 
+// 开机自启store存储key
+export const OPEN_CONFIG = 'OPEN_CONFIG';
+
 // 系统设置关闭应用store存储key
 export const CLOSE_CONFIG = 'CLOSE_CONFIG';
 

@@ -355,19 +355,27 @@ ipcMain.on('restore', (event, info) => {
   });
 });
 
+// 监听开机自启设置
+ipcMain.on('open-at-login', (event, status) => {
+  // 开机自启
+  app.setLoginItemSettings({ openAtLogin: status !== 1 });
+});
+
 // 限制只能启动一个应用
 const gotTheLock = app.requestSingleInstanceLock();
 
-if (!gotTheLock) {
-  app.quit();
-} else {
-  app.on('second-instance', (event, commandLine, workingDirectory) => {
-    if (win) {
-      if (win.isMinimized()) win.restore();
-      win.focus();
-      win.show();
-    }
-  });
+if (!isMac) {
+  if (!gotTheLock) {
+    app.quit();
+  } else {
+    app.on('second-instance', (event, commandLine, workingDirectory) => {
+      if (win) {
+        if (win.isMinimized()) win.restore();
+        win.focus();
+        win.show();
+      }
+    });
+  }
 }
 
 // 在Electron完成初始化时被触发

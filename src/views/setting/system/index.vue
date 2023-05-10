@@ -35,6 +35,18 @@
         </div>
       </div>
     </div>
+    <div class="file-config">
+      <div class="label">启动设置</div>
+      <div class="file-item">
+        <span class="name config-name">设置开机自启</span>
+        <div class="key-info">
+          <el-radio-group v-model="openStatus">
+            <el-radio :label="1" class="radio-close">否（开机不自动启动）</el-radio>
+            <el-radio :label="2" class="radio-close">是（开机后自动启动）</el-radio>
+          </el-radio-group>
+        </div>
+      </div>
+    </div>
     <div class="close-config">
       <div class="label">应用关闭</div>
       <div class="file-item">
@@ -68,7 +80,7 @@
 import { ipcRenderer } from 'electron';
 import Store from 'electron-store';
 import { ref, Directive, DirectiveBinding, nextTick, onMounted, watch } from 'vue';
-import { STSTEM_CONFIG, SHORTCUT_KEYS, CLOSE_CONFIG, INIT_SHOTCUT_KEYS } from '@/constant';
+import { STSTEM_CONFIG, SHORTCUT_KEYS, CLOSE_CONFIG, OPEN_CONFIG, INIT_SHOTCUT_KEYS } from '@/constant';
 import { setShortcutKey } from '@/utils';
 import { ElMessage } from 'element-plus';
 
@@ -88,6 +100,8 @@ const currentEditFileConfig = ref<number>(5);
 const shortcut = ref<string>('');
 // 面板关闭设置
 const closeStatus = ref<number>(1);
+// 开机自启设置
+const openStatus = ref<number>(1);
 
 // 局部自动获取焦点指令
 const vFocus: Directive = (el, binding: DirectiveBinding) => {
@@ -143,11 +157,22 @@ onMounted(() => {
 
   // 初始化应用关闭默认值
   closeStatus.value = (store.get(CLOSE_CONFIG) as number) || 1;
+
+  // 开启启动默认值
+  openStatus.value = (store.get(OPEN_CONFIG) as number) || 1;
 });
 
 // 监听关闭面板状态
 watch(closeStatus, (newVal) => {
   store.set(CLOSE_CONFIG, newVal);
+});
+
+// 监听开机自启状态
+watch(openStatus, (newVal, oldVal) => {
+  if (newVal !== oldVal) {
+    store.set(OPEN_CONFIG, newVal);
+    ipcRenderer.send('open-at-login', newVal);
+  }
 });
 
 // 点击编辑显示弹窗
@@ -225,6 +250,7 @@ const handleKeydown = (e: KeyboardEvent) => {
   height: 100%;
   padding: 10px;
   border-radius: 5px;
+  overflow-y: auto;
 
   .shortcuts,
   .file-config,
