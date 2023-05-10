@@ -35,7 +35,7 @@ const removeStyle = {
   '--card-action-color': 'transparent',
   // 弹窗before背景颜色
   '--pop-before-bg-color': 'transparent',
-  '--h-color': '#00d625',
+  '--h-color': '#00ca23',
 };
 
 // 背景图片公共配置

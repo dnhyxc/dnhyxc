@@ -113,6 +113,7 @@ const onCopyCodeSuccess = (value: string) => {
       h5,
       h6 {
         color: var(--h-color);
+        font-weight: 700;
       }
     }
   }
