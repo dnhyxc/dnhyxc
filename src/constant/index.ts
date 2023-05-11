@@ -7,7 +7,7 @@ import PAGESVG from '@/assets/svg/page_icon.svg';
 import EMPTY from '@/assets/svg/empty.svg';
 import HEAD_IMG from '@/assets/images/face.jpg';
 import IMG1 from '@/assets/images/1.jpg';
-import IMG2 from '@/assets/images/2.jpg';
+import IMG2 from '@/assets/images/2.png';
 import IMG3 from '@/assets/images/3.jpg';
 import IMG4 from '@/assets/images/4.jpg';
 import * as API from '@/server/api';

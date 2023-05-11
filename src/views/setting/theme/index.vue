@@ -101,6 +101,7 @@ const changeTheme = (key: string) => {
           color: @fff;
           border-radius: 5px;
           cursor: pointer;
+          font-weight: 700;
 
           &:hover {
             box-shadow: 0 0 10px @theme-blue;
@@ -147,9 +148,9 @@ const changeTheme = (key: string) => {
         }
 
         .beauty {
-          background-image: url('@/assets/images/2.jpg');
+          background-image: url('@/assets/images/2.png');
           .bgStyles;
-          color: @fff;
+          color: @font-1;
         }
 
         .locomotive {

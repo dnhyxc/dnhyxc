@@ -306,6 +306,10 @@ const ShaoSiming = {
 const beauty = {
   ...imageStyles,
   '--bg-image-url': `url(${IMG2})`,
+  // 图片背景兼容字体颜色
+  '--font-color': '#fff',
+  // h1.h2.h3...标题颜色
+  '--h-color': '#a2ff00',
 };
 
 // 机车
