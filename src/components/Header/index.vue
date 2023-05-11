@@ -7,7 +7,7 @@
 <template>
   <div :class="`${checkOS() === 'mac' && 'mac-header-wrap'} header-wrap`" @dblclick="onDblclick">
     <div class="left">
-      <div class="icon-wrap">
+      <div class="icon-wrap" @click="goHome">
         <i class="page-icon iconfont icon-haidao_" />
       </div>
       <el-tooltip effect="light" content="后退" placement="bottom">
@@ -214,6 +214,11 @@ const goForward = () => {
   router.go(1);
 };
 
+// 返回首页
+const goHome = () => {
+  router.push('/home');
+};
+
 // 点击右侧窗口控制按钮
 const onClick = (item: { title: string; svg: string }) => {
   if (item.title === '最大化') {
@@ -329,9 +334,13 @@ const onEnter = async (e: Event) => {
     display: flex;
     align-items: center;
     justify-content: flex-start;
+    padding-left: 50px;
     color: var(--font-1);
 
     .icon-wrap {
+      position: absolute;
+      top: 15px;
+      left: 13px;
       display: flex;
       align-items: center;
       justify-content: center;

@@ -139,6 +139,7 @@ const onQuit = () => {
   padding-left: 1px;
   border-radius: 5px;
   overflow: auto;
+  padding-top: 15px;
 
   .menu-list {
     box-sizing: border-box;

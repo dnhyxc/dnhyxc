@@ -71,7 +71,7 @@ interface IProps {
 
 const props = withDefaults(defineProps<IProps>(), {
   articleId: '',
-  height: 'calc(100vh - 75px)',
+  height: 'calc(100vh - 77px)',
   onPublish: () => {},
   onClear: () => {},
   onShowDraft: () => {},

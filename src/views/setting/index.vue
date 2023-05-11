@@ -105,7 +105,7 @@ const onClick = (menu: MenuListParams) => {
 
   .content {
     box-sizing: border-box;
-    height: calc(100vh - 112px);
+    height: calc(100vh - 110px);
     border-left: 1px solid var(--card-border);
     border-right: 1px solid var(--card-border);
     border-bottom: 1px solid var(--card-border);

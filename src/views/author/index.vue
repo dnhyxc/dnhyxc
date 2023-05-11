@@ -365,6 +365,7 @@ const onScrollTo = (to?: number) => {
   .content {
     margin-top: 10px;
     border-radius: 5px;
+
     .el-tabs {
       border: 1px solid var(--card-border);
       border-radius: 5px;
