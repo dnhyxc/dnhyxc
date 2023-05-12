@@ -20,7 +20,6 @@ const editorRef = ref<HTMLElement | null>(null);
 
 let editor: any = null;
 
-console.log(Editor, 'Editor');
 onMounted(() => {
   const atList = document.createElement('div');
   atList.className = 'at-list';

@@ -363,3 +363,16 @@ export interface ArticleDetailParams {
   originalArticleId?: string | number;
   isDelete?: boolean;
 }
+
+// 弹幕类型
+export interface BarrageItem {
+  avatar: string;
+  userId?: string;
+  username: string;
+  comment: string;
+}
+
+export interface InteractListRes {
+  list: BarrageItem[];
+  total: number;
+}

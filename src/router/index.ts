@@ -72,6 +72,16 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import('@/views/create/index.vue'),
       },
       {
+        path: '/interact',
+        name: 'interact',
+        meta: {
+          title: '留言一角',
+          keepAlive: true,
+          auth: true,
+        },
+        component: () => import('@/views/interact/index.vue'),
+      },
+      {
         path: '/author',
         name: 'author',
         meta: {
@@ -227,7 +237,7 @@ router.beforeEach(async (to, from, next) => {
 
   if (WITH_AUTH_ROUTES.includes(to.path) && !locGetItem('token')) {
     ElMessage({
-      message: '请先登录后再操作哦！',
+      message: '请先登录后再访问哦！',
       type: 'warning',
       offset: 80,
       duration: 2000,

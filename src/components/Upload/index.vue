@@ -292,7 +292,6 @@ const onPreview = () => {
 
 // 清除图片
 const onDelImage = () => {
-  console.log(props.filePath, 'props.filePath', props.delete);
   // 清空父组件传递过来的filePath
   emit('update:filePath', '');
   // 删除上传的原图片

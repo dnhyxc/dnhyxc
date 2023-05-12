@@ -179,12 +179,6 @@ const visible = computed({
 const getUploadUrl = async (url: string) => {
   if (url && checkImgUrlType(url) === 'URL' && props.articleId) {
     const oldUrl = createStore.oldCoverImage;
-
-    console.log({
-      url,
-      oldUrl,
-    });
-
     await createStore.createArticle(
       {
         coverImage: url,

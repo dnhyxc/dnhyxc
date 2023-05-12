@@ -11,6 +11,7 @@ import { useAuthorStore } from './author';
 import { usePersonalStore } from './personal';
 import { useSearchStore } from './search';
 import { useMessageStore } from './message';
+import { useInteractStore } from './interact';
 
 // 公共store
 export const commonStore = useCommonStore();
@@ -50,3 +51,6 @@ export const searchStore = useSearchStore();
 
 // 消息列表
 export const messageStore = useMessageStore();
+
+// 留言列表
+export const interactStore = useInteractStore();

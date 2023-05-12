@@ -122,3 +122,12 @@ export const DELETE_MESSAGE = '/api/deleteMessage';
 
 // 删除全部消息
 export const DELETE_ALL_MESSAGE = '/api/deleteAllMessage';
+
+// 创建留言
+export const CREATE_INTERACT = '/api/createInteract';
+
+// 获取留言列表
+export const GET_INTERACTS = '/api/getInteracts';
+
+// 分页获取留言列表
+export const GET_INTERACT_LIST = '/api/getInteractList';
