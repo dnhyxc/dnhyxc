@@ -81,7 +81,6 @@ import { useRouter } from 'vue-router';
 import vueDanmaku from 'vue3-danmaku';
 import { loginStore, interactStore } from '@/store';
 import { scrollTo } from '@/utils';
-import { ElMessage } from 'element-plus';
 import { useScroller } from '@/hooks';
 import { HEAD_IMG } from '@/constant';
 import { BarrageItem } from '@/typings/common';
@@ -119,6 +118,7 @@ const onFetchData = async () => {
   await interactStore.getInteractList();
 };
 
+// 监听页面窗口大小变化，重新计算弹幕区域大小弹幕
 const onResize = () => {
   danmakuRef.value?.resize();
 };
@@ -126,14 +126,7 @@ const onResize = () => {
 // 添加弹幕
 const onEnter = async (e: InputEvent) => {
   const target = e.target as HTMLInputElement;
-  if (!target.value || !loginStore.userInfo?.userId) {
-    ElMessage({
-      message: '请先登录后再试',
-      type: 'warning',
-      offset: 80,
-    });
-    return;
-  }
+  if (!target.value.trim()) return;
   keyword.value = target.value;
   const params = {
     avatar: loginStore.userInfo?.headUrl,
@@ -141,9 +134,12 @@ const onEnter = async (e: InputEvent) => {
     userId: loginStore.userInfo?.userId,
     comment: target.value,
   };
+  // 将新增的弹幕插入弹幕组件中
   danmakuRef.value?.add(params);
+  // 调用创建留言的接口
   await interactStore.createInteract(target.value);
   target.value = '';
+  // 向留言列表中无感知的新增留言
   interactStore.addInteract(params as BarrageItem);
 };
 
