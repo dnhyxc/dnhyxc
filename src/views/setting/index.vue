@@ -37,13 +37,18 @@ const router = useRouter();
 const route = useRoute();
 
 onMounted(() => {
-  router.push('/profile');
+  if (loginStore.userInfo?.userId) {
+    router.push('/profile');
+  } else {
+    router.push('/system');
+  }
 });
 
 watch(
   () => route.path,
   (newVal) => {
-    activeMenu.value = SETTING_MENU.find((i) => i.path === newVal)!;
+    const currentMenu = SETTING_MENU.find((i) => i.path === newVal);
+    activeMenu.value = currentMenu!;
   },
 );
 
