@@ -189,6 +189,7 @@ const onScrollTo = () => {
   .avatar {
     width: 28px;
     height: 28px;
+    min-width: 28px;
     margin-right: 5px;
     cursor: pointer;
 
@@ -246,6 +247,7 @@ const onScrollTo = () => {
           background-color: var(--layer-2-2);
           padding: 5px;
           border-radius: 5px;
+          word-break: break-all;
           cursor: pointer;
         }
 
