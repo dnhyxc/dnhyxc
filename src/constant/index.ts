@@ -10,9 +10,10 @@ import IMG1 from '@/assets/images/1.jpg';
 import IMG2 from '@/assets/images/2.png';
 import IMG3 from '@/assets/images/3.jpg';
 import IMG4 from '@/assets/images/4.jpg';
+import CYWL from '@/assets/images/cywl.jpg';
 import * as API from '@/server/api';
 
-export { EMPTY, MINSVG, RESTORESVG, MAXSVG, CLOSESVG, HOMESVG, PAGESVG, HEAD_IMG, IMG1, IMG2, IMG3, IMG4 };
+export { EMPTY, MINSVG, RESTORESVG, MAXSVG, CLOSESVG, HOMESVG, PAGESVG, HEAD_IMG, IMG1, IMG2, IMG3, IMG4, CYWL };
 
 // 线上域名
 export const DOMAIN_URL = '43.143.27.249';
@@ -114,6 +115,10 @@ export const THEME_TYPES = [
 
 // 背景图片主题
 export const IMG_THEME_TYPES = [
+  {
+    key: 'girl',
+    name: '古风',
+  },
   {
     key: 'lateralFace',
     name: '侧脸',

@@ -77,9 +77,11 @@ const changeTheme = (key: string) => {
 
   .content {
     width: 80%;
+    padding-left: 10px;
 
     .default-wrap {
       margin-bottom: 20px;
+
       .label {
         margin-bottom: 15px;
         font-size: 18px;
@@ -90,21 +92,28 @@ const changeTheme = (key: string) => {
       .themes {
         display: flex;
         justify-content: flex-start;
+        flex-wrap: wrap;
 
         .theme {
           box-sizing: border-box;
           padding: 10px 0 0 15px;
           height: 90px;
-          width: 150px;
+          width: calc(20% - 10px);
+          max-width: 150px;
           box-shadow: @shadow-mack;
           margin-right: 10px;
           color: @fff;
           border-radius: 5px;
           cursor: pointer;
           font-weight: 700;
+          margin-bottom: 10px;
 
           &:hover {
             box-shadow: 0 0 10px @theme-blue;
+          }
+
+          &:last-child {
+            margin-right: 0;
           }
         }
 
@@ -163,6 +172,12 @@ const changeTheme = (key: string) => {
           background-image: url('@/assets/images/4.jpg');
           .bgStyles;
           color: @font-1;
+        }
+
+        .girl {
+          background-image: url('@/assets/images/cywl.jpg');
+          .bgStyles;
+          color: @fff;
         }
 
         .active {

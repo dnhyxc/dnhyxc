@@ -195,7 +195,7 @@ const onCopyCodeSuccess = (value: string) => {
     }
 
     .v-md-editor__menu {
-      background-color: var(--fff);
+      background-color: var(--pop-menu-color);
       border: 1px solid var(--card-border);
     }
 

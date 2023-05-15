@@ -42,6 +42,8 @@ body {
   --shadow-mack: @shadow-mack-color;
   --card-shadow: @card-shadow;
   --code-color: @code-color;
+  --p-code-color: @p-code-color;
+  --p-code-bg-color: @p-code-bg-color;
   --modal-bg-color: @theme;
   --input-bg-color: @fff;
   --to-top-bg-color: @to-top-bg-color;
@@ -78,6 +80,8 @@ body {
   --pop-before-bg-color: 'transparent';
   // 标题颜色
   --h-color: @h-color;
+  // pop 下拉菜单背景颜色
+  --pop-menu-color: @pop-menu-color;
 
   margin: 0;
   padding: 0;
@@ -132,7 +136,8 @@ ul {
 }
 
 .el-drawer__header,
-.el-dialog__title {
+.el-dialog__title,
+.el-dialog__close {
   color: var(--font-1) !important;
 }
 

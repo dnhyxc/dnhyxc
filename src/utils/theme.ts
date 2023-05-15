@@ -1,4 +1,4 @@
-import { IMG1, IMG2, IMG3, IMG4, HEAD_IMG } from '@/constant';
+import { IMG1, IMG2, IMG3, IMG4, HEAD_IMG, CYWL } from '@/constant';
 
 // 公共字体设置
 const fontStyle = {
@@ -35,7 +35,14 @@ const removeStyle = {
   '--card-action-color': 'transparent',
   // 弹窗before背景颜色
   '--pop-before-bg-color': 'transparent',
+  // 文章 h1、h2... 标题字体颜色
   '--h-color': '#00ca23',
+  // 弹出菜单背景颜色
+  '--pop-menu-color': '#fff',
+  // 行内 code 字体颜色
+  '--p-code-color': '#dcffd6',
+  // 行内 code 背景颜色
+  '--p-code-bg-color': 'rgba(27, 31, 35, 0.08)',
 };
 
 // 背景图片公共配置
@@ -99,7 +106,14 @@ const imageStyles = {
   '--card-action-color': 'rgba(0, 0, 0, 0.2)',
   // 弹窗before背景颜色
   '--pop-before-bg-color': 'rgba(0, 0, 0, 0.5)',
+  // 详情文章 h1、h2... 标题颜色
   '--h-color': '#00d625',
+  // 弹出菜单背景颜色
+  '--pop-menu-color': 'rgba(0, 0, 0, 0.65)',
+  // 行内 code 字体颜色
+  '--p-code-color': '#dcffd6',
+  // 行内 code 背景颜色
+  '--p-code-bg-color': 'rgba(27, 31, 35, 0.08)',
 };
 
 // 清新绿（默认主题）
@@ -173,6 +187,7 @@ const black = {
   // 子级评论背景颜色
   '--layer-2-2': 'rgba(38, 42, 51, 0.98)',
   ...removeStyle,
+  '--pop-menu-color': '#333',
 };
 
 // 亮青色
@@ -326,6 +341,50 @@ const island = {
   '--h-color': '#a2ff00',
 };
 
+const girl = {
+  ...imageStyles,
+  '--bg-image-url': `url(${CYWL})`,
+  '--backdrop-filter': 'blur(1px)',
+  '--font-1': '#000',
+  '--font-2': '#000',
+  '--font-3': '#000',
+  '--font-4': '#000',
+  '--font-5': '#333',
+  '--font-6': '#333',
+  // 系统设置表单背景颜色
+  '--e-form-bg-color': 'initial',
+  // 文章预览背景图片
+  '--pre-hover-bg': 'rgba(255, 255, 242, 0.5)',
+  '--pre-bg-color': 'rgb(255, 255, 242, 0.65)',
+  // 文章各种卡片渐变颜色
+  '--bg-lg-color1': 'rgba(245, 250, 248, 0.25)',
+  '--bg-lg-color2': 'rgba(255, 255, 242, 0.85)',
+  // 时间轴背景颜色
+  '--timeline-lg-color1': 'rgba(245, 250, 248, 0.25)',
+  '--timeline-lg-color2': 'rgba(255, 255, 242, 0.85)',
+  // 各组件阴影颜色
+  '--shadow-color': 'rgba(255, 255, 242, 0.5)',
+  '--shadow-mack': 'rgba(255, 255, 242, 0.85)',
+  '--fff': 'rgba(255, 255, 242, 0.5)',
+  '--e-edit-color': '#000',
+  '--layer-2-2': 'rgba(255, 255, 242, 0.5)',
+  '--input-bg-color': 'rgba(255, 255, 242, 0.5)',
+  // 弹窗before背景颜色
+  '--pop-before-bg-color': 'rgb(255, 255, 228, 0.3)',
+  '--shade-3': 'rgba(255, 255, 242, 0.5)',
+  '--tab-color': 'rgba(255, 255, 242, 0.5)',
+  '--card-action-font-color': '#000',
+  '--card-border': 'rgba(182, 182, 182, 0.5)',
+  '--modal-bg-color': 'rgb(223, 223, 223, 0.5)',
+  '--to-top-bg-color': 'rgba(255, 255, 242, 0.65)',
+  '--pop-menu-color': 'rgba(255, 255, 242, 0.85)',
+  '--h-color': '#089220',
+  // 行内 code 字体颜色
+  '--p-code-color': '#0f6600',
+  // 行内 code 背景颜色
+  '--p-code-bg-color': 'rgba(255, 255, 242, 0.5)',
+};
+
 const themeTypes = {
   freshGreen,
   black,
@@ -337,6 +396,7 @@ const themeTypes = {
   beauty,
   island,
   locomotive,
+  girl,
 };
 
 // 设置背景颜色

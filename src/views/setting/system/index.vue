@@ -374,10 +374,14 @@ const handleKeydown = (e: KeyboardEvent) => {
       }
     }
 
-    .el-input__wrapper,
-    .el-input__inner {
+    .el-input__wrapper {
       color: var(--font-1);
       background-color: var(--input-bg-color);
+    }
+
+    .el-input__inner {
+      color: var(--font-1);
+      background-color: transparent;
     }
 
     .el-dialog__header {
