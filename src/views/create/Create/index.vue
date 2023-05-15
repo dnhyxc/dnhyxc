@@ -187,9 +187,12 @@ const getUploadUrl = async (url: string) => {
       undefined, // router
       false, // 是否需要提示
     );
-    // 删除上传的老的封面图
-    oldUrl && (await uploadStore.removeFile(oldUrl));
-    createStore.oldCoverImage = url;
+    // 如果文件不一致，则说明重新上传了新的图片，则需要删除老图片
+    if (url !== oldUrl) {
+      // 删除上传的老的封面图
+      oldUrl && (await uploadStore.removeFile(oldUrl));
+      createStore.oldCoverImage = url;
+    }
   }
 };
 

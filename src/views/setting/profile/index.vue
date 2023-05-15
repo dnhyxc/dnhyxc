@@ -144,11 +144,14 @@ watch(headUrl, async (newVal) => {
     const oldUserInfo = JSON.parse(JSON.stringify(loginStore?.userInfo));
     await loginStore.updateUserInfo(
       {
-        headUrl: headUrl.value,
+        headUrl: newVal,
       },
       1, // 1 标识更改用户信息，2 标识更改用户密码
     );
-    uploadStore.removeFile(oldUserInfo?.headUrl!);
+    // 如果文件不一致，则说明重新上传了新的图片，则需要删除老图片
+    if (oldUserInfo?.headUrl! !== newVal) {
+      uploadStore.removeFile(oldUserInfo?.headUrl!);
+    }
   }
 });
 
@@ -158,11 +161,13 @@ watch(mainCover, async (newVal) => {
     const oldUserInfo = JSON.parse(JSON.stringify(loginStore?.userInfo));
     await loginStore.updateUserInfo(
       {
-        mainCover: mainCover.value,
+        mainCover: newVal,
       },
       1, // 1 标识更改用户信息，2 标识更改用户密码
     );
-    uploadStore.removeFile(oldUserInfo?.mainCover!);
+    if (oldUserInfo?.mainCover! !== newVal) {
+      uploadStore.removeFile(oldUserInfo?.mainCover!);
+    }
   }
 });
 
