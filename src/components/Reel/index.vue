@@ -16,7 +16,7 @@
             @click="onClick(i.name!)"
           >
             <div class="content">
-              <span class="name">{{ i.name }}</span>
+              <span class="name">{{ i.name || '-' }}</span>
               <div class="count"><span class="text text-left">共</span>{{ i.value }}<span class="text">篇</span></div>
             </div>
           </div>

@@ -7,7 +7,7 @@
 <template>
   <div :class="`${checkOS() === 'mac' && 'mac-header-wrap'} header-wrap`" @dblclick="onDblclick">
     <div class="left">
-      <div class="icon-wrap">
+      <div class="icon-wrap" @click="goHome">
         <i class="page-icon iconfont icon-haidao_" />
       </div>
       <el-tooltip effect="light" content="后退" placement="bottom">
@@ -54,7 +54,9 @@
           @keyup.enter="onEnter"
         >
           <template #suffix>
-            <el-icon class="el-input__icon" @click="onEnter"><Search /></el-icon>
+            <el-icon class="el-input__icon" @click="onEnter">
+              <Search />
+            </el-icon>
           </template>
         </el-input>
       </div>
@@ -215,6 +217,11 @@ const goForward = () => {
   router.go(1);
 };
 
+// 返回首页
+const goHome = () => {
+  router.push('/home');
+};
+
 // 点击右侧窗口控制按钮
 const onClick = (item: { title: string; svg: string }) => {
   if (item.title === '最大化') {
@@ -330,13 +337,18 @@ const onDeleteAll = async () => {
   height: 35px;
   padding: 10px 18px 10px 12px;
   -webkit-app-region: drag;
+
   .left {
     display: flex;
     align-items: center;
     justify-content: flex-start;
+    padding-left: 50px;
     color: var(--font-1);
 
     .icon-wrap {
+      position: absolute;
+      top: 15px;
+      left: 13px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -365,12 +377,14 @@ const onDeleteAll = async () => {
         font-weight: 700;
       }
     }
+
     .title {
       font-size: 18px;
       font-weight: 700;
       color: var(--font-color);
     }
   }
+
   .right {
     display: flex;
     align-items: center;
@@ -424,12 +438,14 @@ const onDeleteAll = async () => {
         }
       }
     }
+
     .bell {
       position: relative;
       display: flex;
       align-items: center;
       -webkit-app-region: no-drag;
       margin-left: 15px;
+
       .msg-count {
         position: absolute;
         top: -5px;
@@ -456,6 +472,7 @@ const onDeleteAll = async () => {
       align-items: center;
       justify-content: center;
       -webkit-app-region: no-drag;
+
       .font {
         font-size: 16px;
         cursor: pointer;
@@ -463,15 +480,18 @@ const onDeleteAll = async () => {
         margin-top: 1px;
         color: var(--font-color);
       }
+
       .active {
         color: @sub-2-blue;
       }
     }
+
     .setting {
       display: flex;
       align-items: center;
       justify-content: center;
       -webkit-app-region: no-drag;
+
       .font {
         font-size: 19px;
         cursor: pointer;
@@ -479,12 +499,14 @@ const onDeleteAll = async () => {
         color: var(--font-color);
       }
     }
+
     .page-actions {
       display: flex;
       justify-content: flex-start;
       align-items: center;
       width: 100%;
     }
+
     .icon {
       -webkit-app-region: no-drag;
       cursor: pointer;

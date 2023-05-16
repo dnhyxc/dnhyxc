@@ -111,6 +111,8 @@ const cropperContent = ref<HTMLDivElement | null>(null);
 const cropper = ref<ReturnType<typeof VueCropper>>();
 // 缩放默认值
 const scaleNum = ref<number>(1);
+// 保存上传的fileInfo
+const fileInfo = ref<File | null>(null);
 
 // 截图器配置
 const option = reactive({
@@ -166,6 +168,7 @@ const beforeUpload: UploadProps['beforeUpload'] = (rawFile) => {
 
 // 自定义上传
 const onUpload = async (event: { file: Blob }) => {
+  fileInfo.value = event.file as File;
   // 不需要进行裁剪
   if (!props.needCropper) {
     const res = await uploadStore.uploadFile(event.file as File);
@@ -262,7 +265,9 @@ const onFinish = () => {
       shotVisible.value = false;
     };
     reader.readAsDataURL(blob);
-    const res = await uploadStore.uploadFile(blob);
+    // 将 Blob 转成 File
+    const file = new File([blob], fileInfo.value?.name || '', { type: fileInfo.value?.type }) as File;
+    const res = await uploadStore.uploadFile(file);
     if (res) {
       props.getUploadUrl?.(res);
       // 保存老封面图
@@ -271,6 +276,8 @@ const onFinish = () => {
       }
       // 更新父组件传递过来的filePath
       emit('update:filePath', res);
+      // 文件上传完毕之后，清除存储的文件信息
+      fileInfo.value = null;
     }
   });
 };
@@ -292,7 +299,6 @@ const onPreview = () => {
 
 // 清除图片
 const onDelImage = () => {
-  console.log(props.filePath, 'props.filePath', props.delete);
   // 清空父组件传递过来的filePath
   emit('update:filePath', '');
   // 删除上传的原图片

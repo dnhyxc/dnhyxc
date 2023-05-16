@@ -179,12 +179,6 @@ const visible = computed({
 const getUploadUrl = async (url: string) => {
   if (url && checkImgUrlType(url) === 'URL' && props.articleId) {
     const oldUrl = createStore.oldCoverImage;
-
-    console.log({
-      url,
-      oldUrl,
-    });
-
     await createStore.createArticle(
       {
         coverImage: url,
@@ -193,9 +187,12 @@ const getUploadUrl = async (url: string) => {
       undefined, // router
       false, // 是否需要提示
     );
-    // 删除上传的老的封面图
-    oldUrl && (await uploadStore.removeFile(oldUrl));
-    createStore.oldCoverImage = url;
+    // 如果文件不一致，则说明重新上传了新的图片，则需要删除老图片
+    if (url !== oldUrl) {
+      // 删除上传的老的封面图
+      oldUrl && (await uploadStore.removeFile(oldUrl));
+      createStore.oldCoverImage = url;
+    }
   }
 };
 
@@ -280,10 +277,14 @@ const onSaveDraft = () => {
         }
       }
 
-      .el-input__wrapper,
-      .el-input__inner {
+      .el-input__wrapper {
         color: var(--font-1);
         background-color: var(--input-bg-color);
+      }
+
+      .el-input__inner {
+        color: var(--font-1);
+        background-color: transparent;
       }
 
       .el-textarea__inner {

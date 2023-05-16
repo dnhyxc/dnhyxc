@@ -7,12 +7,13 @@ import PAGESVG from '@/assets/svg/page_icon.svg';
 import EMPTY from '@/assets/svg/empty.svg';
 import HEAD_IMG from '@/assets/images/face.jpg';
 import IMG1 from '@/assets/images/1.jpg';
-import IMG2 from '@/assets/images/2.jpg';
+import IMG2 from '@/assets/images/2.png';
 import IMG3 from '@/assets/images/3.jpg';
 import IMG4 from '@/assets/images/4.jpg';
+import CYWL from '@/assets/images/cywl.jpg';
 import * as API from '@/server/api';
 
-export { EMPTY, MINSVG, RESTORESVG, MAXSVG, CLOSESVG, HOMESVG, PAGESVG, HEAD_IMG, IMG1, IMG2, IMG3, IMG4 };
+export { EMPTY, MINSVG, RESTORESVG, MAXSVG, CLOSESVG, HOMESVG, PAGESVG, HEAD_IMG, IMG1, IMG2, IMG3, IMG4, CYWL };
 
 // 线上域名
 export const DOMAIN_URL = '43.143.27.249';
@@ -115,6 +116,10 @@ export const THEME_TYPES = [
 // 背景图片主题
 export const IMG_THEME_TYPES = [
   {
+    key: 'girl',
+    name: '古风',
+  },
+  {
     key: 'lateralFace',
     name: '侧脸',
   },
@@ -183,6 +188,15 @@ export const MENULIST = [
     path: '/create',
     icon: 'icon-fankuitianxie',
     fillIcon: 'icon-sign-review-full',
+    active: 'icon-xieboke',
+    show: false,
+  },
+  {
+    name: '留言一角',
+    key: 'interact',
+    path: '/interact',
+    icon: 'icon-b-chat',
+    fillIcon: 'icon-b-chat',
     active: 'icon-xieboke',
     show: false,
   },
@@ -323,7 +337,7 @@ export const SEARCH_TYPE = [
 export const NEED_HEAD_SEARCH = ['/home', '/classify', '/tag/list'];
 
 // 需要登陆权限的路由
-export const WITH_AUTH_ROUTES = ['/create', '/timeline', '/personal'];
+export const WITH_AUTH_ROUTES = ['/create', '/timeline', '/personal', '/interact'];
 
 // 需要清除上下页搜索条件的路由
 export const CLEAR_PARAMS_LIST_ROUTES = ['/home', '/seach'];
@@ -607,6 +621,9 @@ export const SHORTCUT_KEYS = {
   3: 'MINIMIZE_SHORTCUT',
   4: 'OUT_SHORTCUT',
 };
+
+// 开机自启store存储key
+export const OPEN_CONFIG = 'OPEN_CONFIG';
 
 // 系统设置关闭应用store存储key
 export const CLOSE_CONFIG = 'CLOSE_CONFIG';

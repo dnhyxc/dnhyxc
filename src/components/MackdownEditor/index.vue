@@ -71,7 +71,7 @@ interface IProps {
 
 const props = withDefaults(defineProps<IProps>(), {
   articleId: '',
-  height: 'calc(100vh - 75px)',
+  height: 'calc(100vh - 77px)',
   onPublish: () => {},
   onClear: () => {},
   onShowDraft: () => {},
@@ -131,6 +131,7 @@ const toolbar = reactive<Toolbar>({
 const onUploadImage = async (event: Event, insertImage: Function, files: File) => {
   // 拿到 files 之后上传到文件服务器，然后向编辑框中插入对应的内容
   const res = await uploadStore.uploadFile(files[0]);
+  // const res = await uploadStore.uploadSingleFile(files[0]);
   insertImage({
     url: res,
     desc: files[0]?.name,
@@ -195,7 +196,7 @@ const onCopyCodeSuccess = (value: string) => {
     }
 
     .v-md-editor__menu {
-      background-color: var(--fff);
+      background-color: var(--pop-menu-color);
       border: 1px solid var(--card-border);
     }
 

@@ -19,7 +19,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watchEffect, computed } from 'vue';
+import { ref, onMounted, computed, watch } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { SETTING_MENU } from '@/constant';
 import { loginStore } from '@/store';
@@ -36,16 +36,26 @@ const activeMenu = ref<MenuListParams>(menuList.value[0]);
 const router = useRouter();
 const route = useRoute();
 
-watchEffect(() => {
-  // 判断是否是个人资料、账号设置、主题设置、系统设置页
-  if (SETTING_MENU.find((i) => i.path === route.path)) {
-    router.push(activeMenu.value.path);
+onMounted(() => {
+  if (loginStore.userInfo?.userId) {
+    router.push('/profile');
+  } else {
+    router.push('/system');
   }
 });
+
+watch(
+  () => route.path,
+  (newVal) => {
+    const currentMenu = SETTING_MENU.find((i) => i.path === newVal);
+    activeMenu.value = currentMenu!;
+  },
+);
 
 // 点击菜单
 const onClick = (menu: MenuListParams) => {
   activeMenu.value = menu;
+  router.push(menu.path);
 };
 </script>
 
@@ -105,7 +115,7 @@ const onClick = (menu: MenuListParams) => {
 
   .content {
     box-sizing: border-box;
-    height: calc(100vh - 112px);
+    height: calc(100vh - 110px);
     border-left: 1px solid var(--card-border);
     border-right: 1px solid var(--card-border);
     border-bottom: 1px solid var(--card-border);

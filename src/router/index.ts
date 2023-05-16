@@ -72,6 +72,16 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import('@/views/create/index.vue'),
       },
       {
+        path: '/interact',
+        name: 'interact',
+        meta: {
+          title: '留言一角',
+          keepAlive: true,
+          auth: true,
+        },
+        component: () => import('@/views/interact/index.vue'),
+      },
+      {
         path: '/author',
         name: 'author',
         meta: {
@@ -218,16 +228,23 @@ router.beforeEach(async (to, from, next) => {
   commonStore.showSearch = false;
   // 清除选中卡片的状态，关闭右键菜单
   commonStore.clearContentmenuInfo();
-
+  // 路由切换时，隐藏消息弹窗
   eventBus.emit('hide-msg-popover', false);
-
+  // 进入到登录页时，保存从哪进入的路由路径
   if (to.path === '/login') {
     commonStore.setBackPath(from.path);
   }
-
+  // 控制设置跳转，在没登录的情况，访问我的主页和账号设置，需要重定向到系统设置
+  if ((to.path === '/profile' || to.path === '/account') && !locGetItem('token')) {
+    router.push('/system');
+  }
+  // 如果已经登录，点击返回，不再退回到登录页
+  if (locGetItem('token') && to.path === '/login') {
+    router.push(from.path);
+  }
   if (WITH_AUTH_ROUTES.includes(to.path) && !locGetItem('token')) {
     ElMessage({
-      message: '请先登录后再操作哦！',
+      message: '请先登录后再访问哦！',
       type: 'warning',
       offset: 80,
       duration: 2000,

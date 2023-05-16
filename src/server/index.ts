@@ -9,6 +9,7 @@ import {
   CollectParams,
   UserInfoParams,
   AdvancedSearchParams,
+  BarrageItem,
 } from '@/typings/common';
 import { loginStore } from '@/store';
 import { getStoreUserInfo } from '@/utils';
@@ -345,6 +346,24 @@ export const deleteMessage = async (id: string) => {
 
 // 删除全部消息
 export const deleteAllMessage = async () => {
-  const res = await post(API.DELETE_ALL_MESSAGE, copeParams({}));
+  const res = await post(API.CREATE_INTERACT, copeParams({}));
+  return res;
+};
+
+// 创建留言
+export const createInteract = async (params: BarrageItem) => {
+  const res = await post(API.CREATE_INTERACT, copeParams(params));
+  return res;
+};
+
+// 获取留言列表
+export const getInteracts = async () => {
+  const res = await post(API.GET_INTERACTS, copeParams({}));
+  return res;
+};
+
+// 分页获取留言列表
+export const getInteractList = async (params: { pageNo: number; pageSize: number }) => {
+  const res = await post(API.GET_INTERACT_LIST, copeParams(params));
   return res;
 };

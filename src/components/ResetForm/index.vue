@@ -123,10 +123,14 @@ const onEnter = () => {
   width: 500px;
 
   :deep {
-    .el-input__wrapper,
-    .el-input__inner {
+    .el-input__wrapper {
       color: var(--font-2);
       background-color: var(--input-bg-color);
+    }
+
+    .el-input__inner {
+      color: var(--font-2);
+      background-color: transparent;
     }
   }
 

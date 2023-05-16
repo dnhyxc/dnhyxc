@@ -292,7 +292,6 @@ const onPreviewImage = (e: Event) => {
   const target = e.target as HTMLImageElement;
   if (target.id === '__COMMENT_IMG__') {
     previewVisible.value = true;
-    console.log(target.src, 'essss');
     filePath.value = target.src;
   }
 };

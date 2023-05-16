@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import * as Service from '@/server';
-import { normalizeResult } from '@/utils';
+import { normalizeResult, md5HashName } from '@/utils';
 import { useCheckUserId } from '@/hooks';
 
 interface IProps {
@@ -19,7 +19,13 @@ export const useUploadStore = defineStore('upload', {
       // 检验是否有userId，如果没有禁止发送请求
       if (!useCheckUserId()) return;
       const formData = new FormData();
-      formData.append('file', file);
+      // 根据文件资源生成 MD5 hash
+      const fileName = (await md5HashName(file)) as string;
+      const findIndex = file?.name?.lastIndexOf('.');
+      const ext = file.name.slice(findIndex + 1);
+      // 修改文件名称
+      const newFile = new File([file], fileName + '.' + ext, { type: file.type });
+      formData.append('file', newFile);
       const res = normalizeResult<{ filePath: string }>(await Service.uploadFile(formData));
       if (res.success) {
         this.visible = true;
