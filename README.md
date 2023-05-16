@@ -19,3 +19,17 @@ electron_mirror=https://cdn.npm.taobao.org/dist/electron/
 - openDirectory：允许选择文件夹。
 
 - res.filePaths[0]：选择的文件夹路径。
+
+### 复制 upload 资源
+
+#### 将 upload 资源复制到 server 中：
+
+```json
+cp -r /usr/local/server/src/upload /usr/local/   // 复制到local
+```
+
+#### 将 upload 资源从 server 复制到 src 中：
+
+```json
+cp -r /usr/local/upload /usr/local/server/src/  // 从local复制到src
+```

@@ -5,7 +5,7 @@
  * index.vue
 -->
 <template>
-  <div class="image-wrap-style" @click="onClickImg">
+  <div class="image-wrap-style" @click.stop="onClickImg">
     <img v-if="url" ref="imgRef" :src="loaded ? loadUrl : transitionImg" alt="" class="image-item" @error="onError" />
     <div v-else class="loading-img">
       <div class="loading">loading...</div>

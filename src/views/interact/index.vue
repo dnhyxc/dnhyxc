@@ -20,11 +20,13 @@
         style="height: 100%; width: 100%"
       >
         <template #dm="{ danmu }">
-          <div
-            :class="`item ${danmu.userId === loginStore.userInfo?.userId && 'active'}`"
-            @click.stop="toPersonal(danmu.userId!)"
-          >
-            <Image :url="danmu.avatar || HEAD_IMG" :transition-img="HEAD_IMG" class="avatar" />
+          <div :class="`item ${danmu.userId === loginStore.userInfo?.userId && 'active'}`">
+            <Image
+              :url="danmu.avatar || HEAD_IMG"
+              :transition-img="HEAD_IMG"
+              class="avatar"
+              :on-click="() => toPersonal(danmu.userId!)"
+            />
             <span>{{ danmu.username }}：{{ danmu.comment }}</span>
           </div>
         </template>
@@ -51,9 +53,13 @@
             v-for="(danmu, index) in interactStore.interactList"
             :key="index"
             :class="`item ${danmu.userId === loginStore.userInfo?.userId && 'active'}`"
-            @click.stop="toPersonal(danmu.userId!)"
           >
-            <Image :url="danmu.avatar || HEAD_IMG" :transition-img="HEAD_IMG" class="avatar" />
+            <Image
+              :url="danmu.avatar || HEAD_IMG"
+              :transition-img="HEAD_IMG"
+              class="avatar"
+              :on-click="() => toPersonal(danmu.userId!)"
+            />
             <span class="comment">{{ danmu.username }}：{{ danmu.comment }}</span>
           </div>
         </div>
