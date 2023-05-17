@@ -64,11 +64,14 @@
         v-if="loginStore.userInfo?.userId"
         v-model:visible="messageStore.visible"
         placement="bottom"
-        title="我的消息列表"
         :width="300"
         trigger="click"
         popper-class="msg-popover"
       >
+        <div class="title-popover">
+          <span class="title-text">我的消息列表</span>
+          <span v-if="messageStore.msgList?.length" class="del-all" @click="onDeleteAll">全部删除</span>
+        </div>
         <Messages />
         <template #reference>
           <div class="bell">
@@ -316,6 +319,11 @@ const onEnter = async (e: Event) => {
     commonStore.keyword = value;
   }
 };
+
+// 删除全部消息
+const onDeleteAll = async () => {
+  await messageStore.deleteAllMessage();
+};
 </script>
 
 <style scoped lang="less">
@@ -554,5 +562,28 @@ const onEnter = async (e: Event) => {
 
 .mac-header-wrap {
   padding: 10 12px;
+}
+
+.title-popover {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--font-1);
+  padding: 0 3px 10px;
+  font-size: 16px;
+  z-index: 99;
+
+  .del-all {
+    font-size: 14px;
+    color: var(--theme-blue);
+    cursor: pointer;
+    .clickNoSelectText();
+    z-index: 99;
+
+    &:hover {
+      color: var(--active-color);
+    }
+  }
 }
 </style>

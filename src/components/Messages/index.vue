@@ -6,7 +6,6 @@
 -->
 <template>
   <Loading :loading="messageStore.loading" class="message-wrap">
-    <span v-if="messageStore.msgList?.length" class="delAll" @click="onDeleteAll">全部删除</span>
     <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
       <div
         v-if="isMounted"
@@ -113,11 +112,6 @@ const onDelete = async (id: string) => {
   onScrollTo(scrollTop.value);
 };
 
-// 删除全部消息
-const onDeleteAll = async () => {
-  await messageStore.deleteAllMessage();
-};
-
 // 前往操作人主页
 const toPersonal = (userId: string) => {
   router.push(`/personal?authorId=${userId}`);
@@ -151,20 +145,6 @@ const onScrollTo = (to?: number) => {
   flex-direction: column;
   height: 300px;
   overflow: auto;
-
-  .delAll {
-    position: absolute;
-    top: 10px;
-    right: 13px;
-    color: var(--theme-blue);
-    cursor: pointer;
-    .clickNoSelectText();
-    z-index: 99;
-
-    &:hover {
-      color: var(--active-color);
-    }
-  }
 
   .list-wrap {
     display: flex;
