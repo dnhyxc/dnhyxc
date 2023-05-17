@@ -346,7 +346,7 @@ export const deleteMessage = async (id: string) => {
 
 // 删除全部消息
 export const deleteAllMessage = async () => {
-  const res = await post(API.CREATE_INTERACT, copeParams({}));
+  const res = await post(API.DELETE_ALL_MESSAGE, copeParams({}));
   return res;
 };
 
