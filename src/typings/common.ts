@@ -370,6 +370,7 @@ export interface BarrageItem {
   userId?: string;
   username: string;
   comment: string;
+  id?: string;
 }
 
 export interface InteractListRes {

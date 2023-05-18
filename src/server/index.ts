@@ -367,3 +367,9 @@ export const getInteractList = async (params: { pageNo: number; pageSize: number
   const res = await post(API.GET_INTERACT_LIST, copeParams(params));
   return res;
 };
+
+// 移除留言
+export const removeInteracts = async (ids: string | string[]) => {
+  const res = await post(API.REMOVE_INTERACTS, copeParams({ ids }));
+  return res;
+};

@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import { ElMessage } from 'element-plus';
 import { BarrageItem, InteractListRes } from '@/typings/common';
 import * as Service from '@/server';
-import { normalizeResult } from '@/utils';
+import { normalizeResult, Message } from '@/utils';
 import { loginStore } from '@/store';
 import { useCheckUserId } from '@/hooks';
 
@@ -93,6 +93,28 @@ export const useInteractStore = defineStore('interact', {
     // 添加留言
     addInteract(params: BarrageItem) {
       this.interactList = [params, ...this.interactList];
+    },
+
+    // 删除留言
+    async delInteract(id: string) {
+      Message('', '确定要删除该留言吗？').then(async () => {
+        const res = normalizeResult<InteractListRes>(await Service.removeInteracts(id));
+        if (res.success) {
+          this.interactList = this.interactList.filter((i) => i.id !== id);
+          this.barrageList = this.barrageList.filter((i) => i.id !== id);
+          ElMessage({
+            message: res.message,
+            type: 'success',
+            offset: 80,
+          });
+        } else {
+          ElMessage({
+            message: res.message,
+            type: 'error',
+            offset: 80,
+          });
+        }
+      });
     },
 
     // 清除文章列表数据

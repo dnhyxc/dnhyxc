@@ -7,30 +7,7 @@
 <template>
   <Loading :loading="interactStore.interactLoading" class="barrage-wrap">
     <div class="barrage">
-      <vue-danmaku
-        :key="danmuKey"
-        ref="danmakuRef"
-        v-model:danmus="interactStore.barrageList"
-        use-slot
-        loop
-        :speeds="60"
-        :top="10"
-        :right="0"
-        is-suspend
-        style="height: 100%; width: 100%"
-      >
-        <template #dm="{ danmu }">
-          <div :class="`item ${danmu.userId === loginStore.userInfo?.userId && 'active'}`">
-            <Image
-              :url="danmu.avatar || HEAD_IMG"
-              :transition-img="HEAD_IMG"
-              class="avatar"
-              :on-click="() => toPersonal(danmu.userId!)"
-            />
-            <span>{{ danmu.username }}：{{ danmu.comment }}</span>
-          </div>
-        </template>
-      </vue-danmaku>
+      <Barrage ref="barrageRef" />
     </div>
     <Loading class="comments-wrap" :loading="interactStore.loading && interactStore.pageNo > 1">
       <div class="title">
@@ -50,8 +27,8 @@
           class="comment-list"
         >
           <div
-            v-for="(danmu, index) in interactStore.interactList"
-            :key="index"
+            v-for="danmu in interactStore.interactList"
+            :key="danmu.id"
             :class="`item ${danmu.userId === loginStore.userInfo?.userId && 'active'}`"
           >
             <Image
@@ -60,7 +37,11 @@
               class="avatar"
               :on-click="() => toPersonal(danmu.userId!)"
             />
-            <span class="comment">{{ danmu.username }}：{{ danmu.comment }}</span>
+            <span class="comment">
+              <span class="username" @click="() => toPersonal(danmu.userId!)">{{ danmu.username }}：</span>
+              {{ danmu.comment }}
+              <i v-if="loginStore.userInfo?.auth === 1" class="iconfont icon-shanchu" @click="onDelete(danmu)" />
+            </span>
           </div>
         </div>
         <div v-if="noMore" class="no-more">没有更多了～～～</div>
@@ -86,7 +67,7 @@ import { onMounted, onUnmounted, ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import vueDanmaku from 'vue3-danmaku';
 import { loginStore, interactStore } from '@/store';
-import { scrollTo } from '@/utils';
+import { scrollTo, uuid } from '@/utils';
 import { useScroller } from '@/hooks';
 import { HEAD_IMG } from '@/constant';
 import { BarrageItem } from '@/typings/common';
@@ -94,10 +75,9 @@ import { BarrageItem } from '@/typings/common';
 const router = useRouter();
 const { scrollRef, scrollTop } = useScroller();
 
-const danmakuRef = ref<typeof vueDanmaku | null>(null);
+const barrageRef = ref<typeof vueDanmaku | null>(null);
 const isMounted = ref<boolean>(false);
 const keyword = ref<string>('');
-const danmuKey = ref<number>();
 const noMore = computed(() => {
   const { interactList, total } = interactStore;
   return interactList.length >= total && interactList.length;
@@ -126,7 +106,7 @@ const onFetchData = async () => {
 
 // 监听页面窗口大小变化，重新计算弹幕区域大小弹幕
 const onResize = () => {
-  danmakuRef.value?.resize();
+  barrageRef.value?.danmakuRef?.resize();
 };
 
 // 添加弹幕
@@ -139,9 +119,10 @@ const onEnter = async (e: InputEvent) => {
     username: loginStore.userInfo?.username,
     userId: loginStore.userInfo?.userId,
     comment: target.value,
+    id: uuid(),
   };
   // 将新增的弹幕插入弹幕组件中
-  danmakuRef.value?.add(params);
+  barrageRef.value?.danmakuRef?.add(params);
   // 调用创建留言的接口
   await interactStore.createInteract(target.value);
   target.value = '';
@@ -152,6 +133,11 @@ const onEnter = async (e: InputEvent) => {
 // 去个人主页
 const toPersonal = (authorId: string) => {
   router.push(`/personal?authorId=${authorId}`);
+};
+
+// 删除留言
+const onDelete = (item: BarrageItem) => {
+  interactStore.delInteract(item.id!);
 };
 
 // 置顶
@@ -177,33 +163,6 @@ const onScrollTo = () => {
     padding: 18px 10px 10px;
     box-shadow: 0 0 8px 0 var(--shadow-mack);
     background-color: var(--e-form-bg-color);
-
-    .item {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 16px;
-      cursor: pointer;
-      color: var(--font-1);
-    }
-
-    .active {
-      color: var(--h-color);
-    }
-  }
-
-  .avatar {
-    width: 28px;
-    height: 28px;
-    min-width: 28px;
-    margin-right: 5px;
-    cursor: pointer;
-
-    :deep {
-      .image-item {
-        border-radius: 28px;
-      }
-    }
   }
 
   .comments-wrap {
@@ -249,12 +208,55 @@ const onScrollTo = () => {
         font-size: 14px;
 
         .comment {
+          position: relative;
           flex: 1;
           background-color: var(--layer-2-2);
           padding: 5px;
           border-radius: 5px;
           word-break: break-all;
+
+          .username {
+            color: var(--theme-blue);
+            cursor: pointer;
+          }
+
+          .icon-shanchu {
+            position: absolute;
+            right: 1px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 25px;
+            height: 25px;
+            border-radius: 5px;
+            line-height: 25px;
+            text-align: center;
+            color: @font-danger;
+            font-size: 18px;
+            background-color: var(--to-top-bg-color);
+            box-shadow: 0 0 3px var(--theme-blue);
+            cursor: pointer;
+            display: none;
+          }
+
+          &:hover {
+            .icon-shanchu {
+              display: block;
+            }
+          }
+        }
+
+        .avatar {
+          width: 28px;
+          height: 28px;
+          min-width: 28px;
+          margin-right: 5px;
           cursor: pointer;
+
+          :deep {
+            .image-item {
+              border-radius: 28px;
+            }
+          }
         }
 
         &:last-child {

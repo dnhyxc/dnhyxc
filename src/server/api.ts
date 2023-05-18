@@ -131,3 +131,6 @@ export const GET_INTERACTS = '/api/getInteracts';
 
 // 分页获取留言列表
 export const GET_INTERACT_LIST = '/api/getInteractList';
+
+// 移除留言
+export const REMOVE_INTERACTS = '/api/removeInteracts';

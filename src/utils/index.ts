@@ -533,6 +533,7 @@ export const addWatermark = async ({
   return imgUrl;
 };
 
+// 根据文件生成唯一hash
 export const md5HashName = (file: File) => {
   return new Promise((resolve, reject) => {
     // 创建FileReader实例
@@ -550,5 +551,14 @@ export const md5HashName = (file: File) => {
     };
     // 读取过程中出错也直接报错
     fileReader.onerror = () => reject(new Error('读取出错了'));
+  });
+};
+
+// 生成唯一id
+export const uuid = () => {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+    const r = (Math.random() * 16) | 0;
+    const v = c === 'x' ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
   });
 };
