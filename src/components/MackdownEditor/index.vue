@@ -157,6 +157,7 @@ const onCopyCodeSuccess = (value: string) => {
 
     .v-md-editor__right-area {
       background-color: var(--fff);
+      border-radius: 5px;
     }
 
     .v-md-editor__left-area {

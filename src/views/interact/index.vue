@@ -37,11 +37,17 @@
               class="avatar"
               :on-click="() => toPersonal(danmu.userId!)"
             />
-            <span class="comment">
-              <span class="username" @click="() => toPersonal(danmu.userId!)">{{ danmu.username }}：</span>
-              {{ danmu.comment }}
-              <i v-if="loginStore.userInfo?.auth === 1" class="iconfont icon-shanchu" @click="onDelete(danmu)" />
-            </span>
+            <div class="comment">
+              <div class="user-info" @click="() => toPersonal(danmu.userId!)">
+                <span class="username">
+                  {{ danmu.username }}
+                  <span v-if="authorStore.userInfo?.userId === danmu.userId" class="auth">(博主): </span>
+                </span>
+                <span class="create-time">{{ formatDate(danmu.createTime!, 'YYYY/MM/DD') }}</span>
+                <i v-if="loginStore.userInfo?.auth === 1" class="iconfont icon-shanchu" @click="onDelete(danmu)" />
+              </div>
+              <div class="comment-content">{{ danmu.comment }}</div>
+            </div>
           </div>
         </div>
         <div v-if="noMore" class="no-more">没有更多了～～～</div>
@@ -66,8 +72,8 @@
 import { onMounted, onUnmounted, ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import vueDanmaku from 'vue3-danmaku';
-import { loginStore, interactStore } from '@/store';
-import { scrollTo, uuid } from '@/utils';
+import { loginStore, interactStore, authorStore } from '@/store';
+import { scrollTo, uuid, formatDate } from '@/utils';
 import { useScroller } from '@/hooks';
 import { HEAD_IMG } from '@/constant';
 import { BarrageItem } from '@/typings/common';
@@ -92,6 +98,8 @@ onMounted(async () => {
   window.addEventListener('resize', onResize, false);
   await interactStore.getInteracts();
   onFetchData();
+  // 获取博主信息
+  await authorStore.getUserInfo();
 });
 
 onUnmounted(() => {
@@ -120,6 +128,7 @@ const onEnter = async (e: InputEvent) => {
     userId: loginStore.userInfo?.userId,
     comment: target.value,
     id: uuid(),
+    createTime: new Date().valueOf(),
   };
   // 将新增的弹幕插入弹幕组件中
   barrageRef.value?.danmakuRef?.add(params);
@@ -162,7 +171,7 @@ const onScrollTo = () => {
     border-radius: 5px;
     padding: 18px 10px 10px;
     box-shadow: 0 0 8px 0 var(--shadow-mack);
-    background-color: var(--e-form-bg-color);
+    background-color: var(--pre-hover-bg);
   }
 
   .comments-wrap {
@@ -171,7 +180,7 @@ const onScrollTo = () => {
     max-width: 260px;
     width: 30%;
     box-shadow: 0 0 8px 0 var(--shadow-mack);
-    background-color: var(--e-form-bg-color);
+    background-color: var(--pre-hover-bg);
     margin-left: 10px;
     border-radius: 5px;
 
@@ -208,6 +217,8 @@ const onScrollTo = () => {
         font-size: 14px;
 
         .comment {
+          display: flex;
+          flex-direction: column;
           position: relative;
           flex: 1;
           background-color: var(--layer-2-2);
@@ -215,9 +226,23 @@ const onScrollTo = () => {
           border-radius: 5px;
           word-break: break-all;
 
-          .username {
+          .user-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
             color: var(--theme-blue);
             cursor: pointer;
+
+            .username {
+              font-size: 13px;
+              .ellipsisMore(1);
+            }
+
+            .create-time {
+              font-size: 13px;
+              color: var(--font-5);
+            }
           }
 
           .icon-shanchu {

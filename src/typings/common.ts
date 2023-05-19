@@ -371,6 +371,7 @@ export interface BarrageItem {
   username: string;
   comment: string;
   id?: string;
+  createTime?: number;
 }
 
 export interface InteractListRes {

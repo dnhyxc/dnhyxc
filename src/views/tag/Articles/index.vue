@@ -310,7 +310,7 @@ const likeListArticle = (id: string, data?: ArticleItem) => {
         .author-line-card {
           width: calc(50% - 10px);
           padding: 10px;
-          box-shadow: 0 0 5px var(--shadow-color);
+          box-shadow: 0 0 5px var(--shadow-mack);
           border-radius: 5px;
           margin: 5px;
 

@@ -24,7 +24,10 @@
           class="avatar"
           :on-click="() => toPersonal(danmu.userId!)"
         />
-        <span>{{ danmu.comment }}</span>
+        <span>
+          <span v-if="authorStore.userInfo?.userId === danmu.userId" class="auth">(博主): </span>
+          {{ danmu.comment }}
+        </span>
       </div>
     </template>
   </vue-danmaku>
@@ -34,7 +37,7 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import vueDanmaku from 'vue3-danmaku';
-import { loginStore, interactStore } from '@/store';
+import { loginStore, interactStore, authorStore } from '@/store';
 import { HEAD_IMG } from '@/constant';
 
 interface IProps {
@@ -97,5 +100,9 @@ defineExpose({
       border-radius: 28px;
     }
   }
+}
+
+.auth {
+  color: var(--theme-blue);
 }
 </style>

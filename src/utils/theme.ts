@@ -344,7 +344,7 @@ const island = {
 const girl = {
   ...imageStyles,
   '--bg-image-url': `url(${CYWL})`,
-  '--backdrop-filter': 'blur(1px)',
+  '--backdrop-filter': 'blur(0px)',
   '--font-1': '#000',
   '--font-2': '#000',
   '--font-3': '#000',
@@ -360,11 +360,12 @@ const girl = {
   '--bg-lg-color1': 'rgba(245, 250, 248, 0.25)',
   '--bg-lg-color2': 'rgba(255, 255, 242, 0.85)',
   // 时间轴背景颜色
-  '--timeline-lg-color1': 'rgba(245, 250, 248, 0.25)',
-  '--timeline-lg-color2': 'rgba(255, 255, 242, 0.85)',
+  '--timeline-lg-color1': 'rgba(255, 255, 242, 0.85)',
+  '--timeline-lg-color2': 'rgba(245, 250, 248, 0.25)',
   // 各组件阴影颜色
   '--shadow-color': 'rgba(255, 255, 242, 0.5)',
-  '--shadow-mack': 'rgba(255, 255, 242, 0.85)',
+  '--shadow-mack': 'rgba(205, 205, 205, 0.85)',
+  // '--shadow-mack': 'rgba(255, 255, 242, 0.85)',
   '--fff': 'rgba(255, 255, 242, 0.5)',
   '--e-edit-color': '#000',
   '--layer-2-2': 'rgba(255, 255, 242, 0.5)',

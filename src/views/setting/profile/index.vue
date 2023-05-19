@@ -308,7 +308,6 @@ const onEnter = () => {
     width: 65%;
     border-radius: 5px;
     box-sizing: border-box;
-    background-color: var(--e-form-bg-color);
 
     .action-list {
       :deep {

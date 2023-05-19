@@ -64,8 +64,10 @@ const onClick = (menu: MenuListParams) => {
 
 .setting-wrap {
   box-sizing: border-box;
-  height: calc(100vh - 72px);
+  height: calc(100vh - 76px);
   overflow: hidden;
+  border-radius: 5px;
+  background-color: var(--pre-hover-bg);
 
   .menu {
     display: flex;

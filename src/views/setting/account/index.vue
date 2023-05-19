@@ -252,7 +252,6 @@ const onCancelResetPwd = (Form: FormData<FormInstance>) => {
     width: 600px;
     padding: 20px 5px 25px 20px;
     border-bottom: 1px solid var(--card-border);
-    background-color: var(--e-form-bg-color);
 
     &:first-child {
       border-top-left-radius: 5px;

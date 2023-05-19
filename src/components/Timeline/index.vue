@@ -48,7 +48,7 @@ const onClickCard = (id: string) => {
 
 .timeline {
   position: relative;
-  padding: 20px 0 0;
+  padding: 5px 0 0;
 
   .timeline-item {
     box-sizing: border-box;
@@ -80,7 +80,7 @@ const onClickCard = (id: string) => {
     }
 
     &:nth-child(odd) {
-      padding: 0 50px 30px 20px;
+      padding: 0 35px 30px 5px;
 
       &::after {
         position: absolute;
@@ -89,7 +89,7 @@ const onClickCard = (id: string) => {
         content: '';
         width: 0;
         height: 100%;
-        border-left: 2px solid var(--card-border);
+        border-left: 1px solid var(--card-border);
       }
 
       &:last-child {
@@ -141,7 +141,7 @@ const onClickCard = (id: string) => {
     }
 
     &:nth-child(even) {
-      padding: 0 20px 30px 50px;
+      padding: 0 5px 30px 35px;
       margin-left: 50%;
 
       &::before {
@@ -204,13 +204,13 @@ const onClickCard = (id: string) => {
 
     &:nth-child(odd) {
       &:last-child {
-        padding: 0 50px 0 20px;
+        padding: 0 35px 0 5px;
       }
     }
 
     &:nth-child(even) {
       &:last-child {
-        padding: 0 20px 0 50px;
+        padding: 0 5px 0 35px;
       }
     }
   }

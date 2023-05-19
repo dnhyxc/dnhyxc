@@ -76,6 +76,7 @@ const onScrollTo = () => {
 .timeline-wrap {
   width: 100%;
   height: 100%;
+  border-radius: 5px;
 
   :deep {
     .el-timeline {
@@ -91,7 +92,7 @@ const onScrollTo = () => {
   .no-more {
     text-align: center;
     color: var(--font-4);
-    margin: 15px 0 0;
+    margin: 16px 0 0;
   }
 }
 </style>

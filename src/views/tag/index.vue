@@ -76,7 +76,7 @@ const onCheckTag = (tag: string) => {
     flex: 1;
     box-shadow: 0 0 8px 0 var(--shadow-mack);
     border-radius: 5px;
-    background-color: var(--e-form-bg-color);
+    background-color: var(--pre-hover-bg);
   }
 
   .tag-list {
@@ -88,7 +88,7 @@ const onCheckTag = (tag: string) => {
     width: 220px;
     box-shadow: 0 0 8px 0 var(--shadow-mack);
     border-radius: 5px;
-    background-color: var(--e-form-bg-color);
+    background-color: var(--pre-hover-bg);
 
     :deep {
       .scrollbar-wrapper {

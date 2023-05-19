@@ -259,7 +259,6 @@ const handleKeydown = (e: KeyboardEvent) => {
     padding: 20px;
     width: 80%;
     color: var(--font-1);
-    background-color: var(--e-form-bg-color);
 
     .label {
       font-size: 16px;
