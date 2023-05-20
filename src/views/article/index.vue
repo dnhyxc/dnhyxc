@@ -259,7 +259,6 @@ const onScrollTo = (height?: number) => {
   flex-direction: column;
   box-sizing: border-box;
   height: 100%;
-  background-color: var(--e-form-bg-color);
   background-image: var(--bg-image-url);
   background-position: var(--bg-position);
   background-repeat: var(--bg-repeat);
@@ -397,13 +396,7 @@ const onScrollTo = (height?: number) => {
       .pageHeight();
       border-radius: 5px;
       box-shadow: 0 0 8px 0 var(--shadow-mack);
-      background-color: var(--e-form-bg-color);
-      transition: background-color 0.35s ease-in-out;
-
-      &:hover {
-        background-color: var(--pre-hover-bg);
-        transition: background-color 0.35s ease-in-out;
-      }
+      background-color: var(--pre-hover-bg);
 
       :deep {
         .el-scrollbar {
@@ -438,7 +431,7 @@ const onScrollTo = (height?: number) => {
       .toc-list {
         box-sizing: border-box;
         flex: 1;
-        background-color: var(--e-form-bg-color);
+        background-color: var(--pre-hover-bg);
       }
 
       & > :last-child {

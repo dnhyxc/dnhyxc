@@ -18,6 +18,9 @@ export { EMPTY, MINSVG, RESTORESVG, MAXSVG, CLOSESVG, HOMESVG, PAGESVG, HEAD_IMG
 // 线上域名
 export const DOMAIN_URL = '43.143.27.249';
 
+// web端域名
+export const WEB_DOMAIN_URL = 'http://43.143.27.249:9216';
+
 // 表情资源路径域名
 export const EMOJI_HOST = `http://${location.hostname === DOMAIN_URL ? DOMAIN_URL : '127.0.0.1:9112'}/image/`;
 

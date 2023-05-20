@@ -122,7 +122,7 @@ const onJump = (name: string, type: string) => {
       margin-bottom: 10px;
       border-radius: 5px;
       box-shadow: 0 0 8px 0 var(--shadow-mack);
-      background-color: var(--e-form-bg-color);
+      background-color: var(--pre-hover-bg);
 
       &:hover {
         background-image: linear-gradient(to bottom, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);

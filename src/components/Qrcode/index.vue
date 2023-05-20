@@ -14,13 +14,16 @@
 <script setup lang="ts">
 import { ref, onMounted, nextTick } from 'vue';
 import QRCode from 'qrcode';
+import { WEB_DOMAIN_URL } from '@/constant';
 
 const qrcodeRef = ref<HTMLDivElement | null>(null);
+
+const path = window.location.href.replace(window.origin, WEB_DOMAIN_URL);
 
 onMounted(() => {
   nextTick(() => {
     QRCode.toCanvas(
-      window.location.href,
+      path,
       {
         errorCorrectionLevel: 'H',
         margin: 1,

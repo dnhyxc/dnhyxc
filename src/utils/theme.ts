@@ -17,8 +17,6 @@ const removeStyle = {
   '--bg-image-url': 'none',
   // 富文本编辑器字体颜色
   '--e-edit-color': 'auto',
-  // 系统设置表单背景颜色
-  '--e-form-bg-color': 'initial',
   // 图片背景兼容字体颜色
   '--font-color': '',
   // 详情代码块背景颜色
@@ -88,8 +86,6 @@ const imageStyles = {
   '--backdrop-filter': 'blur(2px)',
   // 富文本编辑器字体颜色
   '--e-edit-color': '#fff',
-  // 系统设置表单背景颜色
-  '--e-form-bg-color': 'rgba(0, 0, 0, 0.15)',
   // 图片背景兼容字体颜色
   '--font-color': '#000',
   // 详情代码块背景颜色
@@ -301,8 +297,6 @@ const lateralFace = {
   ...imageStyles,
   // 字体颜色
   '--bg-image-url': `url(${HEAD_IMG})`,
-  // 系统设置表单背景颜色
-  '--e-form-bg-color': 'initial',
   // 图片背景兼容字体颜色
   '--font-color': '#fff',
   '--pre-bg-color': 'rgba(0, 0, 0, 0.3)',
@@ -351,8 +345,6 @@ const girl = {
   '--font-4': '#000',
   '--font-5': '#333',
   '--font-6': '#333',
-  // 系统设置表单背景颜色
-  '--e-form-bg-color': 'initial',
   // 文章预览背景图片
   '--pre-hover-bg': 'rgba(255, 255, 242, 0.5)',
   '--pre-bg-color': 'rgb(255, 255, 242, 0.65)',
@@ -384,6 +376,8 @@ const girl = {
   '--p-code-color': '#0f6600',
   // 行内 code 背景颜色
   '--p-code-bg-color': 'rgba(255, 255, 242, 0.5)',
+  // loading 背景颜色
+  '--loading-color': 'rgba(255, 255, 255, 0.5)',
 };
 
 const themeTypes = {

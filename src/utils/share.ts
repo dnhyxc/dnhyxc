@@ -1,4 +1,5 @@
 import { shell } from 'electron';
+import { WEB_DOMAIN_URL } from '@/constant';
 
 /**
  * 分享新浪微博
@@ -8,8 +9,9 @@ import { shell } from 'electron';
  * @return {[type]}       [description]
  */
 export const shareSinaWeiBo = (title: string, pic?: string, url?: string) => {
+  const path = window.location.href.replace(window.origin, WEB_DOMAIN_URL);
   const param = {
-    url: url || window.location.href,
+    url: url || path,
     type: '3',
     count: '1', //  是否显示分享数，1显示(可选)
     appkey: '', //  您申请的应用appkey,显示分享来源(可选)
@@ -29,8 +31,9 @@ export const shareSinaWeiBo = (title: string, pic?: string, url?: string) => {
 
 // 分享到QQ空间
 export const shareQZon = (title: string, pic?: string, url?: string) => {
+  const path = window.location.href.replace(window.origin, WEB_DOMAIN_URL);
   const param = {
-    url: url || window.location.href,
+    url: url || path,
     desc: '',
     title: title || '',
     summary: '',
@@ -55,8 +58,9 @@ export const shareQZon = (title: string, pic?: string, url?: string) => {
  * @return {[type]}       [description]
  */
 export const shareQQ = (title: string, pic?: string, url?: string) => {
+  const path = window.location.href.replace(window.origin, WEB_DOMAIN_URL);
   const param = {
-    url: url || window.location.href,
+    url: url || path,
     desc: '', // 分享理由
     title: title || '', // 分享标题(可选)
     summary: '', // 分享描述(可选)

@@ -34,6 +34,7 @@ defineProps<IProps>();
 :deep {
   .el-loading-mask {
     background-color: var(--loading-color) !important;
+    border-radius: 5px;
   }
 }
 </style>

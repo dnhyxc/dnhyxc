@@ -159,7 +159,7 @@ const onCollect = () => {
     box-shadow: 0 0 8px 0 var(--shadow-mack);
     color: var(--font-3);
     cursor: pointer;
-    background-color: var(--e-form-bg-color);
+    background-color: var(--pre-hover-bg);
 
     .count {
       position: absolute;
