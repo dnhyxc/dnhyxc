@@ -6,7 +6,7 @@
 -->
 <template>
   <div class="carousel-wrap">
-    <el-carousel loop :interval="5000" trigger="click" type="card" height="210px" class="carousel">
+    <el-carousel :interval="5000" trigger="click" type="card" height="210px" class="carousel">
       <el-carousel-item v-for="item in data" :key="item" @click="toDetail(item.id)">
         <div class="carousel-item">
           <div class="article-info">
@@ -96,7 +96,7 @@ const toTag = (name: string) => {
       box-sizing: border-box;
       height: 100%;
       border-radius: 5px;
-      padding: 5px;
+      padding: 0 5px;
 
       .article-info {
         position: absolute;
@@ -187,7 +187,7 @@ const toTag = (name: string) => {
         .img {
           box-sizing: border-box;
           width: 100%;
-          height: 200px;
+          height: 210px;
 
           .image-item {
             border-radius: 5px;
@@ -199,7 +199,7 @@ const toTag = (name: string) => {
 
     :deep {
       .is-active {
-        box-shadow: 0 0 3px var(--shadow-mack);
+        // box-shadow: 0 0 3px var(--shadow-mack);
         border-radius: 5px;
       }
     }
