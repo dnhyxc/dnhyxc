@@ -236,8 +236,7 @@ const onScrollTo = (to?: number) => {
     width: 100%;
     height: auto;
     background-image: linear-gradient(225deg, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
-    border-bottom-left-radius: 5px;
-    border-bottom-right-radius: 5px;
+    border-radius: 5px;
     padding-bottom: 20px;
 
     .img-wrap {
