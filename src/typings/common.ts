@@ -146,6 +146,7 @@ export interface ArticleItem extends AddCollectionRes {
   isReaded?: boolean;
   pushDate?: number;
   articleId?: number;
+  isTop?: number;
 }
 
 // 文章列表返回值
@@ -171,6 +172,7 @@ export interface TimelineArticles {
   replyCount?: number;
   readCount?: number;
   commentCount?: number;
+  isTop?: number;
 }
 
 // 时间轴返回参数

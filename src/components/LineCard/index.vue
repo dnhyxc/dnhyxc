@@ -6,9 +6,10 @@
 -->
 <template>
   <div class="timeline-card" @click.stop="toDetail(data)" @mousedown.stop="(e) => onMouseDown(e, data)">
+    <i v-if="data.isTop && !isTimeLine" class="font iconfont icon-zhiding" />
     <div class="title">
       <slot name="title">
-        <div class="left">{{ data.title }}</div>
+        <div :class="`left ${data.isTop && !isTimeLine && 'is-top'}`">{{ data.title || '-' }}</div>
         <div v-if="data.authorId === loginStore.userInfo?.userId" class="right">
           <span class="edit" @click.stop="toEdit(data)">编辑</span>
           <span class="del" @click.stop="onReomve(data)">下架</span>
@@ -19,16 +20,16 @@
       <slot name="content">
         <div class="art-info">
           <div class="desc">
-            {{ data.abstract }}
+            {{ data.abstract || '-' }}
           </div>
           <div class="tags">
-            <div class="author" @click.stop="toPersonal(data.authorId!)">{{ data.authorName }}</div>
+            <div class="author" @click.stop="toPersonal(data.authorId!)">{{ data.authorName || '-' }}</div>
             <div class="right">
               <el-tooltip class="box-item" effect="light" :content="`分类：${data.classify}`" placement="bottom">
-                <div class="classify" @click.stop="toClassify(data.classify!)">{{ data.classify }}</div>
+                <div class="classify" @click.stop="toClassify(data.classify!)">{{ data.classify || '-' }}</div>
               </el-tooltip>
               <el-tooltip class="box-item" effect="light" :content="`标签：${data.tag}`" placement="bottom">
-                <div class="tag" @click.stop="toTag(data.tag!)">{{ data.tag }}</div>
+                <div class="tag" @click.stop="toTag(data.tag!)">{{ data.tag || '-' }}</div>
               </el-tooltip>
             </div>
           </div>
@@ -79,6 +80,7 @@ interface IProps {
   deleteArticle?: (id: string) => void;
   toEdit?: (id: string) => void | null;
   isCollect?: boolean;
+  isTimeLine?: boolean;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
@@ -86,6 +88,7 @@ const props = withDefaults(defineProps<IProps>(), {
   deleteArticle: () => {},
   toEdit: undefined,
   isCollect: false,
+  isTimeLine: false,
 });
 
 // 编辑
@@ -182,17 +185,32 @@ const onOpenNewWindow = async (data: ArticleItem) => {
     }
   }
 
+  .icon-zhiding {
+    position: absolute;
+    top: -1px;
+    left: -1px;
+    font-size: 35px;
+    z-index: 99;
+    .textLg();
+  }
+
   .title {
+    position: relative;
     display: flex;
     justify-content: space-between;
     align-items: center;
     font-size: 16px;
     margin-bottom: 10px;
     color: var(--font-1);
+
     .left {
       max-width: calc(100% - 90px);
       font-weight: 700;
       .ellipsisMore(1);
+    }
+
+    .is-top {
+      margin-left: 20px;
     }
 
     .right {
