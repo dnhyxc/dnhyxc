@@ -6,10 +6,10 @@
 -->
 <template>
   <div class="timeline-card" @click.stop="toDetail(data)" @mousedown.stop="(e) => onMouseDown(e, data)">
-    <i v-if="!data.isTop && !isTimeLine" class="font iconfont icon-zhiding" />
+    <i v-if="data.isTop && !isTimeLine" class="font iconfont icon-zhiding" />
     <div class="title">
       <slot name="title">
-        <div :class="`left ${!data.isTop && !isTimeLine && 'is-top'}`">{{ data.title || '-' }}</div>
+        <div :class="`left ${data.isTop && !isTimeLine && 'is-top'}`">{{ data.title || '-' }}</div>
         <div v-if="data.authorId === loginStore.userInfo?.userId" class="right">
           <span class="edit" @click.stop="toEdit(data)">编辑</span>
           <span class="del" @click.stop="onReomve(data)">下架</span>
