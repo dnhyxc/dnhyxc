@@ -24,8 +24,8 @@
           class="avatar"
           :on-click="() => toPersonal(danmu.userId!)"
         />
-        <span>
-          <span v-if="authorStore.userInfo?.userId === danmu.userId" class="auth">(博主): </span>
+        <span class="comment">
+          <span v-if="authorStore.userInfo?.userId === danmu.userId" class="auth">[博主]: </span>
           {{ danmu.comment }}
         </span>
       </div>
@@ -102,7 +102,14 @@ defineExpose({
   }
 }
 
-.auth {
-  color: var(--theme-blue);
+.comment {
+  display: flex;
+  align-items: center;
+  font-size: 15px;
+
+  .auth {
+    color: @font-warning;
+    .textLg();
+  }
 }
 </style>

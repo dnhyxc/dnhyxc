@@ -7,11 +7,12 @@
 <template>
   <div class="timeline">
     <div v-for="item in dataSource" v-show="item.articles?.length" :key="item.date" class="timeline-item">
-      <div class="year">{{ item.date }}</div>
+      <div class="year">{{ item.date || '-' }}</div>
       <div class="card">
         <div v-for="card in item.articles" :key="card.id" class="card-item" @click.stop="onClickCard(card.id!)">
-          <div class="date">{{ formatDate(card.createTime!) }}</div>
-          <LineCard :data="card" :delete-article="deleteArticle" :like-list-article="likeListArticle" />
+          <i v-if="card.isTop" class="font iconfont icon-star" />
+          <div class="date">{{ formatDate(card.createTime!) || '-' }}</div>
+          <LineCard :data="card" :delete-article="deleteArticle" :like-list-article="likeListArticle" is-time-line />
         </div>
       </div>
     </div>
@@ -61,6 +62,7 @@ const onClickCard = (id: string) => {
       padding: 10px;
 
       .card-item {
+        position: relative;
         margin-bottom: 10px;
         border-radius: 5px;
         padding: 10px;
@@ -75,6 +77,15 @@ const onClickCard = (id: string) => {
           font-weight: 700;
           margin-bottom: 10px;
           color: var(--font-1);
+        }
+
+        .icon-star {
+          position: absolute;
+          top: -2px;
+          right: -2px;
+          font-size: 45px;
+          z-index: 99;
+          .textLg();
         }
       }
     }
@@ -132,9 +143,9 @@ const onClickCard = (id: string) => {
 
       .year {
         position: absolute;
-        top: 16px;
-        right: -95px;
-        font-size: 25px;
+        top: 4px;
+        right: -108px;
+        font-size: 35px;
         font-weight: 700;
         color: var(--font-1);
       }
@@ -194,9 +205,9 @@ const onClickCard = (id: string) => {
 
       .year {
         position: absolute;
-        top: 16px;
-        left: -95px;
-        font-size: 25px;
+        top: 4px;
+        left: -108px;
+        font-size: 35px;
         font-weight: 700;
         color: var(--font-1);
       }

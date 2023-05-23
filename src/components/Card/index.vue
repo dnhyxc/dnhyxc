@@ -8,6 +8,7 @@
   <div class="card-wrap" @click.stop="toDetail(data)" @mousedown.stop="(e) => onMouseDown(e, data)">
     <div class="card">
       <div class="card-top">
+        <i v-if="data.isTop" class="font iconfont icon-zhiding" />
         <div v-if="data?.isDelete" class="mask">
           <span class="mask-text">已下架</span>
         </div>
@@ -259,16 +260,17 @@ const toTag = (name: string) => {
 
       .mask {
         position: absolute;
-        top: 10px;
-        left: 5px;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
         color: @font-warning;
         z-index: 9;
 
         .mask-text {
           display: table-cell;
           vertical-align: middle;
-          font-size: 14px;
-          backdrop-filter: blur(3px);
+          font-size: 16px;
+          backdrop-filter: blur(10px);
           padding: 0 5px 2px 5px;
         }
       }
@@ -296,6 +298,15 @@ const toTag = (name: string) => {
           line-height: 18px;
           color: @fff;
         }
+      }
+
+      .icon-zhiding {
+        position: absolute;
+        top: 0;
+        left: 0;
+        font-size: 35px;
+        z-index: 99;
+        .textLg();
       }
     }
 

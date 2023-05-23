@@ -41,10 +41,10 @@
               <div class="user-info" @click="() => toPersonal(danmu.userId!)">
                 <span class="username">
                   {{ danmu.username }}
-                  <span v-if="authorStore.userInfo?.userId === danmu.userId" class="auth">(博主): </span>
+                  <span v-if="authorStore.userInfo?.userId === danmu.userId" class="auth">[博主]: </span>
                 </span>
                 <span class="create-time">{{ formatDate(danmu.createTime!, 'YYYY/MM/DD') }}</span>
-                <i v-if="loginStore.userInfo?.auth === 1" class="iconfont icon-shanchu" @click="onDelete(danmu)" />
+                <i v-if="loginStore.userInfo?.auth === 1" class="iconfont icon-shanchu" @click.stop="onDelete(danmu)" />
               </div>
               <div class="comment-content">{{ danmu.comment }}</div>
             </div>
@@ -235,6 +235,7 @@ const onScrollTo = () => {
             cursor: pointer;
 
             .username {
+              .textLg();
               font-size: 13px;
               .ellipsisMore(1);
             }
