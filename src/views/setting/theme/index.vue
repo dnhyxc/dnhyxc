@@ -13,7 +13,9 @@
           <div
             v-for="theme in THEME_TYPES"
             :key="theme.key"
-            :class="`${currentTheme === theme.key && 'active'} ${theme.key} theme`"
+            :class="`${(currentTheme === theme.key || (theme.key === 'freshGreen' && !currentTheme)) && 'active'} ${
+              theme.key
+            } theme`"
             @click.stop="changeTheme(theme.key)"
           >
             {{ theme.name }}

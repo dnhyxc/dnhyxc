@@ -41,6 +41,8 @@ const removeStyle = {
   '--p-code-color': '#dcffd6',
   // 行内 code 背景颜色
   '--p-code-bg-color': 'rgba(27, 31, 35, 0.08)',
+  // 登录背景
+  '--login-bg-img': 'linear-gradient(to top, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%)',
 };
 
 // 背景图片公共配置
@@ -290,6 +292,7 @@ const colorful = {
   '--bg-image-url': 'linear-gradient(126deg, #e0c3fc, #d7fffe, #f9fff9, #f8fded, #f9fff9, #d7fffe, #f5ccec)',
   '--bg-img-size': '200%',
   '--bg-animation': 'bgmove 15s infinite',
+  '--login-bg-img': 'linear-gradient(to bottom, #d7fffe, #f9fff9, #f8fded, #f9fff9, #d7fffe)',
 };
 
 // 侧脸
@@ -302,6 +305,7 @@ const lateralFace = {
   '--pre-bg-color': 'rgba(0, 0, 0, 0.3)',
   // 文章预览背景图片
   '--pre-hover-bg': 'rgba(0, 0, 0, 0.3)',
+  '--login-bg-img': 'url(@/assets/images/face.jpg)',
 };
 
 // 少司命
@@ -309,6 +313,7 @@ const ShaoSiming = {
   ...imageStyles,
   '--bg-image-url': `url(${IMG1})`,
   '--h-color': '#a2ff00',
+  '--login-bg-img': 'url(@/assets/images/1.jpg)',
 };
 
 // 动漫
@@ -319,12 +324,14 @@ const beauty = {
   '--font-color': '#fff',
   // h1.h2.h3...标题颜色
   '--h-color': '#a2ff00',
+  '--login-bg-img': 'url(@/assets/images/2.jpg)',
 };
 
 // 机车
 const locomotive = {
   ...imageStyles,
   '--bg-image-url': `url(${IMG3})`,
+  '--login-bg-img': 'url(@/assets/images/3.jpg)',
 };
 
 // 海岛
@@ -333,6 +340,7 @@ const island = {
   '--bg-image-url': `url(${IMG4})`,
   '--backdrop-filter': 'blur(3px)',
   '--h-color': '#a2ff00',
+  '--login-bg-img': 'url(@/assets/images/4.jpg)',
 };
 
 const girl = {
@@ -378,6 +386,7 @@ const girl = {
   '--p-code-bg-color': 'rgba(255, 255, 242, 0.5)',
   // loading 背景颜色
   '--loading-color': 'rgba(255, 255, 255, 0.5)',
+  '--login-bg-img': 'url(@/assets/images/cywl.jpg)',
 };
 
 const themeTypes = {
