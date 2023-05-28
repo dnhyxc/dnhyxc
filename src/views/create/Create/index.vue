@@ -39,7 +39,10 @@
             <div class="classify">
               <el-input v-model="createStore.createInfo.classify" placeholder="请输入文章分类" />
               <el-dropdown max-height="200px" trigger="click" @command="onClassifyCommand">
-                <el-button type="primary">选择&nbsp;<i class="iconfont icon-xiajiantou" /></el-button>
+                <el-button type="primary" :disabled="!createStore.classifys?.length">
+                  选择&nbsp;
+                  <i class="iconfont icon-xiajiantou" />
+                </el-button>
                 <template #dropdown>
                   <el-dropdown-menu>
                     <el-dropdown-item v-for="item in createStore.classifys" :key="item.id" :command="item.classifyName">
