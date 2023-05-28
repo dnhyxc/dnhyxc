@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import { Classifys, ArticleItem, ArticleListResult } from '@/typings/common';
 import { ElMessage } from 'element-plus';
 import * as Service from '@/server';
-import { normalizeResult} from '@/utils';
+import { normalizeResult } from '@/utils';
 import { commonStore } from '@/store';
 import { PAGESIZE } from '@/constant';
 

@@ -380,3 +380,9 @@ export interface InteractListRes {
   list: BarrageItem[];
   total: number;
 }
+
+export interface ClassifyList {
+  id: string;
+  createTime: number;
+  classifyName: string;
+}

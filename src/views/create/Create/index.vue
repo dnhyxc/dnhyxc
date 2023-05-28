@@ -42,8 +42,8 @@
                 <el-button type="primary">选择&nbsp;<i class="iconfont icon-xiajiantou" /></el-button>
                 <template #dropdown>
                   <el-dropdown-menu>
-                    <el-dropdown-item v-for="item in ARTICLE_CLASSIFY" :key="item" :command="item">
-                      {{ item }}
+                    <el-dropdown-item v-for="item in createStore.classifys" :key="item.id" :command="item.classifyName">
+                      {{ item.classifyName }}
                     </el-dropdown-item>
                   </el-dropdown-menu>
                 </template>
@@ -143,7 +143,7 @@
 import { ref, computed, onDeactivated } from 'vue';
 import { useRouter } from 'vue-router';
 import type { FormInstance } from 'element-plus';
-import { ARTICLE_CLASSIFY, ARTICLE_TAG } from '@/constant';
+import { ARTICLE_TAG } from '@/constant';
 import { createStore, uploadStore } from '@/store';
 import { checkImgUrlType } from '@/utils';
 import Upload from '@/components/Upload/index.vue';
