@@ -14,7 +14,11 @@
       :on-save-draft="onSaveDraft"
       :copy-code-success="onCopyCodeSuccess"
     />
-    <CreateDrawer v-model="visible" :article-id="(route?.query?.id as string)" />
+    <CreateDrawer
+      :key="JSON.stringify(createStore.classifys)"
+      v-model="visible"
+      :article-id="(route?.query?.id as string)"
+    />
     <DraftModal v-model:draft-visible="draftVisible" />
   </div>
 </template>
@@ -36,6 +40,8 @@ const draftVisible = ref<boolean>(false); // 草稿箱弹窗状态
 
 // 组件启用时，如果有文章id，则请求文章详情
 onActivated(() => {
+  // 启用组建时，获取创建文章的分类列表
+  createStore.getAddedClassifys();
   if (!route.query.id) return;
   articleStore?.getArticleDetail({ id: route.query.id as string, isEdit: true, router, toHome: !!route.query?.toHome });
 });

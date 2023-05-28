@@ -7,6 +7,7 @@ import {
   ArticleListResult,
   CreateDraftParamsResult,
   ArticleDetailParams,
+  ClassifyList,
 } from '@/typings/common';
 import * as Service from '@/server';
 import { normalizeResult } from '@/utils';
@@ -24,6 +25,7 @@ interface IProps {
   draftArticleId: string; // 草稿id
   draftInfo: ArticleDetailParams;
   oldCoverImage: string; // 保存老的文章封面图
+  classifys?: ClassifyList[]; // 分类
 }
 
 export const useCreateStore = defineStore('create', {
@@ -50,6 +52,14 @@ export const useCreateStore = defineStore('create', {
   }),
 
   actions: {
+    // 获取后台添加的文章分类列表
+    async getAddedClassifys() {
+      const res = normalizeResult<ClassifyList[]>(await Service.getAddedClassifys());
+      if (res.success) {
+        this.classifys = res.data;
+      }
+    },
+
     // 创建文章
     async createArticle(params: CreateArticleParams, router?: Router, needMsg = true) {
       const { userInfo } = loginStore;

@@ -198,6 +198,12 @@ export const getClassifyList = async (params: {
   return res;
 };
 
+// 获取后台添加的文章分类列表
+export const getAddedClassifys = async () => {
+  const res = await post(API.GET_ADDED_CLASSIFYS, copeParams({}));
+  return res;
+};
+
 // 文章搜索
 export const searchArticle = async (params: SearchArticleParams) => {
   const res = await post(API.SEARCH_ARTICLE, copeParams(params));
