@@ -38,7 +38,7 @@ const removeStyle = {
   // 弹出菜单背景颜色
   '--pop-menu-color': '#fff',
   // 行内 code 字体颜色
-  '--p-code-color': '#dcffd6',
+  '--p-code-color': '#289f00',
   // 行内 code 背景颜色
   '--p-code-bg-color': 'rgba(27, 31, 35, 0.08)',
   // 登录背景
