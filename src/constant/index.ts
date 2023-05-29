@@ -147,95 +147,6 @@ export const IMG_THEME_TYPES = [
 // 滚动加载每页加载数量
 export const PAGESIZE = 20;
 
-// 左侧菜单配置
-export const MENULIST = [
-  {
-    name: '文章列表',
-    key: 'home',
-    path: '/home',
-    icon: 'icon-Home',
-    fillIcon: 'icon-home01',
-    active: 'icon-icon',
-    show: true,
-  },
-  {
-    name: '文章分类',
-    key: 'classify',
-    path: '/classify',
-    icon: 'icon-fenlei1',
-    fillIcon: 'icon-fenlei3',
-    active: 'icon-fenlei4',
-    show: true,
-  },
-  {
-    name: '文章标签',
-    key: 'tag',
-    path: '/tag',
-    icon: 'icon-biaoqianku',
-    fillIcon: 'icon-24gf-tags3',
-    active: 'icon-24gf-tags',
-    show: true,
-  },
-  {
-    name: '时间轴线',
-    key: 'timeline',
-    path: '/timeline',
-    icon: 'icon-timeAxis',
-    fillIcon: 'icon-icon_shijian-mian',
-    active: 'icon-a-Frame174',
-    show: false,
-  },
-  {
-    name: '发布文章',
-    key: 'create',
-    path: '/create',
-    icon: 'icon-fankuitianxie',
-    fillIcon: 'icon-sign-review-full',
-    active: 'icon-xieboke',
-    show: false,
-  },
-  {
-    name: '留言一角',
-    key: 'interact',
-    path: '/interact',
-    icon: 'icon-b-chat',
-    fillIcon: 'icon-b-chat',
-    active: 'icon-xieboke',
-    show: false,
-  },
-  {
-    name: '关于博主',
-    key: 'author',
-    path: '/author',
-    icon: 'icon-yonghuID',
-    fillIcon: 'icon-id-card-full',
-    active: 'icon-yonghuziliao',
-    show: true,
-  },
-  // 以下加上是为了控制头部面包屑能展示对应的文案
-  {
-    name: '我的主页',
-    key: 'personal',
-    path: '/personal',
-    show: false,
-    hide: true,
-  },
-  {
-    name: '文章详情',
-    key: 'detail',
-    path: '/detail',
-    show: false,
-    hide: true,
-  },
-  {
-    name: '高级搜索',
-    key: 'search',
-    path: '/search',
-    show: false,
-    hide: true,
-  },
-];
-
 export const ACTION_SVGS = [
   {
     title: '最小化',
@@ -336,11 +247,109 @@ export const SEARCH_TYPE = [
   },
 ];
 
-// 需要头部搜索的页面
-export const NEED_HEAD_SEARCH = ['/home', '/classify', '/tag/list'];
+// 左侧菜单配置
+export const MENULIST = [
+  {
+    name: '文章列表',
+    key: 'home',
+    path: '/home',
+    icon: 'icon-Home',
+    fillIcon: 'icon-home01',
+    active: 'icon-icon',
+    show: true,
+  },
+  {
+    name: '文章分类',
+    key: 'classify',
+    path: '/classify',
+    icon: 'icon-fenlei1',
+    fillIcon: 'icon-fenlei3',
+    active: 'icon-fenlei4',
+    show: true,
+  },
+  {
+    name: '文章标签',
+    key: 'tag',
+    path: '/tag',
+    icon: 'icon-biaoqianku',
+    fillIcon: 'icon-24gf-tags3',
+    active: 'icon-24gf-tags',
+    show: true,
+  },
+  {
+    name: '时间轴线',
+    key: 'timeline',
+    path: '/timeline',
+    icon: 'icon-timeAxis',
+    fillIcon: 'icon-icon_shijian-mian',
+    active: 'icon-a-Frame174',
+    show: false,
+  },
+  {
+    name: '发布文章',
+    key: 'create',
+    path: '/create',
+    icon: 'icon-fankuitianxie',
+    fillIcon: 'icon-sign-review-full',
+    active: 'icon-xieboke',
+    show: false,
+  },
+  {
+    name: '留言一角',
+    key: 'interact',
+    path: '/interact',
+    icon: 'icon-b-chat',
+    fillIcon: 'icon-b-chat',
+    active: 'icon-xieboke',
+    show: false,
+  },
+  {
+    name: '实用工具',
+    key: 'tools',
+    path: '/tools',
+    icon: 'icon-ego-box',
+    fillIcon: 'icon-ego-box',
+    active: 'icon-ego-box',
+    show: false,
+  },
+  {
+    name: '关于博主',
+    key: 'author',
+    path: '/author',
+    icon: 'icon-yonghuID',
+    fillIcon: 'icon-id-card-full',
+    active: 'icon-yonghuziliao',
+    show: true,
+  },
+  // 以下加上是为了控制头部面包屑能展示对应的文案
+  {
+    name: '我的主页',
+    key: 'personal',
+    path: '/personal',
+    show: false,
+    hide: true,
+  },
+  {
+    name: '文章详情',
+    key: 'detail',
+    path: '/detail',
+    show: false,
+    hide: true,
+  },
+  {
+    name: '高级搜索',
+    key: 'search',
+    path: '/search',
+    show: false,
+    hide: true,
+  },
+];
 
 // 需要登陆权限的路由
-export const WITH_AUTH_ROUTES = ['/create', '/timeline', '/personal', '/interact'];
+export const WITH_AUTH_ROUTES = ['/create', '/timeline', '/personal', '/interact', '/tools'];
+
+// 需要头部搜索的页面
+export const NEED_HEAD_SEARCH = ['/home', '/classify', '/tag/list'];
 
 // 需要清除上下页搜索条件的路由
 export const CLEAR_PARAMS_LIST_ROUTES = ['/home', '/seach'];
@@ -539,7 +548,7 @@ export const ABOUT_TABS = [
 ];
 
 // 允许上传的文件类型
-export const FILE_TYPE = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif'];
+export const FILE_TYPE = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif', 'image/webp'];
 
 // 我的主页链接图标
 export const ICONLINKS = [

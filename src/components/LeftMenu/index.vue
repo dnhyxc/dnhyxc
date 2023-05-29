@@ -163,6 +163,10 @@ const onQuit = () => {
       color: var(--active-color);
       .textLgActive();
     }
+
+    .tools {
+      font-size: 31px;
+    }
   }
 
   .setting {

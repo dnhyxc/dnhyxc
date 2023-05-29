@@ -15,6 +15,7 @@ import { locSetItem, locGetItem, locRemoveItem, ssnGetItem, ssnSetItem, ssnRemov
 import * as ipcRenderers from './ipcRenderer';
 import { modifyTheme } from './theme';
 import { eStore, setTheme, getTheme, removeTheme } from './store';
+import { compressImage } from './compress';
 
 export {
   ipcRenderers,
@@ -39,6 +40,7 @@ export {
   setTheme,
   getTheme,
   removeTheme,
+  compressImage,
 };
 
 // 判断系统类型

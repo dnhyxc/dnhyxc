@@ -73,7 +73,7 @@
         </el-scrollbar>
       </Loading>
       <template #footer>
-        <span class="dialog-footer"> </span>
+        <span class="dialog-footer"></span>
       </template>
     </el-dialog>
   </div>
