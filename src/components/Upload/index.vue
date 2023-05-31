@@ -113,6 +113,8 @@ const cropper = ref<ReturnType<typeof VueCropper>>();
 const scaleNum = ref<number>(1);
 // 保存上传的fileInfo
 const fileInfo = ref<File | null>(null);
+// 保存的下载时传给主进程的 URL
+const createdUrl = ref<string>('');
 
 // 截图器配置
 const option = reactive({
@@ -232,6 +234,7 @@ const onDownload = async (e: Event, loadUrl?: string) => {
   } else {
     cropper.value.getCropBlob((blob: Blob) => {
       const url = window.URL.createObjectURL(blob);
+      createdUrl.value = url;
       ipcRenderer.send('download', url);
     });
   }
@@ -239,6 +242,7 @@ const onDownload = async (e: Event, loadUrl?: string) => {
   // 设置一次性监听，防止重复触发
   ipcRenderer.once('download-file', (e, res: string) => {
     if (res) {
+      window.URL.revokeObjectURL(createdUrl.value);
       ElMessage({
         message: '保存成功',
         type: 'success',
