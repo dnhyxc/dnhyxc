@@ -189,6 +189,9 @@ const visible = computed({
   },
   set(visible: boolean) {
     emit('update:modalVisible', visible);
+    if (!visible) {
+      onRefresh();
+    }
   },
 });
 
