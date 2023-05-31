@@ -15,7 +15,35 @@
           </div>
         </div>
       </el-scrollbar>
-      <Modal v-model:modal-visible="compressVisible" />
+      <Modal
+        v-model:modal-visible="compressVisible"
+        v-model:previewVisible="previewVisible"
+        v-model:previewUrls="previewUrls"
+      />
+      <el-dialog v-model="previewVisible" draggable align-center title="图片预览" width="80%" @close="onClose">
+        <div class="preview-dialog">
+          <el-scrollbar class="scroll-wrap" max-height="75vh">
+            <div v-if="previewUrls?.[1]" class="after">压缩后图片预览</div>
+            <el-image v-if="previewUrls?.[1]" class="prew-img" :src="previewUrls?.[1]">
+              <template #placeholder>
+                <div class="image-slot">Loading...</div>
+              </template>
+              <template #error>
+                <div class="image-slot">图片加载失败</div>
+              </template>
+            </el-image>
+            <div v-if="previewUrls?.[0]" class="before">压缩前图片预览</div>
+            <el-image v-if="previewUrls?.[0]" class="prew-img" :src="previewUrls?.[0]">
+              <template #placeholder>
+                <div class="image-slot">Loading...</div>
+              </template>
+              <template #error>
+                <div class="image-slot">图片加载失败</div>
+              </template>
+            </el-image>
+          </el-scrollbar>
+        </div>
+      </el-dialog>
     </template>
   </Loading>
 </template>
@@ -27,10 +55,17 @@ import Modal from './Modal/index.vue';
 
 // 图片压缩弹窗
 const compressVisible = ref<boolean>(false);
+// 图片预览弹窗
+const previewVisible = ref<boolean>(false);
+// 预览图片
+const previewUrls = ref<string[]>([]);
 
 const onCompress = () => {
-  console.log('aaaaa');
+  compressVisible.value = true;
+};
 
+// 关闭预览弹窗
+const onClose = () => {
   compressVisible.value = true;
 };
 </script>
@@ -52,6 +87,10 @@ const onCompress = () => {
       box-sizing: border-box;
       border-radius: 5px;
     }
+
+    .el-dialog__body {
+      padding: 10px 20px 20px;
+    }
   }
 
   .tools {
@@ -71,6 +110,26 @@ const onCompress = () => {
       height: auto;
       border-radius: 5px;
       .clickNoSelectText();
+    }
+  }
+
+  .preview-dialog {
+    .before,
+    .after {
+      color: var(--font-1);
+      text-align: left;
+      margin-bottom: 10px;
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .before {
+      margin-top: 20px;
+    }
+
+    .prew-img {
+      display: block;
+      border-radius: 5px;
     }
   }
 }

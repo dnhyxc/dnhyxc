@@ -6,9 +6,9 @@
 -->
 <template>
   <div class="modal-wrap">
-    <el-dialog v-model="visible" :close-on-click-modal="false" title="图片压缩" align-center width="650px" draggable>
+    <el-dialog v-model="visible" :close-on-click-modal="false" title="图片压缩" align-center width="650px">
       <div class="content">
-        <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
+        <el-scrollbar ref="scrollRef" max-height="75vh" wrap-class="scrollbar-wrapper">
           <el-upload
             class="upload"
             drag
@@ -18,23 +18,25 @@
             :http-request="onUpload"
           >
             <el-icon class="el-icon--upload"><upload-filled /></el-icon>
-            <div class="el-upload__text">拖拽或点击文件上传</div>
+            <div class="el-upload__text">拖拽或点击文件上传（仅支持 png、jpg、jpeg、gif 格式的图片）</div>
           </el-upload>
-          <div class="upload-info">仅支持 png、jpg、jpeg、gif 格式的图片</div>
           <div v-if="sourceUrl" class="image-container">
-            <div class="contrast">压缩前后对比</div>
+            <div class="contrast">
+              <span class="title">压缩前后对比</span>
+              <span class="center">点击图片可进行预览</span>
+            </div>
             <div class="img-list">
               <div v-if="sourceUrl" class="before">
                 <span class="info">
                   压缩前：{{ selectFile?.size ? (selectFile?.size! / 1024).toFixed(2) : '-' }} KB
                 </span>
-                <img :src="sourceUrl" alt="" class="compress-image" />
+                <img :src="sourceUrl" alt="" class="compress-image" @click="onPreview" />
               </div>
               <div v-if="base64Url" ref="imageRef" class="after">
                 <span class="info">
                   压缩后：{{ compressFile?.size ? (compressFile?.size! / 1024).toFixed(2) : '-' }} KB
                 </span>
-                <img :src="base64Url" alt="" class="compress-image" />
+                <img :src="base64Url" alt="" class="compress-image" @click="onPreview" />
               </div>
               <div v-if="base64Url" class="compress-info">
                 <span class="title">压缩比例：{{ sliderValue }}%</span>
@@ -117,6 +119,8 @@ import { compressImage, getImgInfo } from '@/utils';
 
 interface IProps {
   modalVisible: boolean;
+  previewVisible?: boolean;
+  previewUrls?: string[];
   title?: string;
 }
 
@@ -156,7 +160,7 @@ const sourceUrl = ref<string>('');
 // 压缩完的图片路径
 const base64Url = ref<string>('');
 // 压缩后的文件
-const compressFile = ref<File>();
+const compressFile = ref<File | null>(null);
 const sourceFileInfo = reactive<{ width: number; height: number }>({ width: 0, height: 0 });
 // 图片比例
 const scale = computed(() => {
@@ -179,9 +183,22 @@ const compressHeight = computed(() => {
   }
 });
 
-const props = defineProps<IProps>();
+const props = withDefaults(defineProps<IProps>(), {
+  previewVisible: false,
+  previewUrls: () => [],
+  title: '',
+});
 
-const emit = defineEmits(['update:modalVisible']);
+const emit = defineEmits(['update:modalVisible', 'update:previewUrls', 'update:previewVisible']);
+
+const previewVisible = computed({
+  get() {
+    return props.previewVisible;
+  },
+  set(visible: boolean) {
+    emit('update:previewVisible', visible);
+  },
+});
 
 const visible = computed({
   get() {
@@ -189,9 +206,20 @@ const visible = computed({
   },
   set(visible: boolean) {
     emit('update:modalVisible', visible);
-    if (!visible) {
+    if (!visible && !previewVisible.value) {
       onRefresh();
     }
+  },
+});
+
+computed({
+  get() {
+    return props.previewUrls;
+  },
+  set(urls: string[]) {
+    console.log(urls, 'urls');
+
+    emit('update:previewUrls', urls);
   },
 });
 
@@ -263,6 +291,13 @@ const onCompress = async () => {
   });
 };
 
+// 图片预览
+const onPreview = () => {
+  emit('update:previewVisible', true);
+  emit('update:previewUrls', [sourceUrl.value, base64Url.value]);
+  emit('update:modalVisible', false);
+};
+
 // 重置
 const onRefresh = () => {
   sourceUrl.value = '';
@@ -272,6 +307,7 @@ const onRefresh = () => {
   imgSize.imgWidth = null;
   imgSize.imgHeight = null;
   sliderValue.value = 60;
+  compressFile.value = null;
 };
 
 // 下载
@@ -303,21 +339,28 @@ const onDownload = () => {
 
   :deep {
     .el-dialog__body {
-      padding: 10px 20px 0;
+      padding: 10px 20px 0 !important;
     }
     .el-upload-dragger {
       padding: 10px 0 20px 0;
+      background-color: var(--input-bg-color);
+    }
+
+    .el-input__wrapper {
+      background-color: var(--input-bg-color);
     }
 
     .el-slider__button {
       width: 16px;
       height: 16px;
     }
+
+    .el-form-item__label {
+      color: var(--font-1);
+    }
   }
 
   .content {
-    height: 350px;
-
     .upload-info {
       margin-top: 5px;
       margin-bottom: 10px;
@@ -329,6 +372,13 @@ const onDownload = () => {
       margin: 10px 0 30px;
       box-sizing: border-box;
       font-size: 13px;
+      color: var(--font-1);
+
+      :deep {
+        .el-slider__marks-text {
+          color: var(--font-1);
+        }
+      }
 
       .slider-info {
         display: flex;
@@ -346,11 +396,13 @@ const onDownload = () => {
       font-size: 14px;
       font-weight: 700;
       margin-bottom: 10px;
+      color: var(--font-1);
     }
 
     .center {
       font-size: 13px;
       margin-left: 10px;
+      color: var(--font-1);
     }
 
     .image-size {
@@ -385,7 +437,15 @@ const onDownload = () => {
       .contrast {
         font-size: 14px;
         font-weight: 700;
-        margin-bottom: 10px;
+        margin-top: 15px;
+        color: var(--font-1);
+
+        .center {
+          font-size: 13px;
+          margin-left: 10px;
+          color: var(--font-1);
+          font-weight: initial;
+        }
       }
 
       .img-list {
@@ -399,6 +459,7 @@ const onDownload = () => {
         .before,
         .after {
           width: 30%;
+          color: var(--font-1);
 
           .compress-image {
             display: block;
@@ -406,6 +467,7 @@ const onDownload = () => {
             height: auto;
             border-radius: 5px;
             .imgStyle();
+            cursor: pointer;
           }
 
           .info {
@@ -422,9 +484,11 @@ const onDownload = () => {
         display: inline-block;
         margin-bottom: 10px;
         font-weight: initial;
+        color: var(--font-1);
       }
 
       .compress-size {
+        color: var(--font-1);
         .size-item {
           margin-bottom: 10px;
           .comp-width {

@@ -298,6 +298,7 @@ const colorful = {
 // 侧脸
 const lateralFace = {
   ...imageStyles,
+  '--card-border': 'rgba(245, 250, 248, 0.2)',
   // 字体颜色
   '--bg-image-url': `url(${HEAD_IMG})`,
   // 图片背景兼容字体颜色
@@ -376,7 +377,7 @@ const girl = {
   '--tab-color': 'rgba(255, 255, 242, 0.5)',
   '--card-action-font-color': '#000',
   '--card-border': 'rgba(182, 182, 182, 0.5)',
-  '--modal-bg-color': 'rgb(223, 223, 223, 0.5)',
+  '--modal-bg-color': 'rgb(223, 223, 223, 0.8)',
   '--to-top-bg-color': 'rgba(255, 255, 242, 0.65)',
   '--pop-menu-color': 'rgba(255, 255, 242, 0.85)',
   '--h-color': '#089220',
