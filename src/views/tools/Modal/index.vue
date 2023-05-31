@@ -80,7 +80,7 @@
           </div>
           <div v-if="!base64Url" class="image-size">
             <span class="title">图片尺寸</span>
-            <span class="center">图片尺寸越小，可以有效减少图片压缩后的体积</span>
+            <span class="center">尺寸越小，压缩后体积越小（宽高只需输入其中一项，另一项将按比例计算）</span>
             <div class="inp-wrap">
               <el-form ref="formRef" :rules="rules" :model="imgSize" class="form-wrap">
                 <el-form-item prop="imgWidth" label="图片宽度" class="form-item form-item-width">
