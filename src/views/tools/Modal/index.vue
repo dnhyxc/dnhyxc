@@ -99,8 +99,8 @@
       <template #footer>
         <span class="dialog-footer">
           <el-button type="primary" :disabled="!sourceUrl" @click="onCompress">压缩</el-button>
-          <el-button type="warning" :disabled="!base64Url" @click="onRefresh">重置</el-button>
           <el-button type="primary" :disabled="!compressFile" @click="onDownload">下载</el-button>
+          <el-button type="warning" :disabled="!base64Url" @click="onRefresh">重置</el-button>
         </span>
       </template>
     </el-dialog>
@@ -217,8 +217,6 @@ computed({
     return props.previewUrls;
   },
   set(urls: string[]) {
-    console.log(urls, 'urls');
-
     emit('update:previewUrls', urls);
   },
 });
