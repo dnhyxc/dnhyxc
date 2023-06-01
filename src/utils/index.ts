@@ -16,6 +16,7 @@ import * as ipcRenderers from './ipcRenderer';
 import { modifyTheme } from './theme';
 import { eStore, setTheme, getTheme, removeTheme } from './store';
 import { compressImage } from './compress';
+export { Verify, checkNumber, checkMin, checkMax, verifyEmpty, verifyLength, verfiySpecialCharacters } from './verify';
 
 export {
   ipcRenderers,

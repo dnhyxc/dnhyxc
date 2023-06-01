@@ -47,7 +47,11 @@
                   </div>
                   <div class="size-item">
                     <span class="comp-width">压缩宽度：{{ compresWidth }}</span>
-                    <span class="comp-height">压缩高度：{{ compressHeight }}</span>
+                    <span class="comp-height">
+                      压缩高度：{{
+                        Number(compressHeight) > Number(sourceFileInfo.height) ? sourceFileInfo.height : compressHeight
+                      }}
+                    </span>
                   </div>
                   <div class="size-item">
                     <span class="comp-width"> 宽度相差：{{ sourceFileInfo.width - (compresWidth as number) }} </span>
@@ -82,14 +86,25 @@
           </div>
           <div v-if="!base64Url" class="image-size">
             <span class="title">图片尺寸</span>
-            <span class="center">尺寸越小，压缩后体积越小（宽高只需输入其中一项，另一项将按比例计算）</span>
+            <span class="center">
+              尺寸越小，压缩后体积越小
+              <span class="enter-size-info">（宽高只需输入其中一项，另一项将按比例计算） </span>
+            </span>
             <div class="inp-wrap">
               <el-form ref="formRef" :rules="rules" :model="imgSize" class="form-wrap">
                 <el-form-item prop="imgWidth" label="图片宽度" class="form-item form-item-width">
-                  <el-input v-model="imgSize.imgWidth" placeholder="请输入图片宽度" />
+                  <el-input
+                    v-model="imgSize.imgWidth"
+                    placeholder="请输入图片宽度"
+                    :disabled="!sourceUrl || disabledEnter === 'width'"
+                  />
                 </el-form-item>
                 <el-form-item prop="imgHeight" label="图片高度" class="form-item">
-                  <el-input v-model="imgSize.imgHeight" placeholder="请输入图片高度" />
+                  <el-input
+                    v-model="imgSize.imgHeight"
+                    placeholder="请输入图片高度"
+                    :disabled="!sourceUrl || disabledEnter === 'height'"
+                  />
                 </el-form-item>
               </el-form>
             </div>
@@ -115,7 +130,7 @@ import type { FormInstance, UploadProps, FormRules } from 'element-plus';
 import { ElMessage } from 'element-plus';
 import { UploadFilled } from '@element-plus/icons-vue';
 import { FILE_TYPE } from '@/constant';
-import { compressImage, getImgInfo } from '@/utils';
+import { compressImage, getImgInfo, Verify, checkNumber, checkMin, checkMax } from '@/utils';
 
 interface IProps {
   modalVisible: boolean;
@@ -162,6 +177,8 @@ const base64Url = ref<string>('');
 // 压缩后的文件
 const compressFile = ref<File | null>(null);
 const sourceFileInfo = reactive<{ width: number; height: number }>({ width: 0, height: 0 });
+// 校验规则实例
+const verifys = ref<{ addRule: Function; end: Function; check: Function }>();
 // 图片比例
 const scale = computed(() => {
   return sourceFileInfo.width / sourceFileInfo.height;
@@ -169,7 +186,7 @@ const scale = computed(() => {
 // 压缩宽度
 const compresWidth = computed(() => {
   if (imgSize.imgWidth) {
-    return imgSize.imgWidth;
+    return imgSize.imgWidth > sourceFileInfo.width ? sourceFileInfo.width : imgSize.imgWidth;
   } else {
     return imgSize.imgHeight ? (imgSize.imgHeight * scale.value).toFixed(0) : sourceFileInfo.width;
   }
@@ -177,9 +194,19 @@ const compresWidth = computed(() => {
 // 压缩高度
 const compressHeight = computed(() => {
   if (imgSize.imgHeight) {
-    return imgSize.imgHeight;
+    return imgSize.imgHeight > sourceFileInfo.height ? sourceFileInfo.height : imgSize.imgHeight;
   } else {
     return imgSize.imgWidth ? (imgSize.imgWidth / scale.value).toFixed(0) : sourceFileInfo.height;
+  }
+});
+// 是否禁用尺寸输入框
+const disabledEnter = computed(() => {
+  if (imgSize.imgWidth) {
+    return 'height';
+  } else if (imgSize.imgHeight) {
+    return 'width';
+  } else {
+    return false;
   }
 });
 
@@ -223,15 +250,8 @@ computed({
 
 // 校验输入的图片尺寸
 const validateSize = (rule: any, value: any, callback: any) => {
-  if (value && /[^\d]/g.test(value)) {
-    callback(new Error('只能输入整数'));
-  } else if (value && value < 100) {
-    callback(new Error('不能小于 100'));
-  } else if (value && value > 5000) {
-    callback(new Error('不能超过 5000'));
-  } else {
-    callback();
-  }
+  verifys.value?.addRule(checkNumber).addRule(checkMin).addRule(checkMax).end(callback);
+  verifys.value?.check(value, callback);
 };
 
 const rules = reactive<FormRules>({
@@ -266,6 +286,10 @@ const onUpload = async (event: { file: File }) => {
     // 清空上次上传的图片
     imgSize.imgWidth = null;
     imgSize.imgHeight = null;
+    verifys.value = new Verify({
+      maxSize: Math.max(sourceFileInfo.width, sourceFileInfo.height) || 5000,
+      minSize: 100,
+    });
   };
   reader.readAsDataURL(event.file);
 };
@@ -424,6 +448,10 @@ const onDownload = () => {
           }
         }
       }
+
+      .enter-size-info {
+        color: @font-danger;
+      }
     }
 
     .image-container {
@@ -441,7 +469,7 @@ const onDownload = () => {
         .center {
           font-size: 13px;
           margin-left: 10px;
-          color: var(--font-1);
+          color: @font-danger;
           font-weight: initial;
         }
       }

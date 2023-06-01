@@ -24,7 +24,7 @@
         <div class="preview-dialog">
           <el-scrollbar class="scroll-wrap" max-height="75vh">
             <div v-if="previewUrls?.[1]" class="after">压缩后图片预览</div>
-            <el-image v-if="previewUrls?.[1]" class="prew-img" :src="previewUrls?.[1]">
+            <el-image v-if="previewUrls?.[1]" class="prew-img prev-after-img" :src="previewUrls?.[1]">
               <template #placeholder>
                 <div class="image-slot">Loading...</div>
               </template>
@@ -123,13 +123,13 @@ const onClose = () => {
       font-weight: 700;
     }
 
-    .before {
-      margin-top: 20px;
-    }
-
     .prew-img {
       display: block;
       border-radius: 5px;
+    }
+
+    .prev-after-img{
+      margin-bottom: 20px;
     }
   }
 }
