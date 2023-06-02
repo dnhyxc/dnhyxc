@@ -12,8 +12,26 @@ import IMG3 from '@/assets/images/3.jpg';
 import IMG4 from '@/assets/images/4.jpg';
 import CYWL from '@/assets/images/cywl.jpg';
 import * as API from '@/server/api';
+import GITHUB_SVG from '@/assets/svg/github.svg';
+import COMPRESS_SVG from '@/assets/svg/compress.svg';
 
-export { EMPTY, MINSVG, RESTORESVG, MAXSVG, CLOSESVG, HOMESVG, PAGESVG, HEAD_IMG, IMG1, IMG2, IMG3, IMG4, CYWL };
+export {
+  EMPTY,
+  MINSVG,
+  RESTORESVG,
+  MAXSVG,
+  CLOSESVG,
+  HOMESVG,
+  PAGESVG,
+  HEAD_IMG,
+  IMG1,
+  IMG2,
+  IMG3,
+  IMG4,
+  CYWL,
+  GITHUB_SVG,
+  COMPRESS_SVG,
+};
 
 // 线上域名
 export const DOMAIN_URL = '43.143.27.249';

@@ -11,7 +11,19 @@
         <div class="tools">
           <div class="tool-title">资源处理</div>
           <div class="tool-list">
-            <ToolsCard :on-click="onCompress" />
+            <NavCard
+              v-for="item in [{ iconText: '图片压缩', id: Math.random(), iconUrl: COMPRESS_SVG }]"
+              :key="item.id"
+              :data="item"
+              :on-click="() => onClickNavIcon(item)"
+            >
+            </NavCard>
+          </div>
+        </div>
+        <div class="tools">
+          <div class="tool-title">前端编程导航</div>
+          <div class="navigation-list">
+            <NavCard v-for="item in data" :key="item.id" :data="item" :on-click="() => onClickNavIcon(item)" />
           </div>
         </div>
       </el-scrollbar>
@@ -49,9 +61,18 @@
 </template>
 
 <script setup lang="ts">
+import { shell } from 'electron';
 import { ref } from 'vue';
-import ToolsCard from './ToolsCard/index.vue';
+import { GITHUB_SVG, SEA_BASE64, COMPRESS_SVG } from '@/constant';
+// import ToolsCard from './ToolsCard/index.vue';
 import Modal from './Modal/index.vue';
+import NavCard from './NavCard/index.vue';
+import { NavParams } from '@/typings/common';
+
+const data = [
+  { iconUrl: GITHUB_SVG, iconHref: 'https://github.com/', id: '01', iconText: 'GitHub' },
+  { iconUrl: SEA_BASE64, iconHref: 'http://43.143.27.249:9216', id: '02', iconText: '墨客' },
+];
 
 // 图片压缩弹窗
 const compressVisible = ref<boolean>(false);
@@ -60,8 +81,14 @@ const previewVisible = ref<boolean>(false);
 // 预览图片
 const previewUrls = ref<string[]>([]);
 
-const onCompress = () => {
-  compressVisible.value = true;
+// 点击导航图标
+const onClickNavIcon = (item: NavParams) => {
+  console.log(item, '点击导航图标');
+  if (item?.iconHref) {
+    shell.openExternal(item.iconHref);
+  } else {
+    compressVisible.value = true;
+  }
 };
 
 // 关闭预览弹窗
@@ -95,13 +122,14 @@ const onClose = () => {
 
   .tools {
     .tool-title {
-      font-size: 18px;
+      font-size: 16px;
       font-weight: 700;
       margin-bottom: 10px;
       padding: 0 5px;
     }
 
-    .tool-list {
+    .tool-list,
+    .navigation-list {
       display: flex;
       justify-content: flex-start;
       flex-wrap: wrap;
@@ -110,6 +138,7 @@ const onClose = () => {
       height: auto;
       border-radius: 5px;
       .clickNoSelectText();
+      margin-bottom: 20px;
     }
   }
 
@@ -126,9 +155,19 @@ const onClose = () => {
     .prew-img {
       display: block;
       border-radius: 5px;
+      width: 100%;
+      height: auto;
+
+      .image-slot {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        color: var(--font-1);
+      }
     }
 
-    .prev-after-img{
+    .prev-after-img {
       margin-bottom: 20px;
     }
   }

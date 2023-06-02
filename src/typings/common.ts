@@ -386,3 +386,12 @@ export interface ClassifyList {
   createTime: number;
   classifyName: string;
 }
+
+// 编程导航参数定义
+export interface NavParams {
+  iconUrl?: string;
+  iconHref?: string;
+  iconText: string;
+  iconfont?: string;
+  id: string | number;
+}
