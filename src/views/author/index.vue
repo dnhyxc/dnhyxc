@@ -118,7 +118,7 @@
 
 <script setup lang="ts">
 import { ipcRenderer, shell } from 'electron';
-import { ref, onMounted, computed, inject } from 'vue';
+import { ref, onMounted, computed, inject, onUnmounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { ElMessage } from 'element-plus';
 import { HEAD_IMG, AUTHOR_TABS, IMG1 } from '@/constant';
@@ -188,6 +188,11 @@ onMounted(async () => {
   getAuthorArticles();
 });
 
+onUnmounted(() => {
+  // 清除点赞列表数据
+  followStore.clearInteractList();
+});
+
 // 获取各tab文章列表
 const getAuthorArticles = async () => {
   await authorStore.getAuthorArticles();
@@ -206,7 +211,7 @@ const onTabChange = (name: string) => {
     authorStore.getAuthorTimeline();
   } else {
     followStore.clearInteractList();
-    followStore.getFollowList();
+    followStore.getFollowList(authorStore.userInfo?.userId);
   }
 };
 
@@ -413,13 +418,14 @@ const onScrollTo = (to?: number) => {
           border-top-left-radius: 5px;
           border-top-right-radius: 5px;
           background-color: transparent;
+          background-image: linear-gradient(225deg, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
         }
 
         .el-tabs__header {
           border-bottom: 1px solid var(--card-border);
 
           .el-tabs__item {
-            color: var(--font-color);
+            color: var(--font-1);
           }
 
           .el-tabs__item.is-active {

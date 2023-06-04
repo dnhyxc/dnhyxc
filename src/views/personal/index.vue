@@ -258,6 +258,8 @@ watchEffect(() => {
 onUnmounted(() => {
   // 清空原始数据
   personalStore.clearArticleList();
+  // 清除点赞列表数据
+  followStore.clearInteractList();
 });
 
 // 获取各tab中的文章列表
@@ -490,12 +492,13 @@ const onScrollTo = (to?: number) => {
           border-top-left-radius: 5px;
           border-top-right-radius: 5px;
           background-color: transparent;
+          background-image: linear-gradient(225deg, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
         }
         .el-tabs__header {
           border-bottom: 1px solid var(--card-border);
 
           .el-tabs__item {
-            color: var(--font-color);
+            color: var(--font-1);
           }
 
           .el-tabs__item.is-active {

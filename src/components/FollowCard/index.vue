@@ -8,7 +8,7 @@
   <div class="follow-card-wrap" @click="toPersonal()">
     <div class="follow-item">
       <div class="left">
-        <Image :url="HEAD_IMG" :transition-img="HEAD_IMG" class="img" />
+        <Image :url="data.headUrl || HEAD_IMG" :transition-img="HEAD_IMG" class="img" />
       </div>
       <div class="right">
         <div class="title">
@@ -27,7 +27,7 @@
 
 <script setup lang="ts">
 import { computed, inject, onUnmounted, ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 import { HEAD_IMG } from '@/constant';
 import { loginStore } from '@/store';
 import { FollowItem } from '@/typings/common';
@@ -44,6 +44,7 @@ interface IProps {
 const props = defineProps<IProps>();
 
 const router = useRouter();
+const route = useRoute();
 
 const timer = ref<ReturnType<typeof setTimeout> | null>(null);
 
@@ -55,7 +56,7 @@ onUnmounted(() => {
 const showFollowBtn = computed(() => {
   const { userId } = loginStore.userInfo;
   if (props.isAuthUserId) {
-    return props.isAuthUserId === props.data.myUserId;
+    return props.isAuthUserId === props.data.myUserId && userId === props.isAuthUserId;
   } else {
     return userId === props.data.myUserId;
   }
@@ -69,10 +70,12 @@ const onFollow = (id: string, data?: FollowItem) => {
 // 去个人主页
 const toPersonal = () => {
   router.push(`/personal?authorId=${props.data?.userId}`);
-  timer.value = setTimeout(() => {
-    reload?.();
-    timer.value = null;
-  }, 100);
+  if (route.path === '/personal') {
+    timer.value = setTimeout(() => {
+      reload?.();
+      timer.value = null;
+    }, 100);
+  }
 };
 </script>
 
@@ -85,7 +88,6 @@ const toPersonal = () => {
   flex-wrap: wrap;
   box-sizing: border-box;
   box-shadow: 0 0 5px var(--shadow-mack);
-  background-image: linear-gradient(225deg, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
   cursor: pointer;
 
   .follow-item {
@@ -136,6 +138,10 @@ const toPersonal = () => {
           color: var(--theme-blue);
           cursor: pointer;
           .clickNoSelectText();
+
+          &:hover {
+            color: @font-warning;
+          }
         }
       }
 

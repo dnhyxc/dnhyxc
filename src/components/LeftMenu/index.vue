@@ -115,10 +115,12 @@ const toPersonal = () => {
     crumbsPath: '/personal',
   });
   router.push('/personal');
-  timer.value = setTimeout(() => {
-    reload?.();
-    timer.value = null;
-  }, 100);
+  if (route.path === '/personal') {
+    timer.value = setTimeout(() => {
+      reload?.();
+      timer.value = null;
+    }, 100);
+  }
 };
 
 // 登录

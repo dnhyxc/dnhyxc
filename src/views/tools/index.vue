@@ -125,6 +125,7 @@ const onClose = () => {
       font-weight: 700;
       margin-bottom: 10px;
       padding: 0 5px;
+      color: var(--font-1);
     }
 
     .tool-list,

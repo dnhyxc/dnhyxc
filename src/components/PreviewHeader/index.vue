@@ -145,6 +145,9 @@ const onFollow = (authorId: string) => {
         color: var(--theme-blue);
         cursor: pointer;
         .clickNoSelectText();
+        &:hover {
+          color: @font-warning;
+        }
       }
 
       .read-count {
