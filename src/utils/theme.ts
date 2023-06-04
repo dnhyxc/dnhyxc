@@ -372,9 +372,9 @@ const girl = {
   '--layer-2-2': 'rgba(255, 255, 242, 0.5)',
   '--input-bg-color': 'rgba(255, 255, 242, 0.5)',
   // 弹窗before背景颜色
-  '--pop-before-bg-color': 'rgb(255, 255, 228, 0.3)',
+  '--pop-before-bg-color': 'rgb(255, 255, 228, 0.35)',
   '--shade-3': 'rgba(255, 255, 242, 0.5)',
-  '--tab-color': 'rgba(255, 255, 242, 0.5)',
+  '--tab-color': 'rgba(232, 229, 218, 0.5)',
   '--card-action-font-color': '#000',
   '--card-border': 'rgba(182, 182, 182, 0.5)',
   '--modal-bg-color': 'rgb(223, 223, 223, 0.8)',

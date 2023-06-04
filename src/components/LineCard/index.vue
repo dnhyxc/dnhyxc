@@ -64,12 +64,15 @@
 
 <script setup lang="ts">
 import { ipcRenderer } from 'electron';
+import { inject, ref, onUnmounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { IMG1 } from '@/constant';
 import { chackIsDelete } from '@/utils';
 import { loginStore, commonStore } from '@/store';
 import { TimelineArticles, ArticleItem } from '@/typings/common';
 import Image from '@/components/Image/index.vue';
+
+const reload = inject<Function>('reload');
 
 const router = useRouter();
 const route = useRoute();
@@ -91,6 +94,12 @@ const props = withDefaults(defineProps<IProps>(), {
   isTimeLine: false,
 });
 
+const timer = ref<ReturnType<typeof setTimeout> | null>(null);
+
+onUnmounted(() => {
+  timer.value = null;
+});
+
 // 编辑
 const toEdit = async (data: ArticleItem | TimelineArticles) => {
   await chackIsDelete(data as ArticleItem);
@@ -106,6 +115,12 @@ const onReomve = async (data: ArticleItem | TimelineArticles) => {
 // 去作者主页
 const toPersonal = (id: string) => {
   router.push(`/personal?authorId=${id}`);
+  if (route.path === '/personal') {
+    timer.value = setTimeout(() => {
+      reload?.();
+      timer.value = null;
+    }, 100);
+  }
 };
 
 // 去分类页

@@ -83,7 +83,6 @@ const previewUrls = ref<string[]>([]);
 
 // 点击导航图标
 const onClickNavIcon = (item: NavParams) => {
-  console.log(item, '点击导航图标');
   if (item?.iconHref) {
     shell.openExternal(item.iconHref);
   } else {

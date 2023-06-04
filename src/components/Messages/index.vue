@@ -25,7 +25,7 @@
             @click.stop="toDetail(data)"
           >
             <template #title>
-              <div class="left">{{ data.title }}</div>
+              <div class="left">{{ data.title || FOLLOWED_INFO[data.action!] }}</div>
               <div class="right">
                 <span class="del" @click.stop="onDelete(data.id!)">删除</span>
               </div>
@@ -57,7 +57,7 @@ import { useScroller } from '@/hooks';
 import { scrollTo, formatDate } from '@/utils';
 import eventBus from '@/utils/eventBus';
 import { ArticleItem } from '@/typings/common';
-import { MESSAGE_ACTIONS } from '@/constant';
+import { MESSAGE_ACTIONS, FOLLOWED_INFO } from '@/constant';
 
 const reload = inject<Function>('reload');
 
@@ -178,7 +178,7 @@ const onScrollTo = (to?: number) => {
     .line-card {
       width: 100%;
       padding: 5px;
-      box-shadow: 0 0 5px var(--shadow-color);
+      box-shadow: 0 0 5px var(--shadow-mack);
       background-image: linear-gradient(225deg, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
       margin-bottom: 10px;
       border-radius: 5px;

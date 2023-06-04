@@ -136,3 +136,12 @@ export const GET_INTERACT_LIST = '/api/getInteractList';
 
 // 移除留言
 export const REMOVE_INTERACTS = '/api/removeInteracts';
+
+// 关注/取消关注用户
+export const MANAGE_FOLLOW = '/api/manageFollow';
+
+// 关注/取消关注用户
+export const GET_FOLLOW_LIST = '/api/getFollowList';
+
+// 查询是否关注了该用户
+export const FIND_FOLLOWED = '/api/findFollowed';

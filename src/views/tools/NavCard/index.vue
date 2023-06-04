@@ -49,6 +49,7 @@ defineProps<IProps>();
     cursor: pointer;
     overflow: hidden;
     border-radius: 5px;
+    background-color: var(--pre-hover-bg);
 
     .item-top {
       padding: 5px;

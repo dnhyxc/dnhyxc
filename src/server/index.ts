@@ -379,3 +379,21 @@ export const removeInteracts = async (ids: string | string[]) => {
   const res = await post(API.REMOVE_INTERACTS, copeParams({ ids }));
   return res;
 };
+
+// 关注/取消关注用户
+export const manageFollow = async (authorId: string) => {
+  const res = await post(API.MANAGE_FOLLOW, copeParams({ authorId }));
+  return res;
+};
+
+// 获取关注用户列表
+export const getFollowList = async (params: { pageNo: number; pageSize: number; userId?: string }) => {
+  const res = await post(API.GET_FOLLOW_LIST, copeParams(params));
+  return res;
+};
+
+// 查询是否关注该用户
+export const findFollowed = async (authorId: string) => {
+  const res = await post(API.FIND_FOLLOWED, copeParams({ authorId }));
+  return res;
+};

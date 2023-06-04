@@ -395,3 +395,22 @@ export interface NavParams {
   iconfont?: string;
   id: string | number;
 }
+
+// 关注用户信息
+export interface FollowItem {
+  id: string;
+  myUserId: string;
+  userId: string;
+  username: string;
+  job: string;
+  motto: string;
+  headUrl: string;
+  introduce: string;
+  createTime: number;
+  isFollowed: boolean;
+}
+
+export interface FollowList {
+  total: number;
+  list: FollowItem[];
+}

@@ -32,7 +32,6 @@ export const compressImage = ({
         reader.readAsDataURL(data);
       },
       error: function (err: Error) {
-        console.log(err.message);
         reject(err.message);
       },
     };

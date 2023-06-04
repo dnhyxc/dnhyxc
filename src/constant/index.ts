@@ -532,8 +532,12 @@ export const AUTHOR_TABS = [
     value: '2',
   },
   {
-    name: '时间轴',
+    name: '博主关注',
     value: '3',
+  },
+  {
+    name: '时间轴',
+    value: '4',
   },
 ];
 
@@ -548,8 +552,12 @@ export const ABOUT_ME_TABS = [
     value: '2',
   },
   {
-    name: '点赞文章',
+    name: '我的关注',
     value: '3',
+  },
+  {
+    name: '点赞文章',
+    value: '4',
   },
 ];
 
@@ -562,6 +570,10 @@ export const ABOUT_TABS = [
   {
     name: '他的收藏',
     value: '2',
+  },
+  {
+    name: '他的关注',
+    value: '3',
   },
 ];
 
@@ -694,7 +706,8 @@ export const AUTHOR_API_PATH = {
 export const ABOUT_ME_API_PATH = {
   0: API.GET_MY_ARTICLE_LIST,
   1: API.GET_COLLECTION_LIST,
-  2: API.GET_LIKE_ARTICLE_LIST,
+  2: API.GET_FOLLOW_LIST,
+  3: API.GET_LIKE_ARTICLE_LIST,
 };
 
 // 更新用户信息api
@@ -710,6 +723,14 @@ export const MESSAGE_ACTIONS = {
   COMMENT: '评论了你的文章',
   COLLECT: '收藏了你的文章',
   CANCEL_COLLECT: '取消收藏了你的文章',
+  FOLLOWED: '关注了你',
+  CANCEL_FOLLOWED: '取消了对你的关注',
+};
+
+// 关注/取消关注标题
+export const FOLLOWED_INFO = {
+  FOLLOWED: '关注信息',
+  CANCEL_FOLLOWED: '取消关注信息',
 };
 
 export const SEA_BASE64 =
