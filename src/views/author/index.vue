@@ -95,7 +95,7 @@
                     :data="data"
                     class="author-line-card"
                     :on-follow="onFollow"
-                    :is-auth-userId="authorStore.userInfo?.userId"
+                    :is-auth-user-id="authorStore.userInfo?.userId"
                   />
                 </div>
                 <Timeline
