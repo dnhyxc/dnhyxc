@@ -67,7 +67,6 @@ declare module '@vue/runtime-core' {
     RouterView: typeof import('vue-router')['RouterView']
     Timeline: typeof import('./src/components/Timeline/index.vue')['default']
     Toc: typeof import('./src/components/Toc/index.vue')['default']
-    ToolsCard: typeof import('./src/components/ToolsCard/index.vue')['default']
     ToTopIcon: typeof import('./src/components/ToTopIcon/index.vue')['default']
     Upload: typeof import('./src/components/Upload/index.vue')['default']
     WordCloud: typeof import('./src/components/WordCloud/index.vue')['default']
