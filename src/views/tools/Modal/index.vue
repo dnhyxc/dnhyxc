@@ -129,7 +129,7 @@ import type { CSSProperties } from 'vue';
 import type { FormInstance, UploadProps, FormRules } from 'element-plus';
 import { ElMessage } from 'element-plus';
 import { UploadFilled } from '@element-plus/icons-vue';
-import { FILE_TYPE } from '@/constant';
+import { FILE_TYPE, FILE_UPLOAD_MSG } from '@/constant';
 import { compressImage, getImgInfo, Verify, checkNumber, checkMin, checkMax } from '@/utils';
 
 interface IProps {
@@ -262,7 +262,7 @@ const rules = reactive<FormRules>({
 // 上传校验
 const beforeUpload: UploadProps['beforeUpload'] = (rawFile) => {
   if (!FILE_TYPE.includes(rawFile.type)) {
-    ElMessage.error('请上传 png、jpg、jpeg、gif、webp 格式的图片');
+    ElMessage.error(FILE_UPLOAD_MSG);
     return false;
   } else if (rawFile.size / 1024 / 1024 > 20) {
     ElMessage.error('图片不能超过20M');

@@ -1,9 +1,9 @@
 import { createRouter, RouteRecordRaw, createWebHistory } from 'vue-router';
-import { ElMessage } from 'element-plus';
-import { useCommonStore } from '@/store/common';
-import { locGetItem } from '@/utils';
-import { WITH_AUTH_ROUTES } from '@/constant';
-import eventBus from '@/utils/eventBus';
+// import { ElMessage } from 'element-plus';
+// import { useCommonStore } from '@/store/common';
+// import { locGetItem } from '@/utils';
+// import { WITH_AUTH_ROUTES } from '@/constant';
+// import eventBus from '@/utils/eventBus';
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -232,37 +232,37 @@ const router = createRouter({
 });
 
 // 全局守卫：登录拦截 本地没有存token,请重新登录
-router.beforeEach(async (to, from, next) => {
-  const commonStore = useCommonStore();
-  // 切换路由时，隐藏页面头部搜索输入框，并清空搜索输入框内容
-  commonStore.showSearch = false;
-  // 清除选中卡片的状态，关闭右键菜单
-  commonStore.clearContentmenuInfo();
-  // 路由切换时，隐藏消息弹窗
-  eventBus.emit('hide-msg-popover', false);
-  // 进入到登录页时，保存从哪进入的路由路径
-  if (to.path === '/login') {
-    commonStore.setBackPath(from.path);
-  }
-  // 控制设置跳转，在没登录的情况，访问我的主页和账号设置，需要重定向到系统设置
-  if ((to.path === '/profile' || to.path === '/account') && !locGetItem('token')) {
-    router.push('/system');
-  }
-  // 如果已经登录，点击返回，不再退回到登录页
-  if (locGetItem('token') && to.path === '/login') {
-    router.push(from.path);
-  }
-  if (WITH_AUTH_ROUTES.includes(to.path) && !locGetItem('token')) {
-    ElMessage({
-      message: '请先登录后再访问哦！',
-      type: 'warning',
-      offset: 80,
-      duration: 2000,
-    });
-    router.push(from.path);
-  }
+// router.beforeEach(async (to, from, next) => {
+//   const commonStore = useCommonStore();
+//   // 切换路由时，隐藏页面头部搜索输入框，并清空搜索输入框内容
+//   commonStore.showSearch = false;
+//   // 清除选中卡片的状态，关闭右键菜单
+//   commonStore.clearContentmenuInfo();
+//   // 路由切换时，隐藏消息弹窗
+//   eventBus.emit('hide-msg-popover', false);
+//   // 进入到登录页时，保存从哪进入的路由路径
+//   if (to.path === '/login') {
+//     commonStore.setBackPath(from.path);
+//   }
+//   // 控制设置跳转，在没登录的情况，访问我的主页和账号设置，需要重定向到系统设置
+//   if ((to.path === '/profile' || to.path === '/account') && !locGetItem('token')) {
+//     router.push('/system');
+//   }
+//   // 如果已经登录，点击返回，不再退回到登录页
+//   if (locGetItem('token') && to.path === '/login') {
+//     router.push(from.path);
+//   }
+//   if (WITH_AUTH_ROUTES.includes(to.path) && !locGetItem('token')) {
+//     ElMessage({
+//       message: '请先登录后再访问哦！',
+//       type: 'warning',
+//       offset: 80,
+//       duration: 2000,
+//     });
+//     router.push(from.path);
+//   }
 
-  next();
-});
+//   next();
+// });
 
 export default router;

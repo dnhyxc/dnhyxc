@@ -74,7 +74,7 @@ import { Plus } from '@element-plus/icons-vue';
 import type { UploadProps } from 'element-plus';
 import { VueCropper } from 'vue-cropper';
 import { createStore, uploadStore } from '@/store';
-import { FILE_TYPE } from '@/constant';
+import { FILE_TYPE, FILE_UPLOAD_MSG } from '@/constant';
 import { getImgInfo, url2Base64 } from '@/utils';
 
 import 'vue-cropper/dist/index.css';
@@ -159,7 +159,7 @@ const filePath = computed({
 // 上传校验
 const beforeUpload: UploadProps['beforeUpload'] = (rawFile) => {
   if (!FILE_TYPE.includes(rawFile.type)) {
-    ElMessage.error('请上传 png、jpg、jpeg、gif 格式的图片');
+    ElMessage.error(FILE_UPLOAD_MSG);
     return false;
   } else if (rawFile.size / 1024 / 1024 > 20) {
     ElMessage.error('图片不能超过20M');

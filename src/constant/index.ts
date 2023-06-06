@@ -578,7 +578,9 @@ export const ABOUT_TABS = [
 ];
 
 // 允许上传的文件类型
-export const FILE_TYPE = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif', 'image/webp'];
+export const FILE_TYPE = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif', 'image/webp', 'image/svg+xml'];
+// 上传文件提示
+export const FILE_UPLOAD_MSG = '请上传 png、jpg、jpeg、gif、webp、svg 格式的图片';
 
 // 我的主页链接图标
 export const ICONLINKS = [
