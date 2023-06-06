@@ -387,15 +387,6 @@ export interface ClassifyList {
   classifyName: string;
 }
 
-// 编程导航参数定义
-export interface NavParams {
-  iconUrl?: string;
-  iconHref?: string;
-  iconText: string;
-  iconfont?: string;
-  id: string | number;
-}
-
 // 关注用户信息
 export interface FollowItem {
   id: string;
@@ -413,4 +404,18 @@ export interface FollowItem {
 export interface FollowList {
   total: number;
   list: FollowItem[];
+}
+
+// 编程导航参数定义
+export interface ToolsItem {
+  id: string;
+  toolName: string;
+  toolHref?: string;
+  toolUrl: string;
+  powerUsers?: { username: string; id: string }[];
+}
+
+export interface ToolListRes {
+  list: ToolsItem[];
+  total: number;
 }

@@ -145,3 +145,6 @@ export const GET_FOLLOW_LIST = '/api/getFollowList';
 
 // 查询是否关注了该用户
 export const FIND_FOLLOWED = '/api/findFollowed';
+
+// 获取工具列表
+export const GET_TOOL_LIST = '/api/getToolList';

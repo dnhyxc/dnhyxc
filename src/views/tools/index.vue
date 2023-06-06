@@ -12,7 +12,7 @@
           <div class="tool-title">资源处理</div>
           <div class="tool-list">
             <NavCard
-              v-for="item in [{ iconText: '图片压缩', id: Math.random(), iconUrl: COMPRESS_SVG }]"
+              v-for="item in [{ toolName: '图片压缩', id: `${Math.random()}`, toolUrl: COMPRESS_SVG }]"
               :key="item.id"
               :data="item"
               :on-click="() => onClickNavIcon(item)"
@@ -23,7 +23,12 @@
         <div class="tools">
           <div class="tool-title">前端编程导航</div>
           <div class="navigation-list">
-            <NavCard v-for="item in data" :key="item.id" :data="item" :on-click="() => onClickNavIcon(item)" />
+            <NavCard
+              v-for="item in toolsStore.toolList"
+              :key="item.id"
+              :data="item"
+              :on-click="() => onClickNavIcon(item)"
+            />
           </div>
         </div>
       </el-scrollbar>
@@ -62,17 +67,12 @@
 
 <script setup lang="ts">
 import { shell } from 'electron';
-import { ref } from 'vue';
-import { GITHUB_SVG, SEA_BASE64, COMPRESS_SVG } from '@/constant';
-// import ToolsCard from './ToolsCard/index.vue';
+import { onMounted, ref } from 'vue';
+import { COMPRESS_SVG } from '@/constant';
+import { toolsStore } from '@/store';
+import { ToolsItem } from '@/typings/common';
 import Modal from './Modal/index.vue';
 import NavCard from './NavCard/index.vue';
-import { NavParams } from '@/typings/common';
-
-const data = [
-  { iconUrl: GITHUB_SVG, iconHref: 'https://github.com/', id: '01', iconText: 'GitHub' },
-  { iconUrl: SEA_BASE64, iconHref: 'http://43.143.27.249:9216', id: '02', iconText: '墨客' },
-];
 
 // 图片压缩弹窗
 const compressVisible = ref<boolean>(false);
@@ -81,10 +81,15 @@ const previewVisible = ref<boolean>(false);
 // 预览图片
 const previewUrls = ref<string[]>([]);
 
+onMounted(() => {
+  // 获取工具列表
+  toolsStore.getToolList();
+});
+
 // 点击导航图标
-const onClickNavIcon = (item: NavParams) => {
-  if (item?.iconHref) {
-    shell.openExternal(item.iconHref);
+const onClickNavIcon = (item: ToolsItem) => {
+  if (item?.toolHref) {
+    shell.openExternal(item.toolHref);
   } else {
     compressVisible.value = true;
   }

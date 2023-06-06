@@ -397,3 +397,9 @@ export const findFollowed = async (authorId: string) => {
   const res = await post(API.FIND_FOLLOWED, copeParams({ authorId }));
   return res;
 };
+
+// 获取工具列表
+export const getToolList = async (type: string) => {
+  const res = await post(API.GET_TOOL_LIST, copeParams({ type }));
+  return res;
+};

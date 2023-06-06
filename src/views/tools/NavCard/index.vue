@@ -9,7 +9,7 @@
     <div class="navigation-item" @click="() => onClick()">
       <div class="item-top">
         <slot>
-          <el-image class="prew-img" :src="data?.iconUrl">
+          <el-image class="prew-img" :src="data?.toolUrl">
             <template #placeholder>
               <div class="image-slot">Loading...</div>
             </template>
@@ -19,16 +19,16 @@
           </el-image>
         </slot>
       </div>
-      <div class="item-bottom">{{ data?.iconText }}</div>
+      <div class="item-bottom">{{ data?.toolName }}</div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { NavParams } from '@/typings/common';
+import { ToolsItem } from '@/typings/common';
 
 interface IProps {
-  data?: NavParams;
+  data?: ToolsItem;
   onClick: () => void;
 }
 

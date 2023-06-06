@@ -13,6 +13,7 @@ import { useSearchStore } from './search';
 import { useMessageStore } from './message';
 import { useInteractStore } from './interact';
 import { useFollowStore } from './follow';
+import { useToolsStore } from './tools';
 
 // 公共store
 export const commonStore = useCommonStore();
@@ -58,3 +59,6 @@ export const interactStore = useInteractStore();
 
 // 关注用户
 export const followStore = useFollowStore();
+
+// 工具列表
+export const toolsStore = useToolsStore();
