@@ -14,6 +14,7 @@ import CYWL from '@/assets/images/cywl.jpg';
 import * as API from '@/server/api';
 import GITHUB_SVG from '@/assets/svg/github.svg';
 import COMPRESS_SVG from '@/assets/svg/compress.svg';
+import TOOL_SVG from '@/assets/svg/tool.svg';
 
 export {
   EMPTY,
@@ -31,6 +32,7 @@ export {
   CYWL,
   GITHUB_SVG,
   COMPRESS_SVG,
+  TOOL_SVG,
 };
 
 // 线上域名

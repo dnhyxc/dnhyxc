@@ -9,23 +9,19 @@
     <div class="navigation-item" @click="() => onClick()">
       <div class="item-top">
         <slot>
-          <el-image class="prew-img" :src="data?.toolUrl">
-            <template #placeholder>
-              <div class="image-slot">Loading...</div>
-            </template>
-            <template #error>
-              <div class="image-slot">加载失败</div>
-            </template>
-          </el-image>
+          <Image :url="data?.toolUrl || TOOL_SVG" :transition-img="TOOL_SVG" class="prew-img" />
         </slot>
       </div>
-      <div class="item-bottom">{{ data?.toolName }}</div>
+      <el-tooltip effect="light" :content="data?.toolName" placement="bottom" :enterable="false">
+        <div class="item-bottom">{{ data?.toolName }}</div>
+      </el-tooltip>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ToolsItem } from '@/typings/common';
+import { TOOL_SVG } from '@/constant';
 
 interface IProps {
   data?: ToolsItem;
@@ -55,14 +51,20 @@ defineProps<IProps>();
       padding: 5px;
 
       .prew-img {
-        border-radius: 5px;
         display: block;
+
+        :deep {
+          .image-item {
+            max-height: 80px;
+            border-radius: 5px;
+          }
+        }
       }
     }
 
     .item-bottom {
       text-align: center;
-      padding: 0 0 6px;
+      padding: 0 5px 6px;
       .ellipsis();
       color: var(--font-1);
     }
