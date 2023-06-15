@@ -55,7 +55,7 @@
           class="pullup-content"
         >
           <div v-for="i of collectStore.articleList" :key="i.id" class="pullup-list-item">
-            <Card :data="i" :like-list-article="likeListArticle" class="card">
+            <Card :data="i" :like-list-article="likeListArticle" class="card" without-to-detail>
               <template #actions>
                 <div v-if="personalStore.userInfo?.userId === loginStore.userInfo?.userId" class="action art-action">
                   <span class="move" @click.stop="onMoveTo(i)">转移</span>
@@ -91,7 +91,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { useScroller } from '@/hooks';
 import { articleStore, collectStore, loginStore, personalStore } from '@/store';
 import { ArticleItem, CollectParams } from '@/typings/common';
-import { formatDate, scrollTo, chackIsDelete } from '@/utils';
+import { formatDate, scrollTo, showMessage } from '@/utils';
 import { HEAD_IMG } from '@/constant';
 import Card from '@/components/Card/index.vue';
 import CollectModel from '@/components/CollectModel/index.vue';
@@ -174,8 +174,10 @@ const toPersonal = () => {
 };
 
 // 移动文章至别的分组
-const onMoveTo = async (data: ArticleItem) => {
-  await chackIsDelete(data);
+const onMoveTo = (data: ArticleItem) => {
+  if (data?.isDelete) {
+    return showMessage();
+  }
   // 清空收藏集弹窗中的页码及收藏集列表数据
   collectStore.init();
   collectVisible.value = true;
@@ -184,6 +186,9 @@ const onMoveTo = async (data: ArticleItem) => {
 
 // 移除文章
 const onReomve = async (data: ArticleItem) => {
+  if (data?.isDelete) {
+    return showMessage();
+  }
   collectStore.removeArticle(data.id, collectId as string);
 };
 

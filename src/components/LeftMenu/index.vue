@@ -60,17 +60,24 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watchEffect } from 'vue';
+import { ref, computed, watchEffect, inject, onUnmounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { MENULIST, HEAD_IMG } from '@/constant';
 import { MenuListParams } from '@/typings/common';
 import { commonStore, loginStore } from '@/store';
 import { checkOS } from '@/utils';
 
+const reload = inject<Function>('reload');
+
 const router = useRouter();
 const route = useRoute();
 
 const activeMenu = ref<MenuListParams>(MENULIST[0]);
+const timer = ref<ReturnType<typeof setTimeout> | null>(null);
+
+onUnmounted(() => {
+  timer.value = null;
+});
 
 // 计算菜单
 const menuList = computed(() => {
@@ -108,6 +115,12 @@ const toPersonal = () => {
     crumbsPath: '/personal',
   });
   router.push('/personal');
+  if (route.path === '/personal') {
+    timer.value = setTimeout(() => {
+      reload?.();
+      timer.value = null;
+    }, 100);
+  }
 };
 
 // 登录
@@ -162,6 +175,10 @@ const onQuit = () => {
     .active {
       color: var(--active-color);
       .textLgActive();
+    }
+
+    .tools {
+      font-size: 31px;
     }
   }
 

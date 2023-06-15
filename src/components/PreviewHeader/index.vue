@@ -15,7 +15,16 @@
         class="herd-img"
       />
       <div class="create-info">
-        <div class="username">{{ articleStore?.articleDetail?.authorName }}</div>
+        <div class="username">
+          <span>{{ articleStore?.articleDetail?.authorName }}</span>
+          <span
+            v-show="articleStore?.articleDetail?.authorId !== loginStore.userInfo?.userId"
+            class="follow"
+            @click="() => onFollow(articleStore?.articleDetail?.authorId!)"
+          >
+            {{ followStore.isFollowed ? '取消关注' : '关注作者' }}
+          </span>
+        </div>
         <div>
           <span>{{ formatDate(articleStore?.articleDetail?.createTime!, 'YYYY年MM月DD日 HH:mm') }}</span>
           <span class="read-count">阅读 {{ articleStore?.articleDetail?.readCount }}</span>
@@ -43,13 +52,20 @@
 
 <script setup lang="ts">
 import { useRouter, useRoute } from 'vue-router';
-import { articleStore, loginStore, createStore } from '@/store';
+import { articleStore, loginStore, createStore, followStore } from '@/store';
 import { formatDate } from '@/utils';
 import { HEAD_IMG } from '@/constant';
 import Image from '@/components/Image/index.vue';
+import { onMounted } from 'vue';
 
 const router = useRouter();
 const route = useRoute();
+
+onMounted(() => {
+  if (articleStore.articleDetail?.authorId) {
+    followStore.findFollowed(articleStore.articleDetail?.authorId!);
+  }
+});
 
 // 编辑文章
 const onEditArticle = () => {
@@ -64,6 +80,11 @@ const onEditArticle = () => {
 // 去我的主页
 const toSetting = (authorId: string | undefined) => {
   router.push(`/personal?authorId=${authorId}`);
+};
+
+// 关注作者
+const onFollow = (authorId: string) => {
+  followStore.manageFollow(authorId);
 };
 </script>
 
@@ -108,9 +129,25 @@ const toSetting = (authorId: string | undefined) => {
       margin-left: 10px;
 
       .username {
+        display: flex;
+        align-items: center;
         font-size: 16px;
         font-weight: 600;
         margin-bottom: 10px;
+      }
+
+      .follow {
+        margin-left: 15px;
+        font-weight: 100;
+        font-size: 14px;
+        margin-top: 10px;
+        margin-top: 3px;
+        color: var(--theme-blue);
+        cursor: pointer;
+        .clickNoSelectText();
+        &:hover {
+          color: @font-warning;
+        }
       }
 
       .read-count {

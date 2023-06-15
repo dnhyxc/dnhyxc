@@ -3,7 +3,6 @@ import type { ElMessageBoxOptions } from 'element-plus';
 import moment from 'moment';
 import SparkMD5 from 'spark-md5';
 import { MSG_CONFIG, CODE_CONTROL, EMOJI_TEXTS, EMOJI_URLS } from '@/constant';
-import { ArticleItem } from '@/typings/common';
 import { usePlugins } from './plugins';
 import { normalizeResult } from './result';
 import { decrypt, encrypt } from './crypto';
@@ -15,6 +14,8 @@ import { locSetItem, locGetItem, locRemoveItem, ssnGetItem, ssnSetItem, ssnRemov
 import * as ipcRenderers from './ipcRenderer';
 import { modifyTheme } from './theme';
 import { eStore, setTheme, getTheme, removeTheme } from './store';
+import { compressImage } from './compress';
+export { Verify, checkNumber, checkMin, checkMax, verifyEmpty, verifyLength, verfiySpecialCharacters } from './verify';
 
 export {
   ipcRenderers,
@@ -39,6 +40,7 @@ export {
   setTheme,
   getTheme,
   removeTheme,
+  compressImage,
 };
 
 // 判断系统类型
@@ -222,19 +224,16 @@ export const image2Base64 = (image: any) => {
   return canvas.toDataURL('image/png');
 };
 
-// 校验文章是否下架
-export const chackIsDelete = (data: ArticleItem) => {
-  return new Promise((resolve, reject) => {
-    if (data?.isDelete) {
-      ElMessage({
-        message: '文章已下架，无法操作',
-        type: 'warning',
-        offset: 80,
-      });
-      reject(new Error('文章已下架，无法操作'));
-    } else {
-      resolve(true);
-    }
+// 展示message
+export const showMessage = (
+  type: 'error' | 'info' | 'success' | 'warning' = 'warning',
+  message: string = '文章已下架，无法操作',
+  offset: number = 80,
+) => {
+  ElMessage({
+    message,
+    type,
+    offset,
   });
 };
 

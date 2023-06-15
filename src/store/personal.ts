@@ -1,6 +1,12 @@
 import { defineStore } from 'pinia';
 import { ElMessage } from 'element-plus';
-import { UserInfoParams, ArticleListResult, ArticleItem, TimelineResult, PerGetArticlesParams } from '@/typings/common';
+import {
+  UserInfoParams,
+  ArticleListResult,
+  ArticleItem,
+  TimelineResult,
+  PerGetArticlesParams,
+} from '@/typings/common';
 import * as Service from '@/server';
 import { useCheckUserId } from '@/hooks';
 import { normalizeResult, uniqueFunc, Message } from '@/utils';

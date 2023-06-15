@@ -5,7 +5,7 @@
  * index.vue
 -->
 <template>
-  <div class="card-wrap" @click.stop="toDetail(data)" @mousedown.stop="(e) => onMouseDown(e, data)">
+  <div class="card-wrap" @click.stop="toDetail(data)" @mousedown.stop="(e: MouseEvent) => onMouseDown(e, data)">
     <div class="card">
       <div class="card-top">
         <i v-if="data.isTop" class="font iconfont icon-zhiding" />
@@ -83,7 +83,7 @@
 <script setup lang="ts">
 import { ipcRenderer } from 'electron';
 import { useRouter, useRoute } from 'vue-router';
-import { formatDate, chackIsDelete } from '@/utils';
+import { formatDate, showMessage } from '@/utils';
 import { ArticleItem } from '@/typings/common';
 import { IMG1 } from '@/constant';
 import { commonStore, loginStore } from '@/store';
@@ -97,40 +97,53 @@ interface IProps {
   data: ArticleItem;
   deleteArticle?: Function;
   likeListArticle?: Function;
+  withoutToDetail?: boolean;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
   deleteArticle: () => {},
   likeListArticle: () => {},
+  withoutToDetail: false,
 });
 
 // 点赞
-const onLike = async (data: ArticleItem) => {
-  await chackIsDelete(data);
+const onLike = (data: ArticleItem) => {
+  if (data?.isDelete) {
+    return showMessage();
+  }
   props.likeListArticle?.(data.id, data);
 };
 
 // 评论
-const onComment = async (data: ArticleItem) => {
-  await chackIsDelete(data);
+const onComment = (data: ArticleItem) => {
+  if (data?.isDelete) {
+    return showMessage();
+  }
   router.push(`/detail/${data.id}?scrollTo=1&from=${route.name as string}`);
 };
 
 // 编辑
 const toEdit = async (data: ArticleItem) => {
-  await chackIsDelete(data);
+  if (data?.isDelete) {
+    return showMessage();
+  }
   router.push(`/create?id=${data.id}`);
 };
 
 // 下架
 const onReomve = async (data: ArticleItem) => {
-  await chackIsDelete(data);
+  if (data?.isDelete) {
+    return showMessage();
+  }
   props.deleteArticle(data.id);
 };
 
 // 监听鼠标右键，分别进行不同的操作
 const onMouseDown = async (e: MouseEvent, data: ArticleItem) => {
-  await chackIsDelete(data);
+  if (props.withoutToDetail) return;
+  if (data?.isDelete) {
+    return showMessage();
+  }
   // 使用新窗口打开
   if (e.button === 2) {
     commonStore.showContextmenu = true;
@@ -139,7 +152,10 @@ const onMouseDown = async (e: MouseEvent, data: ArticleItem) => {
 };
 
 // 新窗口打开
-const onOpenNewWindow = (data: ArticleItem) => {
+const onOpenNewWindow = async (data: ArticleItem) => {
+  if (data?.isDelete) {
+    return showMessage();
+  }
   const { userInfo, token } = loginStore;
   ipcRenderer.send(
     'new-win',
@@ -152,7 +168,10 @@ const onOpenNewWindow = (data: ArticleItem) => {
 };
 
 // 当前页打开
-const toDetail = (data: ArticleItem) => {
+const toDetail = async (data: ArticleItem) => {
+  if (data?.isDelete) {
+    return showMessage();
+  }
   router.push(`/detail/${data.id}?from=${route.name as string}`);
   // 清除右键菜单选项
   commonStore.clearContentmenuInfo();
@@ -312,7 +331,6 @@ const toTag = (name: string) => {
 
     .card-bottom {
       padding: 8px 10px;
-      // box-shadow: 0 0 1px var(--shadow-color) inset;
       background-blend-mode: multiply, multiply;
       border-bottom-left-radius: 5px;
       border-bottom-right-radius: 5px;

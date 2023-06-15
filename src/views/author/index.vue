@@ -78,7 +78,7 @@
                 :label="tab.name"
                 :class="`${showEmpty && 'tab-pane'}`"
               >
-                <div v-if="tab.value !== '3'" class="list-wrap">
+                <div v-if="tab.value === '1' || tab.value === '2'" class="list-wrap">
                   <LineCard
                     v-for="data in authorStore.articleList"
                     :key="data.id"
@@ -88,8 +88,18 @@
                     :like-list-article="likeListArticle"
                   />
                 </div>
+                <div v-if="tab.value === '3'" class="list-wrap">
+                  <FollowCard
+                    v-for="data in followStore.followList"
+                    :key="data.id"
+                    :data="data"
+                    class="author-line-card"
+                    :on-follow="onFollow"
+                    :is-auth-user-id="authorStore.userInfo?.userId"
+                  />
+                </div>
                 <Timeline
-                  v-if="tab.value === '3'"
+                  v-if="tab.value === '4'"
                   :data-source="authorStore.timelineList"
                   :delete-article="deleteTimeLineArticle"
                   :like-list-article="likeListArticle"
@@ -108,11 +118,11 @@
 
 <script setup lang="ts">
 import { ipcRenderer, shell } from 'electron';
-import { ref, onMounted, computed, inject } from 'vue';
+import { ref, onMounted, computed, inject, onUnmounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { ElMessage } from 'element-plus';
 import { HEAD_IMG, AUTHOR_TABS, IMG1 } from '@/constant';
-import { authorStore, articleStore } from '@/store';
+import { authorStore, articleStore, followStore } from '@/store';
 import { useDeleteArticle, useScroller } from '@/hooks';
 import { scrollTo, checkUrl } from '@/utils';
 import LineCard from '@/components/LineCard/index.vue';
@@ -120,7 +130,7 @@ import Timeline from '@/components/Timeline/index.vue';
 import Image from '@/components/Image/index.vue';
 import Loading from '@/components/Loading/index.vue';
 import Empty from '@/components/Empty/index.vue';
-import { ArticleItem } from '@/typings/common';
+import { ArticleItem, FollowItem } from '@/typings/common';
 
 const reload = inject<Function>('reload');
 
@@ -130,13 +140,23 @@ const { scrollRef, scrollTop } = useScroller();
 const viewMore = ref<boolean>(false);
 const isMounted = ref<boolean>(false);
 const noMore = computed(() => {
+  const { followList, total: followTotal } = followStore;
   const { articleList, total, timelineList, currentTabKey } = authorStore;
-  return currentTabKey === '2' ? timelineList?.length : articleList.length && articleList.length >= total;
+  if (currentTabKey === '3') {
+    return timelineList?.length;
+  } else if (currentTabKey === '2') {
+    return followList?.length && followList?.length >= followTotal;
+  } else {
+    return articleList.length && articleList.length >= total;
+  }
 });
 const disabled = computed(() => authorStore.loading || noMore.value);
 const showEmpty = computed(() => {
+  const { followList } = followStore;
   const { timelineList, articleList, currentTabKey, loading } = authorStore;
-  if (loading !== null && !loading && currentTabKey === '2' && !timelineList.length) {
+  if (loading !== null && !loading && currentTabKey === '3' && !timelineList.length) {
+    return true;
+  } else if (loading !== null && !loading && currentTabKey === '2' && !followList.length) {
     return true;
   } else if (loading !== null && !loading && currentTabKey !== '2' && !articleList.length) {
     return true;
@@ -161,9 +181,16 @@ onMounted(async () => {
   authorStore.currentTabKey = '0';
   // 清空原始数据
   authorStore.clearArticleList();
+  // 清除点赞列表数据
+  followStore.clearInteractList();
   // 获取博主信息
   await authorStore.getUserInfo();
   getAuthorArticles();
+});
+
+onUnmounted(() => {
+  // 清除点赞列表数据
+  followStore.clearInteractList();
 });
 
 // 获取各tab文章列表
@@ -173,16 +200,18 @@ const getAuthorArticles = async () => {
 
 // tab 切换
 const onTabChange = (name: string) => {
-  // name: 0：博主文章、name: 1：博主点赞、name: 2：时间轴
-  if (name !== '2') {
-    // 设置选中tab
-    authorStore.currentTabKey = name;
+  // 设置选中tab
+  authorStore.currentTabKey = name;
+  // name: 0：博主文章、name: 1：博主点赞、name: 2：博主关注、name: 3：时间轴
+  if (name === '0' || name === '1') {
     authorStore.clearArticleList();
     getAuthorArticles();
-  } else {
+  } else if (name === '3') {
     authorStore.clearArticleList();
-    authorStore.currentTabKey = name;
     authorStore.getAuthorTimeline();
+  } else {
+    followStore.clearInteractList();
+    followStore.getFollowList(authorStore.userInfo?.userId);
   }
 };
 
@@ -198,6 +227,11 @@ const likeListArticle = async (id: string, data?: ArticleItem) => {
 // 删除博主页面时间轴
 const deleteTimeLineArticle = (id: string) => {
   authorStore.deleteTimelineArticle(id);
+};
+
+// 关注/取消关注
+const onFollow = (id: string, data?: FollowItem) => {
+  followStore.manageFollow(data?.userId!, id);
 };
 
 // 查看更多信息
@@ -384,13 +418,14 @@ const onScrollTo = (to?: number) => {
           border-top-left-radius: 5px;
           border-top-right-radius: 5px;
           background-color: transparent;
+          background-image: linear-gradient(225deg, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
         }
 
         .el-tabs__header {
           border-bottom: 1px solid var(--card-border);
 
           .el-tabs__item {
-            color: var(--font-color);
+            color: var(--font-1);
           }
 
           .el-tabs__item.is-active {
@@ -414,7 +449,7 @@ const onScrollTo = (to?: number) => {
         .author-line-card {
           width: calc(50% - 5px);
           padding: 10px 10px;
-          box-shadow: 0 0 5px var(--shadow-color);
+          box-shadow: 0 0 5px var(--shadow-mack);
           background-image: linear-gradient(225deg, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
           margin-bottom: 10px;
           border-radius: 5px;

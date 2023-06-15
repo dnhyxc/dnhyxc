@@ -386,3 +386,36 @@ export interface ClassifyList {
   createTime: number;
   classifyName: string;
 }
+
+// 关注用户信息
+export interface FollowItem {
+  id: string;
+  myUserId: string;
+  userId: string;
+  username: string;
+  job: string;
+  motto: string;
+  headUrl: string;
+  introduce: string;
+  createTime: number;
+  isFollowed: boolean;
+}
+
+export interface FollowList {
+  total: number;
+  list: FollowItem[];
+}
+
+// 编程导航参数定义
+export interface ToolsItem {
+  id: string;
+  toolName: string;
+  toolHref?: string;
+  toolUrl: string;
+  powerUsers?: { username: string; id: string }[];
+}
+
+export interface ToolListRes {
+  list: ToolsItem[];
+  total: number;
+}

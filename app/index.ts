@@ -186,8 +186,9 @@ const createChildWin = (pathname, id) => {
     icon: path.join(__dirname, getIconPath({ isDev, isMac })),
   });
 
-  // 存储每个newWin
+  // 根据子窗口传递过来的文章id存储每个子窗口的id
   globalChildWins.newWins.set(id, newWin?.webContents.id);
+  // 根据创建的子窗口的id存储对应的子窗口实例
   globalChildWins['independentWindow-' + newWin.webContents.id] = newWin;
 
   if (!isDev) {
@@ -197,8 +198,9 @@ const createChildWin = (pathname, id) => {
     newWin.loadURL(`${process.env.VITE_DEV_SERVER_URL!}${pathname}`);
   }
 
+  // 根据渲染进程传递的文章id获取对应子串口的id
   const winId = globalChildWins.newWins.get(id);
-
+  // 通过子窗口id获取子窗口实例，并监听 closed 事件
   globalChildWins['independentWindow-' + winId]?.on('closed', () => {
     globalChildWins.newWins.delete(id);
     globalChildWins['independentWindow-' + winId] = null;

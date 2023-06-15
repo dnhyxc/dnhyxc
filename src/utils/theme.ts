@@ -38,7 +38,7 @@ const removeStyle = {
   // 弹出菜单背景颜色
   '--pop-menu-color': '#fff',
   // 行内 code 字体颜色
-  '--p-code-color': '#dcffd6',
+  '--p-code-color': '#289f00',
   // 行内 code 背景颜色
   '--p-code-bg-color': 'rgba(27, 31, 35, 0.08)',
   // 登录背景
@@ -298,6 +298,7 @@ const colorful = {
 // 侧脸
 const lateralFace = {
   ...imageStyles,
+  '--card-border': 'rgba(245, 250, 248, 0.2)',
   // 字体颜色
   '--bg-image-url': `url(${HEAD_IMG})`,
   // 图片背景兼容字体颜色
@@ -371,12 +372,12 @@ const girl = {
   '--layer-2-2': 'rgba(255, 255, 242, 0.5)',
   '--input-bg-color': 'rgba(255, 255, 242, 0.5)',
   // 弹窗before背景颜色
-  '--pop-before-bg-color': 'rgb(255, 255, 228, 0.3)',
+  '--pop-before-bg-color': 'rgb(255, 255, 228, 0.35)',
   '--shade-3': 'rgba(255, 255, 242, 0.5)',
-  '--tab-color': 'rgba(255, 255, 242, 0.5)',
+  '--tab-color': 'rgba(232, 229, 218, 0.5)',
   '--card-action-font-color': '#000',
   '--card-border': 'rgba(182, 182, 182, 0.5)',
-  '--modal-bg-color': 'rgb(223, 223, 223, 0.5)',
+  '--modal-bg-color': 'rgb(223, 223, 223, 0.8)',
   '--to-top-bg-color': 'rgba(255, 255, 242, 0.65)',
   '--pop-menu-color': 'rgba(255, 255, 242, 0.85)',
   '--h-color': '#089220',

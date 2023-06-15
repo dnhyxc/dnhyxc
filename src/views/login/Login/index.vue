@@ -11,19 +11,6 @@
       <el-form-item prop="username" class="form-item">
         <el-input v-model="loginForm.username" size="large" placeholder="请输入用户名" @keyup.enter="onEnter" />
       </el-form-item>
-      <!-- <el-form-item
-        prop="username"
-        :rules="[
-          {
-            required: true,
-            message: '用户名不能为空',
-            trigger: 'blur',
-          },
-        ]"
-        class="form-item"
-      >
-        <el-input v-model="loginForm.username" size="large" placeholder="请输入用户名" @keyup.enter="onEnter" />
-      </el-form-item> -->
       <el-form-item prop="password" class="form-item">
         <el-input
           v-model="loginForm.password"
