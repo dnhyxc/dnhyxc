@@ -49,6 +49,7 @@ const routes: Array<RouteRecordRaw> = [
           title: '标签列表',
           keepAlive: false,
         },
+        // @ts-ignore
         component: () => import('@/views/tag/articles/index.vue'),
       },
       {
