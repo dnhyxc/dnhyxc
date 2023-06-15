@@ -5,7 +5,7 @@
  * index.vue
 -->
 <template>
-  <div class="timeline-card" @click.stop="toDetail(data)" @mousedown.stop="(e) => onMouseDown(e, data)">
+  <div class="timeline-card" @click.stop="toDetail(data)" @mousedown.stop="(e: MouseEvent) => onMouseDown(e, data)">
     <i v-if="data.isTop && !isTimeLine" class="font iconfont icon-zhiding" />
     <div class="title">
       <slot name="title">
@@ -67,7 +67,7 @@ import { ipcRenderer } from 'electron';
 import { inject, ref, onUnmounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { IMG1 } from '@/constant';
-import { chackIsDelete } from '@/utils';
+import { showMessage } from '@/utils';
 import { loginStore, commonStore } from '@/store';
 import { TimelineArticles, ArticleItem } from '@/typings/common';
 import Image from '@/components/Image/index.vue';
@@ -102,13 +102,17 @@ onUnmounted(() => {
 
 // 编辑
 const toEdit = async (data: ArticleItem | TimelineArticles) => {
-  await chackIsDelete(data as ArticleItem);
+  if ((data as ArticleItem)?.isDelete) {
+    return showMessage();
+  }
   router.push(`/create?id=${data.id}`);
 };
 
 // 删除
 const onReomve = async (data: ArticleItem | TimelineArticles) => {
-  await chackIsDelete(data as ArticleItem);
+  if ((data as ArticleItem)?.isDelete) {
+    return showMessage();
+  }
   props?.deleteArticle?.(data?.id!);
 };
 
@@ -137,7 +141,9 @@ const toTag = (tag: string) => {
 
 // 点赞
 const onLike = async (data: ArticleItem | TimelineArticles) => {
-  await chackIsDelete(data as ArticleItem);
+  if ((data as ArticleItem)?.isDelete) {
+    return showMessage();
+  }
   props?.likeListArticle?.(data?.id!, data as ArticleItem);
 };
 
@@ -150,13 +156,17 @@ const toDetail = async (data: ArticleItem | TimelineArticles) => {
     props.toEdit(data.id!);
     return;
   }
-  await chackIsDelete(data as ArticleItem);
+  if ((data as ArticleItem)?.isDelete) {
+    return showMessage();
+  }
   router.push(`/detail/${data?.id}`);
 };
 
 // 评论
 const onComment = async (data: ArticleItem | TimelineArticles) => {
-  await chackIsDelete(data as ArticleItem);
+  if ((data as ArticleItem)?.isDelete) {
+    return showMessage();
+  }
   router.push(`/detail/${data?.id}?scrollTo=1`);
   // ipcRenderer.send('new-win', `article/${data.id}?scrollTo=1&from=${route.name as string}`, data.id);
 };
@@ -172,7 +182,9 @@ const onMouseDown = async (e: MouseEvent, data: ArticleItem | TimelineArticles) 
 
 // 新窗口打开
 const onOpenNewWindow = async (data: ArticleItem) => {
-  await chackIsDelete(data as ArticleItem);
+  if ((data as ArticleItem)?.isDelete) {
+    return showMessage();
+  }
   const { userInfo, token } = loginStore;
   ipcRenderer.send(
     'new-win',
