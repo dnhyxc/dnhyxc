@@ -19,6 +19,7 @@ module.exports = {
       name: 'chore: 构建过程或辅助工具的变动(更改配置文件)',
     },
     { value: 'revert', name: 'revert: 回退' },
+    { value: 'other', name: 'other: 其它修改' },
     { value: 'build', name: 'build: 打包' },
   ],
   // override the messages, defaults are as follows
