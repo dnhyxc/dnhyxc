@@ -240,7 +240,7 @@ const handleKeydown = (e: KeyboardEvent) => {
 .system-wrap {
   position: absolute;
   top: 50%;
-  transform: translateY(-55%);
+  transform: translateY(-50%);
   display: flex;
   flex-direction: column;
   justify-content: center;

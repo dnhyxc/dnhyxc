@@ -47,14 +47,14 @@
                   </div>
                   <div class="size-item">
                     <span class="comp-width">压缩宽度：{{ compresWidth }}</span>
-                    <span class="comp-height">
-                      压缩高度：{{
+                    <span class="comp-height"
+                      >压缩高度：{{
                         Number(compressHeight) > Number(sourceFileInfo.height) ? sourceFileInfo.height : compressHeight
-                      }}
-                    </span>
+                      }}</span
+                    >
                   </div>
                   <div class="size-item">
-                    <span class="comp-width"> 宽度相差：{{ sourceFileInfo.width - (compresWidth as number) }} </span>
+                    <span class="comp-width">宽度相差：{{ sourceFileInfo.width - (compresWidth as number) }}</span>
                     <span class="comp-height">
                       高度相差：{{ sourceFileInfo.height - (compressHeight as number) }}
                     </span>
@@ -88,7 +88,7 @@
             <span class="title">图片尺寸</span>
             <span class="center">
               尺寸越小，压缩后体积越小
-              <span class="enter-size-info">（宽高只需输入其中一项，另一项将按比例计算） </span>
+              <span class="enter-size-info">（宽高只需输入其中一项，另一项将按比例计算）</span>
             </span>
             <div class="inp-wrap">
               <el-form ref="formRef" :rules="rules" :model="imgSize" class="form-wrap">

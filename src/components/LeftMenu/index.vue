@@ -224,8 +224,10 @@ const onQuit = () => {
 }
 
 .mac-left-menu-wrap {
-  padding: 28px 0 10px;
-  width: 68px;
+  padding-top: 28px;
+  width: 62px;
+  box-sizing: border-box;
+  height: calc(100vh - 88px);
 
   .icon-wrap {
     .page-icon {
@@ -238,6 +240,12 @@ const onQuit = () => {
   .menu-list {
     .font {
       font-size: 32px;
+    }
+
+    .tools {
+      font-size: 38px;
+      height: 37px;
+      line-height: 37px;
     }
   }
 }

@@ -5,7 +5,7 @@
  * index.vue
 -->
 <template>
-  <Loading :loading="personalStore.loading" class="personal-wrap">
+  <Loading :loading="personalStore.loading" :class="`${checkOS() === 'mac' && 'mac-personal-wrap'} personal-wrap`">
     <template #default>
       <div class="header">
         <div class="left">
@@ -154,7 +154,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { ElMessage } from 'element-plus';
 import { useDeleteArticle, useScroller } from '@/hooks';
 import { articleStore, loginStore, personalStore, followStore } from '@/store';
-import { formatDate, scrollTo, checkUrl } from '@/utils';
+import { formatDate, scrollTo, checkUrl, checkOS } from '@/utils';
 import { ArticleItem, CollectParams, FollowItem } from '@/typings/common';
 import { HEAD_IMG, ICONLINKS, ABOUT_ME_TABS, ABOUT_TABS } from '@/constant';
 import AddCollectModel from '@/components/AddCollectModel/index.vue';
@@ -650,6 +650,10 @@ const onScrollTo = (to?: number) => {
     color: var(--font-4);
     margin: 15px 0 0;
   }
+}
+
+.mac-personal-wrap {
+  padding-left: 5px;
 }
 
 .introduce-tip {

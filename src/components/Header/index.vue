@@ -561,7 +561,19 @@ const onDeleteAll = async () => {
 }
 
 .mac-header-wrap {
-  padding: 10 12px;
+  padding: 28px 20px 10px 10px;
+
+  .left {
+    padding-left: 51px;
+
+    .icon-wrap {
+      top: 30px;
+      left: 11px;
+      .page-icon {
+        font-size: 40px;
+      }
+    }
+  }
 }
 
 .title-popover {

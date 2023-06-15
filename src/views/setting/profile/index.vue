@@ -5,7 +5,7 @@
  * index.vue
 -->
 <template>
-  <div class="profile-wrap">
+  <div :class="`${checkOS() === 'mac' && 'mac-profile-wrap'} profile-wrap`">
     <div class="user-info">
       <div class="cover">
         <div class="img-wrap">
@@ -101,7 +101,7 @@ import { useRouter } from 'vue-router';
 import type { FormInstance, FormRules } from 'element-plus';
 import { HEAD_IMG, IMG1 } from '@/constant';
 import { loginStore, uploadStore } from '@/store';
-import { verifyUsername, checkImgUrlType } from '@/utils';
+import { verifyUsername, checkImgUrlType, checkOS } from '@/utils';
 import Upload from '@/components/Upload/index.vue';
 
 const router = useRouter();
@@ -345,6 +345,22 @@ const onEnter = () => {
         background-color: transparent;
       }
     }
+  }
+}
+
+.mac-profile-wrap {
+  padding: 10px 0 0 10px;
+
+  .user-info {
+    .cover {
+      .img-wrap {
+        height: 186px;
+      }
+    }
+  }
+
+  .content {
+    padding: 5px 7% 0 2%;
   }
 }
 </style>

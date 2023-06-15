@@ -1,5 +1,5 @@
 <template>
-  <div class="setting-wrap">
+  <div :class="`${checkOS() === 'mac' && 'mac-setting-wrap'} setting-wrap`">
     <div class="menu">
       <div
         v-for="menu in menuList"
@@ -23,6 +23,7 @@ import { ref, onMounted, computed, watch } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { SETTING_MENU } from '@/constant';
 import { loginStore } from '@/store';
+import { checkOS } from '@/utils';
 import { MenuListParams } from '@/typings/common';
 
 const menuList = computed(() => {
@@ -123,6 +124,16 @@ const onClick = (menu: MenuListParams) => {
     border-bottom: 1px solid var(--card-border);
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
+  }
+}
+
+.mac-setting-wrap {
+  padding-left: 5px;
+  height: calc(100vh - 88px);
+  box-sizing: border-box;
+
+  .content {
+    height: calc(100vh - 125px);
   }
 }
 </style>

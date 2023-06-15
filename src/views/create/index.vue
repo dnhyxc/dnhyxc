@@ -5,7 +5,7 @@
  * index.vue
 -->
 <template>
-  <div class="edit-wrap">
+  <div :class="`${checkOS() === 'mac' && 'mac-edit-wrap'} edit-wrap`">
     <MackdownEditor
       :on-publish="onPublish"
       :on-clear="onClear"
@@ -13,6 +13,7 @@
       :article-id="(route?.query?.id as string)"
       :on-save-draft="onSaveDraft"
       :copy-code-success="onCopyCodeSuccess"
+      :height="checkOS() === 'mac' ? 'calc(100vh - 88px)' : ''"
     />
     <CreateDrawer
       :key="JSON.stringify(createStore.classifys)"
@@ -28,9 +29,10 @@ import { ref, onActivated, onDeactivated, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { ElMessage } from 'element-plus';
 import MackdownEditor from '@/components/MackdownEditor/index.vue';
+import { articleStore, createStore } from '@/store';
+import { checkOS } from '@/utils';
 import CreateDrawer from './Create/index.vue';
 import DraftModal from './Draft/index.vue';
-import { articleStore, createStore } from '@/store';
 
 const route = useRoute();
 const router = useRouter();
@@ -106,5 +108,9 @@ export default {
 
 .edit-wrap {
   border-radius: 5px;
+}
+
+.mac-edit-wrap {
+  padding-left: 5px;
 }
 </style>

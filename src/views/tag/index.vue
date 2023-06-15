@@ -5,7 +5,7 @@
  * index.vue
 -->
 <template>
-  <div class="tag-wrap">
+  <div :class="`${checkOS() === 'mac' && 'mac-tag-wrap'} tag-wrap`">
     <WordCloud :data="tagStore.tags" class="word-cloud-wrap" :callback="onCheckTag" :loading="tagStore.loading" />
     <div class="tag-list">
       <div class="title">
@@ -29,7 +29,7 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { scrollTo } from '@/utils';
+import { scrollTo, checkOS } from '@/utils';
 import { useScroller } from '@/hooks';
 import { tagStore } from '@/store';
 import WordCloud from '@/components/WordCloud/index.vue';
@@ -151,5 +151,9 @@ const onCheckTag = (tag: string) => {
       color: var(--font-3);
     }
   }
+}
+
+.mac-tag-wrap {
+  padding-left: 5px;
 }
 </style>

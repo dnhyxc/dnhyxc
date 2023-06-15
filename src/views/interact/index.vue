@@ -5,7 +5,10 @@
  * index.vue
 -->
 <template>
-  <Loading :loading="interactStore.interactLoading" class="barrage-wrap">
+  <Loading
+    :loading="interactStore.interactLoading"
+    :class="`${checkOS() === 'mac' && 'mac-barrage-wrap'} barrage-wrap`"
+  >
     <div class="barrage">
       <Barrage ref="barrageRef" />
     </div>
@@ -73,7 +76,7 @@ import { onMounted, onUnmounted, ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import vueDanmaku from 'vue3-danmaku';
 import { loginStore, interactStore, authorStore } from '@/store';
-import { scrollTo, uuid, formatDate } from '@/utils';
+import { scrollTo, uuid, formatDate, checkOS } from '@/utils';
 import { useScroller } from '@/hooks';
 import { HEAD_IMG } from '@/constant';
 import { BarrageItem } from '@/typings/common';
@@ -326,5 +329,9 @@ const onScrollTo = () => {
     text-align: center;
     color: @font-4;
   }
+}
+
+.mac-barrage-wrap {
+  padding-left: 5px;
 }
 </style>
