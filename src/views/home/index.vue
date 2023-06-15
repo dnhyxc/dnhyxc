@@ -13,7 +13,7 @@
           <el-button type="primary" link :class="searchType === 1 && 'active'" @click="searchNewArticles">
             推荐文章
           </el-button>
-          <el-button type="warning" link :class="searchType === 2 && 'active'" @click="searchHotArticles">
+          <el-button type="danger" link :class="searchType === 2 && 'active'" @click="searchHotArticles">
             最热文章
           </el-button>
         </div>
