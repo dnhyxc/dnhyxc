@@ -74,7 +74,7 @@ import { Plus } from '@element-plus/icons-vue';
 import type { UploadProps } from 'element-plus';
 import { VueCropper } from 'vue-cropper';
 import { createStore, uploadStore } from '@/store';
-import { FILE_TYPE } from '@/constant';
+import { FILE_TYPE, FILE_UPLOAD_MSG } from '@/constant';
 import { getImgInfo, url2Base64 } from '@/utils';
 
 import 'vue-cropper/dist/index.css';
@@ -113,6 +113,8 @@ const cropper = ref<ReturnType<typeof VueCropper>>();
 const scaleNum = ref<number>(1);
 // 保存上传的fileInfo
 const fileInfo = ref<File | null>(null);
+// 保存的下载时传给主进程的 URL
+const createdUrl = ref<string>('');
 
 // 截图器配置
 const option = reactive({
@@ -157,7 +159,7 @@ const filePath = computed({
 // 上传校验
 const beforeUpload: UploadProps['beforeUpload'] = (rawFile) => {
   if (!FILE_TYPE.includes(rawFile.type)) {
-    ElMessage.error('请上传 png、jpg、jpeg、gif 格式的图片');
+    ElMessage.error(FILE_UPLOAD_MSG);
     return false;
   } else if (rawFile.size / 1024 / 1024 > 20) {
     ElMessage.error('图片不能超过20M');
@@ -232,6 +234,7 @@ const onDownload = async (e: Event, loadUrl?: string) => {
   } else {
     cropper.value.getCropBlob((blob: Blob) => {
       const url = window.URL.createObjectURL(blob);
+      createdUrl.value = url;
       ipcRenderer.send('download', url);
     });
   }
@@ -239,6 +242,7 @@ const onDownload = async (e: Event, loadUrl?: string) => {
   // 设置一次性监听，防止重复触发
   ipcRenderer.once('download-file', (e, res: string) => {
     if (res) {
+      window.URL.revokeObjectURL(createdUrl.value);
       ElMessage({
         message: '保存成功',
         type: 'success',

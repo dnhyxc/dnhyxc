@@ -71,9 +71,10 @@
                 v-for="tab in tabs"
                 :key="tab.value"
                 :label="tab.name"
-                :class="`${!personalStore.articleList?.length && 'tab-pane'}`"
+                :class="`${!personalStore.articleList?.length && !followStore.followList?.length && 'tab-pane'}`"
               >
-                <div v-if="tab.value !== '2'" class="list-wrap">
+                <!-- 我的文章/点赞文章 -->
+                <div v-if="tab.value === '1' || tab.value === '4'" class="list-wrap">
                   <LineCard
                     v-for="data in personalStore.articleList"
                     :key="data.id"
@@ -83,6 +84,17 @@
                     :like-list-article="likeListArticle"
                   />
                 </div>
+                <!-- 我的关注 -->
+                <div v-else-if="tab.value === '3'" class="list-wrap">
+                  <FollowCard
+                    v-for="data in followStore.followList"
+                    :key="data.id"
+                    :data="data"
+                    class="author-line-card"
+                    :on-follow="onFollow"
+                  />
+                </div>
+                <!-- 点赞文章 -->
                 <div v-else class="list-wrap">
                   <LineCard
                     v-for="data in personalStore.articleList"
@@ -141,9 +153,9 @@ import { ref, computed, onMounted, onUnmounted, watchEffect, inject } from 'vue'
 import { useRoute, useRouter } from 'vue-router';
 import { ElMessage } from 'element-plus';
 import { useDeleteArticle, useScroller } from '@/hooks';
-import { articleStore, loginStore, personalStore } from '@/store';
+import { articleStore, loginStore, personalStore, followStore } from '@/store';
 import { formatDate, scrollTo, checkUrl } from '@/utils';
-import { ArticleItem, CollectParams } from '@/typings/common';
+import { ArticleItem, CollectParams, FollowItem } from '@/typings/common';
 import { HEAD_IMG, ICONLINKS, ABOUT_ME_TABS, ABOUT_TABS } from '@/constant';
 import AddCollectModel from '@/components/AddCollectModel/index.vue';
 import Empty from '@/components/Empty/index.vue';
@@ -171,13 +183,24 @@ const currentCollectValues = ref<CollectParams>({
 });
 
 const noMore = computed(() => {
-  const { articleList, total } = personalStore;
-  return articleList.length >= total && articleList.length;
+  const { articleList, total, currentTabKey } = personalStore;
+  const { followList, total: followTotal } = followStore;
+  return currentTabKey === '2'
+    ? followList?.length && followList?.length >= followTotal
+    : articleList.length && articleList.length >= total;
 });
 const disabled = computed(() => personalStore.loading || noMore.value);
-const showEmpty = computed(
-  () => personalStore.loading !== null && !personalStore.loading && !personalStore.articleList?.length,
-);
+const showEmpty = computed(() => {
+  const { articleList, currentTabKey, loading } = personalStore;
+  const { followList } = followStore;
+  if (loading !== null && !loading && currentTabKey === '2' && !followList.length) {
+    return true;
+  } else if (loading !== null && !loading && currentTabKey !== '2' && !articleList.length) {
+    return true;
+  } else {
+    return false;
+  }
+});
 // 判断是否展示删除、编辑收藏集的按钮
 const isShowCollectActions = computed(() => !userId || userId === loginStore.userInfo?.userId);
 
@@ -212,6 +235,8 @@ onMounted(async () => {
   isMounted.value = true;
   // 清空原始数据
   personalStore.clearArticleList();
+  // 清除点赞列表原始数据
+  followStore.clearInteractList();
   if (userId && userId !== loginStore.userInfo?.userId) {
     // 获取个人主页信息
     await personalStore.getUserInfo(userId as string);
@@ -233,19 +258,27 @@ watchEffect(() => {
 onUnmounted(() => {
   // 清空原始数据
   personalStore.clearArticleList();
+  // 清除点赞列表数据
+  followStore.clearInteractList();
 });
 
 // 获取各tab中的文章列表
 const getMyArticleList = async () => {
-  await personalStore.getMyArticleList();
+  if (personalStore.currentTabKey === '2') {
+    await followStore.getFollowList(userId as string);
+  } else {
+    await personalStore.getMyArticleList();
+  }
 };
 
 // tab 切换
 const onTabChange = (value: string) => {
-  // 设置选中tab，value：0：我/他的文章，1：我的收藏，2：点赞文章
+  // 设置选中tab，value：0：我/他的文章，1：我的收藏，2：我的关注，3：点赞文章
   personalStore.currentTabKey = value;
   // 切换时清空原有数据
   personalStore.clearArticleList();
+  // 清除点赞列表数据
+  followStore.clearInteractList();
   // 切换tab时，重新加载数据
   getMyArticleList();
 };
@@ -254,9 +287,14 @@ const onTabChange = (value: string) => {
 const likeListArticle = async (id: string, data?: ArticleItem) => {
   await articleStore.likeListArticle({ id, pageType: 'personal', data });
   // 取消点赞文章重新刷新列表之后，自动滚动到之前查看页面的位置
-  if (personalStore.currentTabKey === '2') {
+  if (personalStore.currentTabKey === '3') {
     onScrollTo(scrollTop.value);
   }
+};
+
+// 关注/取消关注
+const onFollow = (id: string, data?: FollowItem) => {
+  followStore.manageFollow(data?.userId!, id);
 };
 
 // 新增收藏集
@@ -454,12 +492,13 @@ const onScrollTo = (to?: number) => {
           border-top-left-radius: 5px;
           border-top-right-radius: 5px;
           background-color: transparent;
+          background-image: linear-gradient(225deg, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
         }
         .el-tabs__header {
           border-bottom: 1px solid var(--card-border);
 
           .el-tabs__item {
-            color: var(--font-color);
+            color: var(--font-1);
           }
 
           .el-tabs__item.is-active {
@@ -482,7 +521,7 @@ const onScrollTo = (to?: number) => {
         .author-line-card {
           width: calc(50% - 5px);
           padding: 10px 10px;
-          box-shadow: 0 0 5px var(--shadow-color);
+          box-shadow: 0 0 5px var(--shadow-mack);
           background-image: linear-gradient(225deg, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
           margin-bottom: 10px;
           border-radius: 5px;

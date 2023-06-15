@@ -411,7 +411,7 @@ export const useArticleStore = defineStore('article', {
               break;
             case 'personal':
               // 取消点赞之后，重新获取点赞文章列表
-              if (personalStore.currentTabKey === '2') {
+              if (personalStore.currentTabKey === '3') {
                 // 获取删除时拉取的文章总数，用于取消点赞时，拉取对应的数量
                 const total = personalStore.articleList?.length;
                 personalStore.clearArticleList();

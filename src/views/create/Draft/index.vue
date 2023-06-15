@@ -73,7 +73,7 @@
         </el-scrollbar>
       </Loading>
       <template #footer>
-        <span class="dialog-footer"> </span>
+        <span class="dialog-footer"></span>
       </template>
     </el-dialog>
   </div>
@@ -265,7 +265,7 @@ const onScrollTo = (to?: number) => {
       .line-card {
         width: calc(50% - 5px);
         padding: 10px 10px;
-        box-shadow: 0 0 5px var(--shadow-color);
+        box-shadow: 0 0 5px var(--shadow-mack);
         background-image: linear-gradient(225deg, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
         margin-bottom: 10px;
         border-radius: 5px;

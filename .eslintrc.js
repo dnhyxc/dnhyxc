@@ -38,5 +38,8 @@ module.exports = {
     'vue/no-mutating-props': 0,
     'vue/no-deprecated-v-on-native-modifier': 0,
     'vue/no-v-html': 0,
+    'no-new': 0,
+    'no-use-before-define': 0,
+    'no-unused-expressions': 0,
   },
 };

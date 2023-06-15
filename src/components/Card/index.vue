@@ -312,7 +312,6 @@ const toTag = (name: string) => {
 
     .card-bottom {
       padding: 8px 10px;
-      // box-shadow: 0 0 1px var(--shadow-color) inset;
       background-blend-mode: multiply, multiply;
       border-bottom-left-radius: 5px;
       border-bottom-right-radius: 5px;

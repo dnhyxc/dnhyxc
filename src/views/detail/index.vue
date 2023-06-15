@@ -9,7 +9,7 @@
     <div class="content">
       <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
         <div ref="articleInfoRef" class="article-info">
-          <PageHeader />
+          <PageHeader v-if="articleStore.articleDetail?.authorId" />
           <Preview
             v-if="articleStore.articleDetail.content"
             :mackdown="articleStore.articleDetail.content"

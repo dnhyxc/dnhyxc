@@ -1,8 +1,8 @@
 @font-face {
   font-family: "iconfont"; /* Project id 3511354 */
-  src: url('iconfont.woff2?t=1684753216287') format('woff2'),
-       url('iconfont.woff?t=1684753216287') format('woff'),
-       url('iconfont.ttf?t=1684753216287') format('truetype');
+  src: url('iconfont.woff2?t=1685346412347') format('woff2'),
+       url('iconfont.woff?t=1685346412347') format('woff'),
+       url('iconfont.ttf?t=1685346412347') format('truetype');
 }
 
 .iconfont {
@@ -11,6 +11,22 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-yasuo:before {
+  content: "\eb0c";
+}
+
+.icon-yasuo1:before {
+  content: "\eb16";
+}
+
+.icon-ego-box:before {
+  content: "\e632";
+}
+
+.icon-heziguanligenduoshangpinkeji:before {
+  content: "\e633";
 }
 
 .icon-star:before {
