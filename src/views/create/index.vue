@@ -13,7 +13,7 @@
       :article-id="(route?.query?.id as string)"
       :on-save-draft="onSaveDraft"
       :copy-code-success="onCopyCodeSuccess"
-      :height="checkOS() === 'mac' ? 'calc(100vh - 88px)' : ''"
+      :height="checkOS() === 'mac' ? 'calc(100vh - 88px)' : null"
     />
     <CreateDrawer
       :key="JSON.stringify(createStore.classifys)"
