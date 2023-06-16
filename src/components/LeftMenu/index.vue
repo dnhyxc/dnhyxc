@@ -12,7 +12,7 @@
         v-show="!menu.hide"
         :key="menu.key"
         class="menu-list"
-        @click="(e) => onSelectMenu(e, menu)"
+        @click="(e: Event) => onSelectMenu(e, menu)"
       >
         <el-tooltip class="box-item" effect="light" :content="menu.name" placement="right">
           <i

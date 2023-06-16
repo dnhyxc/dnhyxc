@@ -5,7 +5,7 @@
       v-model.trim="createStore.createInfo.content"
       placeholder="编辑内容"
       autofocus
-      :height="height"
+      :height="height || 'calc(100vh - 77px)'"
       :disabled-menus="[]"
       left-toolbar="undo redo | h bold italic | quote code | strikethrough hr | emoji link image | ul ol table | clear | draft | save | create"
       :toolbar="toolbar"
@@ -61,7 +61,7 @@ interface Toolbar {
 
 interface IProps {
   articleId?: string;
-  height?: string;
+  height?: string | null;
   onPublish?: () => void;
   onClear?: () => void;
   onShowDraft?: () => void;
