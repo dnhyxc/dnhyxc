@@ -16,3 +16,29 @@ export const sendRefresh = (articleId: string, pathname?: string, isLike?: boole
 export const restore = (info: string) => {
   ipcRenderer.send('restore', info);
 };
+
+// 通知拓展坞闪动
+export const sendFlashMsg = (data: any) => {
+  ipcRenderer.send('show-message', data);
+};
+
+// 发送托盘闪烁消息
+export const sendMessageFlashInfo = (params: { messageStore: any; msgStatus: number }) => {
+  const { messageStore, msgStatus } = params;
+  if (messageStore.msgCount && msgStatus === 1) {
+    sendFlashMsg(
+      JSON.stringify({
+        count: messageStore.msgCount,
+        noReadMsg: messageStore.noReadMsgList?.[0],
+      }),
+    );
+  } else {
+    ipcRenderer.send(
+      'hide-message',
+      JSON.stringify({
+        count: messageStore.msgCount,
+        noReadMsg: messageStore.noReadMsgList?.[0],
+      }),
+    );
+  }
+};

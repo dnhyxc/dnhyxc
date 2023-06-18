@@ -677,6 +677,9 @@ export const CLOSE_CONFIG = 'CLOSE_CONFIG';
 // 系统设置不再提示store存储key
 export const CLOSE_PROMPT = 'CLOSE_PROMPT';
 
+// 消息提醒store存储key
+export const MSG_STATUS = 'MSG_STATUS';
+
 // 阻止按下这些键设置为快捷键
 export const CODE_CONTROL = [
   'Shift',

@@ -2,15 +2,19 @@ import path from 'path';
 import { app, BrowserWindow, ipcMain, Tray, dialog } from 'electron';
 import Store from 'electron-store';
 import { registerShortcut, unRegisterShortcut } from './shortcut';
-import { createContextMenu, getIconPath } from './tray';
+import { createContextMenu, getIconPath, stopFlash } from './tray';
 import { DOMAIN_URL } from './constant';
 import { globalChildWins } from './global';
+import { createMessageWin, showMessage, checkTrayLeave, messageWinStatus } from './message';
 
 let win: BrowserWindow | null = null;
 let newWin: BrowserWindow | null = null;
 let tray: Tray | null = null;
 // 保存用户信息
 let userInfo = '';
+
+// 消息提示控制器
+let msgStatus: boolean | null = true;
 
 // 控制是否退出
 let willQuitApp = false;
@@ -363,6 +367,16 @@ ipcMain.on('open-at-login', (event, status) => {
   app.setLoginItemSettings({ openAtLogin: status !== 1 });
 });
 
+// 设置消息提醒设置
+ipcMain.on('msg-status', (event, status) => {
+  // status = 1：开启消息提醒
+  if (status === 1) {
+    msgStatus = true;
+  } else {
+    msgStatus = false;
+  }
+});
+
 // 限制只能启动一个应用
 const gotTheLock = app.requestSingleInstanceLock();
 
@@ -383,14 +397,42 @@ if (!isMac) {
 // 在Electron完成初始化时被触发
 app
   .whenReady()
-  .then(createWindow)
+  .then(() => {
+    // 创建主窗口
+    createWindow();
+  })
   .then(() => registerShortcut({ isDev, win, isMac, app }))
   .then(() => {
+    const store = new Store();
     tray = new Tray(path.join(__dirname, getIconPath({ isDev, isMac })));
+    // 设置鼠标悬浮 Tip 提示
+    tray?.setToolTip('dnhyxc');
     if (!isMac) {
+      // 设置托盘菜单
       tray?.setContextMenu(createContextMenu(win));
       tray?.on('click', () => {
         win?.show();
+        // 停止托盘图标闪动
+        stopFlash({ tray, isDev, isMac });
+      });
+
+      // 创建消息窗口
+      createMessageWin({ tray, win: win as BrowserWindow });
+
+      // 监听鼠标是否进入托盘
+      tray?.on('mouse-move', () => {
+        // 判断是否开启了消息提醒
+        if (store.get('MSG_STATUS') === 1 && msgStatus) {
+          // 如果存在未读消息则显示消息窗口，否则不显示
+          if (!messageWinStatus.hasUnreadMsg) return;
+          // 判断鼠标是否进入托盘图标
+          if (messageWinStatus.isLeave) {
+            showMessage();
+            messageWinStatus.isLeave = false;
+            // 检测鼠标是否移除托盘图标
+            checkTrayLeave(tray);
+          }
+        }
       });
     } else {
       tray?.on('mouse-up', () => {

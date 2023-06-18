@@ -1,4 +1,5 @@
 import Store from 'electron-store';
+import { MSG_STATUS } from '@/constant';
 
 const store = new Store();
 
@@ -52,4 +53,9 @@ export const getTheme = (): string => {
 // 清除主题
 export const removeTheme = () => {
   store.delete('theme');
+};
+
+// 获取消息提醒状态
+export const getMsgStatus = () => {
+  return store.get(MSG_STATUS);
 };

@@ -86,9 +86,12 @@ import { useRouter, useRoute } from 'vue-router';
 import { formatDate, showMessage } from '@/utils';
 import { ArticleItem } from '@/typings/common';
 import { IMG1 } from '@/constant';
-import { commonStore, loginStore } from '@/store';
+import { loginStore } from '@/store';
+import { useCommonStore } from '@/store/common';
 import Image from '@/components/Image/index.vue';
 import ContentMenu from '@/components/ContentMenu/index.vue';
+
+const commonStore = useCommonStore();
 
 const router = useRouter();
 const route = useRoute();

@@ -8,6 +8,7 @@ import { ArticleItem, ArticleListResult } from '@/typings/common';
 
 interface IProps {
   msgCount: number;
+  noReadMsgList: ArticleItem[];
   msgList: ArticleItem[];
   loading: boolean | null;
   total: number;
@@ -19,6 +20,7 @@ interface IProps {
 export const useMessageStore = defineStore('message', {
   state: (): IProps => ({
     msgCount: 0,
+    noReadMsgList: [],
     msgList: [],
     loading: null,
     total: 0,
@@ -59,24 +61,26 @@ export const useMessageStore = defineStore('message', {
     },
 
     // 设置消息阅读状态
-    async setReadStatus() {
+    async setReadStatus(ids?: string[]) {
       const msgIds = this.msgList
         .filter((i) => !i.isReaded)
         .map((i) => i.id)
         .slice((this.pageNo - 1) * this.pageSize, this.pageNo * this.pageSize + this.pageSize); // 0 => 20, 20 => 40, 40 => 60
 
-      if (!msgIds?.length) return;
+      if (!msgIds?.length && !ids?.length) return;
 
-      normalizeResult<number>(await Service.setReadStatus({ msgIds }));
+      normalizeResult<number>(await Service.setReadStatus({ msgIds: ids || msgIds }));
     },
 
     // 获取未读消息数量
     async getNoReadMsgCount() {
       if (!loginStore?.userInfo?.userId) return;
-      const res = normalizeResult<number>(await Service.getNoReadMsgCount());
+      const res = normalizeResult<{ count: number; list: ArticleItem[] }>(await Service.getNoReadMsgCount());
       if (res.success) {
-        this.msgCount = res.data;
+        this.msgCount = res.data.count;
+        this.noReadMsgList = res.data.list;
       }
+      return res;
     },
 
     // 删除消息
