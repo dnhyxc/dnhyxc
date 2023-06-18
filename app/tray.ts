@@ -34,7 +34,7 @@ export const getFlashIconPath = ({ isDev, isMac }) => {
   if (isDev) {
     return isMac ? '../public/w-icon@16.png' : '../public/w-icon@32.png';
   } else {
-    return isMac ? '../dist/w-icon@16.png' : '../dist/w-icon@32.pn';
+    return isMac ? '../dist/w-icon@16.png' : '../dist/w-icon@32.png';
   }
 };
 
