@@ -33,3 +33,7 @@ cp -r /usr/local/server/src/upload /usr/local/   // 复制到local
 ```json
 cp -r /usr/local/upload /usr/local/server/src/  // 从local复制到src
 ```
+
+#### mac 系统拓展坞鼠标 hover 时 tip 文字显示显示问题
+
+开发环境，鼠标 hover 到应用图标上时，Tip 文字始终显示为 Electron，不必过于纠结，因为当安装到本地之后，自然就会展示为自己应用的名称。
