@@ -13,7 +13,7 @@ import EventBus from './eventBus';
 import { locSetItem, locGetItem, locRemoveItem, ssnGetItem, ssnSetItem, ssnRemoveItem } from './storage';
 import * as ipcRenderers from './ipcRenderer';
 import { modifyTheme } from './theme';
-import { eStore, setTheme, getTheme, removeTheme } from './store';
+import { eStore, setTheme, getTheme, removeTheme, getMsgStatus } from './store';
 import { compressImage } from './compress';
 export { Verify, checkNumber, checkMin, checkMax, verifyEmpty, verifyLength, verfiySpecialCharacters } from './verify';
 
@@ -41,6 +41,7 @@ export {
   getTheme,
   removeTheme,
   compressImage,
+  getMsgStatus,
 };
 
 // 判断系统类型

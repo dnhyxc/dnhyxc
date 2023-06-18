@@ -36,13 +36,22 @@
       </div>
     </div>
     <div class="file-config">
-      <div class="label">启动设置</div>
+      <div class="label">应用设置</div>
       <div class="file-item">
         <span class="name config-name">设置开机自启</span>
         <div class="key-info">
           <el-radio-group v-model="openStatus">
             <el-radio :label="1" class="radio-close">否（开机不自动启动）</el-radio>
             <el-radio :label="2" class="radio-close">是（开机后自动启动）</el-radio>
+          </el-radio-group>
+        </div>
+      </div>
+      <div class="file-item">
+        <span class="name config-name">设置消息提醒</span>
+        <div class="key-info">
+          <el-radio-group v-model="msgStatus">
+            <el-radio :label="1" class="radio-close">是（将开启消息提醒）</el-radio>
+            <el-radio :label="2" class="radio-close">否（将关闭消息提醒）</el-radio>
           </el-radio-group>
         </div>
       </div>
@@ -80,8 +89,9 @@
 import { ipcRenderer } from 'electron';
 import Store from 'electron-store';
 import { ref, Directive, DirectiveBinding, nextTick, onMounted, watch } from 'vue';
-import { STSTEM_CONFIG, SHORTCUT_KEYS, CLOSE_CONFIG, OPEN_CONFIG, INIT_SHOTCUT_KEYS } from '@/constant';
-import { setShortcutKey } from '@/utils';
+import { STSTEM_CONFIG, SHORTCUT_KEYS, CLOSE_CONFIG, OPEN_CONFIG, INIT_SHOTCUT_KEYS, MSG_STATUS } from '@/constant';
+import { setShortcutKey, ipcRenderers } from '@/utils';
+import { messageStore } from '@/store';
 import { ElMessage } from 'element-plus';
 
 const store = new Store();
@@ -102,6 +112,8 @@ const shortcut = ref<string>('');
 const closeStatus = ref<number>(1);
 // 开机自启设置
 const openStatus = ref<number>(1);
+// 消息提醒
+const msgStatus = ref<number>(1);
 
 // 局部自动获取焦点指令
 const vFocus: Directive = (el, binding: DirectiveBinding) => {
@@ -160,6 +172,9 @@ onMounted(() => {
 
   // 开启启动默认值
   openStatus.value = (store.get(OPEN_CONFIG) as number) || 1;
+
+  // 消息提醒默认值
+  msgStatus.value = (store.get(MSG_STATUS) as number) || 1;
 });
 
 // 监听关闭面板状态
@@ -173,6 +188,17 @@ watch(openStatus, (newVal, oldVal) => {
     store.set(OPEN_CONFIG, newVal);
     ipcRenderer.send('open-at-login', newVal);
   }
+});
+
+// 监听是否开启消息提醒
+watch(msgStatus, (newVal, oldVal) => {
+  if (newVal !== oldVal) {
+    store.set(MSG_STATUS, newVal);
+    ipcRenderer.send('msg-status', newVal);
+  }
+
+  // 发送消息闪烁状态控制
+  ipcRenderers.sendMessageFlashInfo({ messageStore, msgStatus: newVal });
 });
 
 // 点击编辑显示弹窗

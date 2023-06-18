@@ -51,8 +51,8 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, watch, inject } from 'vue';
-import { useRouter } from 'vue-router';
-import { useMessageStore } from '@/store/message';
+import { useRouter, useRoute } from 'vue-router';
+import { messageStore, personalStore, loginStore } from '@/store';
 import { useScroller } from '@/hooks';
 import { scrollTo, formatDate } from '@/utils';
 import eventBus from '@/utils/eventBus';
@@ -61,10 +61,9 @@ import { MESSAGE_ACTIONS, FOLLOWED_INFO } from '@/constant';
 
 const reload = inject<Function>('reload');
 
-const messageStore = useMessageStore();
-
 const { scrollRef, scrollTop } = useScroller();
 const router = useRouter();
+const route = useRoute();
 
 const isMounted = ref<boolean>(false);
 const timer = ref<ReturnType<typeof setTimeout> | null>(null);
@@ -115,6 +114,13 @@ const onDelete = async (id: string) => {
 // 前往操作人主页
 const toPersonal = (userId: string) => {
   router.push(`/personal?authorId=${userId}`);
+  if (route.path === '/personal' && loginStore?.userInfo.userId !== userId) {
+    if (personalStore.currentTabKey === '1' && route.query.authorId === userId) return;
+    timer.value = setTimeout(() => {
+      reload?.();
+      timer.value = null;
+    }, 100);
+  }
 };
 
 // 去详情页

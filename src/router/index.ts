@@ -214,6 +214,15 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('@/views/article/index.vue'),
   },
   {
+    path: '/message',
+    name: 'message',
+    meta: {
+      title: '消息提示',
+      keepAlive: false,
+    },
+    component: () => import('@/views/message/index.vue'),
+  },
+  {
     path: '/:pathMatch(.*)*',
     component: () => import('@/views/404/index.vue'),
   },
