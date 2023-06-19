@@ -32,9 +32,9 @@ export const getIconPath = ({ isDev, isMac }) => {
 // 获取闪动图标颜色
 export const getFlashIconPath = ({ isDev, isMac }) => {
   if (isDev) {
-    return isMac ? '../public/w-icon@16.png' : '../public/w-icon@32.png';
+    return isMac ? '../public/TemplateEmpty.png' : '../public/empty.png';
   } else {
-    return isMac ? '../dist/w-icon@16.png' : '../dist/w-icon@32.png';
+    return isMac ? '../dist/TemplateEmpty.png' : '../dist/empty.png';
   }
 };
 
@@ -48,7 +48,7 @@ export const startFlash = ({ tray, isDev, isMac }) => {
   if (!isFlashing) {
     isFlashing = true;
     flashInterval = setInterval(() => {
-      tray.setImage(path.join(__dirname, flashImg));
+      tray.setImage(path.join(__dirname, flashImg as string));
       setTimeout(() => {
         tray.setImage(path.join(__dirname, img));
       }, 500);

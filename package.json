@@ -13,6 +13,7 @@
     "eslint": "eslint --ext .js,.vue --ignore-path .gitignore --fix src",
     "prettier": "prettier --write",
     "cmt": "git-cz",
+    "commit": "git-cz",
     "prepare": "husky install",
     "test": "npx eslint ./src  --ext ts,vue,js --fix"
   },
