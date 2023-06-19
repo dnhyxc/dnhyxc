@@ -78,8 +78,6 @@ const showEmpty = computed(
 
 onMounted(() => {
   isMounted.value = true;
-  // 获取未读消息数量
-  messageStore.getNoReadMsgCount();
   // 接受前置路由守卫发送的消息，关闭消息列表
   eventBus.on('hide-msg-popover', (status: boolean) => {
     messageStore.visible = status;

@@ -10,7 +10,7 @@ import { ipcRenderer } from 'electron';
 import { ref, nextTick, provide, onMounted, onBeforeMount } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { commonStore, messageStore, personalStore, loginStore } from '@/store';
-import { modifyTheme, getTheme } from '@/utils';
+import { modifyTheme, getTheme, ipcRenderers, getMsgStatus } from '@/utils';
 
 const route = useRoute();
 
@@ -29,12 +29,14 @@ onBeforeMount(() => {
   }
 });
 
-onMounted(() => {
+onMounted(async () => {
   document.body.addEventListener('click', onBodyClick);
+
+  // 每次刷新重新加载未读消息列表
+  await messageStore.getNoReadMsgCount();
+
   // 在 App 中监听主进程中发送的清除消息列表的消息，防止重复首次加载时重复监听的问题
-  ipcRenderer.on('clear-message', async (e, data) => {
-    // 设置消息已读
-    await messageStore.getNoReadMsgCount();
+  ipcRenderer.on('clear-message', async () => {
     // 获取未读消息id
     const msgIds = messageStore.noReadMsgList?.map((i) => i.id);
     if (msgIds?.length) {
@@ -43,10 +45,15 @@ onMounted(() => {
     }
   });
 
+  // 发送消息闪烁状态控制
+  ipcRenderers.sendMessageFlashInfo({ messageStore, msgStatus: getMsgStatus() as number });
+
+  // 监听点击消息中的用户名称跳转用户主页
   ipcRenderer.on('to-personal', (e, userId) => {
     router.push(`/personal?authorId=${userId}`);
     personalStore.currentTabKey = '0';
     if (route.path === '/personal' && loginStore?.userInfo.userId !== userId) {
+      // 判断是否是收藏tab及url上的用户id是否等于当前点击用户的用户id
       if (personalStore.currentTabKey === '1' && route.query.authorId === userId) return;
       timer.value = setTimeout(() => {
         reload();

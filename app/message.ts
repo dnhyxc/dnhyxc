@@ -23,8 +23,6 @@ export const createMessageWin = (params: { tray?: Tray | undefined; win?: Browse
   tray = params.tray;
   mainWin = params.win;
   messageWin = new BrowserWindow({
-    // width: 800,
-    // height: 500,
     width: 200,
     height: 120,
     show: false,
@@ -87,9 +85,8 @@ ipcMain.on('close-message-win', (event, status) => {
 });
 
 // 监听渲染进程鼠标移出事件，隐藏窗口
-ipcMain.on('ignore-message-win', async (event, status) => {
-  console.log('ignore-message-win', status);
-  await mainWin?.webContents.send('clear-message', status);
+ipcMain.on('ignore-message-win', async (event) => {
+  await mainWin?.webContents.send('clear-message');
   stopFlash({ tray, isDev, isMac });
   hideMessage();
 });

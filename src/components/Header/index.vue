@@ -143,9 +143,9 @@ import { ref, watchEffect, nextTick, onUnmounted, onMounted, watch } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { ipcRenderer } from 'electron';
 import { Search } from '@element-plus/icons-vue';
-import { ACTION_SVGS, MENULIST, CLOSE_CONFIG, CLOSE_PROMPT, NEED_HEAD_SEARCH, MSG_STATUS } from '@/constant';
+import { ACTION_SVGS, MENULIST, CLOSE_CONFIG, CLOSE_PROMPT, NEED_HEAD_SEARCH } from '@/constant';
 import { commonStore, messageStore, loginStore } from '@/store';
-import { checkOS, ipcRenderers } from '@/utils';
+import { checkOS } from '@/utils';
 import Messages from '@/components/Messages/index.vue';
 
 const router = useRouter();
@@ -163,8 +163,6 @@ const timerRef = ref<ReturnType<typeof setTimeout> | null>();
 
 // 监听路由变化，设置当前选中菜单
 watchEffect(() => {
-  // 发送消息闪烁状态控制
-  ipcRenderers.sendMessageFlashInfo({ messageStore, msgStatus: store.get(MSG_STATUS) as number });
   const menu = MENULIST.find((i) => route.path.includes(i.path));
   commonStore.setCrumbsInfo({
     crumbsName: menu?.name || '设置',
