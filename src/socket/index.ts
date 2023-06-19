@@ -1,5 +1,5 @@
 import { loginStore, messageStore } from '@/store';
-import { locGetItem, getStoreUserInfo, locRemoveItem, ipcRenderers, getMsgStatus } from '@/utils';
+import { locGetItem, getStoreUserInfo, locRemoveItem, ipcRenderers } from '@/utils';
 import { DOMAIN_URL } from '@/constant';
 
 export let ws: any;
@@ -137,15 +137,6 @@ async function onMessage(event: any) {
         // 解析处理数据
         if (parseData.action === 'push') {
           await messageStore.setMsgCount(parseData.data);
-          // 判断是否开启消息提醒设置，发送托盘图标闪烁的消息
-          if (getMsgStatus() === 1) {
-            ipcRenderers.sendFlashMsg(
-              JSON.stringify({
-                count: messageStore.msgCount,
-                noReadMsg: parseData.data,
-              }),
-            );
-          }
           // 只在消息弹出框显示的时候才添加数据
           if (messageStore.visible) {
             messageStore.addMessage(parseData.data);

@@ -7,14 +7,19 @@
 <template>
   <div class="tray-message-wrap" @mouseleave="onMouseleave" @mouseenter="onMouseEnter">
     <div class="title">
-      新消息<span v-if="data?.count">（{{ data?.count }}）</span>
+      新消息<span v-if="data?.count">（{{ data?.count > 99 ? '99+' : data?.count }}）</span>
     </div>
     <div class="content">
       <div v-if="data?.noReadMsg?.action" class="message-item">
-        <span class="username" @click.stop="sendToPersonal(data?.noReadMsg.fromUserId!)">{{
-          data?.noReadMsg.fromUsername
-        }}</span>
-        <span class="action-type" @click.stop="showMessageModal">{{ MESSAGE_ACTIONS[data?.noReadMsg.action] }}</span>
+        <div class="left">
+          <span class="username" @click.stop="sendToPersonal(data?.noReadMsg.fromUserId!)">{{
+            data?.noReadMsg.fromUsername
+          }}</span>
+          <span class="action-type" @click.stop="showMessageModal">{{ MESSAGE_ACTIONS[data?.noReadMsg.action] }}</span>
+        </div>
+        <div class="right">
+          <span class="msg-count">{{ data?.count > 99 ? '99+' : data?.count }}</span>
+        </div>
       </div>
     </div>
     <div class="action" @click.stop="onIgnoreAll">忽略全部</div>
@@ -90,15 +95,35 @@ const sendToPersonal = (userId: string) => {
 
     .message-item {
       display: flex;
+      justify-content: space-between;
       align-items: center;
-      line-height: 24px;
-      font-size: 14px;
-      padding: 5px 10px;
-      .ellipsisMore(2);
+      min-height: 60px;
       cursor: pointer;
 
       &:hover {
         background-color: @background;
+      }
+
+      .left {
+        flex: 1;
+        line-height: 24px;
+        font-size: 14px;
+        padding: 5px 0 5px 10px;
+        .ellipsisMore(2);
+      }
+
+      .right {
+        line-height: 24px;
+        padding-right: 6px;
+        margin-left: 6px;
+
+        .msg-count {
+          padding: 0 6px;
+          font-size: 12px;
+          color: @fff;
+          background-color: @font-danger;
+          border-radius: 10px;
+        }
       }
 
       .username {

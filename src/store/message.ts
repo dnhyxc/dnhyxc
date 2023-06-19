@@ -1,6 +1,6 @@
 import { ElMessage } from 'element-plus';
 import { defineStore } from 'pinia';
-import { normalizeResult, getStoreUserInfo } from '@/utils';
+import { normalizeResult, getStoreUserInfo, ipcRenderers, getMsgStatus } from '@/utils';
 import * as Service from '@/server';
 import { PAGESIZE } from '@/constant';
 import { loginStore } from '@/store';
@@ -62,13 +62,8 @@ export const useMessageStore = defineStore('message', {
 
     // 设置消息阅读状态
     async setReadStatus(ids?: string[]) {
-      const msgIds = this.msgList
-        .filter((i) => !i.isReaded)
-        .map((i) => i.id)
-        .slice((this.pageNo - 1) * this.pageSize, this.pageNo * this.pageSize + this.pageSize); // 0 => 20, 20 => 40, 40 => 60
-
+      const msgIds = this.msgList.filter((i) => !i.isReaded).map((i) => i.id);
       if (!msgIds?.length && !ids?.length) return;
-
       normalizeResult<number>(await Service.setReadStatus({ msgIds: ids || msgIds }));
     },
 
@@ -137,11 +132,21 @@ export const useMessageStore = defineStore('message', {
 
       const { userInfo } = getStoreUserInfo();
 
+      // 判断是否别人发给我的消息
       if (
         (data?.fromUserId !== loginStore.userInfo?.userId && !pathname.includes('/article')) ||
         (pathname.includes('/article') && userInfo?.userId !== data?.fromUserId)
       ) {
         this.msgCount += 1;
+        // 判断是否开启消息提醒设置，发送托盘图标闪烁的消息
+        if (getMsgStatus() === 1) {
+          ipcRenderers.sendFlashMsg(
+            JSON.stringify({
+              count: this.msgCount,
+              noReadMsg: data,
+            }),
+          );
+        }
       }
     },
 

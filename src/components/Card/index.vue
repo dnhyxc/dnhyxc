@@ -82,6 +82,7 @@
 
 <script setup lang="ts">
 import { ipcRenderer } from 'electron';
+import { ref } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { formatDate, showMessage } from '@/utils';
 import { ArticleItem } from '@/typings/common';
@@ -109,12 +110,17 @@ const props = withDefaults(defineProps<IProps>(), {
   withoutToDetail: false,
 });
 
+const timer = ref<boolean>(false);
+
 // 点赞
-const onLike = (data: ArticleItem) => {
+const onLike = async (data: ArticleItem) => {
+  if (timer.value) return;
+  timer.value = true;
   if (data?.isDelete) {
     return showMessage();
   }
-  props.likeListArticle?.(data.id, data);
+  await props.likeListArticle?.(data.id, data);
+  timer.value = false;
 };
 
 // 评论

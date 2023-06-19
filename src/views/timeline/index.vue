@@ -55,8 +55,8 @@ onMounted(async () => {
 });
 
 // 文章点赞
-const likeListArticle = (id: string, data?: ArticleItem) => {
-  articleStore.likeListArticle({ id, isTimeLine: true, data });
+const likeListArticle = async (id: string, data?: ArticleItem) => {
+  await articleStore.likeListArticle({ id, isTimeLine: true, data });
 };
 
 // 删除文章

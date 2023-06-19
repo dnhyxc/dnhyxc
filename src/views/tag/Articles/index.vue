@@ -161,8 +161,8 @@ const onCheckTag = (tag: string) => {
 };
 
 // 文章点赞
-const likeListArticle = (id: string, data?: ArticleItem) => {
-  articleStore.likeListArticle({ id, pageType: 'tag', data });
+const likeListArticle = async (id: string, data?: ArticleItem) => {
+  await articleStore.likeListArticle({ id, pageType: 'tag', data });
 };
 </script>
 

@@ -96,6 +96,8 @@ const props = withDefaults(defineProps<IProps>(), {
 
 const timer = ref<ReturnType<typeof setTimeout> | null>(null);
 
+const isLike = ref<boolean>(false);
+
 onUnmounted(() => {
   timer.value = null;
 });
@@ -141,10 +143,13 @@ const toTag = (tag: string) => {
 
 // 点赞
 const onLike = async (data: ArticleItem | TimelineArticles) => {
+  if (isLike.value) return;
+  isLike.value = true;
   if ((data as ArticleItem)?.isDelete) {
     return showMessage();
   }
-  props?.likeListArticle?.(data?.id!, data as ArticleItem);
+  await props?.likeListArticle?.(data?.id!, data as ArticleItem);
+  isLike.value = false;
 };
 
 // 前往详情/编辑

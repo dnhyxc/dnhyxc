@@ -95,6 +95,8 @@ interface IProps {
 
 const props = defineProps<IProps>();
 
+const timer = ref<boolean>(false);
+
 // 收藏集弹窗显隐状态
 const collectVisible = ref<boolean>(false);
 
@@ -112,7 +114,10 @@ onMounted(() => {
 
 // 文章点赞
 const likeArticle = async () => {
+  if (timer.value) return;
+  timer.value = true;
   await articleStore?.likeArticle({ id: props.id });
+  timer.value = false;
 };
 
 // 滚动到评论

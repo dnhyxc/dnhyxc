@@ -129,8 +129,8 @@ const searchHotArticles = () => {
 };
 
 // 文章点赞
-const likeListArticle = (id: string, data: ArticleItem) => {
-  articleStore.likeListArticle({ id, pageType: 'home', data });
+const likeListArticle = async (id: string, data: ArticleItem) => {
+  await articleStore.likeListArticle({ id, pageType: 'home', data });
 };
 </script>
 
