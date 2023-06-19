@@ -11,11 +11,11 @@
     </div>
     <div class="content">
       <div v-if="data?.noReadMsg?.action" class="message-item">
-        <div class="left">
+        <div class="left" @click.stop="showMessageModal">
           <span class="username" @click.stop="sendToPersonal(data?.noReadMsg.fromUserId!)">{{
             data?.noReadMsg.fromUsername
           }}</span>
-          <span class="action-type" @click.stop="showMessageModal">{{ MESSAGE_ACTIONS[data?.noReadMsg.action] }}</span>
+          <span class="action-type">{{ MESSAGE_ACTIONS[data?.noReadMsg.action] }}</span>
         </div>
         <div class="right">
           <span class="msg-count">{{ data?.count > 99 ? '99+' : data?.count }}</span>
@@ -29,6 +29,7 @@
 <script setup lang="ts">
 import { ipcRenderer } from 'electron';
 import { ref } from 'vue';
+import { messageStore } from '@/store';
 import { MESSAGE_ACTIONS } from '@/constant';
 import { ArticleItem } from '@/typings/common';
 import { locSetItem, locGetItem, locRemoveItem } from '@/utils';
@@ -62,7 +63,7 @@ ipcRenderer.on('message-info', (e, info) => {
 
 // 点击消息通知主进程让主窗口打开消息弹窗
 const showMessageModal = () => {
-  ipcRenderer.send('show-message-modal');
+  ipcRenderer.send('show-message-modal', messageStore.msgCount);
 };
 
 // 点击发送去用户主页的消息

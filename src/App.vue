@@ -7,7 +7,7 @@
 
 <script setup lang="ts">
 import { ipcRenderer } from 'electron';
-import { ref, nextTick, provide, onMounted, onBeforeMount } from 'vue';
+import { ref, nextTick, provide, onMounted, onBeforeMount, watchEffect } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { commonStore, messageStore, personalStore, loginStore } from '@/store';
 import { modifyTheme, getTheme, ipcRenderers, getMsgStatus } from '@/utils';
@@ -29,11 +29,17 @@ onBeforeMount(() => {
   }
 });
 
+watchEffect(async () => {
+  if (loginStore?.userInfo.userId) {
+    // 每次刷新重新加载未读消息列表
+    await messageStore.getNoReadMsgCount();
+    // 发送消息闪烁状态控制
+    ipcRenderers.sendMessageFlashInfo({ messageStore, msgStatus: getMsgStatus() as number });
+  }
+});
+
 onMounted(async () => {
   document.body.addEventListener('click', onBodyClick);
-
-  // 每次刷新重新加载未读消息列表
-  await messageStore.getNoReadMsgCount();
 
   // 在 App 中监听主进程中发送的清除消息列表的消息，防止重复首次加载时重复监听的问题
   ipcRenderer.on('clear-message', async () => {
@@ -44,9 +50,6 @@ onMounted(async () => {
       messageStore.msgCount = 0;
     }
   });
-
-  // 发送消息闪烁状态控制
-  ipcRenderers.sendMessageFlashInfo({ messageStore, msgStatus: getMsgStatus() as number });
 
   // 监听点击消息中的用户名称跳转用户主页
   ipcRenderer.on('to-personal', (e, userId) => {
