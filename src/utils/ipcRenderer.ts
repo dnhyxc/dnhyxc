@@ -46,3 +46,18 @@ export const sendMessageFlashInfo = (params: { messageStore: any; msgStatus: num
     );
   }
 };
+
+// 显示消息窗口
+export const showMessageWin = () => {
+  ipcRenderer.send('show-message-win', true);
+};
+
+// 隐藏消息窗口
+export const closeMessageWin = () => {
+  ipcRenderer.send('close-message-win');
+};
+
+// 忽略所有未读消息
+export const ignoreMessageWin = () => {
+  ipcRenderer.send('ignore-message-win');
+};
