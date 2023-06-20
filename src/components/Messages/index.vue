@@ -50,7 +50,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch, inject } from 'vue';
+import { ref, computed, onMounted, inject } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { messageStore, personalStore, loginStore } from '@/store';
 import { useScroller } from '@/hooks';
@@ -83,19 +83,6 @@ onMounted(() => {
     messageStore.visible = status;
   });
 });
-
-watch(
-  () => messageStore.visible,
-  (newVal) => {
-    if (newVal) {
-      // 消息弹出框显示的时候，清除消息数据
-      messageStore.msgCount = 0;
-      onGetMsgList();
-    } else {
-      messageStore.clearMessageInfo();
-    }
-  },
-);
 
 // 获取消息列表
 const onGetMsgList = async () => {

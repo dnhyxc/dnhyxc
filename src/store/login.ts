@@ -218,8 +218,15 @@ export const useLoginStore = defineStore('login', {
       this.userInfo = {};
       locRemoveItem('token');
       locRemoveItem('userInfo');
-      // 退出时清除消息条数，防止推出后头部小铃铛处还是显示消息条数
-      messageStore.msgCount = 0;
+      // 关闭消息闪动
+      ipcRenderers.sendStopFlashMsg(
+        JSON.stringify({
+          count: messageStore.msgCount,
+          noReadMsg: messageStore.noReadMsgList?.[0],
+        }),
+      );
+      // 退出时清除消息条数，防止退出后头部小铃铛处还是显示消息条数
+      // messageStore.msgCount = 0;
       ipcRenderers.restore('');
       // 关闭ws链接
       closeSocket();

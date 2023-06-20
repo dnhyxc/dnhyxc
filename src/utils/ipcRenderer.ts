@@ -22,6 +22,11 @@ export const sendFlashMsg = (data: any) => {
   ipcRenderer.send('show-message', data);
 };
 
+// 通知主进程停止闪烁及关闭消息弹窗
+export const sendStopFlashMsg = (data: any) => {
+  ipcRenderer.send('hide-message', data);
+};
+
 // 发送托盘闪烁消息
 export const sendMessageFlashInfo = (params: { messageStore: any; msgStatus: number }) => {
   const { messageStore, msgStatus } = params;
@@ -33,8 +38,7 @@ export const sendMessageFlashInfo = (params: { messageStore: any; msgStatus: num
       }),
     );
   } else {
-    ipcRenderer.send(
-      'hide-message',
+    sendStopFlashMsg(
       JSON.stringify({
         count: messageStore.msgCount,
         noReadMsg: messageStore.noReadMsgList?.[0],

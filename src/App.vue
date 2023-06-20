@@ -7,7 +7,7 @@
 
 <script setup lang="ts">
 import { ipcRenderer } from 'electron';
-import { ref, nextTick, provide, onMounted, onBeforeMount, watchEffect } from 'vue';
+import { ref, nextTick, provide, onMounted, onBeforeMount, watchEffect, watch } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { commonStore, messageStore, personalStore, loginStore } from '@/store';
 import { modifyTheme, getTheme, ipcRenderers, getMsgStatus } from '@/utils';
@@ -47,7 +47,6 @@ onMounted(async () => {
     const msgIds = messageStore.noReadMsgList?.map((i) => i.id);
     if (msgIds?.length) {
       await messageStore.setReadStatus(msgIds);
-      messageStore.msgCount = 0;
     }
   });
 
@@ -65,6 +64,19 @@ onMounted(async () => {
     }
   });
 });
+
+watch(
+  () => messageStore.visible,
+  (newVal) => {
+    if (newVal) {
+      // 消息弹出框显示的时候，清除消息数据
+      // messageStore.msgCount = 0;
+      messageStore.getMessageList();
+    } else {
+      messageStore.clearMessageInfo();
+    }
+  },
+);
 
 // body点击事件，清除右键菜单设置
 const onBodyClick = (e: MouseEvent) => {

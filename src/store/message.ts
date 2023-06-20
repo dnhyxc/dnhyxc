@@ -39,6 +39,10 @@ export const useMessageStore = defineStore('message', {
       if (this.msgList.length !== 0 && this.msgList.length >= this.total) return;
       this.pageNo = this.pageNo + 1;
       this.loading = true;
+      // 首次获取消息列表时加载未读消息列表，防止未读消息未加载到的问题
+      if (this.pageNo === 1) {
+        this.getNoReadMsgCount();
+      }
       const res = normalizeResult<ArticleListResult>(
         await Service.getMessageList({
           pageNo: this.pageNo,
@@ -64,7 +68,33 @@ export const useMessageStore = defineStore('message', {
     async setReadStatus(ids?: string[]) {
       const msgIds = this.msgList.filter((i) => !i.isReaded).map((i) => i.id);
       if (!msgIds?.length && !ids?.length) return;
-      normalizeResult<number>(await Service.setReadStatus({ msgIds: ids || msgIds }));
+      const residueNoReadMsgs = this.msgCount - (ids?.length || msgIds?.length);
+      // 判断是否还有未读消息，如果有调用接口设置消息已读
+      if (this.msgCount > 0) {
+        normalizeResult<number>(await Service.setReadStatus({ msgIds: ids || msgIds }));
+      }
+      // 计算未读数量的数量
+      if (residueNoReadMsgs > 0) {
+        this.msgCount = residueNoReadMsgs;
+        const residueList = this.noReadMsgList.filter((i) => !msgIds.includes(i.id));
+        // 每次设置已读消息时，重新通知消息窗口刷新数据
+        ipcRenderers.sendFlashMsg(
+          JSON.stringify({
+            count: this.msgCount,
+            noReadMsg: residueList?.[0],
+          }),
+        );
+      } else {
+        this.msgCount = 0;
+        this.noReadMsgList = [];
+        // 当没有未读消息时，通知主进程停止托盘闪动
+        ipcRenderers.sendStopFlashMsg(
+          JSON.stringify({
+            count: this.msgCount,
+            noReadMsg: this.noReadMsgList?.[0],
+          }),
+        );
+      }
     },
 
     // 获取未读消息数量
@@ -106,9 +136,19 @@ export const useMessageStore = defineStore('message', {
     async deleteAllMessage() {
       const res = normalizeResult<number>(await Service.deleteAllMessage());
       if (res.success) {
-        // 删除草稿后，清除原本的草稿数据
+        // 清除消息信息
         this.clearMessageInfo();
         this.loading = false;
+        // 删除所有消息之后，清除未读消息数量及列表，并通知主进程停止托盘图标闪动
+        this.msgCount = 0;
+        this.noReadMsgList = [];
+        // 当没有未读消息时，通知主进程停止托盘闪动
+        ipcRenderers.sendStopFlashMsg(
+          JSON.stringify({
+            count: this.msgCount,
+            noReadMsg: this.noReadMsgList?.[0],
+          }),
+        );
       } else {
         ElMessage({
           message: res.message,

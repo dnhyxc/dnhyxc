@@ -92,14 +92,12 @@ ipcMain.on('ignore-message-win', async (event) => {
 });
 
 // 监听渲染进程点击消息
-ipcMain.on('show-message-modal', async (event, msgInfo) => {
-  console.log(msgInfo, 'msgInfo');
-
-  mainWin?.webContents.send('show-message-modal', true);
-  messageWinStatus.hasUnreadMsg = false;
+ipcMain.on('show-message-modal', async (event) => {
   // 显示主窗口
   await mainWin?.show();
-  stopFlash({ tray, isDev, isMac });
+  mainWin?.webContents.send('show-message-modal', true);
+  // messageWinStatus.hasUnreadMsg = false;
+  // stopFlash({ tray, isDev, isMac });
   // 隐藏消息窗口
   hideMessage();
 });
