@@ -4,13 +4,13 @@
 
 该项目前台主要采用 `Electron22 + Electron-store + Vite + Vue3 + Vue-Router4 + Typescript + Pinia + Element-plus + Echarts + @kangc/v-md-editor + Eslint + Husky` 等技术框架实现。其中 `electron-store` 用于本地数据的持久化存储，主要使用在应用设置中的快捷键存储、开机自启配置等应用设置的存储。采用 `Pinia` 对全局状态进行管理。使用 `Echarts` 实现标签云。`@kangc/v-md-editor` 则是用来实现编写文章时支持 mackdown。
 
-![前台项目源码](https://github.com/dnhyxc/dnhyxc)
+[前台项目源码](https://github.com/dnhyxc/dnhyxc)
 
 #### 后台架构说明
 
 该项目后台主要采用 `koa2` 相关生态进行编写，数据库则采用 `Mongoodb`。
 
-![后台项目源码](https://github.com/dnhyxc/blog-server-web)
+[后台项目源码](https://github.com/dnhyxc/blog-server-web)
 
 ### 应用介绍
 
