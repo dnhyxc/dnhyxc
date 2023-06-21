@@ -145,7 +145,7 @@ import { ipcRenderer } from 'electron';
 import { Search } from '@element-plus/icons-vue';
 import { ACTION_SVGS, MENULIST, CLOSE_CONFIG, CLOSE_PROMPT, NEED_HEAD_SEARCH } from '@/constant';
 import { commonStore, messageStore, loginStore } from '@/store';
-import { checkOS } from '@/utils';
+import { checkOS, ipcRenderers } from '@/utils';
 import Messages from '@/components/Messages/index.vue';
 
 const router = useRouter();
@@ -209,7 +209,7 @@ watch(
 // 双击放大窗口
 const onDblclick = () => {
   toggle.value = !toggle.value;
-  ipcRenderer.send('window-max');
+  ipcRenderers.sendWindowMax();
 };
 
 // 后退
@@ -231,11 +231,11 @@ const goHome = () => {
 const onClick = (item: { title: string; svg: string }) => {
   if (item.title === '最大化') {
     toggle.value = !toggle.value;
-    ipcRenderer.send('window-max');
+    ipcRenderers.sendWindowMax();
   }
 
   if (item.title === '最小化') {
-    ipcRenderer.send('window-min');
+    ipcRenderers.sendWindowMin();
   }
 
   if (item.title === '关闭') {
@@ -245,8 +245,8 @@ const onClick = (item: { title: string; svg: string }) => {
       closeVisible.value = true;
       return;
     }
-    closePrompt && closeConfig === 1 && ipcRenderer.send('window-close');
-    closePrompt && closeConfig === 2 && ipcRenderer.send('window-out');
+    closePrompt && closeConfig === 1 && ipcRenderers.sendWindowCLose();
+    closePrompt && closeConfig === 2 && ipcRenderers.sendWindowOut();
   }
 };
 
@@ -261,9 +261,9 @@ const onAppClose = (type: number) => {
   // 设置一定的延时等待弹窗先关闭，再关闭程序
   timerRef.value = setTimeout(() => {
     if (type === 1) {
-      ipcRenderer.send('window-close');
+      ipcRenderers.sendWindowCLose();
     } else {
-      ipcRenderer.send('window-out');
+      ipcRenderers.sendWindowOut();
     }
   }, 100);
 };
@@ -271,7 +271,7 @@ const onAppClose = (type: number) => {
 // 置顶
 const onSticky = () => {
   stickyStatus.value = !stickyStatus.value;
-  ipcRenderer.send('win-show', stickyStatus.value);
+  ipcRenderers.sendWinSticky(stickyStatus.value);
 };
 
 // 点击去设置页

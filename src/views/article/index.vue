@@ -36,16 +36,6 @@
             </div>
           </div>
         </div>
-        <el-dialog v-model="closeVisible" title="关闭应用" width="380">
-          <div class="dl-content">
-            <div class="actions">
-              <el-button link class="radio-close" @click.stop="onAppClose">
-                <i class="font out-icon iconfont icon-tuichu1" />
-                退出程序
-              </el-button>
-            </div>
-          </div>
-        </el-dialog>
       </div>
       <div class="content-wrap">
         <div class="content">
@@ -96,7 +86,7 @@ import { onMounted, onUnmounted, nextTick, ref, inject, watchEffect } from 'vue'
 import { useRoute, useRouter } from 'vue-router';
 import { useScroller } from '@/hooks';
 import { articleStore, commonStore } from '@/store';
-import { scrollTo, checkOS, locSetItem, locRemoveItem, getStoreUserInfo } from '@/utils';
+import { scrollTo, checkOS, locSetItem, locRemoveItem, getStoreUserInfo, ipcRenderers } from '@/utils';
 import { ACTION_SVGS } from '@/constant';
 import { createWebSocket } from '@/socket';
 import PageHeader from '@/components/PreviewHeader/index.vue';
@@ -121,9 +111,6 @@ const focus = ref<boolean>(false);
 const toggle = ref<boolean>(false);
 // 指定控制状态
 const stickyStatus = ref<boolean>(false);
-// 窗口关闭状态
-const closeVisible = ref<boolean>(false);
-const timerRef = ref<ReturnType<typeof setTimeout> | null>();
 
 // scrollRef：el-scrollbar ref，scrollTop：滚动距离
 const { scrollRef, scrollTop } = useScroller();
@@ -203,23 +190,14 @@ const updateFocus = (value: boolean) => {
 const onSticky = () => {
   const { id } = route.params;
   stickyStatus.value = !stickyStatus.value;
-  ipcRenderer.send('new-win-show', stickyStatus.value, id);
-};
-
-// 最小化程序
-const onAppClose = (type?: number) => {
-  closeVisible.value = false;
-  if (timerRef.value) {
-    clearTimeout(timerRef.value);
-    timerRef.value = null;
-  }
-  ipcRenderer.send('new-win-out');
+  ipcRenderers.sendNewWinSticky(stickyStatus.value, id as string);
 };
 
 // 双击放大窗口
 const onDblclick = () => {
+  const { id } = route.params;
   toggle.value = !toggle.value;
-  ipcRenderer.send('new-win-max');
+  ipcRenderers.sendNewWinMax(id as string);
 };
 
 // 点击右侧窗口控制按钮
@@ -228,15 +206,15 @@ const onClick = (item: { title: string; svg: string }) => {
 
   if (item.title === '最大化') {
     toggle.value = !toggle.value;
-    ipcRenderer.send('new-win-max', id);
+    ipcRenderers.sendNewWinMax(id as string);
   }
 
   if (item.title === '最小化') {
-    ipcRenderer.send('new-win-min', id);
+    ipcRenderers.sendNewWinMin(id as string);
   }
 
   if (item.title === '关闭') {
-    ipcRenderer.send('new-win-out', id);
+    ipcRenderers.sendNewWinOut(id as string);
   }
 };
 

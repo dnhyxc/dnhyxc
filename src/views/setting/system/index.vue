@@ -142,7 +142,7 @@ onMounted(() => {
     // 将新更改的文件存储路径存到本地磁盘中
     store.set('FILE_STORE_PATH', filePath[0]);
     // 通知主进程重新注册快捷键
-    ipcRenderer.send('restore-register-shortcut');
+    ipcRenderers.restoreRegisterShortCut();
     setFileConfig(filePath[0]);
   });
 
@@ -150,8 +150,8 @@ onMounted(() => {
   if (FILE_STORE_PATH) {
     setFileConfig(FILE_STORE_PATH as string);
   } else {
-    // 获取electron应用的用户目录
-    ipcRenderer.send('get-app-path');
+    // 获取electron应用的存储目录
+    ipcRenderers.getAppPath();
     // 接受主进程中传递过来的当前应用的存储路径
     ipcRenderer.on('got-app-path', (e, path) => {
       setFileConfig(path);
@@ -186,7 +186,7 @@ watch(closeStatus, (newVal) => {
 watch(openStatus, (newVal, oldVal) => {
   if (newVal !== oldVal) {
     store.set(OPEN_CONFIG, newVal);
-    ipcRenderer.send('open-at-login', newVal);
+    ipcRenderers.openAtLogin(newVal);
   }
 });
 
@@ -194,7 +194,7 @@ watch(openStatus, (newVal, oldVal) => {
 watch(msgStatus, (newVal, oldVal) => {
   if (newVal !== oldVal) {
     store.set(MSG_STATUS, newVal);
-    ipcRenderer.send('msg-status', newVal);
+    ipcRenderers.msgStatus(newVal);
   }
 
   // 发送消息闪烁状态控制
@@ -212,7 +212,7 @@ const showDialog = (item: (typeof STSTEM_CONFIG.shortcut)[0]) => {
 const onChangePath = async (item: (typeof STSTEM_CONFIG.fileConfig)[0]) => {
   currentEditFileConfig.value = item.value;
   // 与主进程通信，唤起文件夹选择弹窗
-  ipcRenderer.send('openDialog');
+  ipcRenderers.openDialog();
 };
 
 // 增加快捷键
@@ -237,7 +237,7 @@ const onRestoreShortcutKeys = () => {
     store.set(i.key, i.shortcut);
   });
   // 通知主进程重新注册快捷键
-  ipcRenderer.send('restore-register-shortcut');
+  ipcRenderers.restoreRegisterShortCut();
   shortcutList.value = INIT_SHOTCUT_KEYS;
 };
 
@@ -250,7 +250,7 @@ const handleKeydown = (e: KeyboardEvent) => {
     const key = SHORTCUT_KEYS[currentEditShortcut.value];
     store.set(key, shortcut.value);
     // 通知主进程重新注册快捷键
-    ipcRenderer.send('restore-register-shortcut');
+    ipcRenderers.restoreRegisterShortCut();
     visible.value = false;
     ElMessage.success('快捷键设置成功');
   }

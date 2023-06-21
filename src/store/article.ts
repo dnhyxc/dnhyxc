@@ -1,4 +1,3 @@
-import { ipcRenderer } from 'electron';
 import { defineStore } from 'pinia';
 import { Router } from 'vue-router';
 import type { Ref } from 'vue';
@@ -281,7 +280,7 @@ export const useArticleStore = defineStore('article', {
         }
 
         // 发送删除的文章的消息给主进程，通知主进程及时关闭对应子窗口
-        ipcRenderer.send('remove', params.articleId);
+        ipcRenderers.sendRemove(params.articleId);
 
         ElMessage({
           message: res.message,

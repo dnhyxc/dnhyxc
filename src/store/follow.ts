@@ -88,7 +88,7 @@ export const useFollowStore = defineStore('follow', {
     // 查询是否关注该用户
     async findFollowed(authorId: string) {
       // 检验是否有userId，如果没有禁止发送请求
-      if (!useCheckUserId()) return;
+      if (loginStore?.userInfo?.userId) return;
       const res = normalizeResult<boolean>(await Service.findFollowed(authorId));
       if (res.success) {
         this.isFollowed = res.data;

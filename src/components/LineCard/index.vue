@@ -63,11 +63,10 @@
 </template>
 
 <script setup lang="ts">
-import { ipcRenderer } from 'electron';
 import { inject, ref, onUnmounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { IMG1 } from '@/constant';
-import { showMessage } from '@/utils';
+import { showMessage, ipcRenderers } from '@/utils';
 import { loginStore, commonStore } from '@/store';
 import { TimelineArticles, ArticleItem } from '@/typings/common';
 import Image from '@/components/Image/index.vue';
@@ -173,7 +172,6 @@ const onComment = async (data: ArticleItem | TimelineArticles) => {
     return showMessage();
   }
   router.push(`/detail/${data?.id}?scrollTo=1`);
-  // ipcRenderer.send('new-win', `article/${data.id}?scrollTo=1&from=${route.name as string}`, data.id);
 };
 
 // 监听鼠标右键，分别进行不同的操作
@@ -191,12 +189,11 @@ const onOpenNewWindow = async (data: ArticleItem) => {
     return showMessage();
   }
   const { userInfo, token } = loginStore;
-  ipcRenderer.send(
-    'new-win',
-    `article/${data.id}?from=${route.name as string}`,
-    data.id,
-    JSON.stringify({ userInfo, token }),
-  );
+  ipcRenderers.sendNewWin({
+    path: `article/${data.id}?from=${route.name as string}`,
+    id: data.id,
+    userInfo: JSON.stringify({ userInfo, token }),
+  });
 };
 </script>
 

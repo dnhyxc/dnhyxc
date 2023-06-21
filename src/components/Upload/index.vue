@@ -75,7 +75,7 @@ import type { UploadProps } from 'element-plus';
 import { VueCropper } from 'vue-cropper';
 import { createStore, uploadStore } from '@/store';
 import { FILE_TYPE, FILE_UPLOAD_MSG } from '@/constant';
-import { getImgInfo, url2Base64 } from '@/utils';
+import { getImgInfo, url2Base64, ipcRenderers } from '@/utils';
 
 import 'vue-cropper/dist/index.css';
 
@@ -226,16 +226,16 @@ const onRotate = () => {
 const onDownload = async (e: Event, loadUrl?: string) => {
   if (loadUrl) {
     if (loadUrl.includes('data:image')) {
-      ipcRenderer.send('download', loadUrl);
+      ipcRenderers.sendDownload(loadUrl);
     } else {
       const url = await url2Base64(loadUrl);
-      url && ipcRenderer.send('download', url);
+      url && ipcRenderers.sendDownload(url as string);
     }
   } else {
     cropper.value.getCropBlob((blob: Blob) => {
       const url = window.URL.createObjectURL(blob);
       createdUrl.value = url;
-      ipcRenderer.send('download', url);
+      ipcRenderers.sendDownload(url);
     });
   }
 

@@ -1,10 +1,9 @@
 import { defineStore } from 'pinia';
 import { ElMessage } from 'element-plus';
 import * as Service from '@/server';
-import { normalizeResult, Message } from '@/utils';
+import { normalizeResult, Message, ipcRenderers } from '@/utils';
 import { useCheckUserId } from '@/hooks';
 import { TimelineResult } from '@/typings/common';
-import { ipcRenderer } from 'electron';
 
 interface IProps {
   timelineList: TimelineResult[];
@@ -42,7 +41,7 @@ export const useTimelineStore = defineStore('timeline', {
         const res = normalizeResult<{ id: string }>(await Service.deleteArticle({ articleId, type: 'timeline' }));
         if (res.success) {
           // 发送删除的文章的消息给主进程，通知主进程及时关闭对应子窗口
-          ipcRenderer.send('remove', articleId);
+          ipcRenderers.sendRemove(articleId)
           const list = this.timelineList.map((i) => {
             if (i.articles.length) {
               const filterList = i.articles.filter((j) => j.id !== articleId);

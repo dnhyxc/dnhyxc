@@ -130,7 +130,7 @@ import type { FormInstance, UploadProps, FormRules } from 'element-plus';
 import { ElMessage } from 'element-plus';
 import { UploadFilled } from '@element-plus/icons-vue';
 import { FILE_TYPE, FILE_UPLOAD_MSG } from '@/constant';
-import { compressImage, getImgInfo, Verify, checkNumber, checkMin, checkMax } from '@/utils';
+import { compressImage, getImgInfo, Verify, checkNumber, checkMin, checkMax, ipcRenderers } from '@/utils';
 
 interface IProps {
   modalVisible: boolean;
@@ -337,7 +337,7 @@ const onDownload = () => {
   if (!compressFile.value) return;
   const blob = new Blob([compressFile.value], { type: compressFile.value?.type });
   const url = window.URL.createObjectURL(blob);
-  ipcRenderer.send('download', url);
+  ipcRenderers.sendDownload(url);
   // 设置一次性监听，防止重复触发
   ipcRenderer.once('download-file', (e, res: string) => {
     if (res) {

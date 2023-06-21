@@ -40,11 +40,10 @@
 </template>
 
 <script setup lang="ts">
-import { ipcRenderer } from 'electron';
 import { onMounted, inject, ref } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { articleStore } from '@/store';
-import { formatGapTime, getStoreUserInfo } from '@/utils';
+import { formatGapTime, getStoreUserInfo, ipcRenderers } from '@/utils';
 
 const reload = inject<Function>('reload');
 
@@ -80,13 +79,12 @@ const toDetail = (id: string) => {
     }, 100);
   } else {
     const { userInfo, token } = getStoreUserInfo();
-    ipcRenderer.send(
-      'new-win',
-      `article/${id}?from=${route.query.from}`,
+    ipcRenderers.sendNewWin({
+      path: `article/${id}?from=${route.query.from}`,
       id,
-      JSON.stringify({ userInfo, token }), // 用户信息;
-      props.id,
-    );
+      userInfo: JSON.stringify({ userInfo, token }),
+      prevArticleId: props.id,
+    });
   }
 };
 

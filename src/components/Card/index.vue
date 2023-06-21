@@ -5,7 +5,7 @@
  * index.vue
 -->
 <template>
-  <div class="card-wrap" @click.stop="toDetail(data)" @mousedown.stop="(e: MouseEvent) => onMouseDown(e, data)">
+  <div class="card-wrap" @click.stop="toDetail(data)" @mousedown="(e: MouseEvent) => onMouseDown(e, data)">
     <div class="card">
       <div class="card-top">
         <i v-if="data.isTop" class="font iconfont icon-zhiding" />
@@ -81,10 +81,9 @@
 </template>
 
 <script setup lang="ts">
-import { ipcRenderer } from 'electron';
 import { ref } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
-import { formatDate, showMessage } from '@/utils';
+import { formatDate, showMessage, ipcRenderers } from '@/utils';
 import { ArticleItem } from '@/typings/common';
 import { IMG1 } from '@/constant';
 import { loginStore } from '@/store';
@@ -149,14 +148,14 @@ const onReomve = async (data: ArticleItem) => {
 
 // 监听鼠标右键，分别进行不同的操作
 const onMouseDown = async (e: MouseEvent, data: ArticleItem) => {
-  if (props.withoutToDetail) return;
-  if (data?.isDelete) {
-    return showMessage();
-  }
   // 使用新窗口打开
   if (e.button === 2) {
     commonStore.showContextmenu = true;
     commonStore.currentArticleId = data.id;
+  }
+  if (props.withoutToDetail) return;
+  if (data?.isDelete) {
+    return showMessage();
   }
 };
 
@@ -166,12 +165,11 @@ const onOpenNewWindow = async (data: ArticleItem) => {
     return showMessage();
   }
   const { userInfo, token } = loginStore;
-  ipcRenderer.send(
-    'new-win',
-    `article/${data.id}?from=${route.name as string}`,
-    data.id, // articleId
-    JSON.stringify({ userInfo, token }), // 用户信息
-  );
+  ipcRenderers.sendNewWin({
+    path: `article/${data.id}?from=${route.name as string}`,
+    id: data.id, // articleId
+    userInfo: JSON.stringify({ userInfo, token }),
+  });
   // 清除右键菜单选项
   commonStore.clearContentmenuInfo();
 };

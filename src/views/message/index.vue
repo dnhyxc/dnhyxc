@@ -31,7 +31,7 @@ import { ipcRenderer } from 'electron';
 import { ref } from 'vue';
 import { MESSAGE_ACTIONS } from '@/constant';
 import { ArticleItem } from '@/typings/common';
-import { locSetItem, locGetItem, locRemoveItem } from '@/utils';
+import { locSetItem, locGetItem, locRemoveItem, ipcRenderers } from '@/utils';
 
 const data = ref<{ count: number; noReadMsg: ArticleItem }>(
   locGetItem('__MESSAGE_INFO__') && JSON.parse(locGetItem('__MESSAGE_INFO__')!),
@@ -39,18 +39,18 @@ const data = ref<{ count: number; noReadMsg: ArticleItem }>(
 
 // 监听鼠标移出窗口
 const onMouseleave = () => {
-  ipcRenderer.send('close-message-win');
+  ipcRenderers.closeMessageWin();
 };
 
 // 鼠标进入
 const onMouseEnter = () => {
-  ipcRenderer.send('show-message-win', true);
+  ipcRenderers.showMessageWin(true);
   locRemoveItem('__MESSAGE_INFO__');
 };
 
 // 忽略全部
 const onIgnoreAll = async () => {
-  ipcRenderer.send('ignore-message-win');
+  ipcRenderers.ignoreMessageWin();
 };
 
 // 监听主进程发送的消息信息
@@ -62,12 +62,12 @@ ipcRenderer.on('message-info', (e, info) => {
 
 // 点击消息通知主进程让主窗口打开消息弹窗
 const showMessageModal = () => {
-  ipcRenderer.send('show-message-modal', data.value.count);
+  ipcRenderers.showMessageWinModal(data.value.count);
 };
 
 // 点击发送去用户主页的消息
 const sendToPersonal = (userId: string) => {
-  ipcRenderer.send('to-personal', userId);
+  ipcRenderers.sendToPersonalWin(userId);
 };
 </script>
 
