@@ -1,19 +1,26 @@
+/*
+ * 托盘设置
+ * @author: dnhyxc
+ * @since: 2023-06-21
+ * index.vue
+ */
 import path from 'path';
-import { Menu, BrowserWindow } from 'electron';
+import { Menu } from 'electron';
+import { globalInfo, isDev, isMac } from './constant';
 
-export const createContextMenu = (win: BrowserWindow | null) => {
+export const createContextMenu = () => {
   // 托盘菜单
   const contextMenu = Menu.buildFromTemplate([
     {
       label: '显示墨客',
       click: () => {
-        win?.show();
+        globalInfo.win?.show();
       },
     },
     {
       label: '退出墨客',
       click: () => {
-        win?.destroy();
+        globalInfo.win?.destroy();
       },
     },
   ]);
@@ -21,7 +28,7 @@ export const createContextMenu = (win: BrowserWindow | null) => {
   return contextMenu;
 };
 
-export const getIconPath = ({ isDev, isMac }) => {
+export const getIconPath = () => {
   if (isDev) {
     return isMac ? '../public/Template.png' : '../public/icon@2.png';
   } else {
@@ -30,7 +37,7 @@ export const getIconPath = ({ isDev, isMac }) => {
 };
 
 // 获取闪动图标颜色
-export const getFlashIconPath = ({ isDev, isMac }) => {
+export const getFlashIconPath = () => {
   if (isDev) {
     return isMac ? '../public/TemplateEmpty.png' : '../public/empty.png';
   } else {
@@ -42,29 +49,29 @@ export const getFlashIconPath = ({ isDev, isMac }) => {
 let isFlashing = false;
 let flashInterval: ReturnType<typeof setTimeout> | null = null;
 
-export const startFlash = ({ tray, isDev, isMac }) => {
-  const flashImg = getFlashIconPath({ isDev, isMac });
-  const img = getIconPath({ isDev, isMac });
+export const startFlash = () => {
+  const flashImg = getFlashIconPath();
+  const img = getIconPath();
   if (!isFlashing) {
     isFlashing = true;
     flashInterval = setInterval(() => {
-      tray.setImage(path.join(__dirname, flashImg as string));
+      globalInfo.tray?.setImage(path.join(__dirname, flashImg as string));
       setTimeout(() => {
-        tray.setImage(path.join(__dirname, img));
+        globalInfo.tray?.setImage(path.join(__dirname, img));
       }, 500);
     }, 1000);
   }
 };
 
 // 停止闪动
-export const stopFlash = ({ tray, isDev, isMac }) => {
-  const img = getIconPath({ isDev, isMac });
+export const stopFlash = () => {
+  const img = getIconPath();
   if (isFlashing) {
     isFlashing = false;
     if (flashInterval) {
       clearInterval(flashInterval);
       flashInterval = null;
     }
-    tray.setImage(path.join(__dirname, img));
+    globalInfo.tray?.setImage(path.join(__dirname, img));
   }
 };

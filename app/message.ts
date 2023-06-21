@@ -1,13 +1,14 @@
-import { BrowserWindow, screen, ipcMain, Tray, Rectangle } from 'electron';
-import { DOMAIN_URL } from './constant';
+/*
+ * 消息窗口
+ * @author: dnhyxc
+ * @since: 2023-06-21
+ * index.vue
+ */
+import { BrowserWindow, screen, ipcMain, Rectangle } from 'electron';
+import { DOMAIN_URL, globalInfo, isDev } from './constant';
 import { startFlash, stopFlash } from './tray';
 
-const isDev: boolean = process.env.NODE_ENV === 'development';
-const isMac: boolean = process.platform === 'darwin';
-
 let messageWin: BrowserWindow | null = null;
-let mainWin: BrowserWindow | undefined;
-let tray: Tray | undefined;
 
 export const messageWinStatus = {
   isLeave: true,
@@ -19,9 +20,7 @@ let leaveInter: ReturnType<typeof setTimeout> | null = null;
 let trayBounds: Rectangle;
 let point = { x: 0, y: 0 };
 
-export const createMessageWin = (params: { tray?: Tray | undefined; win?: BrowserWindow }) => {
-  tray = params.tray;
-  mainWin = params.win;
+export const createMessageWin = () => {
   messageWin = new BrowserWindow({
     width: 200,
     height: 120,
@@ -55,7 +54,7 @@ export const createMessageWin = (params: { tray?: Tray | undefined; win?: Browse
 
   const cw = parseInt(`${cwidth / 2 - 11}`);
 
-  const bounds = tray?.getBounds();
+  const bounds = globalInfo.tray?.getBounds();
 
   messageWin.setPosition(bounds?.x! - cw, bounds?.y! - cheight);
 
@@ -67,14 +66,14 @@ export const createMessageWin = (params: { tray?: Tray | undefined; win?: Browse
 // 监听是否有未读消息
 ipcMain.on('show-message', (event, status) => {
   messageWinStatus.hasUnreadMsg = true;
-  startFlash({ tray, isDev, isMac });
+  startFlash();
   messageWin?.webContents.send('message-info', status);
 });
 
 // 监听消息是否已读
 ipcMain.on('hide-message', (event, status) => {
   messageWinStatus.hasUnreadMsg = false;
-  stopFlash({ tray, isDev, isMac });
+  stopFlash();
   messageWin?.webContents.send('message-info', status);
 });
 
@@ -86,16 +85,16 @@ ipcMain.on('close-message-win', (event, status) => {
 
 // 监听渲染进程鼠标移出事件，隐藏窗口
 ipcMain.on('ignore-message-win', async (event) => {
-  await mainWin?.webContents.send('clear-message');
-  stopFlash({ tray, isDev, isMac });
+  await globalInfo.win?.webContents.send('clear-message');
+  stopFlash();
   hideMessage();
 });
 
 // 监听渲染进程点击消息
 ipcMain.on('show-message-modal', async (event) => {
   // 显示主窗口
-  await mainWin?.show();
-  mainWin?.webContents.send('show-message-modal', true);
+  await globalInfo.win?.show();
+  globalInfo.win?.webContents.send('show-message-modal', true);
   // messageWinStatus.hasUnreadMsg = false;
   // stopFlash({ tray, isDev, isMac });
   // 隐藏消息窗口
@@ -104,9 +103,9 @@ ipcMain.on('show-message-modal', async (event) => {
 
 // 监听渲染进程点击消息上的用户名称
 ipcMain.on('to-personal', async (event, userId) => {
-  mainWin?.webContents.send('to-personal', userId);
+  globalInfo.win?.webContents.send('to-personal', userId);
   // 显示主窗口
-  await mainWin?.show();
+  await globalInfo.win?.show();
   // 隐藏消息窗口
   hideMessage();
 });
@@ -131,10 +130,10 @@ export const hideMessage = () => {
 };
 
 // 检测鼠标是否移出托盘图标
-export const checkTrayLeave = (tray) => {
+export const checkTrayLeave = () => {
   leaveInter && clearInterval(leaveInter);
   leaveInter = setInterval(() => {
-    trayBounds = tray?.getBounds()!;
+    trayBounds = globalInfo.tray?.getBounds()!;
     point = screen.getCursorScreenPoint();
     if (
       !(
