@@ -42,6 +42,7 @@ interface IProps {
   detailArtLikeCount: number; // 详情文章点赞数量
   hot?: boolean; // 是否查询最热文章
   articleLikeStatus?: boolean; // 文章点赞状态
+  stickyStatus: boolean; // 自窗口置顶状态
 }
 
 export const useArticleStore = defineStore('article', {
@@ -62,6 +63,7 @@ export const useArticleStore = defineStore('article', {
     detailArtLikeCount: 0,
     hot: false,
     articleLikeStatus: false,
+    stickyStatus: false,
   }),
 
   actions: {
@@ -432,7 +434,7 @@ export const useArticleStore = defineStore('article', {
           }
         }
         // 列表点赞之后推送刷新消息给主进程，让主进程推送消息给article页面，刷新页面
-        ipcRenderers.sendRefresh(id);
+        ipcRenderers.sendRefresh({ articleId: id });
       } else {
         ElMessage({
           message: res.message,
@@ -525,7 +527,7 @@ export const useArticleStore = defineStore('article', {
         const { pathname } = window.location;
 
         // 判断是article还是detail、分别推送刷新消息给主进程，用于通知子窗口或者详情页更新评论列表
-        ipcRenderers.sendRefresh(data?.articleId, pathname);
+        ipcRenderers.sendRefresh({ articleId: data?.articleId, pathname });
 
         ElMessage({
           message: res.message,
@@ -570,7 +572,7 @@ export const useArticleStore = defineStore('article', {
 
         // 判断是article还是detail、分别推送刷新消息给主进程，用于通知子窗口或者详情页更新评论列表
         const { pathname } = window.location;
-        ipcRenderers.sendRefresh(data?.articleId!, pathname, false);
+        ipcRenderers.sendRefresh({ articleId: data?.articleId!, pathname, isLike: false });
       } else {
         ElMessage({
           message: res.message,
@@ -618,7 +620,7 @@ export const useArticleStore = defineStore('article', {
           getCommentList && getCommentList();
           // 判断是article还是detail、分别推送刷新消息给主进程，用于通知子窗口或者详情页更新评论列表
           const { pathname } = window.location;
-          ipcRenderers.sendRefresh(articleId!, pathname);
+          ipcRenderers.sendRefresh({ articleId: articleId!, pathname });
         } else {
           ElMessage({
             message: res.message,
@@ -643,7 +645,7 @@ export const useArticleStore = defineStore('article', {
         const { pathname } = window.location;
 
         // 判断是article还是detail、分别推送刷新消息给主进程，使主进程推送消息给个文章列表页面更新列表点赞状态
-        ipcRenderers.sendRefresh(id, pathname);
+        ipcRenderers.sendRefresh({ articleId: id, pathname });
 
         // 给别人文章点赞时推送消息
         if (authorId !== userId && authorId !== userInfo?.userId) {

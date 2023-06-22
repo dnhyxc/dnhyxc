@@ -30,7 +30,7 @@ import Timeline from '@/components/Timeline/index.vue';
 import ToTopIcon from '@/components/ToTopIcon/index.vue';
 import Loading from '@/components/Loading/index.vue';
 import Empty from '@/components/Empty/index.vue';
-import { ArticleItem } from '@/typings/common';
+import { ArticleItem, WinRefreshParams } from '@/typings/common';
 
 const reload = inject<Function>('reload');
 
@@ -44,7 +44,8 @@ const showEmpty = computed(
 
 onMounted(async () => {
   // 监听详情点赞状态，实时更改列表对应文章的点赞状态
-  ipcRenderer.on('refresh', (_, id, pageType, isLike = true) => {
+  ipcRenderer.on('refresh', (_, params: WinRefreshParams) => {
+    const { pageType, isLike = true } = params;
     // 需要判断是否是属于当前活动页面，并且只是点击点赞而不是收藏或评论防止重复触发
     if (route.name === 'timeline' && pageType !== 'list' && isLike) {
       reload && reload();

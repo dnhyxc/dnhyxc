@@ -16,7 +16,7 @@
           <el-input
             id="TEXTAREA_WRAP"
             ref="inputRef"
-            v-model.trim="keyword"
+            v-model="keyword"
             :autosize="{ minRows: 3, maxRows: 10 }"
             type="textarea"
             :placeholder="

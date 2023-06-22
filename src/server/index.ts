@@ -393,8 +393,8 @@ export const getFollowList = async (params: { pageNo: number; pageSize: number; 
 };
 
 // 查询是否关注该用户
-export const findFollowed = async (authorId: string) => {
-  const res = await post(API.FIND_FOLLOWED, copeParams({ authorId }));
+export const findFollowed = async (authorId: string, userId?: string, token?: string) => {
+  const res = await post(API.FIND_FOLLOWED, copeParams({ authorId, userId, token }));
   return res;
 };
 

@@ -419,3 +419,12 @@ export interface ToolListRes {
   list: ToolsItem[];
   total: number;
 }
+
+// 窗口refresh参数
+export interface WinRefreshParams {
+  id: string;
+  pageType: string;
+  isLike: boolean;
+  authorId: string;
+  isTop: boolean;
+}

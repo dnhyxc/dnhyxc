@@ -155,7 +155,7 @@ import { ElMessage } from 'element-plus';
 import { useDeleteArticle, useScroller } from '@/hooks';
 import { articleStore, loginStore, personalStore, followStore } from '@/store';
 import { formatDate, scrollTo, checkUrl, checkOS } from '@/utils';
-import { ArticleItem, CollectParams, FollowItem } from '@/typings/common';
+import { ArticleItem, CollectParams, FollowItem, WinRefreshParams } from '@/typings/common';
 import { HEAD_IMG, ICONLINKS, ABOUT_ME_TABS, ABOUT_TABS } from '@/constant';
 import AddCollectModel from '@/components/AddCollectModel/index.vue';
 import Empty from '@/components/Empty/index.vue';
@@ -225,7 +225,8 @@ const iconLinks = computed(() => {
 
 onMounted(async () => {
   // 监听详情点赞状态，实时更改列表对应文章的点赞状态
-  ipcRenderer.on('refresh', (_, id, pageType, isLike = true) => {
+  ipcRenderer.on('refresh', (_, params: WinRefreshParams) => {
+    const { pageType, isLike = true } = params;
     // 需要判断是否是属于当前活动页面，并且只是点击点赞而不是收藏或评论防止重复触发
     if (route.name === 'personal' && pageType !== 'list' && isLike) {
       reload && reload();

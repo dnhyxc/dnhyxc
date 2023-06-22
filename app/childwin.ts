@@ -127,18 +127,19 @@ ipcMain.on('new-win-show', (_, status, id: string) => {
 });
 
 // 监听子窗口点赞，刷新主窗口文章列表
-ipcMain.on('refresh', (event, id, pageType, isLike) => {
+ipcMain.on('refresh', (event, params) => {
+  const { id, pageType, isLike } = params;
   const winId = globalChildWins.newWins.get(id);
   const findWin = globalChildWins['independentWindow-' + winId];
   switch (pageType) {
     case 'article':
-      globalInfo.win?.webContents.send('refresh', id, pageType, isLike);
+      globalInfo.win?.webContents.send('refresh', { id, pageType, isLike, isTop: findWin.isAlwaysOnTop() });
       break;
     case 'detail':
-      findWin?.webContents.send('refresh', id, pageType, isLike);
+      findWin?.webContents.send('refresh', { id, pageType, isLike, isTop: findWin.isAlwaysOnTop() });
       break;
     case 'list':
-      findWin?.webContents.send('refresh', id, pageType, isLike);
+      findWin?.webContents.send('refresh', { id, pageType, isLike, isTop: findWin.isAlwaysOnTop() });
       break;
 
     default:
@@ -152,7 +153,7 @@ ipcMain.handle('userInfo', (event, id) => {
   globalChildWins['independentWindow-' + winId]?.webContents.send('userInfo', globalInfo.userInfo);
 });
 
-// 监听子窗口点赞，刷新主窗口文章列表，info：用户信息
+// 监听登录状态，info：用户信息
 ipcMain.on('restore', (event, info) => {
   globalChildWins.newWins.forEach((value, key) => {
     if (info) {

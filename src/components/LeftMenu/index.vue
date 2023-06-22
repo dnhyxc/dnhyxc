@@ -29,7 +29,7 @@
       <el-dropdown v-if="loginStore?.userInfo?.userId">
         <el-avatar
           shape="square"
-          :size="checkOS() === 'mac' ? 45 : 38"
+          :size="checkOS() === 'mac' ? 40 : 38"
           fit="cover"
           :src="loginStore.userInfo?.headUrl || HEAD_IMG"
           class="avatar"

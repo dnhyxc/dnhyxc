@@ -11,19 +11,24 @@
       <Image
         :url="articleStore?.articleDetail?.headUrl || HEAD_IMG"
         :transition-img="HEAD_IMG"
-        :on-click="() => toSetting(articleStore?.articleDetail?.authorId)"
+        :on-click="() => toPersonal(articleStore?.articleDetail?.authorId)"
         class="herd-img"
       />
       <div class="create-info">
         <div class="username">
           <span>{{ articleStore?.articleDetail?.authorName }}</span>
-          <span
-            v-show="articleStore?.articleDetail?.authorId !== loginStore.userInfo?.userId"
-            class="follow"
-            @click="() => onFollow(articleStore?.articleDetail?.authorId!)"
-          >
-            {{ followStore.isFollowed ? '取消关注' : '关注作者' }}
-          </span>
+          <slot name="follow">
+            <span
+              v-show="
+                articleStore?.articleDetail?.authorId !== loginStore.userInfo?.userId &&
+                !route.path.includes('/article')
+              "
+              class="follow"
+              @click="() => onFollow(articleStore?.articleDetail?.authorId!)"
+            >
+              {{ followStore.isFollowed ? '取消关注' : '关注作者' }}
+            </span>
+          </slot>
         </div>
         <div>
           <span>{{ formatDate(articleStore?.articleDetail?.createTime!, 'YYYY年MM月DD日 HH:mm') }}</span>
@@ -39,27 +44,22 @@
         </div>
       </div>
     </div>
-    <Image
-      v-if="articleStore?.articleDetail?.coverImage"
-      :url="articleStore?.articleDetail?.coverImage || HEAD_IMG"
-      :transition-img="HEAD_IMG"
-      :on-click="() => toSetting(articleStore?.articleDetail?.authorId)"
-      class="image"
-    />
+    <Image :url="articleStore?.articleDetail?.coverImage || HEAD_IMG" :transition-img="HEAD_IMG" class="image" />
     <p class="desc">{{ articleStore?.articleDetail?.abstract }}</p>
   </div>
 </template>
 
 <script setup lang="ts">
+import { ref, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { articleStore, loginStore, createStore, followStore } from '@/store';
 import { formatDate } from '@/utils';
 import { HEAD_IMG } from '@/constant';
 import Image from '@/components/Image/index.vue';
-import { onMounted } from 'vue';
 
 const router = useRouter();
 const route = useRoute();
+const followTimer = ref<boolean>(false);
 
 onMounted(() => {
   if (articleStore.articleDetail?.authorId) {
@@ -78,13 +78,17 @@ const onEditArticle = () => {
 };
 
 // 去我的主页
-const toSetting = (authorId: string | undefined) => {
+const toPersonal = (authorId: string | undefined) => {
+  if (route.path.includes('/article')) return;
   router.push(`/personal?authorId=${authorId}`);
 };
 
 // 关注作者
-const onFollow = (authorId: string) => {
-  followStore.manageFollow(authorId);
+const onFollow = async (authorId: string) => {
+  if (followTimer.value) return;
+  followTimer.value = true;
+  await followStore.manageFollow(authorId, route.params.id as string);
+  followTimer.value = false;
 };
 </script>
 

@@ -79,6 +79,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
+import { ElMessage } from 'element-plus';
 import { HEAD_IMG } from '@/constant';
 import { shareQQ, shareSinaWeiBo, getStoreUserInfo } from '@/utils';
 import { articleStore, collectStore, loginStore } from '@/store';
@@ -86,7 +87,6 @@ import { useCommentCount } from '@/hooks';
 import Qrcode from '@/components/Qrcode/index.vue';
 import CollectModel from '@/components/CollectModel/index.vue';
 import AddCollectModel from '@/components/AddCollectModel/index.vue';
-import { ElMessage } from 'element-plus';
 
 interface IProps {
   id: string;

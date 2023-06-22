@@ -90,7 +90,7 @@ import { ref, computed, onMounted, onUnmounted, inject } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useScroller } from '@/hooks';
 import { articleStore, collectStore, loginStore, personalStore } from '@/store';
-import { ArticleItem, CollectParams } from '@/typings/common';
+import { ArticleItem, CollectParams, WinRefreshParams } from '@/typings/common';
 import { formatDate, scrollTo, showMessage } from '@/utils';
 import { HEAD_IMG } from '@/constant';
 import Card from '@/components/Card/index.vue';
@@ -132,7 +132,8 @@ const showEmpty = computed(
 
 onMounted(async () => {
   // 监听详情点赞状态，实时更改列表对应文章的点赞状态
-  ipcRenderer.on('refresh', (_, id, pageType, isLike = true) => {
+  ipcRenderer.on('refresh', (_, params: WinRefreshParams) => {
+    const { pageType, isLike = true } = params;
     // 需要判断是否是属于当前活动页面，并且只是点击点赞而不是收藏或评论防止重复触发
     if (route.name === 'collect' && pageType !== 'list' && isLike) {
       reload && reload();

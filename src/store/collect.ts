@@ -178,7 +178,7 @@ export const useCollectStore = defineStore('collect', {
           );
         }
 
-        ipcRenderers.sendRefresh(articleId, pathname, false);
+        ipcRenderers.sendRefresh({ articleId, pathname, isLike: false });
 
         ElMessage({
           message: res.message,
@@ -237,7 +237,7 @@ export const useCollectStore = defineStore('collect', {
 
         const { pathname } = window.location;
         // 判断是article还是detail、分别推送刷新消息给主进程
-        ipcRenderers.sendRefresh(articleId, pathname, false);
+        ipcRenderers.sendRefresh({ articleId, pathname, isLike: false });
 
         ElMessage({
           message: res.message,

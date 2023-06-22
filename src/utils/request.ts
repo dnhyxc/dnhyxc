@@ -85,14 +85,19 @@ export default function request(_url: string, options?: any): FetchResult {
     credentials: 'include',
   };
   const newOptions = { ...defaultOptions, ...options };
+
   if (newOptions.method === 'POST' || newOptions.method === 'PUT' || newOptions.method === 'GET') {
     if (!(newOptions.body instanceof FormData)) {
       newOptions.headers = {
         Accept: 'application/json',
         'Content-Type': 'application/json; charset=utf-8',
-        Authorization: `Bearer ${locGetItem('token')}`,
+        Authorization: `Bearer ${locGetItem('token') || options?.body?.token}`,
         ...newOptions.headers,
       };
+      // 判断是否传了token，如果传了，则删除
+      if (newOptions.body.token) {
+        delete newOptions.body.token;
+      }
       newOptions.body = JSON.stringify(newOptions.body);
     } else {
       // NewOptions.body is FormData

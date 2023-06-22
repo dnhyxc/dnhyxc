@@ -17,7 +17,7 @@
         <div class="right">
           <div class="sticky">
             <el-tooltip effect="light" content="置顶" placement="bottom">
-              <i :class="`${stickyStatus && 'active'} font iconfont icon-pin1`" @click="onSticky" />
+              <i :class="`${articleStore.stickyStatus && 'active'} font iconfont icon-pin1`" @click="onSticky" />
             </el-tooltip>
           </div>
           <div v-if="checkOS() !== 'mac'" class="page-actions">
@@ -41,7 +41,7 @@
         <div class="content">
           <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
             <div ref="articleInfoRef" class="articleInfo">
-              <PageHeader />
+              <PageHeader v-if="articleStore.articleDetail.authorId" />
               <Preview
                 v-if="articleStore.articleDetail.content"
                 :mackdown="articleStore.articleDetail.content"
@@ -89,6 +89,7 @@ import { articleStore, commonStore } from '@/store';
 import { scrollTo, checkOS, locSetItem, locRemoveItem, getStoreUserInfo, ipcRenderers } from '@/utils';
 import { ACTION_SVGS } from '@/constant';
 import { createWebSocket } from '@/socket';
+import { WinRefreshParams } from '@/typings/common';
 import PageHeader from '@/components/PreviewHeader/index.vue';
 import Preview from '@/components/Preview/index.vue';
 import Multibar from '@/components/Multibar/index.vue';
@@ -110,7 +111,6 @@ const focus = ref<boolean>(false);
 // 窗口大小控制状态
 const toggle = ref<boolean>(false);
 // 指定控制状态
-const stickyStatus = ref<boolean>(false);
 
 // scrollRef：el-scrollbar ref，scrollTop：滚动距离
 const { scrollRef, scrollTop } = useScroller();
@@ -146,7 +146,9 @@ onMounted(async () => {
   });
 
   // 监听主进程发布的刷新页面的消息
-  ipcRenderer.on('refresh', (_, id, pageType) => {
+  ipcRenderer.on('refresh', (_, params: WinRefreshParams) => {
+    const { id, pageType, isTop } = params;
+    articleStore.stickyStatus = isTop;
     if (pageType !== 'article' && id === route.params.id) {
       reload && reload();
     }
@@ -189,8 +191,8 @@ const updateFocus = (value: boolean) => {
 // 置顶
 const onSticky = () => {
   const { id } = route.params;
-  stickyStatus.value = !stickyStatus.value;
-  ipcRenderers.sendNewWinSticky(stickyStatus.value, id as string);
+  articleStore.stickyStatus = !articleStore.stickyStatus;
+  ipcRenderers.sendNewWinSticky(articleStore.stickyStatus, id as string);
 };
 
 // 双击放大窗口
@@ -254,7 +256,7 @@ const onScrollTo = (height?: number) => {
     align-items: center;
     justify-content: space-between;
     height: 35px;
-    padding: 10px 18px 10px 12px;
+    padding: 30px 18px 10px 12px;
     -webkit-app-region: drag;
     .left {
       display: flex;

@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import { ElMessage } from 'element-plus';
 import { FollowList, FollowItem } from '@/typings/common';
 import * as Service from '@/server';
-import { normalizeResult } from '@/utils';
+import { normalizeResult, getStoreUserInfo, ipcRenderers } from '@/utils';
 import { useCheckUserId } from '@/hooks';
 import { sendMessage } from '@/socket';
 import { loginStore, personalStore } from '@/store';
@@ -28,7 +28,7 @@ export const useFollowStore = defineStore('follow', {
 
   actions: {
     // 关注/取消关注用户
-    async manageFollow(authorId: string, id?: string) {
+    async manageFollow(authorId: string, id: string) {
       // 检验是否有userId，如果没有禁止发送请求
       if (!useCheckUserId()) return;
       const res = normalizeResult<{ isFollowed: boolean; userId: string }>(await Service.manageFollow(authorId));
@@ -39,21 +39,28 @@ export const useFollowStore = defineStore('follow', {
       });
       if (res.success) {
         this.isFollowed = res.data.isFollowed;
+        const { userInfo } = getStoreUserInfo();
         const { userId, username } = loginStore.userInfo;
-        // 推送 ws 消息
-        sendMessage(
-          JSON.stringify({
-            action: 'push',
-            data: {
-              toUserId: authorId,
-              fromUsername: username,
-              fromUserId: userId,
-              action: this.isFollowed ? 'FOLLOWED' : 'CANCEL_FOLLOWED',
-            },
-            userId: userId!,
-          }),
-        );
-        // 更改点赞状态状态
+        const { pathname } = window.location;
+        // 判断是article还是detail、分别推送刷新消息给主进程，使主进程推送消息给个文章列表页面更新列表点赞状态
+        ipcRenderers.sendRefresh({ articleId: id, pathname });
+
+        if (authorId !== userId && authorId !== userInfo?.userId) {
+          // 推送 ws 消息
+          sendMessage(
+            JSON.stringify({
+              action: 'push',
+              data: {
+                toUserId: authorId,
+                fromUsername: username || userInfo?.username,
+                fromUserId: userId || userInfo?.userId,
+                action: this.isFollowed ? 'FOLLOWED' : 'CANCEL_FOLLOWED',
+              },
+              userId: userId! || userInfo?.userId,
+            }),
+          );
+        }
+        // 更改关注状态状态
         const list = this.followList?.map((i) => {
           if (i.id === id) {
             i.isFollowed = !i.isFollowed;
@@ -88,7 +95,7 @@ export const useFollowStore = defineStore('follow', {
     // 查询是否关注该用户
     async findFollowed(authorId: string) {
       // 检验是否有userId，如果没有禁止发送请求
-      if (loginStore?.userInfo?.userId) return;
+      if (!useCheckUserId(false)) return;
       const res = normalizeResult<boolean>(await Service.findFollowed(authorId));
       if (res.success) {
         this.isFollowed = res.data;

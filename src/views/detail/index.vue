@@ -74,6 +74,7 @@ import ToTopIcon from '@/components/ToTopIcon/index.vue';
 import AnotherArticle from '@/components/AnotherArticle/index.vue';
 import Comment from '@/components/Comment/index.vue';
 import Loading from '@/components/Loading/index.vue';
+import { WinRefreshParams } from '@/typings/common';
 
 const reload = inject<Function>('reload');
 
@@ -99,7 +100,8 @@ onMounted(async () => {
   }
 
   // 监听主进程发布的刷新页面的消息
-  ipcRenderer.on('refresh', (_, id, pageType) => {
+  ipcRenderer.on('refresh', (_, params: WinRefreshParams) => {
+    const { id, pageType } = params;
     // 需要判断是否是属于当前活动页面，并且pageType不等于detail，防止重复触发
     if (pageType !== 'detail' && id === route.params.id) {
       reload && reload();
