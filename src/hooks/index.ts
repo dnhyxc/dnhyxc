@@ -1,5 +1,5 @@
 import { useRouter } from 'vue-router';
-import { toRaw, onMounted, onUnmounted, ref, computed } from 'vue';
+import { toRaw, onMounted, onUnmounted, ref, computed, watchEffect } from 'vue';
 import type { Ref } from 'vue';
 import { ElMessage } from 'element-plus';
 import {
@@ -21,8 +21,39 @@ export const useGetRoutePath = () => {
   return toRaw(router).currentRoute.value.fullPath;
 };
 
+// 监听滚动条事件hooks，消除存在多个滚动条时不相互影响
+export const useChildScroller = (wait?: boolean) => {
+  const scrollChildRef = ref<any>();
+  const scrollChildTop = ref<number>(0);
+
+  onMounted(() => {
+    if (wait) {
+      // 监听滚动条滚动事件
+      watchEffect(() => {
+        if (scrollChildRef.value?.wrapRef) {
+          scrollChildRef.value?.wrapRef?.addEventListener('scroll', onScroll);
+        }
+      });
+    } else {
+      scrollChildRef.value?.wrapRef?.addEventListener('scroll', onScroll);
+    }
+  });
+
+  onUnmounted(() => {
+    // 卸载滚动条滚动事件
+    scrollChildRef.value?.wrapRef.removeEventListener('scroll', onScroll);
+  });
+
+  // 滚动事件
+  const onScroll = (e: any) => {
+    scrollChildTop.value = e.target.scrollTop;
+  };
+
+  return { scrollChildRef, scrollChildTop };
+};
+
 // 监听滚动条事件hooks
-export const useScroller = (visible?: boolean) => {
+export const useScroller = () => {
   const scrollRef = ref<any>();
   const scrollTop = ref<number>(0);
 
@@ -39,7 +70,6 @@ export const useScroller = (visible?: boolean) => {
   // 滚动事件
   const onScroll = (e: any) => {
     scrollTop.value = e.target.scrollTop;
-
     // 滚动时隐藏右侧菜单，清除选中文章
     if (commonStore.showContextmenu && commonStore.currentArticleId) {
       commonStore.clearContentmenuInfo();

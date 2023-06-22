@@ -10,11 +10,11 @@
       <span class="title">
         <span>文章标签列表</span>
         <i
-          :class="`font iconfont ${scrollTop > 0 ? 'icon-shuangjiantou-shang' : 'icon-shuangjiantou-xia'}`"
-          @click="onScrollTo"
+          :class="`font iconfont ${scrollChildTop > 10 ? 'icon-shuangjiantou-shang' : 'icon-shuangjiantou-xia'}`"
+          @click="onScrollTagMenuTo"
         />
       </span>
-      <el-scrollbar v-if="tagStore.tags.length > 0" ref="tagListRef" wrap-class="scrollbar-wrapper">
+      <el-scrollbar v-if="tagStore.tags.length > 0" ref="scrollChildRef" wrap-class="scrollbar-wrapper">
         <div v-for="i in tagStore.tags" :key="i.name" class="tag-wrap">
           <div
             :id="(tagStore.currentTag || route.query?.tag || tagStore.tags[0]?.name) === i.name ? 'ACTIVE_TAG' : ''"
@@ -64,7 +64,7 @@ import { ipcRenderer } from 'electron';
 import { ref, Ref, computed, onMounted, onUnmounted, watch, watchEffect, inject } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { scrollTo } from '@/utils';
-import { useScroller, useDeleteArticle } from '@/hooks';
+import { useScroller, useChildScroller, useDeleteArticle } from '@/hooks';
 import { tagStore, articleStore, commonStore } from '@/store';
 import Loading from '@/components/Loading/index.vue';
 import { ArticleItem, WinRefreshParams } from '@/typings/common';
@@ -74,7 +74,6 @@ const reload = inject<Function>('reload');
 const route = useRoute();
 const router = useRouter();
 
-const tagListRef = ref<any>(null);
 const scrollbar = ref<HTMLDivElement | null>(null);
 const isMounted = ref<boolean>(false);
 const noMore = computed(() => {
@@ -84,20 +83,15 @@ const noMore = computed(() => {
 const disabled = computed(() => tagStore.loading || noMore.value);
 const showEmpty = computed(() => tagStore.loading !== null && !tagStore.loading && !tagStore.articleList?.length);
 const { scrollRef, scrollTop } = useScroller();
-const { deleteArticle } = useDeleteArticle({
-  pageType: 'tag',
-  tagName: route.query?.tag as string,
-  router,
-  scrollbar: scrollbar as Ref<HTMLDivElement>,
-});
+const { scrollChildRef, scrollChildTop } = useChildScroller(true);
 
 onMounted(async () => {
   // 计算当前选中的标签位置，自动滑动到当前选中的标签位置
   watchEffect(() => {
-    scrollbar.value = tagListRef.value?.wrapRef as HTMLDivElement;
-    if (scrollbar.value) {
+    scrollbar.value = scrollChildRef.value?.wrapRef as HTMLDivElement;
+    if (scrollChildRef.value?.wrapRef) {
       const activeTag = document.querySelector('#ACTIVE_TAG') as HTMLDivElement;
-      scrollbar.value.scrollTop = activeTag?.offsetTop;
+      scrollTo(scrollChildRef, activeTag?.offsetTop - 5);
     }
   });
   isMounted.value = true;
@@ -113,6 +107,13 @@ onMounted(async () => {
       reload && reload();
     }
   });
+});
+
+const { deleteArticle } = useDeleteArticle({
+  pageType: 'tag',
+  tagName: route.query?.tag as string,
+  router,
+  scrollbar: scrollbar as Ref<HTMLDivElement>,
 });
 
 onUnmounted(() => {
@@ -148,6 +149,12 @@ watch(
 // 请求数据
 const onFetchData = async () => {
   await tagStore.getArticleByTagName(route.query?.tag as string);
+};
+
+// 滚动标签菜单到位位置
+const onScrollTagMenuTo = () => {
+  const bottom = scrollChildRef.value?.wrapRef?.firstElementChild?.offsetHeight;
+  scrollTo(scrollChildRef, scrollChildTop.value > 10 ? 0 : bottom);
 };
 
 // 滚动到某位置

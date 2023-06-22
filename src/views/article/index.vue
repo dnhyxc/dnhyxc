@@ -256,7 +256,7 @@ const onScrollTo = (height?: number) => {
     align-items: center;
     justify-content: space-between;
     height: 35px;
-    padding: 30px 18px 10px 12px;
+    padding: 10px 18px 10px 12px;
     -webkit-app-region: drag;
     .left {
       display: flex;
@@ -356,7 +356,7 @@ const onScrollTo = (height?: number) => {
     }
   }
   .mac-header-wrap {
-    padding: 10 12px;
+    padding: 30px 18px 10px 12px;
   }
 
   .content-wrap {

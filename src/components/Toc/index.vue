@@ -9,11 +9,11 @@
     <div class="title">
       <span>目录</span>
       <i
-        :class="`font iconfont ${scrollTop > 0 ? 'icon-shuangjiantou-shang' : 'icon-shuangjiantou-xia'}`"
+        :class="`font iconfont ${scrollChildTop > 0 ? 'icon-shuangjiantou-shang' : 'icon-shuangjiantou-xia'}`"
         @click="onScrollTo"
       />
     </div>
-    <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
+    <el-scrollbar ref="scrollChildRef" wrap-class="scrollbar-wrapper">
       <div class="item-wrap">
         <div
           v-for="(anchor, index) in commonStore.tocTitles"
@@ -32,11 +32,11 @@
 <script setup lang="ts">
 import { onMounted, ref, nextTick, watchEffect, onUnmounted } from 'vue';
 import { scrollTo } from '@/utils';
-import { useScroller } from '@/hooks';
+import { useChildScroller } from '@/hooks';
 import { commonStore } from '@/store';
 import { TocTitlesParams } from '@/typings/common';
 
-const { scrollRef, scrollTop } = useScroller();
+const { scrollChildRef, scrollChildTop } = useChildScroller();
 
 const checkTocTitle = ref<string>('');
 
@@ -60,8 +60,8 @@ onUnmounted(() => {
 // 监听详情md预览组件滚动事件
 const onDetailScroll = (e: any) => {
   const scale = e.target.scrollTop / commonStore.detailScrollRef?.wrapRef?.scrollHeight;
-  const el = scrollRef.value?.wrapRef as HTMLDivElement;
-  el.scrollTop = (scale * scrollRef.value?.wrapRef?.scrollHeight) as number;
+  const el = scrollChildRef.value?.wrapRef as HTMLDivElement;
+  el.scrollTop = (scale * scrollChildRef.value?.wrapRef?.scrollHeight) as number;
 };
 
 // 选中某标题
@@ -83,8 +83,8 @@ const handleAnchorClick = (anchor: TocTitlesParams, index: number) => {
 
 // 滚动到某位置
 const onScrollTo = () => {
-  const bottom = scrollRef.value?.wrapRef?.firstElementChild?.offsetHeight;
-  scrollTo(scrollRef, scrollTop.value > 0 ? 0 : bottom);
+  const bottom = scrollChildRef.value?.wrapRef?.firstElementChild?.firstElementChild?.offsetHeight;
+  scrollTo(scrollChildRef, scrollChildTop.value > 0 ? 0 : bottom);
 };
 </script>
 
@@ -123,13 +123,14 @@ const onScrollTo = () => {
 
   :deep {
     .scrollbar-wrapper {
+      border: 1px solid red;
       box-sizing: border-box;
       height: 100%;
     }
 
     .el-scrollbar__view {
       box-sizing: border-box;
-      height: calc(100% - 20px);
+      height: 100%;
     }
   }
 

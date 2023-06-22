@@ -11,11 +11,11 @@
       <div class="title">
         <span>文章标签列表</span>
         <i
-          :class="`font iconfont ${scrollTop > 0 ? 'icon-shuangjiantou-shang' : 'icon-shuangjiantou-xia'}`"
+          :class="`font iconfont ${scrollChildTop > 0 ? 'icon-shuangjiantou-shang' : 'icon-shuangjiantou-xia'}`"
           @click="onScrollTo"
         />
       </div>
-      <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
+      <el-scrollbar ref="scrollChildRef" wrap-class="scrollbar-wrapper">
         <div v-for="i in tagStore.tags" :key="i.name" class="tag" @click="onCheckTag(i.name)">
           {{ i.name }}
           <span class="count">({{ i.value }} 篇)</span>
@@ -30,12 +30,12 @@
 import { onMounted, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { scrollTo, checkOS } from '@/utils';
-import { useScroller } from '@/hooks';
+import { useChildScroller } from '@/hooks';
 import { tagStore } from '@/store';
 import WordCloud from '@/components/WordCloud/index.vue';
 
 const router = useRouter();
-const { scrollRef, scrollTop } = useScroller();
+const { scrollChildRef, scrollChildTop } = useChildScroller();
 
 onMounted(async () => {
   // 获取标签信息
@@ -48,8 +48,8 @@ onUnmounted(() => {
 
 // 滚动到某位置
 const onScrollTo = () => {
-  const bottom = scrollRef.value?.wrapRef?.firstElementChild?.offsetHeight;
-  scrollTo(scrollRef, scrollTop.value > 0 ? 0 : bottom);
+  const bottom = scrollChildRef.value?.wrapRef?.firstElementChild?.offsetHeight;
+  scrollTo(scrollChildRef, scrollChildTop.value > 0 ? 0 : bottom);
 };
 
 // 选中标签
