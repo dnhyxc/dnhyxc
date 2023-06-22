@@ -123,7 +123,6 @@ const onScrollTo = () => {
 
   :deep {
     .scrollbar-wrapper {
-      border: 1px solid red;
       box-sizing: border-box;
       height: 100%;
     }

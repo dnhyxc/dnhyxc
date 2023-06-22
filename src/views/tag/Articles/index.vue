@@ -83,7 +83,7 @@ const noMore = computed(() => {
 const disabled = computed(() => tagStore.loading || noMore.value);
 const showEmpty = computed(() => tagStore.loading !== null && !tagStore.loading && !tagStore.articleList?.length);
 const { scrollRef, scrollTop } = useScroller();
-const { scrollChildRef, scrollChildTop } = useChildScroller(true);
+const { scrollChildRef, scrollChildTop } = useChildScroller();
 
 onMounted(async () => {
   // 计算当前选中的标签位置，自动滑动到当前选中的标签位置

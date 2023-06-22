@@ -22,21 +22,17 @@ export const useGetRoutePath = () => {
 };
 
 // 监听滚动条事件hooks，消除存在多个滚动条时不相互影响
-export const useChildScroller = (wait?: boolean) => {
+export const useChildScroller = () => {
   const scrollChildRef = ref<any>();
   const scrollChildTop = ref<number>(0);
 
   onMounted(() => {
-    if (wait) {
-      // 监听滚动条滚动事件
-      watchEffect(() => {
-        if (scrollChildRef.value?.wrapRef) {
-          scrollChildRef.value?.wrapRef?.addEventListener('scroll', onScroll);
-        }
-      });
-    } else {
-      scrollChildRef.value?.wrapRef?.addEventListener('scroll', onScroll);
-    }
+    // 监听滚动条滚动事件
+    watchEffect(() => {
+      if (scrollChildRef.value?.wrapRef) {
+        scrollChildRef.value?.wrapRef?.addEventListener('scroll', onScroll);
+      }
+    });
   });
 
   onUnmounted(() => {
