@@ -203,6 +203,7 @@ const onCopyCodeSuccess = (value: string) => {
 
     .v-md-editor__toolbar {
       border-bottom: 1px solid var(--card-border);
+      -webkit-app-region: no-drag;
     }
     .v-md-editor__editor-wrapper {
       border-right: 1px solid var(--card-border);
