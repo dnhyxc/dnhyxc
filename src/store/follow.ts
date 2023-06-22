@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import { ElMessage } from 'element-plus';
 import { FollowList, FollowItem } from '@/typings/common';
 import * as Service from '@/server';
-import { normalizeResult, getStoreUserInfo, ipcRenderers } from '@/utils';
+import { normalizeResult, getStoreUserInfo } from '@/utils';
 import { useCheckUserId } from '@/hooks';
 import { sendMessage } from '@/socket';
 import { loginStore, personalStore } from '@/store';
@@ -41,10 +41,6 @@ export const useFollowStore = defineStore('follow', {
         this.isFollowed = res.data.isFollowed;
         const { userInfo } = getStoreUserInfo();
         const { userId, username } = loginStore.userInfo;
-        const { pathname } = window.location;
-        // 判断是article还是detail、分别推送刷新消息给主进程，使主进程推送消息给个文章列表页面更新列表点赞状态
-        ipcRenderers.sendRefresh({ articleId: id, pathname });
-
         if (authorId !== userId && authorId !== userInfo?.userId) {
           // 推送 ws 消息
           sendMessage(
