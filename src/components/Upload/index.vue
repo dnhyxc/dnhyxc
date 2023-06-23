@@ -108,7 +108,7 @@ const cropperHeight = ref<string>('');
 // 截图器容器
 const cropperContent = ref<HTMLDivElement | null>(null);
 // 截图器dom
-const cropper = ref<ReturnType<typeof VueCropper>>();
+const cropper = ref<ReturnType<any>>();
 // 缩放默认值
 const scaleNum = ref<number>(1);
 // 保存上传的fileInfo
