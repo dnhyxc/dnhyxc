@@ -165,7 +165,7 @@ const onQuit = () => {
     .font {
       display: block;
       font-size: 26px;
-      line-height: 32px;
+      line-height: 35px;
       font-weight: 700;
       color: @sub-2-blue;
       cursor: pointer;

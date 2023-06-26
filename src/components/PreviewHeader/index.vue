@@ -20,13 +20,14 @@
           <slot name="follow">
             <span
               v-show="
+                loginStore?.userInfo.userId &&
                 articleStore?.articleDetail?.authorId !== loginStore.userInfo?.userId &&
                 !route.path.includes('/article')
               "
               class="follow"
               @click="() => onFollow(articleStore?.articleDetail?.authorId!)"
             >
-              {{ followStore.isFollowed && loginStore?.userInfo.userId ? '取消关注' : '关注作者' }}
+              {{ followStore.isFollowed ? '取消关注' : '关注作者' }}
             </span>
           </slot>
         </div>
