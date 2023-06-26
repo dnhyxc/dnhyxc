@@ -6,7 +6,7 @@
  */
 import { globalShortcut, App } from 'electron';
 import Store from 'electron-store';
-import { isDev, isMac, globalInfo } from './constant';
+import { isDev, isMac, globalInfo, clearGlobalInfo } from './constant';
 
 export const registerShortcut = (app: App) => {
   const store = new Store();
@@ -59,6 +59,7 @@ export const registerShortcut = (app: App) => {
   // 退出
   globalShortcut.register((store.get('OUT_SHORTCUT') as string) || 'Shift+Alt+T', () => {
     if (!isMac) {
+      clearGlobalInfo();
       app?.quit();
     }
   });

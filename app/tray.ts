@@ -5,8 +5,8 @@
  * index.vue
  */
 import path from 'path';
-import { Menu } from 'electron';
-import { globalInfo, isDev, isMac } from './constant';
+import { Menu, app } from 'electron';
+import { globalInfo, isDev, isMac, clearGlobalInfo } from './constant';
 
 export const createContextMenu = () => {
   // 托盘菜单
@@ -20,7 +20,9 @@ export const createContextMenu = () => {
     {
       label: '退出墨客',
       click: () => {
-        globalInfo.win?.destroy();
+        // globalInfo.win?.destroy();
+        clearGlobalInfo();
+        app.quit();
       },
     },
   ]);

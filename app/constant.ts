@@ -23,6 +23,13 @@ export const globalInfo: {
   userInfo: '',
 };
 
+export const clearGlobalInfo = () => {
+  globalInfo.win = null;
+  globalInfo.tray = null;
+  globalInfo.msgStatus = true;
+  globalInfo.userInfo = '';
+};
+
 export const isDev: boolean = process.env.NODE_ENV === 'development';
 
 export const isMac: boolean = process.platform === 'darwin';
