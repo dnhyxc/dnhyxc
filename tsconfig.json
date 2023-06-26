@@ -10,6 +10,8 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": false,
+    "suppressImplicitAnyIndexErrors": true,
+    "ignoreDeprecations": "5.0",
     "noImplicitAny": true, // 不允许隐式any类型
     "module": "esnext", // 模块引入方式
     "target": "es5", // 打包后编译成什么形式

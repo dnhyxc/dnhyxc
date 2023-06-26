@@ -26,7 +26,7 @@
               class="follow"
               @click="() => onFollow(articleStore?.articleDetail?.authorId!)"
             >
-              {{ followStore.isFollowed ? '取消关注' : '关注作者' }}
+              {{ followStore.isFollowed && loginStore?.userInfo.userId ? '取消关注' : '关注作者' }}
             </span>
           </slot>
         </div>
