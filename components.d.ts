@@ -65,6 +65,7 @@ declare module '@vue/runtime-core' {
     ResetForm: typeof import('./src/components/ResetForm/index.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    Skeleton: typeof import('./src/components/Skeleton/index.vue')['default']
     Timeline: typeof import('./src/components/Timeline/index.vue')['default']
     Toc: typeof import('./src/components/Toc/index.vue')['default']
     ToTopIcon: typeof import('./src/components/ToTopIcon/index.vue')['default']

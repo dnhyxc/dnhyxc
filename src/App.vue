@@ -1,5 +1,5 @@
 <template>
-  <!-- <RouterView /> -->
+  <Skeleton v-if="!commonStore.pageLoadStatus" />
   <RouterView v-if="isRouterAlive" v-slot="{ Component }">
     <component :is="Component" />
   </RouterView>

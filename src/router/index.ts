@@ -248,6 +248,10 @@ router.beforeEach(async (to, from, next) => {
   commonStore.showSearch = false;
   // 清除选中卡片的状态，关闭右键菜单
   commonStore.clearContentmenuInfo();
+  // 判断是否是首屏加载，如果是则设置loading加载效果
+  if (to.path !== '/home') {
+    commonStore.updatePageLoadStatus();
+  }
   // 路由切换时，隐藏消息弹窗
   eventBus.emit('hide-msg-popover', false);
   // 进入到登录页时，保存从哪进入的路由路径

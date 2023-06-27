@@ -16,6 +16,7 @@ interface IProps {
   reelScrollRef: HTMLDivElement | null; // Reel 滚动容器
   showContextmenu: boolean; // 是否显示右键菜单
   currentArticleId: string; // 当前点击的文章id
+  pageLoadStatus: boolean; // 判断页面是否加载完成
 }
 
 // 公共store
@@ -36,6 +37,7 @@ export const useCommonStore = defineStore('common', {
     reelScrollRef: null,
     showContextmenu: false,
     currentArticleId: '',
+    pageLoadStatus: false,
   }),
 
   actions: {
@@ -71,6 +73,11 @@ export const useCommonStore = defineStore('common', {
     clearContentmenuInfo() {
       this.showContextmenu = false;
       this.currentArticleId = '';
+    },
+
+    // 修改页面加载状态
+    updatePageLoadStatus() {
+      this.pageLoadStatus = true;
     },
   },
 });

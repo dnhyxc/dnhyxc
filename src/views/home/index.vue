@@ -42,7 +42,7 @@
 
 <script setup lang="ts">
 import { ipcRenderer } from 'electron';
-import { ref, computed, onMounted, onUnmounted, watch, inject } from 'vue';
+import { ref, computed, onMounted, onUnmounted, watch, inject, nextTick } from 'vue';
 import { useRoute } from 'vue-router';
 import { ATRICLE_TYPE } from '@/constant';
 import { scrollTo } from '@/utils';
@@ -81,6 +81,11 @@ onMounted(() => {
     if (route.name === 'home' && pageType !== 'list' && isLike) {
       reload && reload();
     }
+  });
+
+  // 判断页面是否加载完成
+  nextTick(() => {
+    commonStore.updatePageLoadStatus();
   });
 });
 
