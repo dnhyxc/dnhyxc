@@ -20,7 +20,6 @@ export const createContextMenu = () => {
     {
       label: '退出墨客',
       click: () => {
-        // globalInfo.win?.destroy();
         clearGlobalInfo();
         app.quit();
       },
