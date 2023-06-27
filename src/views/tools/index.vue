@@ -5,7 +5,7 @@
  * index.vue
 -->
 <template>
-  <Loading :loading="false" class="tools-wrap">
+  <Loading :loading="toolsStore.loading" class="tools-wrap">
     <template #default>
       <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
         <div class="tools">
