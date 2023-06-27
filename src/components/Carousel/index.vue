@@ -6,7 +6,7 @@
 -->
 <template>
   <div class="carousel-wrap">
-    <el-carousel :interval="5000" trigger="click" type="card" height="210px" class="carousel">
+    <el-carousel v-if="data?.length > 0" :interval="5000" trigger="click" type="card" height="210px" class="carousel">
       <el-carousel-item v-for="item in data" :key="item" @click="toDetail(item.id)">
         <div class="carousel-item">
           <div class="article-info">
@@ -25,6 +25,13 @@
             </div>
           </div>
           <Image :url="item.coverImage || IMG1" :transition-img="IMG1" class="img" />
+        </div>
+      </el-carousel-item>
+    </el-carousel>
+    <el-carousel v-else :interval="5000" trigger="click" type="card" height="210px" class="carousel">
+      <el-carousel-item v-for="item in 5" :key="item">
+        <div class="carousel-item">
+          <Image :url="IMG1" :transition-img="IMG1" class="img" />
         </div>
       </el-carousel-item>
     </el-carousel>

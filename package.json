@@ -9,6 +9,7 @@
     "dev": "cross-env NODE_ENV=development vite",
     "build": "rimraf dist release && vue-tsc --noEmit && cross-env NODE_ENV=production && vite build && electron-builder",
     "build:vue": "rimraf dist && vue-tsc --noEmit && cross-env NODE_ENV=production && vite build",
+    "build:ele": "rimraf release && vue-tsc --noEmit && cross-env NODE_ENV=production && electron-builder",
     "preview": "vite preview",
     "eslint": "eslint --ext .js,.vue --ignore-path .gitignore --fix src",
     "prettier": "prettier --write",
