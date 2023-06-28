@@ -27,12 +27,14 @@ export const createWindow = () => {
     minWidth: 1080,
     minHeight: 750,
     titleBarStyle: 'hidden',
+    backgroundColor: '#D7FFFE',
     webPreferences: {
       contextIsolation: false,
       nodeIntegration: true,
       partition: String(+new Date()), // 防止加载线上项目地址缓存在磁盘中
     },
     icon: path.join(__dirname, getIconPath()),
+    // show: false,
   });
 
   // 设置mac扩展坞图标
@@ -83,6 +85,11 @@ export const createWindow = () => {
   globalInfo.win?.webContents.addListener('did-start-loading', () => {
     globalInfo.win?.setAlwaysOnTop(false);
   });
+
+  // 监听是否加载完成，等加载完成再显示窗口
+  // globalInfo.win?.on('ready-to-show', () => {
+  //   globalInfo.win?.show();
+  // });
 };
 
 // 窗口最小化
