@@ -216,6 +216,7 @@ const toTag = (name: string) => {
   .card {
     position: relative;
     width: 100%;
+    border-radius: 5px;
     cursor: pointer;
     overflow: hidden;
 
@@ -235,8 +236,6 @@ const toTag = (name: string) => {
     .card-top {
       position: relative;
       width: 100%;
-      border-top-left-radius: 5px;
-      border-top-right-radius: 5px;
       overflow: hidden;
 
       .art-action {
@@ -310,8 +309,6 @@ const toTag = (name: string) => {
         left: 0;
         width: 100%;
         max-height: 42%;
-        border-bottom-left-radius: 5px;
-        border-bottom-right-radius: 5px;
         overflow: hidden;
 
         .desc {
