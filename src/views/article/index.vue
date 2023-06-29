@@ -38,7 +38,7 @@
         </div>
       </div>
       <div class="content-wrap">
-        <div class="content">
+        <div :class="`${checkOS() === 'mac' && 'mac-content'} content`">
           <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
             <div ref="articleInfoRef" class="articleInfo">
               <PageHeader v-if="articleStore.articleDetail.authorId" />
@@ -58,7 +58,7 @@
           </el-scrollbar>
           <ToTopIcon v-if="scrollTop >= 500" :on-scroll-to="onScrollTo" />
         </div>
-        <div class="right">
+        <div :class="`${checkOS() === 'mac' && 'mac-right'} right`">
           <Multibar
             v-if="getStoreUserInfo()?.userInfo?.userId"
             :id="(route.params.id as string)"
@@ -398,6 +398,10 @@ const onScrollTo = (height?: number) => {
         }
       }
     }
+
+    .mac-content {
+      height: calc(100vh - 93px);
+    }
     .right {
       display: flex;
       flex-direction: column;
@@ -417,6 +421,10 @@ const onScrollTo = (height?: number) => {
       & > :last-child {
         margin-bottom: 0;
       }
+    }
+
+    .mac-right{
+      max-height: calc(100vh - 93px);
     }
   }
 }
