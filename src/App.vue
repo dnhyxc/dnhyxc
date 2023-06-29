@@ -43,6 +43,8 @@ onMounted(async () => {
 
   // 在 App 中监听主进程中发送的清除消息列表的消息，防止重复首次加载时重复监听的问题
   ipcRenderer.on('clear-message', async () => {
+    // 每次监听到时，先加载未读消息列表
+    await messageStore.getNoReadMsgCount();
     // 获取未读消息id
     const msgIds = messageStore.noReadMsgList?.map((i) => i.id);
     if (msgIds?.length) {

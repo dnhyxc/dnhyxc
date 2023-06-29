@@ -86,6 +86,7 @@ ipcMain.on('close-message-win', (event, status) => {
 // 监听渲染进程鼠标移出事件，隐藏窗口
 ipcMain.on('ignore-message-win', async (event) => {
   await globalInfo.win?.webContents.send('clear-message');
+  messageWinStatus.hasUnreadMsg = false;
   stopFlash();
   hideMessage();
 });
