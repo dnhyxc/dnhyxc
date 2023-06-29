@@ -222,7 +222,7 @@ const toTag = (name: string) => {
     &:hover {
       .img {
         transform: scale(1.5);
-        transition: scale 0.5s;
+        transition: scale 0.6s ease-in-out;
       }
 
       .card-top {

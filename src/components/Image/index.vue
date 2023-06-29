@@ -85,6 +85,8 @@ const onClickImg = () => {
     display: block;
     height: 100%;
     width: 100%;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
     .imgStyle();
   }
 }
