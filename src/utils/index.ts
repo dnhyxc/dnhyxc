@@ -2,7 +2,7 @@ import { ElMessageBox, ElMessage } from 'element-plus';
 import type { ElMessageBoxOptions } from 'element-plus';
 import moment from 'moment';
 import SparkMD5 from 'spark-md5';
-import { MSG_CONFIG, CODE_CONTROL, EMOJI_TEXTS, EMOJI_URLS } from '@/constant';
+import { MSG_CONFIG, CODE_CONTROL, EMOJI_TEXTS, EMOJI_URLS, CODE_LENGTH, CHARACTERS } from '@/constant';
 import { usePlugins } from './plugins';
 import { normalizeResult } from './result';
 import { decrypt, encrypt } from './crypto';
@@ -322,6 +322,20 @@ export const verifyPassword = (value: string) => {
   };
 };
 
+// 验证码校验
+export const verifyCode = (value: string, charater: string) => {
+  if (value.toLowerCase() === charater.toLowerCase()) {
+    return {
+      msg: '',
+      status: true,
+    };
+  }
+  return {
+    msg: '验证码输入错误',
+    status: false,
+  };
+};
+
 // 密码校验
 export const verifyResetPassword = (value: string, newPwd: string) => {
   const pwdRegex = /(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[^a-zA-Z0-9]).{8,20}/;
@@ -561,4 +575,62 @@ export const uuid = () => {
     const v = c === 'x' ? r : (r & 0x3) | 0x8;
     return v.toString(16);
   });
+};
+
+// 随机生成颜色
+const randomColor = (min: number, max: number) => {
+  const r = randomNum(min, max);
+  const g = randomNum(min, max);
+  const b = randomNum(min, max);
+  return 'rgb(' + r + ',' + g + ',' + b + ')';
+};
+
+// 随机生成数字
+const randomNum = (min: number, max: number) => {
+  return Math.floor(Math.random() * (max - min) + min);
+};
+
+// canvas 绘制验证码
+export const drawCharater = ({
+  canvasElement,
+  width,
+  height,
+}: {
+  canvasElement: HTMLCanvasElement;
+  width: number;
+  height: number;
+}) => {
+  let txt = '';
+  for (let i = 0; i < CODE_LENGTH; i++) {
+    txt += CHARACTERS[randomNum(0, CHARACTERS.length)];
+  }
+  const ctx = canvasElement?.getContext('2d') as CanvasRenderingContext2D;
+  ctx.fillStyle = randomColor(180, 255);
+  ctx.fillRect(0, 0, width, height);
+  // 字体对齐位置
+  ctx.textBaseline = 'middle';
+  ctx.textAlign = 'center'; // 设置文本对齐方式为居中
+  ctx.fillRect(0, 0, width, height); // 填充背景色
+  ctx.font = '32px sans-serif'; // 设置字体样式
+  // 随机生成字体大小(0.5 - 0.75)高的范围
+  // ctx.font = randomNum((height * 2) / 4, (height * 3) / 4) + 'px sans-serif';
+  ctx.fillStyle = randomColor(0, 255);
+  ctx.fillText(txt, width / 2, height / 2 + 3); // 绘制文本
+  // 绘制干扰线
+  for (let j = 0; j < CODE_LENGTH; j++) {
+    ctx.strokeStyle = randomColor(30, 180);
+    ctx.beginPath();
+    ctx.moveTo(randomNum(0, width), randomNum(0, height));
+    ctx.lineTo(randomNum(0, width), randomNum(0, height));
+    ctx.stroke();
+  }
+  // 绘制干扰点
+  for (let k = 0; k < 30; k++) {
+    ctx.fillStyle = randomColor(0, 255);
+    ctx.beginPath();
+    ctx.arc(randomNum(0, width), randomNum(0, height), 1, 0, 2 * Math.PI);
+    ctx.fill();
+  }
+
+  return txt;
 };

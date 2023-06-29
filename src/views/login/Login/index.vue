@@ -6,7 +6,7 @@
 -->
 <template>
   <div class="login-content">
-    <div class="title">账号密码登录</div>
+    <div class="title">{{ isRegister ? '账号注册' : '账号密码登录' }}</div>
     <el-form ref="formRef" :rules="rules" :model="loginForm" class="form-wrap">
       <el-form-item prop="username" class="form-item">
         <el-input v-model="loginForm.username" size="large" placeholder="请输入用户名" @keyup.enter="onEnter" />
@@ -20,12 +20,26 @@
           @keyup.enter="onEnter"
         />
       </el-form-item>
+      <el-form-item v-if="!isRegister" prop="code" class="form-item code-item">
+        <el-input
+          v-model="loginForm.code"
+          size="large"
+          class="code-inp"
+          placeholder="请输入验证码"
+          @keyup.enter="onEnter"
+        />
+        <canvas ref="canvasCtx" class="code-canvas" :width="width" :height="height" @click="onResetCode"></canvas>
+      </el-form-item>
       <el-form-item class="form-item action-list">
-        <el-button type="primary" size="large" class="action" @click="onLogin(formRef)">登录</el-button>
-        <el-button class="action" size="large" @click="onRegister(formRef)">注册</el-button>
+        <el-button type="primary" size="large" class="action" @click="onLogin(formRef)">{{
+          isRegister ? '注册' : '登录'
+        }}</el-button>
       </el-form-item>
     </el-form>
     <div class="reset-wrap">
+      <el-button class="action" link @click="toRegister">{{
+        isRegister ? '已有帐号，前往登录' : '没有账号，点我注册'
+      }}</el-button>
       <el-button class="action" link @click="onBackHome">返回首页</el-button>
       <el-button class="action" link @click="onForgetPwd">忘记密码</el-button>
     </div>
@@ -33,15 +47,24 @@
 </template>
 
 <script setup lang="ts">
+import { ref, reactive, nextTick, onMounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
-import { ref, reactive } from 'vue';
 import type { FormInstance, FormRules } from 'element-plus';
 import { loginStore } from '@/store';
-import { verifyUsername, verifyPassword } from '@/utils';
+import { verifyUsername, verifyPassword, verifyCode, drawCharater } from '@/utils';
 
 const router = useRouter();
 
 const formRef = ref<FormInstance>();
+const isRegister = ref<boolean>(false);
+// canvas ref
+const canvasCtx = ref<HTMLCanvasElement | null>(null);
+// 生成的验证码
+const charater = ref<string>('');
+// canvas 宽度
+const width = 120;
+// canvas 高度
+const height = 40;
 
 const validateUsername = (rule: any, value: any, callback: any) => {
   const { msg, status } = verifyUsername(value);
@@ -65,20 +88,56 @@ const validatePassword = (rule: any, value: any, callback: any) => {
   }
 };
 
+const validateCode = (rule: any, value: any, callback: any) => {
+  const { msg, status } = verifyCode(value, charater.value);
+  if (value === '') {
+    callback(new Error('验证码不能为空'));
+  } else if (!status) {
+    callback(new Error(msg));
+  } else {
+    callback();
+  }
+};
+
 const rules = reactive<FormRules>({
   username: [{ validator: validateUsername, trigger: 'blur', required: true }],
   password: [{ validator: validatePassword, trigger: 'blur', required: true }],
+  code: [{ validator: validateCode, trigger: 'blur', required: true }],
 });
 
 const loginForm = reactive<{
   username: string;
   password: string;
+  code: string;
 }>({
   username: loginStore.userInfo?.username || '',
   password: '',
+  code: '',
 });
 
 const emit = defineEmits(['switchDom']);
+
+onMounted(() => {
+  nextTick(() => {
+    charater.value = drawCharater({
+      canvasElement: canvasCtx.value!,
+      width,
+      height,
+    });
+  });
+});
+
+watch(isRegister, (newVal: boolean) => {
+  if (!newVal) {
+    nextTick(() => {
+      charater.value = drawCharater({
+        canvasElement: canvasCtx.value!,
+        width,
+        height,
+      });
+    });
+  }
+});
 
 // 登录注册表单提交
 const onSubmit = (formEl: FormInstance, type: string) => {
@@ -87,7 +146,8 @@ const onSubmit = (formEl: FormInstance, type: string) => {
       if (type === 'login') {
         await loginStore.onLogin(loginForm, router);
       } else {
-        loginStore.onRegister(loginForm);
+        await loginStore.onRegister(loginForm);
+        isRegister.value = false;
       }
     } else {
       return false;
@@ -95,16 +155,15 @@ const onSubmit = (formEl: FormInstance, type: string) => {
   });
 };
 
-// 注册
-const onRegister = (formEl: FormInstance | undefined) => {
-  if (!formEl) return;
-  onSubmit(formEl, 'register');
+// 前往注册
+const toRegister = () => {
+  isRegister.value = !isRegister.value;
 };
 
 // 登录
 const onLogin = (formEl: FormInstance | undefined) => {
   if (!formEl) return;
-  onSubmit(formEl, 'login');
+  onSubmit(formEl, isRegister.value ? 'register' : 'login');
 };
 
 // 登陆注册回车事件
@@ -127,6 +186,18 @@ const onBackHome = () => {
 // 点击忘记密码切换组件
 const onForgetPwd = () => {
   emit('switchDom', 'Reset');
+};
+
+// 重置验证码
+const onResetCode = () => {
+  if (canvasCtx.value) {
+    charater.value = '';
+    charater.value = drawCharater({
+      canvasElement: canvasCtx.value,
+      width,
+      height,
+    });
+  }
 };
 </script>
 
@@ -174,6 +245,29 @@ const onForgetPwd = () => {
         flex: 1;
       }
     }
+
+    .code-item {
+      display: flex;
+      justify-content: flex-start;
+
+      .code-inp {
+        flex: 1;
+        border-radius: 10px;
+      }
+
+      :deep {
+        .el-input__wrapper {
+          border-top-right-radius: 0 !important;
+          border-bottom-right-radius: 0 !important;
+        }
+      }
+
+      .code-canvas {
+        border-top-right-radius: 4px;
+        border-bottom-right-radius: 4px;
+        cursor: pointer;
+      }
+    }
   }
 
   .reset-wrap {
@@ -184,6 +278,10 @@ const onForgetPwd = () => {
 
     .action {
       color: var(--theme-blue);
+
+      &:hover {
+        color: var(--active-color);
+      }
     }
   }
 }

@@ -164,6 +164,11 @@ export const IMG_THEME_TYPES = [
   },
 ];
 
+// 生成的验证码长度
+export const CODE_LENGTH = 4;
+// 随机生成的字符集
+export const CHARACTERS = 'ABCDEFGHIJKLMNPQRSTUVWXYZ123456789abcdefghijklmnpqrstuvwxyz';
+
 // 滚动加载每页加载数量
 export const PAGESIZE = 20;
 
