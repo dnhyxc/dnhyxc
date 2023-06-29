@@ -7,9 +7,9 @@
   "description": "a web app of electron",
   "scripts": {
     "dev": "cross-env NODE_ENV=development vite",
-    "build": "rimraf dist release && vue-tsc --noEmit && cross-env NODE_ENV=production && vite build && electron-builder",
+    "build": "rimraf dist dnhyxc && vue-tsc --noEmit && cross-env NODE_ENV=production && vite build && electron-builder",
     "build:vue": "rimraf dist && vue-tsc --noEmit && cross-env NODE_ENV=production && vite build",
-    "build:ele": "rimraf release && vue-tsc --noEmit && cross-env NODE_ENV=production && electron-builder",
+    "build:ele": "rimraf dnhyxc && vue-tsc --noEmit && cross-env NODE_ENV=production && electron-builder",
     "preview": "vite preview",
     "eslint": "eslint --ext .js,.vue --ignore-path .gitignore --fix src",
     "prettier": "prettier --write",
@@ -103,9 +103,9 @@
     "appId": "com.electron.desktop",
     "productName": "dnhyxc",
     "asar": true,
-    "copyright": "Copyright © 2022 dnhyxc",
+    "copyright": "Copyright © 2023 dnhyxc",
     "directories": {
-      "output": "release/"
+      "output": "dnhyxc/"
     },
     "files": [
       "dist",
