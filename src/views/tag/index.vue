@@ -155,5 +155,6 @@ const onCheckTag = (tag: string) => {
 
 .mac-tag-wrap {
   padding-left: 5px;
+  width: calc(100% - 2px);
 }
 </style>

@@ -505,5 +505,7 @@ const onScrollTo = (to?: number) => {
 
 .mac-author-wrap {
   padding-left: 5px;
+  padding-right: 2px;
+  width: calc(100% - 7px);
 }
 </style>

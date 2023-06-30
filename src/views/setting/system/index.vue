@@ -282,7 +282,7 @@ const handleKeydown = (e: KeyboardEvent) => {
   .file-config,
   .close-config {
     border-bottom: 1px solid var(--card-border);
-    padding: 20px;
+    padding: 18px;
     width: 80%;
     color: var(--font-1);
 

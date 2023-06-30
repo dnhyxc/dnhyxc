@@ -655,6 +655,8 @@ const onScrollTo = (to?: number) => {
 
 .mac-personal-wrap {
   padding-left: 5px;
+  padding-right: 2px;
+  width: calc(100% - 7px);
 }
 
 .introduce-tip {

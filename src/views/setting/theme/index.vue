@@ -73,7 +73,7 @@ const changeTheme = (key: string) => {
   justify-content: center;
   box-sizing: border-box;
   height: 100%;
-  width: calc(100vw - 82px);
+  // width: calc(100vw - 82px);
   padding: 30px 10px 10px;
   overflow-x: auto;
 

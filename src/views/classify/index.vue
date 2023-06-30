@@ -5,10 +5,11 @@
  * index.vue
 -->
 <template>
-  <Loading :loading="classifyStore.loading" class="classify-wrap">
+  <Loading :loading="classifyStore.loading" :class="`${checkOS() === 'mac' && 'mac-classify-wrap'} classify-wrap`">
     <template #default>
       <Reel
         ref="reelRef"
+        :width="checkOS() === 'mac' ? 'calc(100vw - 82px)' : 'calc(100vw - 80px)'"
         :on-check-classify="onCheckClassify"
         :classifys="classifyStore.classifys"
         :current-classify="classifyStore.currentClassify || route.query?.classify as string || classifyStore.classifys[0]?.name"
@@ -52,7 +53,7 @@
 import { ipcRenderer } from 'electron';
 import { ref, computed, onMounted, onUnmounted, watch, nextTick, inject } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { scrollTo } from '@/utils';
+import { checkOS, scrollTo } from '@/utils';
 import { useScroller, useDeleteArticle } from '@/hooks';
 import { classifyStore, commonStore, articleStore } from '@/store';
 import { ArticleItem, WinRefreshParams } from '@/typings/common';
@@ -250,6 +251,16 @@ const likeListArticle = (id: string, data?: ArticleItem) => {
     padding-top: 12px;
     text-align: center;
     color: @font-4;
+  }
+}
+
+.mac-classify-wrap {
+  width: calc(100% - 2px);
+
+  .content {
+    .line-wrap {
+      padding-right: 3px;
+    }
   }
 }
 </style>

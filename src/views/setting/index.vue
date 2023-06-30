@@ -129,11 +129,12 @@ const onClick = (menu: MenuListParams) => {
 
 .mac-setting-wrap {
   padding-left: 5px;
-  height: calc(100vh - 88px);
+  width: calc(100% - 2px);
+  height: calc(100vh - 86px);
   box-sizing: border-box;
 
   .content {
-    height: calc(100vh - 125px);
+    height: calc(100vh - 122px);
   }
 }
 </style>

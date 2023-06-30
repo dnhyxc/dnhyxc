@@ -333,5 +333,7 @@ const onScrollTo = () => {
 
 .mac-barrage-wrap {
   padding-left: 5px;
+  padding-right: 2px;
+  width: calc(100% - 7px);
 }
 </style>

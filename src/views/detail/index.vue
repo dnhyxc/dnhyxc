@@ -5,7 +5,7 @@
  * index.vue
 -->
 <template>
-  <Loading :loading="articleStore.loading" class="detail-wrap">
+  <Loading :loading="articleStore.loading" :class="`${checkOS() === 'mac' && 'mac-detail-wrap'} detail-wrap`">
     <div class="content">
       <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
         <div ref="articleInfoRef" class="article-info">
@@ -64,7 +64,7 @@ import { onMounted, onUnmounted, nextTick, ref, inject } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { ElMessage } from 'element-plus';
 import { useScroller } from '@/hooks';
-import { scrollTo } from '@/utils';
+import { scrollTo, checkOS } from '@/utils';
 import { articleStore, commonStore } from '@/store';
 import PageHeader from '@/components/PreviewHeader/index.vue';
 import Preview from '@/components/Preview/index.vue';
@@ -217,6 +217,7 @@ const onScrollTo = (height?: number) => {
       }
     }
   }
+
   .right {
     display: flex;
     flex-direction: column;
@@ -236,6 +237,16 @@ const onScrollTo = (height?: number) => {
     & > :last-child {
       margin-bottom: 0;
     }
+  }
+}
+
+.mac-detail-wrap {
+  .content {
+    height: calc(100vh - 88px);
+  }
+
+  .right {
+    margin-right: 3px;
   }
 }
 </style>
