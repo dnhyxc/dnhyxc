@@ -6,7 +6,7 @@
 -->
 <template>
   <div class="carousel-wrap">
-    <el-carousel v-if="data?.length > 0" :interval="5000" trigger="click" type="card" height="210px" class="carousel">
+    <el-carousel v-if="data?.length > 0" :interval="6000" trigger="click" type="card" height="210px" class="carousel">
       <el-carousel-item v-for="item in data" :key="item" @click="toDetail(item.id)">
         <div class="carousel-item">
           <div class="article-info">

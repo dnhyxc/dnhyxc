@@ -181,11 +181,6 @@ onMounted(() => {
   ipcRenderer.on('mainWin-max', (_, status) => {
     toggle.value = status;
   });
-
-  // 今天主进程发送的打开消息弹窗的消息
-  ipcRenderer.on('show-message-modal', (e, status) => {
-    messageStore.visible = true;
-  });
 });
 
 // 清除副作用

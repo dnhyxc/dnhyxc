@@ -28,14 +28,25 @@
 
 <script setup lang="ts">
 import { ipcRenderer } from 'electron';
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { MESSAGE_ACTIONS } from '@/constant';
 import { ArticleItem } from '@/typings/common';
-import { locSetItem, locGetItem, locRemoveItem, ipcRenderers } from '@/utils';
+import { locSetItem, locGetItem, locRemoveItem, ipcRenderers, checkOS } from '@/utils';
 
 const data = ref<{ count: number; noReadMsg: ArticleItem }>(
   locGetItem('__MESSAGE_INFO__') && JSON.parse(locGetItem('__MESSAGE_INFO__')!),
 );
+
+onMounted(() => {
+  if (checkOS() !== 'mac') {
+    // 监听主进程发送的消息信息
+    ipcRenderer.on('message-info', (e, info) => {
+      locSetItem('__MESSAGE_INFO__', info);
+      const messageInfo: { count: number; noReadMsg: ArticleItem } = info && JSON.parse(info);
+      data.value = messageInfo;
+    });
+  }
+});
 
 // 监听鼠标移出窗口
 const onMouseleave = () => {
@@ -52,13 +63,6 @@ const onMouseEnter = () => {
 const onIgnoreAll = async () => {
   ipcRenderers.ignoreMessageWin();
 };
-
-// 监听主进程发送的消息信息
-ipcRenderer.on('message-info', (e, info) => {
-  locSetItem('__MESSAGE_INFO__', info);
-  const messageInfo: { count: number; noReadMsg: ArticleItem } = info && JSON.parse(info);
-  data.value = messageInfo;
-});
 
 // 点击消息通知主进程让主窗口打开消息弹窗
 const showMessageModal = () => {
