@@ -5,7 +5,7 @@
  * index.vue
 -->
 <template>
-  <Loading :loading="tagStore.loading" :class="`${checkOS() === 'mac' && 'mac-articles-wrap'} articles-wrap`">
+  <Loading :loading="tagStore.loading" class="articles-wrap">
     <div class="left">
       <span class="title">
         <span>文章标签列表aaaa</span>
@@ -63,7 +63,7 @@
 import { ipcRenderer } from 'electron';
 import { ref, Ref, computed, onMounted, onUnmounted, watch, watchEffect, inject } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { checkOS, scrollTo } from '@/utils';
+import { scrollTo } from '@/utils';
 import { useScroller, useChildScroller, useDeleteArticle } from '@/hooks';
 import { tagStore, articleStore, commonStore } from '@/store';
 import Loading from '@/components/Loading/index.vue';
@@ -182,6 +182,8 @@ const likeListArticle = async (id: string, data?: ArticleItem) => {
   justify-content: flex-start;
   height: 100%;
   box-sizing: border-box;
+  padding-left: 5px;
+  padding-right: 3px;
 
   .left {
     display: flex;
@@ -351,10 +353,5 @@ const likeListArticle = async (id: string, data?: ArticleItem) => {
       }
     }
   }
-}
-
-.mac-articles-wrap {
-  padding-left: 2px;
-  padding-right: 3px;
 }
 </style>

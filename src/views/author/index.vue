@@ -264,8 +264,10 @@ const onScrollTo = (to?: number) => {
 @import '@/styles/index.less';
 
 .author-wrap {
-  width: 100%;
   height: 100%;
+  padding-left: 4px;
+  padding-right: 3px;
+  width: calc(100% - 8px);
 
   .cover {
     width: 100%;

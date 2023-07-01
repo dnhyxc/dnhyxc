@@ -354,6 +354,9 @@ const onScrollTo = (to?: number) => {
   flex-direction: column;
   width: 100%;
   height: 100%;
+  padding-left: 4px;
+  padding-right: 3px;
+  width: calc(100% - 8px);
 
   .header {
     display: flex;

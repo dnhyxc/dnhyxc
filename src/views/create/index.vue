@@ -5,7 +5,7 @@
  * index.vue
 -->
 <template>
-  <div :class="`${checkOS() === 'mac' && 'mac-edit-wrap'} edit-wrap`">
+  <div class="edit-wrap">
     <MackdownEditor
       :on-publish="onPublish"
       :on-clear="onClear"
@@ -108,9 +108,6 @@ export default {
 
 .edit-wrap {
   border-radius: 5px;
-}
-
-.mac-edit-wrap {
   padding-left: 5px;
   padding-right: 3px;
   width: calc(100% - 8px);

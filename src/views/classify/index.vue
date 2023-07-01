@@ -184,6 +184,8 @@ const likeListArticle = (id: string, data?: ArticleItem) => {
       margin: 0 0 11px;
       height: 25px;
       line-height: 24px;
+      padding-left: 2px;
+      padding-right: 3px;
 
       .left-line {
         display: inline-block;
@@ -256,11 +258,5 @@ const likeListArticle = (id: string, data?: ArticleItem) => {
 
 .mac-classify-wrap {
   width: calc(100% - 2px);
-
-  .content {
-    .line-wrap {
-      padding-right: 3px;
-    }
-  }
 }
 </style>

@@ -257,9 +257,10 @@ const onScrollTo = () => {
   .search-tag-list {
     display: flex;
     justify-content: center;
-    width: 100%;
     margin-top: 10px;
     margin-bottom: 20px;
+    width: calc(100% - 9px);
+    padding-left: 5px;
 
     .label {
       display: flex;
@@ -333,8 +334,7 @@ const onScrollTo = () => {
 }
 
 .mac-search-wrap {
-
-  .search-inp-wrap{
+  .search-inp-wrap {
     top: 20px;
   }
 

@@ -335,7 +335,7 @@ const onDeleteAll = async () => {
   align-items: center;
   justify-content: space-between;
   height: 35px;
-  padding: 10px 18px 10px 12px;
+  padding: 10px 22px 10px 12px;
   -webkit-app-region: drag;
 
   .left {

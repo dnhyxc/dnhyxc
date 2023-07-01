@@ -227,6 +227,7 @@ const onScrollTo = () => {
   flex-direction: column;
   width: 100%;
   height: 100%;
+  width: calc(100% - 3px);
 
   .header {
     display: flex;
@@ -237,6 +238,7 @@ const onScrollTo = () => {
     border-radius: 5px;
     height: 120px;
     margin-bottom: 10px;
+    margin-left: 5px;
 
     .left {
       width: 120px;
