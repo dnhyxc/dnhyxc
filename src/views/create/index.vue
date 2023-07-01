@@ -112,7 +112,7 @@ export default {
 
 .mac-edit-wrap {
   padding-left: 5px;
-  padding-bottom: 2px;
-  width: calc(100% - 7px);
+  padding-right: 3px;
+  width: calc(100% - 8px);
 }
 </style>

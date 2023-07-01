@@ -5,7 +5,7 @@
  * index.vue
 -->
 <template>
-  <Loading :loading="searchStore.loading" class="search-wrap">
+  <Loading :loading="searchStore.loading" :class="`${checkOS() === 'mac' && 'mac-search-wrap'} search-wrap`">
     <div class="search-inp-wrap">
       <el-input
         v-model="searchStore.keyword"
@@ -68,7 +68,7 @@ import { ElMessage } from 'element-plus';
 import { searchStore, articleStore } from '@/store';
 import { SEARCH_TYPE } from '@/constant';
 import { useScroller, useDeleteArticle } from '@/hooks';
-import { scrollTo } from '@/utils';
+import { checkOS, scrollTo } from '@/utils';
 import { ArticleItem, WinRefreshParams } from '@/typings/common';
 import Empty from '@/components/Empty/index.vue';
 
@@ -329,6 +329,18 @@ const onScrollTo = () => {
     color: var(--font-4);
     margin-top: 3px;
     .clickNoSelectText();
+  }
+}
+
+.mac-search-wrap {
+
+  .search-inp-wrap{
+    top: 20px;
+  }
+
+  .search-tag-list {
+    width: calc(100% - 8px);
+    padding-left: 3px;
   }
 }
 </style>

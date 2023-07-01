@@ -5,10 +5,10 @@
  * index.vue
 -->
 <template>
-  <Loading :loading="tagStore.loading" class="articles-wrap">
+  <Loading :loading="tagStore.loading" :class="`${checkOS() === 'mac' && 'mac-articles-wrap'} articles-wrap`">
     <div class="left">
       <span class="title">
-        <span>文章标签列表</span>
+        <span>文章标签列表aaaa</span>
         <i
           :class="`font iconfont ${scrollChildTop > 10 ? 'icon-shuangjiantou-shang' : 'icon-shuangjiantou-xia'}`"
           @click="onScrollTagMenuTo"
@@ -63,7 +63,7 @@
 import { ipcRenderer } from 'electron';
 import { ref, Ref, computed, onMounted, onUnmounted, watch, watchEffect, inject } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { scrollTo } from '@/utils';
+import { checkOS, scrollTo } from '@/utils';
 import { useScroller, useChildScroller, useDeleteArticle } from '@/hooks';
 import { tagStore, articleStore, commonStore } from '@/store';
 import Loading from '@/components/Loading/index.vue';
@@ -351,5 +351,10 @@ const likeListArticle = async (id: string, data?: ArticleItem) => {
       }
     }
   }
+}
+
+.mac-articles-wrap {
+  padding-left: 2px;
+  padding-right: 3px;
 }
 </style>
