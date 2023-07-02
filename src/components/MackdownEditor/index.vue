@@ -5,7 +5,7 @@
       v-model.trim="createStore.createInfo.content"
       placeholder="编辑内容"
       autofocus
-      :height="height || 'calc(100vh - 77px)'"
+      :height="height || 'calc(100vh - 79px)'"
       :disabled-menus="[]"
       left-toolbar="undo redo | h bold italic | quote code | strikethrough hr | emoji link image | ul ol table | clear | draft | save | create"
       :toolbar="toolbar"

@@ -166,7 +166,7 @@ const onScrollTo = () => {
   border-radius: 5px;
   padding-left: 5px;
   padding-right: 3px;
-  width: calc(100% - 8px);
+  width: calc(100% - 9px);
 
   .barrage {
     flex: 1;
