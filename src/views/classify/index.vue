@@ -216,8 +216,7 @@ const likeListArticle = (id: string, data?: ArticleItem) => {
         border-radius: 3px;
         height: 6px;
         .clickNoSelectText();
-        .bgMoveColor(135deg);
-        .bgKeyframes(bgmove);
+        .bgLgColor(126deg);
         box-shadow: 0 0 3px var(--shadow-color);
 
         .dot {
@@ -228,8 +227,7 @@ const likeListArticle = (id: string, data?: ArticleItem) => {
           width: 15px;
           height: 15px;
           .clickNoSelectText();
-          .bgMoveColor(135deg);
-          .bgKeyframes(bgmove);
+          .bgLgColor();
           border-radius: 10px;
           border: 1px solid var(--shadow-color);
         }

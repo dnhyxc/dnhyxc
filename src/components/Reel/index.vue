@@ -222,8 +222,7 @@ const onClick = (name: string) => {
 
     .active {
       .clickNoSelectText();
-      .bgMoveColor(135deg);
-      .bgKeyframes(bgmove);
+      .bgLgColor();
     }
   }
 }
