@@ -73,10 +73,13 @@ const router = useRouter();
 const route = useRoute();
 
 const activeMenu = ref<MenuListParams>(MENULIST[0]);
-const timer = ref<ReturnType<typeof setTimeout> | null>(null);
+let timer: ReturnType<typeof setTimeout> | null = null;
 
 onUnmounted(() => {
-  timer.value = null;
+  if (timer) {
+    clearTimeout(timer);
+    timer = null;
+  }
 });
 
 // 计算菜单
@@ -116,9 +119,12 @@ const toPersonal = () => {
   });
   router.push('/personal');
   if (route.path === '/personal') {
-    timer.value = setTimeout(() => {
+    if (timer) {
+      clearTimeout(timer);
+    }
+    timer = setTimeout(() => {
       reload?.();
-      timer.value = null;
+      timer = null;
     }, 100);
   }
 };

@@ -7,14 +7,14 @@
 
 <script setup lang="ts">
 import { ipcRenderer } from 'electron';
-import { ref, nextTick, provide, onMounted, onBeforeMount, watchEffect, watch } from 'vue';
+import { ref, nextTick, provide, onMounted, onBeforeMount, watchEffect, watch, onUnmounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { commonStore, messageStore, personalStore, loginStore } from '@/store';
 import { modifyTheme, getTheme, ipcRenderers, getMsgStatus, checkOS } from '@/utils';
 
 const route = useRoute();
 
-const timer = ref<ReturnType<typeof setTimeout> | null>(null);
+let timer: ReturnType<typeof setTimeout> | null = null;
 
 const router = useRouter();
 
@@ -39,7 +39,7 @@ watchEffect(async () => {
 });
 
 onMounted(async () => {
-  document.body.addEventListener('click', onBodyClick);
+  document.body.addEventListener('click', onBodyClick, false);
 
   if (checkOS() !== 'mac') {
     // 在 App 中监听主进程中发送的清除消息列表的消息，防止重复首次加载时重复监听的问题
@@ -60,9 +60,12 @@ onMounted(async () => {
       if (route.path === '/personal' && loginStore?.userInfo.userId !== userId) {
         // 判断是否是收藏tab及url上的用户id是否等于当前点击用户的用户id
         if (personalStore.currentTabKey === '1' && route.query.authorId === userId) return;
-        timer.value = setTimeout(() => {
+        if (timer) {
+          clearTimeout(timer);
+        }
+        timer = setTimeout(() => {
           reload();
-          timer.value = null;
+          timer = null;
         }, 100);
       }
     });
@@ -71,6 +74,15 @@ onMounted(async () => {
     ipcRenderer.on('show-message-modal', (e, status) => {
       messageStore.visible = true;
     });
+  }
+});
+
+onUnmounted(() => {
+  document.body.removeEventListener('click', onBodyClick, false);
+
+  if (timer) {
+    clearTimeout(timer);
+    timer = null;
   }
 });
 

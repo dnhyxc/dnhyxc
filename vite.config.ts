@@ -9,6 +9,8 @@ import ElementPlus from 'unplugin-element-plus/vite';
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers';
 import visualizer from 'rollup-plugin-visualizer';
 
+require('events').EventEmitter.defaultMaxListeners = 20;
+
 export default defineConfig({
   // Failed to load module script: Expected a JavaScript module script but the server responded with a MIME type of "text/html". Strict MIME type checking is enforced for module scripts per HTML spec.
   base: '/', // 线上打包路径改为绝对路径，防止打包后，资源文件路径出现上述错误

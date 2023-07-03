@@ -50,7 +50,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, inject } from 'vue';
+import { ref, computed, onMounted, onUnmounted, inject } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { messageStore, personalStore, loginStore } from '@/store';
 import { useScroller } from '@/hooks';
@@ -66,7 +66,7 @@ const router = useRouter();
 const route = useRoute();
 
 const isMounted = ref<boolean>(false);
-const timer = ref<ReturnType<typeof setTimeout> | null>(null);
+let timer: ReturnType<typeof setTimeout> | null = null;
 const noMore = computed(() => {
   const { msgList, total } = messageStore;
   return msgList.length >= total && msgList.length;
@@ -82,6 +82,13 @@ onMounted(() => {
   eventBus.on('hide-msg-popover', (status: boolean) => {
     messageStore.visible = status;
   });
+});
+
+onUnmounted(() => {
+  if (timer) {
+    clearTimeout(timer);
+    timer = null;
+  }
 });
 
 // 获取消息列表
@@ -101,9 +108,12 @@ const toPersonal = (userId: string) => {
   router.push(`/personal?authorId=${userId}`);
   if (route.path === '/personal' && loginStore?.userInfo.userId !== userId) {
     if (personalStore.currentTabKey === '1' && route.query.authorId === userId) return;
-    timer.value = setTimeout(() => {
+    if (timer) {
+      clearTimeout(timer);
+    }
+    timer = setTimeout(() => {
       reload?.();
-      timer.value = null;
+      timer = null;
     }, 100);
   }
 };
@@ -112,10 +122,10 @@ const toPersonal = (userId: string) => {
 const toDetail = (data: ArticleItem) => {
   if (data?.articleId) {
     router.push(`/detail/${data.articleId}`);
-    timer.value = setTimeout(() => {
-      if (timer.value) {
-        clearTimeout(timer.value);
-        timer.value = null;
+    timer = setTimeout(() => {
+      if (timer) {
+        clearTimeout(timer);
+        timer = null;
       }
       reload && reload();
     }, 100);

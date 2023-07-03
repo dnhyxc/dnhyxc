@@ -40,7 +40,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, inject, ref } from 'vue';
+import { onMounted, inject, onUnmounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { articleStore } from '@/store';
 import { formatGapTime, getStoreUserInfo, ipcRenderers } from '@/utils';
@@ -56,7 +56,7 @@ interface IProps {
 const router = useRouter();
 const route = useRoute();
 
-const timer = ref<ReturnType<typeof setTimeout> | null>(null);
+let timer: ReturnType<typeof setTimeout> | null = null;
 
 const props = defineProps<IProps>();
 
@@ -65,15 +65,22 @@ onMounted(() => {
   articleStore.getLikenessArticles({ classify: props.classify, tag: props.tag, id: props.id });
 });
 
+onUnmounted(() => {
+  if (timer) {
+    clearTimeout(timer);
+    timer = null;
+  }
+});
+
 // 跳转详情
 const toDetail = (id: string) => {
   // 如果是/detail，则说明是当前页打开，直接在当前页访问下一篇即可，否则新窗口打开
   if (route.path.includes('detail')) {
     router.push(`/detail/${id}`);
-    timer.value = setTimeout(() => {
-      if (timer.value) {
-        clearTimeout(timer.value);
-        timer.value = null;
+    timer = setTimeout(() => {
+      if (timer) {
+        clearTimeout(timer);
+        timer = null;
       }
       reload && reload();
     }, 100);

@@ -15,11 +15,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watchEffect } from 'vue';
+import { ref, onMounted, watchEffect, onUnmounted } from 'vue';
 
 const loadUrl = ref<string | undefined>('');
 const loaded = ref<boolean>(false);
 const imgRef = ref<HTMLImageElement | null>(null);
+let timer: ReturnType<typeof setTimeout> | null = null;
 
 interface IProps {
   url: string;
@@ -42,9 +43,15 @@ onMounted(() => {
   });
 });
 
+onUnmounted(() => {
+  if (timer) {
+    clearTimeout(timer);
+    timer = null;
+  }
+});
+
 // 初始化图片
 const loadImage = () => {
-  let timer: ReturnType<typeof setTimeout> | null = null;
   const img = new Image();
   if (img.complete) {
     loaded.value = true;

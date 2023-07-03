@@ -93,12 +93,15 @@ const props = withDefaults(defineProps<IProps>(), {
   isTimeLine: false,
 });
 
-const timer = ref<ReturnType<typeof setTimeout> | null>(null);
+let timer: ReturnType<typeof setTimeout> | null = null;
 
 const isLike = ref<boolean>(false);
 
 onUnmounted(() => {
-  timer.value = null;
+  if (timer) {
+    clearTimeout(timer);
+    timer = null;
+  }
 });
 
 // 编辑
@@ -121,9 +124,12 @@ const onReomve = async (data: ArticleItem | TimelineArticles) => {
 const toPersonal = (id: string) => {
   router.push(`/personal?authorId=${id}`);
   if (route.path === '/personal') {
-    timer.value = setTimeout(() => {
+    if (timer) {
+      clearTimeout(timer);
+    }
+    timer = setTimeout(() => {
       reload?.();
-      timer.value = null;
+      timer = null;
     }, 100);
   }
 };

@@ -26,7 +26,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, inject, onUnmounted, ref } from 'vue';
+import { computed, inject, onUnmounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { HEAD_IMG } from '@/constant';
 import { loginStore } from '@/store';
@@ -46,10 +46,13 @@ const props = defineProps<IProps>();
 const router = useRouter();
 const route = useRoute();
 
-const timer = ref<ReturnType<typeof setTimeout> | null>(null);
+let timer: ReturnType<typeof setTimeout> | null = null;
 
 onUnmounted(() => {
-  timer.value = null;
+  if (timer) {
+    clearTimeout(timer);
+    timer = null;
+  }
 });
 
 // 判断是否展示关注/取消关注按钮
@@ -71,9 +74,9 @@ const onFollow = (id: string, data?: FollowItem) => {
 const toPersonal = () => {
   router.push(`/personal?authorId=${props.data?.userId}`);
   if (route.path === '/personal') {
-    timer.value = setTimeout(() => {
+    timer = setTimeout(() => {
       reload?.();
-      timer.value = null;
+      timer = null;
     }, 100);
   }
 };
