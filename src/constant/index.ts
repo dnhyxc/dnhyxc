@@ -131,6 +131,14 @@ export const THEME_TYPES = [
     name: '极光绿',
   },
   {
+    key: 'danQingHuang',
+    name: '丹青黄',
+  },
+  {
+    key: 'danQingZi',
+    name: '丹青白',
+  },
+  {
     key: 'colorful',
     name: '炫彩',
   },

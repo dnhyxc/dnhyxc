@@ -45,6 +45,38 @@ const removeStyle = {
   '--login-bg-img': 'linear-gradient(to top, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%)',
 };
 
+// 炫彩背景公共配置
+const colorfulStyles = {
+  // 主题背景颜色
+  '--background': '#f9fff9',
+  // 弹窗背景颜色
+  '--modal-bg-color': '#f9fff9',
+  // 输入框背景颜色
+  '--input-bg-color': '#fff',
+  // 文章各种卡片渐变颜色
+  '--bg-lg-color1': '#fffeff',
+  '--bg-lg-color2': '#d7fffe',
+  // 时间轴背景颜色
+  '--timeline-lg-color1': '#fffeff',
+  '--timeline-lg-color2': '#d7fffe',
+  // 各组件阴影颜色
+  '--shadow-color': '#b8eaff',
+  // loading 背景颜色
+  '--loading-color': 'rgba(249, 255, 249, 0.8)',
+  // 组件边框颜色
+  '--card-border': '#ddf5ff',
+  '--fff': '#fff',
+  // 各组件外阴影
+  '--shadow-mack': 'rgb(0 0 0 / 10%)',
+  // 系统设置快捷键显示背景颜色
+  '--tab-color': '#f9fff9',
+  // 滚动到顶部组件背景颜色
+  '--to-top-bg-color': 'rgba(249, 255, 249, 0.9)',
+  // 子级评论背景颜色
+  '--layer-2-2': '#f9fff9',
+  '--login-bg-img': 'linear-gradient(to bottom, #d7fffe, #f9fff9, #f8fded, #f9fff9, #d7fffe)',
+};
+
 // 背景图片公共配置
 const imageStyles = {
   // 主题背景颜色
@@ -258,41 +290,33 @@ const light = {
 
 // 炫彩
 const colorful = {
-  // 主题背景颜色
-  '--background': '#f9fff9',
-  // 弹窗背景颜色
-  '--modal-bg-color': '#f9fff9',
-  // 输入框背景颜色
-  '--input-bg-color': '#fff',
-  // 文章各种卡片渐变颜色
-  '--bg-lg-color1': '#fffeff',
-  '--bg-lg-color2': '#d7fffe',
-  // 时间轴背景颜色
-  '--timeline-lg-color1': '#fffeff',
-  '--timeline-lg-color2': '#d7fffe',
-  // 各组件阴影颜色
-  '--shadow-color': '#b8eaff',
   // 字体颜色
   ...fontStyle,
   ...removeStyle,
-  // loading 背景颜色
-  '--loading-color': 'rgba(249, 255, 249, 0.8)',
-  // 组件边框颜色
-  '--card-border': '#ddf5ff',
-  '--fff': '#fff',
-  // 各组件外阴影
-  '--shadow-mack': 'rgb(0 0 0 / 10%)',
-  // 系统设置快捷键显示背景颜色
-  '--tab-color': '#f9fff9',
-  // 滚动到顶部组件背景颜色
-  '--to-top-bg-color': 'rgba(249, 255, 249, 0.9)',
-  // 子级评论背景颜色
-  '--layer-2-2': '#f9fff9',
+  ...colorfulStyles,
   // 动态背景颜色
   '--bg-image-url': 'linear-gradient(126deg, #e0c3fc, #d7fffe, #f9fff9, #f8fded, #f9fff9, #d7fffe, #f5ccec)',
   '--bg-img-size': '200%',
   '--bg-animation': 'bgmove 15s infinite',
-  '--login-bg-img': 'linear-gradient(to bottom, #d7fffe, #f9fff9, #f8fded, #f9fff9, #d7fffe)',
+};
+
+// 渐变背景（丹青黄）
+const danQingHuang = {
+  // 字体颜色
+  ...fontStyle,
+  ...removeStyle,
+  ...colorfulStyles,
+  '--bg-image-url': 'linear-gradient(126deg, #e0c3fc, #d7fffe, #f9fff9, #f8fded, #f9fff9, #d7fffe, #f5ccec)',
+  '--bg-img-size': '200%',
+};
+
+// 丹青白
+const danQingZi = {
+  // 字体颜色
+  ...fontStyle,
+  ...removeStyle,
+  ...colorfulStyles,
+  '--bg-image-url': 'linear-gradient(to top, #fffeff 0%, #d7fffe 100%)',
 };
 
 // 侧脸
@@ -402,6 +426,8 @@ const themeTypes = {
   island,
   locomotive,
   girl,
+  danQingHuang,
+  danQingZi,
 };
 
 // 设置背景颜色

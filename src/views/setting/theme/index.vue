@@ -140,9 +140,19 @@ const changeTheme = (key: string) => {
           color: @font-1;
         }
 
+        .danQingHuang {
+          background: linear-gradient(126deg, #d7fffe, #f9fff9, #f8fded, #f9fff9, #d7fffe, #f5ccec);
+          background-size: 151%;
+          color: @font-1;
+        }
+
+        .danQingZi {
+          background: linear-gradient(to top, #fffeff 0%, #d7fffe 100%);
+          color: @font-1;
+        }
+
         .colorful {
           .bgMoveColor(126deg);
-          .bgKeyframes(bgmove);
           color: @font-1;
         }
 
