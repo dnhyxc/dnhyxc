@@ -8,29 +8,29 @@
   <div class="skeleton-wrap">
     <div class="header">
       <div class="title">
-        <div class="page-icon"></div>
-        <div class="page-name"></div>
+        <div class="page-icon" />
+        <div class="page-name" />
       </div>
       <div class="header-action">
-        <div class="actions"></div>
+        <div class="actions" />
       </div>
     </div>
     <div class="content">
       <div class="left-menu">
         <div class="menus">
-          <div v-for="n in 4" :key="n" class="icon"></div>
+          <div v-for="n in 4" :key="n" class="icon" />
         </div>
         <div class="avatar-wrap">
-          <div class="avatar"></div>
+          <div class="avatar" />
         </div>
       </div>
       <div class="right">
         <div class="carousel">
-          <div class="carousel-item"></div>
+          <div class="carousel-item" />
         </div>
         <div class="card-list">
           <div v-for="i in 8" :key="i" class="card">
-            <div class="card-item"></div>
+            <div class="card-item" />
           </div>
         </div>
       </div>
@@ -67,18 +67,17 @@
         width: 40px;
         height: 40px;
         .bgMoveColor(135deg);
-        .bgKeyframes(bgmove);
         border-radius: 5px;
         margin-top: 15px;
+        margin-left: 3px;
       }
 
       .page-name {
         height: 25px;
         width: 200px;
-        margin-left: 15px;
+        margin-left: 12px;
         border-radius: 5px;
         .bgMoveColor(135deg);
-        .bgKeyframes(bgmove);
       }
     }
 
@@ -91,7 +90,6 @@
         margin-left: 20px;
         border-radius: 5px;
         .bgMoveColor(135deg);
-        .bgKeyframes(bgmove);
       }
     }
   }
@@ -121,7 +119,6 @@
           margin-bottom: 25px;
           border-radius: 5px;
           .bgMoveColor(135deg);
-          .bgKeyframes(bgmove);
         }
       }
 
@@ -133,7 +130,6 @@
           height: 40px;
           border-radius: 5px;
           .bgMoveColor(135deg);
-          .bgKeyframes(bgmove);
         }
       }
     }
@@ -154,7 +150,6 @@
           border-radius: 5px;
           margin-bottom: 15px;
           .bgMoveColor(135deg);
-          .bgKeyframes(bgmove);
         }
       }
 
@@ -174,7 +169,6 @@
             height: 100%;
             border-radius: 5px;
             .bgMoveColor(135deg);
-            .bgKeyframes(bgmove);
           }
         }
       }
