@@ -159,6 +159,7 @@ const onScrollTo = (height?: number) => {
   display: flex;
   justify-content: center;
   box-sizing: border-box;
+  padding-right: 5px;
 
   .content {
     position: relative;
@@ -226,7 +227,7 @@ const onScrollTo = (height?: number) => {
     width: 30%;
     box-sizing: border-box;
     border-radius: 5px;
-    max-height: calc(100vh - 77px);
+    max-height: calc(100vh - 79px);
 
     .toc-list {
       box-sizing: border-box;
