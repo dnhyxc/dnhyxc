@@ -92,6 +92,7 @@ const sendToPersonal = (userId: string) => {
     padding: 0 10px 5px;
     font-weight: 600;
     line-height: 16px;
+    color: var(--font-1);
   }
 
   .content {
@@ -105,7 +106,7 @@ const sendToPersonal = (userId: string) => {
       cursor: pointer;
 
       &:hover {
-        background-color: @background;
+        background-color: var(--background);
       }
 
       .left {
@@ -124,7 +125,7 @@ const sendToPersonal = (userId: string) => {
         .msg-count {
           padding: 0 6px;
           font-size: 12px;
-          color: @fff;
+          color: var(--font-1);
           background-color: @font-danger;
           border-radius: 10px;
         }
@@ -138,13 +139,17 @@ const sendToPersonal = (userId: string) => {
           color: @active;
         }
       }
+
+      .action-type {
+        color: var(--font-1);
+      }
     }
   }
 
   .action {
     padding: 5px 10px 0;
     color: @theme-blue;
-    border-top: 1px solid @border;
+    border-top: 1px solid var(--card-border);
     font-size: 13px;
     text-align: right;
     cursor: pointer;

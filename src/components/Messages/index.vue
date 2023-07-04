@@ -32,7 +32,14 @@
             </template>
             <template #content>
               <div class="art-info">
-                <div class="pushDate">{{ data?.pushDate ? formatDate(data?.pushDate!) : '-' }}</div>
+                <div class="pushDate">
+                  <span :class="`${data?.isReaded && 'is-readed'} read-status`">
+                    {{ data?.isReaded ? '已读' : '未读' }}
+                  </span>
+                  <span>
+                    {{ data?.pushDate ? formatDate(data?.pushDate!) : '-' }}
+                  </span>
+                </div>
                 <div class="desc">
                   <span class="username" @click.stop="toPersonal(data?.fromUserId!)">{{ data?.fromUsername }}</span>
                   <span class="action-type">{{ MESSAGE_ACTIONS[data?.action!] }}</span>
@@ -156,7 +163,6 @@ const onScrollTo = (to?: number) => {
       flex: 1;
       font-weight: 700;
       color: var(--font-3);
-      margin-right: 10px;
       .ellipsisMore(1);
     }
 
@@ -166,7 +172,9 @@ const onScrollTo = (to?: number) => {
       font-size: 14px;
 
       .del {
+        margin-left: 10px;
         color: @font-danger;
+        display: none;
       }
 
       .del {
@@ -192,6 +200,15 @@ const onScrollTo = (to?: number) => {
           .pushDate {
             font-size: 14px;
             margin-bottom: 5px;
+
+            .read-status {
+              margin-right: 10px;
+              color: @font-danger;
+            }
+
+            .is-readed {
+              color: @font-warning;
+            }
           }
 
           .desc {
@@ -199,8 +216,12 @@ const onScrollTo = (to?: number) => {
             font-size: 14px;
 
             .username {
-              margin-right: 5px;
+              margin-right: 10px;
               color: var(--theme-blue);
+
+              &:hover {
+                color: var(--active-color);
+              }
             }
           }
 
@@ -210,6 +231,14 @@ const onScrollTo = (to?: number) => {
             align-items: center;
             font-size: 14px;
             margin-bottom: 0;
+          }
+        }
+      }
+
+      &:hover {
+        .right {
+          .del {
+            display: inline-block;
           }
         }
       }
