@@ -159,7 +159,7 @@ const onScrollTo = (height?: number) => {
   display: flex;
   justify-content: center;
   box-sizing: border-box;
-  padding-right: 5px;
+  padding-right: 4px;
 
   .content {
     position: relative;
