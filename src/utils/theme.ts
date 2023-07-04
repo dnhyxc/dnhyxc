@@ -306,8 +306,8 @@ const danQingHuang = {
   ...fontStyle,
   ...removeStyle,
   ...colorfulStyles,
-  '--bg-image-url': 'linear-gradient(126deg, #e0c3fc, #d7fffe, #f9fff9, #f8fded, #f9fff9, #d7fffe, #f5ccec)',
-  '--bg-img-size': '200%',
+  '--bg-image-url': 'linear-gradient(to bottom, #e0c3fc, #d7fffe, #f9fff9, #f8fded, #f9fff9, #d7fffe, #f5ccec)',
+  '--bg-img-size': '200% 169%',
 };
 
 // 丹青白
