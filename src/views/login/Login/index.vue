@@ -210,7 +210,7 @@ const onResetCode = () => {
   justify-content: center;
   box-sizing: border-box;
   height: 375px;
-  padding: 20px;
+  padding: 10px 20px 20px;
   border-radius: 5px;
   background: rgba(225, 225, 225, 0.1);
   box-shadow: 0 0 2px @page-color inset;
