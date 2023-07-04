@@ -34,47 +34,49 @@
         />
       </div>
       <div class="card-bottom">
-        <slot>
-          <div class="header">
-            <div class="title">
-              {{ data.title }}
+        <div class="card-bottom-content">
+          <slot>
+            <div class="header">
+              <div class="title">
+                {{ data.title }}
+              </div>
             </div>
-          </div>
-          <div class="art-info">
-            <div class="create-info">
-              <span class="author" @click.stop="toPersonal(data.authorId!)">{{ data.authorName }}</span>
-              <span class="date">{{ data.createTime ? formatDate(data.createTime, 'YYYY/MM/DD') : '-' }}</span>
-            </div>
-            <div class="classifys">
-              <span class="classify" @click.stop="toClassify(data.classify!)">
-                <span class="label">分类: </span>
-                {{ data.classify }}
-              </span>
-              <span class="tag" @click.stop="toTag(data.tag!)">
-                <span class="label">标签: </span>
-                {{ data.tag }}
-              </span>
-            </div>
-            <div class="actions">
-              <div class="action-icons">
-                <div class="action like" @click.stop="onLike(data)">
-                  <i
-                    :class="`font like-icon iconfont ${data.isLike ? 'icon-24gf-thumbsUp2' : 'icon-24gl-thumbsUp2'}`"
-                  />
-                  <span>{{ data.likeCount || '点赞' }}</span>
-                </div>
-                <div class="action comment" @click.stop="onComment(data)">
-                  <i class="font comment-icon iconfont icon-pinglun" />
-                  <span>{{ data.commentCount || '评论' }}</span>
-                </div>
-                <div class="action read-count">
-                  <i class="font read-icon iconfont icon-yanjing" />
-                  <span class="text">{{ data.readCount || '阅读' }}</span>
+            <div class="art-info">
+              <div class="create-info">
+                <span class="author" @click.stop="toPersonal(data.authorId!)">{{ data.authorName }}</span>
+                <span class="date">{{ data.createTime ? formatDate(data.createTime, 'YYYY/MM/DD') : '-' }}</span>
+              </div>
+              <div class="classifys">
+                <span class="classify" @click.stop="toClassify(data.classify!)">
+                  <span class="label">分类: </span>
+                  {{ data.classify }}
+                </span>
+                <span class="tag" @click.stop="toTag(data.tag!)">
+                  <span class="label">标签: </span>
+                  {{ data.tag }}
+                </span>
+              </div>
+              <div class="actions">
+                <div class="action-icons">
+                  <div class="action like" @click.stop="onLike(data)">
+                    <i
+                      :class="`font like-icon iconfont ${data.isLike ? 'icon-24gf-thumbsUp2' : 'icon-24gl-thumbsUp2'}`"
+                    />
+                    <span>{{ data.likeCount || '点赞' }}</span>
+                  </div>
+                  <div class="action comment" @click.stop="onComment(data)">
+                    <i class="font comment-icon iconfont icon-pinglun" />
+                    <span>{{ data.commentCount || '评论' }}</span>
+                  </div>
+                  <div class="action read-count">
+                    <i class="font read-icon iconfont icon-yanjing" />
+                    <span class="text">{{ data.readCount || '阅读' }}</span>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </slot>
+          </slot>
+        </div>
       </div>
     </div>
   </div>
@@ -334,133 +336,138 @@ const toTag = (name: string) => {
     }
 
     .card-bottom {
-      padding: 8px 10px;
       background-blend-mode: multiply, multiply;
       border-bottom-left-radius: 5px;
       border-bottom-right-radius: 5px;
       background-image: linear-gradient(to bottom, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
 
-      .header {
-        display: flex;
-        align-items: center;
+      .card-bottom-content {
+        padding: 8px 10px;
+        border-bottom-left-radius: 5px;
+        border-bottom-right-radius: 5px;
 
-        .title {
-          width: 100%;
-          font-size: 16px;
-          .ellipsisMore(1);
-          color: var(--font-2);
-        }
-      }
-
-      .art-info {
-        display: flex;
-        flex-direction: column;
-
-        .create-info {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin: 8px 0;
-
-          .author,
-          .date {
-            max-width: 50%;
-            font-size: 13px;
-            color: var(--font-2);
-            .ellipsisMore(1);
-          }
-
-          .author {
-            margin-right: 5px;
-            font-size: 14px;
-
-            &:hover {
-              color: var(--theme-blue);
-            }
-          }
-        }
-
-        .classifys {
+        .header {
           display: flex;
           align-items: center;
-          justify-content: space-between;
-          width: 100%;
-          margin-top: 5px;
-          margin-bottom: 5px;
 
-          .classify,
-          .tag {
-            max-width: 100%;
-            font-size: 13px;
-            border-radius: 5px;
-            color: var(--font-2);
+          .title {
+            width: 100%;
+            font-size: 16px;
             .ellipsisMore(1);
-
-            &:hover {
-              color: var(--theme-blue);
-            }
-
-            .label {
-              color: var(--font-5);
-            }
-          }
-
-          .classify {
-            margin-right: 6px;
+            color: var(--font-2);
           }
         }
 
-        .actions {
+        .art-info {
           display: flex;
-          justify-content: space-between;
-          font-size: 13px;
-          margin-top: 8px;
-          color: var(--font-2);
+          flex-direction: column;
 
-          .action-icons {
+          .create-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 8px 0;
+
+            .author,
+            .date {
+              max-width: 50%;
+              font-size: 13px;
+              color: var(--font-2);
+              .ellipsisMore(1);
+            }
+
+            .author {
+              margin-right: 5px;
+              font-size: 14px;
+
+              &:hover {
+                color: var(--theme-blue);
+              }
+            }
+          }
+
+          .classifys {
             display: flex;
             align-items: center;
             justify-content: space-between;
             width: 100%;
+            margin-top: 5px;
+            margin-bottom: 5px;
+
+            .classify,
+            .tag {
+              max-width: 100%;
+              font-size: 13px;
+              border-radius: 5px;
+              color: var(--font-2);
+              .ellipsisMore(1);
+
+              &:hover {
+                color: var(--theme-blue);
+              }
+
+              .label {
+                color: var(--font-5);
+              }
+            }
+
+            .classify {
+              margin-right: 6px;
+            }
           }
 
-          .action {
+          .actions {
             display: flex;
-            align-items: center;
-            margin-right: 15px;
+            justify-content: space-between;
+            font-size: 13px;
+            margin-top: 8px;
+            color: var(--font-2);
 
-            .font {
-              font-size: 15px;
-              margin-right: 5px;
+            .action-icons {
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+              width: 100%;
             }
 
-            .like-icon {
-              margin-bottom: 2px;
+            .action {
+              display: flex;
+              align-items: center;
+              margin-right: 15px;
+
+              .font {
+                font-size: 15px;
+                margin-right: 5px;
+              }
+
+              .like-icon {
+                margin-bottom: 2px;
+              }
+
+              .icon-24gf-thumbsUp2 {
+                color: var(--theme-blue);
+              }
+
+              .comment-icon {
+                font-size: 16px;
+              }
+
+              .read-icon {
+                font-size: 18px;
+              }
+
+              &:last-child {
+                margin-right: 0;
+              }
             }
 
-            .icon-24gf-thumbsUp2 {
-              color: var(--theme-blue);
-            }
-
-            .comment-icon {
-              font-size: 16px;
-            }
-
-            .read-icon {
-              font-size: 18px;
-            }
-
-            &:last-child {
-              margin-right: 0;
-            }
-          }
-
-          .like,
-          .comment,
-          .read-count {
-            cursor: pointer;
-            &:hover {
-              color: @sub-2-blue;
+            .like,
+            .comment,
+            .read-count {
+              cursor: pointer;
+              &:hover {
+                color: @sub-2-blue;
+              }
             }
           }
         }
