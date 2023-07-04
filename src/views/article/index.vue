@@ -373,7 +373,7 @@ const onScrollTo = (height?: number) => {
       justify-content: center;
       box-sizing: border-box;
       margin-right: 10px;
-      .pageHeight();
+      height: calc(100vh - 74px);
       border-radius: 5px;
       box-shadow: 0 0 8px 0 var(--shadow-mack);
       background-color: var(--pre-hover-bg);
@@ -402,6 +402,7 @@ const onScrollTo = (height?: number) => {
     .mac-content {
       height: calc(100vh - 93px);
     }
+
     .right {
       display: flex;
       flex-direction: column;
@@ -410,7 +411,7 @@ const onScrollTo = (height?: number) => {
       width: 30%;
       box-sizing: border-box;
       border-radius: 5px;
-      max-height: calc(100vh - 77px);
+      max-height: calc(100vh - 74px);
 
       .toc-list {
         box-sizing: border-box;
@@ -423,7 +424,7 @@ const onScrollTo = (height?: number) => {
       }
     }
 
-    .mac-right{
+    .mac-right {
       max-height: calc(100vh - 93px);
     }
   }
