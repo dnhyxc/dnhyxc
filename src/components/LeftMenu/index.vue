@@ -204,8 +204,7 @@ const onQuit = () => {
       height: 38px;
       border-radius: 5px;
       .clickNoSelectText();
-      .bgMoveColor(135deg);
-      .bgKeyframes(bgmove);
+      .bgLgColor();
       font-size: 14px;
       cursor: pointer;
       color: var(--theme-blue);
