@@ -16,9 +16,6 @@ import { globalInfo, isMac } from './constant';
 // 屏蔽警告
 process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = 'true';
 
-// 关闭GPU加速
-app.disableHardwareAcceleration();
-
 // 限制只能启动一个应用
 const gotTheLock = app.requestSingleInstanceLock();
 
