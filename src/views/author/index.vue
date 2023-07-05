@@ -158,7 +158,7 @@ const showEmpty = computed(() => {
     return true;
   } else if (loading !== null && !loading && currentTabKey === '2' && !followList.length) {
     return true;
-  } else if (loading !== null && !loading && currentTabKey !== '2' && !articleList.length) {
+  } else if (loading !== null && !loading && currentTabKey !== '2' && currentTabKey !== '3' && !articleList.length) {
     return true;
   } else {
     return false;
