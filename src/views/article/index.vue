@@ -132,6 +132,8 @@ onMounted(async () => {
 
   nextTick(() => {
     commonStore.detailScrollRef = scrollRef.value;
+    // 判断页面是否加载完成
+    commonStore.updatePageLoadStatus();
   });
 
   await articleStore.getArticleDetail({ id: route.params.id as string, router });
@@ -256,7 +258,7 @@ const onScrollTo = (height?: number) => {
     align-items: center;
     justify-content: space-between;
     height: 35px;
-    padding: 10px 18px 10px 12px;
+    padding: 10px 18px 10px 16px;
     -webkit-app-region: drag;
     .left {
       display: flex;

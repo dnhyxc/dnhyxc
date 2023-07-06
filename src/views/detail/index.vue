@@ -167,6 +167,7 @@ const onScrollTo = (height?: number) => {
     display: flex;
     justify-content: center;
     box-sizing: border-box;
+    margin-left: 5px;
     margin-right: 10px;
     .pageHeight();
     border-radius: 5px;

@@ -22,6 +22,7 @@ export const createChildWin = (pathname: string, id: string) => {
     minWidth: 1028,
     minHeight: 700,
     titleBarStyle: 'hidden',
+    backgroundColor: '#d7fffe',
     autoHideMenuBar: true,
     webPreferences: {
       contextIsolation: false,

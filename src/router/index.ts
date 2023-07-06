@@ -249,7 +249,7 @@ router.beforeEach((to, from, next) => {
   // 清除选中卡片的状态，关闭右键菜单
   commonStore.clearContentmenuInfo();
   // 判断是否是首屏加载，如果是则设置loading加载效果
-  if (to.path !== '/home') {
+  if (to.path !== '/home' && to.path !== '/article') {
     commonStore.updatePageLoadStatus();
   }
   // 路由切换时，隐藏消息弹窗
