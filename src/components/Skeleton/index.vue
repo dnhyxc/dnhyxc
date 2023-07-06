@@ -5,7 +5,7 @@
  * index.vue
 -->
 <template>
-  <div class="skeleton-wrap">
+  <div :class="`${checkOS() === 'mac' && 'mac-skeleton-wrap'} skeleton-wrap`">
     <div class="header">
       <div class="title">
         <div class="page-icon" />
@@ -38,7 +38,9 @@
   </div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { checkOS } from '@/utils';
+</script>
 
 <style scoped lang="less">
 @import '@/styles/index.less';
@@ -172,6 +174,23 @@
           }
         }
       }
+    }
+  }
+}
+
+.mac-skeleton-wrap {
+  .header {
+    padding: 30px 27px 0 10px;
+    margin-bottom: 20px;
+  }
+
+  .content {
+    .left-menu {
+      padding-bottom: 26px;
+    }
+    .right {
+      padding-right: 22px;
+      padding-bottom: 21px;
     }
   }
 }
