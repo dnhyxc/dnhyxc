@@ -358,7 +358,14 @@ const onScrollTo = (height?: number) => {
     }
   }
   .mac-header-wrap {
-    padding: 30px 18px 10px 12px;
+    padding: 30px 18px 10px 16px;
+    .left {
+      .icon-wrap {
+        .page-icon {
+          cursor: default;
+        }
+      }
+    }
   }
 
   .content-wrap {
