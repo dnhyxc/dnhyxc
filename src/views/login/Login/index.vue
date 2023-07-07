@@ -80,7 +80,7 @@ const validateUsername = (rule: any, value: any, callback: any) => {
 const validatePassword = (rule: any, value: any, callback: any) => {
   const { msg, status } = verifyPassword(value);
   if (value === '') {
-    callback(new Error('用户名不能为空'));
+    callback(new Error('密码不能为空'));
   } else if (!status) {
     callback(new Error(msg));
   } else {
