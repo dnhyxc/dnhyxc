@@ -65,7 +65,7 @@
                 </div>
                 <div class="view-more" @click="onShowMore">
                   <i :class="`font iconfont ${viewMore ? 'icon-arrow-up-bold' : 'icon-arrow-down-bold'}`" />
-                  <span>查看更多资料</span>
+                  <span>{{ viewMore ? '显示简洁资料' : '查看更多资料' }}</span>
                 </div>
               </div>
             </div>
@@ -363,6 +363,10 @@ const onScrollTo = (to?: number) => {
           cursor: pointer;
           .font {
             margin-right: 5px;
+          }
+
+          &:hover {
+            color: var(--active-color);
           }
         }
 
