@@ -578,7 +578,7 @@ export const uuid = () => {
 };
 
 // 随机生成颜色
-const randomColor = (min: number, max: number) => {
+export const randomColor = (min: number, max: number) => {
   const r = randomNum(min, max);
   const g = randomNum(min, max);
   const b = randomNum(min, max);

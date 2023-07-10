@@ -20,6 +20,7 @@ import { ref, onMounted, nextTick, onUnmounted, watch, computed } from 'vue';
 import * as echarts from 'echarts';
 import 'echarts-wordcloud';
 import { SEA_BASE64, EMPTY } from '@/constant';
+import { randomColor } from '@/utils';
 
 interface IProps {
   data: { name: string; value: number }[];
@@ -116,11 +117,7 @@ const drawChart = () => {
           // fontWeight: 'bold',
           // 配色函数制定配色机制： Math.round() 和 Math.random() 随机给词配色
           color() {
-            return `rgb(${[
-              Math.round(Math.random() * 255),
-              Math.round(Math.random() * 255),
-              Math.round(Math.random() * 255),
-            ].join(',')})`;
+            return randomColor(86, 255);
           },
         },
         emphasis: {
