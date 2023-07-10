@@ -6,7 +6,7 @@
 -->
 <template>
   <div :class="`${checkOS() === 'mac' && 'mac-skeleton-wrap'} skeleton-wrap`">
-    <div class="header">
+    <div :class="`${showType && 'article-header'} header`">
       <div class="title">
         <div class="page-icon" />
         <div class="page-name" />
@@ -15,7 +15,16 @@
         <div class="actions" />
       </div>
     </div>
-    <div class="content">
+    <div v-if="showType" class="content-wrap">
+      <div :class="`${checkOS() === 'mac' && 'mac-content'} content`" />
+      <div :class="`${checkOS() === 'mac' && 'mac-right'} right`">
+        <div class="action-list" />
+        <div class="toc-list" />
+        <div class="another-list" />
+        <div class="another-list" />
+      </div>
+    </div>
+    <div v-else class="content">
       <div class="left-menu">
         <div class="menus">
           <div v-for="n in 4" :key="n" class="icon" />
@@ -40,6 +49,11 @@
 
 <script setup lang="ts">
 import { checkOS } from '@/utils';
+import { computed } from 'vue';
+
+const showType = computed(() => {
+  return location.pathname.includes('/article');
+});
 </script>
 
 <style scoped lang="less">
@@ -92,6 +106,31 @@ import { checkOS } from '@/utils';
         margin-left: 20px;
         border-radius: 5px;
         .bgMoveColor(135deg);
+      }
+    }
+  }
+
+  .article-header {
+    padding: 0 20px 0 15px;
+    height: 50px;
+
+    .title {
+      .page-icon {
+        width: 35px;
+        height: 35px;
+        margin-top: 10px;
+      }
+
+      .page-name {
+        width: 90px;
+        margin-top: 10px;
+      }
+    }
+
+    .header-action {
+      .actions {
+        width: 108px;
+        margin-top: 10px;
       }
     }
   }
@@ -174,6 +213,76 @@ import { checkOS } from '@/utils';
           }
         }
       }
+    }
+  }
+
+  .content-wrap {
+    display: flex;
+    justify-content: center;
+    box-sizing: border-box;
+    padding: 0 20px 0 18px;
+    height: 100%;
+    margin-top: 10px;
+
+    .content {
+      position: relative;
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      box-sizing: border-box;
+      margin-right: 10px;
+      height: calc(100vh - 89px);
+      border-radius: 5px;
+      box-shadow: 0 0 8px 0 var(--shadow-mack);
+      .bgMoveColor(135deg);
+    }
+
+    .mac-content {
+      height: calc(100vh - 108px);
+    }
+
+    .right {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      max-width: 260px;
+      width: 30%;
+      box-sizing: border-box;
+      border-radius: 5px;
+      max-height: calc(100vh - 89px);
+
+      .action-list {
+        height: 50px;
+        box-shadow: 0 0 8px 0 var(--shadow-mack);
+        margin-bottom: 10px;
+        border-radius: 5px;
+        .bgMoveColor(135deg);
+      }
+
+      .toc-list {
+        box-sizing: border-box;
+        flex: 1;
+        background-color: var(--pre-hover-bg);
+        box-shadow: 0 0 8px 0 var(--shadow-mack);
+        border-radius: 5px;
+        .bgMoveColor(135deg);
+      }
+
+      .another-list {
+        height: 95px;
+        box-shadow: 0 0 8px 0 var(--shadow-mack);
+        margin-top: 10px;
+        border-radius: 5px;
+        .bgMoveColor(135deg);
+      }
+
+      & > :last-child {
+        margin-bottom: 0;
+      }
+    }
+
+    .mac-right {
+      max-height: calc(100vh - 108px);
     }
   }
 }
