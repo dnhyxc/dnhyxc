@@ -20,6 +20,7 @@ export const useUploadStore = defineStore('upload', {
       const { file: compressFile } = await compressImage({
         file,
         quality: 0.5,
+        mimeType: file.type,
       });
       // 检验是否有userId，如果没有禁止发送请求
       if (!useCheckUserId()) return;

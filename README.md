@@ -53,3 +53,123 @@
 #### macOS 版本
 
 [macOS 版](http://43.143.27.249:9216/image/dnhyxc-mac.zip)
+
+#### 微笑
+
+http://43.143.27.249/image/24b6f805c6687e5694cbee718.gif
+
+#### 白眼
+
+http://43.143.27.249/image/24b6f805c6687e5694cbee703.gif
+
+#### 鄙视
+
+http://43.143.27.249/image/24b6f805c6687e5694cbee704.gif
+
+#### 龇牙
+
+http://43.143.27.249/image/24b6f805c6687e5694cbee71f.gif
+
+#### 烦恼
+
+http://43.143.27.249/image/24b6f805c6687e5694cbee706.gif
+
+#### 奋斗
+
+http://43.143.27.249/image/24b6f805c6687e5694cbee707.gif
+
+#### 害羞
+
+http://43.143.27.249/image/24b6f805c6687e5694cbee709.gif
+
+#### 鼓掌
+
+http://43.143.27.249/image/24b6f805c6687e5694cbee708.gif
+
+#### 好色
+
+http://43.143.27.249/image/24b6f805c6687e5694cbee70a.gif
+
+#### 坏笑
+
+http://43.143.27.249/image/24b6f805c6687e5694cbee70b.gif
+
+#### 滑稽
+
+http://43.143.27.249/image/24b6f805c6687e5694cbee70c.gif
+
+#### 可怜
+
+http://43.143.27.249/image/24b6f805c6687e5694cbee70d.gif
+
+#### 酷
+
+http://43.143.27.249/image/24b6f805c6687e5694cbee70e.gif
+
+#### 困
+
+http://43.143.27.249/image/24b6f805c6687e5694cbee70f.gif
+
+#### 哭笑
+
+http://43.143.27.249/image/24b6f805c6687e5694cbee710.gif
+
+#### 流泪
+
+http://43.143.27.249/image/24b6f805c6687e5694cbee711.gif
+
+#### 生气
+
+http://43.143.27.249/image/24b6f805c6687e5694cbee712.gif
+
+#### 衰
+
+http://43.143.27.249/image/24b6f805c6687e5694cbee713.gif
+
+#### 吐舌
+
+http://43.143.27.249/image/24b6f805c6687e5694cbee714.gif
+
+#### 吐血
+
+http://43.143.27.249/image/24b6f805c6687e5694cbee715.gif
+
+#### 挖鼻
+
+http://43.143.27.249/image/24b6f805c6687e5694cbee716.gif
+
+#### 委屈
+
+http://43.143.27.249/image/24b6f805c6687e5694cbee717.gif
+
+#### 啊这
+
+http://43.143.27.249/image/24b6f805c6687e5694cbee702.gif
+
+#### 捂嘴
+
+http://43.143.27.249/image/24b6f805c6687e5694cbee719.gif
+
+#### 吓
+
+http://43.143.27.249/image/24b6f805c6687e5694cbee71a.gif
+
+#### 晕
+
+http://43.143.27.249/image/24b6f805c6687e5694cbee71b.gif
+
+#### 再见
+
+http://43.143.27.249/image/24b6f805c6687e5694cbee71c.gif
+
+#### 眨眼
+
+http://43.143.27.249/image/24b6f805c6687e5694cbee71d.gif
+
+#### 皱眉
+
+http://43.143.27.249/image/24b6f805c6687e5694cbee71e.gif
+
+#### 大兵
+
+http://43.143.27.249/image/24b6f805c6687e5694cbee705.gif
