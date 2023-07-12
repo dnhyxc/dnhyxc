@@ -94,6 +94,7 @@ const onClickImg = () => {
     width: 100%;
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
+    -webkit-user-drag: none;
     .imgStyle();
   }
 }
