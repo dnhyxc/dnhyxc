@@ -69,7 +69,7 @@ export const useFollowStore = defineStore('follow', {
 
     // 分页获取关注用户列表
     async getFollowList(userId?: string) {
-      if (this.followList.length !== 0 && this.followList.length >= this.total) return;
+      if ((this.followList.length !== 0 && this.followList.length >= this.total) || !userId) return;
       this.pageNo = this.pageNo + 1;
       personalStore.loading = true;
       const res = normalizeResult<FollowList>(
