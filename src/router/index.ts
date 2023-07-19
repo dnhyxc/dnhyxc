@@ -94,14 +94,14 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import('@/views/tools/index.vue'),
       },
       {
-        path: '/atlas',
-        name: 'atlas',
+        path: '/picture',
+        name: 'picture',
         meta: {
           title: '图片集',
           keepAlive: true,
           auth: true,
         },
-        component: () => import('@/views/atlas/index.vue'),
+        component: () => import('@/views/picture/index.vue'),
       },
       {
         path: '/author',

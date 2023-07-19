@@ -73,7 +73,7 @@ import { ElMessage } from 'element-plus';
 import { Plus } from '@element-plus/icons-vue';
 import type { UploadProps } from 'element-plus';
 import { VueCropper } from 'vue-cropper';
-import { createStore, uploadStore, atlasStore } from '@/store';
+import { createStore, uploadStore, pictureStore } from '@/store';
 import { FILE_TYPE, FILE_UPLOAD_MSG } from '@/constant';
 import { getImgInfo, url2Base64, ipcRenderers } from '@/utils';
 
@@ -181,7 +181,7 @@ const onUpload = async (event: { file: Blob }) => {
       // 更新父组件传递过来的filePath
       emit('update:filePath', res);
       if (props.isAtlas) {
-        atlasStore.addAtlasImages(res);
+        pictureStore.addAtlasImages(res);
       }
     }
     return;

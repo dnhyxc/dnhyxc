@@ -347,8 +347,8 @@ export const MENULIST = [
   },
   {
     name: '图片集',
-    key: 'atlas',
-    path: '/atlas',
+    key: 'picture',
+    path: '/picture',
     icon: 'icon-fenlei2',
     fillIcon: 'icon-fenlei2',
     active: 'icon-fenlei2',
@@ -391,7 +391,7 @@ export const MENULIST = [
 export const WITH_AUTH_ROUTES = ['/create', '/timeline', '/personal', '/interact', '/tools'];
 
 // 只能博主才能访问的页面
-export const AUTHOR_ROUTES = ['/atlas'];
+export const AUTHOR_ROUTES = ['/picture'];
 
 // 需要头部搜索的页面
 export const NEED_HEAD_SEARCH = ['/home', '/classify', '/tag/list'];

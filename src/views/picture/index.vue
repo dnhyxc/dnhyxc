@@ -17,7 +17,7 @@
           class="pullup-content"
         >
           <div v-masonry transition-duration="0.2s" fit-width="true" item-selector=".img-item" class="img-list">
-            <div v-for="(item, index) in atlasStore.atlasList" :key="index" v-masonry-tile class="img-item">
+            <div v-for="(item, index) in pictureStore.atlasList" :key="index" v-masonry-tile class="img-item">
               <div class="del-btn" @click="onDeleteImage(item)">
                 <i class="iconfont icon-shanchu" />
               </div>
@@ -27,7 +27,7 @@
           <ToTopIcon v-if="scrollTop >= 500" :on-scroll-to="onScrollTo" />
         </div>
         <div v-if="noMore" class="no-more">没有更多了～～～</div>
-        <Empty v-if="!atlasStore.loading && !atlasStore.atlasList?.length" />
+        <Empty v-if="!pictureStore.loading && !pictureStore.atlasList?.length" />
       </el-scrollbar>
     </template>
   </Loading>
@@ -36,7 +36,7 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref, computed } from 'vue';
 import { useScroller } from '@/hooks';
-import { atlasStore } from '@/store';
+import { pictureStore } from '@/store';
 import { scrollTo, debounce } from '@/utils';
 import { AtlasItemParams } from '@/typings/common';
 
@@ -47,10 +47,10 @@ const winSize = ref<number>(0);
 const isMounted = ref<boolean>(false);
 
 const noMore = computed(() => {
-  const { atlasList, total } = atlasStore;
+  const { atlasList, total } = pictureStore;
   return atlasList.length >= total && atlasList.length;
 });
-const disabled = computed(() => atlasStore.loading || noMore.value);
+const disabled = computed(() => pictureStore.loading || noMore.value);
 
 const onResize = () => {
   if (previousWidth! > window.innerWidth) {
@@ -72,12 +72,12 @@ onUnmounted(() => {
 
 // 请求数据
 const onFetchData = async () => {
-  await atlasStore.getAtlasList();
+  await pictureStore.getAtlasList();
 };
 
 // 删除图片
 const onDeleteImage = (item: AtlasItemParams) => {
-  atlasStore.deleteAtlasImages({ id: item.id, url: item.url });
+  pictureStore.deleteAtlasImages({ id: item.id, url: item.url });
 };
 
 // 置顶

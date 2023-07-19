@@ -30,7 +30,7 @@ export const useUploadStore = defineStore('upload', {
       const findIndex = compressFile?.name?.lastIndexOf('.');
       const ext = compressFile.name.slice(findIndex + 1);
       // 修改文件名称，__ATLAS__ 用户区分是否是上传的图片集图片
-      const newFile = new File([compressFile], isAtlas ? `__ATLAS__${fileName}` : fileName + '.' + ext, {
+      const newFile = new File([compressFile], isAtlas ? `__ATLAS__${fileName}.${ext}` : `${fileName}.${ext}`, {
         type: compressFile.type,
       });
       formData.append('file', newFile);
