@@ -52,6 +52,7 @@
     "spark-md5": "^3.0.2",
     "vue": "^3.2.45",
     "vue-cropper": "^1.0.6",
+    "vue-masonry": "^0.16.0",
     "vue-router": "^4.1.6",
     "vue3-danmaku": "^1.4.0-beta.1"
   },

@@ -344,3 +344,8 @@ export const findFollowed = async (authorId: string, userId?: string, token?: st
 export const getToolList = async (type: string) => {
   return await post(API.GET_TOOL_LIST, copeParams({ type }));
 };
+
+// 获取工具列表
+export const getAtlasList = async ({ pageNo, pageSize }: { pageNo: number; pageSize: number }) => {
+  return await post(API.GET_ATLAS_LIST, copeParams({ pageNo, pageSize }));
+};

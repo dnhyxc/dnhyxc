@@ -21,7 +21,7 @@ export const useFollowStore = defineStore('follow', {
     followList: [],
     loading: null,
     pageNo: 0,
-    pageSize: 100,
+    pageSize: 50,
     total: 0,
     isFollowed: false,
   }),

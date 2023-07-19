@@ -634,3 +634,21 @@ export const drawCharater = ({
 
   return txt;
 };
+
+// 防抖函数
+export const debounce = (fn: Function, delay = 1000, immediate = false) => {
+  let timer: ReturnType<typeof setTimeout> | null = null;
+  return function () {
+    if (timer) {
+      clearTimeout(timer);
+    }
+    if (immediate && !timer) {
+      // @ts-ignore
+      fn.apply(this, arguments);
+    }
+    timer = setTimeout(() => {
+      // @ts-ignore
+      fn.apply(this);
+    }, delay);
+  };
+};

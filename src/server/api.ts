@@ -148,3 +148,6 @@ export const FIND_FOLLOWED = '/api/findFollowed';
 
 // 获取工具列表
 export const GET_TOOL_LIST = '/api/getToolList';
+
+// 获取收藏集图片
+export const GET_ATLAS_LIST = '/api/getAtlasList';

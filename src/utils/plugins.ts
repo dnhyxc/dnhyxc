@@ -1,3 +1,5 @@
+// 瀑布流组件
+import { VueMasonryPlugin } from 'vue-masonry';
 // 富文本编辑器
 import vuepressTheme from '@kangc/v-md-editor/lib/theme/vuepress.js';
 import VueMarkdownEditor from '@kangc/v-md-editor';
@@ -21,6 +23,9 @@ import '@kangc/v-md-editor/lib/style/preview.css';
 import '@kangc/v-md-editor/lib/plugins/copy-code/copy-code.css';
 
 export const usePlugins = <T>(app: T | any) => {
+  // 挂载瀑布流组件
+  app.use(VueMasonryPlugin);
+
   // 挂载 v-md-deitor 编辑器
   app.use(VueMarkdownEditor);
 

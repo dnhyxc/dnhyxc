@@ -84,8 +84,12 @@ onUnmounted(() => {
 
 // 计算菜单
 const menuList = computed(() => {
-  const { token } = loginStore;
-  const list = token ? MENULIST : MENULIST.filter((i) => i.show);
+  const { token, userInfo } = loginStore;
+  const list = token ? MENULIST : MENULIST.filter((i) => i.show && !i.authorWiew);
+  // 判断是否是博主，否则无法访问图片集
+  if (userInfo.auth !== 1) {
+    return list.filter((i) => !i.authorWiew);
+  }
   return list;
 });
 
@@ -185,6 +189,10 @@ const onQuit = () => {
 
     .tools {
       font-size: 31px;
+    }
+
+    .icon-fenlei2 {
+      font-size: 30px;
     }
   }
 

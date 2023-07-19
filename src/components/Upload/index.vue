@@ -87,6 +87,7 @@ interface IProps {
   getUploadUrl?: (url: string) => void;
   needCropper?: boolean;
   delete?: boolean; // 控制点击删除图标时，是否删除数据库中的图片
+  isAtlas?: boolean; // 是否是图片集上传
 }
 
 const props = withDefaults(defineProps<IProps>(), {
@@ -97,6 +98,7 @@ const props = withDefaults(defineProps<IProps>(), {
   getUploadUrl: () => {},
   needCropper: true,
   delete: false,
+  isAtlas: false,
 });
 
 const emit = defineEmits(['update:filePath']);
@@ -178,6 +180,10 @@ const onUpload = async (event: { file: Blob }) => {
       props.getUploadUrl?.(res);
       // 更新父组件传递过来的filePath
       emit('update:filePath', res);
+
+      if (props.isAtlas) {
+        console.log('图片集上传');
+      }
     }
     return;
   }

@@ -1,8 +1,9 @@
 import { createRouter, RouteRecordRaw, createWebHistory } from 'vue-router';
 import { ElMessage } from 'element-plus';
 import { useCommonStore } from '@/store/common';
+import { loginStore } from '@/store';
 import { locGetItem } from '@/utils';
-import { WITH_AUTH_ROUTES } from '@/constant';
+import { WITH_AUTH_ROUTES, AUTHOR_ROUTES } from '@/constant';
 import eventBus from '@/utils/eventBus';
 
 const routes: Array<RouteRecordRaw> = [
@@ -91,6 +92,16 @@ const routes: Array<RouteRecordRaw> = [
           auth: true,
         },
         component: () => import('@/views/tools/index.vue'),
+      },
+      {
+        path: '/atlas',
+        name: 'atlas',
+        meta: {
+          title: '图片集',
+          keepAlive: true,
+          auth: true,
+        },
+        component: () => import('@/views/atlas/index.vue'),
       },
       {
         path: '/author',
@@ -274,6 +285,16 @@ router.beforeEach((to, from, next) => {
       duration: 2000,
     });
     router.push(from.path);
+  }
+  // 图片集只允许博主访问
+  if (AUTHOR_ROUTES.includes(to.path) && loginStore.userInfo.auth !== 1) {
+    ElMessage({
+      message: '抱歉，暂无访问权限！',
+      type: 'warning',
+      offset: 80,
+      duration: 2000,
+    });
+    router.push('/home');
   }
 
   next();

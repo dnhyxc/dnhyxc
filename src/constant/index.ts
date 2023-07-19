@@ -346,6 +346,15 @@ export const MENULIST = [
     show: false,
   },
   {
+    name: '图片集',
+    key: 'atlas',
+    path: '/atlas',
+    icon: 'icon-fenlei2',
+    fillIcon: 'icon-fenlei2',
+    active: 'icon-fenlei2',
+    authorWiew: true,
+  },
+  {
     name: '关于博主',
     key: 'author',
     path: '/author',
@@ -380,6 +389,9 @@ export const MENULIST = [
 
 // 需要登陆权限的路由
 export const WITH_AUTH_ROUTES = ['/create', '/timeline', '/personal', '/interact', '/tools'];
+
+// 只能博主才能访问的页面
+export const AUTHOR_ROUTES = ['/atlas'];
 
 // 需要头部搜索的页面
 export const NEED_HEAD_SEARCH = ['/home', '/classify', '/tag/list'];
