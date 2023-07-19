@@ -250,7 +250,7 @@ const likeListArticle = (id: string, data?: ArticleItem) => {
   .no-more {
     padding-top: 12px;
     text-align: center;
-    color: @font-4;
+    color: var(--font-4);
   }
 }
 

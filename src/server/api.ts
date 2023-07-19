@@ -149,5 +149,11 @@ export const FIND_FOLLOWED = '/api/findFollowed';
 // 获取工具列表
 export const GET_TOOL_LIST = '/api/getToolList';
 
+// 添加收藏集图片
+export const ADD_ATLAS_IMAGES = '/api/addAtlasImages';
+
 // 获取收藏集图片
 export const GET_ATLAS_LIST = '/api/getAtlasList';
+
+// 删除收藏集图片
+export const DELETE_ATLAS_IMAGES = '/api/deleteAtlasImages';

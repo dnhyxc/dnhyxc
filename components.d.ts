@@ -70,8 +70,6 @@ declare module '@vue/runtime-core' {
     Toc: typeof import('./src/components/Toc/index.vue')['default']
     ToTopIcon: typeof import('./src/components/ToTopIcon/index.vue')['default']
     Upload: typeof import('./src/components/Upload/index.vue')['default']
-    UploadModal: typeof import('./src/components/UploadModal/index.vue')['default']
-    UploadModel: typeof import('./src/components/UploadModel/index.vue')['default']
     WordCloud: typeof import('./src/components/WordCloud/index.vue')['default']
   }
   export interface ComponentCustomProperties {

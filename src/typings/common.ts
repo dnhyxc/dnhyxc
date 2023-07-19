@@ -428,3 +428,18 @@ export interface WinRefreshParams {
   authorId: string;
   isTop: boolean;
 }
+
+// 图片集列表
+export interface AtlasItemParams {
+  id: string;
+  url: string;
+  createTime: number;
+  userId?: string;
+  isDelete?: boolean;
+}
+
+// 图片集
+export interface AtlasList {
+  total: number;
+  list: AtlasItemParams[];
+}

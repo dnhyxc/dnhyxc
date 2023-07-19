@@ -8,75 +8,60 @@
   <Loading :key="winSize" :loading="false" class="atlas-wrap">
     <template #default>
       <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
-        <div :infinite-scroll-delay="300" :infinite-scroll-distance="2" class="pullup-content">
+        <div
+          v-if="isMounted"
+          v-infinite-scroll="onFetchData"
+          :infinite-scroll-delay="300"
+          :infinite-scroll-disabled="disabled"
+          :infinite-scroll-distance="2"
+          class="pullup-content"
+        >
           <div v-masonry transition-duration="0.2s" fit-width="true" item-selector=".img-item" class="img-list">
-            <div v-for="(item, index) in images" :key="index" v-masonry-tile class="img-item">
-              <span class="count">{{ index + 1 }}</span>
-              <img :src="item" alt="http://43.143.27.249:9216" class="img" />
+            <div v-for="(item, index) in atlasStore.atlasList" :key="index" v-masonry-tile class="img-item">
+              <div class="del-btn" @click="onDeleteImage(item)">
+                <i class="iconfont icon-shanchu" />
+              </div>
+              <img :src="item.url" alt="http://43.143.27.249:9216" class="img" />
             </div>
           </div>
           <ToTopIcon v-if="scrollTop >= 500" :on-scroll-to="onScrollTo" />
         </div>
+        <div v-if="noMore" class="no-more">没有更多了～～～</div>
+        <Empty v-if="!atlasStore.loading && !atlasStore.atlasList?.length" />
       </el-scrollbar>
     </template>
   </Loading>
 </template>
 
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from 'vue';
+import { onMounted, onUnmounted, ref, computed } from 'vue';
 import { useScroller } from '@/hooks';
+import { atlasStore } from '@/store';
 import { scrollTo, debounce } from '@/utils';
+import { AtlasItemParams } from '@/typings/common';
 
 const { scrollRef, scrollTop } = useScroller();
 
-const winSize = ref<number>(0);
-
 let previousWidth: number | null = window.innerWidth;
+const winSize = ref<number>(0);
+const isMounted = ref<boolean>(false);
+
+const noMore = computed(() => {
+  const { atlasList, total } = atlasStore;
+  return atlasList.length >= total && atlasList.length;
+});
+const disabled = computed(() => atlasStore.loading || noMore.value);
 
 const onResize = () => {
   if (previousWidth! > window.innerWidth) {
-    console.log(previousWidth, 'aaaaaa', window.innerWidth);
     winSize.value = window.innerWidth;
   }
   previousWidth = window.innerWidth;
 };
 
-const images = [
-  'https://pica.zhimg.com/80/v2-f167a66b1de479dc4a2b19d46701ad06_720w.webp?source=1940ef5c',
-  'https://pic1.zhimg.com/80/v2-779770684deae7ca6a9279909573ba65_720w.webp?source=1940ef5c',
-  'https://pic1.zhimg.com/80/v2-3cb57dd017a65b0d526c3e53f1258e20_720w.webp?source=1940ef5c',
-  'https://pica.zhimg.com/80/v2-1c56872d6db7f6abb1f0ed0f217dcd8b_720w.webp?source=1940ef5c',
-  'https://pic1.zhimg.com/80/v2-4faaf6c8394c3fec83ffd36aa182efa9_720w.webp?source=1940ef5c',
-  'https://pic1.zhimg.com/80/v2-4aec13609438cb7333e998efe2b6320b_720w.webp?source=1940ef5c',
-  'https://picx.zhimg.com/80/v2-bd8a5a507821105321dbeff322fccd25_720w.webp?source=1940ef5c',
-  'https://picx.zhimg.com/80/v2-52165e265072bdbd871fed8a569aa124_720w.webp?source=1940ef5c',
-  'https://picx.zhimg.com/80/v2-7332f2c479ffcbcdd095666841cf69c9_720w.webp?source=1940ef5c',
-  'https://picx.zhimg.com/80/v2-9ec71d6e870f42b2151e4cb72c4282a9_720w.webp?source=1940ef5c',
-  'https://pic1.zhimg.com/80/v2-f2ababed8b41526f6a15fa01e1781b47_720w.webp?source=1940ef5c',
-  'https://pic1.zhimg.com/80/v2-fe528b8923ccaf3ec29fc35ae94207a6_720w.webp?source=1940ef5c',
-  'https://pic1.zhimg.com/80/v2-2c55e37995a6705dd94b96f7af1b7ee5_720w.webp?source=1940ef5c',
-  'https://pic1.zhimg.com/80/v2-45c520a0b502bf0bfff5801523177aee_720w.webp?source=1940ef5c',
-  'https://picx.zhimg.com/80/v2-827c538a2826badeac957132dd47206d_720w.webp?source=1940ef5c',
-  'https://pica.zhimg.com/80/v2-50e6ef96c9cfb4ad66891b23b6ec0c4f_720w.webp?source=1940ef5c',
-  'https://picx.zhimg.com/80/v2-e8d15e00479ae72eba988f88b94aa71b_720w.webp?source=1940ef5c',
-  'https://pic1.zhimg.com/80/v2-c79151a0795c6542922c1be433b626c8_720w.webp?source=1940ef5c',
-  'https://picx.zhimg.com/80/v2-7f7ce4c8c8f0197a1cc0e34048518e26_720w.webp?source=1940ef5c',
-  'https://picx.zhimg.com/80/v2-f7a66328a0470f73c523e4957f48a3f5_720w.webp?source=1940ef5c',
-  'https://pic1.zhimg.com/80/v2-39f808371dc21a064fc5900be6438f3e_720w.webp?source=1940ef5c',
-  'https://picx.zhimg.com/80/v2-3a7baf2bc3db376be7fd216e25a2c3d1_720w.webp?source=1940ef5c',
-  'https://pica.zhimg.com/80/v2-cf663a78b57d3f0ec2519d9b6b786c60_720w.webp?source=1940ef5c',
-  'https://picx.zhimg.com/80/v2-dce89ae04b9a6c87d83277e8359d6973_720w.webp?source=1940ef5c',
-  'https://pica.zhimg.com/80/v2-1c56872d6db7f6abb1f0ed0f217dcd8b_720w.webp?source=1940ef5c',
-  'https://pic1.zhimg.com/80/v2-4faaf6c8394c3fec83ffd36aa182efa9_720w.webp?source=1940ef5c',
-  'https://pic1.zhimg.com/80/v2-4aec13609438cb7333e998efe2b6320b_720w.webp?source=1940ef5c',
-  'https://picx.zhimg.com/80/v2-bd8a5a507821105321dbeff322fccd25_720w.webp?source=1940ef5c',
-  'https://picx.zhimg.com/80/v2-52165e265072bdbd871fed8a569aa124_720w.webp?source=1940ef5c',
-  'https://picx.zhimg.com/80/v2-7332f2c479ffcbcdd095666841cf69c9_720w.webp?source=1940ef5c',
-  'https://picx.zhimg.com/80/v2-9ec71d6e870f42b2151e4cb72c4282a9_720w.webp?source=1940ef5c',
-  'https://pic1.zhimg.com/80/v2-f2ababed8b41526f6a15fa01e1781b47_720w.webp?source=1940ef5c',
-];
-
 onMounted(() => {
+  isMounted.value = true;
+  onFetchData();
   window.addEventListener('resize', debounce(onResize, 300));
 });
 
@@ -84,6 +69,16 @@ onUnmounted(() => {
   window.removeEventListener('resize', onResize);
   previousWidth = null;
 });
+
+// 请求数据
+const onFetchData = async () => {
+  await atlasStore.getAtlasList();
+};
+
+// 删除图片
+const onDeleteImage = (item: AtlasItemParams) => {
+  atlasStore.deleteAtlasImages({ id: item.id, url: item.url });
+};
 
 // 置顶
 const onScrollTo = () => {
@@ -119,10 +114,29 @@ const onScrollTo = () => {
       box-shadow: 0px 2px 10px 1px rgba(0, 0, 0, 0.1);
       border-radius: 5px;
 
-      .count {
+      &:hover {
+        .del-btn {
+          display: block;
+        }
+      }
+
+      .del-btn {
         position: absolute;
-        top: 10px;
-        left: 10px;
+        top: 5px;
+        right: 5px;
+        text-align: center;
+        color: @font-danger;
+        font-size: 18px;
+        background-color: var(--to-top-bg-color);
+        box-shadow: 0 0 3px var(--theme-blue);
+        border-radius: 5px;
+        padding: 0 3px;
+        cursor: pointer;
+        display: none;
+
+        .icon-shanchu {
+          font-size: 18px;
+        }
       }
 
       .img {
@@ -131,6 +145,13 @@ const onScrollTo = () => {
         border-radius: 5px;
       }
     }
+  }
+
+  .no-more {
+    text-align: center;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    color: var(--font-4);
   }
 }
 </style>

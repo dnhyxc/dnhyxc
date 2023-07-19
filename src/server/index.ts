@@ -345,7 +345,17 @@ export const getToolList = async (type: string) => {
   return await post(API.GET_TOOL_LIST, copeParams({ type }));
 };
 
-// 获取工具列表
+// 添加图片集
+export const addAtlasImages = async (url: string) => {
+  return await post(API.ADD_ATLAS_IMAGES, copeParams({ url }));
+};
+
+// 获取图片集列表
 export const getAtlasList = async ({ pageNo, pageSize }: { pageNo: number; pageSize: number }) => {
   return await post(API.GET_ATLAS_LIST, copeParams({ pageNo, pageSize }));
+};
+
+// 删除图片集列表
+export const deleteAtlasImages = async ({ id, url }: { id: string; url: string | string[] }) => {
+  return await post(API.DELETE_ATLAS_IMAGES, copeParams({ id, url }));
 };

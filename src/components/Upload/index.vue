@@ -73,14 +73,14 @@ import { ElMessage } from 'element-plus';
 import { Plus } from '@element-plus/icons-vue';
 import type { UploadProps } from 'element-plus';
 import { VueCropper } from 'vue-cropper';
-import { createStore, uploadStore } from '@/store';
+import { createStore, uploadStore, atlasStore } from '@/store';
 import { FILE_TYPE, FILE_UPLOAD_MSG } from '@/constant';
 import { getImgInfo, url2Base64, ipcRenderers } from '@/utils';
 
 import 'vue-cropper/dist/index.css';
 
 interface IProps {
-  filePath: string;
+  filePath?: string;
   preview?: boolean;
   showImg?: boolean;
   fixedNumber?: number[];
@@ -175,14 +175,13 @@ const onUpload = async (event: { file: Blob }) => {
   fileInfo.value = event.file as File;
   // 不需要进行裁剪
   if (!props.needCropper) {
-    const res = await uploadStore.uploadFile(event.file as File);
+    const res = await uploadStore.uploadFile(event.file as File, props.isAtlas);
     if (res) {
       props.getUploadUrl?.(res);
       // 更新父组件传递过来的filePath
       emit('update:filePath', res);
-
       if (props.isAtlas) {
-        console.log('图片集上传');
+        atlasStore.addAtlasImages(res);
       }
     }
     return;
