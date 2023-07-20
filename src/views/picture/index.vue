@@ -5,7 +5,7 @@
  * index.vue
 -->
 <template>
-  <Loading :key="winSize" :loading="false" class="atlas-wrap">
+  <Loading :key="winSize" :loading="pictureStore.loading" class="atlas-wrap">
     <template #default>
       <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
         <div
@@ -16,8 +16,18 @@
           :infinite-scroll-distance="2"
           class="pullup-content"
         >
-          <div v-masonry transition-duration="0.2s" fit-width="true" item-selector=".img-item" class="img-list">
+          <div
+            v-if="pictureStore.atlasList.length > 0"
+            v-masonry
+            transition-duration="0.2s"
+            fit-width="true"
+            item-selector=".img-item"
+            class="img-list"
+          >
             <div v-for="(item, index) in pictureStore.atlasList" :key="index" v-masonry-tile class="img-item">
+              <div class="download-btn del-btn" @click="onDownload(item)">
+                <i class="iconfont icon-xiazai1" />
+              </div>
               <div class="del-btn" @click="onDeleteImage(item)">
                 <i class="iconfont icon-shanchu" />
               </div>
@@ -34,10 +44,12 @@
 </template>
 
 <script setup lang="ts">
+import { ipcRenderer } from 'electron';
 import { onMounted, onUnmounted, ref, computed } from 'vue';
+import { ElMessage } from 'element-plus';
 import { useScroller } from '@/hooks';
 import { pictureStore } from '@/store';
-import { scrollTo, debounce } from '@/utils';
+import { scrollTo, debounce, ipcRenderers } from '@/utils';
 import { AtlasItemParams } from '@/typings/common';
 
 const { scrollRef, scrollTop } = useScroller();
@@ -73,6 +85,25 @@ onUnmounted(() => {
 // 请求数据
 const onFetchData = async () => {
   await pictureStore.getAtlasList();
+};
+
+// 下载
+const onDownload = (item: AtlasItemParams) => {
+  const blob = new Blob([item.url], { type: 'image/png' });
+  const url = window.URL.createObjectURL(blob);
+  ipcRenderers.sendDownload(url);
+  // 设置一次性监听，防止重复触发
+  ipcRenderer.once('download-file', (e, res: string) => {
+    if (res) {
+      window.URL.revokeObjectURL(url);
+      ElMessage({
+        message: '保存成功',
+        type: 'success',
+        offset: 80,
+        duration: 2000,
+      });
+    }
+  });
 };
 
 // 删除图片
@@ -121,6 +152,8 @@ const onScrollTo = () => {
       }
 
       .del-btn {
+        display: inline-block;
+        backdrop-filter: blur(10px);
         position: absolute;
         top: 5px;
         right: 5px;
@@ -136,6 +169,15 @@ const onScrollTo = () => {
 
         .icon-shanchu {
           font-size: 18px;
+        }
+      }
+
+      .download-btn {
+        right: 35px;
+
+        .icon-xiazai1 {
+          font-size: 17px;
+          color: var(--font-1);
         }
       }
 

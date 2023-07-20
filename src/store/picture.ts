@@ -19,7 +19,7 @@ export const usePictureStore = defineStore('picture', {
     atlasList: [],
     total: 0,
     pageNo: 0,
-    pageSize: 50,
+    pageSize: 30,
   }),
 
   actions: {
@@ -29,14 +29,23 @@ export const usePictureStore = defineStore('picture', {
       if (!useCheckUserId()) return;
       if (this.atlasList.length !== 0 && this.atlasList.length >= this.total) return;
       this.pageNo = this.pageNo + 1;
-      this.loading = true;
       const res = normalizeResult<AtlasList>(
         await Service.getAtlasList({ pageNo: this.pageNo, pageSize: this.pageSize }),
       );
-      this.loading = false;
       if (res.success) {
         this.atlasList = [...this.atlasList, ...res.data.list];
         this.total = res.data.total;
+      }
+    },
+
+    // 添加图片
+    async addAtlasImages(url: string) {
+      this.loading = true;
+      const res = normalizeResult<{ url: string }>(await Service.addAtlasImages(url));
+      this.loading = null;
+      if (res.success) {
+        this.clearAtlasInfo();
+        this.getAtlasList();
       } else {
         ElMessage({
           message: res.message,
@@ -46,31 +55,20 @@ export const usePictureStore = defineStore('picture', {
       }
     },
 
-    // 添加图片
-    async addAtlasImages(url: string) {
-      const res = normalizeResult<{ url: string }>(await Service.addAtlasImages(url));
-      ElMessage({
-        message: res.message,
-        type: res.success ? 'success' : 'error',
-        offset: 80,
-      });
-      if (res.success) {
-        this.clearAtlasInfo();
-        this.getAtlasList();
-      }
-    },
-
     // 删除图片集列表
     async deleteAtlasImages({ id, url }: { id: string; url: string }) {
+      this.loading = true;
       const res = normalizeResult<{ url: string }>(await Service.deleteAtlasImages({ id, url }));
-      ElMessage({
-        message: res.message,
-        type: res.success ? 'success' : 'error',
-        offset: 80,
-      });
+      this.loading = null;
       if (res.success) {
         this.clearAtlasInfo();
         this.getAtlasList();
+      } else {
+        ElMessage({
+          message: res.message,
+          type: 'error',
+          offset: 80,
+        });
       }
     },
 
