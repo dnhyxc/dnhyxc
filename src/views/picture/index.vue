@@ -156,6 +156,7 @@ const onScrollTo = () => {
       max-width: 180px;
       margin: 0.2em;
       border-radius: 5px;
+      cursor: pointer;
 
       &:hover {
         .del-btn {
