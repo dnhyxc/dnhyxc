@@ -177,11 +177,11 @@ const onUpload = async (event: { file: Blob }) => {
   if (!props.needCropper) {
     const res = await uploadStore.uploadFile(event.file as File, props.isAtlas);
     if (res) {
-      props.getUploadUrl?.(res);
+      props.getUploadUrl?.(res.filePath);
       // 更新父组件传递过来的filePath
       emit('update:filePath', res);
       if (props.isAtlas) {
-        pictureStore.addAtlasImages(res);
+        pictureStore.addAtlasImages(res.filePath, res.compressFile);
       }
     }
     return;
@@ -278,7 +278,7 @@ const onFinish = () => {
     const file = new File([blob], fileInfo.value?.name || '', { type: fileInfo.value?.type }) as File;
     const res = await uploadStore.uploadFile(file);
     if (res) {
-      props.getUploadUrl?.(res);
+      props.getUploadUrl?.(res.filePath);
       // 保存老封面图
       if (props.delete) {
         createStore.oldCoverImage = createStore.createInfo?.coverImage as string;

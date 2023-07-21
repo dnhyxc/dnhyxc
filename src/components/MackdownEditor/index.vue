@@ -131,9 +131,8 @@ const toolbar = reactive<Toolbar>({
 const onUploadImage = async (event: Event, insertImage: Function, files: File) => {
   // 拿到 files 之后上传到文件服务器，然后向编辑框中插入对应的内容
   const res = await uploadStore.uploadFile(files[0]);
-  // const res = await uploadStore.uploadSingleFile(files[0]);
   insertImage({
-    url: res,
+    url: res?.filePath,
     desc: files[0]?.name,
     width: '100%',
     height: 'auto',

@@ -434,6 +434,9 @@ export interface AtlasItemParams {
   id: string;
   url: string;
   createTime: number;
+  size: number;
+  fileName: string;
+  type: string;
   userId?: string;
   isDelete?: boolean;
 }
@@ -442,4 +445,12 @@ export interface AtlasItemParams {
 export interface AtlasList {
   total: number;
   list: AtlasItemParams[];
+}
+
+// 图片信息
+export interface AtlasImgInfo {
+  url: string;
+  size: number;
+  fileName: string;
+  type: string;
 }

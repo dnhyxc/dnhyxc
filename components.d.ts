@@ -52,6 +52,7 @@ declare module '@vue/runtime-core' {
     FollowCard: typeof import('./src/components/FollowCard/index.vue')['default']
     Header: typeof import('./src/components/Header/index.vue')['default']
     Image: typeof import('./src/components/Image/index.vue')['default']
+    ImagePreview: typeof import('./src/components/ImagePreview/index.vue')['default']
     LeftMenu: typeof import('./src/components/LeftMenu/index.vue')['default']
     LineCard: typeof import('./src/components/LineCard/index.vue')['default']
     LoadImage: typeof import('./src/components/LoadImage/index.vue')['default']

@@ -31,13 +31,14 @@
               <div class="del-btn" @click="onDeleteImage(item)">
                 <i class="iconfont icon-shanchu" />
               </div>
-              <img :src="item.url" alt="http://43.143.27.249:9216" class="img" />
+              <img :src="item.url" alt="http://43.143.27.249:9216" class="img" @click="onPreview(item)" />
             </div>
           </div>
           <ToTopIcon v-if="scrollTop >= 500" :on-scroll-to="onScrollTo" />
         </div>
         <div v-if="noMore" class="no-more">没有更多了～～～</div>
         <Empty v-if="!pictureStore.loading && !pictureStore.atlasList?.length" />
+        <ImagePreview v-model:previewVisible="previewVisible" :select-image="selectImage" />
       </el-scrollbar>
     </template>
   </Loading>
@@ -49,7 +50,7 @@ import { onMounted, onUnmounted, ref, computed } from 'vue';
 import { ElMessage } from 'element-plus';
 import { useScroller } from '@/hooks';
 import { pictureStore } from '@/store';
-import { scrollTo, debounce, ipcRenderers } from '@/utils';
+import { scrollTo, debounce, ipcRenderers, url2Base64 } from '@/utils';
 import { AtlasItemParams } from '@/typings/common';
 
 const { scrollRef, scrollTop } = useScroller();
@@ -57,6 +58,8 @@ const { scrollRef, scrollTop } = useScroller();
 let previousWidth: number | null = window.innerWidth;
 const winSize = ref<number>(0);
 const isMounted = ref<boolean>(false);
+const previewVisible = ref<boolean>(false);
+const selectImage = ref<AtlasItemParams>();
 
 const noMore = computed(() => {
   const { atlasList, total } = pictureStore;
@@ -88,22 +91,28 @@ const onFetchData = async () => {
 };
 
 // 下载
-const onDownload = (item: AtlasItemParams) => {
-  const blob = new Blob([item.url], { type: 'image/png' });
-  const url = window.URL.createObjectURL(blob);
-  ipcRenderers.sendDownload(url);
-  // 设置一次性监听，防止重复触发
-  ipcRenderer.once('download-file', (e, res: string) => {
-    if (res) {
-      window.URL.revokeObjectURL(url);
-      ElMessage({
-        message: '保存成功',
-        type: 'success',
-        offset: 80,
-        duration: 2000,
-      });
-    }
-  });
+const onDownload = async (item: AtlasItemParams) => {
+  const url = await url2Base64(item.url, item.type);
+  if (url) {
+    ipcRenderers.sendDownload(url as string);
+    // 设置一次性监听，防止重复触发
+    ipcRenderer.once('download-file', (e, res: string) => {
+      if (res) {
+        ElMessage({
+          message: '下载成功',
+          type: 'success',
+          offset: 80,
+          duration: 2000,
+        });
+      }
+    });
+  }
+};
+
+// 预览图片
+const onPreview = (item: AtlasItemParams) => {
+  previewVisible.value = true;
+  selectImage.value = item;
 };
 
 // 删除图片
@@ -131,6 +140,10 @@ const onScrollTo = () => {
 
   :deep {
     .scrollbar-wrapper();
+
+    .el-dialog__body {
+      padding: 10px 20px 20px !important;
+    }
   }
 
   .img-list {
@@ -142,7 +155,6 @@ const onScrollTo = () => {
       width: 100%;
       max-width: 180px;
       margin: 0.2em;
-      box-shadow: 0px 2px 10px 1px rgba(0, 0, 0, 0.1);
       border-radius: 5px;
 
       &:hover {

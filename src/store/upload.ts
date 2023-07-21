@@ -19,7 +19,7 @@ export const useUploadStore = defineStore('upload', {
       // 上传前先压缩图片
       const { file: compressFile } = await compressImage({
         file,
-        quality: 0.5,
+        quality: !isAtlas ? 0.5 : 0.4,
         mimeType: file.type,
       });
       // 检验是否有userId，如果没有禁止发送请求
@@ -37,7 +37,10 @@ export const useUploadStore = defineStore('upload', {
       const res = normalizeResult<{ filePath: string }>(await Service.uploadFile(formData));
       if (res.success) {
         this.visible = true;
-        return res.data.filePath;
+        return {
+          filePath: res.data.filePath,
+          compressFile,
+        };
       }
     },
 

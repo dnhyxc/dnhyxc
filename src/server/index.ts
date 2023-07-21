@@ -10,6 +10,7 @@ import {
   UserInfoParams,
   AdvancedSearchParams,
   BarrageItem,
+  AtlasImgInfo,
 } from '@/typings/common';
 import { loginStore } from '@/store';
 import { getStoreUserInfo } from '@/utils';
@@ -346,8 +347,8 @@ export const getToolList = async (type: string) => {
 };
 
 // 添加图片集
-export const addAtlasImages = async (url: string) => {
-  return await post(API.ADD_ATLAS_IMAGES, copeParams({ url }));
+export const addAtlasImages = async (params: AtlasImgInfo) => {
+  return await post(API.ADD_ATLAS_IMAGES, copeParams(params));
 };
 
 // 获取图片集列表

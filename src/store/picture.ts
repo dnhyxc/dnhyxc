@@ -39,9 +39,16 @@ export const usePictureStore = defineStore('picture', {
     },
 
     // 添加图片
-    async addAtlasImages(url: string) {
+    async addAtlasImages(url: string, file: Blob) {
       this.loading = true;
-      const res = normalizeResult<{ url: string }>(await Service.addAtlasImages(url));
+      const res = normalizeResult<{ url: string }>(
+        await Service.addAtlasImages({
+          url,
+          size: file.size,
+          fileName: file.name,
+          type: file.type,
+        }),
+      );
       this.loading = null;
       if (res.success) {
         this.clearAtlasInfo();

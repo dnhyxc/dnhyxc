@@ -200,7 +200,7 @@ export const getImgInfo = (url: string) => {
 };
 
 // 设置头像base64
-export const url2Base64 = (src: string) => {
+export const url2Base64 = (src: string, type?: string) => {
   return new Promise((resolve, reject) => {
     const image = new Image();
     // 处理缓存
@@ -208,21 +208,21 @@ export const url2Base64 = (src: string) => {
     // 支持跨域图片
     image.crossOrigin = '*';
     image.onload = () => {
-      const base64 = image2Base64(image);
+      const base64 = image2Base64(image, type);
       resolve(base64);
     };
   });
 };
 
 // 将网络图片转换成base64格式
-export const image2Base64 = (image: any) => {
+export const image2Base64 = (image: any, type?: string) => {
   const canvas = document.createElement('canvas');
   canvas.width = image.width;
   canvas.height = image.height;
   const ctx = canvas.getContext('2d');
   ctx?.drawImage(image, 0, 0, image.width, image.height);
   // 可选其他值 image/jpeg
-  return canvas.toDataURL('image/png');
+  return canvas.toDataURL(type || 'image/png');
 };
 
 // 展示message
