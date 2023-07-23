@@ -179,7 +179,7 @@ const onUpload = async (event: { file: Blob }) => {
     if (res) {
       props.getUploadUrl?.(res.filePath);
       // 更新父组件传递过来的filePath
-      emit('update:filePath', res);
+      emit('update:filePath', res.filePath);
       if (props.isAtlas) {
         pictureStore.addAtlasImages(res.filePath, res.compressFile);
       }
@@ -284,7 +284,7 @@ const onFinish = () => {
         createStore.oldCoverImage = createStore.createInfo?.coverImage as string;
       }
       // 更新父组件传递过来的filePath
-      emit('update:filePath', res);
+      emit('update:filePath', res.filePath);
       // 文件上传完毕之后，清除存储的文件信息
       fileInfo.value = null;
     }

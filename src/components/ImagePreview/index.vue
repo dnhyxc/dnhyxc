@@ -94,7 +94,6 @@ watch(
   () => [imageInfo.scale, imageInfo.rotate],
   (newVal) => {
     if (newVal[0] > 1) {
-      console.log(newVal, 'nessss');
       nextTick(() => {
         imgRef.value!.style.cursor = 'move';
       });

@@ -97,7 +97,7 @@ const routes: Array<RouteRecordRaw> = [
         path: '/picture',
         name: 'picture',
         meta: {
-          title: '图片集',
+          title: '图片合集',
           keepAlive: true,
           auth: true,
         },

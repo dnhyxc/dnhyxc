@@ -346,7 +346,7 @@ export const MENULIST = [
     show: false,
   },
   {
-    name: '图片集',
+    name: '图片合集',
     key: 'picture',
     path: '/picture',
     icon: 'icon-fenlei2',
