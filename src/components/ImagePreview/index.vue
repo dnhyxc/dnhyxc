@@ -10,10 +10,10 @@
       <div class="actions">
         <span class="title">图片预览</span>
         <div class="icon-list">
-          <el-tooltip effect="light" content="放大" placement="top">
+          <el-tooltip effect="light" :content="isMaxed ? '不能再大了' : '放大'" placement="top">
             <i class="font iconfont icon-fangda" @click="onScaleMax" />
           </el-tooltip>
-          <el-tooltip effect="light" content="缩小" placement="top">
+          <el-tooltip effect="light" :content="isMined ? '不能再小了' : '缩小'" placement="top">
             <i class="font iconfont icon-suoxiao" @click="onScaleMin" />
           </el-tooltip>
           <el-tooltip effect="light" content="旋转" placement="top">
@@ -70,6 +70,8 @@ const imageInfo = reactive<{ scale: number; rotate: number; boundary: boolean; i
   imgWidth: 0,
   imgHeight: 0,
 });
+const isMaxed = ref<boolean>(false);
+const isMined = ref<boolean>(false);
 
 const emit = defineEmits(['update:previewVisible']);
 
@@ -111,7 +113,11 @@ watch(
 
 // 放大
 const onScaleMax = () => {
-  if (imageInfo.scale >= 2) return;
+  if (imageInfo.scale >= 5) {
+    isMaxed.value = true;
+    return;
+  }
+  isMined.value = false;
   imageInfo.scale += 0.2;
   imageInfo.imgWidth = Math.round(imgRef.value!.width * imageInfo.scale);
   imageInfo.imgHeight = Math.round(imgRef.value!.height * imageInfo.scale);
@@ -123,7 +129,11 @@ const onScaleMin = () => {
     imgRef.value!.style.top = '0';
     imgRef.value!.style.left = '0';
   }
-  if (imageInfo.scale <= 0.5) return;
+  if (imageInfo.scale <= 0.4) {
+    isMined.value = true;
+    return;
+  }
+  isMaxed.value = false;
   imageInfo.scale -= 0.2;
   imageInfo.imgWidth = Math.round(imgRef.value!.width * imageInfo.scale);
   imageInfo.imgHeight = Math.round(imgRef.value!.height * imageInfo.scale);
