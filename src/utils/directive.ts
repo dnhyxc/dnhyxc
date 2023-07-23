@@ -58,7 +58,7 @@ export const mountDirectives = <T>(app: T | any) => {
             minw = -(maxWidth + pw - 60);
             minh = -(maxHeight + ph - 60);
             // 图片大小小于1倍时，禁止拖动
-            if (binding?.value?.scale === 1) {
+            if (binding?.value?.scale === 1 && binding?.value?.rotate === 0) {
               left = 0;
               top = 0;
               return;

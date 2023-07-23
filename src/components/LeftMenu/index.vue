@@ -260,6 +260,10 @@ const onQuit = () => {
       height: 37px;
       line-height: 37px;
     }
+
+    .icon-fenlei2 {
+      font-size: 38px;
+    }
   }
 }
 </style>

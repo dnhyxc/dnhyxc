@@ -1,3 +1,4 @@
+import { ipcRenderer } from 'electron';
 import { ElMessageBox, ElMessage } from 'element-plus';
 import type { ElMessageBoxOptions } from 'element-plus';
 import moment from 'moment';
@@ -651,4 +652,22 @@ export const debounce = (fn: Function, delay = 1000, immediate = false) => {
       fn.apply(this);
     }, delay);
   };
+};
+
+export const onDownloadFile = async (item: { url: string; type: string }) => {
+  const url = await url2Base64(item.url, item.type);
+  if (url) {
+    ipcRenderers.sendDownload(url as string);
+    // 设置一次性监听，防止重复触发
+    ipcRenderer.once('download-file', (e, res: string) => {
+      if (res) {
+        ElMessage({
+          message: '下载成功',
+          type: 'success',
+          offset: 80,
+          duration: 2000,
+        });
+      }
+    });
+  }
 };

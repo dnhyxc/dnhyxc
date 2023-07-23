@@ -50,6 +50,7 @@
 <script setup lang="ts">
 import { computed, reactive, ref, watch, watchEffect, nextTick } from 'vue';
 import { pictureStore } from '@/store';
+import { onDownloadFile } from '@/utils';
 import { AtlasItemParams } from '@/typings/common';
 
 interface IProps {
@@ -78,6 +79,7 @@ const visible = computed({
   },
   set(visible: boolean) {
     emit('update:previewVisible', visible);
+    currentImage.value = props.selectImage;
     onRefresh();
   },
 });
@@ -140,7 +142,7 @@ const onRotate = () => {
 
 // 下载
 const onDownload = () => {
-  console.log('下载');
+  onDownloadFile(currentImage.value);
 };
 
 // 重置

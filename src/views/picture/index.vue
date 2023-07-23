@@ -45,12 +45,10 @@
 </template>
 
 <script setup lang="ts">
-import { ipcRenderer } from 'electron';
 import { onMounted, onUnmounted, ref, computed } from 'vue';
-import { ElMessage } from 'element-plus';
 import { useScroller } from '@/hooks';
 import { pictureStore } from '@/store';
-import { scrollTo, debounce, ipcRenderers, url2Base64 } from '@/utils';
+import { scrollTo, debounce, onDownloadFile } from '@/utils';
 import { AtlasItemParams } from '@/typings/common';
 
 const { scrollRef, scrollTop } = useScroller();
@@ -92,21 +90,7 @@ const onFetchData = async () => {
 
 // 下载
 const onDownload = async (item: AtlasItemParams) => {
-  const url = await url2Base64(item.url, item.type);
-  if (url) {
-    ipcRenderers.sendDownload(url as string);
-    // 设置一次性监听，防止重复触发
-    ipcRenderer.once('download-file', (e, res: string) => {
-      if (res) {
-        ElMessage({
-          message: '下载成功',
-          type: 'success',
-          offset: 80,
-          duration: 2000,
-        });
-      }
-    });
-  }
+  onDownloadFile(item);
 };
 
 // 预览图片
