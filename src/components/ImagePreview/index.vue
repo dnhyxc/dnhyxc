@@ -59,7 +59,7 @@ interface IProps {
 
 const props = defineProps<IProps>();
 
-const currentImage = ref<AtlasItemParams>();
+const currentImage = ref<AtlasItemParams>(props.selectImage);
 
 const imgRef = ref<HTMLImageElement | null>(null);
 const imageInfo = reactive<{ scale: number; rotate: number; boundary: boolean; imgWidth: number; imgHeight: number }>({
@@ -155,7 +155,7 @@ const onRefresh = () => {
 const onPrev = () => {
   onRefresh();
   let prevIndex;
-  const findIndex = pictureStore.atlasList.findIndex((i) => i.id === currentImage.value.id);
+  const findIndex = pictureStore.atlasList.findIndex((i) => i.id === currentImage?.value?.id);
   if (findIndex === 0) {
     prevIndex = pictureStore.atlasList.length - 1;
   } else {
@@ -168,7 +168,7 @@ const onPrev = () => {
 const onNext = () => {
   onRefresh();
   let nextIndex;
-  const findIndex = pictureStore.atlasList.findIndex((i) => i.id === currentImage.value.id);
+  const findIndex = pictureStore.atlasList.findIndex((i) => i.id === currentImage?.value?.id);
   if (findIndex === pictureStore.atlasList.length - 1) {
     nextIndex = 0;
   } else {

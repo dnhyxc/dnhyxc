@@ -55,7 +55,6 @@ declare module '@vue/runtime-core' {
     ImagePreview: typeof import('./src/components/ImagePreview/index.vue')['default']
     LeftMenu: typeof import('./src/components/LeftMenu/index.vue')['default']
     LineCard: typeof import('./src/components/LineCard/index.vue')['default']
-    LoadImage: typeof import('./src/components/LoadImage/index.vue')['default']
     Loading: typeof import('./src/components/Loading/index.vue')['default']
     MackdownEditor: typeof import('./src/components/MackdownEditor/index.vue')['default']
     Messages: typeof import('./src/components/Messages/index.vue')['default']
