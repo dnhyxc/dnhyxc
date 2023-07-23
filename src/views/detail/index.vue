@@ -249,6 +249,7 @@ const onScrollTo = (height?: number) => {
 
   .right {
     margin-right: 3px;
+    max-height: calc(100vh - 88px);
   }
 }
 </style>
