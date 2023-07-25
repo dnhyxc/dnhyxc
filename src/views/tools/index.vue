@@ -22,14 +22,29 @@
         </div>
         <div class="tools">
           <div class="tool-title">前端编程导航</div>
-          <div class="navigation-list">
-            <NavCard
-              v-for="item in toolsStore.toolList"
-              :key="item.id"
-              :data="item"
-              :on-click="() => onClickNavIcon(item)"
-            />
-          </div>
+          <draggable
+            v-model="toolsStore.toolList"
+            item-key="id"
+            draggable=".item"
+            class="navigation-list"
+            @start="onStart"
+            @end="onEnd"
+          >
+            <template #item="{ element }">
+              <div class="item" :style="{ width: '10%' }">
+                <div :key="element.id" :style="{ display: 'inline-block', width: '100%' }">
+                  <div class="navigation-item">
+                    <div class="item-top">
+                      <Image :url="element?.toolUrl || TOOL_SVG" :transition-img="TOOL_SVG" class="prew-img" />
+                    </div>
+                    <el-tooltip effect="light" :content="element?.toolName" placement="bottom" :enterable="false">
+                      <div class="item-bottom">{{ element?.toolName }}</div>
+                    </el-tooltip>
+                  </div>
+                </div>
+              </div>
+            </template>
+          </draggable>
         </div>
       </el-scrollbar>
       <Modal
@@ -68,7 +83,8 @@
 <script setup lang="ts">
 import { shell } from 'electron';
 import { onMounted, ref } from 'vue';
-import { COMPRESS_SVG } from '@/constant';
+import draggable from 'vuedraggable';
+import { COMPRESS_SVG, TOOL_SVG } from '@/constant';
 import { toolsStore } from '@/store';
 import { ToolsItem } from '@/typings/common';
 import Modal from './Modal/index.vue';
@@ -98,6 +114,12 @@ const onClickNavIcon = (item: ToolsItem) => {
 // 关闭预览弹窗
 const onClose = () => {
   compressVisible.value = true;
+};
+
+const onStart = () => {};
+
+const onEnd = (state: any) => {
+  console.log(state, 'state');
 };
 </script>
 
@@ -144,6 +166,48 @@ const onClose = () => {
       border-radius: 5px;
       .clickNoSelectText();
       margin-bottom: 20px;
+
+      .item {
+        box-sizing: border-box;
+        width: 10%;
+        padding: 5px;
+
+        .navigation-item {
+          box-shadow: 0 0 5px 0 var(--shadow-mack);
+          cursor: pointer;
+          overflow: hidden;
+          border-radius: 5px;
+          background-color: var(--pre-hover-bg);
+
+          .item-top {
+            padding: 5px;
+
+            .prew-img {
+              display: block;
+
+              :deep {
+                .image-item {
+                  max-height: 80px;
+                  border-radius: 5px;
+                }
+              }
+            }
+          }
+
+          .item-bottom {
+            text-align: center;
+            padding: 0 5px 6px;
+            .ellipsis();
+            color: var(--font-1);
+          }
+        }
+
+        &:hover {
+          .navigation-item {
+            box-shadow: 0 0 5px 0 var(--theme-blue);
+          }
+        }
+      }
     }
   }
 
