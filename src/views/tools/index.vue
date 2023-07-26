@@ -22,8 +22,10 @@
         <div class="tools">
           <div class="tool-title">
             前端编程导航
-            <el-button type="primary" link @click="onSort">{{ enabled ? '关闭排序' : '开启排序' }}</el-button>
-            <el-button v-show="enabled" type="primary" link @click="onSaveSort">保存排序</el-button>
+            <div class="sort">
+              <el-button type="primary" link @click="onSort">{{ enabled ? '关闭排序' : '开启排序' }}</el-button>
+              <el-button v-show="enabled" type="primary" link @click="onSaveSort">保存排序</el-button>
+            </div>
           </div>
           <draggable
             v-model="toolsStore.toolList"
@@ -134,7 +136,9 @@ const onSaveSort = () => {
       id: i.id,
     };
   });
-  console.log(params, '保存排序', toolsStore.toolList);
+  toolsStore.updateTools({
+    sortInfo: params,
+  });
 };
 
 const onStart = () => {};
@@ -169,6 +173,9 @@ const onEnd = (state: any) => {
 
   .tools {
     .tool-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       font-size: 16px;
       font-weight: 700;
       margin-bottom: 10px;
