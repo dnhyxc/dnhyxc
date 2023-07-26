@@ -413,6 +413,7 @@ export interface ToolsItem {
   toolHref?: string;
   toolUrl: string;
   powerUsers?: { username: string; id: string }[];
+  sort?: number;
 }
 
 export interface ToolListRes {

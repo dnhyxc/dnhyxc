@@ -38,5 +38,21 @@ export const useToolsStore = defineStore('tools', {
         throw error;
       }
     },
+
+    // 更新工具
+    async updateTools(params: { sortInfo: { id: string; sort: number }[] }) {
+      try {
+        if (!useCheckUserId()) return;
+        const res = normalizeResult<ToolsItem>(await Service.updateTools(params));
+        if (res.success) {
+          ElMessage.success(res.message);
+          this.getToolList();
+        } else {
+          ElMessage.error(res.message);
+        }
+      } catch (error) {
+        return false;
+      }
+    },
   },
 });

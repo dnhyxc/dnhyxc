@@ -16,31 +16,34 @@
               :key="item.id"
               :data="item"
               :on-click="() => onClickNavIcon(item)"
-            >
-            </NavCard>
+            />
           </div>
         </div>
         <div class="tools">
-          <div class="tool-title">前端编程导航</div>
+          <div class="tool-title">
+            前端编程导航
+            <el-button type="primary" link @click="onSort">{{ enabled ? '关闭排序' : '开启排序' }}</el-button>
+            <el-button v-show="enabled" type="primary" link @click="onSaveSort">保存排序</el-button>
+          </div>
           <draggable
             v-model="toolsStore.toolList"
             item-key="id"
             draggable=".item"
             class="navigation-list"
+            ghost-class="ghost"
+            :disabled="!enabled"
             @start="onStart"
             @end="onEnd"
           >
             <template #item="{ element }">
-              <div class="item" :style="{ width: '10%' }">
-                <div :key="element.id" :style="{ display: 'inline-block', width: '100%' }">
-                  <div class="navigation-item">
-                    <div class="item-top">
-                      <Image :url="element?.toolUrl || TOOL_SVG" :transition-img="TOOL_SVG" class="prew-img" />
-                    </div>
-                    <el-tooltip effect="light" :content="element?.toolName" placement="bottom" :enterable="false">
-                      <div class="item-bottom">{{ element?.toolName }}</div>
-                    </el-tooltip>
+              <div class="item">
+                <div class="navigation-item">
+                  <div class="item-top">
+                    <Image :url="element?.toolUrl || TOOL_SVG" :transition-img="TOOL_SVG" class="prew-img" />
                   </div>
+                  <el-tooltip effect="light" :content="element?.toolName" placement="bottom" :enterable="false">
+                    <div class="item-bottom">{{ element?.toolName }}</div>
+                  </el-tooltip>
                 </div>
               </div>
             </template>
@@ -96,6 +99,8 @@ const compressVisible = ref<boolean>(false);
 const previewVisible = ref<boolean>(false);
 // 预览图片
 const previewUrls = ref<string[]>([]);
+// 控制是否开启排序
+const enabled = ref<boolean>(false);
 
 onMounted(() => {
   // 获取工具列表
@@ -114,6 +119,22 @@ const onClickNavIcon = (item: ToolsItem) => {
 // 关闭预览弹窗
 const onClose = () => {
   compressVisible.value = true;
+};
+
+// 开启排序
+const onSort = () => {
+  enabled.value = !enabled.value;
+};
+
+// 保存排序
+const onSaveSort = () => {
+  const params = toolsStore.toolList.map((i, index) => {
+    return {
+      sort: index + 1,
+      id: i.id,
+    };
+  });
+  console.log(params, '保存排序', toolsStore.toolList);
 };
 
 const onStart = () => {};
@@ -166,6 +187,12 @@ const onEnd = (state: any) => {
       border-radius: 5px;
       .clickNoSelectText();
       margin-bottom: 20px;
+
+      .ghost {
+        opacity: 0.3;
+        background: var(--theme-blue);
+        border-radius: 5px;
+      }
 
       .item {
         box-sizing: border-box;

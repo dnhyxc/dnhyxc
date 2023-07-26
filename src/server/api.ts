@@ -149,6 +149,9 @@ export const FIND_FOLLOWED = '/api/findFollowed';
 // 获取工具列表
 export const GET_TOOL_LIST = '/api/getToolList';
 
+// 更新工具
+export const UPDATE_TOOLS = '/admin/updateTools';
+
 // 添加收藏集图片
 export const ADD_ATLAS_IMAGES = '/api/addAtlasImages';
 
