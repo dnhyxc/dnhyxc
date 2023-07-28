@@ -34,8 +34,6 @@
             class="navigation-list"
             ghost-class="ghost"
             :disabled="!enabled"
-            @start="onStart"
-            @end="onEnd"
           >
             <template #item="{ element }">
               <div class="item">
@@ -139,12 +137,6 @@ const onSaveSort = () => {
   toolsStore.updateTools({
     sortInfo: params,
   });
-};
-
-const onStart = () => {};
-
-const onEnd = (state: any) => {
-  console.log(state, 'state');
 };
 </script>
 
