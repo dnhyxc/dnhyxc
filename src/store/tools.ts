@@ -46,7 +46,6 @@ export const useToolsStore = defineStore('tools', {
         const res = normalizeResult<ToolsItem>(await Service.updateTools(params));
         if (res.success) {
           ElMessage.success(res.message);
-          this.getToolList();
         } else {
           ElMessage.error(res.message);
         }

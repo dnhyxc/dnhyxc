@@ -7,18 +7,18 @@
 <template>
   <Loading :loading="toolsStore.loading" class="tools-wrap">
     <template #default>
-      <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
-        <div class="tools">
-          <div class="tool-title">资源处理</div>
-          <div class="tool-list">
-            <NavCard
-              v-for="item in [{ toolName: '图片压缩', id: `${Math.random()}`, toolUrl: COMPRESS_SVG }]"
-              :key="item.id"
-              :data="item"
-              :on-click="() => onClickNavIcon(item)"
-            />
-          </div>
+      <div class="tools">
+        <div class="tool-title">资源处理</div>
+        <div class="tool-list">
+          <NavCard
+            v-for="item in [{ toolName: '图片压缩', id: `${Math.random()}`, toolUrl: COMPRESS_SVG }]"
+            :key="item.id"
+            :data="item"
+            :on-click="() => onClickNavIcon(item)"
+          />
         </div>
+      </div>
+      <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
         <div class="tools">
           <div class="tool-title">
             前端编程导航
