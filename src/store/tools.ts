@@ -53,5 +53,20 @@ export const useToolsStore = defineStore('tools', {
         return false;
       }
     },
+
+    // 创建工具排序
+    async createToolSort(params: { sortInfo: { id: string; sort: number }[] }) {
+      try {
+        if (!useCheckUserId()) return;
+        const res = normalizeResult<ToolsItem>(await Service.createToolSort(params));
+        if (res.success) {
+          ElMessage.success(res.message);
+        } else {
+          ElMessage.error(res.message);
+        }
+      } catch (error) {
+        return false;
+      }
+    },
   },
 });

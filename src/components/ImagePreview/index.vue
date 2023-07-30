@@ -25,10 +25,10 @@
           <el-tooltip effect="light" content="重置" placement="top">
             <i class="font iconfont icon-zhongzhi1" @click="onRefresh" />
           </el-tooltip>
-          <el-tooltip effect="light" content="上一张" placement="top">
+          <el-tooltip v-if="showPrevAndNext" effect="light" content="上一张" placement="top">
             <i class="font iconfont icon-arrow-left-bold" @click="onPrev" />
           </el-tooltip>
-          <el-tooltip effect="light" content="下一张" placement="top">
+          <el-tooltip v-if="showPrevAndNext" effect="light" content="下一张" placement="top">
             <i class="font iconfont icon-arrow-right-bold" @click="onNext" />
           </el-tooltip>
         </div>
@@ -56,6 +56,7 @@ import { AtlasItemParams } from '@/typings/common';
 interface IProps {
   selectImage: AtlasItemParams;
   previewVisible: boolean;
+  showPrevAndNext?: boolean;
 }
 
 const props = defineProps<IProps>();

@@ -22,7 +22,12 @@
             </div>
             <div class="author-info">
               <div class="head-img-wrap">
-                <Image :url="authorStore.userInfo?.headUrl || HEAD_IMG" :transition-img="HEAD_IMG" class="head-img" />
+                <Image
+                  :url="authorStore.userInfo?.headUrl || HEAD_IMG"
+                  :transition-img="HEAD_IMG"
+                  class="head-img"
+                  :on-click="onPreview"
+                />
               </div>
               <div class="infos">
                 <div class="username">{{ authorStore.userInfo?.username }}</div>
@@ -110,6 +115,10 @@
             </el-tabs>
           </div>
           <ToTopIcon v-if="scrollTop >= 500" :on-scroll-to="onScrollTo" class="to-top" />
+          <ImagePreview
+            v-model:previewVisible="previewVisible"
+            :select-image="{ url: authorStore.userInfo?.headUrl || HEAD_IMG }"
+          />
         </div>
       </el-scrollbar>
     </template>
@@ -139,6 +148,7 @@ const { scrollRef, scrollTop } = useScroller();
 
 const viewMore = ref<boolean>(false);
 const isMounted = ref<boolean>(false);
+const previewVisible = ref<boolean>(false);
 const noMore = computed(() => {
   const { followList, total: followTotal } = followStore;
   const { articleList, total, timelineList, currentTabKey } = authorStore;
@@ -197,6 +207,11 @@ onUnmounted(() => {
 // 获取各tab文章列表
 const getAuthorArticles = async () => {
   await authorStore.getAuthorArticles();
+};
+
+// 预览
+const onPreview = () => {
+  previewVisible.value = true;
 };
 
 // tab 切换
@@ -312,6 +327,7 @@ const onScrollTo = (to?: number) => {
         padding: 5px;
         background-image: linear-gradient(120deg, var(--card-lg-color1) 0%, var(--card-lg-color2) 100%);
         box-shadow: 0 0 10px var(--shadow-color);
+        cursor: pointer;
 
         .head-img {
           display: block;

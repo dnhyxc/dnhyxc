@@ -134,7 +134,7 @@ const onSaveSort = () => {
       id: i.id,
     };
   });
-  toolsStore.updateTools({
+  toolsStore.createToolSort({
     sortInfo: params,
   });
 };

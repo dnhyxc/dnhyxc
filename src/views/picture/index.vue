@@ -38,7 +38,7 @@
         </div>
         <div v-if="noMore" class="no-more">没有更多了～～～</div>
         <Empty v-if="!pictureStore.loading && !pictureStore.atlasList?.length" />
-        <ImagePreview v-model:previewVisible="previewVisible" :select-image="selectImage" />
+        <ImagePreview v-model:previewVisible="previewVisible" :select-image="selectImage" show-prev-and-next />
       </el-scrollbar>
     </template>
   </Loading>

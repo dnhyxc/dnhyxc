@@ -352,6 +352,18 @@ export const updateTools = async (params: { sortInfo: { id: string; sort: number
   return res;
 };
 
+// 创建工具排序
+export const createToolSort = async (params: { sortInfo: { id: string; sort: number }[] }) => {
+  const res = await post(API.CREATE_TOOL_SORT, copeParams(params));
+  return res;
+};
+
+// 更新工具排序
+export const updateToolSort = async (params: { sortInfo: { id: string; sort: number }[] }) => {
+  const res = await post(API.UPDATE_TOOLSORT, copeParams(params));
+  return res;
+};
+
 // 添加图片集
 export const addAtlasImages = async (params: AtlasImgInfo) => {
   return await post(API.ADD_ATLAS_IMAGES, copeParams(params));

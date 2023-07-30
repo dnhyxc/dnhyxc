@@ -152,6 +152,12 @@ export const GET_TOOL_LIST = '/api/getToolList';
 // 更新工具
 export const UPDATE_TOOLS = '/admin/updateTools';
 
+// 创建工具排序
+export const CREATE_TOOL_SORT = '/admin/createToolSort';
+
+// 更新工具排序
+export const UPDATE_TOOLSORT = '/admin/updateToolSort';
+
 // 添加收藏集图片
 export const ADD_ATLAS_IMAGES = '/api/addAtlasImages';
 

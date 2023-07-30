@@ -10,7 +10,12 @@
       <div class="header">
         <div class="left">
           <div class="head-wrap">
-            <Image :url="personalStore.userInfo?.headUrl || HEAD_IMG" :transition-img="HEAD_IMG" class="head-img" />
+            <Image
+              :url="personalStore.userInfo?.headUrl || HEAD_IMG"
+              :transition-img="HEAD_IMG"
+              class="head-img"
+              :on-click="onPreview"
+            />
           </div>
         </div>
         <div class="right">
@@ -145,6 +150,10 @@
     :default-values="currentCollectValues"
     :is-edit="isEdit"
   />
+  <ImagePreview
+    v-model:previewVisible="previewVisible"
+    :select-image="{ url: personalStore.userInfo?.headUrl || HEAD_IMG }"
+  />
 </template>
 
 <script setup lang="ts">
@@ -181,6 +190,7 @@ const currentCollectValues = ref<CollectParams>({
   desc: '',
   status: '1',
 });
+const previewVisible = ref<boolean>(false);
 
 const noMore = computed(() => {
   const { articleList, total, currentTabKey } = personalStore;
@@ -340,6 +350,11 @@ const onClickLink = (href: string, name: string) => {
   }
 };
 
+// 头像预览
+const onPreview = () => {
+  previewVisible.value = true;
+};
+
 // 置顶
 const onScrollTo = (to?: number) => {
   scrollTo(scrollRef, to || 0);
@@ -375,6 +390,7 @@ const onScrollTo = (to?: number) => {
         width: 100%;
         height: 100%;
         border-radius: 5px;
+        cursor: pointer;
 
         .head-img {
           width: 100%;
@@ -385,8 +401,7 @@ const onScrollTo = (to?: number) => {
 
         :deep {
           .image-item {
-            border-top-left-radius: 5px;
-            border-top-right-radius: 5px;
+            border-radius: 5px;
           }
         }
       }

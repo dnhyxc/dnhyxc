@@ -6,11 +6,7 @@
 -->
 <template>
   <div class="upload-wrap">
-    <el-dialog v-model="previewVisible" title="图片预览" width="500px">
-      <div class="preview-dialog">
-        <img :src="filePath" alt="" class="prew-img" />
-      </div>
-    </el-dialog>
+    <ImagePreview v-model:previewVisible="previewVisible" :select-image="{ url: filePath }" />
     <el-upload
       v-if="!filePath || !showImg"
       class="uploader"
