@@ -39,21 +39,6 @@ export const useToolsStore = defineStore('tools', {
       }
     },
 
-    // 更新工具
-    async updateTools(params: { sortInfo: { id: string; sort: number }[] }) {
-      try {
-        if (!useCheckUserId()) return;
-        const res = normalizeResult<ToolsItem>(await Service.updateTools(params));
-        if (res.success) {
-          ElMessage.success(res.message);
-        } else {
-          ElMessage.error(res.message);
-        }
-      } catch (error) {
-        return false;
-      }
-    },
-
     // 创建工具排序
     async createToolSort(params: { sortInfo: { id: string; sort: number }[] }) {
       try {

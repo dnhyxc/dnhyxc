@@ -346,12 +346,6 @@ export const getToolList = async (type: string) => {
   return await post(API.GET_TOOL_LIST, copeParams({ type }));
 };
 
-// 更新工具
-export const updateTools = async (params: { sortInfo: { id: string; sort: number }[] }) => {
-  const res = await post(API.UPDATE_TOOLS, copeParams(params));
-  return res;
-};
-
 // 创建工具排序
 export const createToolSort = async (params: { sortInfo: { id: string; sort: number }[] }) => {
   const res = await post(API.CREATE_TOOL_SORT, copeParams(params));
