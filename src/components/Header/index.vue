@@ -61,7 +61,14 @@
         </el-input>
       </div>
       <div v-if="route.path === '/picture'" class="upload">
-        <Upload :preview="false" :show-img="false" :fixed-number="[800, 320]" is-atlas :need-cropper="false">
+        <Upload
+          multiple
+          is-atlas
+          :preview="false"
+          :show-img="false"
+          :fixed-number="[800, 320]"
+          :need-cropper="false"
+        >
           <el-tooltip effect="light" content="上传图片" placement="bottom">
             <i class="font iconfont icon-upload" />
           </el-tooltip>

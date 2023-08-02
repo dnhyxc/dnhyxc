@@ -41,7 +41,7 @@ export const usePictureStore = defineStore('picture', {
     // 添加图片
     async addAtlasImages(url: string, file: Blob) {
       this.loading = true;
-      const res = normalizeResult<{ url: string }>(
+      const res = normalizeResult<AtlasItemParams>(
         await Service.addAtlasImages({
           url,
           size: file.size,
@@ -51,8 +51,11 @@ export const usePictureStore = defineStore('picture', {
       );
       this.loading = null;
       if (res.success) {
-        this.clearAtlasInfo();
-        this.getAtlasList();
+        const findOne = this.atlasList.find((i) => i.id === res.data.id);
+        // 如果存在则不添加
+        if (!findOne) {
+          this.atlasList = [res.data, ...this.atlasList];
+        }
       } else {
         ElMessage({
           message: res.message,

@@ -10,6 +10,7 @@
     <el-upload
       v-if="!filePath || !showImg"
       class="uploader"
+      :multiple="multiple"
       :show-file-list="false"
       :before-upload="beforeUpload"
       :http-request="onUpload"
@@ -84,6 +85,7 @@ interface IProps {
   needCropper?: boolean;
   delete?: boolean; // 控制点击删除图标时，是否删除数据库中的图片
   isAtlas?: boolean; // 是否是图片集上传
+  multiple?: boolean; // 是否支持多文件上传
 }
 
 const props = withDefaults(defineProps<IProps>(), {
@@ -95,6 +97,7 @@ const props = withDefaults(defineProps<IProps>(), {
   needCropper: true,
   delete: false,
   isAtlas: false,
+  multiple: false,
 });
 
 const emit = defineEmits(['update:filePath']);
