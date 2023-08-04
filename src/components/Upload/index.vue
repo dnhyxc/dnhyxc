@@ -211,7 +211,7 @@ const onUpload = async (event: { file: Blob }) => {
 
 // 放大
 const onScaleMax = () => {
-  if (scaleNum.value > 2) return;
+  if (scaleNum.value > 5) return;
   scaleNum.value += 0.2;
   cropper.value.changeScale(scaleNum.value);
 };
