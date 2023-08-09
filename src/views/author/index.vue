@@ -282,7 +282,6 @@ const onScrollTo = (to?: number) => {
   height: 100%;
   padding-left: 4px;
   padding-right: 3px;
-  width: calc(100% - 8px);
 
   .cover {
     width: 100%;
@@ -290,10 +289,11 @@ const onScrollTo = (to?: number) => {
     background-image: linear-gradient(225deg, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
     border-radius: 5px;
     padding-bottom: 20px;
+    margin-top: 2px;
 
     .img-wrap {
       width: 100%;
-      height: 200px;
+      height: 198px;
 
       .cover-img {
         width: 100%;

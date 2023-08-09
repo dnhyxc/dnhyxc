@@ -29,9 +29,11 @@ export const usePictureStore = defineStore('picture', {
       if (!useCheckUserId()) return;
       if (this.atlasList.length !== 0 && this.atlasList.length >= this.total) return;
       this.pageNo = this.pageNo + 1;
+      this.loading = true;
       const res = normalizeResult<AtlasList>(
         await Service.getAtlasList({ pageNo: this.pageNo, pageSize: this.pageSize }),
       );
+      this.loading = false;
       if (res.success) {
         this.atlasList = [...this.atlasList, ...res.data.list];
         this.total = res.data.total;
@@ -40,7 +42,6 @@ export const usePictureStore = defineStore('picture', {
 
     // 添加图片
     async addAtlasImages(url: string, file: Blob) {
-      this.loading = true;
       const res = normalizeResult<AtlasItemParams>(
         await Service.addAtlasImages({
           url,
@@ -49,7 +50,6 @@ export const usePictureStore = defineStore('picture', {
           type: file.type,
         }),
       );
-      this.loading = null;
       if (res.success) {
         const findOne = this.atlasList.find((i) => i.id === res.data.id);
         // 如果存在则不添加
@@ -67,9 +67,7 @@ export const usePictureStore = defineStore('picture', {
 
     // 删除图片集列表
     async deleteAtlasImages({ id, url }: { id: string; url: string }) {
-      this.loading = true;
       const res = normalizeResult<{ url: string }>(await Service.deleteAtlasImages({ id, url }));
-      this.loading = null;
       if (res.success) {
         this.clearAtlasInfo();
         this.getAtlasList();

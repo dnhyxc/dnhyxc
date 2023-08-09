@@ -175,6 +175,7 @@ const onScrollTo = () => {
     padding: 18px 10px 10px;
     box-shadow: 0 0 8px 0 var(--shadow-mack);
     background-color: var(--pre-hover-bg);
+    margin-top: 3px;
   }
 
   .comments-wrap {
@@ -185,6 +186,7 @@ const onScrollTo = () => {
     box-shadow: 0 0 8px 0 var(--shadow-mack);
     background-color: var(--pre-hover-bg);
     margin-left: 10px;
+    margin-top: 3px;
     border-radius: 5px;
 
     .title {

@@ -5,7 +5,7 @@
       v-model.trim="createStore.createInfo.content"
       placeholder="编辑内容"
       autofocus
-      :height="height || 'calc(100vh - 79px)'"
+      :height="height || 'calc(100vh - 84px)'"
       :disabled-menus="[]"
       left-toolbar="undo redo | h bold italic | quote code | strikethrough hr | emoji link image | ul ol table | clear | draft | save | create"
       :toolbar="toolbar"
@@ -71,7 +71,7 @@ interface IProps {
 
 const props = withDefaults(defineProps<IProps>(), {
   articleId: '',
-  height: 'calc(100vh - 77px)',
+  height: '100%',
   onPublish: () => {},
   onClear: () => {},
   onShowDraft: () => {},
@@ -149,6 +149,8 @@ const onCopyCodeSuccess = (value: string) => {
 @import '@/styles/index.less';
 
 .container {
+  margin-top: 3px;
+
   :deep {
     .v-md-editor {
       background-color: var(--fff);

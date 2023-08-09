@@ -65,12 +65,13 @@ const onClick = (menu: MenuListParams) => {
 
 .setting-wrap {
   box-sizing: border-box;
-  height: calc(100vh - 76px);
+  height: calc(100vh - 82px);
   overflow: hidden;
   border-radius: 5px;
   background-color: var(--pre-hover-bg);
   padding-left: 4px;
   width: calc(100% - 3px);
+  margin-top: 2px;
 
   .menu {
     display: flex;
@@ -120,7 +121,7 @@ const onClick = (menu: MenuListParams) => {
 
   .content {
     box-sizing: border-box;
-    height: calc(100vh - 112px);
+    height: calc(100vh - 116px);
     border-left: 1px solid var(--card-border);
     border-right: 1px solid var(--card-border);
     border-bottom: 1px solid var(--card-border);

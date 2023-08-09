@@ -60,20 +60,6 @@
           </template>
         </el-input>
       </div>
-      <div v-if="route.path === '/picture'" class="upload">
-        <Upload
-          multiple
-          is-atlas
-          :preview="false"
-          :show-img="false"
-          :fixed-number="[800, 320]"
-          :need-cropper="false"
-        >
-          <el-tooltip effect="light" content="上传图片" placement="bottom">
-            <i class="font iconfont icon-upload" />
-          </el-tooltip>
-        </Upload>
-      </div>
       <el-popover
         v-if="loginStore.userInfo?.userId"
         v-model:visible="messageStore.visible"
@@ -348,7 +334,7 @@ const onDeleteAll = async () => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 35px;
+  height: 38px;
   padding: 10px 22px 10px 12px;
   -webkit-app-region: drag;
 
@@ -497,21 +483,6 @@ const onDeleteAll = async () => {
 
       .active {
         color: @sub-2-blue;
-      }
-    }
-
-    .upload {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      -webkit-app-region: no-drag;
-
-      .font {
-        font-size: 18px;
-        margin-left: 15px;
-        cursor: pointer;
-        margin-top: -2px;
-        color: var(--font-color);
       }
     }
 

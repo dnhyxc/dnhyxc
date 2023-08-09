@@ -368,9 +368,10 @@ const onScrollTo = (to?: number) => {
   display: flex;
   flex-direction: column;
   width: 100%;
-  height: 100%;
+  height: calc(100% - 2px);
   padding-left: 4px;
   padding-right: 3px;
+  margin-top: 2px;
   width: calc(100% - 8px);
 
   .header {

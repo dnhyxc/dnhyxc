@@ -37,7 +37,7 @@ import WordCloud from '@/components/WordCloud/index.vue';
 const router = useRouter();
 const { scrollChildRef, scrollChildTop } = useChildScroller();
 
-onMounted(async () => {
+onMounted(() => {
   // 获取标签信息
   tagStore.getTags();
 });
@@ -69,12 +69,13 @@ const onCheckTag = (tag: string) => {
   box-sizing: border-box;
   padding-left: 5px;
   width: calc(100% - 4px);
-  height: 100%;
+  height: calc(100% - 2px);
   border-radius: 5px;
 
   .word-cloud-wrap {
     box-sizing: border-box;
     flex: 1;
+    margin-top: 3px;
     box-shadow: 0 0 8px 0 var(--shadow-mack);
     border-radius: 5px;
     background-color: var(--pre-hover-bg);
@@ -86,7 +87,9 @@ const onCheckTag = (tag: string) => {
     box-sizing: border-box;
     margin-left: 10px;
     padding: 10px 0;
+    margin-top: 3px;
     width: 220px;
+    height: 100%;
     box-shadow: 0 0 8px 0 var(--shadow-mack);
     border-radius: 5px;
     background-color: var(--pre-hover-bg);
