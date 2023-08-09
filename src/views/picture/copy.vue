@@ -16,10 +16,21 @@
           :infinite-scroll-distance="2"
           class="pullup-content"
         >
-          <div
+          <div v-if="pictureStore.atlasList.length > 0" class="img-list">
+            <div v-for="(item, index) in pictureStore.atlasList" :key="index" class="img-item">
+              <div class="download-btn del-btn" @click="onDownload(item)">
+                <i class="iconfont icon-xiazai1" />
+              </div>
+              <div class="del-btn" @click="onDeleteImage(item)">
+                <i class="iconfont icon-shanchu" />
+              </div>
+              <Image :url="item.url || IMG1" :transition-img="IMG1" class="prew-img" :on-click="onPreview" />
+            </div>
+          </div>
+          <!-- <div
             v-if="pictureStore.atlasList.length > 0"
             v-masonry
-            transition-duration="0.2s"
+            transition-duration="0s"
             fit-width="true"
             item-selector=".img-item"
             class="img-list"
@@ -33,7 +44,7 @@
               </div>
               <img :src="item.url" alt="http://43.143.27.249:9216" class="img" @click="onPreview(item)" />
             </div>
-          </div>
+          </div> -->
           <ToTopIcon v-if="scrollTop >= 500" :on-scroll-to="onScrollTo" />
         </div>
         <div v-if="noMore" class="no-more">没有更多了～～～</div>
@@ -50,6 +61,7 @@ import { useScroller } from '@/hooks';
 import { pictureStore } from '@/store';
 import { scrollTo, debounce, onDownloadFile } from '@/utils';
 import { AtlasItemParams } from '@/typings/common';
+import { IMG1 } from '@/constant';
 
 const { scrollRef, scrollTop } = useScroller();
 
@@ -134,16 +146,34 @@ const onScrollTo = () => {
   }
 
   .img-list {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
     margin: 0 auto;
     width: 100%;
 
     .img-item {
+      display: flex;
+      align-items: center;
+      justify-content: center;
       position: relative;
-      width: 100%;
-      max-width: 180px;
-      margin: 0.2em;
+      width: 200px;
+      height: 200px;
+      margin: 5px;
       border-radius: 5px;
+      box-shadow: 0 0 5px 0 var(--card-shadow);
       cursor: pointer;
+
+      .prew-img {
+        display: block;
+
+        :deep {
+          .image-item {
+            max-height: 200px;
+            border-radius: 5px;
+          }
+        }
+      }
 
       &:hover {
         .del-btn {
