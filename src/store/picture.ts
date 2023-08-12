@@ -66,8 +66,23 @@ export const usePictureStore = defineStore('picture', {
     },
 
     // 删除图片集列表
-    async deleteAtlasImages({ id, url }: { id: string; url: string }) {
+    async deleteAtlasImages({ id, url }: { id: string | string[]; url?: string }) {
       const res = normalizeResult<{ url: string }>(await Service.deleteAtlasImages({ id, url }));
+      if (res.success) {
+        this.clearAtlasInfo();
+        this.getAtlasList();
+      } else {
+        ElMessage({
+          message: res.message,
+          type: 'error',
+          offset: 80,
+        });
+      }
+    },
+
+    // 更新图片信息
+    async updateImagesInfo(params: { id: string; fileName: string }) {
+      const res = normalizeResult<{ count: number }>(await Service.updateFileInfo(params));
       if (res.success) {
         this.clearAtlasInfo();
         this.getAtlasList();

@@ -191,7 +191,7 @@ const onQuit = () => {
       font-size: 31px;
     }
 
-    .icon-fenlei2 {
+    .icon-imgs {
       font-size: 30px;
     }
   }
@@ -261,7 +261,7 @@ const onQuit = () => {
       line-height: 37px;
     }
 
-    .icon-fenlei2 {
+    .icon-imgs {
       font-size: 38px;
     }
   }

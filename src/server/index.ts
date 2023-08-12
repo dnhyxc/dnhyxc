@@ -369,6 +369,11 @@ export const getAtlasList = async ({ pageNo, pageSize }: { pageNo: number; pageS
 };
 
 // 删除图片集列表
-export const deleteAtlasImages = async ({ id, url }: { id: string; url: string | string[] }) => {
+export const deleteAtlasImages = async ({ id, url }: { id: string | string[]; url?: string | string[] }) => {
   return await post(API.DELETE_ATLAS_IMAGES, copeParams({ id, url }));
+};
+
+// 更新图片信息
+export const updateFileInfo = async (params: { id: string; fileName: string }) => {
+  return await post(API.UPDATE_FILE_INFO, copeParams(params));
 };

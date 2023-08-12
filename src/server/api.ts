@@ -163,3 +163,6 @@ export const GET_ATLAS_LIST = '/api/getAtlasList';
 
 // 删除收藏集图片
 export const DELETE_ATLAS_IMAGES = '/api/deleteAtlasImages';
+
+// 更新收藏集图片信息
+export const UPDATE_FILE_INFO = '/api/updateFileInfo';

@@ -349,9 +349,9 @@ export const MENULIST = [
     name: '图片合集',
     key: 'picture',
     path: '/picture',
-    icon: 'icon-fenlei2',
-    fillIcon: 'icon-fenlei2',
-    active: 'icon-fenlei2',
+    icon: 'icon-imgs',
+    fillIcon: 'icon-imgs',
+    active: 'icon-imgs',
     authorWiew: true,
   },
   {
