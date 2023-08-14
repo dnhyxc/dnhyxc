@@ -340,9 +340,9 @@ export const MENULIST = [
     name: '实用工具',
     key: 'tools',
     path: '/tools',
-    icon: 'icon-ego-box',
-    fillIcon: 'icon-ego-box',
-    active: 'icon-ego-box',
+    icon: 'icon-tool',
+    fillIcon: 'icon-tool',
+    active: 'icon-tool',
     show: false,
   },
   {

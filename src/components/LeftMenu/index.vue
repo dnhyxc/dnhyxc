@@ -188,7 +188,7 @@ const onQuit = () => {
     }
 
     .tools {
-      font-size: 31px;
+      font-size: 27px;
     }
 
     .icon-imgs {
@@ -256,13 +256,11 @@ const onQuit = () => {
     }
 
     .tools {
-      font-size: 38px;
-      height: 37px;
-      line-height: 37px;
+      font-size: 32px;
     }
 
     .icon-imgs {
-      font-size: 38px;
+      font-size: 31px;
     }
   }
 }

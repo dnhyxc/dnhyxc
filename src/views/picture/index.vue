@@ -5,7 +5,11 @@
  * index.vue
 -->
 <template>
-  <Loading :key="winSize" :loading="pictureStore.loading" class="atlas-wrap">
+  <Loading
+    :key="winSize"
+    :loading="pictureStore.loading"
+    :class="`${checkOS() === 'mac' && 'mac-atlas-wrap'} atlas-wrap`"
+  >
     <template #default>
       <div class="atlas-header-wrap">
         <div class="upload-btn">
@@ -92,7 +96,7 @@
 import { onMounted, onUnmounted, ref, computed } from 'vue';
 import { useScroller } from '@/hooks';
 import { pictureStore } from '@/store';
-import { scrollTo, debounce, onDownloadFile, Message } from '@/utils';
+import { scrollTo, debounce, onDownloadFile, Message, checkOS } from '@/utils';
 import { AtlasItemParams } from '@/typings/common';
 import { IMG1 } from '@/constant';
 import RenameModal from './RenameModal';
@@ -387,6 +391,20 @@ const onScrollTo = () => {
     padding-top: 15px;
     padding-bottom: 15px;
     color: var(--font-4);
+  }
+}
+
+.mac-atlas-wrap {
+  .img-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(242px, 1fr));
+    justify-content: center; /* 水平居中 */
+    padding: 0 6px;
+    // grid-gap: 1px 0; /* 可以设置相应的间距 */
+
+    .img-item-wrap {
+      width: 244px;
+    }
   }
 }
 </style>
