@@ -385,6 +385,13 @@ export const MENULIST = [
     show: false,
     hide: true,
   },
+  {
+    name: '收藏集',
+    key: 'collect',
+    path: '/collect',
+    show: false,
+    hide: true,
+  },
 ];
 
 // 需要登陆权限的路由
