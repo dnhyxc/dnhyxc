@@ -290,7 +290,7 @@ const onScrollTo = () => {
         border-radius: 5px;
         padding: 2px 5px 5px;
         box-sizing: border-box;
-        box-shadow: 0 0 5px 0 var(--card-shadow);
+        box-shadow: 0 0 5px 0 var(--shadow-mack);
         background-image: linear-gradient(to top, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
 
         .header {
