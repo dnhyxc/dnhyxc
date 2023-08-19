@@ -6,7 +6,7 @@
 -->
 <template>
   <div class="system-wrap">
-    <div class="shortcuts">
+    <div v-if="checkOS() !== 'mac'" class="shortcuts">
       <div class="label label-shortcut">
         快捷键
         <span class="restore-btn" @click="onRestoreShortcutKeys">恢复默认设置</span>
@@ -90,7 +90,7 @@ import { ipcRenderer } from 'electron';
 import Store from 'electron-store';
 import { ref, Directive, DirectiveBinding, nextTick, onMounted, watch } from 'vue';
 import { STSTEM_CONFIG, SHORTCUT_KEYS, CLOSE_CONFIG, OPEN_CONFIG, INIT_SHOTCUT_KEYS, MSG_STATUS } from '@/constant';
-import { setShortcutKey, ipcRenderers } from '@/utils';
+import { setShortcutKey, ipcRenderers, checkOS } from '@/utils';
 import { messageStore } from '@/store';
 import { ElMessage } from 'element-plus';
 
