@@ -89,6 +89,8 @@ const validatePassword = (rule: any, value: any, callback: any) => {
 };
 
 const validateCode = (rule: any, value: any, callback: any) => {
+  // 开发环境不进行校验
+  if (import.meta.env.DEV) return true;
   const { msg, status } = verifyCode(value, charater.value);
   if (value === '') {
     callback(new Error('验证码不能为空'));
