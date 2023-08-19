@@ -36,7 +36,7 @@
             :disabled="!enabled"
           >
             <template #item="{ element }">
-              <div class="item">
+              <div class="item" @click="onClickNavIcon(element)">
                 <div class="navigation-item">
                   <div class="item-top">
                     <Image :url="element?.toolUrl || TOOL_SVG" :transition-img="TOOL_SVG" class="prew-img" />

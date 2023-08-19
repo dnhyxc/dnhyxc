@@ -228,7 +228,7 @@ const onScrollTo = (height?: number) => {
     width: 30%;
     box-sizing: border-box;
     border-radius: 5px;
-    max-height: calc(100vh - 79px);
+    max-height: calc(100vh - 82px);
 
     .toc-list {
       box-sizing: border-box;

@@ -188,11 +188,11 @@ const onQuit = () => {
     }
 
     .tools {
-      font-size: 27px;
+      font-size: 26px;
     }
 
     .icon-imgs {
-      font-size: 30px;
+      font-size: 26px;
     }
   }
 

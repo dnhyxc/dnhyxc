@@ -82,6 +82,8 @@ const toTag = (name: string) => {
   margin-bottom: 10px;
   padding: 0 0 10px 0;
   border-radius: 5px;
+  box-sizing: border-box;
+  padding-right: 1px;
 
   :deep {
     .el-carousel__mask {

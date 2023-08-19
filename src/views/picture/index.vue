@@ -26,7 +26,9 @@
             @change="onSelectAll"
           />
           <el-button type="primary" link class="delete-btn select-all" @click="onSelectAll">全选</el-button>
-          <el-button type="danger" link class="delete-btn" @click="onDeleteAll">批量删除</el-button>
+          <el-button type="danger" link :disabled="!selectedImageIds.length" class="delete-btn" @click="onDeleteAll"
+            >批量删除</el-button
+          >
         </div>
       </div>
       <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
@@ -64,12 +66,6 @@
                         </el-dropdown-menu>
                       </template>
                     </el-dropdown>
-                    <!-- <div class="download-btn del-btn" @click="onDownload(item)">
-                      <i class="iconfont icon-xiazai1" />
-                    </div>
-                    <div class="del-btn" @click="onDeleteImage(item)">
-                      <i class="iconfont icon-shanchu" />
-                    </div> -->
                   </div>
                 </div>
                 <Image
@@ -294,7 +290,7 @@ const onScrollTo = () => {
         border-radius: 5px;
         padding: 2px 5px 5px;
         box-sizing: border-box;
-        box-shadow: 0 0 5px 0 var(--card-shadow);
+        box-shadow: 0 0 5px 0 var(--shadow-mack);
         background-image: linear-gradient(to top, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
 
         .header {
