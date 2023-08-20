@@ -1,4 +1,4 @@
-import { IMG1, IMG2, IMG3, IMG4, HEAD_IMG, CYWL } from '@/constant';
+import { IMG1, IMG2, IMG3, IMG4, HEAD_IMG, CYWL, CLOUD } from '@/constant';
 
 // 公共字体设置
 const fontStyle = {
@@ -414,6 +414,53 @@ const girl = {
   '--login-bg-img': 'url(@/assets/images/cywl.jpg)',
 };
 
+// 云间
+const cloud = {
+  ...imageStyles,
+  '--bg-image-url': `url(${CLOUD})`,
+  '--backdrop-filter': 'blur(0px)',
+  '--font-1': '#000',
+  '--font-2': '#000',
+  '--font-3': '#000',
+  '--font-4': '#000',
+  '--font-5': '#333',
+  '--font-6': '#333',
+  // 文章预览背景图片
+  '--pre-hover-bg': 'rgba(255, 255, 242, 0.5)',
+  '--pre-bg-color': 'rgb(255, 255, 255, 0.3)',
+  // 文章各种卡片渐变颜色
+  '--bg-lg-color1': 'rgba(245, 250, 248, 0.25)',
+  '--bg-lg-color2': 'rgba(255, 255, 242, 0.85)',
+  // 时间轴背景颜色
+  '--timeline-lg-color1': 'rgba(255, 255, 242, 0.85)',
+  '--timeline-lg-color2': 'rgba(245, 250, 248, 0.25)',
+  // 各组件阴影颜色
+  '--shadow-color': 'rgba(255, 255, 242, 0.5)',
+  '--shadow-mack': 'rgba(205, 205, 205, 0.85)',
+  // '--shadow-mack': 'rgba(255, 255, 242, 0.85)',
+  '--fff': 'rgba(255, 255, 242, 0.5)',
+  '--e-edit-color': '#000',
+  '--layer-2-2': 'rgba(255, 255, 242, 0.5)',
+  '--input-bg-color': 'rgba(255, 255, 242, 0.5)',
+  // 弹窗before背景颜色
+  '--pop-before-bg-color': 'rgb(255, 255, 228, 0.35)',
+  '--shade-3': 'rgba(255, 255, 242, 0.5)',
+  '--tab-color': 'rgba(232, 229, 218, 0.5)',
+  '--card-action-font-color': '#000',
+  '--card-border': 'rgba(182, 182, 182, 0.5)',
+  '--modal-bg-color': 'rgb(223, 223, 223, 0.8)',
+  '--to-top-bg-color': 'rgba(255, 255, 242, 0.65)',
+  '--pop-menu-color': 'rgba(255, 255, 242, 0.85)',
+  '--h-color': '#089220',
+  // 行内 code 字体颜色
+  '--p-code-color': '#0f6600',
+  // 行内 code 背景颜色
+  '--p-code-bg-color': 'rgba(255, 255, 242, 0.5)',
+  // loading 背景颜色
+  '--loading-color': 'rgba(255, 255, 255, 0.5)',
+  '--login-bg-img': 'url(@/assets/images/cywl.jpg)',
+};
+
 const themeTypes = {
   freshGreen,
   black,
@@ -428,6 +475,7 @@ const themeTypes = {
   girl,
   danQingHuang,
   danQingZi,
+  cloud,
 };
 
 // 设置背景颜色

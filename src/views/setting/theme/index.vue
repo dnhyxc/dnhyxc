@@ -191,6 +191,11 @@ const changeTheme = (key: string) => {
           .bgStyles;
           color: @fff;
         }
+        .cloud {
+          background-image: url('@/assets/images/cloud.jpeg');
+          .bgStyles;
+          color: @font-1;
+        }
 
         .active {
           box-shadow: 0 0 10px @theme-blue;

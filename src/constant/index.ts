@@ -11,6 +11,7 @@ import IMG2 from '@/assets/images/2.png';
 import IMG3 from '@/assets/images/3.jpg';
 import IMG4 from '@/assets/images/4.jpg';
 import CYWL from '@/assets/images/cywl.jpg';
+import CLOUD from '@/assets/images/cloud.jpeg';
 import * as API from '@/server/api';
 import GITHUB_SVG from '@/assets/svg/github.svg';
 import COMPRESS_SVG from '@/assets/svg/compress.svg';
@@ -30,6 +31,7 @@ export {
   IMG3,
   IMG4,
   CYWL,
+  CLOUD,
   GITHUB_SVG,
   COMPRESS_SVG,
   TOOL_SVG,
@@ -146,6 +148,10 @@ export const THEME_TYPES = [
 
 // 背景图片主题
 export const IMG_THEME_TYPES = [
+  {
+    key: 'cloud',
+    name: '云间',
+  },
   {
     key: 'girl',
     name: '古风',
