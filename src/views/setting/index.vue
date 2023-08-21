@@ -69,8 +69,8 @@ const onClick = (menu: MenuListParams) => {
   overflow: hidden;
   border-radius: 5px;
   background-color: var(--pre-hover-bg);
-  padding-left: 4px;
-  width: calc(100% - 3px);
+  margin-left: 4px;
+  width: calc(100% - 7px);
   margin-top: 2px;
 
   .menu {
@@ -131,7 +131,7 @@ const onClick = (menu: MenuListParams) => {
 }
 
 .mac-setting-wrap {
-  height: calc(100vh - 86px);
+  height: calc(100vh - 90px);
 
   .content {
     height: calc(100vh - 122px);

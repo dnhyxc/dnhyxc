@@ -237,10 +237,10 @@ const onQuit = () => {
 }
 
 .mac-left-menu-wrap {
-  padding-top: 28px;
+  padding-top: 15px;
   width: 62px;
   box-sizing: border-box;
-  height: calc(100vh - 88px);
+  height: calc(100vh - 95px);
 
   .icon-wrap {
     .page-icon {
