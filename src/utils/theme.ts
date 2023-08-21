@@ -25,7 +25,7 @@ const removeStyle = {
   '--pre-hover-bg': 'initial',
   // 右键菜单背景颜色
   '--shade-2': 'transparent',
-  // 右键菜单背景颜色
+  // 文章说明背景颜色
   '--shade-3': 'transparent',
   // 卡片操作字体颜色
   '--card-action-font-color': '#57a0ff',
@@ -128,7 +128,7 @@ const imageStyles = {
   '--pre-hover-bg': 'rgba(0, 0, 0, 0.15)',
   // 右键菜单背景颜色
   '--shade-2': 'rgba(0, 0, 0, 0.3)',
-  // 右键菜单背景颜色
+  // 文章说明背景颜色
   '--shade-3': 'rgba(0, 0, 0, 0.1)',
   // 卡片操作字体颜色
   '--card-action-font-color': '#fff',
@@ -397,7 +397,6 @@ const girl = {
   '--input-bg-color': 'rgba(255, 255, 242, 0.5)',
   // 弹窗before背景颜色
   '--pop-before-bg-color': 'rgb(255, 255, 228, 0.35)',
-  '--shade-3': 'rgba(255, 255, 242, 0.5)',
   '--tab-color': 'rgba(232, 229, 218, 0.5)',
   '--card-action-font-color': '#000',
   '--card-border': 'rgba(182, 182, 182, 0.5)',
@@ -442,15 +441,16 @@ const cloud = {
   '--e-edit-color': '#000',
   '--layer-2-2': 'rgba(255, 255, 255, 0.3)',
   '--input-bg-color': 'rgba(255, 255, 255, 0.5)',
-  '--shade-3': 'rgba(255, 255, 242, 0.5)',
+  // 文章说明背景颜色
+  '--shade-3': 'rgba(255, 255, 255, 0.3)',
   '--tab-color': 'rgba(255, 255, 255, 0.5)',
   '--card-action-font-color': '#000',
   '--card-border': 'rgba(182, 182, 182, 0.5)',
   '--modal-bg-color': 'rgb(255, 255, 255, 0.5)',
   // 弹窗before背景颜色
   '--pop-before-bg-color': 'rgb(255, 255, 255, 0.3)',
-  '--to-top-bg-color': 'rgba(255, 255, 242, 0.65)',
-  '--pop-menu-color': 'rgba(255, 255, 242, 0.85)',
+  '--to-top-bg-color': 'rgba(255, 255, 255, 0.8)',
+  '--pop-menu-color': 'rgba(255, 255, 255, 0.85)',
   '--h-color': '#089220',
   // 行内 code 字体颜色
   '--p-code-color': '#0f6600',

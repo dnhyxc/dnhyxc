@@ -99,6 +99,8 @@ const onCopyCodeSuccess = (value: string) => {
       blockquote {
         color: var(--font-5);
         background: var(--shade-3);
+        border-left: 4px solid var(--active-color);
+        border-radius: 5px;
       }
 
       code {

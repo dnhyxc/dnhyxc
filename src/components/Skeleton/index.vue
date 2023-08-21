@@ -69,8 +69,8 @@ const showType = computed(() => {
   .header {
     display: flex;
     justify-content: space-between;
-    padding: 0 20px 0 10px;
-    height: 55px;
+    padding: 0 27px 0 10px;
+    height: 60px;
     box-sizing: border-box;
     -webkit-app-region: drag;
     cursor: pointer;
@@ -148,7 +148,7 @@ const showType = computed(() => {
       justify-content: space-between;
       width: 60px;
       padding-top: 40px;
-      padding-bottom: 20px;
+      padding-bottom: 25px;
 
       .menus {
         flex: 1;
@@ -179,8 +179,8 @@ const showType = computed(() => {
       display: flex;
       flex-direction: column;
       flex: 1;
-      padding-right: 15px;
-      padding-bottom: 15px;
+      padding-right: 22px;
+      padding-bottom: 20px;
 
       .carousel {
         padding: 0 5px;
