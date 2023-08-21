@@ -96,6 +96,12 @@ const onCopyCodeSuccess = (value: string) => {
       background-color: transparent;
       color: var(--font-2);
 
+      .v-md-pre-wrapper:before {
+        color: var(--font-6);
+        top: 2px;
+        right: 8px;
+      }
+
       blockquote {
         color: var(--font-5);
         background: var(--shade-3);

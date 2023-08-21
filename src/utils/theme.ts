@@ -10,6 +10,16 @@ const fontStyle = {
   '--font-6': '#f2f3f5',
 };
 
+// img 主题字体颜色
+const imgThemeColor = {
+  '--font-1': '#000',
+  '--font-2': '#111',
+  '--font-3': '#222',
+  '--font-4': '#333',
+  '--font-5': '#555',
+  '--font-6': '#888',
+};
+
 // 公共需要去除的样式
 const removeStyle = {
   '--bg-animation': 'none',
@@ -372,12 +382,7 @@ const girl = {
   ...imageStyles,
   '--bg-image-url': `url(${CYWL})`,
   '--backdrop-filter': 'blur(0px)',
-  '--font-1': '#000',
-  '--font-2': '#000',
-  '--font-3': '#000',
-  '--font-4': '#000',
-  '--font-5': '#333',
-  '--font-6': '#333',
+  ...imgThemeColor,
   // 文章预览背景图片
   '--pre-hover-bg': 'rgba(255, 255, 242, 0.5)',
   '--pre-bg-color': 'rgb(255, 255, 242, 0.65)',
@@ -418,12 +423,7 @@ const cloud = {
   ...imageStyles,
   '--bg-image-url': `url(${CLOUD})`,
   '--backdrop-filter': 'blur(0px)',
-  '--font-1': '#000',
-  '--font-2': '#000',
-  '--font-3': '#000',
-  '--font-4': '#000',
-  '--font-5': '#333',
-  '--font-6': '#333',
+  ...imgThemeColor,
   // 文章预览背景图片
   '--pre-hover-bg': 'rgba(255, 255, 255, 0.3)',
   '--pre-bg-color': 'rgb(255, 255, 255, 0.35)',
@@ -436,7 +436,6 @@ const cloud = {
   // 各组件阴影颜色
   '--shadow-color': 'rgba(255, 255, 242, 0.5)',
   '--shadow-mack': 'rgba(205, 205, 205, 0.5)',
-  // '--shadow-mack': 'rgba(255, 255, 242, 0.85)',
   '--fff': 'rgba(255, 255, 255, 0.3)',
   '--e-edit-color': '#000',
   '--layer-2-2': 'rgba(255, 255, 255, 0.3)',
