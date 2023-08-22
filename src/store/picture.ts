@@ -52,7 +52,6 @@ export const usePictureStore = defineStore('picture', {
       );
 
       if (res.success) {
-        console.log(res, 'res>>>resa', res.code === 201);
         if (res.code === 201) return;
         this.atlasList = [res.data, ...this.atlasList];
       } else {

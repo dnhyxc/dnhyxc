@@ -395,7 +395,6 @@ const girl = {
   // 各组件阴影颜色
   '--shadow-color': 'rgba(255, 255, 242, 0.5)',
   '--shadow-mack': 'rgba(205, 205, 205, 0.85)',
-  // '--shadow-mack': 'rgba(255, 255, 242, 0.85)',
   '--fff': 'rgba(255, 255, 242, 0.5)',
   '--e-edit-color': '#000',
   '--layer-2-2': 'rgba(255, 255, 242, 0.5)',
@@ -453,7 +452,6 @@ const cloud = {
   '--h-color': '#089220',
   // 行内 code 字体颜色
   '--p-code-color': '#0f6600',
-  // 行内 code 背景颜色
   '--p-code-bg-color': 'rgba(255, 255, 242, 0.5)',
   // loading 背景颜色
   '--loading-color': 'rgba(255, 255, 255, 0.5)',

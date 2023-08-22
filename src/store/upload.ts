@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import * as Service from '@/server';
 import { normalizeResult, md5HashName, compressImage } from '@/utils';
 import { useCheckUserId } from '@/hooks';
+import { pictureStore } from '.';
 
 interface IProps {
   visible: boolean;
@@ -27,6 +28,10 @@ export const useUploadStore = defineStore('upload', {
       const formData = new FormData();
       // 根据文件资源生成 MD5 hash
       const fileName = (await md5HashName(compressFile)) as string;
+      if (isAtlas) {
+        const findOne = pictureStore.atlasList.find((i) => i.url.includes(fileName));
+        if (findOne) return;
+      }
       const findIndex = compressFile?.name?.lastIndexOf('.');
       const ext = compressFile.name.slice(findIndex + 1);
       // 修改文件名称，__ATLAS__ 用户区分是否是上传的图片集图片
