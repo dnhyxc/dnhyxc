@@ -1,7 +1,7 @@
 export type Result<T> =
   | {
       success: true;
-      code: string;
+      code: string | number;
       data: T;
       response: any; // 原始数据
       message: string;
@@ -14,7 +14,7 @@ export type Result<T> =
       data?: any;
     };
 
-export function normalizeResult<T = any>(res: { err: Error | null; data: any; code?: string }): Result<T> {
+export function normalizeResult<T = any>(res: { err: Error | null; data: any; code?: string | number }): Result<T> {
   if (!res) {
     return {
       success: false,

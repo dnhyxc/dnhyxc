@@ -50,12 +50,11 @@ export const usePictureStore = defineStore('picture', {
           type: file.type,
         }),
       );
+
       if (res.success) {
-        const findOne = this.atlasList.find((i) => i.id === res.data.id);
-        // 如果存在则不添加
-        if (!findOne) {
-          this.atlasList = [res.data, ...this.atlasList];
-        }
+        console.log(res, 'res>>>resa', res.code === 201);
+        if (res.code === 201) return;
+        this.atlasList = [res.data, ...this.atlasList];
       } else {
         ElMessage({
           message: res.message,
