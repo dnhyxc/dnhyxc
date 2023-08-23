@@ -54,7 +54,7 @@ const onQuit = () => {
     margin-top: -30px;
     padding: 10px;
     box-shadow: 0 0 10px var(--shadow-mack);
-    background-color: var(--background);
+    background-image: linear-gradient(to bottom, var(--timeline-lg-color1) 50%, var(--timeline-lg-color2) 100%);
 
     .title {
       color: var(--font-1);
