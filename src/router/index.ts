@@ -6,7 +6,7 @@ import { locGetItem } from '@/utils';
 import { WITH_AUTH_ROUTES, AUTHOR_ROUTES } from '@/constant';
 import eventBus from '@/utils/eventBus';
 
-const routes: Array<RouteRecordRaw> = [
+export const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
     redirect: '/home',
@@ -83,26 +83,26 @@ const routes: Array<RouteRecordRaw> = [
         },
         component: () => import('@/views/interact/index.vue'),
       },
-      {
-        path: '/tools',
-        name: 'tools',
-        meta: {
-          title: '实用工具',
-          keepAlive: true,
-          auth: true,
-        },
-        component: () => import('@/views/tools/index.vue'),
-      },
-      {
-        path: '/picture',
-        name: 'picture',
-        meta: {
-          title: '图片合集',
-          keepAlive: true,
-          auth: true,
-        },
-        component: () => import('@/views/picture/index.vue'),
-      },
+      // {
+      //   path: '/tools',
+      //   name: 'tools',
+      //   meta: {
+      //     title: '实用工具',
+      //     keepAlive: true,
+      //     auth: true,
+      //   },
+      //   component: () => import('@/views/tools/index.vue'),
+      // },
+      // {
+      //   path: '/picture',
+      //   name: 'picture',
+      //   meta: {
+      //     title: '图片合集',
+      //     keepAlive: true,
+      //     auth: true,
+      //   },
+      //   component: () => import('@/views/picture/index.vue'),
+      // },
       {
         path: '/author',
         name: 'author',
@@ -236,6 +236,30 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/:pathMatch(.*)*',
     component: () => import('@/views/404/index.vue'),
+  },
+];
+
+// 需要后台配置权限的路由配置
+export const authRoutes = [
+  {
+    path: '/tools',
+    name: 'tools',
+    meta: {
+      title: '实用工具',
+      keepAlive: true,
+      auth: true,
+    },
+    component: () => import('@/views/tools/index.vue'),
+  },
+  {
+    path: '/picture',
+    name: 'picture',
+    meta: {
+      title: '图片合集',
+      keepAlive: true,
+      auth: true,
+    },
+    component: () => import('@/views/picture/index.vue'),
   },
 ];
 

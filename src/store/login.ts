@@ -8,6 +8,7 @@ import { useCheckUserId } from '@/hooks';
 import { normalizeResult, Message, encrypt, locSetItem, locGetItem, locRemoveItem, ipcRenderers } from '@/utils';
 import { createWebSocket, closeSocket } from '@/socket';
 import { UPDATE_INFO_API_PATH } from '@/constant';
+import router, { authRoutes } from '@/router';
 
 interface IProps {
   token: string | undefined | null;
@@ -210,6 +211,23 @@ export const useLoginStore = defineStore('login', {
           offset: 80,
         });
       }
+    },
+
+    // 获取用户菜单
+    async getUsesRoles() {
+      // const res = normalizeResult<{ key: string; name: string }[]>(await Service.getUsesRoles());
+      // console.log(res, 'res');
+      authRoutes.forEach((i) => {
+        if (
+          [
+            // { key: 'tools', name: '实用工具' },
+            // { key: 'picture', name: '图片集' },
+          ].some((j) => j.key === i.name)
+        ) {
+          console.log(i, 'main>>>>i');
+          router.addRoute('main', i);
+        }
+      });
     },
 
     // 退出登录
