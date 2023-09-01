@@ -8,13 +8,13 @@ import { useCheckUserId } from '@/hooks';
 import { normalizeResult, Message, encrypt, locSetItem, locGetItem, locRemoveItem, ipcRenderers } from '@/utils';
 import { createWebSocket, closeSocket } from '@/socket';
 import { UPDATE_INFO_API_PATH } from '@/constant';
-import router, { authRoutes } from '@/router';
 
 interface IProps {
   token: string | undefined | null;
   userInfo: UserInfoParams;
   timer: ReturnType<typeof setTimeout> | null;
   logoutStatus: boolean; // 登出状态
+  menus: { key: string; name: string }[];
 }
 
 export const useLoginStore = defineStore('login', {
@@ -33,6 +33,7 @@ export const useLoginStore = defineStore('login', {
       github: '',
       blog: '',
     }, // 当前登录人用户信息
+    menus: JSON.parse(locGetItem('menus')!) || [],
     timer: null,
     logoutStatus: false,
   }),
@@ -214,28 +215,25 @@ export const useLoginStore = defineStore('login', {
     },
 
     // 获取用户菜单
-    async getUsesRoles() {
-      // const res = normalizeResult<{ key: string; name: string }[]>(await Service.getUsesRoles());
-      // console.log(res, 'res');
-      authRoutes.forEach((i) => {
-        if (
-          [
-            // { key: 'tools', name: '实用工具' },
-            // { key: 'picture', name: '图片集' },
-          ].some((j) => j.key === i.name)
-        ) {
-          console.log(i, 'main>>>>i');
-          router.addRoute('main', i);
-        }
-      });
+    async getUserMenuRoles() {
+      if (!this.token) return;
+      const res = normalizeResult<{ id: string; menus: { key: string; name: string }[] }>(
+        await Service.getUserMenuRoles(),
+      );
+      if (res.success) {
+        this.menus = res.data.menus;
+        locSetItem('menus', JSON.stringify(this.menus));
+      }
     },
 
     // 退出登录
     onQuit() {
       this.token = '';
       this.userInfo = {};
+      this.menus = [];
       locRemoveItem('token');
       locRemoveItem('userInfo');
+      locRemoveItem('menus');
       // 关闭消息闪动
       ipcRenderers.sendStopFlashMsg(
         JSON.stringify({

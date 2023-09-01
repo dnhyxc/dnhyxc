@@ -379,6 +379,6 @@ export const updateFileInfo = async (params: { id: string; fileName: string }) =
 };
 
 // 获取用户菜单权限
-export const getUsesRoles = async () => {
-  return await post(API.GET_USES_ROLES, copeParams({}));
+export const getUserMenuRoles = async () => {
+  return await post(API.GET_USER_MENU_ROLES, copeParams({}));
 };

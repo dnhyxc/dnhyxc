@@ -6,6 +6,30 @@ import { locGetItem } from '@/utils';
 import { WITH_AUTH_ROUTES, AUTHOR_ROUTES } from '@/constant';
 import eventBus from '@/utils/eventBus';
 
+// 需要后台配置权限的路由配置
+export const authRoutes = [
+  {
+    path: '/tools',
+    name: 'tools',
+    meta: {
+      title: '实用工具',
+      keepAlive: true,
+      auth: true,
+    },
+    component: () => import('@/views/tools/index.vue'),
+  },
+  {
+    path: '/picture',
+    name: 'picture',
+    meta: {
+      title: '图片合集',
+      keepAlive: true,
+      auth: true,
+    },
+    component: () => import('@/views/picture/index.vue'),
+  },
+];
+
 export const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
@@ -83,26 +107,7 @@ export const routes: Array<RouteRecordRaw> = [
         },
         component: () => import('@/views/interact/index.vue'),
       },
-      // {
-      //   path: '/tools',
-      //   name: 'tools',
-      //   meta: {
-      //     title: '实用工具',
-      //     keepAlive: true,
-      //     auth: true,
-      //   },
-      //   component: () => import('@/views/tools/index.vue'),
-      // },
-      // {
-      //   path: '/picture',
-      //   name: 'picture',
-      //   meta: {
-      //     title: '图片合集',
-      //     keepAlive: true,
-      //     auth: true,
-      //   },
-      //   component: () => import('@/views/picture/index.vue'),
-      // },
+      ...authRoutes,
       {
         path: '/author',
         name: 'author',
@@ -239,30 +244,6 @@ export const routes: Array<RouteRecordRaw> = [
   },
 ];
 
-// 需要后台配置权限的路由配置
-export const authRoutes = [
-  {
-    path: '/tools',
-    name: 'tools',
-    meta: {
-      title: '实用工具',
-      keepAlive: true,
-      auth: true,
-    },
-    component: () => import('@/views/tools/index.vue'),
-  },
-  {
-    path: '/picture',
-    name: 'picture',
-    meta: {
-      title: '图片合集',
-      keepAlive: true,
-      auth: true,
-    },
-    component: () => import('@/views/picture/index.vue'),
-  },
-];
-
 const router = createRouter({
   // electron 只支持 hash router，使用 history router 会出现找不到对应路由得情况
   history: createWebHistory(),
@@ -319,6 +300,15 @@ router.beforeEach((to, from, next) => {
       duration: 2000,
     });
     router.push('/home');
+  }
+  // 判断是否具备该菜单权限
+  const noAuthMenus = loginStore.menus.filter((item) => !authRoutes.some((obj) => obj.name === item.key));
+  console.log(noAuthMenus, 'noAuthMenus');
+
+  if (noAuthMenus?.some((i) => to.path.includes(i.key))) {
+    console.log(to.path, loginStore.menus[0].key, 'loginStore.menus');
+
+    // router.push('/404');
   }
 
   next();

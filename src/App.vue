@@ -39,8 +39,8 @@ watchEffect(async () => {
 });
 
 onMounted(async () => {
+  loginStore.getUserMenuRoles();
   document.body.addEventListener('click', onBodyClick, false);
-
   if (checkOS() !== 'mac') {
     // 在 App 中监听主进程中发送的清除消息列表的消息，防止重复首次加载时重复监听的问题
     ipcRenderer.on('clear-message', async () => {
@@ -52,7 +52,6 @@ onMounted(async () => {
         await messageStore.setReadStatus(msgIds);
       }
     });
-
     // 监听点击消息中的用户名称跳转用户主页
     ipcRenderer.on('to-personal', (e, userId) => {
       router.push(`/personal?authorId=${userId}`);
@@ -69,7 +68,6 @@ onMounted(async () => {
         }, 100);
       }
     });
-
     // 监听主进程发送的打开消息弹窗的消息
     ipcRenderer.on('show-message-modal', (e, status) => {
       messageStore.visible = true;

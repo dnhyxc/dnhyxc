@@ -167,5 +167,5 @@ export const DELETE_ATLAS_IMAGES = '/api/deleteAtlasImages';
 // 更新收藏集图片信息
 export const UPDATE_FILE_INFO = '/api/updateFileInfo';
 
-// 更新收藏集图片信息
-export const GET_USES_ROLES = '/api/getUsesRoles';
+// 获取用户菜单权限
+export const GET_USER_MENU_ROLES = '/api/getUserMenuRoles';

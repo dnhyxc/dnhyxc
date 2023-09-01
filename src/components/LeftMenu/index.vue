@@ -60,7 +60,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watchEffect, inject, onUnmounted, onMounted } from 'vue';
+import { ref, computed, watchEffect, inject, onUnmounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { MENULIST, HEAD_IMG } from '@/constant';
 import { MenuListParams } from '@/typings/common';
@@ -76,10 +76,6 @@ const route = useRoute();
 const activeMenu = ref<MenuListParams>(MENULIST[0]);
 let timer: ReturnType<typeof setTimeout> | null = null;
 
-onMounted(() => {
-  loginStore.getUsesRoles();
-});
-
 onUnmounted(() => {
   if (timer) {
     clearTimeout(timer);
@@ -89,15 +85,10 @@ onUnmounted(() => {
 
 // 计算菜单
 const menuList = computed(() => {
-  const { token } = loginStore;
+  const { token, menus } = loginStore;
   const list = token ? MENULIST : MENULIST.filter((i) => i.show && !i.authorWiew);
   // 判断是否是博主，否则无法访问图片集
-  const removeMenu = authRoutes.filter((i) =>
-    [
-      { key: 'tools', name: '实用工具' },
-      { key: 'picture', name: '图片集' },
-    ].some((j) => j.key !== i.name),
-  );
+  const removeMenu = authRoutes.filter((i) => menus.some((j) => j.key !== i.name));
   // 根据权限设置菜单
   return list.filter((i) =>
     removeMenu.length ? removeMenu.some((j) => j.name !== i.key) : authRoutes.every((j) => j.name !== i.key),
