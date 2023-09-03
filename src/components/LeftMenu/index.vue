@@ -88,7 +88,7 @@ const menuList = computed(() => {
   const { token, menus } = loginStore;
   const list = token ? MENULIST : MENULIST.filter((i) => i.show && !i.authorWiew);
   // 判断是否是博主，否则无法访问图片集
-  const removeMenu = authRoutes.filter((i) => menus.some((j) => j.key !== i.name));
+  const removeMenu = authRoutes.filter((i) => menus.some((j) => j !== i.name));
   // 根据权限设置菜单
   return list.filter((i) =>
     removeMenu.length ? removeMenu.some((j) => j.name !== i.key) : authRoutes.every((j) => j.name !== i.key),

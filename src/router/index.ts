@@ -258,7 +258,14 @@ const router = createRouter({
 });
 
 // 全局守卫：登录拦截 本地没有存token,请重新登录
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
+  // 获取路由权限
+  await loginStore.getUserMenuRoles();
+  // 判断是否具备该菜单权限
+  const noAuthMenus = AUTHOR_ROUTES.filter((i) => !loginStore.menus.some((j) => j === i));
+  if (noAuthMenus?.includes(to.name as string)) {
+    router.push('/404');
+  }
   const commonStore = useCommonStore();
   // 切换路由时，隐藏页面头部搜索输入框，并清空搜索输入框内容
   commonStore.showSearch = false;
@@ -291,26 +298,6 @@ router.beforeEach((to, from, next) => {
     });
     router.push(from.path);
   }
-  // 图片集只允许博主访问
-  if (AUTHOR_ROUTES.includes(to.path) && loginStore.userInfo.auth !== 1) {
-    ElMessage({
-      message: '抱歉，暂无访问权限！',
-      type: 'warning',
-      offset: 80,
-      duration: 2000,
-    });
-    router.push('/home');
-  }
-  // 判断是否具备该菜单权限
-  const noAuthMenus = loginStore.menus.filter((item) => !authRoutes.some((obj) => obj.name === item.key));
-  console.log(noAuthMenus, 'noAuthMenus');
-
-  if (noAuthMenus?.some((i) => to.path.includes(i.key))) {
-    console.log(to.path, loginStore.menus[0].key, 'loginStore.menus');
-
-    // router.push('/404');
-  }
-
   next();
 });
 

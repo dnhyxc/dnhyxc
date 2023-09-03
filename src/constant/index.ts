@@ -404,7 +404,7 @@ export const MENULIST = [
 export const WITH_AUTH_ROUTES = ['/create', '/timeline', '/personal', '/interact', '/tools'];
 
 // 只能博主才能访问的页面
-export const AUTHOR_ROUTES = ['/picture'];
+export const AUTHOR_ROUTES = ['tools', 'picture'];
 
 // 需要头部搜索的页面
 export const NEED_HEAD_SEARCH = ['/home', '/classify', '/tag/list'];

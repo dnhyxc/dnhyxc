@@ -14,7 +14,7 @@ interface IProps {
   userInfo: UserInfoParams;
   timer: ReturnType<typeof setTimeout> | null;
   logoutStatus: boolean; // 登出状态
-  menus: { key: string; name: string }[];
+  menus: string[];
 }
 
 export const useLoginStore = defineStore('login', {
@@ -33,7 +33,7 @@ export const useLoginStore = defineStore('login', {
       github: '',
       blog: '',
     }, // 当前登录人用户信息
-    menus: JSON.parse(locGetItem('menus')!) || [],
+    menus: [],
     timer: null,
     logoutStatus: false,
   }),
@@ -217,12 +217,9 @@ export const useLoginStore = defineStore('login', {
     // 获取用户菜单
     async getUserMenuRoles() {
       if (!this.token) return;
-      const res = normalizeResult<{ id: string; menus: { key: string; name: string }[] }>(
-        await Service.getUserMenuRoles(),
-      );
+      const res = normalizeResult<{ id: string; menus: string[] }>(await Service.getUserMenuRoles());
       if (res.success) {
         this.menus = res.data.menus;
-        locSetItem('menus', JSON.stringify(this.menus));
       }
     },
 
@@ -233,7 +230,6 @@ export const useLoginStore = defineStore('login', {
       this.menus = [];
       locRemoveItem('token');
       locRemoveItem('userInfo');
-      locRemoveItem('menus');
       // 关闭消息闪动
       ipcRenderers.sendStopFlashMsg(
         JSON.stringify({
