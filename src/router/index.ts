@@ -262,7 +262,7 @@ router.beforeEach(async (to, from, next) => {
   // 获取路由权限
   await loginStore.getUserMenuRoles();
   // 判断是否具备该菜单权限
-  const noAuthMenus = AUTHOR_ROUTES.filter((i) => !loginStore.menus.some((j) => j === i));
+  const noAuthMenus = AUTHOR_ROUTES.filter((i) => !loginStore.menus?.some((j) => j === i));
   if (noAuthMenus?.includes(to.name as string)) {
     router.push('/404');
   }

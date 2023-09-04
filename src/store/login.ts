@@ -219,7 +219,7 @@ export const useLoginStore = defineStore('login', {
       if (!this.token) return;
       const res = normalizeResult<{ id: string; menus: string[] }>(await Service.getUserMenuRoles());
       if (res.success) {
-        this.menus = res.data.menus;
+        this.menus = res.data?.menus || [];
       }
     },
 
