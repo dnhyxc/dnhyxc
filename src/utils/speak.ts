@@ -9,7 +9,6 @@
  * @param  pitch  读取时声音的音高 0~2  正常1
  * @returns SpeechSynthesisUtterance
  */
-
 interface SpeakParams {
   text: string;
   speechRate?: number;
@@ -20,39 +19,47 @@ interface SpeakParams {
   startEvent?: Function;
 }
 
-export const onSpeak = ({
-  text,
-  speechRate = 1,
-  lang = 'zh-CN',
-  volume = 1,
-  pitch = 1,
-  endEvent,
-  startEvent,
-}: SpeakParams) => {
-  if (!window.SpeechSynthesisUtterance) {
-    console.warn('当前浏览器不支持文字转语音服务');
-    return;
+export class SpeechPlayer {
+  private utterance: SpeechSynthesisUtterance;
+  private isPlaying: boolean;
+
+  constructor({ text, speechRate = 1, lang = 'zh-CN', volume = 1, pitch = 1, endEvent, startEvent }: SpeakParams) {
+    this.utterance = new SpeechSynthesisUtterance();
+    this.utterance.text = text;
+    this.utterance.rate = speechRate;
+    this.utterance.lang = lang;
+    this.utterance.volume = volume;
+    this.utterance.pitch = pitch;
+    this.isPlaying = false;
   }
 
-  if (!text) return;
+  // 开始播放
+  public start(): void {
+    if (!this.isPlaying) {
+      this.isPlaying = true;
+      speechSynthesis.speak(this.utterance);
+    }
+  }
 
-  const speechUtterance = new SpeechSynthesisUtterance();
+  // 暂停
+  public pause(): void {
+    if (this.isPlaying) {
+      this.isPlaying = false;
+      speechSynthesis.pause();
+    }
+  }
 
-  speechUtterance.text = text;
-  speechUtterance.rate = speechRate;
-  speechUtterance.lang = lang;
-  speechUtterance.volume = volume;
-  speechUtterance.pitch = pitch;
+  // 恢复播放
+  public resume(): void {
+    if (!this.isPlaying) {
+      this.isPlaying = true;
+      speechSynthesis.resume();
+    }
+  }
 
-  speechUtterance.onend = () => {
-    endEvent && endEvent();
-  };
-
-  speechUtterance.onstart = () => {
-    startEvent && startEvent();
-  };
-
-  speechSynthesis.speak(speechUtterance);
-
-  return speechUtterance;
-};
+  // 清空播放列表
+  public cancel(): void {
+    this.isPlaying = false;
+    speechSynthesis.cancel();
+  }
+}

@@ -24,9 +24,11 @@
       </div>
       <template #footer>
         <span class="dialog-footer">
-          <el-button type="primary" :disabled="!keyword.trim()" @click="onConvert">转换</el-button>
-          <el-button type="primary" @click="onDownload">下载</el-button>
-          <el-button type="warning" @click="onRefresh">重置</el-button>
+          <el-button type="primary" :disabled="!keyword.trim()" @click="onConvert">转换并播放</el-button>
+          <el-button type="primary" :disabled="!keyword.trim() || !speech" @click="onPause">暂停播放</el-button>
+          <el-button type="primary" :disabled="!keyword.trim() || !speech" @click="onResume">恢复播放</el-button>
+          <el-button type="primary" :disabled="!keyword.trim()" @click="onDownload">下载语音</el-button>
+          <el-button type="warning" :disabled="!keyword.trim()" @click="onRefresh">重置</el-button>
         </span>
       </template>
     </el-dialog>
@@ -34,9 +36,9 @@
 </template>
 
 <script setup lang="ts">
+import { computed, onUnmounted, ref, watch } from 'vue';
 import { ElMessage } from 'element-plus';
-import { computed, ref } from 'vue';
-import { onSpeak } from '@/utils';
+import { SpeechPlayer } from '@/utils';
 
 interface IProps {
   modalVisible: boolean;
@@ -54,6 +56,8 @@ const emit = defineEmits<Emits>();
 
 // 输入的文本
 const keyword = ref<string>('');
+// 语音播放实例
+const speech = ref<SpeechPlayer | null>(null);
 
 const visible = computed({
   get() {
@@ -62,6 +66,25 @@ const visible = computed({
   set(visible: boolean) {
     emit('update:modalVisible', visible);
   },
+});
+
+// 当转换弹窗关闭时，停止播放语音
+watch(visible, (newVal) => {
+  if (!newVal) {
+    // 弹窗关闭，清空keyword
+    keyword.value = '';
+    if (speech.value) {
+      speech.value.cancel();
+      speech.value = null;
+    }
+  }
+});
+
+onUnmounted(() => {
+  if (speech.value) {
+    speech.value.cancel();
+    speech.value = null;
+  }
 });
 
 // 转换
@@ -74,18 +97,30 @@ const onConvert = () => {
     });
     return;
   }
-  console.log(keyword.value.trim(), '转换');
   const value = keyword.value.trim();
 
-  const startEvent = (value: any) => {
-    console.log(value, 'startEvent');
-  };
-  const endEvent = (value: any) => {
-    console.log(value, 'endEvent');
-  };
+  speech.value = new SpeechPlayer({
+    text: value,
+    speechRate: 1.5,
+  });
 
-  const res = onSpeak({ text: value, speechRate: 2, startEvent, endEvent });
-  console.log(res, 'res');
+  // 每次播放前，清除播放列表
+  speech.value.cancel();
+  speech.value.start();
+};
+
+// 暂停
+const onPause = () => {
+  if (speech.value) {
+    speech.value.pause();
+  }
+};
+
+// 恢复
+const onResume = () => {
+  if (speech.value) {
+    speech.value.resume();
+  }
 };
 
 // 下载
@@ -96,6 +131,11 @@ const onDownload = () => {
 // 重置
 const onRefresh = () => {
   console.log('重置');
+  keyword.value = '';
+  if (speech.value) {
+    speech.value.cancel();
+    speech.value = null;
+  }
 };
 </script>
 
