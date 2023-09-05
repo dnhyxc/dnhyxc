@@ -10,12 +10,7 @@
       <div class="tools">
         <div class="tool-title">资源处理</div>
         <div class="tool-list">
-          <NavCard
-            v-for="item in [{ toolName: '图片压缩', id: `${Math.random()}`, toolUrl: COMPRESS_SVG }]"
-            :key="item.id"
-            :data="item"
-            :on-click="() => onClickNavIcon(item)"
-          />
+          <NavCard v-for="item in TOOL_LIST" :key="item.id" :data="item" :on-click="() => onClickNavIcon(item)" />
         </div>
       </div>
       <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
@@ -36,7 +31,7 @@
             :disabled="!enabled"
           >
             <template #item="{ element }">
-              <div class="item" @click="onClickNavIcon(element)">
+              <div class="item" @click="onClickNavIcon({ ...element, key: 'tool' })">
                 <div class="navigation-item">
                   <div class="item-top">
                     <Image :url="element?.toolUrl || TOOL_SVG" :transition-img="TOOL_SVG" class="prew-img" />
@@ -50,11 +45,12 @@
           </draggable>
         </div>
       </el-scrollbar>
-      <Modal
+      <Compress
         v-model:modal-visible="compressVisible"
         v-model:previewVisible="previewVisible"
         v-model:previewUrls="previewUrls"
       />
+      <TextToSpeech v-model:modal-visible="convertVisible" />
       <el-dialog v-model="previewVisible" draggable align-center title="图片预览" width="80%" @close="onClose">
         <div class="preview-dialog">
           <el-scrollbar class="scroll-wrap" max-height="75vh">
@@ -87,14 +83,17 @@
 import { shell } from 'electron';
 import { onMounted, ref } from 'vue';
 import draggable from 'vuedraggable';
-import { COMPRESS_SVG, TOOL_SVG } from '@/constant';
+import { TOOL_LIST, TOOL_SVG } from '@/constant';
 import { toolsStore } from '@/store';
 import { ToolsItem } from '@/typings/common';
-import Modal from './Modal/index.vue';
+import Compress from './Compress/index.vue';
+import TextToSpeech from './TextToSpeech/index.vue';
 import NavCard from './NavCard/index.vue';
 
 // 图片压缩弹窗
 const compressVisible = ref<boolean>(false);
+// 文本转语音弹窗
+const convertVisible = ref<boolean>(false);
 // 图片预览弹窗
 const previewVisible = ref<boolean>(false);
 // 预览图片
@@ -107,13 +106,29 @@ onMounted(() => {
   toolsStore.getToolList();
 });
 
-// 点击导航图标
+// 显示图片压缩
+const showCompress = (item: ToolsItem) => {
+  compressVisible.value = true;
+};
+
+// 显示文字转语音
+const onTextToSpeech = (item: ToolsItem) => {
+  convertVisible.value = true;
+};
+
+// 浏览器打开链接
+const openWithBrowser = (item: ToolsItem) => {
+  shell.openExternal(item.toolHref!);
+};
+
+// 策略模式实现点击每个nav card的效果
 const onClickNavIcon = (item: ToolsItem) => {
-  if (item?.toolHref) {
-    shell.openExternal(item.toolHref);
-  } else {
-    compressVisible.value = true;
-  }
+  const actions = {
+    compress: showCompress,
+    textToSpeech: onTextToSpeech,
+    tool: openWithBrowser,
+  };
+  actions[item.key](item);
 };
 
 // 关闭预览弹窗

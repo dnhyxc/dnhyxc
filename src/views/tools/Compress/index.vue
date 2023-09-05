@@ -139,6 +139,12 @@ interface IProps {
   title?: string;
 }
 
+interface Emits {
+  (e: 'update:modalVisible', visible: boolean): void;
+  (e: 'update:previewVisible', visible: boolean): void;
+  (e: 'update:previewUrls', urls: string[]): void;
+}
+
 interface Mark {
   style: CSSProperties;
   label: string;
@@ -216,7 +222,7 @@ const props = withDefaults(defineProps<IProps>(), {
   title: '',
 });
 
-const emit = defineEmits(['update:modalVisible', 'update:previewUrls', 'update:previewVisible']);
+const emit = defineEmits<Emits>();
 
 const previewVisible = computed({
   get() {

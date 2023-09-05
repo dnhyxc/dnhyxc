@@ -16,6 +16,7 @@ import * as API from '@/server/api';
 import GITHUB_SVG from '@/assets/svg/github.svg';
 import COMPRESS_SVG from '@/assets/svg/compress.svg';
 import TOOL_SVG from '@/assets/svg/tool.svg';
+import YUYIN_SVG from '@/assets/svg/yuyin.svg';
 
 export {
   EMPTY,
@@ -35,7 +36,14 @@ export {
   GITHUB_SVG,
   COMPRESS_SVG,
   TOOL_SVG,
+  YUYIN_SVG,
 };
+
+// 工具列表
+export const TOOL_LIST = [
+  { toolName: '图片压缩', key: 'compress', id: 'compress', toolUrl: COMPRESS_SVG },
+  { toolName: '文本转语音', key: 'textToSpeech', id: 'textToSpeech', toolUrl: YUYIN_SVG },
+];
 
 // 线上域名
 export const DOMAIN_URL = '43.143.27.249';

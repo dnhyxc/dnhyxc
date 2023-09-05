@@ -1,8 +1,8 @@
 @font-face {
   font-family: "iconfont"; /* Project id 3511354 */
-  src: url('iconfont.woff2?t=1692005309961') format('woff2'),
-       url('iconfont.woff?t=1692005309961') format('woff'),
-       url('iconfont.ttf?t=1692005309961') format('truetype');
+  src: url('iconfont.woff2?t=1693883213473') format('woff2'),
+       url('iconfont.woff?t=1693883213473') format('woff'),
+       url('iconfont.ttf?t=1693883213473') format('truetype');
 }
 
 .iconfont {
@@ -13,20 +13,20 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-yuyin:before {
+  content: "\ec69";
+}
+
+.icon-mac:before {
+  content: "\e68f";
+}
+
+.icon-windows:before {
+  content: "\e690";
+}
+
 .icon-tool:before {
   content: "\e656";
-}
-
-.icon-cengji:before {
-  content: "\e631";
-}
-
-.icon-tools1:before {
-  content: "\e647";
-}
-
-.icon-img-list:before {
-  content: "\e630";
 }
 
 .icon-imgs:before {
@@ -53,10 +53,6 @@
   content: "\eb16";
 }
 
-.icon-ego-box:before {
-  content: "\e632";
-}
-
 .icon-star:before {
   content: "\e62b";
 }
@@ -67,10 +63,6 @@
 
 .icon-zhidingzhanshi:before {
   content: "\e770";
-}
-
-.icon-zhiding2:before {
-  content: "\e62a";
 }
 
 .icon-zhiding:before {
@@ -181,10 +173,6 @@
   content: "\e63b";
 }
 
-.icon-home:before {
-  content: "\e69d";
-}
-
 .icon-pin1:before {
   content: "\e9f3";
 }
@@ -263,14 +251,6 @@
 
 .icon-fenlei2:before {
   content: "\e811";
-}
-
-.icon-a-yonghuxinxiyonghu:before {
-  content: "\e63d";
-}
-
-.icon-a-Frame174:before {
-  content: "\e61d";
 }
 
 .icon-winfo-icon-zuixiaohua:before {

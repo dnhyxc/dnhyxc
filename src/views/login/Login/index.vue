@@ -67,6 +67,8 @@ const width = 120;
 const height = 40;
 
 const validateUsername = (rule: any, value: any, callback: any) => {
+  // 开发环境不进行校验
+  if (import.meta.env.DEV) return true;
   const { msg, status } = verifyUsername(value);
   if (value === '') {
     callback(new Error('用户名不能为空'));
@@ -78,6 +80,8 @@ const validateUsername = (rule: any, value: any, callback: any) => {
 };
 
 const validatePassword = (rule: any, value: any, callback: any) => {
+  // 开发环境不进行校验
+  if (import.meta.env.DEV) return true;
   const { msg, status } = verifyPassword(value);
   if (value === '') {
     callback(new Error('密码不能为空'));

@@ -414,6 +414,7 @@ export interface ToolsItem {
   toolUrl: string;
   powerUsers?: { username: string; id: string }[];
   sort?: number;
+  key: string;
 }
 
 export interface ToolListRes {
