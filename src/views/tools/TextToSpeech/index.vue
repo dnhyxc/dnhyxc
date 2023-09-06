@@ -15,14 +15,26 @@
             :autosize="{ minRows: 5, maxRows: 8 }"
             type="textarea"
             maxlength="300"
+            resize="none"
             show-word-limit
             placeholder="请输入需要转换的文本"
           />
         </div>
-        <div class="history-title">最近转换</div>
-        <el-scrollbar ref="scrollRef" max-height="300px" wrap-class="scrollbar-wrapper">
+        <div v-if="convertStore.convertList.length" class="history-title">
+          <span class="left">最近转换</span>
+          <el-button class="right" type="danger" link @click="onClearAll">清空历史</el-button>
+        </div>
+        <el-scrollbar
+          v-if="convertStore.convertList.length"
+          ref="scrollRef"
+          max-height="300px"
+          wrap-class="scrollbar-wrapper"
+        >
           <div class="list">
-            <div v-for="(item, index) in convertStore.convertList" :key="index" class="item">{{ item.keyword }}</div>
+            <div v-for="(item, index) in convertStore.convertList" :key="index" class="item">
+              <div class="keyword" @click="onSelect(item)">{{ item.keyword }}</div>
+              <i class="iconfont icon-guanbi" @click="onDelete(item)" />
+            </div>
           </div>
         </el-scrollbar>
       </div>
@@ -43,6 +55,7 @@ import { computed, onUnmounted, ref, watch } from 'vue';
 import { ElMessage } from 'element-plus';
 import { SpeechPlayer } from '@/utils';
 import { convertStore } from '@/store';
+import { ConvertParams } from '@/typings/common';
 
 interface IProps {
   modalVisible: boolean;
@@ -62,8 +75,6 @@ const emit = defineEmits<Emits>();
 const keyword = ref<string>('');
 // 语音播放实例
 const speech = ref<SpeechPlayer | null>(null);
-// 保存最新的五条转换
-const convertList = ref<string[]>([]);
 
 const visible = computed({
   get() {
@@ -109,23 +120,19 @@ const onConvert = () => {
   // 播放结束事件
   const endEvent = () => {
     speech.value = null;
-    if (convertList.value.length > 5) {
-      convertList.value = [keyword.value, ...convertList.value].slice(0, 4);
-    } else {
-      convertList.value = [keyword.value, ...convertList.value];
-    }
-    convertStore.createConvert(keyword.value);
   };
 
   speech.value = new SpeechPlayer({
     text: keyword.value.trim(),
-    rate: 10,
+    rate: 1.25,
     endEvent,
   });
 
   // 每次播放前，清除播放列表
   speech.value.cancel();
   speech.value.start();
+  // 添加转换列表
+  convertStore.createConvert(keyword.value);
 };
 
 // 暂停
@@ -144,12 +151,26 @@ const onResume = () => {
 
 // 重置
 const onRefresh = () => {
-  console.log('重置');
   keyword.value = '';
   if (speech.value) {
     speech.value.cancel();
     speech.value = null;
   }
+};
+
+// 选择历史转换
+const onSelect = (item: ConvertParams) => {
+  keyword.value = item.keyword;
+};
+
+// 删除选中历史转换
+const onDelete = (item: ConvertParams) => {
+  convertStore.deleteConvert(item.id);
+};
+
+// 清空所有
+const onClearAll = () => {
+  convertStore.deleteConvert();
 };
 </script>
 
@@ -201,6 +222,9 @@ const onRefresh = () => {
     }
 
     .history-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       font-size: 16px;
       margin: 20px 0 10px;
       color: var(--font-1);
@@ -214,15 +238,35 @@ const onRefresh = () => {
       margin-top: 10px;
 
       .item {
-        position: relative;
+        display: flex;
+        justify-content: space-between;
         font-size: 16px;
         color: var(--font-1);
         width: 100%;
         margin-bottom: 10px;
 
-        &:hover {
-          color: @font-success;
+        .keyword {
+          flex: 1;
+          margin-right: 20px;
+
+          &:hover {
+            color: @font-success;
+            cursor: pointer;
+          }
+        }
+
+        .icon-guanbi {
+          color: @font-danger;
+          font-size: 16px;
           cursor: pointer;
+
+          &:hover {
+            color: @font-warning;
+          }
+        }
+
+        &:last-child {
+          margin-bottom: 0;
         }
       }
     }

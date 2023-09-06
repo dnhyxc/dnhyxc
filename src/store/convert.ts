@@ -22,16 +22,14 @@ export const useConvertStore = defineStore('convert', {
     async createConvert(keyword: string) {
       try {
         if (!useCheckUserId()) return;
-        const res = normalizeResult<{ id: string }>(
-          await Service.createConvert({ keyword, count: this.convertList.length + 1 }),
-        );
+        const findOne = this.convertList.some((i) => i.keyword === keyword);
+        if (findOne) return;
+        const res = normalizeResult<{ id: string }>(await Service.createConvert({ keyword }));
         if (!res.success) {
           ElMessage.error(res.message);
         } else {
-          const findOne = this.convertList.some((i) => i.keyword === keyword);
-          if (findOne) return;
           // 如果列表长度大于五，则删除最后一条
-          if (this.convertList.length >= 5) {
+          if (this.convertList.length >= 10) {
             this.convertList.pop();
           }
           this.convertList.unshift({
@@ -64,12 +62,15 @@ export const useConvertStore = defineStore('convert', {
     },
 
     // 删除转换列表
-    async deleteConvert(id: string | string[]) {
+    async deleteConvert(id?: string | string[]) {
       try {
         if (!useCheckUserId()) return;
-        const res = normalizeResult<{ id: string }>(await Service.deleteConvert({ id }));
+        const ids = this.convertList.map((i) => i.id);
+        const res = normalizeResult<{ id: string }>(await Service.deleteConvert({ id: id || ids }));
         if (!res.success) {
           ElMessage.error(res.message);
+        } else {
+          this.convertList = [];
         }
       } catch (error) {
         return false;

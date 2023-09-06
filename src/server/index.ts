@@ -384,7 +384,7 @@ export const getUserMenuRoles = async () => {
 };
 
 // 添加转换列表
-export const createConvert = async (params: { keyword: string; count: number }) => {
+export const createConvert = async (params: { keyword: string }) => {
   return await post(API.CREATE_CONVERT, copeParams(params));
 };
 
@@ -394,6 +394,6 @@ export const getConvertList = async () => {
 };
 
 // 删除转换列表
-export const deleteConvert = async (params: { id: string | string[] }) => {
+export const deleteConvert = async (params: { id?: string | string[] }) => {
   return await post(API.DELETE_CONVERT, copeParams(params));
 };
