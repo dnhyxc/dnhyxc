@@ -262,7 +262,7 @@ const onQuit = () => {
     }
 
     .icon-imgs {
-      font-size: 33px;
+      font-size: 36px;
     }
   }
 }

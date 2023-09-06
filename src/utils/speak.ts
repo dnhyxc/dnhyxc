@@ -1,12 +1,14 @@
 /**
  * @description 文字转语音方法
  * @public
- * @param { text, rate, lang, volume, pitch } object
- * @param  text 要合成的文字内容，字符串
- * @param  rate 读取文字的语速 0.1~10  正常1
- * @param  lang 读取文字时的语言
- * @param  volume  读取时声音的音量 0~1  正常1
- * @param  pitch  读取时声音的音高 0~2  正常1
+ * @param { text, rate, lang, volume, pitch, startEvent, endEvent } object
+ * @param text 要合成的文字内容，字符串
+ * @param rate 读取文字的语速 0.1~10 正常1
+ * @param lang 读取文字时的语言
+ * @param volume 读取时声音的音量 0~1 正常1
+ * @param pitch 读取时声音的音高 0~2 正常1
+ * @param startEvent 播放开始时间
+ * @param endEvent 播放结束时间
  * @returns SpeechSynthesisUtterance
  */
 interface SpeakParams {
@@ -31,6 +33,8 @@ export class SpeechPlayer {
     this.utterance.volume = volume;
     this.utterance.pitch = pitch;
     this.isPlaying = false;
+    this.utterance.onstart = (e): void => startEvent && startEvent(e);
+    this.utterance.onend = (e): void => endEvent && endEvent(e);
   }
 
   // 开始播放

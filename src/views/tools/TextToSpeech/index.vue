@@ -20,14 +20,14 @@
               placeholder="请输入需要转换的文本"
             />
           </div>
+          <div v-for="(item, index) in convertList" :key="index" class="list">{{ item }}</div>
         </el-scrollbar>
       </div>
       <template #footer>
         <span class="dialog-footer">
-          <el-button type="primary" :disabled="!keyword.trim()" @click="onConvert">转换并播放</el-button>
-          <el-button type="primary" :disabled="!keyword.trim() || !speech" @click="onPause">暂停播放</el-button>
-          <el-button type="primary" :disabled="!keyword.trim() || !speech" @click="onResume">恢复播放</el-button>
-          <el-button type="primary" :disabled="!keyword.trim()" @click="onDownload">下载语音</el-button>
+          <el-button type="primary" :disabled="!keyword.trim()" @click="onConvert">播放</el-button>
+          <el-button type="info" :disabled="!keyword.trim() || !speech" @click="onPause">暂停</el-button>
+          <el-button type="success" :disabled="!keyword.trim() || !speech" @click="onResume">恢复</el-button>
           <el-button type="warning" :disabled="!keyword.trim()" @click="onRefresh">重置</el-button>
         </span>
       </template>
@@ -58,6 +58,8 @@ const emit = defineEmits<Emits>();
 const keyword = ref<string>('');
 // 语音播放实例
 const speech = ref<SpeechPlayer | null>(null);
+// 保存最新的五条转换
+const convertList = ref<string[]>([]);
 
 const visible = computed({
   get() {
@@ -97,11 +99,17 @@ const onConvert = () => {
     });
     return;
   }
-  const value = keyword.value.trim();
+
+  // 播放结束事件
+  const endEvent = () => {
+    speech.value = null;
+    convertList.value = [keyword, ...convertList.value];
+  };
 
   speech.value = new SpeechPlayer({
-    text: value,
-    speechRate: 1.5,
+    text: keyword.value.trim(),
+    speechRate: 1.2,
+    endEvent,
   });
 
   // 每次播放前，清除播放列表
@@ -121,11 +129,6 @@ const onResume = () => {
   if (speech.value) {
     speech.value.resume();
   }
-};
-
-// 下载
-const onDownload = () => {
-  console.log('下载');
 };
 
 // 重置
