@@ -456,3 +456,10 @@ export interface AtlasImgInfo {
   fileName: string;
   type: string;
 }
+
+// 转换列表
+export interface ConvertParams {
+  id: string;
+  userId: string;
+  keyword: string;
+}

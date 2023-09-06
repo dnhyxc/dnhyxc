@@ -8,19 +8,22 @@
   <div class="modal-wrap">
     <el-dialog v-model="visible" :close-on-click-modal="false" title="文本转语音" align-center width="850px">
       <div class="content">
-        <el-scrollbar ref="scrollRef" max-height="75vh" wrap-class="scrollbar-wrapper">
-          <div class="inp-wrap">
-            <div class="label">输入文本转换</div>
-            <el-input
-              v-model="keyword"
-              :autosize="{ minRows: 5, maxRows: 8 }"
-              type="textarea"
-              maxlength="300"
-              show-word-limit
-              placeholder="请输入需要转换的文本"
-            />
+        <div class="inp-wrap">
+          <div class="label">输入文本转换</div>
+          <el-input
+            v-model="keyword"
+            :autosize="{ minRows: 5, maxRows: 8 }"
+            type="textarea"
+            maxlength="300"
+            show-word-limit
+            placeholder="请输入需要转换的文本"
+          />
+        </div>
+        <div class="history-title">最近转换</div>
+        <el-scrollbar ref="scrollRef" max-height="300px" wrap-class="scrollbar-wrapper">
+          <div class="list">
+            <div v-for="(item, index) in convertStore.convertList" :key="index" class="item">{{ item.keyword }}</div>
           </div>
-          <div v-for="(item, index) in convertList" :key="index" class="list">{{ item }}</div>
         </el-scrollbar>
       </div>
       <template #footer>
@@ -39,6 +42,7 @@
 import { computed, onUnmounted, ref, watch } from 'vue';
 import { ElMessage } from 'element-plus';
 import { SpeechPlayer } from '@/utils';
+import { convertStore } from '@/store';
 
 interface IProps {
   modalVisible: boolean;
@@ -79,6 +83,8 @@ watch(visible, (newVal) => {
       speech.value.cancel();
       speech.value = null;
     }
+  } else {
+    convertStore.getConvertList();
   }
 });
 
@@ -103,12 +109,17 @@ const onConvert = () => {
   // 播放结束事件
   const endEvent = () => {
     speech.value = null;
-    convertList.value = [keyword, ...convertList.value];
+    if (convertList.value.length > 5) {
+      convertList.value = [keyword.value, ...convertList.value].slice(0, 4);
+    } else {
+      convertList.value = [keyword.value, ...convertList.value];
+    }
+    convertStore.createConvert(keyword.value);
   };
 
   speech.value = new SpeechPlayer({
     text: keyword.value.trim(),
-    speechRate: 1.2,
+    rate: 10,
     endEvent,
   });
 
@@ -186,6 +197,33 @@ const onRefresh = () => {
         color: var(--font-1);
         font-size: 16px;
         margin-bottom: 10px;
+      }
+    }
+
+    .history-title {
+      font-size: 16px;
+      margin: 20px 0 10px;
+      color: var(--font-1);
+    }
+
+    .list {
+      background-color: var(--pop-before-bg-color);
+      padding: 10px;
+      box-sizing: border-box;
+      border-radius: 5px;
+      margin-top: 10px;
+
+      .item {
+        position: relative;
+        font-size: 16px;
+        color: var(--font-1);
+        width: 100%;
+        margin-bottom: 10px;
+
+        &:hover {
+          color: @font-success;
+          cursor: pointer;
+        }
       }
     }
   }

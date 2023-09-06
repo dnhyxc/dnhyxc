@@ -117,12 +117,22 @@ ul {
 // 更改全局弹窗
 .el-dialog {
   background-color: var(--modal-bg-color) !important;
+  &::before {
+    position: absolute;
+    top: 0;
+    left: 0;
+    content: '';
+    width: 100%;
+    height: 100%;
+    background: var(--pop-before-bg-color);
+    box-shadow: 2px 0 2px -2px var(--card-border) inset;
+    z-index: -1;
+  }
 }
 
 // 抽屉背景颜色
 .el-drawer {
   background-color: var(--modal-bg-color) !important;
-
   &::before {
     position: absolute;
     top: 0;
@@ -145,7 +155,6 @@ ul {
   position: relative;
   background: var(--modal-bg-color) !important;
   border: 1px solid var(--shadow-mack) !important;
-
   &::before {
     position: absolute;
     top: 0;

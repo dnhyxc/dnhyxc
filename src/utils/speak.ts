@@ -13,7 +13,7 @@
  */
 interface SpeakParams {
   text: string;
-  speechRate?: number;
+  rate?: number;
   lang?: string;
   volume?: number;
   pitch?: number;
@@ -25,10 +25,10 @@ export class SpeechPlayer {
   private utterance: SpeechSynthesisUtterance;
   private isPlaying: boolean;
 
-  constructor({ text, speechRate = 1, lang = 'zh-CN', volume = 1, pitch = 1, endEvent, startEvent }: SpeakParams) {
+  constructor({ text, rate = 1, lang = 'zh-CN', volume = 1, pitch = 1, endEvent, startEvent }: SpeakParams) {
     this.utterance = new SpeechSynthesisUtterance();
     this.utterance.text = text;
-    this.utterance.rate = speechRate;
+    this.utterance.rate = rate;
     this.utterance.lang = lang;
     this.utterance.volume = volume;
     this.utterance.pitch = pitch;

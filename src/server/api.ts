@@ -169,3 +169,12 @@ export const UPDATE_FILE_INFO = '/api/updateFileInfo';
 
 // 获取用户菜单权限
 export const GET_USER_MENU_ROLES = '/api/getUserMenuRoles';
+
+// 添加转换列表
+export const CREATE_CONVERT = '/api/createConvert';
+
+// 获取转换列表
+export const GET_CONVERT_LIST = '/api/getConvertList';
+
+// 删除转换列表
+export const DELETE_CONVERT = '/api/deleteConvert';

@@ -382,3 +382,18 @@ export const updateFileInfo = async (params: { id: string; fileName: string }) =
 export const getUserMenuRoles = async () => {
   return await post(API.GET_USER_MENU_ROLES, copeParams({}));
 };
+
+// 添加转换列表
+export const createConvert = async (params: { keyword: string; count: number }) => {
+  return await post(API.CREATE_CONVERT, copeParams(params));
+};
+
+// 获取转换列表
+export const getConvertList = async () => {
+  return await post(API.GET_CONVERT_LIST, copeParams({}));
+};
+
+// 删除转换列表
+export const deleteConvert = async (params: { id: string | string[] }) => {
+  return await post(API.DELETE_CONVERT, copeParams(params));
+};
