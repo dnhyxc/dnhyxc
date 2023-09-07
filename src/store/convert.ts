@@ -24,7 +24,7 @@ export const useConvertStore = defineStore('convert', {
         if (!useCheckUserId()) return;
         const findOne = this.convertList.some((i) => i.keyword === keyword);
         if (findOne) return;
-        const res = normalizeResult<{ id: string }>(await Service.createConvert({ keyword }));
+        const res = normalizeResult<string>(await Service.createConvert({ keyword }));
         if (!res.success) {
           ElMessage.error(res.message);
         } else {
@@ -35,7 +35,7 @@ export const useConvertStore = defineStore('convert', {
           this.convertList.unshift({
             keyword,
             userId: loginStore.userInfo?.userId!,
-            id: `${Math.random()}`,
+            id: res.data,
           });
         }
       } catch (error) {
@@ -70,7 +70,7 @@ export const useConvertStore = defineStore('convert', {
         if (!res.success) {
           ElMessage.error(res.message);
         } else {
-          this.convertList = [];
+          this.convertList = id ? this.convertList.filter((i) => i.id !== id) : [];
         }
       } catch (error) {
         return false;

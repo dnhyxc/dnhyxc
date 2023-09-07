@@ -33,7 +33,9 @@
           <div class="list">
             <div v-for="(item, index) in convertStore.convertList" :key="index" class="item">
               <div class="keyword" @click="onSelect(item)">{{ item.keyword }}</div>
-              <i class="iconfont icon-guanbi" @click="onDelete(item)" />
+              <span class="delete">
+                <i class="iconfont icon-guanbi" @click="onDelete(item)" />
+              </span>
             </div>
           </div>
         </el-scrollbar>
@@ -231,23 +233,31 @@ const onClearAll = () => {
     }
 
     .list {
-      background-color: var(--pop-before-bg-color);
       padding: 10px;
       box-sizing: border-box;
       border-radius: 5px;
       margin-top: 10px;
+      background-color: var(--pre-bg-color);
 
       .item {
+        position: relative;
         display: flex;
         justify-content: space-between;
         font-size: 16px;
         color: var(--font-1);
         width: 100%;
-        margin-bottom: 10px;
+        margin-bottom: 15px;
+
+        &:hover {
+          .delete {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+          }
+        }
 
         .keyword {
           flex: 1;
-          margin-right: 20px;
 
           &:hover {
             color: @font-success;
@@ -255,13 +265,28 @@ const onClearAll = () => {
           }
         }
 
-        .icon-guanbi {
-          color: @font-danger;
-          font-size: 16px;
-          cursor: pointer;
+        .delete {
+          position: absolute;
+          top: -1px;
+          right: 0;
+          width: 24px;
+          height: 24px;
+          border-radius: 5px;
+          background-color: var(--to-top-bg-color);
+          box-shadow: 0 0 3px var(--theme-blue);
+          backdrop-filter: blur(3px);
+          display: none;
+
+          .icon-guanbi {
+            color: @font-danger;
+            font-size: 16px;
+            cursor: pointer;
+          }
 
           &:hover {
-            color: @font-warning;
+            .icon-guanbi {
+              color: @font-warning;
+            }
           }
         }
 
