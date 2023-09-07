@@ -53,9 +53,10 @@
 </template>
 
 <script setup lang="ts">
+import { ipcRenderer } from 'electron';
 import { computed, onUnmounted, ref, watch } from 'vue';
 import { ElMessage } from 'element-plus';
-import { SpeechPlayer } from '@/utils';
+import { SpeechPlayer, ipcRenderers } from '@/utils';
 import { convertStore } from '@/store';
 import { ConvertParams } from '@/typings/common';
 
@@ -122,6 +123,24 @@ const onConvert = () => {
   // 播放结束事件
   const endEvent = () => {
     speech.value = null;
+    const blob = new Blob([keyword.value.trim()], { type: 'audio/wav' }); // 将转换的文本保存为 WAV 音频文件
+    const url = URL.createObjectURL(blob);
+
+    ipcRenderers.sendDownload(url);
+    // 设置一次性监听，防止重复触发
+    ipcRenderer.once('download-file', (e, res: string) => {
+      if (res) {
+        window.URL.revokeObjectURL(url);
+        ElMessage({
+          message: '保存成功',
+          type: 'success',
+          offset: 80,
+          duration: 2000,
+        });
+      }
+    });
+
+    console.log(url, 'url');
   };
 
   speech.value = new SpeechPlayer({
