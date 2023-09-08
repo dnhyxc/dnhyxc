@@ -26,8 +26,7 @@ export class SpeechPlayer {
   private isPlaying: boolean;
 
   constructor({ text, rate = 1, lang = 'zh-CN', volume = 1, pitch = 1, endEvent, startEvent }: SpeakParams) {
-    this.utterance = new SpeechSynthesisUtterance();
-    this.utterance.text = text;
+    this.utterance = new SpeechSynthesisUtterance(text);
     this.utterance.rate = rate;
     this.utterance.lang = lang;
     this.utterance.volume = volume;
@@ -37,10 +36,25 @@ export class SpeechPlayer {
     this.utterance.onend = (e): void => endEvent && endEvent(e);
   }
 
+  // 设置语音类型
+  public setVoice(name = 'Yaoyao'): void {
+    const voices = speechSynthesis.getVoices();
+    const findVoice = voices.find((i) => i.name.includes(name));
+    findVoice && (this.utterance.voice = findVoice);
+  }
+
+  // 切换播放速度
+  public setRate(speed: number) {
+    this.pause();
+    this.utterance.rate = speed;
+    this.resume();
+  }
+
   // 开始播放
   public start(): void {
     if (!this.isPlaying) {
       this.isPlaying = true;
+      this.setVoice();
       speechSynthesis.speak(this.utterance);
     }
   }

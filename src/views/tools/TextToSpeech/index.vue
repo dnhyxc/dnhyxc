@@ -41,22 +41,40 @@
         </el-scrollbar>
       </div>
       <template #footer>
-        <span class="dialog-footer">
-          <el-button type="primary" :disabled="!keyword.trim()" @click="onConvert">播放</el-button>
+        <div class="dialog-footer">
+          <el-button :type="speech ? 'warning' : 'primary'" :disabled="!keyword.trim()" @click="onConvert">{{
+            speech ? '重置' : '播放'
+          }}</el-button>
           <el-button type="info" :disabled="!keyword.trim() || !speech" @click="onPause">暂停</el-button>
           <el-button type="success" :disabled="!keyword.trim() || !speech" @click="onResume">恢复</el-button>
-          <el-button type="warning" :disabled="!keyword.trim()" @click="onRefresh">重置</el-button>
-        </span>
+          <el-popover placement="top" popper-class="speed-pop" trigger="hover">
+            <div class="content">
+              <el-slider
+                v-model="speed"
+                vertical
+                height="176px"
+                :step="0.25"
+                :min="0.5"
+                :max="3"
+                :show-tooltip="false"
+              />
+            </div>
+            <template #reference>
+              <el-button :type="speech ? 'info' : 'primary'" class="spend-btn" :disabled="speech"
+                >倍速 {{ speed }}</el-button
+              >
+            </template>
+          </el-popover>
+        </div>
       </template>
     </el-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ipcRenderer } from 'electron';
 import { computed, onUnmounted, ref, watch } from 'vue';
 import { ElMessage } from 'element-plus';
-import { SpeechPlayer, ipcRenderers } from '@/utils';
+import { SpeechPlayer } from '@/utils';
 import { convertStore } from '@/store';
 import { ConvertParams } from '@/typings/common';
 
@@ -74,6 +92,8 @@ const props = withDefaults(defineProps<IProps>(), {
 
 const emit = defineEmits<Emits>();
 
+// 播放语速
+const speed = ref<number>(1.25);
 // 输入的文本
 const keyword = ref<string>('');
 // 语音播放实例
@@ -102,6 +122,12 @@ watch(visible, (newVal) => {
   }
 });
 
+watch(speed, (newVal) => {
+  if (speech.value) {
+    speech.value.setRate(newVal);
+  }
+});
+
 onUnmounted(() => {
   if (speech.value) {
     speech.value.cancel();
@@ -123,35 +149,19 @@ const onConvert = () => {
   // 播放结束事件
   const endEvent = () => {
     speech.value = null;
-    const blob = new Blob([keyword.value.trim()], { type: 'audio/wav' }); // 将转换的文本保存为 WAV 音频文件
-    const url = URL.createObjectURL(blob);
-
-    ipcRenderers.sendDownload(url);
-    // 设置一次性监听，防止重复触发
-    ipcRenderer.once('download-file', (e, res: string) => {
-      if (res) {
-        window.URL.revokeObjectURL(url);
-        ElMessage({
-          message: '保存成功',
-          type: 'success',
-          offset: 80,
-          duration: 2000,
-        });
-      }
-    });
-
-    console.log(url, 'url');
   };
 
-  speech.value = new SpeechPlayer({
-    text: keyword.value.trim(),
-    rate: 1.25,
-    endEvent,
-  });
-
-  // 每次播放前，清除播放列表
-  speech.value.cancel();
-  speech.value.start();
+  if (speech.value) {
+    speech.value.cancel();
+    speech.value = null;
+  } else {
+    speech.value = new SpeechPlayer({
+      text: keyword.value.trim(),
+      rate: speed.value,
+      endEvent,
+    });
+    speech.value.start();
+  }
   // 添加转换列表
   convertStore.createConvert(keyword.value);
 };
@@ -167,15 +177,6 @@ const onPause = () => {
 const onResume = () => {
   if (speech.value) {
     speech.value.resume();
-  }
-};
-
-// 重置
-const onRefresh = () => {
-  keyword.value = '';
-  if (speech.value) {
-    speech.value.cancel();
-    speech.value = null;
   }
 };
 
@@ -230,6 +231,10 @@ const onClearAll = () => {
 
     .el-form-item__label {
       color: var(--font-1);
+    }
+
+    .spend-btn {
+      width: 80px;
     }
   }
 
