@@ -17,6 +17,7 @@ import GITHUB_SVG from '@/assets/svg/github.svg';
 import COMPRESS_SVG from '@/assets/svg/compress.svg';
 import TOOL_SVG from '@/assets/svg/tool.svg';
 import YUYIN_SVG from '@/assets/svg/yuyin.svg';
+import MARK_SVG from '@/assets/svg/mark.svg';
 
 export {
   EMPTY,
@@ -37,12 +38,14 @@ export {
   COMPRESS_SVG,
   TOOL_SVG,
   YUYIN_SVG,
+  MARK_SVG,
 };
 
 // 工具列表
 export const TOOL_LIST = [
   { toolName: '图片压缩', key: 'compress', id: 'compress', toolUrl: COMPRESS_SVG },
-  { toolName: '文本转语音', key: 'textToSpeech', id: 'textToSpeech', toolUrl: YUYIN_SVG },
+  { toolName: '语音播报', key: 'textToSpeech', id: 'textToSpeech', toolUrl: YUYIN_SVG },
+  { toolName: '水印设置', key: 'watermark', id: 'watermark', toolUrl: MARK_SVG },
 ];
 
 // 线上域名

@@ -655,9 +655,8 @@ export const debounce = (fn: Function, delay = 1000, immediate = false) => {
   };
 };
 
-export const onDownloadFile = async (item: { url: string; type: string }) => {
-  const url = await url2Base64(item.url, item.type);
-  if (url) {
+export const onDownloadFile = async ({ url, type = 'png' }: { url: string; type?: string }) => {
+  if (url.includes('data:image')) {
     ipcRenderers.sendDownload(url as string);
     // 设置一次性监听，防止重复触发
     ipcRenderer.once('download-file', (e, res: string) => {
@@ -670,5 +669,106 @@ export const onDownloadFile = async (item: { url: string; type: string }) => {
         });
       }
     });
+  } else {
+    const base64url = await url2Base64(url, type);
+    if (base64url) {
+      ipcRenderers.sendDownload(base64url as string);
+      // 设置一次性监听，防止重复触发
+      ipcRenderer.once('download-file', (e, res: string) => {
+        if (res) {
+          ElMessage({
+            message: '下载成功',
+            type: 'success',
+            offset: 80,
+            duration: 2000,
+          });
+        }
+      });
+    }
   }
+};
+
+/**
+ * 图片路径转成canvas
+ * @param {图片url} url
+ */
+export const imgToCanvas = async (url: string) => {
+  // 创建img元素
+  const img = document.createElement('img');
+  img.src = url;
+  img.setAttribute('crossOrigin', 'anonymous'); // 防止跨域引起的 Failed to execute 'toDataURL' on 'HTMLCanvasElement': Tainted canvases may not be exported.
+  await new Promise((resolve) => (img.onload = resolve));
+  // 创建canvas DOM元素，并设置其宽高和图片一样
+  const canvas = document.createElement('canvas');
+  canvas.width = img.width;
+  canvas.height = img.height;
+  // 坐标(0,0) 表示从此处开始绘制，相当于偏移。
+  canvas.getContext('2d')?.drawImage(img, 0, 0);
+  return canvas;
+};
+
+/**
+ * canvas添加水印
+ * @param {canvas对象} canvas
+ * @param {水印文字} text
+ */
+export const addImgWatermark = (params: {
+  canvas: HTMLCanvasElement;
+  text: string;
+  size: number;
+  width: number;
+  height: number;
+  top: number;
+  left: number;
+  color: string;
+}) => {
+  const { canvas, text, size, top, left, width, height, color } = params;
+  const ctx = canvas.getContext('2d');
+  ctx!.fillStyle = color;
+  ctx!.textBaseline = 'bottom';
+  ctx!.font = `${(canvas.width / width) * size}px sans-serif`; // 设置字体样式
+  ctx!.fillText(text, (canvas.width / width) * left, (canvas.height / height) * top);
+  return canvas;
+};
+
+/**
+ * canvas转成img
+ * @param {canvas对象} canvas
+ */
+export const convas2ImgAddWatermark = async ({
+  imgUrl,
+  width,
+  height,
+  type = 'png',
+  top,
+  left,
+  size,
+  color,
+  text,
+}: {
+  imgUrl: string;
+  top: number;
+  left: number;
+  width: number;
+  height: number;
+  size: number;
+  color: string;
+  text: string;
+  type?: string;
+}) => {
+  // 1.图片路径转成canvas
+  const tempCanvas = await imgToCanvas(imgUrl);
+  // 2.canvas添加水印
+  const canvas = addImgWatermark({
+    canvas: tempCanvas,
+    text,
+    size,
+    top,
+    left,
+    width,
+    height,
+    color,
+  });
+  // 指定格式 PNG
+  return canvas.toDataURL(`image/${type}`);
 };

@@ -9,17 +9,7 @@
     <el-dialog v-model="visible" :close-on-click-modal="false" title="图片压缩" align-center width="650px">
       <div class="content">
         <el-scrollbar ref="scrollRef" max-height="75vh" wrap-class="scrollbar-wrapper">
-          <el-upload
-            class="upload"
-            drag
-            multiple
-            :show-file-list="false"
-            :before-upload="beforeUpload"
-            :http-request="onUpload"
-          >
-            <el-icon class="el-icon--upload"><upload-filled /></el-icon>
-            <div class="el-upload__text">拖拽或点击文件上传（仅支持 png、jpg、jpeg、gif 格式的图片）</div>
-          </el-upload>
+          <DragUpload class="upload" :on-upload="onUpload" />
           <div v-if="sourceUrl" class="image-container">
             <div class="contrast">
               <span class="title">压缩前后对比</span>
@@ -126,10 +116,8 @@
 import { ipcRenderer } from 'electron';
 import { computed, ref, reactive } from 'vue';
 import type { CSSProperties } from 'vue';
-import type { FormInstance, UploadProps, FormRules } from 'element-plus';
+import type { FormInstance, FormRules } from 'element-plus';
 import { ElMessage } from 'element-plus';
-import { UploadFilled } from '@element-plus/icons-vue';
-import { FILE_TYPE, FILE_UPLOAD_MSG } from '@/constant';
 import { compressImage, getImgInfo, Verify, checkNumber, checkMin, checkMax, ipcRenderers } from '@/utils';
 
 interface IProps {
@@ -264,18 +252,6 @@ const rules = reactive<FormRules>({
   imgWidth: [{ validator: validateSize }],
   imgHeight: [{ validator: validateSize }],
 });
-
-// 上传校验
-const beforeUpload: UploadProps['beforeUpload'] = (rawFile) => {
-  if (!FILE_TYPE.includes(rawFile.type)) {
-    ElMessage.error(FILE_UPLOAD_MSG);
-    return false;
-  } else if (rawFile.size / 1024 / 1024 > 20) {
-    ElMessage.error('图片不能超过20M');
-    return false;
-  }
-  return true;
-};
 
 // 自定义上传
 const onUpload = async (event: { file: File }) => {

@@ -51,6 +51,7 @@
         v-model:previewUrls="previewUrls"
       />
       <TextToSpeech v-model:modal-visible="convertVisible" />
+      <Watermark v-model:modal-visible="watermarkVisible" />
       <el-dialog v-model="previewVisible" draggable align-center title="图片预览" width="80%" @close="onClose">
         <div class="preview-dialog">
           <el-scrollbar class="scroll-wrap" max-height="75vh">
@@ -89,11 +90,14 @@ import { ToolsItem } from '@/typings/common';
 import Compress from './Compress/index.vue';
 import TextToSpeech from './TextToSpeech/index.vue';
 import NavCard from './NavCard/index.vue';
+import Watermark from './Watermark/index.vue';
 
 // 图片压缩弹窗
 const compressVisible = ref<boolean>(false);
 // 文本转语音弹窗
 const convertVisible = ref<boolean>(false);
+// 文本转语音弹窗
+const watermarkVisible = ref<boolean>(false);
 // 图片预览弹窗
 const previewVisible = ref<boolean>(false);
 // 预览图片
@@ -116,6 +120,11 @@ const onTextToSpeech = (item: ToolsItem) => {
   convertVisible.value = true;
 };
 
+// 添加水印
+const onAddwatermark = (item: ToolsItem) => {
+  watermarkVisible.value = true;
+};
+
 // 浏览器打开链接
 const openWithBrowser = (item: ToolsItem) => {
   shell.openExternal(item.toolHref!);
@@ -126,6 +135,7 @@ const onClickNavIcon = (item: ToolsItem) => {
   const actions = {
     compress: showCompress,
     textToSpeech: onTextToSpeech,
+    watermark: onAddwatermark,
     tool: openWithBrowser,
   };
   actions[item.key](item);

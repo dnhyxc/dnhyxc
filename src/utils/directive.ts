@@ -15,6 +15,40 @@ export const mountDirectives = <T>(app: T | any) => {
     },
   });
 
+  app.directive('draggable', {
+    mounted(el: HTMLElement, binding: DirectiveBinding) {
+      let offsetX = 0;
+      let offsetY = 0;
+      let dragging = false;
+
+      const handleMouseDown = (e: MouseEvent) => {
+        dragging = true;
+        offsetX = e.clientX - el.offsetLeft;
+        offsetY = e.clientY - el.offsetTop;
+        document.addEventListener('mousemove', handleMouseMove);
+      };
+
+      const handleMouseMove = (e: MouseEvent) => {
+        if (dragging) {
+          el.style.left = e.clientX - offsetX + 'px';
+          el.style.top = e.clientY - offsetY + 'px';
+          binding.value({
+            top: e.clientY - offsetY,
+            left: e.clientX - offsetX,
+          });
+        }
+      };
+
+      const handleMouseUp = () => {
+        dragging = false;
+        document.removeEventListener('mousemove', handleMouseMove);
+      };
+
+      el.addEventListener('mousedown', handleMouseDown);
+      el.addEventListener('mouseup', handleMouseUp);
+    },
+  });
+
   app.directive('move', {
     // 绑定元素的父组件挂载时调用
     mounted(el: HTMLElement, binding: DirectiveBinding) {

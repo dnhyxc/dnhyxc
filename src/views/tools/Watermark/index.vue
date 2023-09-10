@@ -1,0 +1,323 @@
+<!--
+ * 水印工具
+ * @author: dnhyxc
+ * @since: 2023-09-08
+ * index.vue
+-->
+<template>
+  <div class="modal-wrap">
+    <el-dialog v-model="visible" :close-on-click-modal="false" title="图片加水印" align-center width="950px">
+      <div class="content">
+        <div class="img-wrap">
+          <el-scrollbar ref="scrollRef" max-height="80vh" wrap-class="scrollbar-wrapper">
+            <div class="prev">
+              <DragUpload v-if="!base64Url" class="drag-upload" :on-upload="onUpload">
+                <template #info>
+                  <div class="drag-info">图片上传之后，拖动图片中的文字，可更改水印位置</div>
+                </template>
+              </DragUpload>
+              <div class="upload-img-wrap">
+                <span v-if="base64Url" ref="markTextRef" v-draggable.getData="getData" class="mark-text">
+                  {{ markText }}
+                </span>
+                <img v-if="base64Url" ref="uploadImgRef" :src="watermarkUrl || base64Url" alt="" class="upload-img" />
+              </div>
+            </div>
+          </el-scrollbar>
+        </div>
+        <div class="action-list">
+          <div class="setting">
+            <div class="title">水印设置</div>
+            <div class="mark-inp">
+              <span class="label">水印文字：</span>
+              <el-input v-model="markText" maxlength="20" placeholder="请输入水印文字" />
+            </div>
+            <div class="mark-inp">
+              <span class="label">文字颜色：</span>
+              <div class="color-wrap">
+                <el-color-picker v-model="markColor" />
+              </div>
+            </div>
+            <div class="mark-inp">
+              <span class="label">文字大小：</span>
+              <div class="color-wrap">
+                <el-input-number v-model="markSize" :min="12" :max="100" />
+              </div>
+            </div>
+          </div>
+          <div class="action-btns">
+            <el-button class="btn" type="primary" :disabled="!base64Url" @click="addWatermark">添加水印</el-button>
+            <el-button class="btn" :disabled="!watermarkUrl" @click="onPreview">预览图片</el-button>
+            <el-button class="btn" type="success" :disabled="!watermarkUrl" @click="onDownload">下载图片</el-button>
+            <el-button class="btn" type="info" @click="onReset">重置</el-button>
+          </div>
+        </div>
+      </div>
+    </el-dialog>
+    <ImagePreview
+      v-model:previewVisible="previewVisible"
+      :show-water-modal="showWaterModal"
+      :select-image="{ url: watermarkUrl || base64Url }"
+    />
+  </div>
+</template>
+
+<script setup lang="ts">
+import { computed, ref, watch } from 'vue';
+import { convas2ImgAddWatermark, onDownloadFile } from '@/utils';
+
+interface IProps {
+  modalVisible: boolean;
+}
+
+interface Emits {
+  (e: 'update:modalVisible', visible: boolean): void;
+}
+
+const emit = defineEmits<Emits>();
+
+const props = withDefaults(defineProps<IProps>(), {
+  modalVisible: false,
+});
+
+const markTextRef = ref<HTMLDivElement | null>(null);
+const uploadImgRef = ref<HTMLImageElement | null>(null);
+const watermarkUrl = ref<string>('');
+// 压缩前的图片路径
+const base64Url = ref<string>('');
+const markText = ref<string>('@dnhyxc');
+const markColor = ref<string>('#EAEAEA');
+const markSize = ref<number>(20);
+// 水印文字移动的信息
+const moveInfo = ref<{ top: number; left: number }>({ top: 30, left: 15 });
+const previewVisible = ref<boolean>(false);
+
+const markFontSize = computed(() => `${markSize.value}px`);
+
+const visible = computed({
+  get() {
+    return props.modalVisible;
+  },
+  set(visible: boolean) {
+    emit('update:modalVisible', visible);
+  },
+});
+
+watch([markColor, markSize, markText], (newVal) => {
+  if (base64Url.value) {
+    addWatermark();
+  }
+});
+
+const getData = (params: { top: number; left: number }) => {
+  moveInfo.value = params;
+};
+
+// 自定义上传
+const onUpload = async (event: { file: Blob }) => {
+  const reader = new FileReader();
+  reader.onload = async (e: Event) => {
+    base64Url.value = (e.target as FileReader).result as string;
+  };
+  reader.readAsDataURL(event.file);
+};
+
+// 图片预览
+const onPreview = () => {
+  previewVisible.value = true;
+  emit('update:modalVisible', false);
+};
+
+const showWaterModal = () => {
+  emit('update:modalVisible', true);
+};
+
+// 图片路径转成canvas并加水印
+const addWatermark = async () => {
+  const markUrl = await convas2ImgAddWatermark({
+    ...moveInfo.value,
+    width: uploadImgRef.value?.width as number,
+    height: uploadImgRef.value?.height as number,
+    imgUrl: base64Url.value,
+    size: markSize.value,
+    text: markText.value,
+    color: markColor.value,
+  });
+  watermarkUrl.value = markUrl;
+};
+
+// 下载
+const onDownload = () => {
+  onDownloadFile({ url: watermarkUrl.value });
+};
+
+// 重置
+const onReset = () => {
+  base64Url.value = '';
+  watermarkUrl.value = '';
+  markText.value = '@dnhyxc';
+  markColor.value = '#EAEAEA';
+  markSize.value = 20;
+  moveInfo.value = {
+    top: 30,
+    left: 15,
+  };
+};
+</script>
+
+<style scoped lang="less">
+@import '@/styles/index.less';
+
+.content {
+  display: flex;
+  justify-content: space-between;
+
+  .img-wrap {
+    flex: 1;
+    box-shadow: 0 0 8px 0 var(--shadow-mack);
+    background-color: var(--pre-hover-bg);
+    margin-right: 10px;
+    border-radius: 5px;
+
+    .prev {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 540px;
+
+      .upload-img-wrap {
+        position: relative;
+
+        .clickNoSelectText();
+        .upload-img {
+          display: block;
+          max-width: 640px;
+          max-height: 520px;
+          margin-right: 0 !important;
+          user-select: none;
+          -webkit-user-drag: none;
+        }
+
+        .mark-text {
+          position: absolute;
+          top: 10px;
+          left: 15px;
+          color: @fff;
+          padding: 3px;
+          border-radius: 5px;
+          cursor: move;
+          font-size: v-bind(markFontSize);
+          height: v-bind(markFontSize);
+          line-height: v-bind(markFontSize);
+          font-family: sans-serif, Arial, Helvetica, sans-serif;
+          white-space: nowrap;
+          text-shadow: 0 0 0.5em var(--theme-blue), 0 0 0.2em var(--theme-blue);
+          backdrop-filter: blur(5px);
+        }
+      }
+
+      .drag-upload {
+        width: 100%;
+        height: 520px;
+      }
+
+      .drag-info {
+        color: @active;
+        margin-top: 10px;
+      }
+    }
+  }
+
+  .action-list {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    width: 220px;
+    box-shadow: 0 0 8px 0 var(--shadow-mack);
+    background-color: var(--pre-hover-bg);
+    border-radius: 5px;
+    padding: 10px;
+
+    .setting {
+      .title {
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--font-1);
+        margin-bottom: 10px;
+
+        .title-info {
+          font-size: 12px;
+        }
+      }
+      .mark-inp {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 10px;
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+
+        .label {
+          margin-bottom: 5px;
+          color: var(--font-6);
+        }
+
+        .color-wrap {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+
+          .current-color {
+            margin-left: 10px;
+          }
+
+          :deep {
+            .el-color-picker {
+              flex: 1;
+            }
+            .el-color-picker__trigger {
+              width: 100%;
+              border: 1px solid var(--card-border);
+              padding: 0;
+            }
+
+            .el-color-picker__color {
+              border: none;
+            }
+
+            .el-color-picker__color-inner {
+              border-radius: 4px;
+            }
+
+            .el-color-picker__icon {
+              color: var(--font-1);
+            }
+
+            .el-input-number {
+              width: 100%;
+            }
+          }
+        }
+      }
+    }
+
+    .action-btns {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+
+      .btn {
+        flex: 1;
+        margin-left: 0;
+        margin-bottom: 10px;
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+      }
+    }
+  }
+}
+</style>

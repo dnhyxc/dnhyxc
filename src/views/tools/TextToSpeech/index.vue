@@ -60,7 +60,7 @@
               />
             </div>
             <template #reference>
-              <el-button :type="speech ? 'info' : 'primary'" class="spend-btn" :disabled="speech"
+              <el-button :type="speech ? 'info' : 'primary'" class="spend-btn" :disabled="!!speech"
                 >倍速 {{ speed }}</el-button
               >
             </template>

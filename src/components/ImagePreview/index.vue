@@ -5,7 +5,7 @@
  * index.vue
 -->
 <template>
-  <el-dialog v-model="visible" :close-on-click-modal="false" align-center width="88vw">
+  <el-dialog v-model="visible" :close-on-click-modal="false" align-center width="88vw" @close="onClose">
     <template #header>
       <div class="actions">
         <span class="title">图片预览</span>
@@ -57,6 +57,7 @@ interface IProps {
   selectImage: AtlasItemParams;
   previewVisible: boolean;
   showPrevAndNext?: boolean;
+  showWaterModal?: Function;
 }
 
 const props = defineProps<IProps>();
@@ -110,6 +111,11 @@ watch(
     }
   },
 );
+
+// 关闭弹窗时，开启父弹窗
+const onClose = () => {
+  props?.showWaterModal?.();
+};
 
 // 放大
 const onScaleMax = () => {
