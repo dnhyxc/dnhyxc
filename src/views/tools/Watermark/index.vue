@@ -46,8 +46,8 @@
             </div>
           </div>
           <div class="action-btns">
-            <el-button class="btn" type="primary" :disabled="!base64Url" @click="addWatermark">添加水印</el-button>
-            <el-button class="btn" :disabled="!watermarkUrl" @click="onPreview">预览图片</el-button>
+            <el-button class="btn" type="primary" :disabled="!base64Url" @click="addWatermark">设置水印</el-button>
+            <el-button class="btn" :disabled="!watermarkUrl" @click="onPreview">预览水印</el-button>
             <el-button class="btn" type="success" :disabled="!watermarkUrl" @click="onDownload">下载图片</el-button>
             <el-button class="btn" type="info" @click="onReset">重置</el-button>
           </div>
@@ -63,7 +63,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
+import { computed, ref, watch, nextTick } from 'vue';
 import { convas2ImgAddWatermark, onDownloadFile } from '@/utils';
 
 interface IProps {
@@ -89,7 +89,10 @@ const markText = ref<string>('@dnhyxc');
 const markColor = ref<string>('#EAEAEA');
 const markSize = ref<number>(20);
 // 水印文字移动的信息
-const moveInfo = ref<{ top: number; left: number }>({ top: 30, left: 15 });
+const moveInfo = ref<{ top: number; left: number }>({ top: 0, left: 0 });
+// 水印初始化位置
+const markInitTop = ref<string>('0');
+const markInitLeft = ref<string>('0');
 const previewVisible = ref<boolean>(false);
 
 const markFontSize = computed(() => `${markSize.value}px`);
@@ -103,12 +106,26 @@ const visible = computed({
   },
 });
 
+// 动态计算初始化水印文字的位置
+watch(base64Url, (newVal) => {
+  if (newVal) {
+    nextTick(() => {
+      const { height, width } = uploadImgRef.value!;
+      const { offsetHeight, offsetWidth } = markTextRef.value!;
+      markInitTop.value = height - offsetHeight - 5 + 'px';
+      markInitLeft.value = width - offsetWidth - 5 + 'px';
+    });
+  }
+});
+
+// 监听水印颜色、文字大小、水印文字的变化
 watch([markColor, markSize, markText], (newVal) => {
   if (base64Url.value) {
     addWatermark();
   }
 });
 
+// 获取水印文字移动的位置信息
 const getData = (params: { top: number; left: number }) => {
   moveInfo.value = params;
 };
@@ -142,6 +159,8 @@ const addWatermark = async () => {
     size: markSize.value,
     text: markText.value,
     color: markColor.value,
+    markTextWidth: markTextRef.value?.offsetWidth as number,
+    markTextHeight: markTextRef.value?.offsetHeight as number,
   });
   watermarkUrl.value = markUrl;
 };
@@ -159,8 +178,8 @@ const onReset = () => {
   markColor.value = '#EAEAEA';
   markSize.value = 20;
   moveInfo.value = {
-    top: 30,
-    left: 15,
+    top: 0,
+    left: 0,
   };
 };
 </script>
@@ -201,19 +220,21 @@ const onReset = () => {
 
         .mark-text {
           position: absolute;
-          top: 10px;
-          left: 15px;
+          top: v-bind(markInitTop);
+          left: v-bind(markInitLeft);
+          // top: 5px;
+          // left: 5px;
           color: @fff;
           padding: 3px;
           border-radius: 5px;
           cursor: move;
           font-size: v-bind(markFontSize);
+          text-align: right;
           height: v-bind(markFontSize);
           line-height: v-bind(markFontSize);
           font-family: sans-serif, Arial, Helvetica, sans-serif;
           white-space: nowrap;
           text-shadow: 0 0 0.5em var(--theme-blue), 0 0 0.2em var(--theme-blue);
-          backdrop-filter: blur(5px);
         }
       }
 

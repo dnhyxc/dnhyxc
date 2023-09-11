@@ -689,51 +689,17 @@ export const onDownloadFile = async ({ url, type = 'png' }: { url: string; type?
 };
 
 /**
- * 图片路径转成canvas
- * @param {图片url} url
- */
-export const imgToCanvas = async (url: string) => {
-  // 创建img元素
-  const img = document.createElement('img');
-  img.src = url;
-  img.setAttribute('crossOrigin', 'anonymous'); // 防止跨域引起的 Failed to execute 'toDataURL' on 'HTMLCanvasElement': Tainted canvases may not be exported.
-  await new Promise((resolve) => (img.onload = resolve));
-  // 创建canvas DOM元素，并设置其宽高和图片一样
-  const canvas = document.createElement('canvas');
-  canvas.width = img.width;
-  canvas.height = img.height;
-  // 坐标(0,0) 表示从此处开始绘制，相当于偏移。
-  canvas.getContext('2d')?.drawImage(img, 0, 0);
-  return canvas;
-};
-
-/**
- * canvas添加水印
- * @param {canvas对象} canvas
- * @param {水印文字} text
- */
-export const addImgWatermark = (params: {
-  canvas: HTMLCanvasElement;
-  text: string;
-  size: number;
-  width: number;
-  height: number;
-  top: number;
-  left: number;
-  color: string;
-}) => {
-  const { canvas, text, size, top, left, width, height, color } = params;
-  const ctx = canvas.getContext('2d');
-  ctx!.fillStyle = color;
-  ctx!.textBaseline = 'bottom';
-  ctx!.font = `${(canvas.width / width) * size}px sans-serif`; // 设置字体样式
-  ctx!.fillText(text, (canvas.width / width) * left, (canvas.height / height) * top);
-  return canvas;
-};
-
-/**
  * canvas转成img
- * @param {canvas对象} canvas
+ * @param {imgUrl} 图片url
+ * @param {width} 容器宽度
+ * @param {height} 容器高度
+ * @param {type} 转成的图片格式，如：png
+ * @param {top} 水印相对与图片上面的偏移量
+ * @param {left} 水印相对与图片左边的偏移量
+ * @param {size} 水印文字大小
+ * @param {markTextWidth} 水印文字元素宽度
+ * @param {markTextHeight} 水印文字元素高度
+ * @return {canvas} HTMLCanvasElement
  */
 export const convas2ImgAddWatermark = async ({
   imgUrl,
@@ -745,6 +711,8 @@ export const convas2ImgAddWatermark = async ({
   size,
   color,
   text,
+  markTextWidth,
+  markTextHeight,
 }: {
   imgUrl: string;
   top: number;
@@ -754,6 +722,8 @@ export const convas2ImgAddWatermark = async ({
   size: number;
   color: string;
   text: string;
+  markTextWidth: number;
+  markTextHeight: number;
   type?: string;
 }) => {
   // 1.图片路径转成canvas
@@ -768,7 +738,57 @@ export const convas2ImgAddWatermark = async ({
     width,
     height,
     color,
+    markTextWidth,
+    markTextHeight,
   });
   // 指定格式 PNG
   return canvas.toDataURL(`image/${type}`);
+};
+
+// 图片路径转成canvas
+export const imgToCanvas = async (url: string) => {
+  // 创建img元素
+  const img = document.createElement('img');
+  img.src = url;
+  // 防止跨域引起的 Failed to execute 'toDataURL' on 'HTMLCanvasElement': Tainted canvases may not be exported.
+  img.setAttribute('crossOrigin', 'anonymous');
+  await new Promise((resolve) => (img.onload = resolve));
+  // 创建canvas DOM元素，并设置其宽高和图片一样
+  const canvas = document.createElement('canvas');
+  canvas.width = img.width;
+  canvas.height = img.height;
+  // 坐标(0,0) 表示从此处开始绘制，相当于偏移。
+  canvas.getContext('2d')?.drawImage(img, 0, 0);
+  return canvas;
+};
+
+// canvas添加水印
+export const addImgWatermark = (params: {
+  canvas: HTMLCanvasElement;
+  text: string;
+  size: number;
+  width: number;
+  height: number;
+  top: number;
+  left: number;
+  color: string;
+  markTextWidth: number;
+  markTextHeight: number;
+}) => {
+  const { canvas, text, size, top, left, width, height, color, markTextWidth, markTextHeight } = params;
+  const ctx = canvas.getContext('2d');
+  ctx!.fillStyle = color;
+  ctx!.textAlign = 'right';
+  ctx!.textBaseline = 'bottom';
+  ctx!.font = `${(canvas.width / width) * size}px sans-serif`; // 设置字体样式
+  if (left && top) {
+    ctx!.fillText(
+      text,
+      (canvas.width / width) * left + (canvas.width / width) * markTextWidth,
+      (canvas.height / height) * top + (canvas.height / height) * markTextHeight,
+    );
+  } else {
+    ctx!.fillText(text, canvas.width - 20, canvas.height - 20);
+  }
+  return canvas;
 };

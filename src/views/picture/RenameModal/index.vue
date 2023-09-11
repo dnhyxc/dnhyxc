@@ -82,7 +82,6 @@ const onCancel = () => {
 
 const onSubmit = () => {
   if (!formRef.value) return;
-  console.log(renameForm, 'renameForm');
   formRef.value.validate(async (valid) => {
     if (valid) {
       await pictureStore.updateImagesInfo({ id: props.imgId, fileName: renameForm.fileName });

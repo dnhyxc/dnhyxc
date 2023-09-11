@@ -161,7 +161,6 @@ const onSelectAll = () => {
 };
 
 const onRename = (item: AtlasItemParams) => {
-  console.log(item, 'item');
   renameId.value = item.id;
   renameVisible.value = true;
 };
