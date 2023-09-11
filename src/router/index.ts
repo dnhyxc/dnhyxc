@@ -1,9 +1,8 @@
 import { createRouter, RouteRecordRaw, createWebHistory } from 'vue-router';
 import { ElMessage } from 'element-plus';
 import { useCommonStore } from '@/store/common';
-import { loginStore } from '@/store';
 import { locGetItem } from '@/utils';
-import { WITH_AUTH_ROUTES, AUTHOR_ROUTES } from '@/constant';
+import { WITH_AUTH_ROUTES } from '@/constant';
 import eventBus from '@/utils/eventBus';
 
 // 需要后台配置权限的路由配置
@@ -258,14 +257,7 @@ const router = createRouter({
 });
 
 // 全局守卫：登录拦截 本地没有存token,请重新登录
-router.beforeEach(async (to, from, next) => {
-  // 获取路由权限
-  await loginStore.getUserMenuRoles();
-  // 判断是否具备该菜单权限
-  const noAuthMenus = AUTHOR_ROUTES.filter((i) => !loginStore.menus?.some((j) => j === i));
-  if (noAuthMenus?.includes(to.name as string)) {
-    router.push('/404');
-  }
+router.beforeEach((to, from, next) => {
   const commonStore = useCommonStore();
   // 切换路由时，隐藏页面头部搜索输入框，并清空搜索输入框内容
   commonStore.showSearch = false;

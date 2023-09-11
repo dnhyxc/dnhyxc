@@ -90,7 +90,7 @@
 
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref, computed } from 'vue';
-import { useScroller } from '@/hooks';
+import { useScroller, useGetRouteAuthInfo } from '@/hooks';
 import { pictureStore } from '@/store';
 import { scrollTo, debounce, onDownloadFile, Message, checkOS } from '@/utils';
 import { AtlasItemParams } from '@/typings/common';
@@ -107,6 +107,9 @@ const selectImage = ref<AtlasItemParams>();
 const selectedImageIds = ref<string[]>([]);
 const renameVisible = ref<boolean>(false);
 const renameId = ref<string>('');
+
+// 判断是否有路由权限
+useGetRouteAuthInfo();
 
 const noMore = computed(() => {
   const { atlasList, total } = pictureStore;

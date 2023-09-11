@@ -86,6 +86,7 @@ import { onMounted, ref } from 'vue';
 import draggable from 'vuedraggable';
 import { TOOL_LIST, TOOL_SVG } from '@/constant';
 import { toolsStore } from '@/store';
+import { useGetRouteAuthInfo } from '@/hooks';
 import { ToolsItem } from '@/typings/common';
 import Compress from './Compress/index.vue';
 import TextToSpeech from './TextToSpeech/index.vue';
@@ -104,6 +105,9 @@ const previewVisible = ref<boolean>(false);
 const previewUrls = ref<string[]>([]);
 // 控制是否开启排序
 const enabled = ref<boolean>(false);
+
+// 判断是否有路由权限
+useGetRouteAuthInfo();
 
 onMounted(() => {
   // 获取工具列表

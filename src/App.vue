@@ -21,7 +21,8 @@ const router = useRouter();
 const isRouterAlive = ref<boolean>(true);
 
 // 修改主题色
-onBeforeMount(() => {
+onBeforeMount(async () => {
+  await loginStore.getUserMenuRoles();
   // 获取存储在electron store中的主题颜色
   const theme = getTheme();
   if (theme) {

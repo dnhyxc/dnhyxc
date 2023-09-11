@@ -12,6 +12,7 @@ import {
   authorStore,
   searchStore,
 } from '@/store';
+import { AUTHOR_ROUTES } from '@/constant';
 import { CommentParams, useDeleteArticleParams, DeleteArticleParams } from '@/typings/common';
 import { Message, getStoreUserInfo } from '@/utils';
 
@@ -172,4 +173,16 @@ export const useDeleteArticle = ({
   };
 
   return { deleteArticle };
+};
+
+// 判断页面是否有权限
+export const useGetRouteAuthInfo = () => {
+  const router = useRouter();
+  const { menus } = loginStore;
+  const name = location.pathname.slice(1); // tools
+  // 判断是否具备该菜单权限
+  const noAuthMenus = AUTHOR_ROUTES.filter((i) => !menus?.some((j) => j === i));
+  if (noAuthMenus?.includes(name as string)) {
+    router.push('/404');
+  }
 };
