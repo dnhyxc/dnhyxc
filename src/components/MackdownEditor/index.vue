@@ -2,7 +2,7 @@
   <div class="container">
     <!-- 上传图片菜单默认为禁用状态 设置 disabled-menus 为空数组可以开启 -->
     <v-md-editor
-      v-model.trim="createStore.createInfo.content"
+      v-model="createStore.createInfo.content"
       placeholder="编辑内容"
       autofocus
       :height="height || 'calc(100vh - 84px)'"
@@ -85,7 +85,7 @@ const toolbar = reactive<Toolbar>({
     text: '发',
     title: '发布文章',
     action(editor) {
-      if (!createStore?.createInfo?.content) {
+      if (!createStore?.createInfo?.content?.trim()) {
         ElMessage({
           message: '嘿！一个字都没写休想发布',
           type: 'warning',
@@ -107,7 +107,7 @@ const toolbar = reactive<Toolbar>({
     text: '存',
     title: '保存草稿',
     action(editor) {
-      if (!createStore?.createInfo?.content) {
+      if (!createStore?.createInfo?.content?.trim()) {
         ElMessage({
           message: '嘿！一个字都没写休想发布',
           type: 'warning',
