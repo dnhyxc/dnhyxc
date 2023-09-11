@@ -94,6 +94,7 @@ export const useLoginStore = defineStore('login', {
           if (!window.location.pathname.includes('/article')) {
             createWebSocket();
           }
+          await this.getUserMenuRoles();
           // 登陆成功后返回到上一页面
           router?.push(commonStore.backPath);
         } else {

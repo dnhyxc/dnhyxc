@@ -22,7 +22,6 @@ const isRouterAlive = ref<boolean>(true);
 
 // 修改主题色
 onBeforeMount(async () => {
-  await loginStore.getUserMenuRoles();
   // 获取存储在electron store中的主题颜色
   const theme = getTheme();
   if (theme) {
@@ -40,6 +39,8 @@ watchEffect(async () => {
 });
 
 onMounted(async () => {
+  // 获取路由权限
+  await loginStore.getUserMenuRoles();
   document.body.addEventListener('click', onBodyClick, false);
   if (checkOS() !== 'mac') {
     // 在 App 中监听主进程中发送的清除消息列表的消息，防止重复首次加载时重复监听的问题

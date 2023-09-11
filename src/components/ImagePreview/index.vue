@@ -95,12 +95,10 @@ watchEffect(() => {
 watch(
   () => [imageInfo.scale, imageInfo.rotate],
   (newVal) => {
-    if (newVal[0] > 1) {
+    if (newVal[0] !== 1) {
       nextTick(() => {
         imgRef.value!.style.cursor = 'move';
       });
-    } else {
-      imgRef.value!.style.cursor = 'default';
     }
     if (newVal[1] !== 0) {
       nextTick(() => {
@@ -231,6 +229,10 @@ const onNext = () => {
       color: var(--font-1);
       margin-left: 15px;
       cursor: pointer;
+
+      &:hover {
+        color: var(--theme-blue);
+      }
     }
 
     .icon-arrow-right-bold {
