@@ -18,6 +18,7 @@
             resize="none"
             show-word-limit
             placeholder="请输入需要转换的文本"
+            @input="onKeywordChange"
           />
         </div>
         <div v-if="convertStore.convertList.length" class="history-title">
@@ -33,6 +34,9 @@
           <div class="list">
             <div v-for="(item, index) in convertStore.convertList" :key="index" class="item">
               <div class="keyword" @click="onSelect(item)">{{ item.keyword }}</div>
+              <span class="play">
+                <i class="iconfont icon-zanting" @click="onPlay(item)" />
+              </span>
               <span class="delete">
                 <i class="iconfont icon-guanbi" @click="onDelete(item)" />
               </span>
@@ -42,11 +46,18 @@
       </div>
       <template #footer>
         <div class="dialog-footer">
-          <el-button :type="speech ? 'warning' : 'primary'" :disabled="!keyword.trim()" @click="onConvert">{{
-            speech ? '重置' : '播放'
-          }}</el-button>
-          <el-button type="info" :disabled="!keyword.trim() || !speech" @click="onPause">暂停</el-button>
-          <el-button type="success" :disabled="!keyword.trim() || !speech" @click="onResume">恢复</el-button>
+          <el-button
+            :type="speech ? 'warning' : 'primary'"
+            :disabled="!keyword.trim() && !selectKeyword"
+            @click="onConvert"
+            >{{ speech ? '重置' : '播放' }}</el-button
+          >
+          <el-button type="info" :disabled="(!keyword.trim() && !selectKeyword) || !speech" @click="onPause"
+            >暂停</el-button
+          >
+          <el-button type="success" :disabled="(!keyword.trim() && !selectKeyword) || !speech" @click="onResume"
+            >恢复</el-button
+          >
           <el-popover placement="top" popper-class="speed-pop" trigger="hover">
             <div class="content">
               <el-slider
@@ -96,6 +107,8 @@ const emit = defineEmits<Emits>();
 const speed = ref<number>(1.25);
 // 输入的文本
 const keyword = ref<string>('');
+// select keyword
+const selectKeyword = ref<string>('');
 // 语音播放实例
 const speech = ref<SpeechPlayer | null>(null);
 
@@ -113,6 +126,7 @@ watch(visible, (newVal) => {
   if (!newVal) {
     // 弹窗关闭，清空keyword
     keyword.value = '';
+    selectKeyword.value = '';
     if (speech.value) {
       speech.value.cancel();
       speech.value = null;
@@ -135,9 +149,14 @@ onUnmounted(() => {
   }
 });
 
+// 输入框内容更改事件
+const onKeywordChange = () => {
+  selectKeyword.value = '';
+};
+
 // 转换
 const onConvert = () => {
-  if (!keyword.value.trim()) {
+  if (!keyword.value.trim() && !selectKeyword.value) {
     ElMessage({
       message: '请先输入需要转换的文本',
       type: 'warning',
@@ -156,14 +175,14 @@ const onConvert = () => {
     speech.value = null;
   } else {
     speech.value = new SpeechPlayer({
-      text: keyword.value.trim(),
+      text: selectKeyword.value || keyword.value.trim(),
       rate: speed.value,
       endEvent,
     });
     speech.value.start();
   }
   // 添加转换列表
-  convertStore.createConvert(keyword.value);
+  keyword.value && convertStore.createConvert(keyword.value);
 };
 
 // 暂停
@@ -183,6 +202,12 @@ const onResume = () => {
 // 选择历史转换
 const onSelect = (item: ConvertParams) => {
   keyword.value = item.keyword;
+};
+
+// 播放
+const onPlay = (item: ConvertParams) => {
+  selectKeyword.value = item.keyword;
+  onConvert();
 };
 
 // 删除选中历史转换
@@ -273,7 +298,8 @@ const onClearAll = () => {
         margin-bottom: 15px;
 
         &:hover {
-          .delete {
+          .delete,
+          .play {
             display: flex;
             justify-content: center;
             align-items: center;
@@ -289,7 +315,8 @@ const onClearAll = () => {
           }
         }
 
-        .delete {
+        .delete,
+        .play {
           position: absolute;
           top: -1px;
           right: 0;
@@ -301,16 +328,26 @@ const onClearAll = () => {
           backdrop-filter: blur(3px);
           display: none;
 
-          .icon-guanbi {
+          .icon-guanbi,
+          .icon-zanting {
             color: @font-danger;
             font-size: 16px;
             cursor: pointer;
           }
 
           &:hover {
-            .icon-guanbi {
+            .icon-guanbi,
+            .icon-zanting {
               color: @font-warning;
             }
+          }
+        }
+
+        .play {
+          top: -1px;
+          right: 35px;
+          .icon-zanting {
+            color: var(--theme-blue);
           }
         }
 
