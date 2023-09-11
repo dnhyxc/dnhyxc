@@ -206,9 +206,11 @@ const onNext = () => {
   overflow: hidden;
 
   .preview-img {
+    // 设置图片展示不变性且完整显示图像
     width: 100%;
-    height: auto;
-    // object-fit: cover;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
   }
 }
 
