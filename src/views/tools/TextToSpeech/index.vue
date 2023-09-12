@@ -14,7 +14,7 @@
             v-model="keyword"
             :autosize="{ minRows: 5, maxRows: 8 }"
             type="textarea"
-            maxlength="300"
+            maxlength="800"
             resize="none"
             show-word-limit
             placeholder="请输入需要转换的文本"
@@ -33,13 +33,26 @@
         >
           <div class="list">
             <div v-for="(item, index) in convertStore.convertList" :key="index" class="item">
-              <div class="keyword" @click="onSelect(item)">{{ item.keyword }}</div>
-              <span class="play">
-                <i class="iconfont icon-zanting" @click="onPlay(item)" />
-              </span>
-              <span class="delete">
-                <i class="iconfont icon-guanbi" @click="onDelete(item)" />
-              </span>
+              <div :class="`${selectKeyword === item.keyword && speech && 'playing-keyword'} keyword`">
+                {{ item.keyword }}
+              </div>
+              <div :class="`${selectKeyword === item.keyword && speech && 'playing-actions'} actions`">
+                <span class="play">
+                  <i
+                    :class="`iconfont ${
+                      selectKeyword === item.keyword && speech
+                        ? 'icon-bofangzhong'
+                        : speech
+                        ? 'icon-pause-circle'
+                        : 'icon-zanting'
+                    } `"
+                    @click="onPlay(item)"
+                  />
+                </span>
+                <span class="delete">
+                  <i class="iconfont icon-guanbi" @click="onDelete(item)" />
+                </span>
+              </div>
             </div>
           </div>
         </el-scrollbar>
@@ -58,6 +71,24 @@
           <el-button type="success" :disabled="(!keyword.trim() && !selectKeyword) || !speech" @click="onResume"
             >恢复</el-button
           >
+          <el-popover placement="top" popper-class="speed-pop" trigger="hover">
+            <div class="content">
+              <el-slider
+                v-model="volume"
+                vertical
+                height="176px"
+                :step="0.05"
+                :min="0"
+                :max="1"
+                :show-tooltip="false"
+              />
+            </div>
+            <template #reference>
+              <el-button :type="speech ? 'info' : 'primary'" class="spend-btn" :disabled="!!speech"
+                >音量 {{ (volume * 100).toFixed(0) }}%</el-button
+              >
+            </template>
+          </el-popover>
           <el-popover placement="top" popper-class="speed-pop" trigger="hover">
             <div class="content">
               <el-slider
@@ -105,6 +136,8 @@ const emit = defineEmits<Emits>();
 
 // 播放语速
 const speed = ref<number>(1.25);
+// 播放音量
+const volume = ref<number>(0.5);
 // 输入的文本
 const keyword = ref<string>('');
 // select keyword
@@ -134,6 +167,10 @@ watch(visible, (newVal) => {
   } else {
     convertStore.getConvertList();
   }
+});
+
+watch(volume, (newVal) => {
+  speech.value?.setVolume(newVal);
 });
 
 watch(speed, (newVal) => {
@@ -177,6 +214,7 @@ const onConvert = () => {
     speech.value = new SpeechPlayer({
       text: selectKeyword.value || keyword.value.trim(),
       rate: speed.value,
+      volume: volume.value,
       endEvent,
     });
     speech.value.start();
@@ -197,11 +235,6 @@ const onResume = () => {
   if (speech.value) {
     speech.value.resume();
   }
-};
-
-// 选择历史转换
-const onSelect = (item: ConvertParams) => {
-  keyword.value = item.keyword;
 };
 
 // 播放
@@ -298,11 +331,8 @@ const onClearAll = () => {
         margin-bottom: 15px;
 
         &:hover {
-          .delete,
-          .play {
+          .actions {
             display: flex;
-            justify-content: center;
-            align-items: center;
           }
         }
 
@@ -315,40 +345,65 @@ const onClearAll = () => {
           }
         }
 
-        .delete,
-        .play {
+        .playing-keyword {
+          color: @font-success;
+        }
+
+        .actions {
+          display: flex;
+          justify-content: space-between;
           position: absolute;
           top: -1px;
           right: 0;
-          width: 24px;
-          height: 24px;
-          border-radius: 5px;
-          background-color: var(--to-top-bg-color);
-          box-shadow: 0 0 3px var(--theme-blue);
-          backdrop-filter: blur(3px);
           display: none;
 
-          .icon-guanbi,
-          .icon-zanting {
-            color: @font-danger;
-            font-size: 16px;
-            cursor: pointer;
+          & > :first-child {
+            margin-right: 10px;
           }
 
-          &:hover {
+          .delete,
+          .play {
+            width: 25px;
+            height: 25px;
+            line-height: 25px;
+            text-align: center;
+            border-radius: 5px;
+            background-color: var(--to-top-bg-color);
+            box-shadow: 0 0 3px var(--theme-blue);
+            backdrop-filter: blur(3px);
+
             .icon-guanbi,
-            .icon-zanting {
+            .icon-zanting,
+            .icon-pause-circle {
+              color: @font-danger;
+              font-size: 16px;
+              cursor: pointer;
+            }
+
+            .icon-bofangzhong {
+              color: var(--theme-blue);
+            }
+
+            .icon-pause-circle {
               color: @font-warning;
+            }
+
+            &:hover {
+              .icon-guanbi {
+                color: @font-warning;
+              }
+            }
+          }
+
+          .play {
+            .icon-zanting {
+              color: @active;
             }
           }
         }
 
-        .play {
-          top: -1px;
-          right: 35px;
-          .icon-zanting {
-            color: var(--theme-blue);
-          }
+        .playing-actions {
+          display: flex;
         }
 
         &:last-child {

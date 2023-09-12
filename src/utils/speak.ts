@@ -25,7 +25,7 @@ export class SpeechPlayer {
   private utterance: SpeechSynthesisUtterance;
   private isPlaying: boolean;
 
-  constructor({ text, rate = 1, lang = 'zh-CN', volume = 1, pitch = 1, endEvent, startEvent }: SpeakParams) {
+  constructor({ text, rate = 1, lang = 'zh-CN', volume = 0.5, pitch = 1, endEvent, startEvent }: SpeakParams) {
     this.utterance = new SpeechSynthesisUtterance(text);
     this.utterance.rate = rate;
     this.utterance.lang = lang;
@@ -34,6 +34,11 @@ export class SpeechPlayer {
     this.isPlaying = false;
     this.utterance.onstart = (e): void => startEvent && startEvent(e);
     this.utterance.onend = (e): void => endEvent && endEvent(e);
+  }
+
+  // 设置音量
+  public setVolume(value: number): void {
+    this.utterance.volume = value;
   }
 
   // 设置语音类型
