@@ -45,6 +45,7 @@
     "isomorphic-fetch": "^3.0.0",
     "js-md5": "^0.7.3",
     "moment": "^2.29.4",
+    "monaco-editor": "^0.43.0",
     "pinia": "^2.0.29",
     "prismjs": "^1.29.0",
     "qrcode": "^1.5.1",

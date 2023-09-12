@@ -7,7 +7,7 @@
       autofocus
       :height="height || 'calc(100vh - 84px)'"
       :disabled-menus="[]"
-      left-toolbar="undo redo | h bold italic | quote code | strikethrough hr | emoji link image | ul ol table | clear | draft | save | create"
+      left-toolbar="undo redo | h bold italic | quote code | strikethrough hr | emoji link image | ul ol table | clear draft save create | monaco"
       :toolbar="toolbar"
       @upload-image="onUploadImage"
       @copy-code-success="onCopyCodeSuccess"
@@ -57,6 +57,13 @@ interface Toolbar {
     action?: (editor?: any) => void;
     menus?: ToolbarItem[];
   };
+  monaco?: {
+    title?: string;
+    text?: string;
+    icon?: string;
+    action?: (editor?: any) => void;
+    menus?: ToolbarItem[];
+  };
 }
 
 interface IProps {
@@ -66,6 +73,7 @@ interface IProps {
   onClear?: () => void;
   onShowDraft?: () => void;
   onSaveDraft?: () => void;
+  onChangeEditor?: () => void;
   copyCodeSuccess?: (value?: string) => void;
 }
 
@@ -76,6 +84,7 @@ const props = withDefaults(defineProps<IProps>(), {
   onClear: () => {},
   onShowDraft: () => {},
   onSaveDraft: () => {},
+  onChangeEditor: () => {},
   copyCodeSuccess: () => {},
 });
 
@@ -123,6 +132,13 @@ const toolbar = reactive<Toolbar>({
     title: '草稿列表',
     action(editor) {
       props?.onShowDraft?.();
+    },
+  },
+  monaco: {
+    text: 'code',
+    title: '切换编辑器',
+    action(editor) {
+      props?.onChangeEditor?.();
     },
   },
 });
@@ -246,25 +262,22 @@ const onCopyCodeSuccess = (value: string) => {
     .v-md-editor__toolbar-right {
       min-width: 125px;
     }
-    .v-md-editor__toolbar-item-create {
-      color: var(--theme-blue);
-      font-size: 14px;
-      line-height: 30px;
-    }
     .v-md-editor__toolbar-item-clear {
       color: @font-warning;
       font-size: 14px;
       line-height: 30px;
     }
-    .v-md-editor__toolbar-item-save {
+    .v-md-editor__toolbar-item-create,
+    .v-md-editor__toolbar-item-save,
+    .v-md-editor__toolbar-item-draft,
+    .v-md-editor__toolbar-item-monaco {
       color: var(--theme-blue);
       font-size: 14px;
       line-height: 30px;
     }
-    .v-md-editor__toolbar-item-draft {
-      color: var(--theme-blue);
-      font-size: 14px;
-      line-height: 30px;
+
+    .v-md-editor__toolbar-item-monaco {
+      font-size: 16px;
     }
   }
 }

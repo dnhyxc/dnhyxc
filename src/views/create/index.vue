@@ -7,14 +7,17 @@
 <template>
   <div class="edit-wrap">
     <MackdownEditor
+      v-if="!editType"
       :on-publish="onPublish"
       :on-clear="onClear"
       :on-show-draft="showDraft"
       :article-id="(route?.query?.id as string)"
       :on-save-draft="onSaveDraft"
+      :on-change-editor="onChangeEditor"
       :copy-code-success="onCopyCodeSuccess"
-      :height="checkOS() === 'mac' ? 'calc(100vh - 88px)' : null"
+      :height="checkOS() === 'mac' ? 'calc(100vh - 98px)' : null"
     />
+    <MonacoEditor v-if="editType" />
     <CreateDrawer
       :key="JSON.stringify(createStore.classifys)"
       v-model="visible"
@@ -28,7 +31,6 @@
 import { ref, onActivated, onDeactivated, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { ElMessage } from 'element-plus';
-import MackdownEditor from '@/components/MackdownEditor/index.vue';
 import { articleStore, createStore } from '@/store';
 import { checkOS } from '@/utils';
 import CreateDrawer from './Create/index.vue';
@@ -39,6 +41,7 @@ const router = useRouter();
 
 const visible = ref<boolean>(false); // 权限设置弹窗的状态
 const draftVisible = ref<boolean>(false); // 草稿箱弹窗状态
+const editType = ref<boolean>(false); // 编辑器类型
 
 // 组件启用时，如果有文章id，则请求文章详情
 onActivated(() => {
@@ -73,6 +76,11 @@ const onPublish = () => {
 const onSaveDraft = () => {
   createStore.articleDraft();
   createStore.clearCreateInfo(true);
+};
+
+// 切换编辑器
+const onChangeEditor = () => {
+  editType.value = !editType.value;
 };
 
 // 清空编辑内容
@@ -111,5 +119,6 @@ export default {
   padding-left: 5px;
   padding-right: 3px;
   width: calc(100% - 9px);
+  height: 100%;
 }
 </style>

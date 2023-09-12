@@ -41,5 +41,6 @@ module.exports = {
     'no-new': 0,
     'no-use-before-define': 0,
     'no-unused-expressions': 0,
+    'new-cap': 0,
   },
 };
