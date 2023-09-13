@@ -17,7 +17,7 @@
       :copy-code-success="onCopyCodeSuccess"
       :height="checkOS() === 'mac' ? 'calc(100vh - 98px)' : null"
     />
-    <MonacoEditor v-if="editType" />
+    <MonacoEditor v-if="editType" :on-change-editor="onChangeEditor" :edit-type="editType" />
     <CreateDrawer
       :key="JSON.stringify(createStore.classifys)"
       v-model="visible"

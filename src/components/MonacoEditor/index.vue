@@ -5,33 +5,72 @@
  * index.vue
 -->
 <template>
-  <div class="toolbar">
-    <el-tooltip effect="light" content="切换编辑器" placement="bottom">
-      <el-button type="primary" link @click="changeLanguage">mackdown</el-button>
-    </el-tooltip>
-    <el-tooltip effect="light" content="转换编辑语言" placement="bottom">
-      <el-button type="primary" link @click="changeLanguage">language</el-button>
-    </el-tooltip>
+  <div class="container">
+    <div :class="`${theme !== 'vs' && 'dark-toolbar'} toolbar`">
+      <div class="left">
+        <div class="code-action">
+          <el-dropdown class="menu-list" max-height="200px">
+            <span class="action iconfont icon-wodedasai" title="切换语言" />
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item v-for="item in MONACO_EDITOR_LANGUAGES" :key="item" @click="onChangeLanguage(item)">
+                  {{ item }}
+                </el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
+          <el-dropdown class="menu-list">
+            <span class="action iconfont icon-sketchpad-theme" title="切换主题" />
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item @click="onSelectTheme('vs')">晶莹白</el-dropdown-item>
+                <el-dropdown-item @click="onSelectTheme('vs-dark')">暗夜黑</el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
+          <span class="action iconfont icon-markdown" title="切换编辑器" @click="onChangeEditor" />
+        </div>
+        <div class="create-action">
+          <span class="action clear" title="清空内容">清</span>
+          <span class="action" title="草稿列表">稿</span>
+          <span class="action" title="保存草稿">存</span>
+          <span class="action" title="发布文章">发</span>
+        </div>
+      </div>
+      <div class="right">
+        <div class="language-text">当前语言：{{ language }}</div>
+      </div>
+    </div>
+    <div ref="editorRef" :class="`${theme !== 'vs' && 'dark-monaco-editor-wrap'} monaco-editor-wrap`"></div>
   </div>
-  <div ref="editorRef" class="monaco-editor-wrap"></div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, nextTick } from 'vue';
-// @ts-ignore
-import jsonWorker from 'monaco-editor/esm/vs/language/json/json.worker?worker';
-// @ts-ignore
-import cssWorker from 'monaco-editor/esm/vs/language/css/css.worker?worker';
-// @ts-ignore
-import htmlWorker from 'monaco-editor/esm/vs/language/html/html.worker?worker';
-// @ts-ignore
-import tsWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker?worker';
-// @ts-ignore
-import EditorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker';
+import { ref, onMounted, nextTick } from 'vue';
 import * as monaco from 'monaco-editor';
+import jsonWorker from 'monaco-editor/esm/vs/language/json/json.worker?worker';
+import cssWorker from 'monaco-editor/esm/vs/language/css/css.worker?worker';
+import htmlWorker from 'monaco-editor/esm/vs/language/html/html.worker?worker';
+import tsWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker?worker';
+import EditorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker';
+import { MONACO_EDITOR_LANGUAGES } from '@/constant';
+import { createStore } from '@/store';
 
-const editorRef = ref<any>();
-const content = ref<any>();
+interface IProps {
+  editType: boolean;
+  onChangeEditor: () => void;
+}
+
+const props = defineProps<IProps>();
+
+// 编辑器ref
+const editorRef = ref<HTMLDivElement | null>(null);
+// 编辑内容
+// const content = ref<string>('');
+// 主题
+const theme = ref<string>('vs');
+// 当前语言
+const language = ref<string>('markdown');
 
 let editor: monaco.editor.IStandaloneCodeEditor;
 
@@ -69,94 +108,180 @@ const initEditor = () => {
       target: monaco.languages.typescript.ScriptTarget.ES2016,
       allowNonTsExtensions: true,
     });
+    // 使ts能够实时显示警告和错误
+    monaco.languages.typescript.typescriptDefaults.setEagerModelSync(true);
 
     if (!editor) {
-      editor = monaco.editor.create(editorRef.value, {
-        value: content.value, // 编辑器初始显示文字
-        language: 'javascript', // 语言支持自行查阅demo
+      editor = monaco.editor.create(editorRef?.value!, {
+        value: createStore.createInfo.content, // 编辑器初始显示文字
+        language: language.value, // 语言
+        theme: 'vs', // 官方自带三种主题vs, hc-black, or vs-dark
         automaticLayout: true, // 自适应布局
-        theme: 'vs-dark', // 官方自带三种主题vs, hc-black, or vs-dark
         foldingStrategy: 'indentation',
-        renderLineHighlight: 'all', // 行亮
+        renderLineHighlight: 'all', // 行亮 all line
         selectOnLineNumbers: true, // 显示行号
         minimap: {
           enabled: false, // 是否启用预览图
         },
+        scrollbar: {
+          // 滚动条设置
+          verticalScrollbarSize: 6,
+          horizontalScrollbarSize: 6,
+          arrowSize: 10,
+          alwaysConsumeMouseWheel: false,
+        },
         readOnly: false, // 只读
-        fontSize: 14, // 字体大小
+        fontSize: 16, // 字体大小
         scrollBeyondLastLine: true, // 取消代码后面一大段空白
         overviewRulerBorder: false, // 不要滚动条的边框
         tabSize: 2,
         colorDecorators: true, // 呈现内联色彩装饰器和颜色选择器
       });
-
-      setTheme();
     } else {
       editor.setValue('');
     }
 
     // 监听值的变化
     editor.onDidChangeModelContent(() => {
-      console.log(editor.getValue(), 'editor.getValue()');
-      content.value = editor.getValue();
+      createStore.createInfo.content = editor.getValue();
     });
   });
 };
 
 // 设置主题颜色
-const setTheme = () => {
+const setTheme = (type: string) => {
+  theme.value = type;
   // 定义一个主题
   monaco.editor.defineTheme('myTheme', {
-    base: 'vs',
+    base: type as any,
     inherit: true,
     rules: [],
-    colors: {
-      // 'editor.foreground': '#000000',
-      'editor.background': '#EDF9FA',
-      // 'editorCursor.foreground': '#8B0000',
-      // 'editor.lineHighlightBackground': '#0000FF20',
-      // 'editorLineNumber.foreground': '#008800',
-      // 'editor.selectionBackground': '#88000030',
-      // 'editor.inactiveSelectionBackground': '#88000015',
-    },
+    colors: {},
   });
   monaco.editor.setTheme('myTheme');
 };
 
 // 切换语言
-const changeLanguage = () => {
-  monaco.editor.setModelLanguage(editor?.getModel()!, 'html');
+const onChangeLanguage = (value: string) => {
+  language.value = value;
+  monaco.editor.setModelLanguage(editor?.getModel()!, value);
 };
 
-onUnmounted(() => {
-  // editor.dispose();
-});
+// 切换主题
+const onSelectTheme = (type: string) => {
+  setTheme(type);
+};
+
+// 切换编辑器类型
+const onChangeEditor = () => {
+  editor?.getModel()?.setValue('');
+  props?.onChangeEditor?.();
+};
 </script>
 
 <style scoped lang="less">
 @import '@/styles/index.less';
 
-.toolbar {
-  display: flex;
-  align-items: center;
-  height: 40px;
-  padding: 0 10px;
-  box-sizing: border-box;
-  background-color: var(--modal-bg-color);
-  border-bottom: 1px solid var(--card-border);
-  border-top-left-radius: 5px;
-  border-top-right-radius: 5px;
-}
+.container {
+  height: 100%;
+  border-radius: 5px;
+  box-shadow: 0 0 8px 0 var(--shadow-mack);
 
-.monaco-editor-wrap {
-  height: calc(100% - 40px);
+  .toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 40px;
+    padding: 0 10px;
+    box-sizing: border-box;
+    background-color: @fff;
+    border-bottom: 1px solid var(--card-border);
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
 
-  :deep {
-    .monaco-editor,
-    .overflow-guard {
-      border-bottom-left-radius: 5px;
-      border-bottom-right-radius: 5px;
+    .menu-list {
+      display: flex;
+      align-items: center;
     }
+
+    .left {
+      flex: 1;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-right: 10px;
+
+      .code-action {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+      }
+
+      .action {
+        color: var(--theme-blue);
+        font-size: 14px;
+        height: 30px;
+        line-height: 30px;
+        cursor: pointer;
+        margin-right: 14px;
+
+        &:hover {
+          color: @blue-1;
+        }
+      }
+
+      .icon-wodedasai {
+        font-size: 21px;
+      }
+
+      .icon-sketchpad-theme {
+        font-size: 15px;
+      }
+
+      .icon-markdown {
+        font-size: 25px;
+      }
+
+      .clear {
+        font-size: 14px;
+        color: @font-warning;
+      }
+    }
+
+    .right {
+      display: flex;
+      justify-content: flex-end;
+      font-size: 14px;
+
+      color: @font-4;
+
+      .language-text {
+        height: 30px;
+        line-height: 30px;
+      }
+    }
+  }
+
+  .monaco-editor-wrap {
+    height: calc(100% - 40px);
+    padding: 10px 3px 0;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    background-color: @fff;
+    box-sizing: border-box;
+
+    :deep {
+      .monaco-editor,
+      .overflow-guard {
+        border-bottom-left-radius: 5px;
+        border-bottom-right-radius: 5px;
+      }
+    }
+  }
+
+  .dark-toolbar,
+  .dark-monaco-editor-wrap {
+    background-color: #1e1e1e;
   }
 }
 </style>

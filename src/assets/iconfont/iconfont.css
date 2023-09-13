@@ -1,8 +1,8 @@
 @font-face {
   font-family: "iconfont"; /* Project id 3511354 */
-  src: url('iconfont.woff2?t=1693883213473') format('woff2'),
-       url('iconfont.woff?t=1693883213473') format('woff'),
-       url('iconfont.ttf?t=1693883213473') format('truetype');
+  src: url('iconfont.woff2?t=1694606600055') format('woff2'),
+       url('iconfont.woff?t=1694606600055') format('woff'),
+       url('iconfont.ttf?t=1694606600055') format('truetype');
 }
 
 .iconfont {
@@ -11,6 +11,30 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-markdown-line:before {
+  content: "\e6eb";
+}
+
+.icon-markdown:before {
+  content: "\e946";
+}
+
+.icon-vscodeignore:before {
+  content: "\e676";
+}
+
+.icon-sketchpad-theme:before {
+  content: "\e985";
+}
+
+.icon-sketchpad-theme-full:before {
+  content: "\e986";
+}
+
+.icon-wodedasai:before {
+  content: "\e647";
 }
 
 .icon-yuyin:before {
@@ -129,14 +153,6 @@
   content: "\e879";
 }
 
-.icon-id-card-full:before {
-  content: "\e8aa";
-}
-
-.icon-id-card:before {
-  content: "\e8ab";
-}
-
 .icon-fenleiorguangchangorqita:before {
   content: "\e64f";
 }
@@ -201,10 +217,6 @@
   content: "\e614";
 }
 
-.icon-fenlei4:before {
-  content: "\e6b3";
-}
-
 .icon-yongyan:before {
   content: "\e61a";
 }
@@ -235,14 +247,6 @@
 
 .icon-yonghuxinxi:before {
   content: "\e673";
-}
-
-.icon-yonghuID:before {
-  content: "\e68d";
-}
-
-.icon-bianjiwenzhang_huaban:before {
-  content: "\e62e";
 }
 
 .icon-timeAxis:before {
@@ -413,10 +417,6 @@
   content: "\e6ae";
 }
 
-.icon-bofangliebiao:before {
-  content: "\e6a7";
-}
-
 .icon-bofangzhong:before {
   content: "\e617";
 }
@@ -447,10 +447,6 @@
 
 .icon-shezhi3:before {
   content: "\e61b";
-}
-
-.icon-iconfontgerenzhongxin:before {
-  content: "\e645";
 }
 
 .icon-gerenzhongxin:before {
@@ -589,14 +585,6 @@
   content: "\e67c";
 }
 
-.icon-save:before {
-  content: "\e67d";
-}
-
-.icon-smile:before {
-  content: "\e67e";
-}
-
 .icon-setting:before {
   content: "\e691";
 }
@@ -641,10 +629,6 @@
   content: "\e745";
 }
 
-.icon-charutupian:before {
-  content: "\ec7f";
-}
-
 .icon-icon_bianji:before {
   content: "\e603";
 }
@@ -683,10 +667,6 @@
 
 .icon-guanbi:before {
   content: "\e684";
-}
-
-.icon-shangchuan:before {
-  content: "\e685";
 }
 
 .icon-shanchu:before {
