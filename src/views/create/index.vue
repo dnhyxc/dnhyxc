@@ -17,7 +17,16 @@
       :copy-code-success="onCopyCodeSuccess"
       :height="checkOS() === 'mac' ? 'calc(100vh - 98px)' : null"
     />
-    <MonacoEditor v-if="editType" :on-change-editor="onChangeEditor" :edit-type="editType" />
+    <MonacoEditor
+      v-if="editType"
+      :on-change-editor="onChangeEditor"
+      :edit-type="editType"
+      :on-publish="onPublish"
+      :on-clear="onClear"
+      :on-show-draft="showDraft"
+      :article-id="(route?.query?.id as string)"
+      :on-save-draft="onSaveDraft"
+    />
     <CreateDrawer
       :key="JSON.stringify(createStore.classifys)"
       v-model="visible"
@@ -48,7 +57,12 @@ onActivated(() => {
   // 启用组建时，获取创建文章的分类列表
   createStore.getAddedClassifys();
   if (!route.query.id) return;
-  articleStore?.getArticleDetail({ id: route.query.id as string, isEdit: true, router, toHome: !!route.query?.toHome });
+  articleStore?.getArticleDetail({
+    id: route.query.id as string,
+    isEdit: true,
+    router,
+    toHome: !!route.query?.toHome,
+  });
 });
 
 watch(
@@ -93,6 +107,7 @@ const onClear = () => {
 // 弹窗显示、隐藏
 const showDraft = () => {
   draftVisible.value = true;
+  onChangeEditor();
 };
 
 // 复制成功回调

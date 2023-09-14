@@ -31,10 +31,18 @@
           <span class="action iconfont icon-markdown" title="切换编辑器" @click="onChangeEditor" />
         </div>
         <div class="create-action">
-          <span class="action clear" title="清空内容">清</span>
-          <span class="action" title="草稿列表">稿</span>
-          <span class="action" title="保存草稿">存</span>
-          <span class="action" title="发布文章">发</span>
+          <el-button
+            class="clear"
+            type="warning"
+            link
+            title="清空内容"
+            :disabled="!createStore.createInfo.content?.trim()"
+            @click="onClear"
+            >清</el-button
+          >
+          <span class="action" title="草稿列表" @click="onShowDraft">稿</span>
+          <span class="action" title="保存草稿" @click="onSaveDraft">存</span>
+          <span class="action" title="发布文章" @click="onPublish">发</span>
         </div>
       </div>
       <div class="right">
@@ -48,6 +56,7 @@
 <script setup lang="ts">
 import { ref, onMounted, nextTick, onDeactivated } from 'vue';
 import * as monaco from 'monaco-editor';
+import { ElMessage } from 'element-plus';
 import jsonWorker from 'monaco-editor/esm/vs/language/json/json.worker?worker';
 import cssWorker from 'monaco-editor/esm/vs/language/css/css.worker?worker';
 import htmlWorker from 'monaco-editor/esm/vs/language/html/html.worker?worker';
@@ -59,14 +68,16 @@ import { createStore } from '@/store';
 interface IProps {
   editType: boolean;
   onChangeEditor: () => void;
+  onPublish?: () => void;
+  onClear?: () => void;
+  onShowDraft?: () => void;
+  onSaveDraft?: () => void;
 }
 
 const props = defineProps<IProps>();
 
 // 编辑器ref
 const editorRef = ref<HTMLDivElement | null>(null);
-// 编辑内容
-// const content = ref<string>('');
 // 主题
 const theme = ref<string>('vs');
 // 当前语言
@@ -97,7 +108,7 @@ onMounted(() => {
   initEditor();
 });
 
-// 组件弃用时，如果有文章 id 则清除 createStore 中的 createInfo 属性，并且重置表单数据
+// 组件弃用时，显示mackdown编辑器
 onDeactivated(() => {
   props?.onChangeEditor?.();
 });
@@ -180,6 +191,25 @@ const onChangeEditor = () => {
   editor?.getModel()?.setValue(createStore.createInfo.content || '');
   props?.onChangeEditor?.();
 };
+
+// 清空编辑
+const onClear = () => {
+  props.onClear?.();
+  editor?.getModel()?.setValue('');
+};
+
+// 保存草稿
+const onSaveDraft = () => {
+  if (!createStore?.createInfo?.content?.trim()) {
+    ElMessage({
+      message: '嘿！一个字都没写休想发布',
+      type: 'warning',
+      offset: 80,
+    });
+    return;
+  }
+  props.onSaveDraft?.();
+};
 </script>
 
 <style scoped lang="less">
@@ -248,6 +278,10 @@ const onChangeEditor = () => {
       .clear {
         font-size: 14px;
         color: @font-warning;
+        margin-right: 14px;
+        padding: 0;
+        height: 30px;
+        line-height: 30px;
       }
     }
 
