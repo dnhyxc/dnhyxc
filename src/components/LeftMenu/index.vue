@@ -264,6 +264,10 @@ const onQuit = () => {
     .icon-imgs {
       font-size: 36px;
     }
+
+    .icon-shenfenzheng {
+      font-size: 28px;
+    }
   }
 }
 </style>

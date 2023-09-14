@@ -46,7 +46,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, nextTick } from 'vue';
+import { ref, onMounted, nextTick, onDeactivated } from 'vue';
 import * as monaco from 'monaco-editor';
 import jsonWorker from 'monaco-editor/esm/vs/language/json/json.worker?worker';
 import cssWorker from 'monaco-editor/esm/vs/language/css/css.worker?worker';
@@ -72,7 +72,7 @@ const theme = ref<string>('vs');
 // 当前语言
 const language = ref<string>('markdown');
 
-let editor: monaco.editor.IStandaloneCodeEditor;
+let editor: monaco.editor.IStandaloneCodeEditor | null = null;
 
 // @ts-ignore
 self.MonacoEnvironment = {
@@ -95,6 +95,11 @@ self.MonacoEnvironment = {
 
 onMounted(() => {
   initEditor();
+});
+
+// 组件弃用时，如果有文章 id 则清除 createStore 中的 createInfo 属性，并且重置表单数据
+onDeactivated(() => {
+  props?.onChangeEditor?.();
 });
 
 // 初始化编辑器
@@ -137,13 +142,11 @@ const initEditor = () => {
         tabSize: 2,
         colorDecorators: true, // 呈现内联色彩装饰器和颜色选择器
       });
-    } else {
-      editor.setValue('');
     }
 
     // 监听值的变化
     editor.onDidChangeModelContent(() => {
-      createStore.createInfo.content = editor.getValue();
+      createStore.createInfo.content = editor?.getValue();
     });
   });
 };
@@ -174,7 +177,7 @@ const onSelectTheme = (type: string) => {
 
 // 切换编辑器类型
 const onChangeEditor = () => {
-  editor?.getModel()?.setValue('');
+  editor?.getModel()?.setValue(createStore.createInfo.content || '');
   props?.onChangeEditor?.();
 };
 </script>

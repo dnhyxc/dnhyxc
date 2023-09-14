@@ -375,7 +375,7 @@ export const MENULIST = [
     name: '关于博主',
     key: 'author',
     path: '/author',
-    icon: 'icon-yonghuID',
+    icon: 'icon-shenfenzheng',
     fillIcon: 'icon-id-card-full',
     active: 'icon-yonghuziliao',
     show: true,

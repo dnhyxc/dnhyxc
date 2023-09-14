@@ -26,6 +26,7 @@ interface IProps {
   draftInfo: ArticleDetailParams;
   oldCoverImage: string; // 保存老的文章封面图
   classifys?: ClassifyList[]; // 分类
+  code?: string;
 }
 
 export const useCreateStore = defineStore('create', {
@@ -49,6 +50,7 @@ export const useCreateStore = defineStore('create', {
     loading: null,
     draftArticleId: '',
     draftInfo: {},
+    code: '',
   }),
 
   actions: {

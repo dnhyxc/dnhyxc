@@ -1,8 +1,8 @@
 @font-face {
   font-family: "iconfont"; /* Project id 3511354 */
-  src: url('iconfont.woff2?t=1694606600055') format('woff2'),
-       url('iconfont.woff?t=1694606600055') format('woff'),
-       url('iconfont.ttf?t=1694606600055') format('truetype');
+  src: url('iconfont.woff2?t=1694617923948') format('woff2'),
+       url('iconfont.woff?t=1694617923948') format('woff'),
+       url('iconfont.ttf?t=1694617923948') format('truetype');
 }
 
 .iconfont {
@@ -11,6 +11,38 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-shenfenzheng:before {
+  content: "\e677";
+}
+
+.icon-ziyuan1:before {
+  content: "\e60f";
+}
+
+.icon-saomiaoshenfenzheng:before {
+  content: "\e61d";
+}
+
+.icon-2222:before {
+  content: "\e630";
+}
+
+.icon-xiaologo:before {
+  content: "\e632";
+}
+
+.icon-shangquan:before {
+  content: "\e8cd";
+}
+
+.icon-gerenziliao-jindutiaowoniu:before {
+  content: "\e62e";
+}
+
+.icon-luoxuan:before {
+  content: "\e773";
 }
 
 .icon-markdown-line:before {
@@ -199,10 +231,6 @@
 
 .icon-biaoqian:before {
   content: "\e61f";
-}
-
-.icon-zhanghu:before {
-  content: "\e60f";
 }
 
 .icon-shouye1:before {
