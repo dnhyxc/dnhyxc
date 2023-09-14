@@ -198,6 +198,19 @@ const onClear = () => {
   editor?.getModel()?.setValue('');
 };
 
+// 清空编辑
+const onPublish = () => {
+  if (!createStore?.createInfo?.content?.trim()) {
+    ElMessage({
+      message: '嘿！一个字都没写休想发布',
+      type: 'warning',
+      offset: 80,
+    });
+    return;
+  }
+  props.onPublish?.();
+};
+
 // 保存草稿
 const onSaveDraft = () => {
   if (!createStore?.createInfo?.content?.trim()) {
