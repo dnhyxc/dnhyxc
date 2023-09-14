@@ -357,18 +357,18 @@ export const MENULIST = [
     name: '实用工具',
     key: 'tools',
     path: '/tools',
-    icon: 'icon-tool',
-    fillIcon: 'icon-tool',
-    active: 'icon-tool',
+    icon: 'icon-outline-designtools',
+    fillIcon: 'icon-outline-designtools',
+    active: 'icon-outline-designtools',
     show: false,
   },
   {
     name: '图片合集',
     key: 'picture',
     path: '/picture',
-    icon: 'icon-imgs',
-    fillIcon: 'icon-imgs',
-    active: 'icon-imgs',
+    icon: 'icon-luoxuan',
+    fillIcon: 'icon-luoxuan',
+    active: 'icon-luoxuan',
     authorWiew: true,
   },
   {
@@ -443,26 +443,6 @@ export const ATRICLE_TYPE = {
 
 // URL host
 export const GATEWAY_HOST = '';
-
-// 文章分类
-export const ARTICLE_CLASSIFY = [
-  '前端',
-  '后端',
-  '架构',
-  '数据库',
-  '设计模式',
-  '数据结构',
-  '算法',
-  '开发工具',
-  '代码人生',
-  '前端框架',
-  '计算机',
-  '网络协议',
-  '可视化',
-  '移动端',
-  '阅读',
-  '其它',
-];
 
 // 文章标签
 export const ARTICLE_TAG = [

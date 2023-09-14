@@ -189,16 +189,20 @@ const onQuit = () => {
       .textLgActive();
     }
 
-    .tools {
-      font-size: 26px;
+    .icon-outline-designtools {
+      font-size: 25px;
     }
 
-    .icon-imgs {
-      font-size: 29px;
+    .icon-luoxuan {
+      font-size: 25px;
+    }
+
+    .icon-biaoqianku {
+      font-size: 25px;
     }
 
     .icon-shenfenzheng {
-      font-size: 24px;
+      font-size: 23px;
     }
   }
 
@@ -261,11 +265,11 @@ const onQuit = () => {
       font-size: 32px;
     }
 
-    .tools {
+    .icon-outline-designtools {
       font-size: 32px;
     }
 
-    .icon-imgs {
+    .icon-luoxuan {
       font-size: 36px;
     }
 
