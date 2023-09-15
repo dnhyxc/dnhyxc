@@ -265,16 +265,21 @@ const onQuit = () => {
       font-size: 32px;
     }
 
-    .icon-outline-designtools {
-      font-size: 32px;
-    }
-
     .icon-luoxuan {
-      font-size: 36px;
+      font-size: 31px;
     }
 
     .icon-shenfenzheng {
       font-size: 28px;
+    }
+
+    .icon-biaoqianku {
+      font-size: 30px;
+    }
+
+    .icon-b-chat,
+    .icon-outline-designtools {
+      font-size: 31px;
     }
   }
 }
