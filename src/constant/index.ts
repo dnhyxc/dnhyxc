@@ -331,7 +331,7 @@ export const MENULIST = [
     key: 'timeline',
     path: '/timeline',
     icon: 'icon-timeAxis',
-    fillIcon: 'icon-icon_shijian-mian',
+    fillIcon: 'icon-timeAxis',
     active: 'icon-a-Frame174',
     show: false,
   },
