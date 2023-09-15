@@ -279,7 +279,7 @@ const onQuit = () => {
 
     .icon-b-chat,
     .icon-outline-designtools {
-      font-size: 31px;
+      font-size: 30px;
     }
   }
 }
