@@ -50,6 +50,7 @@
         v-model:previewVisible="previewVisible"
         v-model:previewUrls="previewUrls"
       />
+      <Cropper v-model:modal-visible="cropperVisible" />
       <TextToSpeech v-model:modal-visible="convertVisible" />
       <Watermark v-model:modal-visible="watermarkVisible" />
       <el-dialog v-model="previewVisible" draggable align-center title="图片预览" width="80%" @close="onClose">
@@ -89,12 +90,15 @@ import { toolsStore } from '@/store';
 import { useGetRouteAuthInfo } from '@/hooks';
 import { ToolsItem } from '@/typings/common';
 import Compress from './Compress/index.vue';
+import Cropper from './Cropper/index.vue';
 import TextToSpeech from './TextToSpeech/index.vue';
 import NavCard from './NavCard/index.vue';
 import Watermark from './Watermark/index.vue';
 
 // 图片压缩弹窗
 const compressVisible = ref<boolean>(false);
+// 图片裁剪弹窗
+const cropperVisible = ref<boolean>(false);
 // 文本转语音弹窗
 const convertVisible = ref<boolean>(false);
 // 文本转语音弹窗
@@ -119,6 +123,11 @@ const showCompress = (item: ToolsItem) => {
   compressVisible.value = true;
 };
 
+// 显示图片裁剪
+const showCropper = (item: ToolsItem) => {
+  cropperVisible.value = true;
+};
+
 // 显示文字转语音
 const onTextToSpeech = (item: ToolsItem) => {
   convertVisible.value = true;
@@ -138,6 +147,7 @@ const openWithBrowser = (item: ToolsItem) => {
 const onClickNavIcon = (item: ToolsItem) => {
   const actions = {
     compress: showCompress,
+    cropper: showCropper,
     textToSpeech: onTextToSpeech,
     watermark: onAddwatermark,
     tool: openWithBrowser,
