@@ -20,22 +20,25 @@
         @mouseup="onMouseup"
       />
       <div class="color-group">
-        <div class="paint-color">画笔颜色</div>
+        <div v-for="color in COLORS" :key="color" class="paint-color" :style="{ backgroundColor: color }" @click="onColorChange(color)"></div>
+        <el-color-picker v-model="markColor" @change="onColorChange" />
       </div>
       <div class="range-wrap">
         <input id="range" type="range" min="1" max="30" value="5" title="调整笔刷粗细" />
       </div>
       <div class="tools">
-        <div v-for="btn in ACTIONS" :key="btn">{{ btn }}</div>
+        <div v-for="btn in ACTIONS" :key="btn" class="tool">{{ btn }}</div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, nextTick, reactive } from 'vue';
+import { onMounted, ref, nextTick, reactive, watch } from 'vue';
 
-const ACTIONS = ['撤销', '画笔', '橡皮擦', '清空', '保存'];
+const ACTIONS = ['撤销', '画笔', '橡皮', '清空', '保存'];
+
+const COLORS = ['#000', '#fff', '#FF0000', '#FFA500', '#FFFF00', '#008000', '#00FFFF', '#0000FF', '#800080'];
 
 interface IProps {
   boardVisible: boolean;
@@ -73,6 +76,7 @@ const pageSizeInfo = reactive({
   left: 0,
   top: 0,
 });
+const markColor = ref<string>('');
 
 onMounted(() => {
   nextTick(() => {
@@ -82,9 +86,18 @@ onMounted(() => {
   });
 });
 
+watch(activeColor, (newVal) => {
+  setLineColor(newVal);
+});
+
 // 关闭画板
 const onClose = () => {
   emit('update:boardVisible', false);
+};
+
+// 画板颜色变化
+const onColorChange = (color: string) => {
+  activeColor.value = color;
 };
 
 // 创建 ctx 对象
@@ -107,10 +120,17 @@ const initCanvasSize = () => {
   canvas.value!.height = pageHeight!;
 };
 
+// 设置画板背景颜色
 const setCanvasBg = (color: string) => {
   ctx.value!.fillStyle = color;
   ctx.value!.fillRect(0, 0, canvas.value?.width!, canvas.value?.height!);
   ctx.value!.fillStyle = 'black';
+};
+
+// 设置画笔颜色
+const setLineColor = (color: string) => {
+  ctx.value!.fillStyle = color;
+  ctx.value!.strokeStyle = color;
 };
 
 const onMousedown = (e: MouseEvent) => {
@@ -235,6 +255,15 @@ const saveActions = (data: ImageData) => {
     top: 50%;
     left: 20px;
     transform: translateY(-50%);
+
+    .paint-color {
+      width: 30px;
+      height: 30px;
+      margin-bottom: 15px;
+      border-radius: 30px;
+      cursor: pointer;
+      box-shadow: 0 0 5px#999;
+    }
   }
 
   .range-wrap {
@@ -246,13 +275,88 @@ const saveActions = (data: ImageData) => {
 
   .tools {
     position: absolute;
-    bottom: 0;
-    left: 0;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 100%;
+    width: auto;
     height: 50px;
+
+    .tool {
+      width: 30px;
+      height: 30px;
+      line-height: 30px;
+      border-radius: 30px;
+      margin-right: 15px;
+      text-align: center;
+      padding: 10px;
+      box-shadow: 0 0 8px 0 #999, 0 0 2px 0 #ccc inset;
+      background-color: var(--pre-hover-bg);
+      cursor: pointer;
+
+      &:last-child {
+        margin-right: 0;
+      }
+
+      &:hover {
+        color: var(--theme-blue);
+      }
+    }
+  }
+
+  :deep {
+    .el-color-picker__trigger {
+      width: 30px;
+      height: 30px;
+      border-radius: 30px;
+      padding: 0;
+    }
+
+    .el-color-picker__color {
+      width: 30px;
+      height: 30px;
+      border-radius: 30px;
+      border: none;
+    }
+
+    .el-color-picker__color-inner {
+      border-radius: 30px;
+      width: 30px;
+      height: 30px;
+      box-shadow: 0 0 5px#999;
+    }
+
+    .el-color-picker__icon {
+      display: none !important;
+    }
+
+    .el-icon-arrow-down {
+      display: none !important;
+    }
+
+    .el-color-picker__empty {
+      display: none !important;
+    }
+
+    .el-color-picker__color::before {
+      content: 'A';
+      color: #181515;
+      font-size: 17px;
+    }
+
+    .el-color-picker__color::before {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      height: 60%;
+      width: 60%;
+      content: '';
+      background-image: url('@/assets/svg/color.svg');
+      background-size: 100% 100%;
+    }
   }
 }
 </style>
