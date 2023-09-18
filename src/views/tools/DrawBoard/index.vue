@@ -77,7 +77,7 @@ const pageSizeInfo = reactive({
 onMounted(() => {
   nextTick(() => {
     createCanvas();
-    canvasSetSize();
+    initCanvasSize();
     setCanvasBg('transparent');
   });
 });
@@ -87,16 +87,17 @@ const onClose = () => {
   emit('update:boardVisible', false);
 };
 
+// 创建 ctx 对象
 const createCanvas = () => {
-  // 创建 ctx 对象
-  ctx.value = canvas.value?.getContext('2d')!;
-  console.log(ctx.value, 'ctx.value');
+  ctx.value = canvas.value?.getContext('2d', { willReadFrequently: true })!;
   ctx.value!.fillStyle = activeColor.value;
   ctx.value!.strokeStyle = activeColor.value;
 };
 
-const canvasSetSize = () => {
+const initCanvasSize = () => {
+  // 获取左侧页面左侧菜单
   const pageMenu = document.querySelector('#__LEFT_MENU__') as HTMLDivElement;
+  // 获取页面头部
   const pageHead = document.querySelector('#__HEADER__') as HTMLDivElement;
   pageSizeInfo.top = pageHead.offsetHeight + titleRef.value?.offsetHeight!;
   pageSizeInfo.left = pageMenu.offsetWidth;
