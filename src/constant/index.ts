@@ -49,6 +49,7 @@ export const TOOL_LIST = [
   { toolName: '图片裁剪', key: 'cropper', id: 'cropper', toolUrl: CROP_SVG },
   { toolName: '语音播报', key: 'textToSpeech', id: 'textToSpeech', toolUrl: YUYIN_SVG },
   { toolName: '水印设置', key: 'watermark', id: 'watermark', toolUrl: MARK_SVG },
+  { toolName: '画板', key: 'board', id: 'board', toolUrl: MARK_SVG },
 ];
 
 // 常用图片截取比例

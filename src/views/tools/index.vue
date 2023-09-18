@@ -7,76 +7,79 @@
 <template>
   <Loading :loading="toolsStore.loading" class="tools-wrap">
     <template #default>
-      <div class="tools">
-        <div class="tool-title">资源处理</div>
-        <div class="tool-list">
-          <NavCard v-for="item in TOOL_LIST" :key="item.id" :data="item" :on-click="() => onClickNavIcon(item)" />
-        </div>
-      </div>
-      <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
+      <DrawBoard v-if="boardVisible" v-model:board-visible="boardVisible" />
+      <div v-if="!boardVisible">
         <div class="tools">
-          <div class="tool-title">
-            前端编程导航
-            <div class="sort">
-              <el-button type="primary" link @click="onSort">{{ enabled ? '关闭排序' : '开启排序' }}</el-button>
-              <el-button v-show="enabled" type="primary" link @click="onSaveSort">保存排序</el-button>
-            </div>
+          <div class="tool-title">资源处理</div>
+          <div class="tool-list">
+            <NavCard v-for="item in TOOL_LIST" :key="item.id" :data="item" :on-click="() => onClickNavIcon(item)" />
           </div>
-          <draggable
-            v-model="toolsStore.toolList"
-            item-key="id"
-            draggable=".item"
-            class="navigation-list"
-            ghost-class="ghost"
-            :disabled="!enabled"
-          >
-            <template #item="{ element }">
-              <div class="item" @click="onClickNavIcon({ ...element, key: 'tool' })">
-                <div class="navigation-item">
-                  <div class="item-top">
-                    <Image :url="element?.toolUrl || TOOL_SVG" :transition-img="TOOL_SVG" class="prew-img" />
-                  </div>
-                  <el-tooltip effect="light" :content="element?.toolName" placement="bottom" :enterable="false">
-                    <div class="item-bottom">{{ element?.toolName }}</div>
-                  </el-tooltip>
+          <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
+            <div class="tools">
+              <div class="tool-title">
+                前端编程导航
+                <div class="sort">
+                  <el-button type="primary" link @click="onSort">{{ enabled ? '关闭排序' : '开启排序' }}</el-button>
+                  <el-button v-show="enabled" type="primary" link @click="onSaveSort">保存排序</el-button>
                 </div>
               </div>
-            </template>
-          </draggable>
-        </div>
-      </el-scrollbar>
-      <Compress
-        v-model:modal-visible="compressVisible"
-        v-model:previewVisible="previewVisible"
-        v-model:previewUrls="previewUrls"
-      />
-      <Cropper v-model:modal-visible="cropperVisible" />
-      <TextToSpeech v-model:modal-visible="convertVisible" />
-      <Watermark v-model:modal-visible="watermarkVisible" />
-      <el-dialog v-model="previewVisible" draggable align-center title="图片预览" width="80%" @close="onClose">
-        <div class="preview-dialog">
-          <el-scrollbar class="scroll-wrap" max-height="75vh">
-            <div v-if="previewUrls?.[1]" class="after">压缩后图片预览</div>
-            <el-image v-if="previewUrls?.[1]" class="prew-img prev-after-img" :src="previewUrls?.[1]">
-              <template #placeholder>
-                <div class="image-slot">Loading...</div>
-              </template>
-              <template #error>
-                <div class="image-slot">图片加载失败</div>
-              </template>
-            </el-image>
-            <div v-if="previewUrls?.[0]" class="before">压缩前图片预览</div>
-            <el-image v-if="previewUrls?.[0]" class="prew-img" :src="previewUrls?.[0]">
-              <template #placeholder>
-                <div class="image-slot">Loading...</div>
-              </template>
-              <template #error>
-                <div class="image-slot">图片加载失败</div>
-              </template>
-            </el-image>
+              <draggable
+                v-model="toolsStore.toolList"
+                item-key="id"
+                draggable=".item"
+                class="navigation-list"
+                ghost-class="ghost"
+                :disabled="!enabled"
+              >
+                <template #item="{ element }">
+                  <div class="item" @click="onClickNavIcon({ ...element, key: 'tool' })">
+                    <div class="navigation-item">
+                      <div class="item-top">
+                        <Image :url="element?.toolUrl || TOOL_SVG" :transition-img="TOOL_SVG" class="prew-img" />
+                      </div>
+                      <el-tooltip effect="light" :content="element?.toolName" placement="bottom" :enterable="false">
+                        <div class="item-bottom">{{ element?.toolName }}</div>
+                      </el-tooltip>
+                    </div>
+                  </div>
+                </template>
+              </draggable>
+            </div>
           </el-scrollbar>
+          <Compress
+            v-model:modal-visible="compressVisible"
+            v-model:previewVisible="previewVisible"
+            v-model:previewUrls="previewUrls"
+          />
+          <Cropper v-model:modal-visible="cropperVisible" />
+          <TextToSpeech v-model:modal-visible="convertVisible" />
+          <Watermark v-model:modal-visible="watermarkVisible" />
+          <el-dialog v-model="previewVisible" draggable align-center title="图片预览" width="80%" @close="onClose">
+            <div class="preview-dialog">
+              <el-scrollbar class="scroll-wrap" max-height="75vh">
+                <div v-if="previewUrls?.[1]" class="after">压缩后图片预览</div>
+                <el-image v-if="previewUrls?.[1]" class="prew-img prev-after-img" :src="previewUrls?.[1]">
+                  <template #placeholder>
+                    <div class="image-slot">Loading...</div>
+                  </template>
+                  <template #error>
+                    <div class="image-slot">图片加载失败</div>
+                  </template>
+                </el-image>
+                <div v-if="previewUrls?.[0]" class="before">压缩前图片预览</div>
+                <el-image v-if="previewUrls?.[0]" class="prew-img" :src="previewUrls?.[0]">
+                  <template #placeholder>
+                    <div class="image-slot">Loading...</div>
+                  </template>
+                  <template #error>
+                    <div class="image-slot">图片加载失败</div>
+                  </template>
+                </el-image>
+              </el-scrollbar>
+            </div>
+          </el-dialog>
         </div>
-      </el-dialog>
+      </div>
     </template>
   </Loading>
 </template>
@@ -94,6 +97,7 @@ import Cropper from './Cropper/index.vue';
 import TextToSpeech from './TextToSpeech/index.vue';
 import NavCard from './NavCard/index.vue';
 import Watermark from './Watermark/index.vue';
+import DrawBoard from './DrawBoard/index.vue';
 
 // 图片压缩弹窗
 const compressVisible = ref<boolean>(false);
@@ -109,6 +113,8 @@ const previewVisible = ref<boolean>(false);
 const previewUrls = ref<string[]>([]);
 // 控制是否开启排序
 const enabled = ref<boolean>(false);
+// 是否显示画板
+const boardVisible = ref<boolean>(false);
 
 // 判断是否有路由权限
 useGetRouteAuthInfo();
@@ -143,6 +149,12 @@ const openWithBrowser = (item: ToolsItem) => {
   shell.openExternal(item.toolHref!);
 };
 
+// 跳转至画板
+const toDrawBoard = () => {
+  // router.push('/board');
+  boardVisible.value = true;
+};
+
 // 策略模式实现点击每个nav card的效果
 const onClickNavIcon = (item: ToolsItem) => {
   const actions = {
@@ -151,6 +163,7 @@ const onClickNavIcon = (item: ToolsItem) => {
     textToSpeech: onTextToSpeech,
     watermark: onAddwatermark,
     tool: openWithBrowser,
+    board: toDrawBoard,
   };
   actions[item.key](item);
 };

@@ -5,7 +5,7 @@
  * index.vue
 -->
 <template>
-  <div :class="`${checkOS() === 'mac' && 'mac-header-wrap'} header-wrap`" @dblclick="onDblclick">
+  <div id="__HEADER__" :class="`${checkOS() === 'mac' && 'mac-header-wrap'} header-wrap`" @dblclick="onDblclick">
     <div class="left">
       <div class="icon-wrap" @click="goHome">
         <i class="page-icon iconfont icon-haidao_" />

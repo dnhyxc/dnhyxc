@@ -5,7 +5,7 @@
  * index.vue
 -->
 <template>
-  <div :class="`${checkOS() === 'mac' && 'mac-left-menu-wrap'} left-menu-wrap`">
+  <div id="__LEFT_MENU__" :class="`${checkOS() === 'mac' && 'mac-left-menu-wrap'} left-menu-wrap`">
     <el-scrollbar ref="scrollRef">
       <div
         v-for="menu in menuList"

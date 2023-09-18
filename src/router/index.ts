@@ -207,6 +207,14 @@ export const routes: Array<RouteRecordRaw> = [
         },
         component: () => import('@/views/detail/index.vue'),
       },
+      {
+        path: '/board',
+        name: 'board',
+        meta: {
+          title: '画板',
+        },
+        component: () => import('@/views/tools/DrawBoard/index.vue'),
+      },
     ],
     redirect: { name: 'home' },
   },
