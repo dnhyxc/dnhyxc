@@ -225,7 +225,6 @@ const onScrollTo = () => {
 .collect-wrap {
   display: flex;
   flex-direction: column;
-  width: 100%;
   height: 100%;
   width: calc(100% - 3px);
 

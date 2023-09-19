@@ -76,6 +76,41 @@ export const IMG_ROPORTIONS = [
   },
 ];
 
+export const BOARD_ACTIONS = [
+  {
+    key: 'brush',
+    name: '画笔',
+  },
+  {
+    key: 'eraser',
+    name: '橡皮',
+  },
+  {
+    key: 'clear',
+    name: '清空',
+  },
+  {
+    key: 'undo',
+    name: '撤销',
+  },
+  {
+    key: 'save',
+    name: '保存',
+  },
+];
+
+export const BOARD_COLORS = [
+  '#000',
+  '#fff',
+  '#FF0000',
+  '#FFA500',
+  '#FFFF00',
+  '#008000',
+  '#00FFFF',
+  '#0000FF',
+  '#800080',
+];
+
 // 线上域名
 export const DOMAIN_URL = '43.143.27.249';
 

@@ -142,19 +142,19 @@ range.onchange = function () {
   lWidth = this.value;
 };
 
-eraser.onclick = function () {
+eraser.onclick = function () { // 橡皮擦
   clear = true;
   this.classList.add('active');
   brush.classList.remove('active');
 };
 
-brush.onclick = function () {
+brush.onclick = function () { // 画笔
   clear = false;
   this.classList.add('active');
   eraser.classList.remove('active');
 };
 
-reSetCanvas.onclick = function () {
+reSetCanvas.onclick = function () { // 清空
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   setCanvasBg('white');
 };
@@ -190,7 +190,7 @@ function saveData(data) {
   historyDeta.push(data);
 }
 
-undo.onclick = function () {
+undo.onclick = function () { // 撤销
   if (historyDeta.length < 1) return false;
   ctx.putImageData(historyDeta[historyDeta.length - 1], 0, 0);
   historyDeta.pop();

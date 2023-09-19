@@ -5,7 +5,7 @@
  * index.vue
 -->
 <template>
-  <Loading :loading="toolsStore.loading" class="tools-wrap">
+  <Loading :loading="toolsStore.loading" :class="`tools-wrap ${boardVisible && 'board-wrap'}`">
     <template #default>
       <DrawBoard v-if="boardVisible" v-model:board-visible="boardVisible" />
       <div v-if="!boardVisible">
@@ -318,5 +318,12 @@ const onSaveSort = () => {
       margin-bottom: 20px;
     }
   }
+}
+
+.board-wrap {
+  margin-left: 5px;
+  width: calc(100% - 9px);
+  box-shadow: 0 0 8px 0 var(--shadow-mack);
+  background-color: var(--pre-hover-bg);
 }
 </style>

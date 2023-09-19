@@ -7,7 +7,7 @@
 <template>
   <div class="container">
     <div ref="titleRef" class="title">
-      <span class="left">画板</span>
+      <div class="left" @click="onSetBoardBg">涂鸦工具</div>
       <span class="right" @click="onClose">关闭画板</span>
     </div>
     <div ref="boardWrapRef" class="board-wrap">
@@ -19,15 +19,45 @@
         @mouseleave="onMouseleave"
         @mouseup="onMouseup"
       />
-      <div class="color-group">
-        <div v-for="color in COLORS" :key="color" class="paint-color" :style="{ backgroundColor: color }" @click="onColorChange(color)"></div>
+      <div class="color-group" title="画笔颜色">
+        <el-tooltip
+          effect="light"
+          :content="`切换颜色设置，当前${!colorType ? '（画笔颜色）' : '（画布颜色）'}`"
+          placement="top"
+        >
+          <div class="change" @click="onSetColorType" />
+        </el-tooltip>
+        <div
+          v-for="color in BOARD_COLORS"
+          :key="color"
+          class="paint-color"
+          :style="{ backgroundColor: color }"
+          @click="onColorChange(color)"
+        />
         <el-color-picker v-model="markColor" @change="onColorChange" />
       </div>
-      <div class="range-wrap">
-        <input id="range" type="range" min="1" max="30" value="5" title="调整笔刷粗细" />
+      <div class="range-wrap" title="画笔粗细">
+        <el-slider
+          v-model="lineWidth"
+          class="slider"
+          vertical
+          height="150"
+          :step="1"
+          :min="1"
+          :max="50"
+          :show-tooltip="false"
+        />
+        <span class="line-width">{{ lineWidth }}</span>
       </div>
       <div class="tools">
-        <div v-for="btn in ACTIONS" :key="btn" class="tool">{{ btn }}</div>
+        <div
+          v-for="btn in BOARD_ACTIONS"
+          :key="btn.key"
+          :class="`tool ${currentTool === btn.key && 'active-tool'}`"
+          @click="onClickTools(btn.key)"
+        >
+          {{ btn.name }}
+        </div>
       </div>
     </div>
   </div>
@@ -35,10 +65,8 @@
 
 <script setup lang="ts">
 import { onMounted, ref, nextTick, reactive, watch } from 'vue';
-
-const ACTIONS = ['撤销', '画笔', '橡皮', '清空', '保存'];
-
-const COLORS = ['#000', '#fff', '#FF0000', '#FFA500', '#FFFF00', '#008000', '#00FFFF', '#0000FF', '#800080'];
+import { onDownloadFile } from '@/utils';
+import { BOARD_ACTIONS, BOARD_COLORS } from '@/constant';
 
 interface IProps {
   boardVisible: boolean;
@@ -66,8 +94,8 @@ const painting = ref<boolean>(false);
 const lastPoint = ref();
 const clear = ref<boolean>(false);
 // 历史操作步骤
-const historyDeta = ref<ImageData[]>([]);
-// 线宽
+const historyData = ref<ImageData[]>([]);
+// 画笔及橡皮差大小
 const lineWidth = ref<number>(1);
 // 画笔颜色
 const activeColor = ref<string>('#000');
@@ -77,18 +105,31 @@ const pageSizeInfo = reactive({
   top: 0,
 });
 const markColor = ref<string>('');
+// 当前选中的工具
+const currentTool = ref<string>('brush');
+// 标识背景颜色设置还是画笔颜色设置
+const colorType = ref<boolean>(false);
 
 onMounted(() => {
   nextTick(() => {
     createCanvas();
     initCanvasSize();
-    setCanvasBg('transparent');
+    setCanvasBg();
   });
 });
 
 watch(activeColor, (newVal) => {
   setLineColor(newVal);
 });
+
+const onSetBoardBg = () => {
+  setCanvasBg('#ccc');
+};
+
+// 切换颜色设置
+const onSetColorType = () => {
+  colorType.value = !colorType.value;
+};
 
 // 关闭画板
 const onClose = () => {
@@ -97,7 +138,11 @@ const onClose = () => {
 
 // 画板颜色变化
 const onColorChange = (color: string) => {
-  activeColor.value = color;
+  if (colorType.value) {
+    setCanvasBg(color);
+  } else {
+    activeColor.value = color;
+  }
 };
 
 // 创建 ctx 对象
@@ -121,7 +166,7 @@ const initCanvasSize = () => {
 };
 
 // 设置画板背景颜色
-const setCanvasBg = (color: string) => {
+const setCanvasBg = (color = '#fff') => {
   ctx.value!.fillStyle = color;
   ctx.value!.fillRect(0, 0, canvas.value?.width!, canvas.value?.height!);
   ctx.value!.fillStyle = 'black';
@@ -198,8 +243,50 @@ const drawCircle = (x: number, y: number, radius: number) => {
 
 // 保存操作步骤
 const saveActions = (data: ImageData) => {
-  historyDeta.value.length === 10 && historyDeta.value.shift();
-  historyDeta.value.push(data);
+  historyData.value.length === 10 && historyData.value.shift();
+  historyData.value.push(data);
+};
+
+// 画笔
+const onBrush = () => {
+  clear.value = false;
+};
+
+// 橡皮擦
+const onEraser = () => {
+  clear.value = true;
+};
+
+// 清空
+const onClear = () => {
+  ctx.value?.clearRect(0, 0, canvas.value!.width, canvas.value!.height);
+  setCanvasBg();
+};
+
+// 撤销
+const onUndo = () => {
+  if (historyData.value.length < 1) return false;
+  ctx.value?.putImageData(historyData.value[historyData.value.length - 1], 0, 0);
+  historyData.value.pop();
+};
+
+// 保存
+const onSave = () => {
+  const imgUrl = canvas.value!.toDataURL('image/png');
+  onDownloadFile({ url: imgUrl });
+};
+
+// 点击工具
+const onClickTools = (key: string) => {
+  currentTool.value = key;
+  const actions = {
+    brush: onBrush,
+    eraser: onEraser,
+    clear: onClear,
+    undo: onUndo,
+    save: onSave,
+  };
+  actions[key]();
 };
 </script>
 
@@ -211,26 +298,31 @@ const saveActions = (data: ImageData) => {
   flex-direction: column;
   justify-content: flex-start;
   height: 100%;
-  width: calc(100% - 4px);
-  padding-left: 5px;
+  width: 100%;
   box-sizing: border-box;
   overflow: auto;
+  border-radius: 5px;
 
   .title {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    height: 32px;
+    height: 45px;
     font-size: 16px;
+    box-sizing: border-box;
+    border-bottom: 1px solid var(--card-border);
+    padding: 10px 10px;
     color: var(--font-1);
+    user-select: none;
+
     .left,
     .right {
       cursor: pointer;
+      .clickNoSelectText();
     }
 
     .right {
       color: var(--theme-blue);
-      .clickNoSelectText();
     }
   }
 
@@ -238,14 +330,13 @@ const saveActions = (data: ImageData) => {
     flex: 1;
     position: relative;
     box-sizing: border-box;
-    box-shadow: 0 0 8px 0 var(--shadow-mack);
-    background-color: var(--pre-hover-bg);
-    border-radius: 5px;
+    cursor: crosshair;
 
     .draw-board {
       width: 100%;
       height: 100%;
-      border-radius: 5px;
+      border-bottom-left-radius: 5px;
+      border-bottom-right-radius: 5px;
       display: block;
     }
   }
@@ -253,8 +344,19 @@ const saveActions = (data: ImageData) => {
   .color-group {
     position: absolute;
     top: 50%;
-    left: 20px;
+    left: 10px;
     transform: translateY(-50%);
+
+    .change {
+      width: 30px;
+      height: 30px;
+      margin-bottom: 15px;
+      border-radius: 30px;
+      box-sizing: border-box;
+      background-image: url('@/assets/svg/change.svg');
+      background-size: 100% 100%;
+      cursor: pointer;
+    }
 
     .paint-color {
       width: 30px;
@@ -263,19 +365,34 @@ const saveActions = (data: ImageData) => {
       border-radius: 30px;
       cursor: pointer;
       box-shadow: 0 0 5px#999;
+      border: 2px solid @fff;
+      box-sizing: border-box;
     }
   }
 
   .range-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     position: absolute;
     top: 50%;
-    right: 20px;
+    right: 1px;
+    height: 200px;
     transform: translateY(-50%);
+
+    .slider {
+      flex: 1;
+    }
+
+    .line-width {
+      color: var(--theme-blue);
+      margin-top: 20px;
+    }
   }
 
   .tools {
     position: absolute;
-    bottom: 20px;
+    bottom: 5px;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
@@ -285,16 +402,17 @@ const saveActions = (data: ImageData) => {
     height: 50px;
 
     .tool {
-      width: 30px;
-      height: 30px;
-      line-height: 30px;
-      border-radius: 30px;
+      width: 18px;
+      height: 18px;
+      line-height: 18px;
+      border-radius: 18px;
       margin-right: 15px;
       text-align: center;
       padding: 10px;
       box-shadow: 0 0 8px 0 #999, 0 0 2px 0 #ccc inset;
       background-color: var(--pre-hover-bg);
       cursor: pointer;
+      .clickNoSelectText();
 
       &:last-child {
         margin-right: 0;
@@ -303,6 +421,10 @@ const saveActions = (data: ImageData) => {
       &:hover {
         color: var(--theme-blue);
       }
+    }
+
+    .active-tool {
+      box-shadow: 0 0 8px 0 var(--theme-blue), 0 0 2px 0 #ccc inset;
     }
   }
 
@@ -325,7 +447,9 @@ const saveActions = (data: ImageData) => {
       border-radius: 30px;
       width: 30px;
       height: 30px;
-      box-shadow: 0 0 5px#999;
+      box-shadow: 0 0 5px #999;
+      border: 2px solid @fff;
+      box-sizing: border-box;
     }
 
     .el-color-picker__icon {
@@ -341,9 +465,8 @@ const saveActions = (data: ImageData) => {
     }
 
     .el-color-picker__color::before {
-      content: 'A';
-      color: #181515;
-      font-size: 17px;
+      content: '';
+      font-size: 16px;
     }
 
     .el-color-picker__color::before {
@@ -356,6 +479,10 @@ const saveActions = (data: ImageData) => {
       content: '';
       background-image: url('@/assets/svg/color.svg');
       background-size: 100% 100%;
+    }
+
+    .el-slider__runway {
+      background-color: var(--font-1);
     }
   }
 }
