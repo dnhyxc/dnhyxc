@@ -482,7 +482,7 @@ const onClickTools = (key: string) => {
     }
 
     .el-slider__runway {
-      background-color: var(--font-1);
+      background-color: #d5efff;
     }
   }
 }
