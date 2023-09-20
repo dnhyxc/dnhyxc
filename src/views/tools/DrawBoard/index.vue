@@ -7,7 +7,49 @@
 <template>
   <div class="container">
     <div ref="titleRef" class="title">
-      <div class="left">涂鸦工具</div>
+      <div class="left">
+        <div class="tools">
+          <div
+            v-for="btn in BOARD_ACTIONS"
+            :key="btn.key"
+            :class="`tool ${currentTool === btn.key && (btn.key === 'brush' || btn.key === 'eraser') && 'active-tool'}`"
+            @click="onClickTools(btn.key)"
+          >
+            <div v-if="currentTool === btn.key">
+              <el-popover placement="top" :show-arrow="false" popper-class="speed-pop" trigger="hover">
+                <div class="tools-content">
+                  <el-slider
+                    v-model="lineWidth"
+                    class="slider"
+                    vertical
+                    height="100px"
+                    :step="1"
+                    :min="1"
+                    :max="50"
+                    :show-tooltip="false"
+                  />
+                  <span class="line-width">{{ lineWidth }}</span>
+                </div>
+                <template #reference>
+                  <span class="btn-text">
+                    <i v-if="btn.key === 'brush' || btn.key === 'eraser'" :class="`iconfont ${btn.icon}`"></i>
+                    <span v-if="btn.key === 'brush' || btn.key === 'eraser'" class="name">{{ btn.name }}</span>
+                  </span>
+                </template>
+              </el-popover>
+            </div>
+            <span class="btn-text">
+              <i
+                v-if="(btn.key !== 'brush' && btn.key !== 'eraser') || currentTool !== btn.key"
+                :class="`iconfont ${btn.icon}`"
+              />
+              <span v-if="(btn.key !== 'brush' && btn.key !== 'eraser') || currentTool !== btn.key" class="name">{{
+                btn.name
+              }}</span>
+            </span>
+          </div>
+        </div>
+      </div>
       <span class="right" @click="onClose">关闭画板</span>
     </div>
     <div ref="boardWrapRef" class="board-wrap">
@@ -46,7 +88,7 @@
           </div>
         </el-tooltip>
       </div>
-      <div class="tools">
+      <!-- <div class="tools">
         <div
           v-for="btn in BOARD_ACTIONS"
           :key="btn.key"
@@ -69,13 +111,24 @@
                 <span class="line-width">{{ lineWidth }}</span>
               </div>
               <template #reference>
-                <span v-if="btn.key === 'brush' || btn.key === 'eraser'">{{ btn.name }}</span>
+                <span class="btn-text">
+                  <i v-if="btn.key === 'brush' || btn.key === 'eraser'" :class="`iconfont ${btn.icon}`"></i>
+                  <span v-if="btn.key === 'brush' || btn.key === 'eraser'" class="name">{{ btn.name }}</span>
+                </span>
               </template>
             </el-popover>
           </div>
-          <span v-if="(btn.key !== 'brush' && btn.key !== 'eraser') || currentTool !== btn.key">{{ btn.name }}</span>
+          <span class="btn-text">
+            <i
+              v-if="(btn.key !== 'brush' && btn.key !== 'eraser') || currentTool !== btn.key"
+              :class="`iconfont ${btn.icon}`"
+            />
+            <span v-if="(btn.key !== 'brush' && btn.key !== 'eraser') || currentTool !== btn.key" class="name">{{
+              btn.name
+            }}</span>
+          </span>
         </div>
-      </div>
+      </div> -->
     </div>
   </div>
 </template>
@@ -325,18 +378,57 @@ const onClickTools = (key: string) => {
     font-size: 16px;
     box-sizing: border-box;
     border-bottom: 1px solid var(--card-border);
-    padding: 10px 10px;
+    padding: 10px 10px 10px 2px;
     color: var(--font-1);
     user-select: none;
 
-    .left,
-    .right {
+    .left {
       cursor: pointer;
       .clickNoSelectText();
+      .tools {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: auto;
+        height: 50px;
+
+        .tool {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          width: 45px;
+          height: 45px;
+          padding: 5px;
+          box-sizing: border-box;
+          border-radius: 5px;
+          margin-right: 15px;
+          text-align: center;
+          // box-shadow: 0 0 8px 0 @font-4, 0 0 2px 0 @font-5 inset;
+          // background-color: var(--pre-hover-bg);
+          cursor: pointer;
+          .clickNoSelectText();
+
+          &:last-child {
+            margin-right: 0;
+          }
+
+          &:hover {
+            color: var(--theme-blue);
+          }
+        }
+
+        .active-tool {
+          // box-shadow: 0 0 8px 0 var(--theme-blue), 0 0 2px 0 #ccc inset;
+          color: var(--theme-blue);
+        }
+      }
     }
 
     .right {
       color: var(--theme-blue);
+      cursor: pointer;
+      .clickNoSelectText();
     }
   }
 
@@ -401,44 +493,6 @@ const onClickTools = (key: string) => {
     transform: translateY(-50%);
     .slider {
       flex: 1;
-    }
-  }
-
-  .tools {
-    position: absolute;
-    bottom: 5px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: auto;
-    height: 50px;
-
-    .tool {
-      width: 18px;
-      height: 18px;
-      line-height: 18px;
-      border-radius: 18px;
-      margin-right: 15px;
-      text-align: center;
-      padding: 10px;
-      box-shadow: 0 0 8px 0 @font-4, 0 0 2px 0 @font-5 inset;
-      background-color: var(--pre-hover-bg);
-      cursor: pointer;
-      .clickNoSelectText();
-
-      &:last-child {
-        margin-right: 0;
-      }
-
-      &:hover {
-        color: var(--theme-blue);
-      }
-    }
-
-    .active-tool {
-      box-shadow: 0 0 8px 0 var(--theme-blue), 0 0 2px 0 #ccc inset;
     }
   }
 
@@ -511,6 +565,17 @@ const onClickTools = (key: string) => {
     color: var(--theme-blue);
     margin-top: 10px;
     .clickNoSelectText();
+  }
+}
+
+.btn-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  .name {
+    font-size: 12px;
   }
 }
 </style>

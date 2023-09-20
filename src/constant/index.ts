@@ -79,22 +79,27 @@ export const IMG_ROPORTIONS = [
 export const BOARD_ACTIONS = [
   {
     key: 'brush',
+    icon: 'icon-huabi',
     name: '画笔',
   },
   {
     key: 'eraser',
+    icon: 'icon-a-xiangpicachuxiangpica',
     name: '橡皮',
   },
   {
     key: 'undo',
+    icon: 'icon-chehuisekuai',
     name: '撤销',
   },
   {
     key: 'clear',
+    icon: 'icon-qingchu',
     name: '清空',
   },
   {
     key: 'save',
+    icon: 'icon-baocun',
     name: '保存',
   },
 ];
