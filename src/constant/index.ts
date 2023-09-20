@@ -86,12 +86,12 @@ export const BOARD_ACTIONS = [
     name: '橡皮',
   },
   {
-    key: 'clear',
-    name: '清空',
-  },
-  {
     key: 'undo',
     name: '撤销',
+  },
+  {
+    key: 'clear',
+    name: '清空',
   },
   {
     key: 'save',

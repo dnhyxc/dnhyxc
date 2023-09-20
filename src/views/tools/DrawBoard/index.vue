@@ -7,7 +7,7 @@
 <template>
   <div class="container">
     <div ref="titleRef" class="title">
-      <div class="left" @click="onSetBoardBg">涂鸦工具</div>
+      <div class="left">涂鸦工具</div>
       <span class="right" @click="onClose">关闭画板</span>
     </div>
     <div ref="boardWrapRef" class="board-wrap">
@@ -19,44 +19,61 @@
         @mouseleave="onMouseleave"
         @mouseup="onMouseup"
       />
-      <div class="color-group" title="画笔颜色">
-        <el-tooltip
-          effect="light"
-          :content="`切换颜色设置，当前${!colorType ? '（画笔颜色）' : '（画布颜色）'}`"
-          placement="top"
-        >
+      <div class="color-group">
+        <el-tooltip placement="top">
+          <template #content>
+            <span v-if="colorType" class="tip-text">切换为画笔颜色设置</span>
+            <span v-else class="tip-text">切换为画布颜色设置</span>
+          </template>
           <div class="change" @click="onSetColorType" />
         </el-tooltip>
-        <div
-          v-for="color in BOARD_COLORS"
-          :key="color"
-          class="paint-color"
-          :style="{ backgroundColor: color }"
-          @click="onColorChange(color)"
-        />
-        <el-color-picker v-model="markColor" @change="onColorChange" />
-      </div>
-      <div class="range-wrap" title="画笔粗细">
-        <el-slider
-          v-model="lineWidth"
-          class="slider"
-          vertical
-          height="150"
-          :step="1"
-          :min="1"
-          :max="50"
-          :show-tooltip="false"
-        />
-        <span class="line-width">{{ lineWidth }}</span>
+        <div v-for="color in BOARD_COLORS" :key="color">
+          <el-tooltip placement="left">
+            <template #content>
+              <span v-if="colorType" class="tip-text">画布颜色</span>
+              <span v-else class="tip-text">画笔颜色</span>
+            </template>
+            <div class="paint-color" :style="{ backgroundColor: color }" @click="onColorChange(color, true)"></div>
+          </el-tooltip>
+        </div>
+        <el-tooltip placement="left">
+          <template #content>
+            <span v-if="colorType" class="tip-text">画布颜色</span>
+            <span v-else class="tip-text">画笔颜色</span>
+          </template>
+          <div class="costom-color">
+            <el-color-picker v-model="markColor" @change="onColorChange" />
+          </div>
+        </el-tooltip>
       </div>
       <div class="tools">
         <div
           v-for="btn in BOARD_ACTIONS"
           :key="btn.key"
-          :class="`tool ${currentTool === btn.key && 'active-tool'}`"
+          :class="`tool ${currentTool === btn.key && (btn.key === 'brush' || btn.key === 'eraser') && 'active-tool'}`"
           @click="onClickTools(btn.key)"
         >
-          {{ btn.name }}
+          <div v-if="currentTool === btn.key">
+            <el-popover placement="top" :show-arrow="false" popper-class="speed-pop" trigger="hover">
+              <div class="tools-content">
+                <el-slider
+                  v-model="lineWidth"
+                  class="slider"
+                  vertical
+                  height="100px"
+                  :step="1"
+                  :min="1"
+                  :max="50"
+                  :show-tooltip="false"
+                />
+                <span class="line-width">{{ lineWidth }}</span>
+              </div>
+              <template #reference>
+                <span v-if="btn.key === 'brush' || btn.key === 'eraser'">{{ btn.name }}</span>
+              </template>
+            </el-popover>
+          </div>
+          <span v-if="(btn.key !== 'brush' && btn.key !== 'eraser') || currentTool !== btn.key">{{ btn.name }}</span>
         </div>
       </div>
     </div>
@@ -64,7 +81,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, nextTick, reactive, watch } from 'vue';
+import { onMounted, ref, nextTick, reactive } from 'vue';
 import { onDownloadFile } from '@/utils';
 import { BOARD_ACTIONS, BOARD_COLORS } from '@/constant';
 
@@ -99,6 +116,8 @@ const historyData = ref<ImageData[]>([]);
 const lineWidth = ref<number>(1);
 // 画笔颜色
 const activeColor = ref<string>('#000');
+// 画布颜色
+const drawBgColor = ref<string>('#fff');
 // 画图时需要减去的宽高
 const pageSizeInfo = reactive({
   left: 0,
@@ -118,17 +137,10 @@ onMounted(() => {
   });
 });
 
-watch(activeColor, (newVal) => {
-  setLineColor(newVal);
-});
-
-const onSetBoardBg = () => {
-  setCanvasBg('#ccc');
-};
-
 // 切换颜色设置
 const onSetColorType = () => {
   colorType.value = !colorType.value;
+  markColor.value = '';
 };
 
 // 关闭画板
@@ -137,11 +149,14 @@ const onClose = () => {
 };
 
 // 画板颜色变化
-const onColorChange = (color: string) => {
+const onColorChange = (color: string, isCustom: boolean) => {
+  isCustom && markColor.value && (markColor.value = '');
   if (colorType.value) {
+    drawBgColor.value = color;
     setCanvasBg(color);
   } else {
     activeColor.value = color;
+    setLineColor(color);
   }
 };
 
@@ -212,21 +227,15 @@ const drawLine = (x1: number, y1: number, x2: number, y2: number) => {
   ctx.value!.lineCap = 'round';
   ctx.value!.lineJoin = 'round';
   if (clear.value) {
-    ctx.value?.save();
-    ctx.value!.globalCompositeOperation = 'destination-out';
-    ctx.value?.moveTo(x1, y1);
-    ctx.value?.lineTo(x2, y2);
-    ctx.value?.stroke();
-    ctx.value?.closePath();
-    ctx.value?.clip();
-    ctx.value?.clearRect(0, 0, canvas.value!.width, canvas.value!.height);
-    ctx.value?.restore();
+    // 当是橡皮檫时，将画笔颜色改成画布颜色，以达到擦除笔迹的效果
+    setLineColor(drawBgColor.value);
   } else {
-    ctx.value?.moveTo(x1, y1);
-    ctx.value?.lineTo(x2, y2);
-    ctx.value?.stroke();
-    ctx.value?.closePath();
+    setLineColor(activeColor.value);
   }
+  ctx.value?.moveTo(x1, y1);
+  ctx.value?.lineTo(x2, y2);
+  ctx.value?.stroke();
+  ctx.value?.closePath();
 };
 
 const drawCircle = (x: number, y: number, radius: number) => {
@@ -243,7 +252,7 @@ const drawCircle = (x: number, y: number, radius: number) => {
 
 // 保存操作步骤
 const saveActions = (data: ImageData) => {
-  historyData.value.length === 10 && historyData.value.shift();
+  historyData.value.length === 100 && historyData.value.shift();
   historyData.value.push(data);
 };
 
@@ -278,7 +287,12 @@ const onSave = () => {
 
 // 点击工具
 const onClickTools = (key: string) => {
-  currentTool.value = key;
+  if (key !== 'brush' && key !== 'eraser') {
+    currentTool.value = 'brush';
+    clear.value = false;
+  } else {
+    currentTool.value = key;
+  }
   const actions = {
     brush: onBrush,
     eraser: onEraser,
@@ -354,7 +368,12 @@ const onClickTools = (key: string) => {
       border-radius: 30px;
       box-sizing: border-box;
       background-image: url('@/assets/svg/change.svg');
-      background-size: 100% 100%;
+      background-size: 85% 85%;
+      background-position: center;
+      background-repeat: no-repeat;
+      box-shadow: 0 0 5px 0 @font-5, 0 0 2px 0 @font-6 inset;
+      border: 2px solid @fff;
+      background-color: v-bind(activeColor);
       cursor: pointer;
     }
 
@@ -364,13 +383,14 @@ const onClickTools = (key: string) => {
       margin-bottom: 15px;
       border-radius: 30px;
       cursor: pointer;
-      box-shadow: 0 0 5px#999;
+      box-shadow: 0 0 5px 0 @font-5, 0 0 2px 0 @font-6 inset;
       border: 2px solid @fff;
       box-sizing: border-box;
     }
   }
 
   .range-wrap {
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -379,14 +399,8 @@ const onClickTools = (key: string) => {
     right: 1px;
     height: 200px;
     transform: translateY(-50%);
-
     .slider {
       flex: 1;
-    }
-
-    .line-width {
-      color: var(--theme-blue);
-      margin-top: 20px;
     }
   }
 
@@ -409,7 +423,7 @@ const onClickTools = (key: string) => {
       margin-right: 15px;
       text-align: center;
       padding: 10px;
-      box-shadow: 0 0 8px 0 #999, 0 0 2px 0 #ccc inset;
+      box-shadow: 0 0 8px 0 @font-4, 0 0 2px 0 @font-5 inset;
       background-color: var(--pre-hover-bg);
       cursor: pointer;
       .clickNoSelectText();
@@ -484,6 +498,19 @@ const onClickTools = (key: string) => {
     .el-slider__runway {
       background-color: #d5efff;
     }
+  }
+}
+
+.tools-content {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+
+  .line-width {
+    color: var(--theme-blue);
+    margin-top: 10px;
+    .clickNoSelectText();
   }
 }
 </style>
