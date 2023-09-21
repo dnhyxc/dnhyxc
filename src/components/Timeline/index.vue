@@ -58,6 +58,7 @@ const onClickCard = (id: string) => {
 
     .card {
       box-shadow: 0 0 8px 0 var(--shadow-mack);
+      background-color: var(--pre-hover-bg);
       border-radius: 5px;
       padding: 10px;
 
