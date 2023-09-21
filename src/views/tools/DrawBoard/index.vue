@@ -404,8 +404,6 @@ const onClickTools = (key: string) => {
           border-radius: 5px;
           margin-right: 15px;
           text-align: center;
-          // box-shadow: 0 0 8px 0 @font-4, 0 0 2px 0 @font-5 inset;
-          // background-color: var(--pre-hover-bg);
           cursor: pointer;
           .clickNoSelectText();
 
@@ -419,7 +417,6 @@ const onClickTools = (key: string) => {
         }
 
         .active-tool {
-          // box-shadow: 0 0 8px 0 var(--theme-blue), 0 0 2px 0 #ccc inset;
           color: var(--theme-blue);
         }
       }
