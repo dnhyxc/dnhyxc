@@ -16,7 +16,7 @@
             @click="onClickTools(btn.key)"
           >
             <div v-if="currentTool === btn.key">
-              <el-popover placement="top" :show-arrow="false" popper-class="speed-pop" trigger="hover">
+              <el-popover placement="top" effect="dark" popper-class="draw-pop" trigger="hover">
                 <div class="tools-content">
                   <el-slider
                     v-model="lineWidth"
@@ -88,53 +88,12 @@
           </div>
         </el-tooltip>
       </div>
-      <!-- <div class="tools">
-        <div
-          v-for="btn in BOARD_ACTIONS"
-          :key="btn.key"
-          :class="`tool ${currentTool === btn.key && (btn.key === 'brush' || btn.key === 'eraser') && 'active-tool'}`"
-          @click="onClickTools(btn.key)"
-        >
-          <div v-if="currentTool === btn.key">
-            <el-popover placement="top" :show-arrow="false" popper-class="speed-pop" trigger="hover">
-              <div class="tools-content">
-                <el-slider
-                  v-model="lineWidth"
-                  class="slider"
-                  vertical
-                  height="100px"
-                  :step="1"
-                  :min="1"
-                  :max="50"
-                  :show-tooltip="false"
-                />
-                <span class="line-width">{{ lineWidth }}</span>
-              </div>
-              <template #reference>
-                <span class="btn-text">
-                  <i v-if="btn.key === 'brush' || btn.key === 'eraser'" :class="`iconfont ${btn.icon}`"></i>
-                  <span v-if="btn.key === 'brush' || btn.key === 'eraser'" class="name">{{ btn.name }}</span>
-                </span>
-              </template>
-            </el-popover>
-          </div>
-          <span class="btn-text">
-            <i
-              v-if="(btn.key !== 'brush' && btn.key !== 'eraser') || currentTool !== btn.key"
-              :class="`iconfont ${btn.icon}`"
-            />
-            <span v-if="(btn.key !== 'brush' && btn.key !== 'eraser') || currentTool !== btn.key" class="name">{{
-              btn.name
-            }}</span>
-          </span>
-        </div>
-      </div> -->
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, nextTick, reactive } from 'vue';
+import { onMounted, ref, nextTick, reactive, onUnmounted } from 'vue';
 import { onDownloadFile } from '@/utils';
 import { BOARD_ACTIONS, BOARD_COLORS } from '@/constant';
 
@@ -188,7 +147,23 @@ onMounted(() => {
     initCanvasSize();
     setCanvasBg();
   });
+  document.addEventListener('keydown', onKeydown);
 });
+
+onUnmounted(() => {
+  document.removeEventListener('keydown', onKeydown);
+});
+
+// 监听快捷键操作
+const onKeydown = (event: KeyboardEvent) => {
+  if ((event.ctrlKey || event.metaKey) && event.key === 'z') {
+    onUndo();
+  }
+
+  if ((event.ctrlKey || event.metaKey) && event.key === 's') {
+    onSave();
+  }
+};
 
 // 切换颜色设置
 const onSetColorType = () => {
