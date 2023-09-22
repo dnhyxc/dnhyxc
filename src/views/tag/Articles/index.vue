@@ -8,7 +8,7 @@
   <Loading :loading="tagStore.loading" class="articles-wrap">
     <div class="left">
       <span class="title">
-        <span>文章标签列表aaaa</span>
+        <span>文章标签列表</span>
         <i
           :class="`font iconfont ${scrollChildTop > 10 ? 'icon-shuangjiantou-shang' : 'icon-shuangjiantou-xia'}`"
           @click="onScrollTagMenuTo"
