@@ -9,6 +9,8 @@ declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     AddCollectModel: typeof import('./src/components/AddCollectModel/index.vue')['default']
     AnotherArticle: typeof import('./src/components/AnotherArticle/index.vue')['default']
+    AsyncLoad: typeof import('./src/components/AsyncLoad/index.vue')['default']
+    AsyncLoading: typeof import('./src/components/AsyncLoading/index.vue')['default']
     Barrage: typeof import('./src/components/Barrage/index.vue')['default']
     Card: typeof import('./src/components/Card/index.vue')['default']
     Carousel: typeof import('./src/components/Carousel/index.vue')['default']

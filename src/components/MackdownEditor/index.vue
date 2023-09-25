@@ -7,7 +7,7 @@
       autofocus
       :height="height || 'calc(100vh - 84px)'"
       :disabled-menus="[]"
-      left-toolbar="undo redo | h bold italic | quote code | strikethrough hr | emoji link image | ul ol table | clear draft save create | monaco"
+      :left-toolbar="toolMenu"
       :toolbar="toolbar"
       @upload-image="onUploadImage"
       @copy-code-success="onCopyCodeSuccess"
@@ -16,7 +16,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive } from 'vue';
+import { reactive, computed } from 'vue';
 import { ElMessage } from 'element-plus';
 import { createStore, uploadStore } from '@/store';
 
@@ -75,6 +75,7 @@ interface IProps {
   onSaveDraft?: () => void;
   onChangeEditor?: () => void;
   copyCodeSuccess?: (value?: string) => void;
+  showVscode?: boolean;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
@@ -86,6 +87,16 @@ const props = withDefaults(defineProps<IProps>(), {
   onSaveDraft: () => {},
   onChangeEditor: () => {},
   copyCodeSuccess: () => {},
+});
+
+// tool menu
+const toolMenu = computed(() => {
+  const menu =
+    'undo redo | h bold italic | quote code | strikethrough hr | emoji link image | ul ol table | clear draft save create';
+  if (props.showVscode) {
+    return `${menu} | monaco`;
+  }
+  return menu;
 });
 
 // 自定义工具栏配置
