@@ -50,6 +50,10 @@ const MonacoEditor = defineAsyncComponent({
   loader: () => import('@/components/MonacoEditor/index.vue'),
   loadingComponent: AsyncLoading,
 });
+const MackdownEditor = defineAsyncComponent({
+  loader: () => import('@/components/MackdownEditor/index.vue'),
+  loadingComponent: AsyncLoading,
+});
 
 const route = useRoute();
 const router = useRouter();

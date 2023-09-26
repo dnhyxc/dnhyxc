@@ -60,21 +60,21 @@
 
 <script setup lang="ts">
 import { ipcRenderer } from 'electron';
-import { onMounted, onUnmounted, nextTick, ref, inject } from 'vue';
+import { onMounted, onUnmounted, nextTick, ref, inject, defineAsyncComponent } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { ElMessage } from 'element-plus';
 import { useScroller } from '@/hooks';
 import { scrollTo, checkOS } from '@/utils';
 import { articleStore, commonStore } from '@/store';
+import { WinRefreshParams } from '@/typings/common';
 import PageHeader from '@/components/PreviewHeader/index.vue';
-import Preview from '@/components/Preview/index.vue';
 import Multibar from '@/components/Multibar/index.vue';
 import Toc from '@/components/Toc/index.vue';
 import ToTopIcon from '@/components/ToTopIcon/index.vue';
 import AnotherArticle from '@/components/AnotherArticle/index.vue';
-import Comment from '@/components/Comment/index.vue';
 import Loading from '@/components/Loading/index.vue';
-import { WinRefreshParams } from '@/typings/common';
+const Preview = defineAsyncComponent(() => import('@/components/Preview/index.vue'));
+const Comment = defineAsyncComponent(() => import('@/components/Comment/index.vue'));
 
 const reload = inject<Function>('reload');
 

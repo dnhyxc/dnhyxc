@@ -23,53 +23,52 @@
   width: 100%;
   border-radius: 5px;
 
-  .loader {
-    position: fixed;
-    top: 45%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    border: 3px solid transparent;
-    border-top-color: var(--theme-blue);
-    animation: spin 2s linear infinite;
-    z-index: 99;
-
-    &::before {
-      content: '';
-      position: absolute;
-      top: 5px;
-      left: 5px;
-      right: 5px;
-      bottom: 5px;
-      border-radius: 50%;
-      border: 3px solid transparent;
-      border-top-color: var(--theme-blue);
-      animation: spin 3s linear infinite;
-    }
-
-    &::after {
-      content: '';
-      position: absolute;
-      top: 15px;
-      left: 15px;
-      right: 15px;
-      bottom: 15px;
-      border-radius: 50%;
-      border: 3px solid transparent;
-      border-top-color: var(--theme-blue);
-      animation: spin 1.5s linear infinite;
-    }
-  }
-
   .loader-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     position: relative;
     width: 100%;
     height: 100%;
     background-size: 200% 200%;
     animation: bgmove 5s infinite;
     border-radius: 5px;
+
+    .loader {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      border: 3px solid transparent;
+      border-top-color: var(--theme-blue);
+      animation: spin 2s linear infinite;
+      z-index: 99;
+
+      &::before {
+        content: '';
+        position: absolute;
+        top: 5px;
+        left: 5px;
+        right: 5px;
+        bottom: 5px;
+        border-radius: 50%;
+        border: 3px solid transparent;
+        border-top-color: var(--theme-blue);
+        animation: spin 3s linear infinite;
+      }
+
+      &::after {
+        content: '';
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        right: 15px;
+        bottom: 15px;
+        border-radius: 50%;
+        border: 3px solid transparent;
+        border-top-color: var(--theme-blue);
+        animation: spin 1.5s linear infinite;
+      }
+    }
   }
 }
 
