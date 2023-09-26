@@ -1,26 +1,29 @@
 <!--
- * 图片压缩弹窗
+ * 语音播报
  * @author: dnhyxc
  * @since: 2023-05-29
  * index.vue
 -->
 <template>
-  <div class="modal-wrap">
-    <el-dialog v-model="visible" :close-on-click-modal="false" title="文本转语音" align-center width="850px">
-      <div class="content">
-        <div class="inp-wrap">
-          <div class="label">输入文本转换</div>
-          <el-input
-            v-model="keyword"
-            :autosize="{ minRows: 5, maxRows: 8 }"
-            type="textarea"
-            maxlength="800"
-            resize="none"
-            show-word-limit
-            placeholder="请输入需要转换的文本"
-            @input="onKeywordChange"
-          />
+  <div class="speech-wrap">
+    <div class="content">
+      <div class="inp-wrap">
+        <div class="label">
+          <span class="left">输入文本转换</span>
+          <span class="close" @click="onClose">关闭</span>
         </div>
+        <el-input
+          v-model="keyword"
+          :autosize="{ minRows: 6, maxRows: 6 }"
+          type="textarea"
+          maxlength="800"
+          resize="none"
+          show-word-limit
+          placeholder="请输入需要转换的文本"
+          @input="onKeywordChange"
+        />
+      </div>
+      <div class="speech-list">
         <div v-if="convertStore.convertList.length" class="history-title">
           <span class="left">最近转换</span>
           <el-button class="right" type="danger" link @click="onClearAll">清空历史</el-button>
@@ -28,7 +31,7 @@
         <el-scrollbar
           v-if="convertStore.convertList.length"
           ref="scrollRef"
-          max-height="300px"
+          max-height="calc(100vh - 380px)"
           wrap-class="scrollbar-wrapper"
         >
           <div class="list">
@@ -57,64 +60,46 @@
           </div>
         </el-scrollbar>
       </div>
-      <template #footer>
-        <div class="dialog-footer">
-          <el-button
-            :type="speech ? 'warning' : 'primary'"
-            :disabled="!keyword.trim() && !selectKeyword"
-            @click="onConvert"
-            >{{ speech ? '重置' : '播放' }}</el-button
-          >
-          <el-button type="info" :disabled="(!keyword.trim() && !selectKeyword) || !speech" @click="onPause"
-            >暂停</el-button
-          >
-          <el-button type="success" :disabled="(!keyword.trim() && !selectKeyword) || !speech" @click="onResume"
-            >恢复</el-button
-          >
-          <el-popover placement="top" popper-class="speed-pop" trigger="hover">
-            <div class="content">
-              <el-slider
-                v-model="volume"
-                vertical
-                height="176px"
-                :step="0.05"
-                :min="0"
-                :max="1"
-                :show-tooltip="false"
-              />
-            </div>
-            <template #reference>
-              <el-button :type="speech ? 'info' : 'primary'" class="spend-btn" :disabled="!!speech"
-                >音量 {{ (volume * 100).toFixed(0) }}%</el-button
-              >
-            </template>
-          </el-popover>
-          <el-popover placement="top" popper-class="speed-pop" trigger="hover">
-            <div class="content">
-              <el-slider
-                v-model="speed"
-                vertical
-                height="176px"
-                :step="0.25"
-                :min="0.5"
-                :max="3"
-                :show-tooltip="false"
-              />
-            </div>
-            <template #reference>
-              <el-button :type="speech ? 'info' : 'primary'" class="spend-btn" :disabled="!!speech"
-                >倍速 {{ speed }}</el-button
-              >
-            </template>
-          </el-popover>
+    </div>
+    <div class="footer">
+      <el-button
+        :type="speech ? 'warning' : 'primary'"
+        :disabled="!keyword.trim() && !selectKeyword"
+        @click="onConvert"
+        >{{ speech ? '重置' : '播放' }}</el-button
+      >
+      <el-button type="info" :disabled="(!keyword.trim() && !selectKeyword) || !speech" @click="onPause">
+        暂停
+      </el-button>
+      <el-button type="success" :disabled="(!keyword.trim() && !selectKeyword) || !speech" @click="onResume">
+        恢复
+      </el-button>
+      <el-popover placement="top" popper-class="speed-pop" trigger="hover">
+        <div class="content">
+          <el-slider v-model="volume" vertical height="176px" :step="0.05" :min="0" :max="1" :show-tooltip="false" />
         </div>
-      </template>
-    </el-dialog>
+        <template #reference>
+          <el-button :type="speech ? 'info' : 'primary'" class="spend-btn" :disabled="!!speech">
+            音量 {{ (volume * 100).toFixed(0) }}%
+          </el-button>
+        </template>
+      </el-popover>
+      <el-popover placement="top" popper-class="speed-pop" trigger="hover">
+        <div class="content">
+          <el-slider v-model="speed" vertical height="176px" :step="0.25" :min="0.5" :max="3" :show-tooltip="false" />
+        </div>
+        <template #reference>
+          <el-button :type="speech ? 'info' : 'primary'" class="spend-btn" :disabled="!!speech"
+            >倍速 {{ speed }}</el-button
+          >
+        </template>
+      </el-popover>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, onUnmounted, ref, watch } from 'vue';
+import { onUnmounted, ref, watch, onMounted } from 'vue';
 import { ElMessage } from 'element-plus';
 import { SpeechPlayer } from '@/utils';
 import { convertStore } from '@/store';
@@ -145,27 +130,19 @@ const selectKeyword = ref<string>('');
 // 语音播放实例
 const speech = ref<SpeechPlayer | null>(null);
 
-const visible = computed({
-  get() {
-    return props.modalVisible;
-  },
-  set(visible: boolean) {
-    emit('update:modalVisible', visible);
-  },
+onMounted(() => {
+  if (props.modalVisible) {
+    convertStore.getConvertList();
+  }
 });
 
-// 当转换弹窗关闭时，停止播放语音
-watch(visible, (newVal) => {
-  if (!newVal) {
-    // 弹窗关闭，清空keyword
-    keyword.value = '';
-    selectKeyword.value = '';
-    if (speech.value) {
-      speech.value.cancel();
-      speech.value = null;
-    }
-  } else {
-    convertStore.getConvertList();
+onUnmounted(() => {
+  // 弹窗关闭，清空keyword
+  keyword.value = '';
+  selectKeyword.value = '';
+  if (speech.value) {
+    speech.value.cancel();
+    speech.value = null;
   }
 });
 
@@ -185,6 +162,11 @@ onUnmounted(() => {
     speech.value = null;
   }
 });
+
+// 关闭
+const onClose = () => {
+  emit('update:modalVisible', false);
+};
 
 // 输入框内容更改事件
 const onKeywordChange = () => {
@@ -257,51 +239,49 @@ const onClearAll = () => {
 <style scoped lang="less">
 @import '@/styles/index.less';
 
-.modal-wrap {
+.speech-wrap {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
   overflow: hidden;
-
-  :deep {
-    .el-dialog__body {
-      padding: 10px 20px 0 !important;
-    }
-    .el-upload-dragger {
-      padding: 10px 0 20px 0;
-      background-color: var(--input-bg-color);
-    }
-
-    .el-input__wrapper {
-      background-color: var(--input-bg-color);
-    }
-
-    .el-textarea__inner {
-      color: var(--font-1);
-      background-color: var(--input-bg-color);
-    }
-
-    .el-textarea .el-input__count {
-      background-color: transparent;
-    }
-
-    .el-slider__button {
-      width: 16px;
-      height: 16px;
-    }
-
-    .el-form-item__label {
-      color: var(--font-1);
-    }
-
-    .spend-btn {
-      width: 80px;
-    }
-  }
+  padding: 0 10px 10px;
 
   .content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+
+    .speech-list {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      overflow: auto;
+    }
+
+    :deep {
+      .scrollbar-wrapper {
+        flex: 1;
+      }
+    }
+
     .inp-wrap {
       .label {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
         color: var(--font-1);
         font-size: 16px;
-        margin-bottom: 10px;
+        height: 45px;
+
+        .close {
+          color: var(--theme-blue);
+          cursor: pointer;
+
+          &:hover {
+            color: @active;
+          }
+        }
       }
     }
 
@@ -318,7 +298,6 @@ const onClearAll = () => {
       padding: 10px;
       box-sizing: border-box;
       border-radius: 5px;
-      margin-top: 10px;
       background-color: var(--pre-bg-color);
 
       .item {
@@ -410,6 +389,40 @@ const onClearAll = () => {
           margin-bottom: 0;
         }
       }
+    }
+  }
+
+  .footer {
+    position: relative;
+    text-align: right;
+    z-index: 99;
+  }
+
+  :deep {
+    .el-input__wrapper {
+      background-color: var(--input-bg-color);
+    }
+
+    .el-textarea__inner {
+      color: var(--font-1);
+      background-color: var(--input-bg-color);
+    }
+
+    .el-textarea .el-input__count {
+      background-color: transparent;
+    }
+
+    .el-slider__button {
+      width: 16px;
+      height: 16px;
+    }
+
+    .el-form-item__label {
+      color: var(--font-1);
+    }
+
+    .spend-btn {
+      width: 80px;
     }
   }
 }

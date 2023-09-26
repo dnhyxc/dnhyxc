@@ -50,7 +50,7 @@
           </div>
         </div>
       </div>
-      <span class="right" @click="onClose">关闭画板</span>
+      <span class="right" @click="onClose">关闭</span>
     </div>
     <div ref="boardWrapRef" class="board-wrap">
       <canvas
@@ -401,6 +401,10 @@ const onClickTools = (key: string) => {
       color: var(--theme-blue);
       cursor: pointer;
       .clickNoSelectText();
+
+      &:hover {
+        color: @active;
+      }
     }
   }
 
