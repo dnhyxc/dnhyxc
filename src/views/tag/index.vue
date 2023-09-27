@@ -6,7 +6,9 @@
 -->
 <template>
   <div class="tag-wrap">
-    <WordCloud :data="tagStore.tags" class="word-cloud-wrap" :callback="onCheckTag" :loading="tagStore.loading" />
+    <div class="cloud-content">
+      <WordCloud :data="tagStore.tags" class="word-cloud-wrap" :callback="onCheckTag" :loading="tagStore.loading" />
+    </div>
     <div class="tag-list">
       <div class="title">
         <span>文章标签列表</span>
@@ -27,12 +29,16 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, onUnmounted } from 'vue';
+import { onMounted, onUnmounted, defineAsyncComponent } from 'vue';
 import { useRouter } from 'vue-router';
 import { scrollTo } from '@/utils';
 import { useChildScroller } from '@/hooks';
 import { tagStore } from '@/store';
-import WordCloud from '@/components/WordCloud/index.vue';
+import AsyncLoading from '@/components/AsyncLoading/index.vue';
+const WordCloud = defineAsyncComponent({
+  loader: () => import('@/components/WordCloud/index.vue'),
+  loadingComponent: AsyncLoading,
+});
 
 const router = useRouter();
 const { scrollChildRef, scrollChildTop } = useChildScroller();
@@ -72,13 +78,19 @@ const onCheckTag = (tag: string) => {
   height: calc(100% - 2px);
   border-radius: 5px;
 
-  .word-cloud-wrap {
-    box-sizing: border-box;
+  .cloud-content {
     flex: 1;
-    margin-top: 3px;
-    box-shadow: 0 0 8px 0 var(--shadow-mack);
     border-radius: 5px;
-    background-color: var(--pre-hover-bg);
+
+    .word-cloud-wrap {
+      width: 100%;
+      height: 100%;
+      box-sizing: border-box;
+      margin-top: 3px;
+      box-shadow: 0 0 8px 0 var(--shadow-mack);
+      border-radius: 5px;
+      background-color: var(--pre-hover-bg);
+    }
   }
 
   .tag-list {

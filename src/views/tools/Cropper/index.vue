@@ -6,88 +6,77 @@
 -->
 <template>
   <div class="container">
-    <el-dialog v-model="visible" class="crop-dialog" align-center width="80vw">
-      <template #header>
-        <div class="title">
-          <span>图片剪裁</span>
-          <span class="title-info">{{ `（当前采用${option.fixed ? '固定裁剪' : '自定义裁剪'}比例进行裁剪）` }}</span>
-        </div>
-      </template>
-      <div ref="cropperContent" class="cropper-content">
-        <div v-if="cropperVisible" class="cropper">
-          <VueCropper
-            ref="cropper"
-            :img="cropperUrl || sourceUrl"
-            :output-size="option.outputSize"
-            :output-type="option.outputType"
-            :info="option.info"
-            :full="option.full"
-            :can-move-box="option.canMoveBox"
-            :original="option.original"
-            :auto-crop="option.autoCrop"
-            :fixed="option.fixed"
-            :fixed-number="option.fixedNumber"
-            :center-box="option.centerBox"
-            :info-true="option.infoTrue"
-            :fixed-box="option.fixedBox"
-            :auto-crop-width="option.autoCropWidth"
-            :auto-crop-height="option.autoCropHeight"
-          />
-        </div>
+    <div class="title">
+      <div class="left">
+        <span>图片剪裁</span>
+        <span class="title-info">{{ `（当前采用${option.fixed ? '固定裁剪' : '自定义裁剪'}比例进行裁剪）` }}</span>
       </div>
-      <div class="content">
-        <DragUpload v-if="!cropperUrl && !sourceUrl" class="drag-upload" :on-upload="onUpload" />
+      <span class="close" @click="onClose">关闭</span>
+    </div>
+    <div ref="cropperContent" class="cropper-content">
+      <div v-if="cropperVisible" class="cropper">
+        <VueCropper
+          ref="cropper"
+          :img="cropperUrl || sourceUrl"
+          :output-size="option.outputSize"
+          :output-type="option.outputType"
+          :info="option.info"
+          :full="option.full"
+          :can-move-box="option.canMoveBox"
+          :original="option.original"
+          :auto-crop="option.autoCrop"
+          :fixed="option.fixed"
+          :fixed-number="option.fixedNumber"
+          :center-box="option.centerBox"
+          :info-true="option.infoTrue"
+          :fixed-box="option.fixedBox"
+          :auto-crop-width="option.autoCropWidth"
+          :auto-crop-height="option.autoCropHeight"
+        />
       </div>
-      <div class="footer">
-        <el-button type="primary" class="btn roportion" @click="onCropFixed">
-          {{ option.fixed ? '自定义比例' : '固定比例' }}
-        </el-button>
-        <el-button type="primary" class="btn" plain :disabled="!sourceUrl" @click="onScaleMax">放大</el-button>
-        <el-button type="primary" class="btn" plain :disabled="!sourceUrl" @click="onScaleMin">缩小</el-button>
-        <el-button type="primary" class="btn" plain :disabled="!sourceUrl" @click="onRotate">旋转</el-button>
-        <el-dropdown>
-          <el-button type="primary" class="btn" :disabled="!sourceUrl" plain>比例</el-button>
-          <template #dropdown>
-            <el-dropdown-menu>
-              <el-dropdown-item v-for="item in IMG_ROPORTIONS" :key="item.key" @click="onRoportion(item.value)">
-                <span class="dropdown-item">{{ item.key }}</span>
-              </el-dropdown-item>
-            </el-dropdown-menu>
-          </template>
-        </el-dropdown>
-        <el-tooltip class="box-item" effect="dark" content="需要优先点击截取按钮之后才能下载最新设置的图片" placement="top">
-          <el-button type="primary" :disabled="!cropperUrl" class="btn" plain @click="onDownload">下载</el-button>
-        </el-tooltip>
-        <el-button type="warning" class="btn" :disabled="!sourceUrl" @click="onRefresh">重置</el-button>
-        <el-button type="success" class="btn" @click="onFinish">截取</el-button>
-      </div>
-    </el-dialog>
+    </div>
+    <div class="content">
+      <DragUpload v-if="!cropperUrl && !sourceUrl" class="drag-upload" :on-upload="onUpload" />
+    </div>
+    <div class="footer">
+      <el-button type="primary" class="btn roportion" @click="onCropFixed">
+        {{ option.fixed ? '自定义比例' : '固定比例' }}
+      </el-button>
+      <el-button type="primary" class="btn" plain :disabled="!sourceUrl" @click="onScaleMax">放大</el-button>
+      <el-button type="primary" class="btn" plain :disabled="!sourceUrl" @click="onScaleMin">缩小</el-button>
+      <el-button type="primary" class="btn" plain :disabled="!sourceUrl" @click="onRotate">旋转</el-button>
+      <el-dropdown>
+        <el-button type="primary" class="btn" :disabled="!sourceUrl" plain>比例</el-button>
+        <template #dropdown>
+          <el-dropdown-menu>
+            <el-dropdown-item v-for="item in IMG_ROPORTIONS" :key="item.key" @click="onRoportion(item.value)">
+              <span class="dropdown-item">{{ item.key }}</span>
+            </el-dropdown-item>
+          </el-dropdown-menu>
+        </template>
+      </el-dropdown>
+      <el-tooltip
+        class="box-item"
+        effect="dark"
+        content="需要优先点击截取按钮之后才能下载最新设置的图片"
+        placement="top"
+      >
+        <el-button type="primary" :disabled="!cropperUrl" class="btn" plain @click="onDownload">下载</el-button>
+      </el-tooltip>
+      <el-button type="warning" class="btn" :disabled="!sourceUrl" @click="onRefresh">重置</el-button>
+      <el-button type="success" class="btn" @click="onFinish">截取</el-button>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, nextTick, computed } from 'vue';
+import { ref, reactive, nextTick } from 'vue';
 import { VueCropper } from 'vue-cropper';
 import { getImgInfo, onDownloadFile } from '@/utils';
 import { IMG_ROPORTIONS } from '@/constant';
 import 'vue-cropper/dist/index.css';
 
-interface IProps {
-  modalVisible: boolean;
-}
-
-const props = defineProps<IProps>();
-
 const emit = defineEmits(['update:modalVisible']);
-
-const visible = computed({
-  get() {
-    return props.modalVisible;
-  },
-  set(visible: boolean) {
-    emit('update:modalVisible', visible);
-  },
-});
 
 // 裁剪器状态
 const cropperVisible = ref<boolean>(false);
@@ -219,23 +208,52 @@ const onRefresh = () => {
   sourceUrl.value = '';
   cropperVisible.value = false;
 };
+
+// 关闭
+const onClose = () => {
+  emit('update:modalVisible', false);
+};
 </script>
 
 <style scoped lang="less">
 @import '@/styles/index.less';
 
 .container {
+  position: relative;
+  height: 100%;
+  padding: 0 10px 10px;
+
   .title {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     font-size: 18px;
-    .title-info {
-      font-size: 14px;
-      color: var(--font-5);
+    height: 45px;
+
+    .left {
+      display: flex;
+      align-items: center;
+
+      .title-info {
+        font-size: 14px;
+        color: var(--font-5);
+      }
+    }
+
+    .close {
+      color: var(--theme-blue);
+      font-size: 16px;
+      cursor: pointer;
+
+      &:hover {
+        color: @active;
+      }
     }
   }
+
   .cropper {
     height: v-bind(cropperHeight);
+    max-height: calc(100vh - 182px);
   }
 
   .content {
@@ -244,13 +262,20 @@ const onRefresh = () => {
     flex-direction: column;
     box-shadow: 0 0 8px 0 var(--shadow-mack);
     background-color: var(--pre-hover-bg);
+    border-radius: 5px;
+    overflow: auto;
 
     .drag-upload {
-      height: 300px;
+      height: calc(100vh - 182px);
+      display: block;
+      padding: 0;
     }
   }
 
   .footer {
+    position: absolute;
+    bottom: 0;
+    right: 10px;
     display: flex;
     flex-wrap: wrap;
     justify-content: flex-end;

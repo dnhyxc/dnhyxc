@@ -28,8 +28,8 @@ module.exports = {
     'vue/max-attributes-per-line': [
       'error',
       {
-        singleline: { max: 6 },
-        multiline: { max: 6 },
+        singleline: { max: 8 },
+        multiline: { max: 8 },
       },
     ], // vue template模板元素第一行最多5个属性
     'vue/multi-word-component-names': 0,

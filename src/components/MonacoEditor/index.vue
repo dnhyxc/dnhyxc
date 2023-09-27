@@ -231,6 +231,8 @@ const onSaveDraft = () => {
 .container {
   height: 100%;
   border-radius: 5px;
+  padding-top: 3px;
+  box-sizing: border-box;
   box-shadow: 0 0 8px 0 var(--shadow-mack);
 
   .toolbar {

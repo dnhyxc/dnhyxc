@@ -5,7 +5,7 @@
  * index.vue
 -->
 <template>
-  <Loading :loading="interactStore.interactLoading" class="barrage-wrap">
+  <div class="barrage-wrap">
     <div class="barrage">
       <Barrage ref="barrageRef" />
     </div>
@@ -65,11 +65,11 @@
         />
       </div>
     </Loading>
-  </Loading>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref, computed } from 'vue';
+import { onMounted, onUnmounted, ref, computed, defineAsyncComponent } from 'vue';
 import { useRouter } from 'vue-router';
 import vueDanmaku from 'vue3-danmaku';
 import { loginStore, interactStore, authorStore } from '@/store';
@@ -77,6 +77,11 @@ import { scrollTo, uuid, formatDate } from '@/utils';
 import { useScroller } from '@/hooks';
 import { HEAD_IMG } from '@/constant';
 import { BarrageItem } from '@/typings/common';
+import AsyncLoading from '@/components/AsyncLoading/index.vue';
+const Barrage = defineAsyncComponent({
+  loader: () => import('@/components/Barrage/index.vue'),
+  loadingComponent: AsyncLoading,
+});
 
 const router = useRouter();
 const { scrollRef, scrollTop } = useScroller();

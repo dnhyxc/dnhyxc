@@ -16,6 +16,7 @@
       :on-change-editor="onChangeEditor"
       :copy-code-success="onCopyCodeSuccess"
       :height="checkOS() === 'mac' ? 'calc(100vh - 98px)' : null"
+      show-vscode
     />
     <MonacoEditor
       v-if="editType"
@@ -37,13 +38,22 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onActivated, onDeactivated, watch } from 'vue';
+import { ref, onActivated, onDeactivated, watch, defineAsyncComponent } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { ElMessage } from 'element-plus';
 import { articleStore, createStore } from '@/store';
 import { checkOS } from '@/utils';
+import AsyncLoading from '@/components/AsyncLoading/index.vue';
 import CreateDrawer from './Create/index.vue';
 import DraftModal from './Draft/index.vue';
+const MonacoEditor = defineAsyncComponent({
+  loader: () => import('@/components/MonacoEditor/index.vue'),
+  loadingComponent: AsyncLoading,
+});
+const MackdownEditor = defineAsyncComponent({
+  loader: () => import('@/components/MackdownEditor/index.vue'),
+  loadingComponent: AsyncLoading,
+});
 
 const route = useRoute();
 const router = useRouter();
