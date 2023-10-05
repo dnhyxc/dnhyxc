@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia';
+import { Router } from 'vue-router';
 import { ElMessage } from 'element-plus';
 import { BarrageItem, InteractListRes } from '@/typings/common';
 import * as Service from '@/server';
@@ -50,7 +51,7 @@ export const useInteractStore = defineStore('interact', {
     },
 
     // 获取留言列表
-    async getInteracts() {
+    async getInteracts(router?: Router) {
       // 检验是否有userId，如果没有禁止发送请求
       if (!useCheckUserId()) return;
       this.interactLoading = true;
@@ -58,6 +59,15 @@ export const useInteractStore = defineStore('interact', {
       this.interactLoading = false;
       if (res.success) {
         this.barrageList = res.data;
+      } else if (res.code === 409) {
+        ElMessage({
+          message: res.message,
+          type: 'error',
+          offset: 80,
+        });
+        // 未登录时清空用户信息
+        loginStore.onQuit();
+        router?.push('/home');
       } else {
         ElMessage({
           message: res.message,
@@ -68,7 +78,7 @@ export const useInteractStore = defineStore('interact', {
     },
 
     // 分页获取留言列表
-    async getInteractList() {
+    async getInteractList(router?: Router) {
       if (this.interactList.length !== 0 && this.interactList.length >= this.total) return;
       this.pageNo = this.pageNo + 1;
       this.loading = true;
@@ -81,11 +91,12 @@ export const useInteractStore = defineStore('interact', {
       if (res.success) {
         this.interactList = [...this.interactList, ...res.data.list];
         this.total = res.data.total;
-      } else {
+      } else if (res.code !== 409) {
         ElMessage({
           message: res.message,
           type: 'error',
           offset: 80,
+          duration: 2000,
         });
       }
     },

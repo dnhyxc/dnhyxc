@@ -1,12 +1,6 @@
 import { defineStore } from 'pinia';
 import { ElMessage } from 'element-plus';
-import {
-  UserInfoParams,
-  ArticleListResult,
-  ArticleItem,
-  TimelineResult,
-  PerGetArticlesParams,
-} from '@/typings/common';
+import { UserInfoParams, ArticleListResult, ArticleItem, TimelineResult, PerGetArticlesParams } from '@/typings/common';
 import * as Service from '@/server';
 import { useCheckUserId } from '@/hooks';
 import { normalizeResult, uniqueFunc, Message } from '@/utils';
@@ -112,6 +106,13 @@ export const usePersonalStore = defineStore('personal', {
           this.articleList = [...this.articleList, ...list];
           this.total = total;
         }
+      } else {
+        ElMessage({
+          message: res.message,
+          type: 'error',
+          offset: 80,
+          duration: 2000,
+        });
       }
     },
 

@@ -65,7 +65,7 @@ const editType = ref<boolean>(false); // 编辑器类型
 // 组件启用时，如果有文章id，则请求文章详情
 onActivated(() => {
   // 启用组建时，获取创建文章的分类列表
-  createStore.getAddedClassifys();
+  createStore.getAddedClassifys(router);
   if (!route.query.id) return;
   articleStore?.getArticleDetail({
     id: route.query.id as string,

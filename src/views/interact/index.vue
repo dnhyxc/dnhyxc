@@ -101,7 +101,7 @@ const showEmpty = computed(
 onMounted(async () => {
   isMounted.value = true;
   window.addEventListener('resize', onResize, false);
-  await interactStore.getInteracts();
+  await interactStore.getInteracts(router);
   onFetchData();
   // 获取博主信息
   await authorStore.getUserInfo();
@@ -114,7 +114,7 @@ onUnmounted(() => {
 
 // 滚动加载留言列表
 const onFetchData = async () => {
-  await interactStore.getInteractList();
+  await interactStore.getInteractList(router);
 };
 
 // 监听页面窗口大小变化，重新计算弹幕区域大小弹幕
