@@ -13,7 +13,7 @@
             <span class="action iconfont icon-wodedasai" title="切换语言" />
             <template #dropdown>
               <el-dropdown-menu>
-                <el-dropdown-item v-for="item in MONACO_EDITOR_LANGUAGES" :key="item" @click="onChangeLanguage(item)">
+                <el-dropdown-item v-for="item in languages" :key="item" @click="onChangeLanguage(item)">
                   {{ item }}
                 </el-dropdown-item>
               </el-dropdown-menu>
@@ -28,9 +28,9 @@
               </el-dropdown-menu>
             </template>
           </el-dropdown>
-          <span class="action iconfont icon-markdown" title="切换编辑器" @click="onChangeEditor" />
+          <span v-if="!isCodeEdit" class="action iconfont icon-markdown" title="切换编辑器" @click="onChangeEditor" />
         </div>
-        <div class="create-action">
+        <div v-if="!isCodeEdit" class="create-action">
           <el-button
             class="clear"
             type="warning"
@@ -44,6 +44,10 @@
           <span class="action" title="保存草稿" @click="onSaveDraft">存</span>
           <span class="action" title="发布文章" @click="onPublish">发</span>
         </div>
+        <div v-if="isCodeEdit" class="create-action">
+          <span class="action" title="清空内容" @click="onClear">清空内容</span>
+          <span class="action" title="发布文章" @click="run">运行代码</span>
+        </div>
       </div>
       <div class="right">
         <div class="language-text">当前语言：{{ language }}</div>
@@ -54,7 +58,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, nextTick, onDeactivated } from 'vue';
+import { ref, onMounted, nextTick, onDeactivated, computed } from 'vue';
 import * as monaco from 'monaco-editor';
 import { ElMessage } from 'element-plus';
 import jsonWorker from 'monaco-editor/esm/vs/language/json/json.worker?worker';
@@ -62,16 +66,18 @@ import cssWorker from 'monaco-editor/esm/vs/language/css/css.worker?worker';
 import htmlWorker from 'monaco-editor/esm/vs/language/html/html.worker?worker';
 import tsWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker?worker';
 import EditorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker';
-import { MONACO_EDITOR_LANGUAGES } from '@/constant';
+import { MONACO_EDITOR_LANGUAGES, CODE_RUN_LANGUAGES } from '@/constant';
 import { createStore } from '@/store';
 
 interface IProps {
-  editType: boolean;
-  onChangeEditor: () => void;
+  editType?: boolean;
+  onChangeEditor?: () => void;
   onPublish?: () => void;
   onClear?: () => void;
   onShowDraft?: () => void;
   onSaveDraft?: () => void;
+  isCodeEdit?: boolean;
+  run?: (code: string) => void;
 }
 
 const props = defineProps<IProps>();
@@ -81,7 +87,9 @@ const editorRef = ref<HTMLDivElement | null>(null);
 // 主题
 const theme = ref<string>('vs');
 // 当前语言
-const language = ref<string>('markdown');
+const language = ref<string>(props.isCodeEdit ? 'javascript' : 'markdown');
+// 编辑代码模式时的默认值
+const content = ref<string | undefined>('');
 
 let editor: monaco.editor.IStandaloneCodeEditor | null = null;
 
@@ -108,6 +116,8 @@ onMounted(() => {
   initEditor();
 });
 
+const languages = computed(() => (props?.isCodeEdit ? CODE_RUN_LANGUAGES : MONACO_EDITOR_LANGUAGES));
+
 // 组件弃用时，显示mackdown编辑器
 onDeactivated(() => {
   props?.onChangeEditor?.();
@@ -129,7 +139,7 @@ const initEditor = () => {
 
     if (!editor) {
       editor = monaco.editor.create(editorRef?.value!, {
-        value: createStore.createInfo.content, // 编辑器初始显示文字
+        value: props.isCodeEdit ? content.value : createStore.createInfo.content, // 编辑器初始显示文字
         language: language.value, // 语言
         theme: 'vs', // 官方自带三种主题vs, hc-black, or vs-dark
         automaticLayout: true, // 自适应布局
@@ -157,7 +167,11 @@ const initEditor = () => {
 
     // 监听值的变化
     editor.onDidChangeModelContent(() => {
-      createStore.createInfo.content = editor?.getValue();
+      if (props.isCodeEdit) {
+        content.value = editor?.getValue() || '';
+      } else {
+        createStore.createInfo.content = editor?.getValue();
+      }
     });
   });
 };
@@ -194,8 +208,13 @@ const onChangeEditor = () => {
 
 // 清空编辑
 const onClear = () => {
-  props.onClear?.();
-  editor?.getModel()?.setValue('');
+  if (props.isCodeEdit) {
+    editor?.getModel()?.setValue('');
+    content.value = '';
+  } else {
+    props.onClear?.();
+    editor?.getModel()?.setValue('');
+  }
 };
 
 // 清空编辑
@@ -223,6 +242,11 @@ const onSaveDraft = () => {
   }
   props.onSaveDraft?.();
 };
+
+// 运行代码
+const run = () => {
+  props?.run?.(content.value as string);
+};
 </script>
 
 <style scoped lang="less">
@@ -231,7 +255,6 @@ const onSaveDraft = () => {
 .container {
   height: 100%;
   border-radius: 5px;
-  padding-top: 3px;
   box-sizing: border-box;
   box-shadow: 0 0 8px 0 var(--shadow-mack);
 

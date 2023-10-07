@@ -18,6 +18,7 @@ import { eStore, setTheme, getTheme, removeTheme, getMsgStatus } from './store';
 import { compressImage } from './compress';
 export { Verify, checkNumber, checkMin, checkMax, verifyEmpty, verifyLength, verfiySpecialCharacters } from './verify';
 export * from './speak';
+export * from './codeTemplate';
 
 export {
   ipcRenderers,

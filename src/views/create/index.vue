@@ -27,6 +27,7 @@
       :on-show-draft="showDraft"
       :article-id="(route?.query?.id as string)"
       :on-save-draft="onSaveDraft"
+      class="create-monaco-eritor"
     />
     <CreateDrawer
       :key="JSON.stringify(createStore.classifys)"
@@ -145,5 +146,10 @@ export default {
   padding-right: 3px;
   width: calc(100% - 9px);
   height: 100%;
+
+  .create-monaco-eritor {
+    height: calc(100% - 3px);
+    margin-top: 3px;
+  }
 }
 </style>

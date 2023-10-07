@@ -5,19 +5,15 @@
  * index.vue
 -->
 <template>
-  <Loading
-    :loading="toolsStore.loading"
-    :class="`tools-wrap ${
-      (boardVisible || convertVisible || cropperVisible || watermarkVisible || compressVisible) && 'board-wrap'
-    }`"
-  >
+  <Loading :loading="toolsStore.loading" :class="`tools-wrap ${visible && 'board-wrap'}`">
     <template #default>
       <Cropper v-if="cropperVisible" v-model:modal-visible="cropperVisible" />
       <DrawBoard v-if="boardVisible" v-model:board-visible="boardVisible" />
       <TextToSpeech v-if="convertVisible" v-model:modal-visible="convertVisible" />
       <Watermark v-if="watermarkVisible" v-model:modal-visible="watermarkVisible" />
       <Compress v-if="compressVisible" v-model:modal-visible="compressVisible" />
-      <div v-if="!boardVisible && !convertVisible && !cropperVisible && !watermarkVisible && !compressVisible">
+      <CodeRun v-if="codeRunVisible" v-model:modal-visible="codeRunVisible" />
+      <div v-if="!visible">
         <div class="tools">
           <div class="tool-title">资源处理</div>
           <div class="tool-list">
@@ -63,7 +59,7 @@
 
 <script setup lang="ts">
 import { shell } from 'electron';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, computed } from 'vue';
 import draggable from 'vuedraggable';
 import { TOOL_LIST, TOOL_SVG } from '@/constant';
 import { toolsStore } from '@/store';
@@ -75,6 +71,7 @@ import TextToSpeech from './TextToSpeech/index.vue';
 import NavCard from './NavCard/index.vue';
 import Watermark from './Watermark/index.vue';
 import DrawBoard from './DrawBoard/index.vue';
+import CodeRun from './CodeRun/index.vue';
 
 // 图片压缩弹窗
 const compressVisible = ref<boolean>(false);
@@ -88,6 +85,8 @@ const watermarkVisible = ref<boolean>(false);
 const enabled = ref<boolean>(false);
 // 是否显示画板
 const boardVisible = ref<boolean>(false);
+// 是否显示代码测试
+const codeRunVisible = ref<boolean>(false);
 
 // 判断是否有路由权限
 useGetRouteAuthInfo();
@@ -95,6 +94,17 @@ useGetRouteAuthInfo();
 onMounted(() => {
   // 获取工具列表
   toolsStore.getToolList();
+});
+
+const visible = computed(() => {
+  return (
+    boardVisible.value ||
+    convertVisible.value ||
+    cropperVisible.value ||
+    watermarkVisible.value ||
+    compressVisible.value ||
+    codeRunVisible.value
+  );
 });
 
 // 显示图片压缩
@@ -124,8 +134,12 @@ const openWithBrowser = (item: ToolsItem) => {
 
 // 跳转至画板
 const toDrawBoard = () => {
-  // router.push('/board');
   boardVisible.value = true;
+};
+
+// 跳转至代码运行
+const showCodeRun = () => {
+  codeRunVisible.value = true;
 };
 
 // 策略模式实现点击每个nav card的效果
@@ -137,6 +151,7 @@ const onClickNavIcon = (item: ToolsItem) => {
     watermark: onAddwatermark,
     tool: openWithBrowser,
     board: toDrawBoard,
+    codeRun: showCodeRun,
   };
   actions[item.key](item);
 };
