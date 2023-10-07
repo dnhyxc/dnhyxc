@@ -12,9 +12,11 @@
         <div class="search-btns">
           <el-button type="primary" link :class="searchType === 1 && 'active'" @click="searchNewArticles">
             推荐文章
+            <span v-if="searchType === 1">（{{ articleStore.total }} 篇）</span>
           </el-button>
           <el-button type="danger" link :class="searchType === 2 && 'active'" @click="searchHotArticles">
             最热文章
+            <span v-if="searchType === 2">（{{ articleStore.total }} 篇）</span>
           </el-button>
         </div>
         <div class="recommend">{{ ATRICLE_TYPE[searchType] }}</div>
@@ -156,7 +158,7 @@ const likeListArticle = async (id: string, data: ArticleItem) => {
     .search-btns {
       position: absolute;
       left: 11px;
-      bottom: 16px;
+      bottom: 10px;
 
       .active {
         color: var(--active-color);
@@ -166,7 +168,7 @@ const likeListArticle = async (id: string, data: ArticleItem) => {
     .recommend {
       position: absolute;
       right: 11px;
-      bottom: 16px;
+      bottom: 10px;
       color: var(--active-color);
     }
   }
