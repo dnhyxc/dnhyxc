@@ -116,8 +116,8 @@ const loginForm = reactive<{
   password: string;
   code: string;
 }>({
-  username: loginStore.userInfo?.username || '',
-  password: '',
+  username: import.meta.env.DEV ? 'dnhyxc' : loginStore.userInfo?.username || '',
+  password: import.meta.env.DEV ? 'dnh12345678.' : '',
   code: '',
 });
 
