@@ -22,7 +22,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, nextTick } from 'vue';
-import { codeTemplate, JSONParse } from '@/utils';
+import { codeTemplate, JSONParse, JSONStringify } from '@/utils';
 
 interface Emits {
   (e: 'update:modalVisible', visible: boolean): void;
@@ -49,13 +49,16 @@ const bindEvents = () => {
         console.log(parseData, 'parseData', data, type);
 
         if (parseData?.length > 1) {
-          console.log(parseData.join(', '));
+          if (type === 'error') {
+            const errorMessage = JSONStringify(parseData).replace(/\s+/g, ' ');
+            console.log(errorMessage.slice(1, errorMessage.length - 1), 'errrrrrrror');
+          } else {
+            const code = JSONStringify(parseData).replace(/"([^"]+)":/g, '$1:');
+            console.log(code.slice(1, code.length - 1));
+          }
         } else {
-          console.log(parseData.join(''));
+          console.log(parseData[0]);
         }
-
-        const frameDocument = iframe.value?.contentWindow?.document!;
-        frameDocument.close();
 
         // parseData.forEach((d) => {
         //   console.log(d, 'ddddddddddd', parseData);
@@ -79,16 +82,10 @@ const bindEvents = () => {
 
 // 运行代码
 const run = (code: string) => {
-  console.log(code, 'codew');
   const frameDocument = iframe.value?.contentWindow?.document!;
   frameDocument.open();
   frameDocument.write(codeTemplate(code));
   frameDocument.close();
-  // 创建并加载一个包含执行代码的 iframe
-  // iframe.value!.src = 'about:blank';
-  // frameDocument.open();
-  // frameDocument.write(codeRunner(code));
-  // frameDocument.close();
 };
 
 // 关闭

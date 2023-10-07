@@ -28,8 +28,9 @@ export const JSONParse = (objStr: string) => {
 };
 
 export const codeTemplate = (code: string) => {
-  const theCode = code.replace('parent.document', 'window.disableParent');
-  const template = `
+  try {
+    const theCode = code.replace('parent.document', 'window.disableParent');
+    const template = `
     <body>
       <script>
         function rewriteConsole(type) {
@@ -63,12 +64,12 @@ export const codeTemplate = (code: string) => {
         rewriteConsole('time');
         rewriteConsole('timeEnd');
 
-        Object.defineProperty(window, 'disableParent', {
-          get() {
-            throw new Error('无法调用 window.parent 属性！');
-          },
-          set() {},
-        });
+        // Object.defineProperty(window, 'disableParent', {
+        //   get() {
+        //     throw new Error('无法调用 window.parent 属性！');
+        //   },
+        //   set() {},
+        // });
 
         try {
           ${theCode}
@@ -78,5 +79,17 @@ export const codeTemplate = (code: string) => {
       </script>
     </body>
   `;
-  return template;
+    return template;
+  } catch (error) {
+    console.error(error);
+  }
 };
+
+const dnhyxc = 'dnhyxc';
+const getName = () => {
+  return dnhyxc;
+};
+console.log(dnhyxc, 'dnhyxc');
+console.log(getName, 'getName');
+console.log(getName(), 'getName()');
+console.log(getName);
