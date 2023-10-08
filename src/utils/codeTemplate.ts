@@ -15,11 +15,10 @@ export const JSONStringify = (option: string) => {
     2,
   );
 };
-// 对象序列化解析
+
 export const JSONParse = (objStr: string) => {
   return JSON.parse(objStr, (k, v) => {
     if (typeof v === 'string' && v.indexOf && v.indexOf('function') > -1) {
-      // eval 可能在eslint中报错，需要加入下行注释
       // eslint-disable-next-line
       return eval(`(function(){return ${v}})()`);
     }
@@ -27,10 +26,9 @@ export const JSONParse = (objStr: string) => {
   });
 };
 
-export const codeTemplate = (code: string) => {
-  try {
-    const theCode = code.replace('parent.document', 'window.disableParent');
-    const template = `
+export const codeTemplate = (value: string) => {
+  const code = value.replace('parent.document', 'window.disableParent');
+  const template = `
     <body>
       <script>
         function rewriteConsole(type) {
@@ -72,24 +70,12 @@ export const codeTemplate = (code: string) => {
         // });
 
         try {
-          ${theCode}
+          ${code}
         } catch(e) {
           console.error(e.name, e.message)
         }
       </script>
     </body>
   `;
-    return template;
-  } catch (error) {
-    console.error(error);
-  }
+  return template;
 };
-
-const dnhyxc = 'dnhyxc';
-const getName = () => {
-  return dnhyxc;
-};
-console.log(dnhyxc, 'dnhyxc');
-console.log(getName, 'getName');
-console.log(getName(), 'getName()');
-console.log(getName);

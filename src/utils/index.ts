@@ -793,3 +793,21 @@ export const addImgWatermark = (params: {
   }
   return canvas;
 };
+
+// 判断数据类型
+export const diffType = (value: string | number | string | boolean | Function | Date) => {
+  const type = Object.prototype.toString.call(value);
+  const types = {
+    '[object Undefined]': 'undefined',
+    '[object Boolean]': 'boolean',
+    '[object Number]': 'number',
+    '[object String]': 'string',
+    '[object BigInt]': 'bigint',
+    '[object Function]': 'function',
+    '[object Object]': 'object',
+    '[object Array]': 'array',
+    '[object Null]': 'null',
+    '[object Date]': 'date',
+  };
+  return types[type];
+};

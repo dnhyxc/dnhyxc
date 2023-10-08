@@ -8,7 +8,7 @@
   <div class="container">
     <div :class="`${theme !== 'vs' && 'dark-toolbar'} toolbar`">
       <div class="left">
-        <div class="code-action">
+        <div v-if="!readonly" class="code-action">
           <el-dropdown class="menu-list" max-height="200px">
             <span class="action iconfont icon-wodedasai" title="切换语言" />
             <template #dropdown>
@@ -45,11 +45,21 @@
           <span class="action" title="发布文章" @click="onPublish">发</span>
         </div>
         <div v-if="isCodeEdit" class="create-action">
-          <span class="action" title="清空内容" @click="onClear">清空内容</span>
-          <span class="action" title="发布文章" @click="run">运行代码</span>
+          <el-button
+            v-if="!readonly"
+            :disabled="!content"
+            type="primary"
+            link
+            class="run-code"
+            title="发布文章"
+            @click="run"
+          >
+            运行代码
+          </el-button>
+          <span class="clear-code" title="清空内容" @click="onClear">清空内容</span>
         </div>
       </div>
-      <div class="right">
+      <div v-if="!readonly" class="right">
         <div class="language-text">当前语言：{{ language }}</div>
       </div>
     </div>
@@ -58,7 +68,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, nextTick, onDeactivated, computed } from 'vue';
+import { ref, onMounted, nextTick, onDeactivated, computed, watchEffect } from 'vue';
 import * as monaco from 'monaco-editor';
 import { ElMessage } from 'element-plus';
 import jsonWorker from 'monaco-editor/esm/vs/language/json/json.worker?worker';
@@ -78,20 +88,34 @@ interface IProps {
   onSaveDraft?: () => void;
   isCodeEdit?: boolean;
   run?: (code: string) => void;
+  readonly?: boolean;
+  code?: string;
+  theme?: string;
 }
 
 const props = defineProps<IProps>();
 
+const emit = defineEmits(['update:theme']);
+
 // 编辑器ref
 const editorRef = ref<HTMLDivElement | null>(null);
 // 主题
-const theme = ref<string>('vs');
+// const theme = ref<string>('vs');
 // 当前语言
 const language = ref<string>(props.isCodeEdit ? 'javascript' : 'markdown');
 // 编辑代码模式时的默认值
 const content = ref<string | undefined>('');
 
 let editor: monaco.editor.IStandaloneCodeEditor | null = null;
+
+const theme = computed({
+  get() {
+    return props.theme as string;
+  },
+  set(value: string) {
+    emit('update:theme', value);
+  },
+});
 
 // @ts-ignore
 self.MonacoEnvironment = {
@@ -114,6 +138,12 @@ self.MonacoEnvironment = {
 
 onMounted(() => {
   initEditor();
+});
+
+watchEffect(() => {
+  if (props.readonly && props.code && editor) {
+    editor.getModel()?.setValue(props.code);
+  }
 });
 
 const languages = computed(() => (props?.isCodeEdit ? CODE_RUN_LANGUAGES : MONACO_EDITOR_LANGUAGES));
@@ -139,13 +169,14 @@ const initEditor = () => {
 
     if (!editor) {
       editor = monaco.editor.create(editorRef?.value!, {
-        value: props.isCodeEdit ? content.value : createStore.createInfo.content, // 编辑器初始显示文字
+        value: props.isCodeEdit ? (props.readonly ? props.code : content.value) : createStore.createInfo.content, // 编辑器初始显示文字
         language: language.value, // 语言
         theme: 'vs', // 官方自带三种主题vs, hc-black, or vs-dark
         automaticLayout: true, // 自适应布局
         foldingStrategy: 'indentation',
         renderLineHighlight: 'all', // 行亮 all line
         selectOnLineNumbers: true, // 显示行号
+        lineNumbers: props.readonly ? 'off' : 'on', // 是否显示行号
         minimap: {
           enabled: false, // 是否启用预览图
         },
@@ -156,7 +187,7 @@ const initEditor = () => {
           arrowSize: 10,
           alwaysConsumeMouseWheel: false,
         },
-        readOnly: false, // 只读
+        readOnly: props.readonly, // 只读
         fontSize: 16, // 字体大小
         scrollBeyondLastLine: true, // 取消代码后面一大段空白
         overviewRulerBorder: false, // 不要滚动条的边框
@@ -178,7 +209,7 @@ const initEditor = () => {
 
 // 设置主题颜色
 const setTheme = (type: string) => {
-  theme.value = type;
+  emit('update:theme', type);
   // 定义一个主题
   monaco.editor.defineTheme('myTheme', {
     base: type as any,
@@ -288,7 +319,8 @@ const run = () => {
         align-items: center;
       }
 
-      .action {
+      .action,
+      .clear-code {
         color: var(--theme-blue);
         font-size: 14px;
         height: 30px;
@@ -299,6 +331,14 @@ const run = () => {
         &:hover {
           color: @blue-1;
         }
+      }
+
+      .run-code {
+        margin-right: 14px;
+      }
+
+      .clear-code {
+        margin-right: 14px;
       }
 
       .icon-wodedasai {
