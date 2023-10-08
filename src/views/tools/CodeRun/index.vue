@@ -51,21 +51,15 @@ const bindEvents = () => {
         const parseData = JSONParse(data);
         // 运行结果信息
         const runInfo = { type, data: '' };
-        if (parseData?.length > 1) {
-          let code = parseData
-            .map((item: any) => (typeof item === 'object' ? JSON.stringify(item) : item))
-            .join('\n')
-            .replace(/"([^"]+)":/g, '$1: ');
-
-          if (type === 'error') {
-            code = code.replace(/\s+/g, ' ');
-          }
-          runInfo.data = code;
-          setCodeResults(runInfo);
-        } else {
-          runInfo.data = parseData[0];
-          setCodeResults(runInfo);
+        let code = parseData
+          .map((item: any) => (typeof item === 'object' ? JSON.stringify(item) : item))
+          .join('\n')
+          .replace(/"([^"]+)":/g, '$1: ');
+        if (type === 'error') {
+          code = code.replace(/\s+/g, ' ');
         }
+        runInfo.data = code;
+        setCodeResults(runInfo);
       }
     });
   });
@@ -133,16 +127,23 @@ const onClose = () => {
   }
 
   .content {
+    position: relative;
     flex: 1;
-    display: flex;
-    justify-content: space-between;
 
     .code-edit-wrap {
-      flex: 1;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: calc(100% - 370px);
+      height: 100%;
     }
 
     .preview {
+      position: absolute;
+      top: 0;
+      right: 0;
       width: 360px;
+      height: 100%;
     }
 
     .preview {

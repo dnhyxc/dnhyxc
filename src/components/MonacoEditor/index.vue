@@ -38,8 +38,9 @@
             title="清空内容"
             :disabled="!createStore.createInfo.content?.trim()"
             @click="onClear"
-            >清</el-button
           >
+            清
+          </el-button>
           <span class="action" title="草稿列表" @click="onShowDraft">稿</span>
           <span class="action" title="保存草稿" @click="onSaveDraft">存</span>
           <span class="action" title="发布文章" @click="onPublish">发</span>
@@ -56,7 +57,7 @@
           >
             运行代码
           </el-button>
-          <span class="clear-code" title="清空内容" @click="onClear">清空内容</span>
+          <el-button type="warning" link class="clear-code" title="重置" @click="onClear">重置</el-button>
         </div>
       </div>
       <div v-if="!readonly" class="right">
@@ -319,8 +320,7 @@ const run = () => {
         align-items: center;
       }
 
-      .action,
-      .clear-code {
+      .action {
         color: var(--theme-blue);
         font-size: 14px;
         height: 30px;
@@ -338,6 +338,7 @@ const run = () => {
       }
 
       .clear-code {
+        margin-left: 0;
         margin-right: 14px;
       }
 
