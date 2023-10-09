@@ -20,6 +20,7 @@
     />
     <MonacoEditor
       v-if="editType"
+      v-model:theme="theme"
       :on-change-editor="onChangeEditor"
       :edit-type="editType"
       :on-publish="onPublish"
@@ -62,6 +63,7 @@ const router = useRouter();
 const visible = ref<boolean>(false); // 权限设置弹窗的状态
 const draftVisible = ref<boolean>(false); // 草稿箱弹窗状态
 const editType = ref<boolean>(false); // 编辑器类型
+const theme = ref<string>('vs'); // 主题
 
 // 组件启用时，如果有文章id，则请求文章详情
 onActivated(() => {

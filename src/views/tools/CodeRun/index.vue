@@ -12,10 +12,11 @@
     </div>
     <div ref="contentRef" class="content">
       <div class="code-edit-wrap">
-        <MonacoEditor v-model:theme="theme" :run="run" :is-code-edit="true" />
+        <MonacoEditor v-model:theme="theme" :run="run" :is-code-edit="true" class="code-edit" />
       </div>
       <div class="preview">
-        <MonacoEditor v-model:theme="theme" :code="codeResults" :is-code-edit="true" readonly />
+        <div v-drag class="line" />
+        <MonacoEditor v-model:theme="theme" :code="codeResults" :is-code-edit="true" readonly class="code-result" />
       </div>
     </div>
   </div>
@@ -99,7 +100,6 @@ const onClose = () => {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  padding: 0 10px 10px;
   height: 100%;
   box-shadow: 0 0 8px 0 var(--shadow-mack);
   background-color: var(--pre-hover-bg);
@@ -110,6 +110,8 @@ const onClose = () => {
     justify-content: space-between;
     height: 45px;
     width: 100%;
+    box-sizing: border-box;
+    padding: 0 10px;
     color: var(--font-1);
 
     .left {
@@ -129,25 +131,68 @@ const onClose = () => {
   .content {
     position: relative;
     flex: 1;
+    display: flex;
+    justify-content: space-between;
 
     .code-edit-wrap {
       position: absolute;
       top: 0;
       left: 0;
-      width: calc(100% - 370px);
+      width: calc(100% - 35%);
       height: 100%;
+
+      .code-edit {
+        box-shadow: none;
+
+        :deep {
+          .toolbar {
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+          }
+          .monaco-editor-wrap {
+            border-bottom-right-radius: 0;
+          }
+        }
+      }
     }
 
     .preview {
       position: absolute;
       top: 0;
       right: 0;
-      width: 360px;
+      width: 35%;
       height: 100%;
-    }
 
-    .preview {
-      margin-left: 10px;
+      .line {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 1px;
+        transform: scaleX(0.8);
+        background-color: @border;
+        cursor: ew-resize;
+        z-index: 1;
+
+        &:hover {
+          width: 10px;
+          height: 100%;
+        }
+      }
+
+      .code-result {
+        box-shadow: none;
+
+        :deep {
+          .toolbar {
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+          }
+          .monaco-editor-wrap {
+            border-bottom-left-radius: 0;
+          }
+        }
+      }
     }
   }
 }

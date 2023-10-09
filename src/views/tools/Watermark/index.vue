@@ -211,7 +211,7 @@ const onClose = () => {
         display: flex;
         align-items: center;
         justify-content: center;
-        height: calc(100vh - 140px);
+        height: calc(100vh - 136px);
         box-sizing: border-box;
 
         .upload-img-wrap {
@@ -222,7 +222,7 @@ const onClose = () => {
             display: block;
             width: 100%;
             height: auto;
-            max-height: calc(100vh - 140px);
+            max-height: calc(100vh - 136px);
             margin-right: 0 !important;
             user-select: none;
             -webkit-user-drag: none;
@@ -251,9 +251,22 @@ const onClose = () => {
 
         .drag-upload {
           width: 100%;
-          height: calc(100vh - 140px);
+          // height: calc(100vh - 140px);
+          height: calc(100vh - 136px);
           box-sizing: border-box;
           padding: 0;
+          border: 1px dashed @border;
+          border-radius: 5px;
+
+          &:hover {
+            border: 1px dashed var(--theme-blue);
+          }
+
+          :deep {
+            .el-upload-dragger {
+              border: none;
+            }
+          }
         }
 
         .drag-info {
@@ -268,6 +281,7 @@ const onClose = () => {
       justify-content: space-between;
       flex-direction: column;
       width: 220px;
+      height: calc(100% - 21px);
       box-shadow: 0 0 8px 0 var(--shadow-mack);
       background-color: var(--pre-hover-bg);
       border-radius: 5px;
@@ -295,7 +309,7 @@ const onClose = () => {
 
           .label {
             margin-bottom: 5px;
-            color: var(--font-6);
+            color: var(--font-5);
           }
 
           .color-wrap {

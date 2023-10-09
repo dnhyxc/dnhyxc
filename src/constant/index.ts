@@ -20,6 +20,7 @@ import YUYIN_SVG from '@/assets/svg/yuyin.svg';
 import MARK_SVG from '@/assets/svg/mark.svg';
 import CROP_SVG from '@/assets/svg/crop.svg';
 import BOARD_SVG from '@/assets/svg/board.svg';
+import CODE_SVG from '@/assets/svg/code.svg';
 
 export {
   EMPTY,
@@ -52,7 +53,7 @@ export const TOOL_LIST = [
   { toolName: '语音播报', key: 'textToSpeech', id: 'textToSpeech', toolUrl: YUYIN_SVG },
   { toolName: '水印设置', key: 'watermark', id: 'watermark', toolUrl: MARK_SVG },
   { toolName: '画板', key: 'board', id: 'board', toolUrl: BOARD_SVG },
-  { toolName: '代码测试', key: 'codeRun', id: 'codeRun', toolUrl: MARK_SVG },
+  { toolName: '代码测试', key: 'codeRun', id: 'codeRun', toolUrl: CODE_SVG },
 ];
 
 // 常用图片截取比例

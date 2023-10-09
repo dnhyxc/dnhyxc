@@ -115,4 +115,60 @@ export const mountDirectives = <T>(app: T | any) => {
       });
     },
   });
+
+  app.directive('drag', {
+    // 绑定元素的父组件挂载时调用
+    mounted(dragBox: HTMLElement, binding: DirectiveBinding) {
+      nextTick(() => {
+        dragBox.style.position = 'absolute';
+        const pNode = dragBox.parentNode as HTMLElement;
+
+        dragBox.addEventListener('mousedown', (e) => {
+          console.log(e, 'eeeee');
+          // 阻止默认事件，避免元素选中
+          e.preventDefault();
+          const disX = e.x - pNode.offsetLeft;
+          console.log(disX, 'disX');
+
+          const ondocumentMove = (e: MouseEvent) => {
+            console.log(e, 'eee');
+            const left = e.clientX - disX;
+
+            console.log(left, 'left');
+
+            const pNodeLeft = pNode.offsetLeft;
+            console.log(pNodeLeft, 'pNodeLeft');
+          };
+
+          const onDocumentUp = (e: MouseEvent) => {
+            document.removeEventListener('mousemove', ondocumentMove);
+            document.removeEventListener('mouseup', onDocumentUp);
+          };
+
+          // const disY = e.y - dragBox.offsetTop;
+          // document.onmousemove = (e2) => {
+          //   // 用鼠标的位置减去鼠标相对元素的位置，得到元素的位置
+          //   let left = e2.clientX - disX;
+          //   let top = e2.clientY - disY;
+          document.addEventListener('mousemove', ondocumentMove);
+          document.addEventListener('mouseup', onDocumentUp);
+        });
+
+        // dragBox.onmousedown = (e) => {
+        //   console.log(e, 'eeeee');
+
+        //   // 阻止默认事件，避免元素选中
+        //   e.preventDefault();
+        //   document.onmousemove = (e2) => {
+        //     console.log(e2, 'e2');
+        //   };
+        //   document.onmouseup = (updom) => {
+        //     // 鼠标弹起来的时候不再移动
+        //     document.onmousemove = null;
+        //     document.onmouseup = null;
+        //   };
+        // };
+      });
+    },
+  });
 };

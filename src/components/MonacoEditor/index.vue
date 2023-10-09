@@ -57,7 +57,16 @@
           >
             运行代码
           </el-button>
-          <el-button type="warning" link class="clear-code" title="重置" @click="onClear">重置</el-button>
+          <el-button
+            type="warning"
+            link
+            class="clear-code"
+            :disabled="(readonly && !code) || !content"
+            :title="readonly ? '清空' : '重置'"
+            @click="onClear"
+          >
+            {{ readonly ? '清空' : '重置' }}
+          </el-button>
         </div>
       </div>
       <div v-if="!readonly" class="right">
@@ -100,8 +109,6 @@ const emit = defineEmits(['update:theme']);
 
 // 编辑器ref
 const editorRef = ref<HTMLDivElement | null>(null);
-// 主题
-// const theme = ref<string>('vs');
 // 当前语言
 const language = ref<string>(props.isCodeEdit ? 'javascript' : 'markdown');
 // 编辑代码模式时的默认值
@@ -175,7 +182,7 @@ const initEditor = () => {
         theme: 'vs', // 官方自带三种主题vs, hc-black, or vs-dark
         automaticLayout: true, // 自适应布局
         foldingStrategy: 'indentation',
-        renderLineHighlight: 'all', // 行亮 all line
+        renderLineHighlight: props.readonly ? 'none' : 'all', // 行亮 all line none
         selectOnLineNumbers: true, // 显示行号
         lineNumbers: props.readonly ? 'off' : 'on', // 是否显示行号
         minimap: {
