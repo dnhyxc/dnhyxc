@@ -1,4 +1,5 @@
 import { nextTick, DirectiveBinding } from 'vue';
+import { debounce } from '@/utils';
 
 export const mountDirectives = <T>(app: T | any) => {
   app.directive('focus', {
@@ -118,56 +119,49 @@ export const mountDirectives = <T>(app: T | any) => {
 
   app.directive('drag', {
     // 绑定元素的父组件挂载时调用
-    mounted(dragBox: HTMLElement, binding: DirectiveBinding) {
+    mounted(dragBox: HTMLElement) {
       nextTick(() => {
-        dragBox.style.position = 'absolute';
+        // 拖动元素的父元素
         const pNode = dragBox.parentNode as HTMLElement;
-
+        // 拖动元素的父元素的上一个兄弟元素
+        const pSiblingNode = pNode.previousSibling as HTMLElement;
+        // 外层父元素
+        const pSiblingNodeParent = pSiblingNode.parentNode as HTMLElement;
         dragBox.addEventListener('mousedown', (e) => {
-          console.log(e, 'eeeee');
-          // 阻止默认事件，避免元素选中
           e.preventDefault();
+          // 当前位置
           const disX = e.x - pNode.offsetLeft;
-          console.log(disX, 'disX');
-
+          const pNodeWidth = pNode.offsetWidth;
+          const pSiblingNodeWidth = pSiblingNode.offsetWidth;
+          const pNodeLeft = pNode.offsetLeft;
           const ondocumentMove = (e: MouseEvent) => {
-            console.log(e, 'eee');
-            const left = e.clientX - disX;
-
-            console.log(left, 'left');
-
-            const pNodeLeft = pNode.offsetLeft;
-            console.log(pNodeLeft, 'pNodeLeft');
+            // 拖动轴左侧偏移量
+            const offsetL = e.clientX - disX;
+            // 偏移位置
+            const left = pNodeLeft - offsetL;
+            // 控制拖动边界
+            if (offsetL <= 10 || pSiblingNodeParent.offsetWidth - 10 <= offsetL) return;
+            // 根据offsetL判断移动
+            if (left < 0) {
+              pSiblingNode.style.width = `${pSiblingNodeWidth + Math.abs(left)}px`;
+              pNode.style.width = `${pNodeWidth - Math.abs(left)}px`;
+            } else {
+              pSiblingNode.style.width = `${pSiblingNodeWidth - Math.abs(left)}px`;
+              pNode.style.width = `${pNodeWidth + Math.abs(left)}px`;
+            }
           };
-
-          const onDocumentUp = (e: MouseEvent) => {
+          const onDocumentUp = () => {
             document.removeEventListener('mousemove', ondocumentMove);
             document.removeEventListener('mouseup', onDocumentUp);
           };
-
-          // const disY = e.y - dragBox.offsetTop;
-          // document.onmousemove = (e2) => {
-          //   // 用鼠标的位置减去鼠标相对元素的位置，得到元素的位置
-          //   let left = e2.clientX - disX;
-          //   let top = e2.clientY - disY;
           document.addEventListener('mousemove', ondocumentMove);
           document.addEventListener('mouseup', onDocumentUp);
+          const onResize = () => {
+            pSiblingNode.style.width = '65%';
+            pNode.style.width = '35%';
+          };
+          window.addEventListener('resize', debounce(onResize, 100));
         });
-
-        // dragBox.onmousedown = (e) => {
-        //   console.log(e, 'eeeee');
-
-        //   // 阻止默认事件，避免元素选中
-        //   e.preventDefault();
-        //   document.onmousemove = (e2) => {
-        //     console.log(e2, 'e2');
-        //   };
-        //   document.onmouseup = (updom) => {
-        //     // 鼠标弹起来的时候不再移动
-        //     document.onmousemove = null;
-        //     document.onmouseup = null;
-        //   };
-        // };
       });
     },
   });

@@ -62,12 +62,12 @@ export const codeTemplate = (value: string) => {
         rewriteConsole('time');
         rewriteConsole('timeEnd');
 
-        // Object.defineProperty(window, 'disableParent', {
-        //   get() {
-        //     throw new Error('无法调用 window.parent 属性！');
-        //   },
-        //   set() {},
-        // });
+        Object.defineProperty(window, 'disableParent', {
+          get() {
+            throw new Error('无法调用 window.parent 属性！');
+          },
+          set() {},
+        });
 
         try {
           ${code}

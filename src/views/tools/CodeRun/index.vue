@@ -10,7 +10,7 @@
       <span class="title">代码测试</span>
       <span class="close" @click="onClose">关闭</span>
     </div>
-    <div ref="contentRef" class="content">
+    <div class="content">
       <div class="code-edit-wrap">
         <MonacoEditor v-model:theme="theme" :run="run" :is-code-edit="true" class="code-edit" />
       </div>
@@ -32,13 +32,13 @@ interface Emits {
 
 const emit = defineEmits<Emits>();
 
-const contentRef = ref<HTMLDivElement | null>(null);
 // 需要运行的源代码
 const sourceCode = ref<string>('');
 // 代码运行的结果
 const codeResults = ref<string>('');
 // 主题颜色
 const theme = ref<string>('vs');
+const iframeNode = ref<HTMLIFrameElement | null>(null);
 
 onMounted(() => {
   bindEvents();
@@ -72,24 +72,29 @@ const setCodeResults = (info: { type: string; data: string }) => {
 
 // 运行代码
 const run = (code: string) => {
-  if (sourceCode.value === code) return;
+  // if (sourceCode.value === code) return;
+  iframeNode.value && document.body.removeChild(iframeNode.value);
+  console.clear();
   // 首先清楚原有的代码执行结果
   codeResults.value = '';
   sourceCode.value = code;
   const iframe = document.createElement('iframe');
+  iframeNode.value = iframe;
   iframe.style.display = 'none';
   iframe.src = 'about:blank';
-  contentRef.value?.appendChild(iframe);
+  iframe.id = 'RUN_CODE';
+  document.body.appendChild(iframe);
   const frameDocument = iframe.contentWindow?.document!;
   frameDocument.open();
   frameDocument.write(codeTemplate(code) as string);
   frameDocument.close();
-  contentRef.value?.removeChild(iframe);
 };
 
 // 关闭
 const onClose = () => {
   emit('update:modalVisible', false);
+  iframeNode.value && document.body.removeChild(iframeNode.value);
+  console.clear();
 };
 </script>
 
@@ -138,7 +143,7 @@ const onClose = () => {
       position: absolute;
       top: 0;
       left: 0;
-      width: calc(100% - 35%);
+      width: 65%;
       height: 100%;
 
       .code-edit {
@@ -170,13 +175,17 @@ const onClose = () => {
         height: 100%;
         width: 1px;
         transform: scaleX(0.8);
-        background-color: @border;
+        background-color: var(--card-border);
         cursor: ew-resize;
         z-index: 1;
 
         &:hover {
-          width: 10px;
+          width: 5px;
           height: 100%;
+        }
+
+        &:active {
+          width: 5px;
         }
       }
 
