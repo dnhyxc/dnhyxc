@@ -101,6 +101,7 @@ interface IProps {
   readonly?: boolean;
   code?: string;
   theme?: string;
+  getLanguage?: (language: string) => void;
 }
 
 const props = defineProps<IProps>();
@@ -232,6 +233,7 @@ const setTheme = (type: string) => {
 const onChangeLanguage = (value: string) => {
   language.value = value;
   monaco.editor.setModelLanguage(editor?.getModel()!, value);
+  props?.getLanguage?.(value);
 };
 
 // 切换主题

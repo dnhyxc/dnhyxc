@@ -12,7 +12,13 @@
     </div>
     <div class="content">
       <div class="code-edit-wrap">
-        <MonacoEditor v-model:theme="theme" :run="run" :is-code-edit="true" class="code-edit" />
+        <MonacoEditor
+          v-model:theme="theme"
+          :run="run"
+          :is-code-edit="true"
+          :get-language="getLanguage"
+          class="code-edit"
+        />
       </div>
       <div class="preview">
         <div v-drag class="line" />
@@ -39,6 +45,8 @@ const codeResults = ref<string>('');
 // 主题颜色
 const theme = ref<string>('vs');
 const iframeNode = ref<HTMLIFrameElement | null>(null);
+// 编辑的语言
+const language = ref<string>('');
 
 onMounted(() => {
   bindEvents();
@@ -66,13 +74,13 @@ const bindEvents = () => {
   });
 };
 
+// 合并运行结果
 const setCodeResults = (info: { type: string; data: string }) => {
   codeResults.value += `${info.data}\n\n`;
 };
 
 // 运行代码
 const run = (code: string) => {
-  // if (sourceCode.value === code) return;
   iframeNode.value && document.body.removeChild(iframeNode.value);
   console.clear();
   // 首先清楚原有的代码执行结果
@@ -95,6 +103,11 @@ const onClose = () => {
   emit('update:modalVisible', false);
   iframeNode.value && document.body.removeChild(iframeNode.value);
   console.clear();
+};
+
+// 获取当前编辑语言
+const getLanguage = (value: string) => {
+  language.value = value;
 };
 </script>
 
@@ -167,6 +180,7 @@ const onClose = () => {
       right: 0;
       width: 35%;
       height: 100%;
+      background-color: @fff;
 
       .line {
         position: absolute;
@@ -201,6 +215,13 @@ const onClose = () => {
             border-bottom-left-radius: 0;
           }
         }
+      }
+
+      .html-result {
+        height: 100%;
+        width: 100%;
+        background-color: @fff;
+        padding: 10px;
       }
     }
   }
