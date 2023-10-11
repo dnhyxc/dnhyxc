@@ -22,7 +22,20 @@
       </div>
       <div class="preview">
         <div v-drag class="line" />
-        <MonacoEditor v-model:theme="theme" :code="codeResults" :is-code-edit="true" readonly class="code-result" />
+        <MonacoEditor
+          v-if="language !== 'html'"
+          v-model:theme="theme"
+          :code="codeResults"
+          :is-code-edit="true"
+          readonly
+          class="code-result"
+        />
+        <div class="preview-content">
+          <div class="toolbar">
+            <el-button type="warning" link class="clear-code" title="清空" @click="onClear">清空</el-button>
+          </div>
+          <div ref="previewRef" class="iframe-wrap" />
+        </div>
       </div>
     </div>
   </div>
@@ -30,16 +43,15 @@
 
 <script setup lang="ts">
 import { ref, onMounted, nextTick } from 'vue';
-import { codeTemplate, JSONParse } from '@/utils';
+import { codeTemplate, htmlTemplate, JSONParse } from '@/utils';
 
 interface Emits {
   (e: 'update:modalVisible', visible: boolean): void;
 }
 
 const emit = defineEmits<Emits>();
-
-// 需要运行的源代码
-const sourceCode = ref<string>('');
+// 代码运行结果预览容器
+const previewRef = ref<HTMLDivElement | null>(null);
 // 代码运行的结果
 const codeResults = ref<string>('');
 // 主题颜色
@@ -79,29 +91,35 @@ const setCodeResults = (info: { type: string; data: string }) => {
   codeResults.value += `${info.data}\n\n`;
 };
 
-// 运行代码
-const run = (code: string) => {
-  iframeNode.value && document.body.removeChild(iframeNode.value);
-  console.clear();
-  // 首先清楚原有的代码执行结果
-  codeResults.value = '';
-  sourceCode.value = code;
+const createIframe = ({ code, display, id }: { code: string; display: string; id?: string }) => {
+  iframeNode.value && previewRef.value?.removeChild(iframeNode.value);
   const iframe = document.createElement('iframe');
   iframeNode.value = iframe;
-  iframe.style.display = 'none';
   iframe.src = 'about:blank';
-  iframe.id = 'RUN_CODE';
-  document.body.appendChild(iframe);
+  iframe.style.display = display;
+  id && (iframe.id = id);
+  previewRef.value?.appendChild(iframe);
   const frameDocument = iframe.contentWindow?.document!;
   frameDocument.open();
-  frameDocument.write(codeTemplate(code) as string);
+  frameDocument.write(code);
   frameDocument.close();
+};
+
+// 运行代码
+const run = (code: string) => {
+  console.clear();
+  // 首先清除原有的代码执行结果
+  codeResults.value = '';
+  if (language.value === 'html') {
+    createIframe({ code: htmlTemplate(code), display: 'block', id: '__HTML_RESULT__' });
+  } else {
+    createIframe({ code: codeTemplate(code) as string, display: 'none' });
+  }
 };
 
 // 关闭
 const onClose = () => {
   emit('update:modalVisible', false);
-  iframeNode.value && document.body.removeChild(iframeNode.value);
   console.clear();
 };
 
@@ -109,10 +127,31 @@ const onClose = () => {
 const getLanguage = (value: string) => {
   language.value = value;
 };
+
+// 清空html运行结果
+const onClear = () => {
+  if (iframeNode.value) {
+    iframeNode.value.contentWindow!.document.body.innerHTML = '';
+  }
+};
 </script>
 
 <style scoped lang="less">
 @import '@/styles/index.less';
+
+.manaco-code-style() {
+  .toolbar {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+  }
+  .monaco-editor-wrap {
+    border-bottom-left-radius: 0;
+
+    .overflow-guard {
+      border-bottom-right-radius: 0;
+    }
+  }
+}
 
 .code-run-wrap {
   display: flex;
@@ -163,13 +202,7 @@ const getLanguage = (value: string) => {
         box-shadow: none;
 
         :deep {
-          .toolbar {
-            border-top-left-radius: 0;
-            border-top-right-radius: 0;
-          }
-          .monaco-editor-wrap {
-            border-bottom-right-radius: 0;
-          }
+          .manaco-code-style();
         }
       }
     }
@@ -181,6 +214,7 @@ const getLanguage = (value: string) => {
       width: 35%;
       height: 100%;
       background-color: @fff;
+      z-index: 99;
 
       .line {
         position: absolute;
@@ -207,21 +241,42 @@ const getLanguage = (value: string) => {
         box-shadow: none;
 
         :deep {
-          .toolbar {
-            border-top-left-radius: 0;
-            border-top-right-radius: 0;
-          }
-          .monaco-editor-wrap {
-            border-bottom-left-radius: 0;
-          }
+          .manaco-code-style();
         }
       }
 
-      .html-result {
+      .preview-content {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
         height: 100%;
-        width: 100%;
-        background-color: @fff;
-        padding: 10px;
+
+        .toolbar {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          height: 40px;
+          padding: 0 10px;
+          box-sizing: border-box;
+          background-color: @fff;
+          border-bottom: 1px solid var(--card-border);
+          border-top-left-radius: 5px;
+          border-top-right-radius: 5px;
+        }
+
+        .iframe-wrap {
+          flex: 1;
+        }
+      }
+
+      :deep {
+        #__HTML_RESULT__ {
+          height: 100%;
+          width: 100%;
+          background-color: @fff;
+          border: none;
+          box-sizing: border-box;
+        }
       }
     }
   }

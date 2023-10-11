@@ -79,3 +79,30 @@ export const codeTemplate = (value: string) => {
   `;
   return template;
 };
+
+// 渲染html的模板
+export const htmlTemplate = (code: string) => {
+  return `
+    <html>
+      <head>
+        <style>
+          ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+            background-color: transparent;
+          }
+          ::-webkit-scrollbar-track {
+            height: 6px;
+          }
+          ::-webkit-scrollbar-thumb {
+            background-color: #c1c1c0;
+          }
+          body,html {
+            padding: 0;
+            margin: 0;
+          }
+        </style>
+      </head>
+      <body>${code}</body>
+    </html>`;
+};

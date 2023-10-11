@@ -127,6 +127,9 @@ export const mountDirectives = <T>(app: T | any) => {
         const pSiblingNode = pNode.previousSibling as HTMLElement;
         // 外层父元素
         const pSiblingNodeParent = pSiblingNode.parentNode as HTMLElement;
+        // html运行结果的iframe元素
+        let iframe = null;
+        // 获取html运行结果的iframe元素
         dragBox.addEventListener('mousedown', (e) => {
           e.preventDefault();
           // 当前位置
@@ -134,6 +137,10 @@ export const mountDirectives = <T>(app: T | any) => {
           const pNodeWidth = pNode.offsetWidth;
           const pSiblingNodeWidth = pSiblingNode.offsetWidth;
           const pNodeLeft = pNode.offsetLeft;
+          iframe = pNode.querySelector('#__HTML_RESULT__');
+          if (iframe) {
+            iframe.style.display = 'none';
+          }
           const ondocumentMove = (e: MouseEvent) => {
             // 拖动轴左侧偏移量
             const offsetL = e.clientX - disX;
@@ -161,6 +168,11 @@ export const mountDirectives = <T>(app: T | any) => {
             pNode.style.width = '35%';
           };
           window.addEventListener('resize', debounce(onResize, 100));
+        });
+        dragBox.addEventListener('mouseup', (e) => {
+          if (iframe) {
+            iframe.style.display = 'block';
+          }
         });
       });
     },
