@@ -7,7 +7,10 @@
 <template>
   <div class="code-run-wrap">
     <div class="header">
-      <span class="title">代码测试</span>
+      <div class="title">
+        <span class="title-text">代码测试</span>
+        <span type="primary" link class="demo-list" @click="showDemoList">示例列表</span>
+      </div>
       <span class="close" @click="onClose">关闭</span>
     </div>
     <div class="content">
@@ -17,6 +20,7 @@
           :run="run"
           :is-code-edit="true"
           :get-language="getLanguage"
+          :on-save-demo="onShowDemoForm"
           class="code-edit"
         />
       </div>
@@ -39,12 +43,48 @@
         </div>
       </div>
     </div>
+    <el-dialog v-model="visible" :close-on-click-modal="false" title="保存代码示例" width="500px" draggable>
+      <div class="dialog-content">
+        <el-form ref="formRef" label-width="80px" :model="saveDemoForm.title">
+          <el-form-item
+            prop="title"
+            label="示例名称"
+            :rules="[
+              {
+                required: true,
+                message: '请输入文章标题',
+              },
+            ]"
+          >
+            <el-input v-model="saveDemoForm.title" placeholder="请输入示例名称" />
+          </el-form-item>
+          <el-form-item prop="abstract" label="示例描述">
+            <el-input
+              v-model="saveDemoForm.abstract"
+              :autosize="{ minRows: 3, maxRows: 5 }"
+              type="textarea"
+              maxlength="100"
+              show-word-limit
+              resize="none"
+              placeholder="请输入示例描述"
+            />
+          </el-form-item>
+        </el-form>
+        <div class="actions">
+          <el-button type="primary" @click="onSaveDemo">保存示例</el-button>
+          <el-button @click="onCancel">取消保存</el-button>
+        </div>
+      </div>
+    </el-dialog>
+    <DemoList v-model:model-value="demoVisible" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, nextTick } from 'vue';
+import { ref, onMounted, nextTick, reactive } from 'vue';
+import type { FormInstance } from 'element-plus';
 import { codeTemplate, htmlTemplate, JSONParse } from '@/utils';
+import DemoList from './DemoList/index.vue';
 
 interface Emits {
   (e: 'update:modalVisible', visible: boolean): void;
@@ -60,6 +100,14 @@ const theme = ref<string>('vs');
 const iframeNode = ref<HTMLIFrameElement | null>(null);
 // 编辑的语言
 const language = ref<string>('');
+// 保存弹窗
+const visible = ref<boolean>(false);
+const demoVisible = ref<boolean>(false);
+const formRef = ref<FormInstance>();
+const saveDemoForm = reactive<{ title: string; abstract: string }>({
+  title: '',
+  abstract: '',
+});
 
 onMounted(() => {
   bindEvents();
@@ -129,6 +177,25 @@ const getLanguage = (value: string) => {
   language.value = value;
 };
 
+// 显示保存弹窗
+const onShowDemoForm = () => {
+  visible.value = true;
+};
+
+// 保存示例
+const onSaveDemo = () => {
+  visible.value = false;
+};
+
+// 保存示例
+const onCancel = () => {
+  visible.value = false;
+};
+
+const showDemoList = () => {
+  demoVisible.value = true;
+};
+
 // 清空html运行结果
 const onClear = () => {
   if (iframeNode.value) {
@@ -172,6 +239,20 @@ const onClear = () => {
     box-sizing: border-box;
     padding: 0 10px;
     color: var(--font-1);
+
+    .title-text {
+      margin-right: 10px;
+    }
+
+    .demo-list {
+      font-size: 14px;
+      color: var(--theme-blue);
+      cursor: pointer;
+
+      &:hover {
+        color: @active;
+      }
+    }
 
     .left {
       font-size: 18px;
@@ -289,6 +370,17 @@ const onClear = () => {
           box-sizing: border-box;
         }
       }
+    }
+  }
+
+  .dialog-content {
+    .inp {
+      margin: 10px 0;
+    }
+
+    .actions {
+      display: flex;
+      justify-content: flex-end;
     }
   }
 }
