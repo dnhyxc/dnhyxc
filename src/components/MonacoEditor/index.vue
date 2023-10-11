@@ -45,7 +45,7 @@
           <span class="action" title="保存草稿" @click="onSaveDraft">存</span>
           <span class="action" title="发布文章" @click="onPublish">发</span>
         </div>
-        <div v-if="isCodeEdit" class="create-action">
+        <div v-if="isCodeEdit" class="create-action prev-action">
           <el-button
             v-if="!readonly"
             :disabled="!content"
@@ -55,7 +55,18 @@
             title="发布文章"
             @click="run"
           >
-            运行代码
+            运行
+          </el-button>
+          <el-button
+            v-if="!readonly"
+            :disabled="!content"
+            type="primary"
+            link
+            class="clear-code"
+            title="发布文章"
+            @click="onSaveDemo"
+          >
+            保存
           </el-button>
           <el-button
             type="warning"
@@ -69,8 +80,9 @@
           </el-button>
         </div>
       </div>
-      <div v-if="!readonly" class="right">
-        <div class="language-text">当前语言：{{ language }}</div>
+      <div class="right">
+        <div v-if="!readonly" class="language-text">当前语言：{{ language }}</div>
+        <span v-else class="language-text result-text">{{ language }} 运行结果</span>
       </div>
     </div>
     <div ref="editorRef" :class="`${theme !== 'vs' && 'dark-monaco-editor-wrap'} monaco-editor-wrap`"></div>
@@ -96,6 +108,7 @@ interface IProps {
   onClear?: () => void;
   onShowDraft?: () => void;
   onSaveDraft?: () => void;
+  onSaveDemo?: () => void; // 保存代码测试示例
   isCodeEdit?: boolean;
   run?: (code: string) => void;
   readonly?: boolean;
@@ -311,6 +324,15 @@ const run = () => {
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
 
+    .create-action {
+      .ellipsisMore(1);
+    }
+
+    .prev-action {
+      display: flex;
+      justify-content: space-between;
+    }
+
     .menu-list {
       display: flex;
       align-items: center;
@@ -377,12 +399,16 @@ const run = () => {
       display: flex;
       justify-content: flex-end;
       font-size: 14px;
-
       color: @font-4;
 
       .language-text {
         height: 30px;
         line-height: 30px;
+        .ellipsisMore(1);
+      }
+
+      .result-text {
+        margin-right: 2px;
       }
     }
   }

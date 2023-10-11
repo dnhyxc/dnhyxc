@@ -33,6 +33,7 @@
         <div class="preview-content">
           <div class="toolbar">
             <el-button type="warning" link class="clear-code" title="清空" @click="onClear">清空</el-button>
+            <span class="run-title">{{ language }} 运行结果</span>
           </div>
           <div ref="previewRef" class="iframe-wrap" />
         </div>
@@ -146,6 +147,7 @@ const onClear = () => {
   }
   .monaco-editor-wrap {
     border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
 
     .overflow-guard {
       border-bottom-right-radius: 0;
@@ -262,6 +264,15 @@ const onClear = () => {
           border-bottom: 1px solid var(--card-border);
           border-top-left-radius: 5px;
           border-top-right-radius: 5px;
+
+          .run-title {
+            font-size: 14px;
+            color: var(--font-6);
+            .ellipsisMore(1);
+            height: 30px;
+            line-height: 30px;
+            margin-right: 2px;
+          }
         }
 
         .iframe-wrap {
