@@ -128,7 +128,7 @@ export const mountDirectives = <T>(app: T | any) => {
         // 外层父元素
         const pSiblingNodeParent = pSiblingNode.parentNode as HTMLElement;
         // html运行结果的iframe元素
-        let iframe = null;
+        let iframe: HTMLIFrameElement | null = null;
         // 获取html运行结果的iframe元素
         dragBox.addEventListener('mousedown', (e) => {
           e.preventDefault();
