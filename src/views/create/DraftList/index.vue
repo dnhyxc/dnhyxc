@@ -42,7 +42,7 @@
                     </div>
                     <div class="author" @click.stop="toPersonal(data.authorId!)">
                       <span class="username">{{ data.authorName }}</span>
-                      <span class="date">{{ formatDate(data.createTime) }}</span>
+                      <span class="date">{{ data.createTime && formatDate(data.createTime) }}</span>
                     </div>
                     <div v-if="data.classify || data.tag" class="tags">
                       <div v-if="data.classify" class="classify" @click.stop="toClassify(data.classify!)">
