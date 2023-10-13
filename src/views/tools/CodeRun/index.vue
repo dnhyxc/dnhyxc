@@ -17,12 +17,48 @@
       <div class="code-edit-wrap">
         <MonacoEditor
           v-model:theme="theme"
-          :run="run"
           :is-code-edit="true"
           :get-language="getLanguage"
-          :on-save-demo="onShowDemoForm"
+          :language="codeStore.codeDetail.language"
+          :get-code-content="getCodeContent"
+          :code="codeStore.codeDetail.content || ''"
           class="code-edit"
-        />
+        >
+          <template #save="monacoData">
+            <div class="action-list">
+              <el-button
+                :disabled="!codeContent"
+                type="primary"
+                link
+                class="save-code"
+                title="发布文章"
+                @click="run(monacoData)"
+              >
+                运行
+              </el-button>
+              <el-button
+                :disabled="!codeContent"
+                type="primary"
+                link
+                class="save-code"
+                :title="codeStore.currentCodeId && codeContent ? '更新' : '保存'"
+                @click="showCodeForm"
+              >
+                {{ codeStore.currentCodeId && codeContent ? '更新' : '保存' }}
+              </el-button>
+              <el-button
+                :disabled="!codeContent"
+                type="warning"
+                link
+                class="save-code"
+                title="重置"
+                @click="onReset(monacoData)"
+              >
+                重置
+              </el-button>
+            </div>
+          </template>
+        </MonacoEditor>
       </div>
       <div class="preview">
         <div v-drag class="line" />
@@ -33,7 +69,22 @@
           :is-code-edit="true"
           readonly
           class="code-result"
-        />
+        >
+          <template #save="monacoData">
+            <div class="action-list">
+              <el-button
+                :disabled="!codeResults"
+                type="warning"
+                link
+                class="save-code"
+                title="重置"
+                @click="onClear(monacoData)"
+              >
+                清空
+              </el-button>
+            </div>
+          </template>
+        </MonacoEditor>
         <div class="preview-content">
           <div class="toolbar">
             <el-button type="warning" link class="clear-code" title="清空" @click="onClear">清空</el-button>
@@ -45,22 +96,23 @@
     </div>
     <el-dialog v-model="visible" :close-on-click-modal="false" title="保存代码示例" width="500px" draggable>
       <div class="dialog-content">
-        <el-form ref="formRef" label-width="80px" :model="saveDemoForm.title">
+        <el-form ref="formRef" label-width="80px" :model="codeStore.codeInfo">
           <el-form-item
             prop="title"
             label="示例名称"
             :rules="[
               {
                 required: true,
-                message: '请输入文章标题',
+                message: '请输入示例名称',
+                trigger: 'blur',
               },
             ]"
           >
-            <el-input v-model="saveDemoForm.title" placeholder="请输入示例名称" />
+            <el-input v-model="codeStore.codeInfo.title" placeholder="请输入示例名称" />
           </el-form-item>
           <el-form-item prop="abstract" label="示例描述">
             <el-input
-              v-model="saveDemoForm.abstract"
+              v-model="codeStore.codeInfo.abstract"
               :autosize="{ minRows: 3, maxRows: 5 }"
               type="textarea"
               maxlength="100"
@@ -76,15 +128,16 @@
         </div>
       </div>
     </el-dialog>
-    <DemoList v-model:model-value="demoVisible" />
+    <CodeList v-model:model-value="demoVisible" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, nextTick, reactive } from 'vue';
+import { ref, onMounted, nextTick, onUnmounted } from 'vue';
 import type { FormInstance } from 'element-plus';
 import { codeTemplate, htmlTemplate, JSONParse } from '@/utils';
-import DemoList from './DemoList/index.vue';
+import { codeStore } from '@/store';
+import CodeList from './CodeList/index.vue';
 
 interface Emits {
   (e: 'update:modalVisible', visible: boolean): void;
@@ -104,13 +157,18 @@ const language = ref<string>('');
 const visible = ref<boolean>(false);
 const demoVisible = ref<boolean>(false);
 const formRef = ref<FormInstance>();
-const saveDemoForm = reactive<{ title: string; abstract: string }>({
-  title: '',
-  abstract: '',
-});
+// 编辑内容
+const codeContent = ref<string>('');
+// 上次运行的代码
+const prevCode = ref<string>('');
 
 onMounted(() => {
   bindEvents();
+});
+
+onUnmounted(() => {
+  // 页面销毁时清空创建的代码示例信息
+  codeStore.clearCodeId();
 });
 
 const bindEvents = () => {
@@ -155,7 +213,9 @@ const createIframe = ({ code, display, id }: { code: string; display: string; id
 };
 
 // 运行代码
-const run = (code: string) => {
+const run = (monacoData: any) => {
+  const { content: code } = monacoData.data;
+  prevCode.value = code;
   console.clear();
   // 首先清除原有的代码执行结果
   codeResults.value = '';
@@ -170,6 +230,13 @@ const run = (code: string) => {
 const onClose = () => {
   emit('update:modalVisible', false);
   console.clear();
+  // 关闭时清空创建的代码示例信息
+  codeStore.clearCodeId();
+};
+
+// 实时获取编辑内容
+const getCodeContent = (code: string) => {
+  codeContent.value = code;
 };
 
 // 获取当前编辑语言
@@ -177,27 +244,42 @@ const getLanguage = (value: string) => {
   language.value = value;
 };
 
-// 显示保存弹窗
-const onShowDemoForm = () => {
+// 显示保存代码弹窗
+const showCodeForm = () => {
   visible.value = true;
 };
 
 // 保存示例
-const onSaveDemo = () => {
+const onSaveDemo = async () => {
+  await codeStore.saveCode({ content: codeContent.value as string, language: language.value });
   visible.value = false;
 };
 
-// 保存示例
+// 取消保存
 const onCancel = () => {
   visible.value = false;
 };
 
+// 显示代码示例列表弹窗
 const showDemoList = () => {
   demoVisible.value = true;
+  // 先清空列表再获取代码示例列表
+  codeStore.clearCodeInfo();
+  codeStore.getCodeList();
+};
+
+// 重置
+const onReset = (monacoData: any) => {
+  const { editor } = monacoData.data;
+  editor?.getModel()?.setValue('');
+  codeStore.clearCodeId();
 };
 
 // 清空html运行结果
-const onClear = () => {
+const onClear = (monacoData?: any) => {
+  if (monacoData) {
+    monacoData.data?.editor?.getModel()?.setValue('');
+  }
   if (iframeNode.value) {
     iframeNode.value.contentWindow!.document.body.innerHTML = '';
   }
@@ -287,6 +369,15 @@ const onClear = () => {
         :deep {
           .manaco-code-style();
         }
+      }
+
+      .save-code {
+        margin-left: 0;
+        margin-right: 14px;
+      }
+
+      .action-list {
+        .ellipsisMore(1);
       }
     }
 

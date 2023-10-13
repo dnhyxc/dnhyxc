@@ -46,38 +46,7 @@
           <span class="action" title="发布文章" @click="onPublish">发</span>
         </div>
         <div v-if="isCodeEdit" class="create-action prev-action">
-          <el-button
-            v-if="!readonly"
-            :disabled="!content"
-            type="primary"
-            link
-            class="run-code"
-            title="发布文章"
-            @click="run"
-          >
-            运行
-          </el-button>
-          <el-button
-            v-if="!readonly"
-            :disabled="!content"
-            type="primary"
-            link
-            class="clear-code"
-            title="发布文章"
-            @click="onSaveDemo"
-          >
-            保存
-          </el-button>
-          <el-button
-            type="warning"
-            link
-            class="clear-code"
-            :disabled="(readonly && !code) || !content"
-            :title="readonly ? '清空' : '重置'"
-            @click="onClear"
-          >
-            {{ readonly ? '清空' : '重置' }}
-          </el-button>
+          <slot name="save" :data="{ content, editor }"></slot>
         </div>
       </div>
       <div class="right">
@@ -107,14 +76,15 @@ interface IProps {
   onPublish?: () => void;
   onClear?: () => void;
   onShowDraft?: () => void;
-  onSaveDraft?: () => void;
-  onSaveDemo?: () => void; // 保存代码测试示例
+  onSaveDraft?: (editor: monaco.editor.IStandaloneCodeEditor) => void;
   isCodeEdit?: boolean;
-  run?: (code: string) => void;
   readonly?: boolean;
-  code?: string;
+  code?: string; // 传入的code内容
   theme?: string;
   getLanguage?: (language: string) => void;
+  getCodeContent?: (code: string) => void;
+  saveText?: string;
+  language?: string;
 }
 
 const props = defineProps<IProps>();
@@ -163,8 +133,17 @@ onMounted(() => {
 });
 
 watchEffect(() => {
-  if (props.readonly && props.code && editor) {
+  editor?.getModel()?.setValue('');
+  // 设置编辑内容
+  if (props.code && editor) {
     editor.getModel()?.setValue(props.code);
+  }
+  if (props.code === '' && editor) {
+    editor.getModel()?.setValue('');
+  }
+  // 切换语言
+  if (props.language && editor) {
+    onChangeLanguage(props.language);
   }
 });
 
@@ -225,6 +204,7 @@ const initEditor = () => {
       } else {
         createStore.createInfo.content = editor?.getValue();
       }
+      props?.getCodeContent?.(editor?.getValue() as string);
     });
   });
 };
@@ -262,16 +242,11 @@ const onChangeEditor = () => {
 
 // 清空编辑
 const onClear = () => {
-  if (props.isCodeEdit) {
-    editor?.getModel()?.setValue('');
-    content.value = '';
-  } else {
-    props.onClear?.();
-    editor?.getModel()?.setValue('');
-  }
+  props.onClear?.();
+  editor?.getModel()?.setValue('');
 };
 
-// 清空编辑
+// 保存
 const onPublish = () => {
   if (!createStore?.createInfo?.content?.trim()) {
     ElMessage({
@@ -294,12 +269,7 @@ const onSaveDraft = () => {
     });
     return;
   }
-  props.onSaveDraft?.();
-};
-
-// 运行代码
-const run = () => {
-  props?.run?.(content.value as string);
+  props.onSaveDraft?.(editor as any);
 };
 </script>
 

@@ -397,3 +397,34 @@ export const getConvertList = async () => {
 export const deleteConvert = async (params: { id?: string | string[] }) => {
   return await post(API.DELETE_CONVERT, copeParams(params));
 };
+
+// 添加代码示例
+export const addCode = async (params: { title: string; abstract: string; content: string; language: string }) => {
+  return await post(API.ADD_CODE, copeParams(params));
+};
+
+// 更新代码示例
+export const updateCode = async (params: {
+  id: string;
+  title: string;
+  abstract: string;
+  content: string;
+  language: string;
+}) => {
+  return await post(API.UPDATE_CODE, copeParams(params));
+};
+
+// 删除代码示例
+export const deleteCode = async (params: { id: string | string[] }) => {
+  return await post(API.DELETE_CODE, copeParams(params));
+};
+
+// 获取代码示例列表
+export const getCodeList = async (params: { pageNo: number; pageSize: number }) => {
+  return await post(API.GET_CODE_LIST, copeParams(params));
+};
+
+// 获取代码示例
+export const getCodeById = async (id: string) => {
+  return await post(API.GET_CODE_BY_ID, copeParams({ id }));
+};

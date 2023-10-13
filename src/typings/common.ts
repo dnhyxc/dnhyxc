@@ -463,3 +463,20 @@ export interface ConvertParams {
   userId: string;
   keyword: string;
 }
+
+// 代码示例
+export interface CodeItem {
+  id: string;
+  userId: string;
+  content: string;
+  title: string;
+  abstract: string;
+  language: string;
+  createTime: number;
+}
+
+// 代码示例列表
+export interface CodeList {
+  total: number;
+  list: CodeItem[];
+}

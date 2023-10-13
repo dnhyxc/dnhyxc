@@ -19,7 +19,7 @@
               {
                 required: true,
                 message: '请输入文章标题',
-                trigger: 'change',
+                trigger: 'blur',
               },
             ]"
           >
@@ -32,7 +32,7 @@
               {
                 required: true,
                 message: '请输入文章分类',
-                trigger: 'change',
+                trigger: 'blur',
               },
             ]"
           >
@@ -60,7 +60,7 @@
               {
                 required: true,
                 message: '请输入文章标签',
-                trigger: 'change',
+                trigger: 'blur',
               },
             ]"
           >
@@ -85,7 +85,7 @@
               {
                 required: true,
                 message: '请选择发文时间',
-                trigger: 'change',
+                trigger: 'blur',
               },
             ]"
           >
@@ -116,7 +116,7 @@
               {
                 required: true,
                 message: '请输入文章摘要',
-                trigger: 'change',
+                trigger: 'blur',
               },
             ]"
           >

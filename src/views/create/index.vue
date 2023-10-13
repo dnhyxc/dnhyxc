@@ -100,9 +100,13 @@ const onPublish = () => {
 };
 
 // 保存草稿
-const onSaveDraft = () => {
+const onSaveDraft = (editor?: any) => {
   createStore.articleDraft();
   createStore.clearCreateInfo(true);
+  // 清空 mocaco 中的编辑内容
+  if (editor) {
+    editor.getModel()?.setValue('');
+  }
 };
 
 // 切换编辑器
@@ -120,7 +124,7 @@ const onClear = () => {
 // 弹窗显示、隐藏
 const showDraft = () => {
   draftVisible.value = true;
-  onChangeEditor();
+  editType.value = false;
 };
 
 // 复制成功回调

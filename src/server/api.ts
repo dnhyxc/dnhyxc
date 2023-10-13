@@ -178,3 +178,18 @@ export const GET_CONVERT_LIST = '/api/getConvertList';
 
 // 删除转换列表
 export const DELETE_CONVERT = '/api/deleteConvert';
+
+// 添加代码示例
+export const ADD_CODE = '/api/addCode';
+
+// 更新代码示例
+export const UPDATE_CODE = '/api/updateCode';
+
+// 删除代码示例
+export const DELETE_CODE = '/api/deleteCode';
+
+// 获取代码示例列表
+export const GET_CODE_LIST = '/api/getCodeList';
+
+// 获取代码示例
+export const GET_CODE_BY_ID = '/api/getCodeById';
