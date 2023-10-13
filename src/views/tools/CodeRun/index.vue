@@ -152,7 +152,7 @@ const codeResults = ref<string>('');
 const theme = ref<string>('vs');
 const iframeNode = ref<HTMLIFrameElement | null>(null);
 // 编辑的语言
-const language = ref<string>('');
+const language = ref<string>('javascript');
 // 保存弹窗
 const visible = ref<boolean>(false);
 const demoVisible = ref<boolean>(false);
