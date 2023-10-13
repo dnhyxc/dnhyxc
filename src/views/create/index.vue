@@ -35,7 +35,7 @@
       v-model="visible"
       :article-id="(route?.query?.id as string)"
     />
-    <DraftModal v-model:draft-visible="draftVisible" />
+    <DraftList v-model:draft-visible="draftVisible" />
   </div>
 </template>
 
@@ -47,7 +47,7 @@ import { articleStore, createStore } from '@/store';
 import { checkOS } from '@/utils';
 import AsyncLoading from '@/components/AsyncLoading/index.vue';
 import CreateDrawer from './Create/index.vue';
-import DraftModal from './Draft/index.vue';
+import DraftList from './DraftList/index.vue';
 const MonacoEditor = defineAsyncComponent({
   loader: () => import('@/components/MonacoEditor/index.vue'),
   loadingComponent: AsyncLoading,

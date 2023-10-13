@@ -133,7 +133,6 @@ onMounted(() => {
 });
 
 watchEffect(() => {
-  editor?.getModel()?.setValue('');
   // 设置编辑内容
   if (props.code && editor) {
     editor.getModel()?.setValue(props.code);
@@ -172,7 +171,7 @@ const initEditor = () => {
       editor = monaco.editor.create(editorRef?.value!, {
         value: props.isCodeEdit ? (props.readonly ? props.code : content.value) : createStore.createInfo.content, // 编辑器初始显示文字
         language: language.value, // 语言
-        theme: 'vs', // 官方自带三种主题vs, hc-black, or vs-dark
+        theme: props.theme || 'vs', // 官方自带三种主题vs, hc-black, or vs-dark
         automaticLayout: true, // 自适应布局
         foldingStrategy: 'indentation',
         renderLineHighlight: props.readonly ? 'none' : 'all', // 行亮 all line none

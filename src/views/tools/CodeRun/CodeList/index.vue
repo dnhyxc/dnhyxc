@@ -6,7 +6,7 @@
 -->
 <template>
   <div class="container">
-    <el-drawer v-model="visible" title="示例列表" size="380">
+    <el-drawer v-model="visible" size="350">
       <template #header="{ titleId, titleClass }">
         <h3 :id="titleId" :class="titleClass">示例列表</h3>
       </template>
@@ -31,11 +31,11 @@
               </div>
               <div class="abstract">{{ item.abstract }}</div>
               <div class="code-info">
-                <span class="date">{{ item.language }}</span>
+                <span class="language">{{ item.language }}</span>
                 <span class="date">{{ formatDate(item.createTime) }}</span>
               </div>
             </div>
-            <ToTopIcon v-if="scrollTop >= 500" :on-scroll-to="onScrollTo" />
+            <ToTopIcon v-if="scrollTop >= 100" :on-scroll-to="onScrollTo" />
           </div>
           <div v-if="noMore" class="no-more">没有更多了～～～</div>
           <Empty v-if="showEmpty" />
@@ -46,10 +46,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref, onMounted, onUnmounted } from 'vue';
 import { codeStore } from '@/store';
-import { formatDate, scrollTo } from '@/utils';
-import { useScroller } from '@/hooks';
+import { formatDate, scrollTo, Message } from '@/utils';
+import { nextTick } from 'process';
 
 interface IProps {
   modelValue: boolean;
@@ -58,6 +58,8 @@ interface IProps {
 const props = defineProps<IProps>();
 
 const emit = defineEmits(['update:modelValue']);
+const scrollRef = ref<any>(null);
+const scrollTop = ref<number>(0);
 
 const visible = computed({
   get() {
@@ -75,7 +77,20 @@ const noMore = computed(() => {
 const disabled = computed(() => codeStore.loading || noMore.value);
 const showEmpty = computed(() => codeStore.loading !== null && !codeStore.loading && !codeStore.codeList?.length);
 
-const { scrollRef, scrollTop } = useScroller();
+onMounted(() => {
+  nextTick(() => {
+    scrollRef.value?.wrapRef?.addEventListener('scroll', onScroll);
+  });
+});
+
+onUnmounted(() => {
+  scrollRef.value?.wrapRef.removeEventListener('scroll', onScroll);
+});
+
+// 滚动事件
+const onScroll = (e: any) => {
+  scrollTop.value = e.target.scrollTop;
+};
 
 // 获取代码示例列表
 const onFetchData = () => {
@@ -83,8 +98,8 @@ const onFetchData = () => {
 };
 
 // 置顶
-const onScrollTo = () => {
-  scrollTo(scrollRef, 0);
+const onScrollTo = (to?: number) => {
+  scrollTo(scrollRef, to || 0);
 };
 
 // 编辑
@@ -95,7 +110,10 @@ const onEdit = (id: string) => {
 
 // 删除
 const onDelete = (id: string) => {
-  codeStore.deleteCode(id);
+  Message('', '确定删除该示例吗？').then(async () => {
+    await codeStore.deleteCode(id);
+    onScrollTo(scrollTop.value);
+  });
 };
 </script>
 
@@ -107,12 +125,12 @@ const onDelete = (id: string) => {
     height: 100%;
 
     .code-item {
-      margin-bottom: 10px;
       background-image: linear-gradient(225deg, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
-      box-shadow: 0 0 3px var(--shadow-color);
+      box-shadow: 0 0 5px var(--shadow-mack);
       padding: 5px 5px 5px 7px;
       border-radius: 5px;
       box-sizing: border-box;
+      margin: 0 7px 10px 5px;
 
       .header {
         display: flex;
@@ -140,18 +158,28 @@ const onDelete = (id: string) => {
         color: var(--font-3);
         padding-right: 2px;
         box-sizing: border-box;
+
+        .date {
+          font-size: 13px;
+        }
       }
     }
 
     .no-more {
       text-align: center;
-      padding-top: 8px;
+      color: var(--font-4);
+      margin: 20px 0 2px;
+      .clickNoSelectText();
     }
   }
 
   :deep {
     .el-drawer__header {
       margin-bottom: 0;
+    }
+
+    .el-drawer__body {
+      padding: 20px 15px;
     }
   }
 }

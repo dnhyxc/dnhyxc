@@ -81,7 +81,7 @@ export const codeTemplate = (value: string) => {
 };
 
 // 渲染html的模板
-export const htmlTemplate = (code: string) => {
+export const htmlTemplate = (code: string, { background }: { background: string }) => {
   return `
     <html>
       <head>
@@ -100,6 +100,7 @@ export const htmlTemplate = (code: string) => {
           body,html {
             padding: 0;
             margin: 0;
+            background: ${background};
           }
         </style>
       </head>

@@ -6,7 +6,10 @@
 -->
 <template>
   <div class="draft-wrap">
-    <el-dialog v-model="visible" :close-on-click-modal="false" title="草稿箱" align-center width="800px" draggable>
+    <el-drawer v-model="visible" size="350">
+      <template #header="{ titleId, titleClass }">
+        <h3 :id="titleId" :class="titleClass">草稿箱</h3>
+      </template>
       <Loading :loading="createStore.loading" class="content">
         <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
           <div
@@ -34,33 +37,18 @@
                 </template>
                 <template #content>
                   <div class="art-info">
-                    <div class="desc">
+                    <div v-if="data.abstract" class="desc">
                       {{ data.abstract }}
                     </div>
-                    <div class="tags">
-                      <div class="author" @click.stop="toPersonal(data.authorId!)">{{ data.authorName }}</div>
-                      <div class="right">
-                        <el-tooltip
-                          v-if="data.classify"
-                          class="box-item"
-                          effect="light"
-                          :content="`分类：${data.classify}`"
-                          placement="bottom"
-                        >
-                          <div class="classify" @click.stop="toClassify(data.classify!)">
-                            {{ data.classify }}
-                          </div>
-                        </el-tooltip>
-                        <el-tooltip
-                          v-if="data.tag"
-                          class="box-item"
-                          effect="light"
-                          :content="`标签：${data.tag}`"
-                          placement="bottom"
-                        >
-                          <div class="tag" @click.stop="toTag(data.tag!)">{{ data.tag }}</div>
-                        </el-tooltip>
+                    <div class="author" @click.stop="toPersonal(data.authorId!)">
+                      <span class="username">{{ data.authorName }}</span>
+                      <span class="date">{{ formatDate(data.createTime) }}</span>
+                    </div>
+                    <div v-if="data.classify || data.tag" class="tags">
+                      <div v-if="data.classify" class="classify" @click.stop="toClassify(data.classify!)">
+                        分类：{{ data.classify }}
                       </div>
+                      <div v-if="data.tag" class="tag" @click.stop="toTag(data.tag!)">标签：{{ data.tag }}</div>
                     </div>
                   </div>
                 </template>
@@ -72,10 +60,7 @@
           <Empty v-if="showEmpty" />
         </el-scrollbar>
       </Loading>
-      <template #footer>
-        <span class="dialog-footer"></span>
-      </template>
-    </el-dialog>
+    </el-drawer>
   </div>
 </template>
 
@@ -83,7 +68,7 @@
 import { computed, onMounted, ref, watch, nextTick, onUnmounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { createStore } from '@/store';
-import { scrollTo, Message } from '@/utils';
+import { scrollTo, Message, formatDate } from '@/utils';
 import Loading from '@/components/Loading/index.vue';
 import ToTopIcon from '@/components/ToTopIcon/index.vue';
 import Empty from '@/components/Empty/index.vue';
@@ -199,22 +184,6 @@ const onScrollTo = (to?: number) => {
 @import '@/styles/index.less';
 
 .draft-wrap {
-  :deep {
-    .el-dialog__header {
-      -webkit-app-region: no-drag;
-    }
-    .el-dialog__title {
-      color: var(--font-1);
-    }
-    .el-dialog__body {
-      padding: 5px 10px;
-    }
-
-    .el-dialog__footer {
-      padding: 6px 20px 5px;
-    }
-  }
-
   .title {
     display: flex;
     justify-content: space-between;
@@ -254,22 +223,17 @@ const onScrollTo = (to?: number) => {
 
   .content {
     position: relative;
-    height: 565px;
+    height: 100%;
 
     .list-wrap {
-      display: flex;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      padding: 5px 10px;
+      padding: 5px 0;
 
       .line-card {
-        width: calc(50% - 5px);
         padding: 10px 10px;
         box-shadow: 0 0 5px var(--shadow-mack);
         background-image: linear-gradient(225deg, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
-        margin-bottom: 10px;
         border-radius: 5px;
-        margin-right: 10px;
+        margin: 0 7px 10px 5px;
 
         :deep {
           .art-info {
@@ -280,70 +244,76 @@ const onScrollTo = (to?: number) => {
               .ellipsisMore(1);
               margin-bottom: 10px;
               font-size: 14px;
+              color: var(--font-5);
+            }
+
+            .author {
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              font-size: 14px;
+              cursor: pointer;
+              .username,
+              .date {
+                flex: 1;
+                .ellipsisMore(1);
+              }
+
+              .date {
+                text-align: right;
+              }
+
+              .username {
+                margin-right: 10px;
+                &:hover {
+                  color: @sub-2-blue;
+                }
+              }
             }
 
             .tags {
               display: flex;
               justify-content: space-between;
               align-items: center;
-              font-size: 14px;
               margin-bottom: 0;
+              margin-top: 10px;
+              font-size: 14px;
 
-              .author {
-                flex: 0.5;
-                .ellipsisMore(1);
-                margin-right: 15px;
-                min-width: 100px;
-                cursor: pointer;
-                &:hover {
-                  color: @sub-2-blue;
-                }
+              .tag {
+                text-align: right;
+                margin-left: 10px;
               }
 
-              .right {
-                flex: 0.5;
-                display: flex;
-                justify-content: flex-end;
+              .classify,
+              .tag {
+                flex: 1;
+                border-radius: 5px;
+                min-width: 28px;
+                .ellipsisMore(1);
+                cursor: pointer;
 
-                .classify,
-                .tag {
-                  background-image: linear-gradient(225deg, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
-                  box-shadow: 0 0 3px var(--shadow-color);
-                  padding: 1px 5px 3px;
-                  border-radius: 5px;
-                  min-width: 28px;
-                  .ellipsisMore(1);
-                  cursor: pointer;
-
-                  &:hover {
-                    color: @sub-2-blue;
-                  }
-                }
-
-                .tag {
-                  margin-left: 10px;
+                &:hover {
+                  color: @sub-2-blue;
                 }
               }
             }
           }
         }
 
-        &:nth-child(even) {
-          margin-right: 0;
-          &:last-child {
-            margin-bottom: 0;
-          }
-        }
-
-        &:nth-child(odd) {
-          &:nth-last-child(2) {
-            margin-bottom: 0;
-          }
-          &:last-child {
-            margin-bottom: 0;
-          }
+        &:last-child {
+          margin-bottom: 0;
         }
       }
+    }
+  }
+
+  :deep {
+    .el-drawer__header {
+      margin-bottom: 0;
+    }
+
+    .el-drawer__body {
+      padding: 20px 15px;
     }
   }
 

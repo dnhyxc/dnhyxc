@@ -133,7 +133,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, nextTick, onUnmounted } from 'vue';
+import { ref, onMounted, nextTick, onUnmounted, computed } from 'vue';
 import type { FormInstance } from 'element-plus';
 import { codeTemplate, htmlTemplate, JSONParse } from '@/utils';
 import { codeStore } from '@/store';
@@ -169,6 +169,10 @@ onMounted(() => {
 onUnmounted(() => {
   // 页面销毁时清空创建的代码示例信息
   codeStore.clearCodeId();
+});
+
+const background = computed(() => {
+  return theme.value !== 'vs' ? '#1e1e1e' : '#fff';
 });
 
 const bindEvents = () => {
@@ -220,7 +224,11 @@ const run = (monacoData: any) => {
   // 首先清除原有的代码执行结果
   codeResults.value = '';
   if (language.value === 'html') {
-    createIframe({ code: htmlTemplate(code), display: 'block', id: '__HTML_RESULT__' });
+    createIframe({
+      code: htmlTemplate(code, { background: background.value }),
+      display: 'block',
+      id: '__HTML_RESULT__',
+    });
   } else {
     createIframe({ code: codeTemplate(code) as string, display: 'none' });
   }
@@ -424,6 +432,7 @@ const onClear = (monacoData?: any) => {
         flex-direction: column;
         justify-content: flex-start;
         height: 100%;
+        background-color: v-bind(background);
 
         .toolbar {
           display: flex;
@@ -432,14 +441,14 @@ const onClear = (monacoData?: any) => {
           height: 40px;
           padding: 0 10px;
           box-sizing: border-box;
-          background-color: @fff;
+          background-color: v-bind(background);
           border-bottom: 1px solid var(--card-border);
           border-top-left-radius: 5px;
           border-top-right-radius: 5px;
 
           .run-title {
             font-size: 14px;
-            color: var(--font-6);
+            color: @font-4;
             .ellipsisMore(1);
             height: 30px;
             line-height: 30px;
