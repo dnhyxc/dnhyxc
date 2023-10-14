@@ -221,7 +221,7 @@ const onClose = () => {
 .container {
   position: relative;
   height: 100%;
-  padding: 0 10px 10px;
+  padding: 0 0 10px;
 
   .title {
     display: flex;
@@ -229,6 +229,7 @@ const onClose = () => {
     justify-content: space-between;
     font-size: 18px;
     height: 45px;
+    padding: 0 10px;
 
     .left {
       display: flex;
@@ -262,13 +263,24 @@ const onClose = () => {
     flex-direction: column;
     box-shadow: 0 0 8px 0 var(--shadow-mack);
     background-color: var(--pre-hover-bg);
-    border-radius: 5px;
     overflow: auto;
 
     .drag-upload {
-      height: calc(100vh - 182px);
+      height: calc(100vh - 192px);
       display: block;
       padding: 0;
+      border-radius: 0;
+
+      &:hover {
+        border: 1px dashed var(--theme-blue);
+      }
+
+      :deep {
+        .el-upload-dragger {
+          border-radius: 0;
+          border: none;
+        }
+      }
     }
   }
 
