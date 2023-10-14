@@ -127,6 +127,7 @@ export const useCodeStore = defineStore('code', {
         title: '',
         abstract: '',
       };
+      this.codeDetail = {} as CodeItem;
     },
   },
 });
