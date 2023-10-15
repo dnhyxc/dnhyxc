@@ -42,7 +42,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import draggable from 'vuedraggable';
 import { toolsStore } from '@/store';
 import { TOOL_SVG } from '@/constant';
@@ -56,6 +56,10 @@ defineProps<IProps>();
 
 // 控制是否开启排序
 const enabled = ref<boolean>(false);
+
+const action = computed(() => {
+  return enabled.value ? 'move' : 'pointer';
+});
 
 // 开启排序
 const onSort = () => {
@@ -126,7 +130,7 @@ const onSaveSort = () => {
 
       .navigation-item {
         box-shadow: 0 0 5px 0 var(--shadow-mack);
-        cursor: pointer;
+        cursor: v-bind(action);
         border-radius: 5px;
         background-color: var(--pre-hover-bg);
 

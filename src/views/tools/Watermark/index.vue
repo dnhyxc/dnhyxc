@@ -177,7 +177,7 @@ const onClose = () => {
 .watermark-wrap {
   display: flex;
   flex-direction: column;
-  padding: 0 10px 10px;
+  // padding: 0 10px 10px;
   height: 100%;
 
   .title {
@@ -185,6 +185,7 @@ const onClose = () => {
     align-items: center;
     justify-content: space-between;
     height: 45px;
+    padding: 0 10px;
 
     .close {
       color: var(--theme-blue);
@@ -202,10 +203,10 @@ const onClose = () => {
 
     .img-wrap {
       flex: 1;
-      box-shadow: 0 0 8px 0 var(--shadow-mack);
+      // box-shadow: 0 0 8px 0 var(--shadow-mack);
       background-color: var(--pre-hover-bg);
-      margin-right: 10px;
-      border-radius: 5px;
+      // margin-right: 10px;
+      // border-radius: 5px;
 
       .prev {
         display: flex;
@@ -233,8 +234,6 @@ const onClose = () => {
             position: absolute;
             top: v-bind(markInitTop);
             left: v-bind(markInitLeft);
-            // top: 5px;
-            // left: 5px;
             color: @fff;
             padding: 3px;
             border-radius: 5px;
@@ -252,11 +251,10 @@ const onClose = () => {
         .drag-upload {
           width: 100%;
           // height: calc(100vh - 140px);
-          height: calc(100vh - 136px);
+          height: calc(100vh - 135px);
           box-sizing: border-box;
           padding: 0;
-          border: 1px dashed @border;
-          border-radius: 5px;
+          // border: 1px dashed @border;
 
           &:hover {
             border: 1px dashed var(--theme-blue);
@@ -265,6 +263,8 @@ const onClose = () => {
           :deep {
             .el-upload-dragger {
               border: none;
+              border-radius: 0;
+              background-color: transparent;
             }
           }
         }
@@ -281,10 +281,11 @@ const onClose = () => {
       justify-content: space-between;
       flex-direction: column;
       width: 220px;
-      height: calc(100% - 21px);
-      box-shadow: 0 0 8px 0 var(--shadow-mack);
+      height: calc(100% - 20px);
+      // box-shadow: 0 0 8px 0 var(--shadow-mack);
       background-color: var(--pre-hover-bg);
-      border-radius: 5px;
+      border-left: 1px solid var(--card-border);
+      // border-radius: 5px;
       padding: 10px;
 
       .setting {

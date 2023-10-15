@@ -14,7 +14,7 @@
       <span class="close" @click="onClose">关闭</span>
     </div>
     <div ref="cropperContent" class="cropper-content">
-      <div v-if="cropperVisible" class="cropper">
+      <div v-if="cropperVisible" :class="`${checkOS() === 'mac' && 'cropper-mac'} cropper`">
         <VueCropper
           ref="cropper"
           :img="cropperUrl || sourceUrl"
@@ -67,8 +67,8 @@
       >
         <el-button type="primary" :disabled="!cropperUrl" class="btn" plain @click="onDownload">下载</el-button>
       </el-tooltip>
-      <el-button type="warning" class="btn" :disabled="!sourceUrl" @click="onRefresh">重置</el-button>
-      <el-button type="success" class="btn" @click="onFinish">截取</el-button>
+      <el-button type="warning" :disabled="!sourceUrl" class="btn" @click="onRefresh">重置</el-button>
+      <el-button type="success" :disabled="!sourceUrl" class="btn" @click="onFinish">截取</el-button>
     </div>
   </div>
 </template>
@@ -258,7 +258,12 @@ const onClose = () => {
 
   .cropper {
     height: v-bind(cropperHeight);
-    max-height: calc(100vh - 182px);
+    // max-height: calc(100vh - 182px);
+  }
+
+  .cropper-mac {
+    height: v-bind(cropperHeight);
+    height: calc(100vh - 192px);
   }
 
   .content {
