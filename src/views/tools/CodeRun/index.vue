@@ -164,12 +164,21 @@ const prevCode = ref<string>('');
 
 onMounted(() => {
   bindEvents();
+  window.addEventListener('keydown', onKeydown);
 });
 
 onUnmounted(() => {
   // 页面销毁时清空创建的代码示例信息
   codeStore.clearCodeId();
+  window.removeEventListener('keydown', onKeydown);
 });
+
+// 监听快捷键操作
+const onKeydown = (event: KeyboardEvent) => {
+  if ((event.ctrlKey || event.metaKey) && event.key === 's' && codeContent.value) {
+    run({ data: { content: codeContent.value } });
+  }
+};
 
 const background = computed(() => {
   return theme.value !== 'vs' ? '#1e1e1e' : '#fff';

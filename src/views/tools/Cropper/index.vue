@@ -36,7 +36,11 @@
       </div>
     </div>
     <div class="content">
-      <DragUpload v-if="!cropperUrl && !sourceUrl" class="drag-upload" :on-upload="onUpload" />
+      <DragUpload
+        v-if="!cropperUrl && !sourceUrl"
+        :class="`${checkOS() === 'mac' && 'drag-upload-mac'} drag-upload`"
+        :on-upload="onUpload"
+      />
     </div>
     <div class="footer">
       <el-button type="primary" class="btn roportion" @click="onCropFixed">
@@ -72,7 +76,7 @@
 <script setup lang="ts">
 import { ref, reactive, nextTick } from 'vue';
 import { VueCropper } from 'vue-cropper';
-import { getImgInfo, onDownloadFile } from '@/utils';
+import { getImgInfo, onDownloadFile, checkOS } from '@/utils';
 import { IMG_ROPORTIONS } from '@/constant';
 import 'vue-cropper/dist/index.css';
 
@@ -266,7 +270,7 @@ const onClose = () => {
     overflow: auto;
 
     .drag-upload {
-      height: calc(100vh - 192px);
+      height: calc(100vh - 182px);
       display: block;
       padding: 0;
       border-radius: 0;
@@ -279,8 +283,13 @@ const onClose = () => {
         .el-upload-dragger {
           border-radius: 0;
           border: none;
+          background-color: transparent;
         }
       }
+    }
+
+    .drag-upload-mac {
+      height: calc(100vh - 192px);
     }
   }
 
