@@ -44,11 +44,11 @@ export const useToolsStore = defineStore('tools', {
       try {
         if (!useCheckUserId()) return;
         const res = normalizeResult<ToolsItem>(await Service.createToolSort(params));
-        if (res.success) {
-          ElMessage.success(res.message);
-        } else {
-          ElMessage.error(res.message);
-        }
+        ElMessage({
+          message: res.message,
+          type: res.success ? 'success' : 'error',
+          offset: 80,
+        });
       } catch (error) {
         return false;
       }
