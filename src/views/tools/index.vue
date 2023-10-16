@@ -11,6 +11,7 @@
       <DrawBoard v-if="boardVisible" v-model:board-visible="boardVisible" />
       <TextToSpeech v-if="convertVisible" v-model:modal-visible="convertVisible" />
       <Watermark v-if="watermarkVisible" v-model:modal-visible="watermarkVisible" />
+      <BlindWaterMark v-if="blindWatermarkVisible" v-model:modal-visible="showBlindWatermark" />
       <Compress v-if="compressVisible" v-model:modal-visible="compressVisible" />
       <CodeRun v-if="codeRunVisible" v-model:modal-visible="codeRunVisible" />
       <div v-if="!visible" class="navs-wrap">
@@ -43,6 +44,8 @@ import Watermark from './Watermark/index.vue';
 import DrawBoard from './DrawBoard/index.vue';
 import CodeRun from './CodeRun/index.vue';
 import Links from './Links/index.vue';
+import BlindWaterMark from './BlindWaterMark/index.vue';
+
 
 // 图片压缩弹窗
 const compressVisible = ref<boolean>(false);
@@ -56,6 +59,8 @@ const watermarkVisible = ref<boolean>(false);
 const boardVisible = ref<boolean>(false);
 // 是否显示代码测试
 const codeRunVisible = ref<boolean>(false);
+// 盲水印显示状态
+const blindWatermarkVisible = ref<boolean>(false);
 
 // 判断是否有路由权限
 useGetRouteAuthInfo();
@@ -72,6 +77,7 @@ const visible = computed(() => {
     cropperVisible.value ||
     watermarkVisible.value ||
     compressVisible.value ||
+    blindWatermarkVisible.value ||
     codeRunVisible.value
   );
 });
@@ -94,6 +100,11 @@ const onTextToSpeech = (item: ToolsItem) => {
 // 添加水印
 const onAddwatermark = (item: ToolsItem) => {
   watermarkVisible.value = true;
+};
+
+// 盲水印
+const showBlindWatermark = (item: ToolsItem) => {
+  blindWatermarkVisible.value = true;
 };
 
 // 浏览器打开链接
@@ -121,6 +132,7 @@ const onClickNavIcon = (item: ToolsItem) => {
     tool: openWithBrowser,
     board: toDrawBoard,
     codeRun: showCodeRun,
+    blindWaterMark: showBlindWatermark,
   };
   actions[item.key](item);
 };

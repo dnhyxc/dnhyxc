@@ -27,13 +27,7 @@
             >
               {{ markText }}
             </span>
-            <img
-              v-if="base64Url && markType === 'line'"
-              ref="uploadImgRef"
-              :src="watermarkUrl || base64Url"
-              alt=""
-              class="upload-img"
-            />
+            <img v-if="base64Url" ref="uploadImgRef" :src="watermarkUrl || base64Url" alt="" class="upload-img" />
           </div>
         </div>
       </div>
@@ -70,9 +64,6 @@
           <el-button class="btn" type="primary" :disabled="!base64Url" @click="addWatermark('more')"
             >设置多行水印</el-button
           >
-          <el-button class="btn" type="primary" :disabled="!base64Url" @click="addBlindWatermark()"
-            >设置盲水印</el-button
-          >
           <el-button class="btn" :disabled="!watermarkUrl" @click="onPreview">预览水印</el-button>
           <el-button class="btn" type="success" :disabled="!watermarkUrl" @click="onDownload">下载图片</el-button>
           <el-button class="btn" type="info" @click="onReset">重置</el-button>
@@ -89,7 +80,7 @@
 
 <script setup lang="ts">
 import { computed, ref, watch, nextTick } from 'vue';
-import { convas2ImgAddWatermark, onDownloadFile, checkOS, createWaterMark } from '@/utils';
+import { convas2ImgAddWatermark, onDownloadFile, checkOS } from '@/utils';
 
 interface Emits {
   (e: 'update:modalVisible', visible: boolean): void;
@@ -187,24 +178,6 @@ const addWatermark = async (type?: string) => {
     markOffsetTop: markOffsetTop.value,
   });
   watermarkUrl.value = markUrl;
-};
-
-// 设置盲水印
-const addBlindWatermark = async () => {
-  console.log('设置盲水印');
-  const res = await createWaterMark({
-    text: 'dnhyxc-xixi-zczc-yhyh',
-    fontSize: '20px',
-    fontFamily: 'Microsoft Yahei',
-    spacing: 200,
-    // url: 'https://pic1.zhimg.com/80/v2-137fa06cbb1f31da2b1eed57b5894c8a_720w.webp?source=1940ef5c',
-    url: 'https://pic.imgdb.cn/item/5f9cb7401cd1bbb86b80e1e8.jpg',
-    // url: "https://fc.sinaimg.cn/large/007W46Vsgy1grs0siinh9j30iy0p940e.jpg",
-    // url: "https://ts1.cn.mm.bing.net/th/id/R-C.0701bfd07d363bb5611fef6cdc72a65e?rik=%2bgHdDajWXaTrBA&riu=http%3a%2f%2fwww.zwf20.com%2fuploads%2fallimg%2f210302%2f4-2103021641330-L.jpg&ehk=d7P9cY9dV%2fY15sMlQn%2bwzPOyD9iHQXXCHPEah3YE21M%3d&risl=&pid=ImgRaw&r=0",
-    // url: "./image/4.jpg",
-  });
-
-  console.log(res, 'res');
 };
 
 // 下载

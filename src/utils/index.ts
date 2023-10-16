@@ -875,20 +875,25 @@ export const diffType = (value: string | number | string | boolean | Function | 
 };
 
 // 设置盲水印
-export const createWaterMark = ({
-  canvas,
+export const createWaterMark = async ({
   url,
   text,
   fontSize,
   fontFamily,
+  spacing,
 }: {
-  canvas: HTMLCanvasElement;
   url: string;
   text: string;
   fontSize: string;
   fontFamily: string;
+  spacing: number; // 水印上下间距
 }) => {
+  const canvas = document.createElement('canvas');
+  console.log(canvas, 'canvas');
+
   const ctx = canvas.getContext('2d')!;
+  console.log(ctx, 'ctx');
+
   const img = new Image();
   img.crossOrigin = '';
   let textData, originalData;
@@ -905,8 +910,6 @@ export const createWaterMark = ({
     const textWidth = textMetrics.width;
     // 水印文本高度
     const textHeight = textMetrics.fontBoundingBoxAscent;
-    // 水印上下间距
-    const spacing = 100;
     // 计算水印的起始位置，使其水平和垂直居中排列
     const rows = Math.floor(canvas.height / (textHeight + spacing));
     const cols = Math.floor(canvas.width / (textWidth + spacing));
@@ -927,6 +930,9 @@ export const createWaterMark = ({
     originalData = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height);
     // 调用盲水印算法
     mergeData({ ctx, textData, color: 'R', originalData });
+    console.log(canvas, 'canvas', canvas.toDataURL('image/png'));
+
+    return canvas.toDataURL('image/png');
   };
 
   // 盲水印加密算法

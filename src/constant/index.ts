@@ -52,6 +52,7 @@ export const TOOL_LIST = [
   { toolName: '图片裁剪', key: 'cropper', id: 'cropper', toolUrl: CROP_SVG },
   { toolName: '语音播报', key: 'textToSpeech', id: 'textToSpeech', toolUrl: YUYIN_SVG },
   { toolName: '水印设置', key: 'watermark', id: 'watermark', toolUrl: MARK_SVG },
+  { toolName: '盲水印', key: 'blindWaterMark', id: 'blindWaterMark', toolUrl: CODE_SVG },
   { toolName: '画板', key: 'board', id: 'board', toolUrl: BOARD_SVG },
   { toolName: '代码测试', key: 'codeRun', id: 'codeRun', toolUrl: CODE_SVG },
 ];
