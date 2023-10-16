@@ -10,7 +10,7 @@
       <span class="left">图片加水印</span>
       <span class="close" @click="onClose">关闭</span>
     </div>
-    <div class="content">
+    <div :class="`${checkOS() !== 'mac' && 'content-win'} content`">
       <div class="img-wrap">
         <div class="prev">
           <DragUpload v-if="!base64Url" class="drag-upload" :on-upload="onUpload">
@@ -19,7 +19,12 @@
             </template>
           </DragUpload>
           <div class="upload-img-wrap">
-            <span v-if="base64Url" ref="markTextRef" v-draggable.getData="getData" class="mark-text">
+            <span
+              v-if="base64Url && markType === 'line'"
+              ref="markTextRef"
+              v-draggable.getData="getData"
+              class="mark-text"
+            >
               {{ markText }}
             </span>
             <img v-if="base64Url" ref="uploadImgRef" :src="watermarkUrl || base64Url" alt="" class="upload-img" />
@@ -45,9 +50,20 @@
               <el-input-number v-model="markSize" :min="12" :max="100" />
             </div>
           </div>
+          <div v-if="markType !== 'line'" class="mark-inp">
+            <span class="label">多行水印垂直位置调整：</span>
+            <div class="color-wrap">
+              <el-input-number v-model="markOffsetTop" />
+            </div>
+          </div>
         </div>
         <div class="action-btns">
-          <el-button class="btn" type="primary" :disabled="!base64Url" @click="addWatermark">设置水印</el-button>
+          <el-button class="btn" type="primary" :disabled="!base64Url" @click="addWatermark('line')"
+            >设置单行水印</el-button
+          >
+          <el-button class="btn" type="primary" :disabled="!base64Url" @click="addWatermark('more')"
+            >设置多行水印</el-button
+          >
           <el-button class="btn" :disabled="!watermarkUrl" @click="onPreview">预览水印</el-button>
           <el-button class="btn" type="success" :disabled="!watermarkUrl" @click="onDownload">下载图片</el-button>
           <el-button class="btn" type="info" @click="onReset">重置</el-button>
@@ -64,7 +80,7 @@
 
 <script setup lang="ts">
 import { computed, ref, watch, nextTick } from 'vue';
-import { convas2ImgAddWatermark, onDownloadFile } from '@/utils';
+import { convas2ImgAddWatermark, onDownloadFile, checkOS } from '@/utils';
 
 interface Emits {
   (e: 'update:modalVisible', visible: boolean): void;
@@ -78,8 +94,10 @@ const watermarkUrl = ref<string>('');
 // 压缩前的图片路径
 const base64Url = ref<string>('');
 const markText = ref<string>('@dnhyxc');
+const markType = ref<string>('line');
 const markColor = ref<string>('#EAEAEA');
 const markSize = ref<number>(20);
+const markOffsetTop = ref<number>(0);
 // 水印文字移动的信息
 const moveInfo = ref<{ top: number; left: number }>({ top: 0, left: 0 });
 // 水印初始化位置
@@ -93,6 +111,7 @@ const markFontSize = computed(() => `${markSize.value}px`);
 watch(base64Url, (newVal) => {
   if (newVal) {
     nextTick(() => {
+      if (!markTextRef.value) return;
       const { height, width } = uploadImgRef.value!;
       const { offsetHeight, offsetWidth } = markTextRef.value!;
       markInitTop.value = height - offsetHeight - 5 + 'px';
@@ -102,9 +121,20 @@ watch(base64Url, (newVal) => {
 });
 
 // 监听水印颜色、文字大小、水印文字的变化
-watch([markColor, markSize, markText], () => {
+watch([markColor, markSize, markText, markType, markOffsetTop], (newVal, oldVal) => {
+  let timer = null;
   if (base64Url.value) {
-    addWatermark();
+    if (timer) {
+      clearTimeout(timer);
+      timer = null;
+    }
+    timer = setTimeout(() => {
+      addWatermark();
+      if (newVal[3] !== oldVal[3] && moveInfo.value.top !== 0 && moveInfo.value.left !== 0) {
+        markInitTop.value = moveInfo.value.top + 'px';
+        markInitLeft.value = moveInfo.value.left + 'px';
+      }
+    }, 500);
   }
 });
 
@@ -132,7 +162,8 @@ const showWaterModal = () => {
 };
 
 // 图片路径转成canvas并加水印
-const addWatermark = async () => {
+const addWatermark = async (type?: string) => {
+  type && (markType.value = type);
   const markUrl = await convas2ImgAddWatermark({
     ...moveInfo.value,
     width: uploadImgRef.value?.width as number,
@@ -143,6 +174,8 @@ const addWatermark = async () => {
     color: markColor.value,
     markTextWidth: markTextRef.value?.offsetWidth as number,
     markTextHeight: markTextRef.value?.offsetHeight as number,
+    markType: markType.value,
+    markOffsetTop: markOffsetTop.value,
   });
   watermarkUrl.value = markUrl;
 };
@@ -163,6 +196,8 @@ const onReset = () => {
     top: 0,
     left: 0,
   };
+  markType.value = 'line';
+  markOffsetTop.value = 0;
 };
 
 // 关闭
@@ -177,7 +212,6 @@ const onClose = () => {
 .watermark-wrap {
   display: flex;
   flex-direction: column;
-  // padding: 0 10px 10px;
   height: 100%;
 
   .title {
@@ -186,6 +220,7 @@ const onClose = () => {
     justify-content: space-between;
     height: 45px;
     padding: 0 10px;
+    border-bottom: 1px solid var(--card-border);
 
     .close {
       color: var(--theme-blue);
@@ -203,10 +238,7 @@ const onClose = () => {
 
     .img-wrap {
       flex: 1;
-      // box-shadow: 0 0 8px 0 var(--shadow-mack);
       background-color: var(--pre-hover-bg);
-      // margin-right: 10px;
-      // border-radius: 5px;
 
       .prev {
         display: flex;
@@ -250,11 +282,10 @@ const onClose = () => {
 
         .drag-upload {
           width: 100%;
-          // height: calc(100vh - 140px);
           height: calc(100vh - 135px);
           box-sizing: border-box;
+          border-bottom-left-radius: 5px;
           padding: 0;
-          // border: 1px dashed @border;
 
           &:hover {
             border: 1px dashed var(--theme-blue);
@@ -282,10 +313,8 @@ const onClose = () => {
       flex-direction: column;
       width: 220px;
       height: calc(100% - 20px);
-      // box-shadow: 0 0 8px 0 var(--shadow-mack);
       background-color: var(--pre-hover-bg);
       border-left: 1px solid var(--card-border);
-      // border-radius: 5px;
       padding: 10px;
 
       .setting {
@@ -365,6 +394,18 @@ const onClose = () => {
           &:last-child {
             margin-bottom: 0;
           }
+        }
+      }
+    }
+  }
+
+  .content-win {
+    .img-wrap {
+      .prev {
+        height: calc(100vh - 128px);
+
+        .drag-upload {
+          height: calc(100vh - 128px);
         }
       }
     }

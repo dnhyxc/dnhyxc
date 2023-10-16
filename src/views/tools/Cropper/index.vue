@@ -234,6 +234,7 @@ const onClose = () => {
     font-size: 18px;
     height: 45px;
     padding: 0 10px;
+    border-bottom: 1px solid var(--card-border);
 
     .left {
       display: flex;
@@ -258,7 +259,6 @@ const onClose = () => {
 
   .cropper {
     height: v-bind(cropperHeight);
-    // max-height: calc(100vh - 182px);
   }
 
   .cropper-mac {
@@ -270,7 +270,7 @@ const onClose = () => {
     display: flex;
     justify-content: space-between;
     flex-direction: column;
-    box-shadow: 0 0 8px 0 var(--shadow-mack);
+    border-bottom: 1px solid var(--card-border);
     background-color: var(--pre-hover-bg);
     overflow: auto;
 

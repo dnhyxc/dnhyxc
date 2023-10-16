@@ -700,6 +700,9 @@ export const onDownloadFile = async ({ url, type = 'png' }: { url: string; type?
  * @param {size} 水印文字大小
  * @param {markTextWidth} 水印文字元素宽度
  * @param {markTextHeight} 水印文字元素高度
+ * @param {markType} 水印类型，line: 单行，more: 多行
+ * @param {spacing} 多行水印间距
+ * @param {markOffsetTop} 多行水印垂直位置调整值
  * @return {canvas} HTMLCanvasElement
  */
 export const convas2ImgAddWatermark = async ({
@@ -714,6 +717,9 @@ export const convas2ImgAddWatermark = async ({
   text,
   markTextWidth,
   markTextHeight,
+  spacing = 100,
+  markType = 'line',
+  markOffsetTop,
 }: {
   imgUrl: string;
   top: number;
@@ -725,7 +731,10 @@ export const convas2ImgAddWatermark = async ({
   text: string;
   markTextWidth: number;
   markTextHeight: number;
+  spacing?: number;
+  markType?: string;
   type?: string;
+  markOffsetTop?: number;
 }) => {
   // 1.图片路径转成canvas
   const tempCanvas = await imgToCanvas(imgUrl);
@@ -741,6 +750,9 @@ export const convas2ImgAddWatermark = async ({
     color,
     markTextWidth,
     markTextHeight,
+    spacing,
+    markType,
+    markOffsetTop,
   });
   // 指定格式 PNG
   return canvas.toDataURL(`image/${type}`);
@@ -775,22 +787,72 @@ export const addImgWatermark = (params: {
   color: string;
   markTextWidth: number;
   markTextHeight: number;
+  markType: string; // 水印类型
+  spacing: number; // 水印间距
+  markOffsetTop?: number;
 }) => {
-  const { canvas, text, size, top, left, width, height, color, markTextWidth, markTextHeight } = params;
-  const ctx = canvas.getContext('2d');
-  ctx!.fillStyle = color;
-  ctx!.textAlign = 'right';
-  ctx!.textBaseline = 'bottom';
-  ctx!.font = `${(canvas.width / width) * size}px sans-serif`; // 设置字体样式
-  if (left && top) {
-    ctx!.fillText(
-      text,
-      (canvas.width / width) * left + (canvas.width / width) * markTextWidth,
-      (canvas.height / height) * top + (canvas.height / height) * markTextHeight,
-    );
+  const {
+    canvas,
+    text,
+    size,
+    top,
+    left,
+    width,
+    height,
+    color,
+    markTextWidth,
+    markTextHeight,
+    markType,
+    spacing,
+    markOffsetTop = 0,
+  } = params;
+  const ctx = canvas.getContext('2d')!;
+  ctx.fillStyle = color;
+  ctx.font = `${(canvas.width / width) * size}px sans-serif`; // 设置字体样式
+  // 设置多行水印
+  const setMoreLineWatermark = () => {
+    const textMetrics = ctx.measureText(text);
+    // 水印文本宽度
+    const textWidth = textMetrics.width;
+    // 水印文本高度
+    const textHeight = textMetrics.fontBoundingBoxAscent;
+    // 计算水印的起始位置，使其水平和垂直居中排列
+    const cols = Math.floor(canvas.width / (textWidth + spacing));
+    const rows = Math.floor(canvas.height / (textHeight + spacing));
+    // 计算水印上间距和左间距
+    const startX = (canvas.width - cols * textWidth - (cols - 1) * spacing) / 2;
+    const startY = (canvas.height - rows * textHeight - (rows - 1) * spacing) / 2 + 15 + markOffsetTop;
+    // 绘制水印
+    for (let i = 0; i < rows; i++) {
+      for (let j = 0; j < cols; j++) {
+        const x = startX + j * (textWidth + spacing);
+        const y = startY + i * (textHeight + spacing);
+        ctx.fillText(text, x, y);
+      }
+    }
+  };
+
+  // 设置单行水印
+  const setOneLineWatermark = () => {
+    ctx.textAlign = 'right';
+    ctx.textBaseline = 'bottom';
+    if (left && top) {
+      ctx!.fillText(
+        text,
+        (canvas.width / width) * left + (canvas.width / width) * markTextWidth,
+        (canvas.height / height) * top + (canvas.height / height) * markTextHeight,
+      );
+    } else {
+      ctx!.fillText(text, canvas.width - 20, canvas.height - 20);
+    }
+  };
+
+  if (markType === 'line') {
+    setOneLineWatermark();
   } else {
-    ctx!.fillText(text, canvas.width - 20, canvas.height - 20);
+    setMoreLineWatermark();
   }
+
   return canvas;
 };
 
@@ -810,4 +872,156 @@ export const diffType = (value: string | number | string | boolean | Function | 
     '[object Date]': 'date',
   };
   return types[type];
+};
+
+// 设置盲水印
+export const createWaterMark = ({
+  canvas,
+  url,
+  text,
+  fontSize,
+  fontFamily,
+}: {
+  canvas: HTMLCanvasElement;
+  url: string;
+  text: string;
+  fontSize: string;
+  fontFamily: string;
+}) => {
+  const ctx = canvas.getContext('2d')!;
+  const img = new Image();
+  img.crossOrigin = '';
+  let textData, originalData;
+  img.src = url;
+  // 图片加载完成
+  img.onload = () => {
+    // 设置画布宽高为图片宽高
+    canvas.width = img.width;
+    canvas.height = img.height;
+    // 设置水印字体
+    ctx.font = `${fontSize} ${fontFamily}`;
+    const textMetrics = ctx.measureText(text);
+    // 水印文本宽度
+    const textWidth = textMetrics.width;
+    // 水印文本高度
+    const textHeight = textMetrics.fontBoundingBoxAscent;
+    // 水印上下间距
+    const spacing = 100;
+    // 计算水印的起始位置，使其水平和垂直居中排列
+    const rows = Math.floor(canvas.height / (textHeight + spacing));
+    const cols = Math.floor(canvas.width / (textWidth + spacing));
+    const startX = (canvas.width - (cols * textWidth + (cols - 1) * spacing)) / 2;
+    const startY = (canvas.height - (rows * textHeight + (rows - 1) * spacing)) / 2 + 15;
+    // 绘制水印
+    for (let i = 0; i < rows; i++) {
+      for (let j = 0; j < cols; j++) {
+        const x = startX + j * (textWidth + spacing);
+        const y = startY + i * (textHeight + spacing);
+        ctx.fillText(text, x, y);
+      }
+    }
+    // 此时画布上已经有了水印的信息，我们获取水印的各个像素的信息
+    textData = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height);
+    // 将图片绘入画布
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+    originalData = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height);
+    // 调用盲水印算法
+    mergeData({ ctx, textData, color: 'R', originalData });
+  };
+
+  // 盲水印加密算法
+  function mergeData({
+    ctx,
+    textData,
+    color,
+    originalData,
+  }: {
+    ctx: CanvasRenderingContext2D;
+    textData: any;
+    color: string;
+    originalData: any;
+  }) {
+    const oData = originalData.data;
+    const newData = textData.data;
+    // offset的作用是找到结合bit找到对应的A值，即透明度
+    let bit, offset;
+
+    switch (color) {
+      case 'R':
+        bit = 0;
+        offset = 3;
+        break;
+      case 'G':
+        bit = 1;
+        offset = 2;
+        break;
+      case 'B':
+        bit = 2;
+        offset = 1;
+        break;
+    }
+
+    for (let i = 0; i < oData.length; i++) {
+      // 此处是为了筛选我们要修改的RGB中那一项，在此处，过滤出来的就是每个坐标点的R值
+      if (i % 4 === bit) {
+        // 我们获取到R值的位置，那对应这个点的A值就是i+offset
+        if (newData[i + offset!] === 0 && oData[i] % 2 === 1) {
+          // 此处先判断该坐标点的透明度，如果为0，说明这个点是没有水印的，将没有水印信息点的R值变为偶数，并且不能超过0-255的范围
+          if (oData[i] === 255) {
+            oData[i]--;
+          } else {
+            oData[i]++;
+          }
+        } else if (newData[i + offset!] !== 0 && oData[i] % 2 === 0) {
+          // 透明度非0，该点有信息，若该点的R值是偶数，将其改为奇数
+          oData[i]++;
+        }
+      }
+    }
+    // 至此，整个图片中所有包含水印信息的点的R值都是奇数，没有水印信息的点的R值都是偶数，再将图片绘入画布，即完成整个水印添加过程
+    ctx.putImageData(originalData, 0, 0);
+  }
+};
+
+// 解密盲水印
+export const processWaterMark = (canvas: HTMLCanvasElement, url: string) => {
+  const ctx = canvas.getContext('2d')!;
+  const img = new Image();
+  let originalData = null;
+  img.src = url;
+  // 图片加载完成
+  img.onload = function () {
+    canvas.width = img.width;
+    canvas.height = img.height;
+    ctx.drawImage(img, 0, 0, img.width, img.height);
+    // 将带有盲水印的图片绘入画布，获取到像素点的RGBA数组信息
+    originalData = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height);
+    // 调用盲水印解密算法
+    processData(ctx, originalData);
+  };
+
+  // 盲水印解密算法
+  function processData(ctx: CanvasRenderingContext2D, originalData: any) {
+    const data = originalData.data;
+    for (let i = 0; i < data.length; i++) {
+      // 筛选每个像素点的R值
+      if (i % 4 === 0) {
+        if (data[i] % 2 === 0) {
+          // 如果R值为偶数，说明这个点是没有水印信息的，将其R值设为0
+          data[i] = 0;
+        } else {
+          // 如果R值为奇数，说明这个点是有水印信息的，将其R值设为255
+          data[i] = 255;
+        }
+      } else if (i % 4 === 3) {
+        // 透明度不作处理
+        continue;
+      } else {
+        // G、B值设置为0，不影响
+        data[i] = 0;
+      }
+    }
+    // 至此，带有水印信息的点都将展示为255,0,0   而没有水印信息的点将展示为0,0,0  将结果绘制到画布
+    ctx.putImageData(originalData, 0, 0);
+  }
 };
