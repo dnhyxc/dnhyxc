@@ -27,27 +27,26 @@
             >
               {{ markText }}
             </span>
-            <img
-              v-if="base64Url && markType === 'line'"
-              ref="uploadImgRef"
-              :src="watermarkUrl || base64Url"
-              alt=""
-              class="upload-img"
-            />
+            <img v-if="base64Url" ref="uploadImgRef" :src="watermarkUrl || base64Url" alt="" class="upload-img" />
           </div>
         </div>
       </div>
       <div class="action-list">
         <div class="setting">
-          <div class="title">水印设置</div>
           <div class="mark-inp">
             <span class="label">水印文字：</span>
             <el-input v-model="markText" maxlength="20" placeholder="请输入水印文字" />
           </div>
-          <div class="mark-inp">
+          <div v-if="markType !== 'blind'" class="mark-inp">
             <span class="label">文字颜色：</span>
             <div class="color-wrap">
               <el-color-picker v-model="markColor" />
+            </div>
+          </div>
+          <div v-if="markType === 'blind'" class="mark-inp">
+            <span class="label">水印间距：</span>
+            <div class="color-wrap">
+              <el-input-number v-model="markSpacing" />
             </div>
           </div>
           <div class="mark-inp">
@@ -56,7 +55,7 @@
               <el-input-number v-model="markSize" :min="12" :max="100" />
             </div>
           </div>
-          <div v-if="markType !== 'line'" class="mark-inp">
+          <div v-if="markType === 'more'" class="mark-inp">
             <span class="label">多行水印垂直位置调整：</span>
             <div class="color-wrap">
               <el-input-number v-model="markOffsetTop" />
@@ -70,8 +69,11 @@
           <el-button class="btn" type="primary" :disabled="!base64Url" @click="addWatermark('more')"
             >设置多行水印</el-button
           >
-          <el-button class="btn" type="primary" :disabled="!base64Url" @click="addBlindWatermark()"
+          <el-button class="btn" type="primary" :disabled="!base64Url" @click="addBlindWatermark('blind')"
             >设置盲水印</el-button
+          >
+          <el-button class="btn" type="primary" :disabled="!base64Url" @click="processBlindWatermark()"
+            >盲水印解密</el-button
           >
           <el-button class="btn" :disabled="!watermarkUrl" @click="onPreview">预览水印</el-button>
           <el-button class="btn" type="success" :disabled="!watermarkUrl" @click="onDownload">下载图片</el-button>
@@ -81,15 +83,16 @@
     </div>
     <ImagePreview
       v-model:previewVisible="previewVisible"
+      title="预览水印"
       :show-water-modal="showWaterModal"
-      :select-image="{ url: watermarkUrl || base64Url }"
+      :select-image="{ url: blindWatermarkUrl || watermarkUrl || base64Url }"
     />
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed, ref, watch, nextTick } from 'vue';
-import { convas2ImgAddWatermark, onDownloadFile, checkOS, createWaterMark } from '@/utils';
+import { convas2ImgAddWatermark, onDownloadFile, checkOS, createWaterMark, processWaterMark } from '@/utils';
 
 interface Emits {
   (e: 'update:modalVisible', visible: boolean): void;
@@ -100,12 +103,16 @@ const emit = defineEmits<Emits>();
 const markTextRef = ref<HTMLDivElement | null>(null);
 const uploadImgRef = ref<HTMLImageElement | null>(null);
 const watermarkUrl = ref<string>('');
+// 解析的盲水印路径
+const blindWatermarkUrl = ref<string>('');
 // 压缩前的图片路径
 const base64Url = ref<string>('');
 const markText = ref<string>('@dnhyxc');
 const markType = ref<string>('line');
 const markColor = ref<string>('#EAEAEA');
 const markSize = ref<number>(20);
+// 盲水印间距
+const markSpacing = ref<number>(100);
 const markOffsetTop = ref<number>(0);
 // 水印文字移动的信息
 const moveInfo = ref<{ top: number; left: number }>({ top: 0, left: 0 });
@@ -138,7 +145,7 @@ watch([markColor, markSize, markText, markType, markOffsetTop], (newVal, oldVal)
       timer = null;
     }
     timer = setTimeout(() => {
-      addWatermark();
+      newVal[3] !== 'blind' && addWatermark();
       if (newVal[3] !== oldVal[3] && moveInfo.value.top !== 0 && moveInfo.value.left !== 0) {
         markInitTop.value = moveInfo.value.top + 'px';
         markInitLeft.value = moveInfo.value.left + 'px';
@@ -162,7 +169,12 @@ const onUpload = async (event: { file: Blob }) => {
 };
 
 // 图片预览
-const onPreview = () => {
+const onPreview = async () => {
+  if (markType.value === 'blind') {
+    blindWatermarkUrl.value = await processWaterMark(watermarkUrl.value);
+  } else {
+    blindWatermarkUrl.value = '';
+  }
   previewVisible.value = true;
 };
 
@@ -190,21 +202,23 @@ const addWatermark = async (type?: string) => {
 };
 
 // 设置盲水印
-const addBlindWatermark = async () => {
-  console.log('设置盲水印');
+const addBlindWatermark = async (type: string) => {
+  markType.value = type;
   const res = await createWaterMark({
-    text: 'dnhyxc-xixi-zczc-yhyh',
-    fontSize: '20px',
+    text: 'dnhyxc',
+    fontSize: `${markSize.value}px`,
     fontFamily: 'Microsoft Yahei',
-    spacing: 200,
-    // url: 'https://pic1.zhimg.com/80/v2-137fa06cbb1f31da2b1eed57b5894c8a_720w.webp?source=1940ef5c',
-    url: 'https://pic.imgdb.cn/item/5f9cb7401cd1bbb86b80e1e8.jpg',
-    // url: "https://fc.sinaimg.cn/large/007W46Vsgy1grs0siinh9j30iy0p940e.jpg",
-    // url: "https://ts1.cn.mm.bing.net/th/id/R-C.0701bfd07d363bb5611fef6cdc72a65e?rik=%2bgHdDajWXaTrBA&riu=http%3a%2f%2fwww.zwf20.com%2fuploads%2fallimg%2f210302%2f4-2103021641330-L.jpg&ehk=d7P9cY9dV%2fY15sMlQn%2bwzPOyD9iHQXXCHPEah3YE21M%3d&risl=&pid=ImgRaw&r=0",
-    // url: "./image/4.jpg",
+    spacing: markSpacing.value,
+    url: base64Url.value,
+    color: markColor.value,
   });
+  watermarkUrl.value = res;
+};
 
-  console.log(res, 'res');
+// 解密盲水印
+const processBlindWatermark = async () => {
+  const res = await processWaterMark(watermarkUrl.value || base64Url.value);
+  watermarkUrl.value = res;
 };
 
 // 下载
@@ -225,6 +239,7 @@ const onReset = () => {
   };
   markType.value = 'line';
   markOffsetTop.value = 0;
+  blindWatermarkUrl.value = '';
 };
 
 // 关闭

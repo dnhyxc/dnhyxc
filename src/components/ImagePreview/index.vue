@@ -8,7 +8,7 @@
   <el-dialog v-model="visible" :close-on-click-modal="false" align-center width="88vw" @close="onClose">
     <template #header>
       <div class="actions">
-        <span class="title">图片预览</span>
+        <span class="title">{{ title || '图片预览' }}</span>
         <div class="icon-list">
           <el-tooltip effect="light" :content="isMaxed ? '不能再大了' : '放大'" placement="top">
             <i class="font iconfont icon-fangda" @click="onScaleMax" />
@@ -58,6 +58,7 @@ interface IProps {
   previewVisible: boolean;
   showPrevAndNext?: boolean;
   showWaterModal?: Function;
+  title?: string;
 }
 
 const props = defineProps<IProps>();

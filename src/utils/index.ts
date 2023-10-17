@@ -849,7 +849,9 @@ export const addImgWatermark = (params: {
 
   if (markType === 'line') {
     setOneLineWatermark();
-  } else {
+  }
+
+  if (markType === 'more') {
     setMoreLineWatermark();
   }
 
@@ -875,65 +877,65 @@ export const diffType = (value: string | number | string | boolean | Function | 
 };
 
 // 设置盲水印
-export const createWaterMark = async ({
+export const createWaterMark = ({
   url,
   text,
   fontSize,
   fontFamily,
   spacing,
+  color,
 }: {
   url: string;
   text: string;
   fontSize: string;
   fontFamily: string;
   spacing: number; // 水印上下间距
-}) => {
+  color?: string;
+}): Promise<string> => {
   const canvas = document.createElement('canvas');
-  console.log(canvas, 'canvas');
-
-  const ctx = canvas.getContext('2d')!;
-  console.log(ctx, 'ctx');
-
+  const ctx = canvas.getContext('2d', { willReadFrequently: true })!;
   const img = new Image();
   img.crossOrigin = '';
   let textData, originalData;
   img.src = url;
   // 图片加载完成
-  img.onload = () => {
-    // 设置画布宽高为图片宽高
-    canvas.width = img.width;
-    canvas.height = img.height;
-    // 设置水印字体
-    ctx.font = `${fontSize} ${fontFamily}`;
-    const textMetrics = ctx.measureText(text);
-    // 水印文本宽度
-    const textWidth = textMetrics.width;
-    // 水印文本高度
-    const textHeight = textMetrics.fontBoundingBoxAscent;
-    // 计算水印的起始位置，使其水平和垂直居中排列
-    const rows = Math.floor(canvas.height / (textHeight + spacing));
-    const cols = Math.floor(canvas.width / (textWidth + spacing));
-    const startX = (canvas.width - (cols * textWidth + (cols - 1) * spacing)) / 2;
-    const startY = (canvas.height - (rows * textHeight + (rows - 1) * spacing)) / 2 + 15;
-    // 绘制水印
-    for (let i = 0; i < rows; i++) {
-      for (let j = 0; j < cols; j++) {
-        const x = startX + j * (textWidth + spacing);
-        const y = startY + i * (textHeight + spacing);
-        ctx.fillText(text, x, y);
+  return new Promise((resolve) => {
+    img.onload = () => {
+      // 设置画布宽高为图片宽高
+      canvas.width = img.width;
+      canvas.height = img.height;
+      ctx.fillStyle = color;
+      // 设置水印字体
+      ctx.font = `${fontSize} ${fontFamily}`;
+      const textMetrics = ctx.measureText(text);
+      // 水印文本宽度
+      const textWidth = textMetrics.width;
+      // 水印文本高度
+      const textHeight = textMetrics.fontBoundingBoxAscent;
+      // 计算水印的起始位置，使其水平和垂直居中排列
+      const rows = Math.floor(canvas.height / (textHeight + spacing));
+      const cols = Math.floor(canvas.width / (textWidth + spacing));
+      const startX = (canvas.width - (cols * textWidth + (cols - 1) * spacing)) / 2;
+      const startY = (canvas.height - (rows * textHeight + (rows - 1) * spacing)) / 2 + 15;
+      // 绘制水印
+      for (let i = 0; i < rows; i++) {
+        for (let j = 0; j < cols; j++) {
+          const x = startX + j * (textWidth + spacing);
+          const y = startY + i * (textHeight + spacing);
+          ctx.fillText(text, x, y);
+        }
       }
-    }
-    // 此时画布上已经有了水印的信息，我们获取水印的各个像素的信息
-    textData = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height);
-    // 将图片绘入画布
-    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-    originalData = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height);
-    // 调用盲水印算法
-    mergeData({ ctx, textData, color: 'R', originalData });
-    console.log(canvas, 'canvas', canvas.toDataURL('image/png'));
-
-    return canvas.toDataURL('image/png');
-  };
+      // 此时画布上已经有了水印的信息，我们获取水印的各个像素的信息
+      textData = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height);
+      // 将图片绘入画布
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      originalData = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height);
+      // 调用盲水印算法
+      mergeData({ ctx, textData, color: 'R', originalData });
+      const url = canvas.toDataURL('image/png');
+      resolve(url);
+    };
+  });
 
   // 盲水印加密算法
   function mergeData({
@@ -990,21 +992,26 @@ export const createWaterMark = async ({
 };
 
 // 解密盲水印
-export const processWaterMark = (canvas: HTMLCanvasElement, url: string) => {
-  const ctx = canvas.getContext('2d')!;
+export const processWaterMark = (url: string): Promise<string> => {
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d', { willReadFrequently: true })!;
   const img = new Image();
   let originalData = null;
   img.src = url;
   // 图片加载完成
-  img.onload = function () {
-    canvas.width = img.width;
-    canvas.height = img.height;
-    ctx.drawImage(img, 0, 0, img.width, img.height);
-    // 将带有盲水印的图片绘入画布，获取到像素点的RGBA数组信息
-    originalData = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height);
-    // 调用盲水印解密算法
-    processData(ctx, originalData);
-  };
+  return new Promise((resolve) => {
+    img.onload = () => {
+      canvas.width = img.width;
+      canvas.height = img.height;
+      ctx.drawImage(img, 0, 0, img.width, img.height);
+      // 将带有盲水印的图片绘入画布，获取到像素点的RGBA数组信息
+      originalData = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height);
+      // 调用盲水印解密算法
+      processData(ctx, originalData);
+      const processUrl = canvas.toDataURL('image/png');
+      resolve(processUrl);
+    };
+  });
 
   // 盲水印解密算法
   function processData(ctx: CanvasRenderingContext2D, originalData: any) {
