@@ -23,18 +23,7 @@
               <div class="drag-info">图片上传之后，拖动图片中的文字，可更改水印位置</div>
             </template>
           </DragUpload>
-          <div v-if="!base64Url && imgFrom" class="online">
-            <el-input
-              v-model="onlineUrl"
-              :autosize="{ minRows: 5, maxRows: 8 }"
-              type="textarea"
-              size="large"
-              resize="none"
-              class="href-inp"
-              placeholder="请输入在线链接"
-            />
-            <el-button size="large" type="primary" class="href-btn" @click="onUseOnlineUrl">使用链接</el-button>
-          </div>
+          <OnlineImage v-if="!base64Url && imgFrom" :on-use-online-url="onUseOnlineUrl" />
           <div class="upload-img-wrap">
             <span
               v-if="base64Url && markType === 'line'"
@@ -109,8 +98,8 @@
 
 <script setup lang="ts">
 import { computed, ref, watch, nextTick } from 'vue';
-import { ElMessage } from 'element-plus';
-import { convas2ImgAddWatermark, onDownloadFile, checkOS, createWaterMark, processWaterMark, checkUrl } from '@/utils';
+import { convas2ImgAddWatermark, onDownloadFile, checkOS, createWaterMark, processWaterMark } from '@/utils';
+import OnlineImage from '../OnlineImage/index.vue';
 
 interface Emits {
   (e: 'update:modalVisible', visible: boolean): void;
@@ -203,16 +192,8 @@ const onUpload = async (event: { file: Blob }) => {
 };
 
 // 使用在线链接
-const onUseOnlineUrl = () => {
-  if (checkUrl(onlineUrl.value)) {
-    base64Url.value = onlineUrl.value;
-  } else {
-    ElMessage({
-      message: '链接无效，请重新输入',
-      type: 'error',
-      offset: 80,
-    });
-  }
+const onUseOnlineUrl = (url: string) => {
+  base64Url.value = url;
 };
 
 // 图片预览
@@ -398,31 +379,6 @@ const onClose = () => {
         .drag-info {
           color: @active;
           margin-top: 10px;
-        }
-      }
-
-      .online {
-        display: flex;
-        align-items: center;
-        flex-direction: column;
-        height: 100%;
-        width: 100%;
-        box-sizing: border-box;
-        border-bottom-left-radius: 5px;
-        padding: 10px;
-        .href-inp {
-          flex: 1;
-
-          :deep {
-            .el-textarea__inner {
-              height: 100% !important;
-            }
-          }
-        }
-
-        .href-btn {
-          margin-top: 10px;
-          width: 100%;
         }
       }
     }

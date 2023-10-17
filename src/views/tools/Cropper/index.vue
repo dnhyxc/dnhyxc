@@ -9,7 +9,13 @@
     <div class="title">
       <div class="left">
         <span>图片剪裁</span>
-        <span class="title-info">{{ `（当前采用${option.fixed ? '固定裁剪' : '自定义裁剪'}比例进行裁剪）` }}</span>
+        <span class="title-info">
+          （当前采用<span v-if="option.fixed" class="type">固定裁剪</span>
+          <span v-else class="type">自定义裁剪</span>比例进行裁剪）
+        </span>
+        <span class="left-action">
+          <el-switch v-model="imgFrom" size="small" active-text="在线图片" inactive-text="本地图片" />
+        </span>
       </div>
       <span class="close" @click="onClose">关闭</span>
     </div>
@@ -37,10 +43,11 @@
     </div>
     <div class="content">
       <DragUpload
-        v-if="!cropperUrl && !sourceUrl"
+        v-if="!cropperUrl && !sourceUrl && !imgFrom"
         :class="`${checkOS() === 'mac' && 'drag-upload-mac'} drag-upload`"
         :on-upload="onUpload"
       />
+      <OnlineImage v-if="!cropperUrl && !sourceUrl && imgFrom" :on-use-online-url="onUseOnlineUrl" />
     </div>
     <div class="footer">
       <el-button type="primary" class="btn roportion" @click="onCropFixed">
@@ -50,7 +57,7 @@
       <el-button type="primary" class="btn" plain :disabled="!sourceUrl" @click="onScaleMin">缩小</el-button>
       <el-button type="primary" class="btn" plain :disabled="!sourceUrl" @click="onRotate">旋转</el-button>
       <el-dropdown>
-        <el-button type="primary" class="btn" :disabled="!sourceUrl" plain>比例</el-button>
+        <el-button type="primary" class="btn" :disabled="!sourceUrl || !option.fixed" plain>比例</el-button>
         <template #dropdown>
           <el-dropdown-menu>
             <el-dropdown-item v-for="item in IMG_ROPORTIONS" :key="item.key" @click="onRoportion(item.value)">
@@ -74,10 +81,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, nextTick } from 'vue';
+import { ref, reactive, nextTick, watch } from 'vue';
 import { VueCropper } from 'vue-cropper';
 import { getImgInfo, onDownloadFile, checkOS } from '@/utils';
 import { IMG_ROPORTIONS } from '@/constant';
+import OnlineImage from '../OnlineImage/index.vue';
 import 'vue-cropper/dist/index.css';
 
 const emit = defineEmits(['update:modalVisible']);
@@ -100,6 +108,8 @@ const fileInfo = ref<File | null>(null);
 const imgHeight = ref<number>(0);
 // 标识是否设置过了比例
 const isRoportioned = ref<boolean>(false);
+// 图片来源
+const imgFrom = ref<boolean>(false);
 // 截图器配置
 const option = reactive({
   img: '',
@@ -120,6 +130,13 @@ const option = reactive({
   infoTrue: true, // true 为展示真实输出图片宽高 false 展示看到的截图框宽高
 });
 
+// 切换图片来源时,重置
+watch(imgFrom, (newVal, oldVal) => {
+  if (newVal !== oldVal) {
+    onRefresh();
+  }
+});
+
 // 自定义上传
 const onUpload = (event: { file: Blob }) => {
   fileInfo.value = event.file as File;
@@ -130,6 +147,13 @@ const onUpload = (event: { file: Blob }) => {
     setCropSize();
   };
   reader.readAsDataURL(event.file);
+};
+
+// 设置在线链接
+const onUseOnlineUrl = (url: string) => {
+  cropperVisible.value = true;
+  sourceUrl.value = url;
+  setCropSize();
 };
 
 // 初始化裁剪比例
@@ -243,6 +267,10 @@ const onClose = () => {
       .title-info {
         font-size: 14px;
         color: var(--font-5);
+
+        .type {
+          color: @active;
+        }
       }
     }
 
@@ -259,6 +287,7 @@ const onClose = () => {
 
   .cropper {
     height: v-bind(cropperHeight);
+    height: calc(100vh - 182px);
   }
 
   .cropper-mac {
@@ -273,6 +302,8 @@ const onClose = () => {
     border-bottom: 1px solid var(--card-border);
     background-color: var(--pre-hover-bg);
     overflow: auto;
+    height: calc(100% - 88px);
+    box-sizing: border-box;
 
     .drag-upload {
       height: calc(100vh - 182px);
