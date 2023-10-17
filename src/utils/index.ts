@@ -883,14 +883,12 @@ export const createWaterMark = ({
   fontSize,
   fontFamily,
   spacing,
-  color,
 }: {
   url: string;
   text: string;
   fontSize: string;
   fontFamily: string;
   spacing: number; // 水印上下间距
-  color?: string;
 }): Promise<string> => {
   const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d', { willReadFrequently: true })!;
@@ -904,7 +902,6 @@ export const createWaterMark = ({
       // 设置画布宽高为图片宽高
       canvas.width = img.width;
       canvas.height = img.height;
-      ctx.fillStyle = color;
       // 设置水印字体
       ctx.font = `${fontSize} ${fontFamily}`;
       const textMetrics = ctx.measureText(text);

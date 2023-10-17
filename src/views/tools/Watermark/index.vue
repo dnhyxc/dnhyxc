@@ -137,7 +137,7 @@ watch(base64Url, (newVal) => {
 });
 
 // 监听水印颜色、文字大小、水印文字的变化
-watch([markColor, markSize, markText, markType, markOffsetTop], (newVal, oldVal) => {
+watch([markColor, markSize, markText, markType, markOffsetTop, markSpacing], (newVal, oldVal) => {
   let timer = null;
   if (base64Url.value) {
     if (timer) {
@@ -145,7 +145,11 @@ watch([markColor, markSize, markText, markType, markOffsetTop], (newVal, oldVal)
       timer = null;
     }
     timer = setTimeout(() => {
-      newVal[3] !== 'blind' && addWatermark();
+      if (newVal[3] !== 'blind') {
+        addWatermark();
+      } else {
+        addBlindWatermark();
+      }
       if (newVal[3] !== oldVal[3] && moveInfo.value.top !== 0 && moveInfo.value.left !== 0) {
         markInitTop.value = moveInfo.value.top + 'px';
         markInitLeft.value = moveInfo.value.left + 'px';
@@ -202,15 +206,14 @@ const addWatermark = async (type?: string) => {
 };
 
 // 设置盲水印
-const addBlindWatermark = async (type: string) => {
-  markType.value = type;
+const addBlindWatermark = async (type?: string) => {
+  type && (markType.value = type);
   const res = await createWaterMark({
-    text: 'dnhyxc',
+    text: markText.value,
     fontSize: `${markSize.value}px`,
-    fontFamily: 'Microsoft Yahei',
+    fontFamily: 'sans-serif',
     spacing: markSpacing.value,
     url: base64Url.value,
-    color: markColor.value,
   });
   watermarkUrl.value = res;
 };
