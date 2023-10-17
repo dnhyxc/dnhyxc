@@ -7,70 +7,7 @@
 <template>
   <Loading :loading="timelineStore.loading" class="timeline-wrap">
     <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
-      <el-timeline>
-        <el-timeline-item
-          v-for="item in timelineStore.timelineList"
-          :key="item.date"
-          :color="'var(--theme-blue)'"
-          :timestamp="`${item.date} 年`"
-          placement="top"
-        >
-          <div
-            v-for="card in item.articles"
-            :key="card.id"
-            class="timeline-card"
-            @click.stop="toDetail(card)"
-            @mousedown.stop="(e: MouseEvent) => onMouseDown(e, card)"
-          >
-            <i v-if="!card.isTop" class="font iconfont icon-zhiding" />
-            <div class="left">
-              <div class="date">
-                {{ card.createTime && formatDate(card.createTime) }}
-                <div v-if="card.authorId === loginStore.userInfo?.userId" class="right">
-                  <span class="edit" @click.stop="toEdit(card)">编辑</span>
-                  <span class="del" @click.stop="onReomve(card)">下架</span>
-                </div>
-              </div>
-              <div class="title">
-                {{ card.title }}
-                <div class="author" @click.stop="toPersonal(card.authorId!)">{{ card.authorName || '-' }}</div>
-              </div>
-              <div class="abstract">{{ card.abstract }}</div>
-              <div class="actions">
-                <div class="action-item">
-                  <div class="action like" @click.stop="likeListArticle(card)">
-                    <i
-                      :class="`font like-icon iconfont ${card.isLike ? 'icon-24gf-thumbsUp2' : 'icon-24gl-thumbsUp2'}`"
-                    />
-                    <span>{{ card.likeCount || '点赞' }}</span>
-                  </div>
-                  <div class="action comment" @click.stop="onComment(card)">
-                    <i class="font comment-icon iconfont icon-pinglun" />
-                    <span>{{ card.commentCount || '评论' }}</span>
-                  </div>
-                  <div class="action read-count">
-                    <i class="font read-icon iconfont icon-yanjing" />
-                    <span class="text read">{{ card.readCount || '阅读' }}</span>
-                  </div>
-                </div>
-                <div class="tag-list">
-                  <span class="classify" @click.stop="toClassify(card.classify!)">分类：{{ card.classify }}</span>
-                  <span class="tag" @click.stop="toTag(card.tag!)">标签：{{ card.tag }}</span>
-                </div>
-              </div>
-            </div>
-            <div class="right">
-              <Image :url="card.coverImage || IMG1" :transition-img="IMG1" class="img" />
-            </div>
-            <ContentMenu
-              v-show="commonStore.showContextmenu && commonStore.currentArticleId === card.id"
-              :data="card"
-              :on-open-new-window="onOpenNewWindow"
-              :to-detail="toDetail"
-            />
-          </div>
-        </el-timeline-item>
-      </el-timeline>
+      <ElTimeline :timeline-list="timelineStore.timelineList" />
       <div v-if="timelineStore.timelineList?.length > 0" class="no-more">没有更多了～～～</div>
       <Empty v-if="showEmpty" />
     </el-scrollbar>
@@ -80,24 +17,21 @@
 
 <script setup lang="ts">
 import { ipcRenderer } from 'electron';
-import { onMounted, computed, inject, ref } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { onMounted, computed, inject } from 'vue';
+import { useRoute } from 'vue-router';
 import { useScroller } from '@/hooks';
-import { scrollTo, formatDate, showMessage, ipcRenderers } from '@/utils';
-import { timelineStore, articleStore, loginStore, commonStore } from '@/store';
-import { IMG1 } from '@/constant';
+import { scrollTo } from '@/utils';
+import { timelineStore } from '@/store';
 import ToTopIcon from '@/components/ToTopIcon/index.vue';
 import Loading from '@/components/Loading/index.vue';
 import Empty from '@/components/Empty/index.vue';
-import { ArticleItem, WinRefreshParams, TimelineArticles } from '@/typings/common';
+import { WinRefreshParams } from '@/typings/common';
 
 const reload = inject<Function>('reload');
 
 const route = useRoute();
-const router = useRouter();
 // scrollRef：el-scrollbar ref，scrollTop：滚动距离
 const { scrollRef, scrollTop } = useScroller();
-const isLike = ref<boolean>(false);
 
 const showEmpty = computed(
   () => timelineStore.loading !== null && !timelineStore.loading && !timelineStore.timelineList?.length,
@@ -115,96 +49,6 @@ onMounted(async () => {
 
   await timelineStore.getTimelineList();
 });
-
-// 编辑
-const toEdit = async (data: ArticleItem | TimelineArticles) => {
-  if ((data as ArticleItem)?.isDelete) {
-    return showMessage();
-  }
-  router.push(`/create?id=${data.id}`);
-};
-
-// 删除
-const onReomve = async (data: ArticleItem | TimelineArticles) => {
-  if ((data as ArticleItem)?.isDelete) {
-    return showMessage();
-  }
-  timelineStore.deleteTimelineArticle(data.id!);
-};
-
-// 文章点赞
-const likeListArticle = async (data: ArticleItem | TimelineArticles) => {
-  if (isLike.value) return;
-  isLike.value = true;
-  await articleStore.likeListArticle({ id: data.id, isTimeLine: true, data } as ArticleItem);
-  isLike.value = false;
-};
-
-// 去作者主页
-const toPersonal = (id: string) => {
-  router.push(`/personal?authorId=${id}`);
-  let timer: ReturnType<typeof setTimeout> | null = null;
-  if (route.path === '/personal') {
-    if (timer) {
-      clearTimeout(timer);
-      timer = null;
-    }
-    timer = setTimeout(() => {
-      reload?.();
-      timer = null;
-    }, 100);
-  }
-};
-
-// 去分类页
-const toClassify = (classify: string) => {
-  router.push(`/classify?classify=${classify}`);
-};
-
-// 去标签
-const toTag = (tag: string) => {
-  if (route.path !== '/tag/list') {
-    router.push(`/tag/list?tag=${tag}`);
-  }
-};
-
-// 前往详情/编辑
-const toDetail = (data: ArticleItem | TimelineArticles) => {
-  if ((data as ArticleItem)?.isDelete) {
-    return showMessage();
-  }
-  router.push(`/detail/${data?.id}`);
-};
-
-// 评论
-const onComment = (data: ArticleItem | TimelineArticles) => {
-  if ((data as ArticleItem)?.isDelete) {
-    return showMessage();
-  }
-  router.push(`/detail/${data?.id}?scrollTo=1`);
-};
-
-// 监听鼠标右键，分别进行不同的操作
-const onMouseDown = (e: MouseEvent, data: ArticleItem | TimelineArticles) => {
-  // 使用新窗口打开
-  if (e.button === 2) {
-    commonStore.showContextmenu = true;
-    commonStore.currentArticleId = data.id!;
-  }
-};
-
-// 新窗口打开
-const onOpenNewWindow = (data: ArticleItem) => {
-  if ((data as ArticleItem)?.isDelete) {
-    return showMessage();
-  }
-  const { userInfo, token } = loginStore;
-  ipcRenderers.sendNewWin({
-    path: `article/${data.id}?from=${route.name as string}`,
-    id: data.id,
-    userInfo: JSON.stringify({ userInfo, token }),
-  });
-};
 
 // 置顶
 const onScrollTo = () => {
@@ -238,6 +82,10 @@ const onScrollTo = () => {
     margin-bottom: 15px;
     border-radius: 5px;
     cursor: pointer;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
 
     .icon-zhiding {
       position: absolute;
@@ -428,7 +276,18 @@ const onScrollTo = () => {
     }
 
     .el-timeline-item__tail {
-      border-left: 2px solid var(--card-border);
+      border: 1px solid;
+      border-image: linear-gradient(to bottom, @colors) 1;
+    }
+
+    .el-timeline-item__node {
+      background-image: linear-gradient(45deg, @colors);
+    }
+
+    .el-timeline-item__node--normal {
+      left: -3px;
+      width: 16px;
+      height: 16px;
     }
   }
 
@@ -440,7 +299,7 @@ const onScrollTo = () => {
   .no-more {
     text-align: center;
     color: var(--font-4);
-    margin: 16px 0 0;
+    margin: 2px 0 15px;
   }
 }
 </style>
