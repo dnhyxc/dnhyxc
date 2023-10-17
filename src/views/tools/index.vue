@@ -183,6 +183,51 @@ const onClickNavIcon = (item: ToolsItem) => {
       }
     }
   }
+
+  :deep {
+    .el-color-picker {
+      flex: 1;
+    }
+    .el-color-picker__trigger {
+      width: 100%;
+      border: 1px solid var(--card-border);
+      padding: 0;
+    }
+
+    .el-input__wrapper {
+      color: var(--font-1);
+      background-color: var(--input-bg-color);
+    }
+
+    .el-input__inner {
+      color: var(--font-1);
+      background-color: transparent;
+    }
+
+    .el-color-picker__color {
+      border: none;
+    }
+
+    .el-color-picker__color-inner {
+      border-radius: 4px;
+    }
+
+    .el-color-picker__icon {
+      color: var(--font-1);
+    }
+
+    .el-input-number {
+      width: 100%;
+    }
+
+    .el-switch__label {
+      color: var(--font-5);
+    }
+
+    .el-switch__label.is-active {
+      color: var(--theme-blue);
+    }
+  }
 }
 
 .board-wrap {

@@ -8,11 +8,23 @@
   <div class="compress-wrap">
     <div class="content">
       <div class="header">
-        <span class="left">图片压缩</span>
+        <div class="left">
+          <span>图片压缩</span>
+          <span class="left-action">
+            <el-switch
+              v-model="imgFrom"
+              size="small"
+              style="--el-switch-off-color: var(--theme-blue); --el-switch-on-color: var(--active)"
+              active-text="在线图片"
+              inactive-text="本地图片"
+            />
+          </span>
+        </div>
         <span class="close" @click="onClose">关闭</span>
       </div>
       <el-scrollbar ref="scrollRef" max-height="calc(100vh - 182px)" wrap-class="scrollbar-wrapper">
-        <DragUpload class="compress-upload" :on-upload="onUpload" />
+        <DragUpload v-if="!imgFrom" class="compress-upload" :on-upload="onUpload" />
+        <OnlineImage v-else :on-use-online-url="onUseOnlineUrl" />
         <div v-if="sourceUrl" class="image-container">
           <div class="contrast">
             <span class="title">压缩前后对比</span>
@@ -136,11 +148,21 @@
 
 <script setup lang="ts">
 import { ipcRenderer } from 'electron';
-import { computed, ref, reactive, onUnmounted } from 'vue';
+import { computed, ref, reactive, onUnmounted, watch } from 'vue';
 import type { CSSProperties } from 'vue';
 import type { FormInstance, FormRules } from 'element-plus';
 import { ElMessage } from 'element-plus';
-import { compressImage, getImgInfo, Verify, checkNumber, checkMin, checkMax, ipcRenderers } from '@/utils';
+import {
+  compressImage,
+  getImgInfo,
+  Verify,
+  checkNumber,
+  checkMin,
+  checkMax,
+  ipcRenderers,
+  onlineImgToFile,
+} from '@/utils';
+import OnlineImage from '../OnlineImage/index.vue';
 
 interface IProps {
   modalVisible: boolean;
@@ -180,6 +202,8 @@ const imgSize = reactive<{
   imgWidth: null,
   imgHeight: null,
 });
+// 图片来源
+const imgFrom = ref<boolean>(false);
 // 预览图片
 const previewUrls = ref<string[]>([]);
 // 图片预览弹窗
@@ -232,6 +256,12 @@ withDefaults(defineProps<IProps>(), {
 
 const emit = defineEmits<Emits>();
 
+watch(imgFrom, (newVal, oldVal) => {
+  if (newVal !== oldVal) {
+    onRefresh();
+  }
+});
+
 onUnmounted(() => {
   onRefresh();
 });
@@ -270,6 +300,26 @@ const onUpload = async (event: { file: File }) => {
   reader.readAsDataURL(event.file);
 };
 
+// 使用在线链接
+const onUseOnlineUrl = async (url: string) => {
+  const file = await onlineImgToFile(url);
+  selectFile.value = file;
+  sourceUrl.value = url;
+  // 获取上传的图片宽高
+  const imgInfo = (await getImgInfo(url)) as { width: number; height: number };
+  sourceFileInfo.width = imgInfo.width;
+  sourceFileInfo.height = imgInfo.height;
+  // 清空压缩后的图片路径
+  base64Url.value = '';
+  // 清空上次上传的图片
+  imgSize.imgWidth = null;
+  imgSize.imgHeight = null;
+  verifys.value = new Verify({
+    maxSize: Math.max(sourceFileInfo.width, sourceFileInfo.height) || 5000,
+    minSize: 100,
+  });
+};
+
 // 压缩
 const onCompress = async () => {
   if (!formRef.value || !selectFile.value) return;
@@ -293,8 +343,6 @@ const onCompress = async () => {
 const onPreview = () => {
   previewVisible.value = true;
   previewUrls.value = [sourceUrl.value, base64Url.value];
-  // emit('update:previewUrls', [sourceUrl.value, base64Url.value]);
-  // emit('update:modalVisible', false);
 };
 
 // 重置
@@ -357,10 +405,6 @@ const onClosePreview = () => {
       background-color: var(--input-bg-color);
     }
 
-    .el-input__wrapper {
-      background-color: var(--input-bg-color);
-    }
-
     .el-slider__button {
       width: 16px;
       height: 16px;
@@ -380,16 +424,21 @@ const onClosePreview = () => {
       justify-content: space-between;
       height: 45px;
       width: 100%;
+      color: var(--font-1);
 
       .left {
         font-size: 18px;
+      }
+
+      .left-action {
+        margin-left: 10px;
       }
 
       .close {
         color: var(--theme-blue);
         cursor: pointer;
 
-        &:hover{
+        &:hover {
           color: @active;
         }
       }

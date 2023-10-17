@@ -1035,3 +1035,24 @@ export const processWaterMark = (url: string): Promise<string> => {
     ctx.putImageData(originalData, 0, 0);
   }
 };
+
+// 在线图片转为File
+export const onlineImgToFile = async (url: string): Promise<File> => {
+  const blob = await fetch(url).then((response) => response.blob());
+  const file = new File([blob], 'image.jpg', { type: 'image/jpeg' });
+  return file;
+};
+
+// 检测链接是否是可用的图片
+export const checkImage = (link: string) => {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => {
+      resolve(true);
+    };
+    img.onerror = () => {
+      resolve(false);
+    };
+    img.src = link;
+  });
+};

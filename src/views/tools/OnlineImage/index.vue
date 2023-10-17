@@ -22,7 +22,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { ElMessage } from 'element-plus';
-import { checkUrl } from '@/utils';
+import { checkImage } from '@/utils';
 
 const onlineUrl = ref<string>('');
 
@@ -32,9 +32,10 @@ interface IProps {
 
 const props = defineProps<IProps>();
 
-const onUseOnlineUrl = () => {
+const onUseOnlineUrl = async () => {
+  const status = await checkImage(onlineUrl.value);
   // 使用在线链接
-  if (checkUrl(onlineUrl.value)) {
+  if (status) {
     props?.onUseOnlineUrl?.(onlineUrl.value);
   } else {
     ElMessage({
@@ -65,6 +66,7 @@ const onUseOnlineUrl = () => {
     :deep {
       .el-textarea__inner {
         height: 100% !important;
+        background-color: var(--input-bg-color);
       }
     }
   }

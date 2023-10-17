@@ -14,7 +14,13 @@
           <span v-else class="type">自定义裁剪</span>比例进行裁剪）
         </span>
         <span class="left-action">
-          <el-switch v-model="imgFrom" size="small" active-text="在线图片" inactive-text="本地图片" />
+          <el-switch
+            v-model="imgFrom"
+            style="--el-switch-off-color: var(--theme-blue); --el-switch-on-color: var(--active)"
+            size="small"
+            active-text="在线图片"
+            inactive-text="本地图片"
+          />
         </span>
       </div>
       <span class="close" @click="onClose">关闭</span>
@@ -259,6 +265,7 @@ const onClose = () => {
     height: 45px;
     padding: 0 10px;
     border-bottom: 1px solid var(--card-border);
+    color: var(--font-1);
 
     .left {
       display: flex;

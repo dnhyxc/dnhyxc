@@ -10,7 +10,13 @@
       <div class="left">
         <span class="left-text">图片加水印</span>
         <span class="left-action">
-          <el-switch v-model="imgFrom" size="small" active-text="在线图片" inactive-text="本地图片" />
+          <el-switch
+            v-model="imgFrom"
+            style="--el-switch-off-color: var(--theme-blue); --el-switch-on-color: var(--active)"
+            size="small"
+            active-text="在线图片"
+            inactive-text="本地图片"
+          />
         </span>
       </div>
       <span class="close" @click="onClose">关闭</span>
@@ -291,6 +297,7 @@ const onClose = () => {
     height: 45px;
     padding: 0 10px;
     border-bottom: 1px solid var(--card-border);
+    color: var(--font-1);
 
     .left-action {
       margin-left: 10px;
@@ -425,33 +432,6 @@ const onClose = () => {
 
             .current-color {
               margin-left: 10px;
-            }
-
-            :deep {
-              .el-color-picker {
-                flex: 1;
-              }
-              .el-color-picker__trigger {
-                width: 100%;
-                border: 1px solid var(--card-border);
-                padding: 0;
-              }
-
-              .el-color-picker__color {
-                border: none;
-              }
-
-              .el-color-picker__color-inner {
-                border-radius: 4px;
-              }
-
-              .el-color-picker__icon {
-                color: var(--font-1);
-              }
-
-              .el-input-number {
-                width: 100%;
-              }
             }
           }
         }

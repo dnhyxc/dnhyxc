@@ -30,7 +30,7 @@ const removeStyle = {
   // 图片背景兼容字体颜色
   '--font-color': '',
   // 详情代码块背景颜色
-  '--pre-bg-color': '#282c34',
+  '--pre-bg-color': '#fff',
   // 文章预览背景颜色
   '--pre-hover-bg': 'initial',
   // 右键菜单背景颜色
@@ -227,6 +227,7 @@ const black = {
   // 子级评论背景颜色
   '--layer-2-2': 'rgba(38, 42, 51, 0.98)',
   ...removeStyle,
+  '--pre-bg-color': '#282828',
   '--pop-menu-color': '#333',
 };
 
