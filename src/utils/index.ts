@@ -949,7 +949,8 @@ export const createWaterMark = ({
     const oData = originalData.data;
     const newData = textData.data;
     // offset的作用是找到结合bit找到对应的A值，即透明度
-    let bit, offset;
+    let bit = 0;
+    let offset = 3;
 
     switch (color) {
       case 'R':

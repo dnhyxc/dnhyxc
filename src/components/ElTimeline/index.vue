@@ -82,8 +82,8 @@ const router = useRouter();
 
 interface IProps {
   timelineList: TimelineResult[];
-  deleteTimeLineArticle?: (id: string) => void;
-  likeListArticle?: (data: ArticleItem) => void;
+  deleteTimeLineArticle?: (data: ArticleItem) => void;
+  likeListArticle?: (id: string, data: ArticleItem) => void;
 }
 
 const props = defineProps<IProps>();
@@ -103,14 +103,14 @@ const onReomve = async (data: ArticleItem | TimelineArticles) => {
   if ((data as ArticleItem)?.isDelete) {
     return showMessage();
   }
-  props?.deleteTimeLineArticle?.(data);
+  props?.deleteTimeLineArticle?.(data as ArticleItem);
 };
 
 // 文章点赞
 const likeListArticle = async (data: ArticleItem | TimelineArticles) => {
   if (isLike.value) return;
   isLike.value = true;
-  await props?.likeListArticle?.(data.id, data);
+  await props?.likeListArticle?.(data?.id!, data as ArticleItem);
   isLike.value = false;
 };
 

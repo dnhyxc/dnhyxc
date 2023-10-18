@@ -138,7 +138,7 @@ import LineCard from '@/components/LineCard/index.vue';
 import Image from '@/components/Image/index.vue';
 import Loading from '@/components/Loading/index.vue';
 import Empty from '@/components/Empty/index.vue';
-import { ArticleItem, FollowItem, WinRefreshParams } from '@/typings/common';
+import { ArticleItem, FollowItem, WinRefreshParams, TimelineArticles } from '@/typings/common';
 
 const reload = inject<Function>('reload');
 
@@ -241,8 +241,8 @@ const likeListArticle = async (id: string, data?: ArticleItem) => {
 };
 
 // 删除博主页面时间轴
-const deleteTimeLineArticle = async (data: ArticleItem) => {
-  await authorStore.deleteTimelineArticle(data.id);
+const deleteTimeLineArticle = async (data: ArticleItem | TimelineArticles) => {
+  await authorStore.deleteTimelineArticle(data?.id!);
 };
 
 // 关注/取消关注
