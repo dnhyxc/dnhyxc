@@ -7,7 +7,13 @@
 <template>
   <div class="el-timeline-wrap">
     <el-timeline>
-      <el-timeline-item v-for="item in timelineList" :key="item.date" :timestamp="`${item.date} 年`" placement="top">
+      <el-timeline-item
+        v-for="item in timelineList"
+        :key="item.date"
+        :timestamp="`${item.date} 年`"
+        placement="top"
+        class="timeline-item"
+      >
         <div
           v-for="card in item.articles"
           :key="card.id"
@@ -185,6 +191,11 @@ const onOpenNewWindow = (data: ArticleItem) => {
 @import '@/styles/index.less';
 
 .el-timeline-wrap {
+  .timeline-item {
+    &:last-child {
+      padding-bottom: 0;
+    }
+  }
   .timeline-card {
     position: relative;
     display: flex;

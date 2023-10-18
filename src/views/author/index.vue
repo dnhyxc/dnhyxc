@@ -279,7 +279,7 @@ const onScrollTo = (to?: number) => {
 @import '@/styles/index.less';
 
 .author-wrap {
-  height: 100%;
+  height: calc(100% - 2px);
   padding-left: 4px;
   padding-right: 3px;
 

@@ -77,14 +77,14 @@ const onScrollTo = () => {
 @import '@/styles/index.less';
 
 .timeline-wrap {
-  width: 100%;
-  height: 100%;
   border-radius: 5px;
   box-shadow: 0 0 8px 0 var(--shadow-mack);
   background-color: var(--pre-hover-bg);
   box-sizing: border-box;
   margin-left: 5px;
+  margin-top: 3px;
   padding-right: 3px;
+  height: calc(100% - 3px);
   width: calc(100% - 9px);
   padding: 10px 5px 10px 0;
 
