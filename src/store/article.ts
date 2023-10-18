@@ -336,9 +336,9 @@ export const useArticleStore = defineStore('article', {
           );
         }
         // 时间轴页面
-        if (isTimeLine || authorStore.currentTabKey === '2') {
+        if (isTimeLine || authorStore.currentTabKey === '3') {
           const cloneArticles: TimelineResult[] =
-            authorStore.currentTabKey !== '2'
+            authorStore.currentTabKey !== '3'
               ? JSON.parse(JSON.stringify(timelineStore.timelineList))
               : JSON.parse(JSON.stringify(authorStore.timelineList));
 
@@ -355,8 +355,8 @@ export const useArticleStore = defineStore('article', {
             });
             return i;
           });
-          // authorStore.currentTabKey !== '2' 为时间轴页面，否则为博主时间轴页面
-          if (authorStore.currentTabKey !== '2') {
+          // authorStore.currentTabKey !== '3' 为时间轴页面，否则为博主时间轴页面
+          if (authorStore.currentTabKey !== '3') {
             timelineStore.timelineList = timelineList;
           } else {
             authorStore.timelineList = timelineList;

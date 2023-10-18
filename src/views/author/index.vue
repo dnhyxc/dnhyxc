@@ -103,10 +103,10 @@
                     :is-auth-user-id="authorStore.userInfo?.userId"
                   />
                 </div>
-                <Timeline
+                <ElTimeline
                   v-if="tab.value === '4'"
-                  :data-source="authorStore.timelineList"
-                  :delete-article="deleteTimeLineArticle"
+                  :timeline-list="authorStore.timelineList"
+                  :delete-time-line-article="deleteTimeLineArticle"
                   :like-list-article="likeListArticle"
                 />
                 <div v-if="noMore" class="no-more">没有更多了～～～</div>
@@ -135,7 +135,6 @@ import { authorStore, articleStore, followStore } from '@/store';
 import { useDeleteArticle, useScroller } from '@/hooks';
 import { scrollTo, checkUrl, checkOS } from '@/utils';
 import LineCard from '@/components/LineCard/index.vue';
-import Timeline from '@/components/Timeline/index.vue';
 import Image from '@/components/Image/index.vue';
 import Loading from '@/components/Loading/index.vue';
 import Empty from '@/components/Empty/index.vue';
@@ -202,6 +201,7 @@ onMounted(async () => {
 onUnmounted(() => {
   // 清除点赞列表数据
   followStore.clearInteractList();
+  authorStore.currentTabKey = '0';
 });
 
 // 获取各tab文章列表
@@ -241,8 +241,8 @@ const likeListArticle = async (id: string, data?: ArticleItem) => {
 };
 
 // 删除博主页面时间轴
-const deleteTimeLineArticle = (id: string) => {
-  authorStore.deleteTimelineArticle(id);
+const deleteTimeLineArticle = async (data: ArticleItem) => {
+  await authorStore.deleteTimelineArticle(data.id);
 };
 
 // 关注/取消关注

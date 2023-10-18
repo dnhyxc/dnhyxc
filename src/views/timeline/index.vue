@@ -7,7 +7,11 @@
 <template>
   <Loading :loading="timelineStore.loading" class="timeline-wrap">
     <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
-      <ElTimeline :timeline-list="timelineStore.timelineList" />
+      <ElTimeline
+        :timeline-list="timelineStore.timelineList"
+        :delete-time-line-article="deleteTimeLineArticle"
+        :like-list-article="likeListArticle"
+      />
       <div v-if="timelineStore.timelineList?.length > 0" class="no-more">没有更多了～～～</div>
       <Empty v-if="showEmpty" />
     </el-scrollbar>
@@ -20,12 +24,12 @@ import { ipcRenderer } from 'electron';
 import { onMounted, computed, inject } from 'vue';
 import { useRoute } from 'vue-router';
 import { useScroller } from '@/hooks';
-import { scrollTo } from '@/utils';
-import { timelineStore } from '@/store';
+import { scrollTo, showMessage } from '@/utils';
+import { timelineStore, articleStore } from '@/store';
 import ToTopIcon from '@/components/ToTopIcon/index.vue';
 import Loading from '@/components/Loading/index.vue';
 import Empty from '@/components/Empty/index.vue';
-import { WinRefreshParams } from '@/typings/common';
+import { WinRefreshParams, ArticleItem, TimelineArticles } from '@/typings/common';
 
 const reload = inject<Function>('reload');
 
@@ -49,6 +53,19 @@ onMounted(async () => {
 
   await timelineStore.getTimelineList();
 });
+
+// 删除
+const deleteTimeLineArticle = async (data: ArticleItem | TimelineArticles) => {
+  if ((data as ArticleItem)?.isDelete) {
+    return showMessage();
+  }
+  await timelineStore.deleteTimelineArticle(data.id!);
+};
+
+// 文章点赞
+const likeListArticle = async (id: string, data: ArticleItem | TimelineArticles) => {
+  await articleStore.likeListArticle({ id, isTimeLine: true, data } as ArticleItem);
+};
 
 // 置顶
 const onScrollTo = () => {
@@ -258,36 +275,6 @@ const onScrollTo = () => {
           }
         }
       }
-    }
-  }
-
-  :deep {
-    .el-timeline {
-      margin: 0 10px;
-    }
-
-    .el-timeline-item__wrapper {
-      padding-left: 20px;
-    }
-
-    .el-timeline-item__timestamp {
-      font-size: 20px;
-      padding-top: 2px;
-    }
-
-    .el-timeline-item__tail {
-      border: 1px solid;
-      border-image: linear-gradient(to bottom, @colors) 1;
-    }
-
-    .el-timeline-item__node {
-      background-image: linear-gradient(45deg, @colors);
-    }
-
-    .el-timeline-item__node--normal {
-      left: -3px;
-      width: 16px;
-      height: 16px;
     }
   }
 

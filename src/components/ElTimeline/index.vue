@@ -15,7 +15,7 @@
           @click.stop="toDetail(card)"
           @mousedown.stop="(e: MouseEvent) => onMouseDown(e, card)"
         >
-          <i v-if="!card.isTop" class="font iconfont icon-zhiding" />
+          <i v-if="card.isTop" class="font iconfont icon-zhiding" />
           <div class="left">
             <div class="date">
               {{ card.createTime && formatDate(card.createTime) }}
@@ -71,7 +71,7 @@
 import { inject, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { formatDate, showMessage, ipcRenderers } from '@/utils';
-import { timelineStore, articleStore, loginStore, commonStore } from '@/store';
+import { loginStore, commonStore } from '@/store';
 import { IMG1 } from '@/constant';
 import { ArticleItem, TimelineArticles, TimelineResult } from '@/typings/common';
 
@@ -82,9 +82,11 @@ const router = useRouter();
 
 interface IProps {
   timelineList: TimelineResult[];
+  deleteTimeLineArticle?: (id: string) => void;
+  likeListArticle?: (data: ArticleItem) => void;
 }
 
-defineProps<IProps>();
+const props = defineProps<IProps>();
 
 const isLike = ref<boolean>(false);
 
@@ -101,14 +103,14 @@ const onReomve = async (data: ArticleItem | TimelineArticles) => {
   if ((data as ArticleItem)?.isDelete) {
     return showMessage();
   }
-  timelineStore.deleteTimelineArticle(data.id!);
+  props?.deleteTimeLineArticle?.(data);
 };
 
 // 文章点赞
 const likeListArticle = async (data: ArticleItem | TimelineArticles) => {
   if (isLike.value) return;
   isLike.value = true;
-  await articleStore.likeListArticle({ id: data.id, isTimeLine: true, data } as ArticleItem);
+  await props?.likeListArticle?.(data.id, data);
   isLike.value = false;
 };
 
@@ -354,13 +356,11 @@ const onOpenNewWindow = (data: ArticleItem) => {
       max-width: 200px;
       box-sizing: border-box;
       display: flex;
-      // max-height: 130px;
 
       .img {
         display: block;
         height: 100%;
         width: 100%;
-        // max-height: 85px;
         border-radius: 5px;
         .imgStyle();
 
@@ -382,9 +382,15 @@ const onOpenNewWindow = (data: ArticleItem) => {
       padding-left: 20px;
     }
 
+    .el-timeline-item__content {
+      margin-top: 10px;
+    }
+
     .el-timeline-item__timestamp {
+      display: inline;
       font-size: 20px;
-      padding-top: 2px;
+      line-height: 24px;
+      .textLg();
     }
 
     .el-timeline-item__tail {
@@ -397,9 +403,9 @@ const onOpenNewWindow = (data: ArticleItem) => {
     }
 
     .el-timeline-item__node--normal {
-      left: -3px;
-      width: 16px;
-      height: 16px;
+      left: -2px;
+      width: 15px;
+      height: 15px;
     }
   }
 }
