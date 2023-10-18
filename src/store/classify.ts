@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import { Classifys, ArticleItem, ArticleListResult } from '@/typings/common';
 import { ElMessage } from 'element-plus';
 import * as Service from '@/server';
-import { normalizeResult } from '@/utils';
+import { normalizeResult, hlightKeyword } from '@/utils';
 import { commonStore } from '@/store';
 import { PAGESIZE } from '@/constant';
 
@@ -44,6 +44,7 @@ export const useClassifyStore = defineStore('classify', {
 
     // 获取文章分类
     async getClassifyList(classify?: string) {
+      if (!this.currentClassify && !classify && !this.classifys[0]?.name!) return;
       if (this.articleList.length !== 0 && this.articleList.length >= this.total) return;
       this.pageNo = this.pageNo + 1;
       this.loading = true;
@@ -57,7 +58,8 @@ export const useClassifyStore = defineStore('classify', {
       const res = normalizeResult<ArticleListResult>(await Service.getClassifyList(params));
       this.loading = false;
       if (res.success) {
-        this.articleList = [...this.articleList, ...res.data.list];
+        const list = [...this.articleList, ...res.data.list];
+        this.articleList = commonStore.keyword ? hlightKeyword(commonStore.keyword, list) : list;
         this.total = res.data.total;
       } else {
         ElMessage({

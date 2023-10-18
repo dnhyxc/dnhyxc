@@ -3,7 +3,7 @@ import { Router } from 'vue-router';
 import type { Ref } from 'vue';
 import { ElMessage } from 'element-plus';
 import * as Service from '@/server';
-import { normalizeResult, Message, getStoreUserInfo, ipcRenderers } from '@/utils';
+import { normalizeResult, Message, getStoreUserInfo, ipcRenderers, hlightKeyword } from '@/utils';
 import { useCheckUserId } from '@/hooks';
 import {
   ArticleListResult,
@@ -82,7 +82,8 @@ export const useArticleStore = defineStore('article', {
       );
       this.loading = false;
       if (res.success) {
-        this.articleList = [...this.articleList, ...res.data.list];
+        const list = [...this.articleList, ...res.data.list];
+        this.articleList = commonStore.keyword ? hlightKeyword(commonStore.keyword, list) : list;
         this.total = res.data.total;
       } else {
         ElMessage({

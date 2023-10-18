@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import { ArticleItem, ArticleListResult } from '@/typings/common';
 import { ElMessage } from 'element-plus';
 import * as Service from '@/server';
-import { normalizeResult } from '@/utils';
+import { normalizeResult, hlightKeyword } from '@/utils';
 import { PAGESIZE } from '@/constant';
 
 interface IProps {
@@ -45,8 +45,8 @@ export const useSearchStore = defineStore('search', {
       this.loading = false;
       if (res.success) {
         const { total, list } = res.data;
-        // 使用ref暂存list，防止滚动加载时，list添加错乱问题
-        this.articleList = [...this.articleList, ...list];
+        const dataList = [...this.articleList, ...list];
+        this.articleList = hlightKeyword(this.keyword, dataList);
         this.total = total;
       } else {
         ElMessage({

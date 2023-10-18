@@ -9,7 +9,7 @@
     <i v-if="data.isTop && !isTimeLine" class="font iconfont icon-zhiding" />
     <div class="title">
       <slot name="title">
-        <div :class="`left ${data.isTop && !isTimeLine && 'is-top'}`">{{ data.title || '-' }}</div>
+        <div :class="`left ${data.isTop && !isTimeLine && 'is-top'}`" v-html="data.title" />
         <div v-if="data.authorId === loginStore.userInfo?.userId" class="right">
           <span class="edit" @click.stop="toEdit(data)">编辑</span>
           <span class="del" @click.stop="onReomve(data)">下架</span>
@@ -19,17 +19,15 @@
     <div class="content">
       <slot name="content">
         <div class="art-info">
-          <div class="desc">
-            {{ data.abstract || '-' }}
-          </div>
+          <div class="desc" v-html="data.abstract" />
           <div class="tags">
-            <div class="author" @click.stop="toPersonal(data.authorId!)">{{ data.authorName || '-' }}</div>
+            <div class="author" @click.stop="toPersonal(data.authorId!)" v-html="data.authorName" />
             <div class="right">
               <el-tooltip class="box-item" effect="light" :content="`分类：${data.classify}`" placement="bottom">
-                <div class="classify" @click.stop="toClassify(data.classify!)">{{ data.classify || '-' }}</div>
+                <div class="classify" @click.stop="toClassify(data.classify!)" v-html="data.classify" />
               </el-tooltip>
               <el-tooltip class="box-item" effect="light" :content="`标签：${data.tag}`" placement="bottom">
-                <div class="tag" @click.stop="toTag(data.tag!)">{{ data.tag || '-' }}</div>
+                <div class="tag" @click.stop="toTag(data.tag!)" v-html="data.tag" />
               </el-tooltip>
             </div>
           </div>

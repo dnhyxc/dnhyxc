@@ -22,9 +22,7 @@
         </div>
         <Image :url="data.coverImage || IMG1" :transition-img="IMG1" class="img" />
         <div class="info">
-          <div class="desc">
-            {{ data.abstract }}
-          </div>
+          <div class="desc" v-html="data.abstract" />
         </div>
         <ContentMenu
           v-show="commonStore.showContextmenu && commonStore.currentArticleId === data.id"
@@ -36,23 +34,21 @@
       <div class="card-bottom">
         <slot>
           <div class="header">
-            <div class="title">
-              {{ data.title }}
-            </div>
+            <div class="title" v-html="data.title" />
           </div>
           <div class="art-info">
             <div class="create-info">
-              <span class="author" @click.stop="toPersonal(data.authorId!)">{{ data.authorName }}</span>
+              <span class="author" @click.stop="toPersonal(data.authorId!)" v-html="data.authorName" />
               <span class="date">{{ data.createTime ? formatDate(data.createTime, 'YYYY/MM/DD') : '-' }}</span>
             </div>
             <div class="classifys">
               <span class="classify" @click.stop="toClassify(data.classify!)">
                 <span class="label">分类: </span>
-                {{ data.classify }}
+                <span v-html="data.classify" />
               </span>
               <span class="tag" @click.stop="toTag(data.tag!)">
                 <span class="label">标签: </span>
-                {{ data.tag }}
+                <span v-html="data.tag" />
               </span>
             </div>
             <div class="actions">
