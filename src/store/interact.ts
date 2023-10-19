@@ -24,7 +24,7 @@ export const useInteractStore = defineStore('interact', {
     loading: null,
     interactLoading: null,
     pageNo: 0,
-    pageSize: 100,
+    pageSize: 20,
     total: 0,
   }),
 
@@ -78,8 +78,8 @@ export const useInteractStore = defineStore('interact', {
     },
 
     // 分页获取留言列表
-    async getInteractList(router?: Router) {
-      if (this.interactList.length !== 0 && this.interactList.length >= this.total) return;
+    async getInteractList(reset?: boolean, onScroll?: Function, isDelete?: boolean) {
+      if (!reset && this.interactList.length !== 0 && this.interactList.length >= this.total) return;
       this.pageNo = this.pageNo + 1;
       this.loading = true;
       const params = {
@@ -89,8 +89,9 @@ export const useInteractStore = defineStore('interact', {
       const res = normalizeResult<InteractListRes>(await Service.getInteractList(params));
       this.loading = false;
       if (res.success) {
-        this.interactList = [...this.interactList, ...res.data.list];
+        this.interactList = reset ? res.data.list : [...this.interactList, ...res.data.list];
         this.total = res.data.total;
+        onScroll?.(2, isDelete);
       } else if (res.code !== 409) {
         ElMessage({
           message: res.message,
@@ -102,17 +103,19 @@ export const useInteractStore = defineStore('interact', {
     },
 
     // 添加留言
-    addInteract(params: BarrageItem) {
-      this.interactList = [params, ...this.interactList];
+    addInteract(onScrollTo: Function) {
+      this.clearInteractList(false);
+      this.getInteractList(true, onScrollTo);
     },
 
     // 删除留言
-    async delInteract(id: string) {
-      Message('', '确定要删除该留言吗？').then(async () => {
+    async delInteract(id: string | string[], onScrollTo: Function) {
+      Message('', !id.length ? '确定要删除该留言吗？' : '确定要清空所有吗？').then(async () => {
         const res = normalizeResult<InteractListRes>(await Service.removeInteracts(id));
         if (res.success) {
-          this.interactList = this.interactList.filter((i) => i.id !== id);
-          this.barrageList = this.barrageList.filter((i) => i.id !== id);
+          this.barrageList = id.length ? this.barrageList.filter((i) => i.id !== id) : [];
+          this.clearInteractList(false);
+          this.getInteractList(true, onScrollTo, true);
           ElMessage({
             message: res.message,
             type: 'success',
@@ -129,8 +132,10 @@ export const useInteractStore = defineStore('interact', {
     },
 
     // 清除文章列表数据
-    clearInteractList() {
-      this.interactList = [];
+    clearInteractList(clear: boolean = true) {
+      if (clear) {
+        this.interactList = [];
+      }
       this.total = 0;
       this.pageNo = 0;
       this.loading = null;

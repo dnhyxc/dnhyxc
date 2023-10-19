@@ -286,7 +286,7 @@ const onScrollTo = () => {
   .no-more {
     text-align: center;
     color: var(--font-4);
-    margin: 2px 0 15px;
+    margin: 18px 0 12px;
   }
 }
 </style>

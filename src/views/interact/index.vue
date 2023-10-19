@@ -11,19 +11,22 @@
     </div>
     <Loading class="comments-wrap" :loading="interactStore.loading && interactStore.pageNo > 1">
       <div class="title">
-        <span class="text">留言列表</span>
+        <div class="text">
+          留言列表 {{ interactStore.total }} | {{ interactStore.interactList.length }}
+          <span v-if="loginStore.userInfo?.auth === 1" class="clear" @click.stop="onDelete()">清空</span>
+        </div>
         <i
           :class="`font iconfont ${scrollTop > 0 ? 'icon-shuangjiantou-shang' : 'icon-shuangjiantou-xia'}`"
-          @click="onScrollTo"
+          @click="() => onScrollTo()"
         />
       </div>
       <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
         <div
           v-if="isMounted"
           v-infinite-scroll="onFetchData"
-          :infinite-scroll-delay="300"
+          :infinite-scroll-delay="200"
           :infinite-scroll-disabled="disabled"
-          :infinite-scroll-distance="2"
+          :infinite-scroll-distance="1"
           class="comment-list"
         >
           <div
@@ -44,7 +47,11 @@
                   <span v-if="authorStore.userInfo?.userId === danmu.userId" class="auth">[博主]: </span>
                 </span>
                 <span class="create-time">{{ formatDate(danmu.createTime!, 'YYYY/MM/DD') }}</span>
-                <i v-if="loginStore.userInfo?.auth === 1" class="iconfont icon-shanchu" @click.stop="onDelete(danmu)" />
+                <i
+                  v-if="loginStore.userInfo?.auth === 1 || danmu.userId === loginStore.userInfo?.userId"
+                  class="iconfont icon-shanchu"
+                  @click.stop="onDelete(danmu)"
+                />
               </div>
               <div class="comment-content">{{ danmu.comment }}</div>
             </div>
@@ -114,7 +121,7 @@ onUnmounted(() => {
 
 // 滚动加载留言列表
 const onFetchData = async () => {
-  await interactStore.getInteractList(router);
+  await interactStore.getInteractList();
 };
 
 // 监听页面窗口大小变化，重新计算弹幕区域大小弹幕
@@ -140,8 +147,7 @@ const onEnter = async (e: InputEvent) => {
   // 调用创建留言的接口
   await interactStore.createInteract(target.value);
   target.value = '';
-  // 向留言列表中无感知的新增留言
-  interactStore.addInteract(params as BarrageItem);
+  interactStore.addInteract(onScrollTo);
 };
 
 // 去个人主页
@@ -150,14 +156,19 @@ const toPersonal = (authorId: string) => {
 };
 
 // 删除留言
-const onDelete = (item: BarrageItem) => {
-  interactStore.delInteract(item.id!);
+const onDelete = async (item?: BarrageItem) => {
+  await interactStore.delInteract(item ? item.id! : [], onScrollTo);
 };
 
 // 置顶
-const onScrollTo = () => {
+const onScrollTo = (to?: number, isDelete: boolean = false) => {
   const bottom = scrollRef.value?.wrapRef?.firstElementChild?.offsetHeight;
-  scrollTo(scrollRef, scrollTop.value > 0 ? 0 : bottom);
+  const height = scrollRef.value?.wrapRef?.offsetHeight || 0;
+  if (isDelete) {
+    scrollTo(scrollRef, scrollTop.value < height ? scrollTop.value : height);
+  } else {
+    scrollTo(scrollRef, to || (scrollTop.value > 0 ? 0 : bottom));
+  }
 };
 </script>
 
@@ -205,6 +216,17 @@ const onScrollTo = () => {
       .text {
         font-size: 18px;
         .textLg();
+      }
+
+      .clear {
+        margin-left: 5px;
+        font-size: 16px;
+        cursor: pointer;
+        .textLg();
+
+        &:hover {
+          color: @font-danger;
+        }
       }
 
       .font {

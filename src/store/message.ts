@@ -68,10 +68,16 @@ export const useMessageStore = defineStore('message', {
     async setReadStatus(ids?: string[]) {
       const msgIds = this.msgList.filter((i) => !i.isReaded).map((i) => i.id);
       if (!msgIds?.length && !ids?.length) return;
+      const allIds = ids?.length ? [...msgIds, ...ids] : msgIds;
       const residueNoReadMsgs = this.msgCount - (ids?.length || msgIds?.length);
       // 判断是否还有未读消息，如果有调用接口设置消息已读
       if (this.msgCount > 0) {
         normalizeResult<number>(await Service.setReadStatus({ msgIds: ids || msgIds }));
+        this.msgList.forEach((i) => {
+          if (allIds.includes(i.id)) {
+            i.isReaded = true;
+          }
+        });
       }
       // 计算未读数量的数量
       if (residueNoReadMsgs > 0) {

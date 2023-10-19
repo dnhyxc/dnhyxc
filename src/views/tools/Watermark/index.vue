@@ -78,16 +78,16 @@
           <el-button class="btn" type="primary" :disabled="!base64Url" @click="addWatermark('line')"
             >设置单行水印</el-button
           >
-          <el-button class="btn" type="primary" :disabled="!base64Url" @click="addWatermark('more')"
+          <el-button class="btn" type="success" :disabled="!base64Url" @click="addWatermark('more')"
             >设置多行水印</el-button
           >
           <el-button class="btn" type="primary" :disabled="!base64Url" @click="addBlindWatermark('blind')"
             >设置盲水印</el-button
           >
-          <el-button class="btn" type="primary" :disabled="!base64Url" @click="processBlindWatermark()"
+          <el-button class="btn" type="success" :disabled="!base64Url" @click="processBlindWatermark()"
             >盲水印解密</el-button
           >
-          <el-button class="btn" :disabled="!watermarkUrl" @click="onPreview">预览水印</el-button>
+          <el-button class="btn" type="primary" :disabled="!watermarkUrl" @click="onPreview">预览水印</el-button>
           <el-button class="btn" type="success" :disabled="!watermarkUrl" @click="onDownload">下载图片</el-button>
           <el-button class="btn" type="info" @click="onReset">重置</el-button>
         </div>
