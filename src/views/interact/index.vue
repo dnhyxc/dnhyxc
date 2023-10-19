@@ -12,7 +12,7 @@
     <Loading class="comments-wrap" :loading="interactStore.loading && interactStore.pageNo > 1">
       <div class="title">
         <div class="text">
-          留言列表 {{ interactStore.total }} | {{ interactStore.interactList.length }}
+          留言列表
           <span v-if="loginStore.userInfo?.auth === 1" class="clear" @click.stop="onDelete()">清空</span>
         </div>
         <i
@@ -57,7 +57,7 @@
             </div>
           </div>
         </div>
-        <div v-if="noMore" class="no-more">没有更多了～～～</div>
+        <div v-if="noMore" class="no-more">共 {{ interactStore.total }}条，没有更多了～～～</div>
         <Empty v-if="showEmpty" />
       </el-scrollbar>
       <div class="actions">
