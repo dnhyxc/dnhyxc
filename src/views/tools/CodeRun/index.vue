@@ -108,7 +108,7 @@
               },
             ]"
           >
-            <el-input v-model="codeStore.codeInfo.title" placeholder="请输入示例名称" />
+            <el-input v-model="codeStore.codeInfo.title" maxlength="20" placeholder="请输入示例名称" />
           </el-form-item>
           <el-form-item prop="abstract" label="示例描述">
             <el-input

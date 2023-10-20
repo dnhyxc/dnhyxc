@@ -8,7 +8,7 @@ import { BrowserWindow, screen, ipcMain, Rectangle } from 'electron';
 import { DOMAIN_URL, globalInfo, isDev } from './constant';
 import { startFlash, stopFlash } from './tray';
 
-let messageWin: BrowserWindow | null = null;
+// let messageWin: BrowserWindow | null = null;
 
 export const messageWinStatus = {
   isLeave: true,
@@ -21,7 +21,7 @@ let trayBounds: Rectangle;
 let point = { x: 0, y: 0 };
 
 export const createMessageWin = () => {
-  messageWin = new BrowserWindow({
+  globalInfo.messageWin = new BrowserWindow({
     width: 200,
     height: 120,
     show: false,
@@ -41,24 +41,13 @@ export const createMessageWin = () => {
   });
 
   if (!isDev) {
-    messageWin.loadURL(`${DOMAIN_URL}/message`);
+    globalInfo.messageWin.loadURL(`${DOMAIN_URL}/message`);
   } else {
     // messageWin.webContents.openDevTools();
-    messageWin.loadURL(`${process.env.VITE_DEV_SERVER_URL!}message`);
+    globalInfo.messageWin.loadURL(`${process.env.VITE_DEV_SERVER_URL!}message`);
   }
 
-  // 定位到桌面右上角
-  // const { width, height } = screen.getPrimaryDisplay().workAreaSize;
-
-  const [cwidth, cheight] = messageWin.getContentSize();
-
-  const cw = parseInt(`${cwidth / 2 - 11}`);
-
-  const bounds = globalInfo.tray?.getBounds();
-
-  messageWin.setPosition(bounds?.x! - cw, bounds?.y! - cheight);
-
-  messageWin?.on('blur', () => {
+  globalInfo.messageWin?.on('blur', () => {
     hideMessage();
   });
 };
@@ -67,14 +56,14 @@ export const createMessageWin = () => {
 ipcMain.on('show-message', (event, status) => {
   messageWinStatus.hasUnreadMsg = true;
   startFlash();
-  messageWin?.webContents.send('message-info', status);
+  globalInfo.messageWin?.webContents.send('message-info', status);
 });
 
 // 监听消息是否已读
 ipcMain.on('hide-message', (event, status) => {
   messageWinStatus.hasUnreadMsg = false;
   stopFlash();
-  messageWin?.webContents.send('message-info', status);
+  globalInfo.messageWin?.webContents.send('message-info', status);
 });
 
 // 监听渲染进程鼠标移出事件，隐藏窗口
@@ -122,12 +111,19 @@ ipcMain.on('show-message-win', (event, status) => {
 });
 
 export const showMessage = () => {
-  messageWin?.showInactive(); // 显示但不聚焦于窗口（建议做延时处理）
-  // messageWin?.show();
+  // 获取托盘图标的位置
+  // const { width, height } = screen.getPrimaryDisplay().workAreaSize;
+  // 定位到桌面右上角
+  const [cwidth, cheight] = globalInfo.messageWin!.getContentSize();
+  const cw = parseInt(`${cwidth / 2 - 11}`);
+  const bounds = globalInfo.tray?.getBounds();
+  globalInfo.messageWin?.setPosition(bounds?.x! - cw, bounds?.y! - cheight - 6);
+  globalInfo.messageWin?.showInactive(); // 显示但不聚焦于窗口（建议做延时处理）
+  // globalInfo.messageWin?.show();
 };
 
 export const hideMessage = () => {
-  messageWin?.hide();
+  globalInfo.messageWin?.hide();
 };
 
 // 检测鼠标是否移出托盘图标
@@ -150,5 +146,5 @@ export const checkTrayLeave = () => {
       messageWinStatus.isLeave = true;
       hideMessage();
     }
-  }, 300);
+  }, 300) as ReturnType<typeof setTimeout>;
 };

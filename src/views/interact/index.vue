@@ -57,7 +57,7 @@
             </div>
           </div>
         </div>
-        <div v-if="noMore" class="no-more">共 {{ interactStore.total }}条，没有更多了～～～</div>
+        <div v-if="noMore" class="no-more">共 {{ interactStore.total }} 条，没有更多了</div>
         <Empty v-if="showEmpty" />
       </el-scrollbar>
       <div class="actions">

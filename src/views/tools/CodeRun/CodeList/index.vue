@@ -21,7 +21,7 @@
           >
             <div v-for="item in codeStore.codeList" :key="item.id" class="code-item">
               <div class="header">
-                <span class="title">
+                <span class="title" :title="item.title">
                   {{ item.title }}
                 </span>
                 <div class="actions">
@@ -138,9 +138,11 @@ const onDelete = (id: string) => {
         align-items: center;
 
         .title {
+          flex: 1;
           font-size: 16px;
           font-weight: 700;
           color: var(--font-1);
+          .ellipsisMore(1);
         }
       }
 
