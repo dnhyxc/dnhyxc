@@ -91,7 +91,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { useScroller } from '@/hooks';
 import { articleStore, collectStore, loginStore, personalStore } from '@/store';
 import { ArticleItem, CollectParams, WinRefreshParams } from '@/typings/common';
-import { formatDate, scrollTo, showMessage } from '@/utils';
+import { formatDate, scrollTo } from '@/utils';
 import { HEAD_IMG } from '@/constant';
 import Card from '@/components/Card/index.vue';
 import CollectModel from '@/components/CollectModel/index.vue';
@@ -176,9 +176,6 @@ const toPersonal = () => {
 
 // 移动文章至别的分组
 const onMoveTo = (data: ArticleItem) => {
-  if (data?.isDelete) {
-    return showMessage();
-  }
   // 清空收藏集弹窗中的页码及收藏集列表数据
   collectStore.init();
   collectVisible.value = true;
@@ -187,9 +184,6 @@ const onMoveTo = (data: ArticleItem) => {
 
 // 移除文章
 const onReomve = async (data: ArticleItem) => {
-  if (data?.isDelete) {
-    return showMessage();
-  }
   collectStore.removeArticle(data.id, collectId as string);
 };
 

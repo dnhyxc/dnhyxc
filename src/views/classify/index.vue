@@ -8,14 +8,15 @@
   <Loading :loading="classifyStore.loading" :class="`${checkOS() === 'mac' && 'mac-classify-wrap'} classify-wrap`">
     <template #default>
       <Reel
+        v-if="classifyStore.articleList?.length"
         ref="reelRef"
         :width="checkOS() === 'mac' ? 'calc(100vw - 82px)' : 'calc(100vw - 80px)'"
         :on-check-classify="onCheckClassify"
         :classifys="classifyStore.classifys"
         :current-classify="classifyStore.currentClassify || route.query?.classify as string || classifyStore.classifys[0]?.name"
       />
-      <div class="content">
-        <div class="line-wrap">
+      <div :class="`content ${!classifyStore.articleList?.length && 'empty-content'}`">
+        <div v-if="classifyStore.articleList?.length" class="line-wrap">
           <i class="left-line iconfont icon-fenlei2" />
           <span class="current-classify">
             <span class="label">当前分类：</span>
@@ -76,9 +77,7 @@ const noMore = computed(() => {
   return articleList.length >= total && articleList.length;
 });
 const disabled = computed(() => classifyStore.loading || noMore.value);
-const showEmpty = computed(
-  () => classifyStore.loading !== null && !classifyStore.loading && !classifyStore.articleList?.length,
-);
+const showEmpty = computed(() => !classifyStore.loading && !classifyStore.articleList?.length);
 const lineRef = ref<any>(null);
 const dotRef = ref<any>(null);
 const scrollLeft = ref<string>('');
@@ -233,6 +232,10 @@ const likeListArticle = (id: string, data?: ArticleItem) => {
         }
       }
     }
+  }
+
+  .empty-content {
+    height: 100%;
   }
 
   :deep {
