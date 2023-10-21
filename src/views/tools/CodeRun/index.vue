@@ -115,7 +115,7 @@
               v-model="codeStore.codeInfo.abstract"
               :autosize="{ minRows: 3, maxRows: 5 }"
               type="textarea"
-              maxlength="100"
+              maxlength="500"
               show-word-limit
               resize="none"
               placeholder="请输入示例描述"
