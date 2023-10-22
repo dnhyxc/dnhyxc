@@ -17,7 +17,6 @@
             :infinite-scroll-delay="300"
             :infinite-scroll-disabled="disabled"
             :infinite-scroll-distance="2"
-            class="pullup-content"
           >
             <div v-for="item in codeStore.codeList" :key="item.id" class="code-item">
               <div class="header">
@@ -132,6 +131,10 @@ const onDelete = (id: string) => {
       box-sizing: border-box;
       margin: 0 7px 10px 5px;
 
+      &:first-child {
+        margin-top: 5px;
+      }
+
       .header {
         display: flex;
         justify-content: space-between;
@@ -181,7 +184,7 @@ const onDelete = (id: string) => {
     }
 
     .el-drawer__body {
-      padding: 20px 15px;
+      padding: 15px 15px 20px;
     }
   }
 }
