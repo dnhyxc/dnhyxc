@@ -50,6 +50,25 @@ export const createMessageWin = () => {
   globalInfo.messageWin?.on('blur', () => {
     hideMessage();
   });
+
+  const [cwidth, cheight] = globalInfo.messageWin!.getContentSize();
+  const cw = parseInt(`${cwidth / 2 - 11}`);
+  globalInfo.size = {
+    width: cw,
+    height: cheight,
+  };
+  // const { width, height } = screen.getPrimaryDisplay().workAreaSize;
+  // 获取托盘图标的位置
+  const bounds = globalInfo.tray?.getBounds()!;
+  if (bounds.x < 100) {
+    bounds.x = 1340;
+    bounds.y = 750;
+  }
+  const { width, height } = globalInfo.size;
+  const top = bounds?.y! - height - 6;
+  const left = bounds?.x! - width;
+  // 定位到桌面右上角
+  globalInfo.messageWin?.setPosition(left, top);
 };
 
 // 监听是否有未读消息
@@ -111,13 +130,6 @@ ipcMain.on('show-message-win', (event, status) => {
 });
 
 export const showMessage = () => {
-  // 获取托盘图标的位置
-  // const { width, height } = screen.getPrimaryDisplay().workAreaSize;
-  // 定位到桌面右上角
-  const [cwidth, cheight] = globalInfo.messageWin!.getContentSize();
-  const cw = parseInt(`${cwidth / 2 - 11}`);
-  const bounds = globalInfo.tray?.getBounds();
-  globalInfo.messageWin?.setPosition(bounds?.x! - cw, bounds?.y! - cheight - 6);
   globalInfo.messageWin?.showInactive(); // 显示但不聚焦于窗口（建议做延时处理）
   // globalInfo.messageWin?.show();
 };

@@ -15,9 +15,9 @@ export const globalInfo: {
   msgStatus: boolean | null;
   userInfo: string;
   messageWin: BrowserWindow | null;
-  position: {
-    left: number;
-    top: number;
+  size: {
+    width: number;
+    height: number;
   };
 } = {
   tray: null,
@@ -27,9 +27,9 @@ export const globalInfo: {
   msgStatus: true,
   // 保存用户信息
   userInfo: '',
-  position: {
-    left: 0,
-    top: 0,
+  size: {
+    width: 0,
+    height: 0,
   },
 };
 
