@@ -5,7 +5,7 @@
  * index.vue
 -->
 <template>
-  <div id="__HEADER__" :class="`${checkOS() === 'mac' && 'mac-header-wrap'} header-wrap`" @dblclick="onDblclick">
+  <div id="__HEADER__" :class="`${checkOS() === 'mac' && 'mac-header-wrap'} header-wrap`">
     <div class="left">
       <div class="icon-wrap" @click="goHome">
         <i class="page-icon iconfont icon-haidao_" />
@@ -200,12 +200,6 @@ watch(
     }
   },
 );
-
-// 双击放大窗口
-const onDblclick = () => {
-  toggle.value = !toggle.value;
-  ipcRenderers.sendWindowMax();
-};
 
 // 后退
 const goBack = () => {
