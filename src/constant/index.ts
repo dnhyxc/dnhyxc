@@ -375,9 +375,9 @@ export const MENULIST = [
     name: '文章列表',
     key: 'home',
     path: '/home',
-    icon: 'icon-Home',
-    fillIcon: 'icon-home01',
-    active: 'icon-icon',
+    icon: 'icon-home',
+    fillIcon: 'icon-home',
+    active: 'icon-home',
     show: true,
   },
   {

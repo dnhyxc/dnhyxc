@@ -18,6 +18,7 @@
             ref="inputRef"
             v-model="keyword"
             :autosize="{ minRows: 3, maxRows: 10 }"
+            maxlength="1000"
             type="textarea"
             :placeholder="
               selectComment?.content
@@ -27,14 +28,13 @@
             class="textArea"
             @focus="onFocus"
             @change="onCommentChange"
-            @keyup.enter="onEnter"
           />
         </div>
         <div v-if="showIcon || !showAvatar" id="EMOJI_WRAP" class="emojiWrap">
           <div id="EMOJI_LIST" class="emoji-list">
             <div id="ICONFONT" class="iconfontWrap">
               <span id="BIAOQING_XUE" class="iconfont">
-                <i id="BIAOQING_XUE" class="font iconfont icon-smile" @click="onShowEmoji">&nbsp;表情</i>
+                <i id="BIAOQING_XUE" class="font iconfont icon-xiaolian" @click="onShowEmoji">&nbsp;表情</i>
               </span>
               <span id="BIAOQING_XUE" class="iconfont">
                 <Upload
@@ -45,14 +45,21 @@
                   :fixed-number="[600, 338]"
                   :get-upload-url="getUploadUrl"
                 >
-                  <i id="CHARUTUPIAN" class="font iconfont icon-charutupian">&nbsp;图片</i>
+                  <i id="CHARUTUPIAN" class="font iconfont icon-tupian">&nbsp;图片</i>
                 </Upload>
               </span>
             </div>
             <Emoji v-model:showEmoji="showEmoji" class="emojis" :add-emoji="addEmoji" />
           </div>
           <div id="ACTION">
-            <el-button id="BTN" type="primary" :disabled="!keyword.trim()" @click.stop="submitComment">
+            <el-button
+              id="BTN"
+              type="primary"
+              link
+              size="large"
+              :disabled="!keyword.trim()"
+              @click.stop="submitComment"
+            >
               发表评论
             </el-button>
           </div>
@@ -145,11 +152,6 @@ const onFocus = () => {
 // 输入框onchange事件
 const onCommentChange = (word: string) => {
   keyword.value = word.trim();
-};
-
-// 回车事件
-const onEnter = () => {
-  keyword.value += '\n';
 };
 
 // 显示表情
@@ -273,7 +275,11 @@ const submitComment = async () => {
         display: flex;
         align-items: center;
         cursor: pointer;
-        font-size: 16px;
+        font-size: 14px;
+
+        &:hover {
+          color: var(--active);
+        }
 
         .icon-charutupian {
           min-width: 55px;

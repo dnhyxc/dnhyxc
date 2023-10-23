@@ -44,6 +44,12 @@
             <div v-if="isShowCollectActions" class="bottom">
               <el-button class="edit-btn" type="primary" @click="toSetting">修改个人资料</el-button>
             </div>
+            <div v-else class="bottom">
+              <el-button class="edit-btn" :type="followStore.isFollowed ? 'success' : 'primary'" @click="onFollow">
+                {{ followStore.isFollowed ? '已关注' : '关注' }}
+              </el-button>
+              <el-button class="edit-btn" type="primary" @click="toSetting">私信</el-button>
+            </div>
           </div>
         </div>
       </div>
@@ -256,6 +262,9 @@ onMounted(async () => {
     personalStore.userInfo = loginStore.userInfo;
   }
   getMyArticleList();
+  if (userId) {
+    followStore.findFollowed(userId as string);
+  }
 });
 
 watchEffect(() => {
@@ -305,7 +314,7 @@ const likeListArticle = async (id: string, data?: ArticleItem) => {
 
 // 关注/取消关注
 const onFollow = (id: string, data?: FollowItem) => {
-  followStore.manageFollow(data?.userId!, id);
+  followStore.manageFollow(data?.userId! || (userId as string), id);
 };
 
 // 新增收藏集
@@ -479,9 +488,12 @@ const onScrollTo = (to?: number) => {
         }
 
         .bottom {
+          display: flex;
+          justify-content: space-between;
           width: 100%;
 
           .edit-btn {
+            flex: 1;
             width: 100%;
           }
         }
