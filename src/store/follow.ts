@@ -9,6 +9,7 @@ import { loginStore, personalStore } from '@/store';
 
 interface IProps {
   followList: FollowItem[]; // 关注列表
+  followMeList: FollowItem[]; // 关注列表
   pageNo: number;
   pageSize: number;
   total: number; // 文章列表总数
@@ -19,6 +20,7 @@ interface IProps {
 export const useFollowStore = defineStore('follow', {
   state: (): IProps => ({
     followList: [],
+    followMeList: [],
     loading: null,
     pageNo: 0,
     pageSize: 50,
@@ -89,6 +91,32 @@ export const useFollowStore = defineStore('follow', {
       }
     },
 
+    // 分页获取关注我的用户列表
+    async getFollowMeList() {
+      if (!loginStore.token) return;
+      if (this.followMeList.length !== 0 && this.followMeList.length >= this.total) return;
+      this.pageNo = this.pageNo + 1;
+      personalStore.loading = true;
+      const res = normalizeResult<FollowList>(
+        await Service.getFollowMeList({
+          userId: loginStore.userInfo.userId,
+          pageNo: this.pageNo,
+          pageSize: this.pageSize,
+        }),
+      );
+      personalStore.loading = false;
+      if (res.success) {
+        this.followMeList = [...this.followMeList, ...res.data.list];
+        this.total = res.data.total;
+      } else {
+        ElMessage({
+          message: res.message,
+          type: 'error',
+          offset: 80,
+        });
+      }
+    },
+
     // 查询是否关注该用户
     async findFollowed(authorId: string) {
       // 检验是否有userId，如果没有禁止发送请求
@@ -102,6 +130,7 @@ export const useFollowStore = defineStore('follow', {
     // 清除文章列表数据
     clearInteractList() {
       this.followList = [];
+      this.followMeList = [];
       this.total = 0;
       this.pageNo = 0;
       this.loading = null;

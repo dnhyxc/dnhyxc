@@ -143,6 +143,9 @@ export const MANAGE_FOLLOW = '/api/manageFollow';
 // 关注/取消关注用户
 export const GET_FOLLOW_LIST = '/api/getFollowList';
 
+// 获取关注我的用户
+export const GET_FOLLOW_ME_LIST = '/api/getFollowMeList';
+
 // 查询是否关注了该用户
 export const FIND_FOLLOWED = '/api/findFollowed';
 

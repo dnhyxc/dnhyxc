@@ -656,8 +656,12 @@ export const ABOUT_ME_TABS = [
     value: '3',
   },
   {
-    name: '点赞文章',
+    name: '关注我的',
     value: '4',
+  },
+  {
+    name: '点赞文章',
+    value: '5',
   },
 ];
 
@@ -812,7 +816,8 @@ export const ABOUT_ME_API_PATH = {
   0: API.GET_MY_ARTICLE_LIST,
   1: API.GET_COLLECTION_LIST,
   2: API.GET_FOLLOW_LIST,
-  3: API.GET_LIKE_ARTICLE_LIST,
+  3: API.GET_FOLLOW_ME_LIST,
+  4: API.GET_LIKE_ARTICLE_LIST,
 };
 
 // 更新用户信息api

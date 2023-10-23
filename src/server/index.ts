@@ -341,6 +341,11 @@ export const findFollowed = async (authorId: string, userId?: string, token?: st
   return await post(API.FIND_FOLLOWED, copeParams({ authorId, userId, token }));
 };
 
+// 查询关注我的用户
+export const getFollowMeList = async (params: { pageNo: number; pageSize: number; userId?: string }) => {
+  return await post(API.GET_FOLLOW_ME_LIST, copeParams(params));
+};
+
 // 获取工具列表
 export const getToolList = async (type: string) => {
   return await post(API.GET_TOOL_LIST, copeParams({ type }));

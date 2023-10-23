@@ -18,7 +18,7 @@
           </span>
         </div>
         <div class="desc">
-          {{ data.introduce || '暂无个人简介' }}
+          {{ data.job || '-' }}
         </div>
       </div>
     </div>

@@ -85,7 +85,7 @@
                 :class="`${!personalStore.articleList?.length && !followStore.followList?.length && 'tab-pane'}`"
               >
                 <!-- 我的文章/点赞文章 -->
-                <div v-if="tab.value === '1' || tab.value === '4'" class="list-wrap">
+                <div v-if="tab.value === '1' || tab.value === '5'" class="list-wrap">
                   <LineCard
                     v-for="data in personalStore.articleList"
                     :key="data.id"
@@ -99,6 +99,16 @@
                 <div v-else-if="tab.value === '3'" class="list-wrap">
                   <FollowCard
                     v-for="data in followStore.followList"
+                    :key="data.id"
+                    :data="data"
+                    class="author-line-card"
+                    :on-follow="onFollow"
+                  />
+                </div>
+                <!-- 关注我的 -->
+                <div v-else-if="tab.value === '4'" class="list-wrap">
+                  <FollowCard
+                    v-for="data in followStore.followMeList"
                     :key="data.id"
                     :data="data"
                     class="author-line-card"
@@ -208,10 +218,12 @@ const noMore = computed(() => {
 const disabled = computed(() => personalStore.loading || noMore.value);
 const showEmpty = computed(() => {
   const { articleList, currentTabKey, loading } = personalStore;
-  const { followList } = followStore;
+  const { followList, followMeList } = followStore;
   if (loading !== null && !loading && currentTabKey === '2' && !followList.length) {
     return true;
-  } else if (loading !== null && !loading && currentTabKey !== '2' && !articleList.length) {
+  } else if (loading !== null && !loading && currentTabKey !== '2' && currentTabKey === '3' && !followMeList.length) {
+    return true;
+  } else if (loading !== null && !loading && currentTabKey !== '2' && currentTabKey !== '3' && !articleList.length) {
     return true;
   } else {
     return false;
@@ -255,6 +267,9 @@ onMounted(async () => {
   // 清除点赞列表原始数据
   followStore.clearInteractList();
   if (userId && userId !== loginStore.userInfo?.userId) {
+    if (personalStore.currentTabKey === '3' || personalStore.currentTabKey === '4') {
+      personalStore.currentTabKey = '0';
+    }
     // 获取个人主页信息
     await personalStore.getUserInfo(userId as string);
   } else {
@@ -286,6 +301,8 @@ onUnmounted(() => {
 const getMyArticleList = async () => {
   if (personalStore.currentTabKey === '2') {
     await followStore.getFollowList(userId as string);
+  } else if (personalStore.currentTabKey === '3') {
+    await followStore.getFollowMeList();
   } else {
     await personalStore.getMyArticleList();
   }
@@ -293,7 +310,7 @@ const getMyArticleList = async () => {
 
 // tab 切换
 const onTabChange = (value: string) => {
-  // 设置选中tab，value：0：我/他的文章，1：我的收藏，2：我的关注，3：点赞文章
+  // 设置选中tab，value：0：我/他的文章，1：我的收藏，2：我的关注，3，关注我的，4：点赞文章
   personalStore.currentTabKey = value;
   // 切换时清空原有数据
   personalStore.clearArticleList();
@@ -307,7 +324,7 @@ const onTabChange = (value: string) => {
 const likeListArticle = async (id: string, data?: ArticleItem) => {
   await articleStore.likeListArticle({ id, pageType: 'personal', data });
   // 取消点赞文章重新刷新列表之后，自动滚动到之前查看页面的位置
-  if (personalStore.currentTabKey === '3') {
+  if (personalStore.currentTabKey === '4') {
     onScrollTo(scrollTop.value);
   }
 };
