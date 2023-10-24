@@ -39,6 +39,7 @@ interface IProps {
   onFollow?: (id: string, data?: FollowItem) => void;
   onClick?: () => void;
   isAuthUserId?: string;
+  isFollowMe?: boolean;
 }
 
 const props = defineProps<IProps>();
@@ -61,7 +62,7 @@ const showFollowBtn = computed(() => {
   if (props.isAuthUserId) {
     return props.isAuthUserId === props.data.myUserId && userId === props.isAuthUserId;
   } else {
-    return userId === props.data.myUserId;
+    return props.isFollowMe || userId === props.data.myUserId;
   }
 });
 

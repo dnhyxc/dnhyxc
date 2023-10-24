@@ -221,6 +221,7 @@ export interface TocTitlesParams {
 export interface CommentParams {
   articleId?: string;
   username?: string;
+  job?: string;
   date?: number;
   commentId?: string;
   userId?: string;

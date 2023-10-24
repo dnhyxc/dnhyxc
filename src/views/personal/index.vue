@@ -111,8 +111,9 @@
                     v-for="data in followStore.followMeList"
                     :key="data.id"
                     :data="data"
-                    class="author-line-card"
                     :on-follow="onFollow"
+                    :is-follow-me="true"
+                    class="author-line-card"
                   />
                 </div>
                 <!-- 点赞文章 -->

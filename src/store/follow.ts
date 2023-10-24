@@ -12,7 +12,8 @@ interface IProps {
   followMeList: FollowItem[]; // 关注列表
   pageNo: number;
   pageSize: number;
-  total: number; // 文章列表总数
+  total: number;
+  followMeTotal: number;
   loading: boolean | null;
   isFollowed: boolean;
 }
@@ -25,6 +26,7 @@ export const useFollowStore = defineStore('follow', {
     pageNo: 0,
     pageSize: 50,
     total: 0,
+    followMeTotal: 0,
     isFollowed: false,
   }),
 
@@ -58,7 +60,7 @@ export const useFollowStore = defineStore('follow', {
             }),
           );
         }
-        // 更改关注状态状态
+        // 更改我关注的状态
         const list = this.followList?.map((i) => {
           if (i.id === id) {
             i.isFollowed = !i.isFollowed;
@@ -66,17 +68,30 @@ export const useFollowStore = defineStore('follow', {
           return i;
         });
         this.followList = [...list];
+        // 更改关注我的状态
+        const followMeList = this.followMeList?.map((i) => {
+          if (i.userId === authorId) {
+            i.isFollowed = !i.isFollowed;
+          }
+          return i;
+        });
+        this.followMeList = [...followMeList];
       }
     },
 
     // 分页获取关注用户列表
     async getFollowList(userId?: string) {
-      if (!loginStore.token) return;
+      const { userInfo, token } = getStoreUserInfo();
+      if (!loginStore.token && !token) return;
       if (this.followList.length !== 0 && this.followList.length >= this.total) return;
       this.pageNo = this.pageNo + 1;
       personalStore.loading = true;
       const res = normalizeResult<FollowList>(
-        await Service.getFollowList({ userId, pageNo: this.pageNo, pageSize: this.pageSize }),
+        await Service.getFollowList({
+          userId: userId || userInfo?.userId,
+          pageNo: this.pageNo,
+          pageSize: this.pageSize,
+        }),
       );
       personalStore.loading = false;
       if (res.success) {
@@ -92,14 +107,15 @@ export const useFollowStore = defineStore('follow', {
     },
 
     // 分页获取关注我的用户列表
-    async getFollowMeList() {
-      if (!loginStore.token) return;
+    async getFollowMeList(userId?: string) {
+      const { userInfo, token } = getStoreUserInfo();
+      if (!loginStore.token && !token) return;
       if (this.followMeList.length !== 0 && this.followMeList.length >= this.total) return;
       this.pageNo = this.pageNo + 1;
       personalStore.loading = true;
       const res = normalizeResult<FollowList>(
         await Service.getFollowMeList({
-          userId: loginStore.userInfo.userId,
+          userId: userId || loginStore.userInfo.userId || userInfo?.userId,
           pageNo: this.pageNo,
           pageSize: this.pageSize,
         }),
@@ -107,7 +123,7 @@ export const useFollowStore = defineStore('follow', {
       personalStore.loading = false;
       if (res.success) {
         this.followMeList = [...this.followMeList, ...res.data.list];
-        this.total = res.data.total;
+        this.followMeTotal = res.data.total;
       } else {
         ElMessage({
           message: res.message,
@@ -132,6 +148,7 @@ export const useFollowStore = defineStore('follow', {
       this.followList = [];
       this.followMeList = [];
       this.total = 0;
+      this.followMeTotal = 0;
       this.pageNo = 0;
       this.loading = null;
     },

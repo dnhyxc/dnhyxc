@@ -34,7 +34,18 @@
       class="commentWrap"
     >
       <div class="avatar" @click.stop="toPersonal(i?.userId!)">
-        <Image :url="i.headUrl || HEAD_IMG" :transition-img="HEAD_IMG" class="image" />
+        <el-popover
+          :model:visible="popItem.commentId === i.commentId"
+          placement="top-start"
+          :width="180"
+          trigger="hover"
+          @show="showPop(i)"
+        >
+          <template #reference>
+            <Image :url="i.headUrl || HEAD_IMG" :transition-img="HEAD_IMG" class="image" />
+          </template>
+          <PopContent :comment="i" />
+        </el-popover>
       </div>
       <div class="commentContent">
         <div class="commentMain">
@@ -90,7 +101,18 @@
         <div v-if="i.replyList && i.replyList.length > 0" class="commentChild">
           <div v-for="j in checkReplyList(i.replyList, i.commentId!)" :key="j.commentId" class="commentChildItem">
             <div class="avatar" @click.stop="toPersonal(j?.userId!)">
-              <Image :url="j.headUrl || HEAD_IMG" :transition-img="HEAD_IMG" class="image" />
+              <el-popover
+                :model:visible="popItem.commentId === j.commentId"
+                placement="top-start"
+                :width="180"
+                trigger="hover"
+                @show="showPop(j)"
+              >
+                <template #reference>
+                  <Image :url="j.headUrl || HEAD_IMG" :transition-img="HEAD_IMG" class="image" />
+                </template>
+                <PopContent :comment="j" />
+              </el-popover>
             </div>
             <div class="commentChildItemContent">
               <div class="userInfo">
@@ -185,10 +207,11 @@ import { useRouter } from 'vue-router';
 import { ElMessage } from 'element-plus';
 import { CommentParams } from '@/typings/common';
 import { HEAD_IMG } from '@/constant';
-import { loginStore, articleStore } from '@/store';
+import { loginStore, articleStore, followStore } from '@/store';
 import { formatGapTime, getStoreUserInfo, replaceCommentContent } from '@/utils';
 import Image from '@/components/Image/index.vue';
 import DraftInput from '@/components/DraftInput/index.vue';
+import PopContent from '@/components/PopContent/index.vue';
 
 const router = useRouter();
 
@@ -211,6 +234,8 @@ const viewMoreComments = ref<string[]>([]);
 const previewVisible = ref<boolean>(false);
 // 图片预览路径
 const filePath = ref<string>('');
+// 显示气泡的一项
+const popItem = ref<CommentParams>({});
 
 const commentsRef = ref<HTMLDivElement | null>(null);
 
@@ -294,6 +319,16 @@ const onPreviewImage = (e: Event) => {
     previewVisible.value = true;
     filePath.value = target.src;
   }
+};
+
+const showPop = async (item: CommentParams) => {
+  popItem.value = item;
+  followStore.clearInteractList();
+  await Promise.all([
+    followStore.findFollowed(item.userId as string),
+    followStore.getFollowList(item.userId),
+    followStore.getFollowMeList(item.userId),
+  ]);
 };
 </script>
 
