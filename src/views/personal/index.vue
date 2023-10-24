@@ -48,7 +48,7 @@
               <el-button class="edit-btn" :type="followStore.isFollowed ? 'success' : 'primary'" @click="onFollow">
                 {{ followStore.isFollowed ? '已关注' : '关注' }}
               </el-button>
-              <el-button class="edit-btn" type="primary" @click="toSetting">私信</el-button>
+              <el-button class="edit-btn" type="primary" @click="toChart">私信</el-button>
             </div>
           </div>
         </div>
@@ -380,6 +380,11 @@ const onClickLink = (href: string, name: string) => {
 // 头像预览
 const onPreview = () => {
   previewVisible.value = true;
+};
+
+// 去聊天页面
+const toChart = () => {
+  router.push(`/chart?userId=${personalStore.userInfo?.userId}`);
 };
 
 // 置顶

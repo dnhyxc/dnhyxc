@@ -83,7 +83,6 @@ const onScrollTo = () => {
   box-sizing: border-box;
   margin-left: 5px;
   margin-top: 3px;
-  padding-right: 3px;
   height: calc(100% - 3px);
   width: calc(100% - 9px);
   padding: 10px 5px 10px 0;

@@ -30,7 +30,7 @@
       <el-button class="btn" type="primary" plain @click.stop="onFollow">
         {{ followStore.isFollowed ? '已关注' : '关注' }}
       </el-button>
-      <el-button class="btn" type="success" plain>私信</el-button>
+      <el-button class="btn" type="success" plain @click.stop="toChart">私信</el-button>
     </div>
   </div>
 </template>
@@ -58,6 +58,11 @@ const onFollow = () => {
 
 const toPersonal = () => {
   router.push(`/personal?authorId=${props.comment?.userId}`);
+};
+
+// 去聊天页面
+const toChart = () => {
+  router.push(`/chart?userId=${props.comment?.userId}`);
 };
 </script>
 

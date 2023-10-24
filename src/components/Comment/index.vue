@@ -44,7 +44,7 @@
           <template #reference>
             <Image :url="i.headUrl || HEAD_IMG" :transition-img="HEAD_IMG" class="image" />
           </template>
-          <PopContent :comment="i" />
+          <UserPopContent :comment="i" />
         </el-popover>
       </div>
       <div class="commentContent">
@@ -111,7 +111,7 @@
                 <template #reference>
                   <Image :url="j.headUrl || HEAD_IMG" :transition-img="HEAD_IMG" class="image" />
                 </template>
-                <PopContent :comment="j" />
+                <UserPopContent :comment="j" />
               </el-popover>
             </div>
             <div class="commentChildItemContent">
@@ -211,7 +211,7 @@ import { loginStore, articleStore, followStore } from '@/store';
 import { formatGapTime, getStoreUserInfo, replaceCommentContent } from '@/utils';
 import Image from '@/components/Image/index.vue';
 import DraftInput from '@/components/DraftInput/index.vue';
-import PopContent from '@/components/PopContent/index.vue';
+import UserPopContent from '@/components/UserPopContent/index.vue';
 
 const router = useRouter();
 

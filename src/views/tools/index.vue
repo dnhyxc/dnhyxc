@@ -138,17 +138,6 @@ const onClickNavIcon = (item: ToolsItem) => {
   overflow: hidden;
   box-sizing: border-box;
 
-  :deep {
-    .scrollbar-wrapper {
-      box-sizing: border-box;
-      border-radius: 5px;
-    }
-
-    .el-dialog__body {
-      padding: 10px 20px 20px;
-    }
-  }
-
   .navs-wrap {
     height: 100%;
     box-sizing: border-box;
@@ -185,6 +174,15 @@ const onClickNavIcon = (item: ToolsItem) => {
   }
 
   :deep {
+    .scrollbar-wrapper {
+      box-sizing: border-box;
+      border-radius: 5px;
+    }
+
+    .el-dialog__body {
+      padding: 10px 20px 20px;
+    }
+
     .el-color-picker {
       flex: 1;
     }

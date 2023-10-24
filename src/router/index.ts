@@ -208,12 +208,12 @@ export const routes: Array<RouteRecordRaw> = [
         component: () => import('@/views/detail/index.vue'),
       },
       {
-        path: '/board',
-        name: 'board',
+        path: '/chart',
+        name: 'chart',
         meta: {
-          title: '画板',
+          title: '发送私聊',
         },
-        component: () => import('@/views/tools/DrawBoard/index.vue'),
+        component: () => import('@/views/chart/index.vue'),
       },
     ],
     redirect: { name: 'home' },

@@ -49,7 +49,7 @@ declare module '@vue/runtime-core' {
     ElSwitch: typeof import('element-plus/es')['ElSwitch']
     ElTabPane: typeof import('element-plus/es')['ElTabPane']
     ElTabs: typeof import('element-plus/es')['ElTabs']
-    ElTimeline: typeof import('./src/components/ElTimeline/index.vue')['default']
+    ElTimeline: typeof import('element-plus/es')['ElTimeline']
     ElTimelineItem: typeof import('element-plus/es')['ElTimelineItem']
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
     ElUpload: typeof import('element-plus/es')['ElUpload']
@@ -80,6 +80,7 @@ declare module '@vue/runtime-core' {
     Toc: typeof import('./src/components/Toc/index.vue')['default']
     ToTopIcon: typeof import('./src/components/ToTopIcon/index.vue')['default']
     Upload: typeof import('./src/components/Upload/index.vue')['default']
+    UserPopContent: typeof import('./src/components/UserPopContent/index.vue')['default']
     WordCloud: typeof import('./src/components/WordCloud/index.vue')['default']
   }
   export interface ComponentCustomProperties {
