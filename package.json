@@ -50,6 +50,7 @@
     "prismjs": "^1.29.0",
     "qrcode": "^1.5.1",
     "query-string": "^7.1.1",
+    "socket.io-client": "^4.7.2",
     "spark-md5": "^3.0.2",
     "vue": "^3.2.45",
     "vue-cropper": "^1.0.6",

@@ -142,6 +142,10 @@ async function onMessage(event: any) {
             messageStore.addMessage(parseData.data);
           }
         }
+        // 接收聊天消息
+        if (parseData.action === 'chat') {
+          console.log(parseData, 'parseData---聊天消息');
+        }
         // 收到后台推送的退出登录通知
         if (parseData.action === 'logout' && (loginStore?.token || loginStore?.userInfo?.userId)) {
           loginStore.token = '';

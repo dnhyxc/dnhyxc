@@ -18,6 +18,7 @@ import { useToolsStore } from './tools';
 import { usePictureStore } from './picture';
 import { useConvertStore } from './convert';
 import { useCodeStore } from './code';
+import { useChatStore } from './chat';
 
 // 公共store，传入 store 用于防止在使用时，出现 pinia 注册比 Vue app 注册早，导致使用 pinia 报错
 export const commonStore = useCommonStore(store);
@@ -75,3 +76,6 @@ export const convertStore = useConvertStore(store);
 
 // 代码示例列表
 export const codeStore = useCodeStore(store);
+
+// 聊天消息列表
+export const chatStore = useChatStore(store);

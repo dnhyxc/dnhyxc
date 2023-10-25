@@ -19,6 +19,7 @@
             v-model="keyword"
             :autosize="{ minRows: 3, maxRows: 10 }"
             maxlength="1000"
+            :resize="sendMessage && 'none'"
             type="textarea"
             :placeholder="
               selectComment?.content
@@ -33,8 +34,9 @@
         <div v-if="showIcon || !showAvatar" id="EMOJI_WRAP" class="emojiWrap">
           <div id="EMOJI_LIST" class="emoji-list">
             <div id="ICONFONT" class="iconfontWrap">
-              <span id="BIAOQING_XUE" class="iconfont">
-                <i id="BIAOQING_XUE" class="font iconfont icon-xiaolian" @click="onShowEmoji">&nbsp;表情</i>
+              <span id="BIAOQING_XUE" class="iconfont" @click="onShowEmoji">
+                <i id="BIAOQING_XUE" class="font iconfont icon-xiaolian" />
+                <span id="BIAOQING_XUE" class="icon-text">表情</span>
               </span>
               <span id="BIAOQING_XUE" class="iconfont">
                 <Upload
@@ -45,13 +47,14 @@
                   :fixed-number="[600, 338]"
                   :get-upload-url="getUploadUrl"
                 >
-                  <i id="CHARUTUPIAN" class="font iconfont icon-tupian">&nbsp;图片</i>
+                  <i id="CHARUTUPIAN" class="font iconfont icon-tupian" />
+                  <span id="CHARUTUPIAN" class="icon-text">图片</span>
                 </Upload>
               </span>
             </div>
-            <Emoji v-model:showEmoji="showEmoji" class="emojis" :add-emoji="addEmoji" />
+            <Emoji v-show="showEmoji" v-model:showEmoji="showEmoji" class="emojis" :add-emoji="addEmoji" />
           </div>
-          <div id="ACTION">
+          <div v-if="!sendMessage" id="ACTION">
             <el-button
               id="BTN"
               type="primary"
@@ -77,8 +80,8 @@ import { insertContent } from '@/utils';
 import { CommentParams } from '@/typings/common';
 
 interface IProps {
-  articleId: string;
-  getCommentList: Function;
+  articleId?: string;
+  getCommentList?: Function;
   showAvatar?: boolean;
   selectComment?: CommentParams;
   isThreeTier?: boolean;
@@ -86,14 +89,18 @@ interface IProps {
   onReplay?: Function;
   onJump?: Function;
   onHideInput?: Function;
+  sendMessage?: Function | null;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
   focus: false,
+  articleId: '',
+  getCommentList: () => ({}),
   selectComment: () => ({}),
   onReplay: () => {},
   onJump: () => {},
   onHideInput: () => {},
+  sendMessage: null,
 });
 
 const inputRef = ref<HTMLDivElement | null>(null);
@@ -173,19 +180,27 @@ const addEmoji = (key: string) => {
 // 发布评论
 const submitComment = async () => {
   if (!keyword.value.trim()) return;
-  // 评论接口
-  const res = await articleStore?.releaseComment({
-    keyword: keyword.value,
-    selectComment: props?.selectComment,
-    articleId: props?.articleId || '',
-    isThreeTier: props?.isThreeTier,
-  });
-  showEmoji.value = false;
-  props?.onReplay && props?.onReplay({}, true);
-  keyword.value = '';
-  showIcon.value = false;
-  if (res?.success) {
-    props?.getCommentList && props?.getCommentList();
+  if (props?.sendMessage) {
+    // 发送消息
+    props?.sendMessage?.(keyword.value);
+    showEmoji.value = false;
+    keyword.value = '';
+    showIcon.value = false;
+  } else {
+    // 评论接口
+    const res = await articleStore?.releaseComment({
+      keyword: keyword.value,
+      selectComment: props?.selectComment,
+      articleId: props?.articleId || '',
+      isThreeTier: props?.isThreeTier,
+    });
+    showEmoji.value = false;
+    props?.onReplay && props?.onReplay({}, true);
+    keyword.value = '';
+    showIcon.value = false;
+    if (res?.success) {
+      props?.getCommentList && props?.getCommentList();
+    }
   }
 };
 </script>
@@ -194,6 +209,9 @@ const submitComment = async () => {
 @import '@/styles/index.less';
 
 .DraftInput {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
   width: 100%;
   height: 100%;
 
@@ -230,6 +248,7 @@ const submitComment = async () => {
 
   .input {
     flex: 1;
+    position: relative;
 
     .textAreaWrap {
       width: 100%;
@@ -253,6 +272,7 @@ const submitComment = async () => {
       width: 100%;
 
       .emoji-list {
+        position: relative;
         display: flex;
         justify-content: flex-start;
         flex-direction: column;
@@ -276,6 +296,10 @@ const submitComment = async () => {
         align-items: center;
         cursor: pointer;
         font-size: 14px;
+
+        .icon-text {
+          margin-left: 5px;
+        }
 
         &:hover {
           color: var(--active);

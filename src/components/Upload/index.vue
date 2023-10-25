@@ -19,7 +19,7 @@
         <el-icon class="uploader-icon"><Plus /></el-icon>
       </slot>
     </el-upload>
-    <div v-if="filePath" class="preview">
+    <div v-if="filePath && preview" class="preview">
       <div v-if="preview" class="mack">
         <i v-if="sourceUrl" class="shot iconfont icon-line-screenshotpingmujietu-01" @click="onRestoreShot" />
         <i class="download iconfont icon-xiazai1" @click.stop="(e) => onDownload(e, cropperUrl || filePath)" />

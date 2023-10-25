@@ -481,3 +481,19 @@ export interface CodeList {
   total: number;
   list: CodeItem[];
 }
+
+// 聊天消息
+export interface ChatItem {
+  from: string;
+  to: string;
+  content: string;
+  createTime: number;
+  chatId: string;
+  id: string;
+  read: boolean;
+}
+
+export interface ChatList {
+  total: number;
+  list: ChatItem[];
+}
