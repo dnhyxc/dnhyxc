@@ -420,6 +420,7 @@ const scrollToBottom = () => {
       height: 120px;
       border-top: 1px solid #ccc;
       box-sizing: border-box;
+      background-color: var(--input-bg-color);
 
       :deep {
         .emojis {
@@ -456,6 +457,7 @@ const scrollToBottom = () => {
         .el-textarea__inner {
           box-shadow: none;
           height: 90px !important;
+          background-color: transparent;
           padding: 5px;
 
           &:focus {
