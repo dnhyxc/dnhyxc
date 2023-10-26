@@ -1,4 +1,4 @@
-import { loginStore, messageStore } from '@/store';
+import { chatStore, loginStore, messageStore } from '@/store';
 import { locGetItem, getStoreUserInfo, locRemoveItem, ipcRenderers } from '@/utils';
 import { DOMAIN_URL } from '@/constant';
 
@@ -144,7 +144,7 @@ async function onMessage(event: any) {
         }
         // 接收聊天消息
         if (parseData.action === 'chat') {
-          console.log(parseData, 'parseData---聊天消息');
+          chatStore.addChat(parseData.data);
         }
         // 收到后台推送的退出登录通知
         if (parseData.action === 'logout' && (loginStore?.token || loginStore?.userInfo?.userId)) {

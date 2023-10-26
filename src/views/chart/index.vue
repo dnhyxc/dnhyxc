@@ -8,7 +8,7 @@
   <div class="chart-wrap">
     <div class="friends-menu">
       <div class="search">
-        <el-form @submit.native.prevent="onSubmit">
+        <el-form @submit.native.prevent="onSearch">
           <el-input v-model="keyword" size="large" placeholder="搜索联系人" clearable />
         </el-form>
       </div>
@@ -48,24 +48,50 @@
           </template>
         </el-dropdown>
       </div>
-      <div class="message-wrap">
-        <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
-          <div class="messages">
-            <div v-for="msg in [0, 1, 2, 3, 4, 5, 6]" :key="msg" class="message-content">
-              <div v-if="msg === 0" class="info">由于对方并未关注你，在收到对方回复之前，你最多只能发送1条文字消息</div>
-              <div class="time">10-23 10:19</div>
-              <div v-if="msg % 2 === 0" class="message-info message-send">
-                <div class="message">这是一条消息这是一条消息这是一条消息这是一条消息这是一条消息这是一条消息</div>
-                <Image :url="HEAD_IMG" :transition-img="HEAD_IMG" class="head-img" />
+      <Loading :loading="chatStore.loading" class="message-wrap">
+        <template #default>
+          <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
+            <div class="messages">
+              <div
+                v-if="!noMore && hasScroll"
+                v-load="{ loadChatList, chatStore, scrollToBottom, hasScroll }"
+                class="load-more"
+              >
+                loading...
               </div>
-              <div v-else class="message-info message-receive">
-                <Image :url="HEAD_IMG" :transition-img="HEAD_IMG" class="head-img" />
-                <div class="message">这是一条消息这是一条消息这是一条消息这是一条消息这是一条消息这是一条消息</div>
+              <div
+                v-for="(msg, index) in [...chatStore.chatList, ...chatStore.addChatList]"
+                :key="msg.chatId"
+                class="message-content"
+              >
+                <div v-if="chatStore.chatList.length === 1" class="info">
+                  由于对方并未关注你，在收到对方回复之前，你最多只能发送1条文字消息
+                </div>
+                <div
+                  v-if="
+                    index === 0 ||
+                    diffTime(
+                      msg.createTime,
+                      (chatStore.chatList[index + 1] || chatStore.chatList[chatStore.chatList.length - 1]).createTime,
+                    )
+                  "
+                  class="time"
+                >
+                  {{ formatDate(msg.createTime) }}
+                </div>
+                <div v-if="msg.from === loginStore.userInfo.userId" class="message-info message-send">
+                  <div class="message">{{ msg.content }}</div>
+                  <Image :url="HEAD_IMG" :transition-img="HEAD_IMG" class="head-img" />
+                </div>
+                <div v-else class="message-info message-receive">
+                  <Image :url="HEAD_IMG" :transition-img="HEAD_IMG" class="head-img" />
+                  <div class="message">{{ msg.content }}</div>
+                </div>
               </div>
             </div>
-          </div>
-        </el-scrollbar>
-      </div>
+          </el-scrollbar>
+        </template>
+      </Loading>
       <div class="draft-inp-wrap">
         <DraftInput class="draft-send-inp" :on-hide-input="onHideInput" :send-message="sendMessage" />
       </div>
@@ -74,31 +100,70 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { HEAD_IMG } from '@/constant';
 import { chatStore, loginStore } from '@/store';
+import { formatDate, diffTime } from '@/utils';
 import Image from '@/components/Image/index.vue';
+import { nextTick } from 'process';
 
 const keyword = ref<string>('');
 const active = ref<number>(0);
+const scrollRef = ref<any>(null);
+const hasScroll = ref<boolean>(false);
+let timer: ReturnType<typeof setTimeout> | null = null;
 
 const emit = defineEmits(['updateFocus']);
 
 const route = useRoute();
+const { userId } = route?.query;
 
-onMounted(() => {
-  chatStore.initIO();
+const noMore = computed(() => {
+  const { chatList, total } = chatStore;
+  console.log(chatList.length, 'chatList.length', total);
+  return chatList.length >= total && chatList.length;
 });
 
-const onSubmit = () => {
-  const { userId } = route?.query;
-  console.log(keyword.value, 'values', userId);
-};
+// const disabled = computed(() => chatStore.loading || noMore.value);
 
-const onActive = (item: any) => {
+onMounted(async () => {
+  chatStore.initIO();
+  chatStore.clearChatInfo();
+  await loadChatList();
+  scrollToBottom();
+
+  nextTick(() => {
+    const scrollHeight = scrollRef.value?.wrapRef.scrollHeight;
+    const clientHeight = scrollRef.value?.wrapRef.clientHeight;
+    console.log(scrollHeight, 'KKKKKKKKKKKKKKKKKKKKK', clientHeight);
+    hasScroll.value = scrollHeight > clientHeight;
+  });
+});
+
+// 切换联系人
+const onActive = async (item: any) => {
   console.log(item, 'item');
   active.value = item;
+  chatStore.clearChatInfo();
+  await loadChatList();
+  scrollToBottom();
+  nextTick(() => {
+    const height = scrollRef.value?.wrapRef.scrollHeight;
+    console.log(height, 'KKKKKKKKKKKKKKKKKKKKK');
+    hasScroll.value = height;
+  });
+};
+
+// 加载更多数据
+const loadChatList = () => {
+  return chatStore.getChatList(userId as string);
+};
+
+// 搜索联系人
+const onSearch = () => {
+  const { userId } = route?.query;
+  console.log(keyword.value, 'values', userId);
 };
 
 // 隐藏回复输入框
@@ -108,14 +173,24 @@ const onHideInput = () => {
 
 // 发送消息
 const sendMessage = (content: string) => {
-  console.log(content, 'value');
-  const { userId } = route?.query;
-  console.log(keyword.value, 'values', userId);
   chatStore.sendChatMessage({
-    from: loginStore.userInfo?.userId!,
     to: userId as string,
     content,
   });
+  scrollToBottom();
+};
+
+// 滚动到底部
+const scrollToBottom = () => {
+  if (timer) {
+    clearTimeout(timer);
+    timer = null;
+  }
+  timer = setTimeout(() => {
+    const scroll = scrollRef.value?.wrapRef as HTMLDivElement;
+    const height = scrollRef.value?.wrapRef.scrollHeight;
+    scroll.scrollTop = height;
+  }, 100);
 };
 </script>
 
@@ -269,9 +344,16 @@ const sendMessage = (content: string) => {
       overflow-y: auto;
 
       .messages {
-        margin-top: 20px;
-        padding: 0 10px;
         height: auto;
+        padding: 0 10px;
+
+        .load-more {
+          text-align: center;
+          line-height: 32px;
+          height: 32px;
+          color: var(--font-5);
+          font-size: 14px;
+        }
 
         .info,
         .time {
@@ -279,13 +361,15 @@ const sendMessage = (content: string) => {
           color: var(--font-4);
           margin-bottom: 20px;
           text-align: center;
+          margin-top: 20px;
         }
 
         .message-info {
           margin-bottom: 20px;
+          word-wrap: break-word;
 
           .message {
-            flex: 0.65;
+            max-width: 65%;
             color: @font-1;
             border-radius: 5px;
             padding: 5px;

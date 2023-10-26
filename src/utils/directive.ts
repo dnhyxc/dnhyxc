@@ -1,4 +1,4 @@
-import { nextTick, DirectiveBinding } from 'vue';
+import { nextTick, DirectiveBinding, computed } from 'vue';
 import { debounce } from '@/utils';
 
 export const mountDirectives = <T>(app: T | any) => {
@@ -175,6 +175,49 @@ export const mountDirectives = <T>(app: T | any) => {
           }
         });
       });
+    },
+  });
+
+  // observe 监听元素，加载数据
+  app.directive('load', {
+    // 绑定元素的父组件挂载时调用
+    mounted(observeNode: HTMLElement, binding: DirectiveBinding) {
+      nextTick(() => {
+        const parentNode = observeNode.parentNode as HTMLElement;
+        (observeNode as any).ob = new IntersectionObserver(async (entries) => {
+          const noMore = computed(() => {
+            const { chatList, total } = binding.value.chatStore;
+            return chatList.length >= total && chatList.length;
+          });
+          const disabled = computed(() => binding.value.chatStore.loading || noMore.value);
+
+          const wrapRef = parentNode.parentNode!.parentNode;
+
+          const scrollHeight = wrapRef.scrollHeight;
+          const clientHeight = wrapRef.clientHeight;
+          const hasScroll = scrollHeight > clientHeight;
+          console.log(hasScroll, 'hasScroll');
+
+          console.log(binding.value.chatStore.hasScroll, 'binding.value.chatStore.hasScroll');
+
+          if (entries[0].isIntersecting && !disabled.value && hasScroll) {
+            const beforeHeight = parentNode.scrollHeight;
+            console.log(beforeHeight, 'beforeHeight');
+
+            await binding.value.loadChatList();
+            const afterHeight = parentNode.scrollHeight;
+            console.log(afterHeight, 'afterHeight');
+
+            const height = afterHeight - beforeHeight;
+
+            (parentNode.parentNode!.parentNode! as HTMLElement).scrollTop = height < 100 ? height + 200 : height;
+          }
+        });
+        (observeNode as any).ob.observe(observeNode);
+      });
+    },
+    beforeUnmount(observeNode: HTMLElement) {
+      (observeNode as any).ob.unobserve(observeNode);
     },
   });
 };

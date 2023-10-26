@@ -197,9 +197,6 @@ export const GET_CODE_LIST = '/api/getCodeList';
 // 获取代码示例
 export const GET_CODE_BY_ID = '/api/getCodeById';
 
-// 添加聊天消息
-export const ADD_CHAT = '/api/addChat';
-
 // 获取聊天消息列表
 export const GET_CHAT_LIST = '/api/getChatList';
 

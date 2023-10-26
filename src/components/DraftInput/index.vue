@@ -186,6 +186,7 @@ const submitComment = async () => {
     showEmoji.value = false;
     keyword.value = '';
     showIcon.value = false;
+    inputRef.value?.focus();
   } else {
     // 评论接口
     const res = await articleStore?.releaseComment({

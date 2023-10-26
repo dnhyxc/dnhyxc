@@ -434,14 +434,9 @@ export const getCodeById = async (id: string) => {
   return await post(API.GET_CODE_BY_ID, copeParams({ id }));
 };
 
-// 添加聊天消息
-export const addChat = async (params: { from: string; to: string; content: string }) => {
-  return await post(API.ADD_CHAT, copeParams(params));
-};
-
 // 获取聊天消息列表
-export const getChatList = async (params: { from: string; to: string }) => {
-  return await post(API.ADD_CHAT, copeParams(params));
+export const getChatList = async (params: { pageNo: number; pageSize: number; chatId: string }) => {
+  return await post(API.GET_CHAT_LIST, copeParams(params));
 };
 
 // 删除聊天消息

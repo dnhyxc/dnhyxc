@@ -1071,3 +1071,12 @@ export const hlightKeyword = <T extends ArticleItem>(keyword: string, list: Arra
     return i;
   });
 };
+
+// 对比时间
+export const diffTime = (time1: number, time2: number, referenceTime = 1000) => {
+  const timeDiff = Math.abs(time1 - time2) / (referenceTime * 60); // 计算时间差，单位为分钟
+  if (timeDiff >= referenceTime / 100) {
+    return true;
+  }
+  return false;
+};
