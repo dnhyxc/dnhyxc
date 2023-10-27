@@ -190,27 +190,16 @@ export const mountDirectives = <T>(app: T | any) => {
             return chatList.length >= total && chatList.length;
           });
           const disabled = computed(() => binding.value.chatStore.loading || noMore.value);
-
           const wrapRef = parentNode.parentNode!.parentNode;
-
-          const scrollHeight = wrapRef.scrollHeight;
-          const clientHeight = wrapRef.clientHeight;
+          const scrollHeight = (wrapRef as HTMLElement).scrollHeight;
+          const clientHeight = (wrapRef as HTMLElement).clientHeight;
           const hasScroll = scrollHeight > clientHeight;
-          console.log(hasScroll, 'hasScroll');
-
-          console.log(binding.value.chatStore.hasScroll, 'binding.value.chatStore.hasScroll');
-
           if (entries[0].isIntersecting && !disabled.value && hasScroll) {
             const beforeHeight = parentNode.scrollHeight;
-            console.log(beforeHeight, 'beforeHeight');
-
             await binding.value.loadChatList();
             const afterHeight = parentNode.scrollHeight;
-            console.log(afterHeight, 'afterHeight');
-
             const height = afterHeight - beforeHeight;
-
-            (parentNode.parentNode!.parentNode! as HTMLElement).scrollTop = height < 100 ? height + 200 : height;
+            (wrapRef! as HTMLElement).scrollTop = height;
           }
         });
         (observeNode as any).ob.observe(observeNode);

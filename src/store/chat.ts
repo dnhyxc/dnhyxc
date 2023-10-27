@@ -1,13 +1,11 @@
 import { defineStore } from 'pinia';
-// import io from 'socket.io-client';
-// import { ElMessage } from 'element-plus';
+import { ElMessage } from 'element-plus';
 import * as Service from '@/server';
-import { normalizeResult, uniqueFunc } from '@/utils';
+import { normalizeResult } from '@/utils';
 import { useCheckUserId } from '@/hooks';
-// import { DOMAIN_URL } from '@/constant';
 import { createWebSocket, sendMessage } from '@/socket';
 import { loginStore } from '@/store';
-import { ChatItem, ChatList } from '@/typings/common';
+import { ChatItem, ChatList, ContactItem, ContactList } from '@/typings/common';
 
 interface IProps {
   loading: boolean | null;
@@ -16,7 +14,10 @@ interface IProps {
   pageNo: number;
   pageSize: number;
   total: number;
-  addCount: number;
+  contactList: ContactItem[];
+  contactPageNo: number;
+  contactPageSize: number;
+  contactTotal: number;
 }
 
 export const useChatStore = defineStore('chat', {
@@ -24,15 +25,18 @@ export const useChatStore = defineStore('chat', {
     loading: null,
     chatList: [],
     addChatList: [],
+    contactList: [],
     total: 0,
     pageNo: 0,
-    pageSize: 10,
-    addCount: 0,
+    pageSize: 30,
+    contactPageNo: 0,
+    contactPageSize: 30,
+    contactTotal: 0,
   }),
 
   actions: {
     // 初始化io
-    async initIO() {
+    initIO() {
       createWebSocket();
     },
 
@@ -44,10 +48,10 @@ export const useChatStore = defineStore('chat', {
         JSON.stringify({
           action: 'chat',
           data: {
-            // from: to,
-            // to: userId,
             from: userId,
             to,
+            // from: to,
+            // to: userId,
             content,
             chatId,
             createTime: new Date().valueOf(),
@@ -63,61 +67,104 @@ export const useChatStore = defineStore('chat', {
       if (!useCheckUserId()) return;
       if (this.chatList.length !== 0 && this.chatList.length >= this.total) return;
       this.pageNo = this.pageNo + 1;
-      this.loading = true;
+      // this.loading = true;
       const chatId = [loginStore.userInfo.userId, userId].sort().join('_');
       const res = normalizeResult<ChatList>(
         await Service.getChatList({ pageNo: this.pageNo, pageSize: this.pageSize, chatId }),
       );
       this.loading = false;
       if (res.success) {
-        console.log([...res.data.list, ...this.chatList], '[...res.data.list, ...this.chatList]');
-
-        const uniqueData = uniqueFunc([...res.data.list, ...this.chatList], 'id');
-
-        const count = [...res.data.list, ...this.chatList].length - uniqueData.length;
-
-        console.log(uniqueData, 'uniqueData', count);
-
         this.chatList = [...res.data.list, ...this.chatList];
-        // this.addCount = this.addCount - count;
         this.total = res.data.total;
-
-        console.log(this.chatList.length, 'this.chatList.length');
-        console.log('this.total', this.total);
-        // console.log([...res.data.list, ...this.chatList], '[...res.data.list, ...this.chatList]');
-
-        // const uniqueData = uniqueFunc([...res.data.list, ...this.chatList], 'id');
-
-        // const count = [...res.data.list, ...this.chatList].length - uniqueData.length;
-
-        // console.log(uniqueData, 'uniqueData', count);
-
-        // this.chatList = uniqueData;
-        // this.addCount = this.addCount - count;
-        // this.total = res.data.total + this.addCount;
-
-        // console.log(this.chatList.length, 'this.chatList.length');
-        // console.log('this.total', this.total);
       }
+    },
+
+    // 合并消息
+    async mergeChats(to: string) {
+      // 检验是否有userId，如果没有禁止发送请求
+      if (!useCheckUserId()) return;
+      this.loading = true;
+      const { userId } = loginStore.userInfo;
+      const chatId = [userId, to].sort().join('_');
+      await Service.mergeChats(chatId);
     },
 
     // 添加聊天消息
     async addChat(params: ChatItem) {
-      console.log(params, 'params');
       this.addChatList = [...this.addChatList, params];
-      // this.chatList = [...this.chatList, params];
-      this.addCount += 1;
-      console.log(this.addCount, 'this.addCount');
-      // this.total = this.total + this.addCount;
+    },
+
+    // 添加联系人
+    async addContacts(userId: string) {
+      if (!useCheckUserId()) return;
+      const res = normalizeResult<ContactItem>(
+        await Service.addContacts({ contactId: userId, createTime: new Date().valueOf() }),
+      );
+      if (!res.success) {
+        ElMessage({
+          message: res.message,
+          type: 'error',
+          offset: 80,
+        });
+      }
+    },
+
+    // 获取联系人
+    async getContactList() {
+      // 检验是否有userId，如果没有禁止发送请求
+      if (!useCheckUserId()) return;
+      if (this.contactList.length !== 0 && this.contactList.length >= this.contactTotal) return;
+      this.contactPageNo = this.contactPageNo + 1;
+      this.loading = true;
+      const res = normalizeResult<ContactList>(
+        await Service.getContactList({ pageNo: this.contactPageNo, pageSize: this.contactPageSize }),
+      );
+      this.loading = false;
+      if (res.success) {
+        this.contactList = [...this.contactList, ...res.data.list];
+        this.contactTotal = res.data.total;
+      }
+    },
+
+    // 置顶联系人
+    async toTopContacts(contactId: string) {
+      if (!useCheckUserId()) return;
+      const res = normalizeResult<{ userId: string }>(
+        await Service.toTopContacts({ contactId, createTime: new Date().valueOf() }),
+      );
+      ElMessage({
+        message: res.message,
+        type: res.success ? 'success' : 'error',
+        offset: 80,
+      });
+    },
+
+    // 删除联系人
+    async deleteContacts(userId: string) {
+      if (!useCheckUserId()) return;
+      const res = normalizeResult<{ userId: string }>(await Service.deleteContacts(userId));
+      ElMessage({
+        message: res.message,
+        type: res.success ? 'success' : 'error',
+        offset: 80,
+      });
     },
 
     // 清除数据
-    clearChatInfo() {
+    clearChatInfo(clearAll?: boolean) {
+      // clearAll && (this.chatList = []);
+      this.chatList = [];
       this.pageNo = 0;
       this.total = 0;
-      this.chatList = [];
+      this.addChatList = [];
       this.loading = null;
-      this.addCount = 0;
+    },
+
+    // 清除数据
+    clearContactInfo() {
+      this.contactPageNo = 0;
+      this.contactTotal = 0;
+      this.contactList = [];
     },
   },
 });

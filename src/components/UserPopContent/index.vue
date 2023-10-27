@@ -36,8 +36,8 @@
 </template>
 
 <script setup lang="ts">
-import { followStore, loginStore } from '@/store';
 import { useRouter } from 'vue-router';
+import { followStore, loginStore, chatStore } from '@/store';
 import { HEAD_IMG } from '@/constant';
 import { getStoreUserInfo } from '@/utils';
 import { CommentParams } from '@/typings/common';
@@ -61,8 +61,9 @@ const toPersonal = () => {
 };
 
 // 去聊天页面
-const toChart = () => {
-  router.push(`/chart?userId=${props.comment?.userId}`);
+const toChart = async () => {
+  await chatStore.addContacts(props.comment?.userId!);
+  router.push(`/chat?userId=${props.comment?.userId}`);
 };
 </script>
 

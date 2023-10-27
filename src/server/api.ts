@@ -200,11 +200,17 @@ export const GET_CODE_BY_ID = '/api/getCodeById';
 // 获取聊天消息列表
 export const GET_CHAT_LIST = '/api/getChatList';
 
-// 删除聊天消息
-export const DELETE_CHAT = '/api/deleteChat';
+// 合并消息
+export const MERGE_CHATS = '/api/mergeChats';
 
-// 获取好友列表
-export const GET_FRIEND_LIST = '/api/getFriendList';
+// 获取联系人
+export const GET_CONTACT_LIST = '/api/getContactList';
 
-// 删除好友聊天
-export const DEL_FRIEND_CHAT = '/api/delFriendChat';
+// 添加联系人
+export const ADD_CONTACTS = '/api/addContacts';
+
+// 置顶联系人
+export const TO_TOP_CONTACTS = '/api/toTopContacts';
+
+// 删除联系人
+export const DELETE_CONTACTS = '/api/deleteContacts';

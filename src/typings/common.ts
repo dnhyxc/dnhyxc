@@ -497,3 +497,19 @@ export interface ChatList {
   total: number;
   list: ChatItem[];
 }
+
+// 联系人
+export interface ContactItem {
+  createTime: number;
+  id: string;
+  userId: string;
+  contactId: string;
+  headUrl: string;
+  username: string;
+  job: string;
+}
+
+export interface ContactList {
+  total: number;
+  list: ContactItem[];
+}

@@ -208,12 +208,12 @@ export const routes: Array<RouteRecordRaw> = [
         component: () => import('@/views/detail/index.vue'),
       },
       {
-        path: '/chart',
-        name: 'chart',
+        path: '/chat',
+        name: 'chat',
         meta: {
           title: '发送私聊',
         },
-        component: () => import('@/views/chart/index.vue'),
+        component: () => import('@/views/chat/index.vue'),
       },
     ],
     redirect: { name: 'home' },

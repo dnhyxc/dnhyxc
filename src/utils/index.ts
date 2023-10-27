@@ -83,6 +83,7 @@ export const formatDate = (date: number, format = 'YYYY/MM/DD HH:mm:ss') => {
 
 // 转化距离当前时间的间隔时长
 export const formatGapTime = (date: number) => {
+  if (!date) return;
   const ms = Date.now() - date;
   const seconds = Math.round(ms / 1000);
   const minutes = Math.round(ms / 60000);
@@ -90,7 +91,6 @@ export const formatGapTime = (date: number) => {
   const days = Math.round(ms / 86400000);
   const months = Math.round(ms / 2592000000);
   const years = Math.round(ms / 31104000000);
-
   switch (true) {
     case seconds < 60:
       return '刚刚';
@@ -104,6 +104,52 @@ export const formatGapTime = (date: number) => {
       return `${months} 月前`;
     default:
       return `${years} 年前`;
+  }
+};
+
+// 将时间戳转换为 "刚刚"、"N分钟前"、"今天几点几分"、"昨天几点几分"、"星期几几点几分" 等表示法
+export const formatTimestamp = (timestamp: number) => {
+  if (!timestamp) return;
+  const now = new Date();
+  const date = new Date(timestamp);
+  // 计算时间差（单位：毫秒）
+  const diff = now.getTime() - date.getTime();
+  const minutesDiff = Math.floor(diff / 60000); // 转换为分钟
+  // 判断时间差并返回相应的表示法
+  if (minutesDiff < 1) {
+    return '刚刚';
+  } else if (minutesDiff < 60) {
+    return `${minutesDiff}分钟前`;
+  } else if (
+    date.getDate() === now.getDate() &&
+    date.getMonth() === now.getMonth() &&
+    date.getFullYear() === now.getFullYear()
+  ) {
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `今天 ${hours}:${minutes}`;
+  } else if (
+    date.getDate() === now.getDate() - 1 &&
+    date.getMonth() === now.getMonth() &&
+    date.getFullYear() === now.getFullYear()
+  ) {
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `昨天 ${hours}:${minutes}`;
+  } else if (date.getFullYear() === now.getFullYear() && date.getTime() > now.getTime() - 6 * 24 * 60 * 60 * 1000) {
+    const weekday = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+    const dayOfWeek = weekday[date.getDay()];
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `${dayOfWeek} ${hours}:${minutes}`;
+  } else {
+    // 如果不是今天、昨天或最近一周，则返回完整的日期和时间
+    const year = String(date.getFullYear());
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `${year}年${month}月${day}日 ${hours}:${minutes}`;
   }
 };
 
@@ -1070,13 +1116,4 @@ export const hlightKeyword = <T extends ArticleItem>(keyword: string, list: Arra
     i.tag = i.tag?.replace(reg, (key) => `<span style="color: #ff9900">${key}</span>`);
     return i;
   });
-};
-
-// 对比时间
-export const diffTime = (time1: number, time2: number, referenceTime = 1000) => {
-  const timeDiff = Math.abs(time1 - time2) / (referenceTime * 60); // 计算时间差，单位为分钟
-  if (timeDiff >= referenceTime / 100) {
-    return true;
-  }
-  return false;
 };

@@ -439,17 +439,27 @@ export const getChatList = async (params: { pageNo: number; pageSize: number; ch
   return await post(API.GET_CHAT_LIST, copeParams(params));
 };
 
-// 删除聊天消息
-export const deleteChat = async (params: { from: string; to: string }) => {
-  return await post(API.DELETE_CHAT, copeParams(params));
+// 合并消息
+export const mergeChats = async (chatId: string) => {
+  return await post(API.MERGE_CHATS, copeParams({ chatId }));
 };
 
-// 获取好友列表
-export const getFriendList = async () => {
-  return await post(API.GET_FRIEND_LIST, copeParams({}));
+// 获取联系人
+export const getContactList = async (params: { pageNo: number; pageSize: number }) => {
+  return await post(API.GET_CONTACT_LIST, copeParams(params));
 };
 
-// 删除聊天好友
-export const delFriendChat = async () => {
-  return await post(API.DEL_FRIEND_CHAT, copeParams({}));
+// 添加联系人
+export const addContacts = async (params: { contactId: string; createTime: number }) => {
+  return await post(API.ADD_CONTACTS, copeParams(params));
+};
+
+// 置顶联系人
+export const toTopContacts = async (params: { contactId: string; createTime: number }) => {
+  return await post(API.TO_TOP_CONTACTS, copeParams(params));
+};
+
+// 删除联系人
+export const deleteContacts = async (contactId: string) => {
+  return await post(API.DELETE_CONTACTS, copeParams({ contactId }));
 };

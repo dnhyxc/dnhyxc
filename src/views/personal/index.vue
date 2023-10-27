@@ -179,7 +179,7 @@ import { ref, computed, onMounted, onUnmounted, watchEffect, inject } from 'vue'
 import { useRoute, useRouter } from 'vue-router';
 import { ElMessage } from 'element-plus';
 import { useDeleteArticle, useScroller } from '@/hooks';
-import { articleStore, loginStore, personalStore, followStore } from '@/store';
+import { articleStore, loginStore, personalStore, followStore, chatStore } from '@/store';
 import { formatDate, scrollTo, checkUrl, checkOS } from '@/utils';
 import { ArticleItem, CollectParams, FollowItem, WinRefreshParams } from '@/typings/common';
 import { HEAD_IMG, ICONLINKS, ABOUT_ME_TABS, ABOUT_TABS } from '@/constant';
@@ -383,8 +383,9 @@ const onPreview = () => {
 };
 
 // 去聊天页面
-const toChart = () => {
-  router.push(`/chart?userId=${personalStore.userInfo?.userId}`);
+const toChart = async () => {
+  await chatStore.addContacts(personalStore.userInfo?.userId!);
+  router.push(`/chat?userId=${personalStore.userInfo?.userId}`);
 };
 
 // 置顶
