@@ -66,15 +66,15 @@
                 {{ formatTimestamp(msg.createTime) }}
               </div>
               <div v-if="msg.from === loginStore.userInfo.userId" class="message-info message-send">
-                <div class="message">
+                <div class="message" @click="onPreview(msg.content)">
                   <span class="send-date">{{ formatDate(msg.createTime, 'MM/DD HH:mm') }}</span>
-                  {{ msg.content }}
+                  <div v-html="replaceCommentContent(msg.content)" />
                 </div>
                 <Image :url="HEAD_IMG" :transition-img="HEAD_IMG" class="head-img" />
               </div>
               <div v-else class="message-info message-receive">
                 <Image :url="HEAD_IMG" :transition-img="HEAD_IMG" class="head-img" />
-                <div class="message">
+                <div class="message" @click="onPreview(msg.content)">
                   <span class="send-date">{{ formatDate(msg.createTime, 'MM/DD HH:mm') }}</span>
                   {{ msg.content }}
                 </div>
@@ -86,6 +86,7 @@
       <div class="draft-inp-wrap">
         <DraftInput class="draft-send-inp" :on-hide-input="onHideInput" :send-message="sendMessage" />
       </div>
+      <ImagePreview v-model:previewVisible="previewVisible" :select-image="{ url: prevImg }" />
     </div>
   </Loading>
 </template>
@@ -93,9 +94,9 @@
 <script setup lang="ts">
 import { onMounted, ref, computed, nextTick, onUnmounted } from 'vue';
 import { useRoute } from 'vue-router';
-import { HEAD_IMG } from '@/constant';
+import { HEAD_IMG, MATCH_LINK_REG } from '@/constant';
 import { chatStore, loginStore } from '@/store';
-import { formatTimestamp, formatDate } from '@/utils';
+import { formatTimestamp, formatDate, replaceCommentContent } from '@/utils';
 import Image from '@/components/Image/index.vue';
 
 const route = useRoute();
@@ -107,6 +108,8 @@ const scrollRef = ref<any>(null);
 const hasScroll = ref<boolean>(false);
 const currentContactId = ref<string>(userId as string);
 const isMounted = ref<boolean>(false);
+const previewVisible = ref<boolean>(false);
+const prevImg = ref<string>('');
 let timer: ReturnType<typeof setTimeout> | null = null;
 
 const emit = defineEmits(['updateFocus']);
@@ -204,6 +207,15 @@ const scrollToBottom = () => {
       scroll.scrollTop = height;
     }, 100);
   });
+};
+
+// 预览图片
+const onPreview = (content: string) => {
+  const match = content.match(MATCH_LINK_REG);
+  if (match?.[1]) {
+    prevImg.value = match?.[1];
+    previewVisible.value = true;
+  }
 };
 </script>
 

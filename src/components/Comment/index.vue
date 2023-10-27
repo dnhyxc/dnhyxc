@@ -6,20 +6,7 @@
 -->
 <template>
   <div ref="commentsRef" class="Comments">
-    <el-dialog v-model="previewVisible" draggable align-center title="图片预览" width="70%">
-      <div class="preview-dialog">
-        <el-scrollbar class="scroll-wrap" max-height="70vh">
-          <el-image class="prew-img" :src="filePath" fit="cover">
-            <template #placeholder>
-              <div class="image-slot">Loading...</div>
-            </template>
-            <template #error>
-              <div class="image-slot">图片加载失败</div>
-            </template>
-          </el-image>
-        </el-scrollbar>
-      </div>
-    </el-dialog>
+    <ImagePreview v-model:previewVisible="previewVisible" :select-image="{ url: filePath }" />
     <div class="draftInputWrap">
       <DraftInput :get-comment-list="getCommentList" :focus="focus" :article-id="id" :on-hide-input="onHideInput" />
     </div>
@@ -63,7 +50,6 @@
                 >
                   <span class="icon-text">{{ i.likeCount! > 0 ? i.likeCount : '点赞' }}</span>
                 </i>
-
                 <i
                   id="ON_REPLAY"
                   :class="`font iconWrap iconfont icon-pinglun ${
