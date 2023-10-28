@@ -53,6 +53,7 @@ const removeStyle = {
   '--p-code-bg-color': 'rgba(27, 31, 35, 0.08)',
   // 登录背景
   '--login-bg-img': 'linear-gradient(to top, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%)',
+  '--border-color': '#e4e6eb',
 };
 
 // 炫彩背景公共配置
@@ -457,6 +458,8 @@ const cloud = {
   // loading 背景颜色
   '--loading-color': 'rgba(255, 255, 255, 0.5)',
   '--login-bg-img': 'url(@/assets/images/cywl.jpg)',
+  // border 颜色
+  '--border-color': '#ffffffa1',
 };
 
 const themeTypes = {

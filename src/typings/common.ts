@@ -507,6 +507,9 @@ export interface ContactItem {
   headUrl: string;
   username: string;
   job: string;
+  message: string;
+  sendTime: number;
+  chatId: string;
 }
 
 export interface ContactList {

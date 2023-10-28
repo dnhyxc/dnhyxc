@@ -24,7 +24,7 @@
             :placeholder="
               selectComment?.content
                 ? `回复 ${selectComment?.content}...`
-                : '请输入评论（Enter换行，Ctrl + Enter 发送）'
+                : placeholder || '请输入评论（Enter换行，Ctrl + Enter 发送）'
             "
             class="textArea"
             @focus="onFocus"
@@ -90,6 +90,7 @@ interface IProps {
   onJump?: Function;
   onHideInput?: Function;
   sendMessage?: Function | null;
+  placeholder?: string;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
@@ -101,6 +102,7 @@ const props = withDefaults(defineProps<IProps>(), {
   onJump: () => {},
   onHideInput: () => {},
   sendMessage: null,
+  placeholder: '',
 });
 
 const inputRef = ref<HTMLDivElement | null>(null);
@@ -170,6 +172,7 @@ const onShowEmoji = () => {
 const getUploadUrl = (url: string) => {
   const { username } = loginStore?.userInfo;
   keyword.value = insertContent({ keyword: keyword.value, node: (inputRef?.value as any)?.textarea, username, url });
+  inputRef.value?.focus();
 };
 
 // 添加表情

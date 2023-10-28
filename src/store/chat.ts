@@ -48,10 +48,10 @@ export const useChatStore = defineStore('chat', {
         JSON.stringify({
           action: 'chat',
           data: {
-            from: userId,
-            to,
-            // from: to,
-            // to: userId,
+            // from: userId,
+            // to,
+            from: to,
+            to: userId,
             content,
             chatId,
             createTime: new Date().valueOf(),
@@ -92,6 +92,7 @@ export const useChatStore = defineStore('chat', {
     // 添加聊天消息
     async addChat(params: ChatItem) {
       this.addChatList = [...this.addChatList, params];
+      this.updateMessage(params);
     },
 
     // 添加联系人
@@ -148,6 +149,20 @@ export const useChatStore = defineStore('chat', {
         type: res.success ? 'success' : 'error',
         offset: 80,
       });
+    },
+
+    // 更新对应联系人的最新消息
+    updateMessage(params: ChatItem) {
+      const newContacts = this.contactList.map((i) => {
+        if (i.chatId === params.chatId) {
+          i.message = params.content;
+        }
+        return i;
+      });
+
+      console.log(newContacts, 'newContacts');
+
+      this.contactList = newContacts;
     },
 
     // 清除数据

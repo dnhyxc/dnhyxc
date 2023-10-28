@@ -19,15 +19,15 @@
               v-for="item in chatStore.contactList"
               :key="item.contactId"
               :class="`friend-item ${item.contactId === active && 'active'}`"
-              @click.stop="onActive(item.contactId)"
+              @click.stop="onActive(item)"
             >
               <Image :url="item.headUrl || HEAD_IMG" :transition-img="HEAD_IMG" class="head-img" />
               <div class="user-info">
                 <div class="title">
                   <span class="username">{{ item.username }}</span>
-                  <span class="time">12.09</span>
+                  <span class="time">{{ formatTimestamp(item.sendTime) }}</span>
                 </div>
-                <div class="message">这是一条消息这是一条消息这是一条消息这是一条消息这是一条消息这是一条消息</div>
+                <div class="message">{{ item.message }}</div>
               </div>
             </div>
             <div class="load-more">加载更多</div>
@@ -37,7 +37,7 @@
     </div>
     <div class="content">
       <div class="title">
-        <span class="username">dnhyxc</span>
+        <span class="username">{{ contactName }}</span>
         <el-dropdown trigger="click" placement="bottom-end">
           <i class="iconfont icon-gengduo3" />
           <template #dropdown>
@@ -59,9 +59,9 @@
               loading...
             </div>
             <div v-for="(msg, index) in chatList" :key="msg.chatId" class="message-content">
-              <div v-if="chatList.length === 1" class="info">
+              <!-- <div v-if="chatList.length === 1" class="info">
                 由于对方并未关注你，在收到对方回复之前，你最多只能发送1条文字消息
-              </div>
+              </div> -->
               <div v-if="index === 0 || index % 10 === 0" class="time">
                 {{ formatTimestamp(msg.createTime) }}
               </div>
@@ -84,7 +84,12 @@
         </el-scrollbar>
       </div>
       <div class="draft-inp-wrap">
-        <DraftInput class="draft-send-inp" :on-hide-input="onHideInput" :send-message="sendMessage" />
+        <DraftInput
+          class="draft-send-inp"
+          placeholder="请输入 (Enter换行，Ctrl + Enter 发送)"
+          :on-hide-input="onHideInput"
+          :send-message="sendMessage"
+        />
       </div>
       <ImagePreview v-model:previewVisible="previewVisible" :select-image="{ url: prevImg }" />
     </div>
@@ -96,6 +101,7 @@ import { onMounted, ref, computed, nextTick, onUnmounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { HEAD_IMG, MATCH_LINK_REG } from '@/constant';
 import { chatStore, loginStore } from '@/store';
+import { ContactItem } from '@/typings/common';
 import { formatTimestamp, formatDate, replaceCommentContent } from '@/utils';
 import Image from '@/components/Image/index.vue';
 
@@ -104,6 +110,7 @@ const { userId } = route?.query;
 
 const keyword = ref<string>('');
 const active = ref<string>(userId as string);
+const contactName = ref<string>('');
 const scrollRef = ref<any>(null);
 const hasScroll = ref<boolean>(false);
 const currentContactId = ref<string>(userId as string);
@@ -127,6 +134,7 @@ onMounted(async () => {
   chatStore.clearChatInfo();
   chatStore.clearContactInfo();
   await chatStore.getContactList();
+  contactName.value = chatStore.contactList.find((i) => i.contactId === userId)?.username as string;
   // 合并聊天记录
   await chatStore.mergeChats(currentContactId.value);
   // 获取聊天列表
@@ -148,10 +156,12 @@ const onScroll = (e: Event) => {
 };
 
 // 切换联系人
-const onActive = async (contactId: string) => {
+const onActive = async (contact: ContactItem) => {
+  const { contactId, username } = contact;
   isMounted.value = false;
   currentContactId.value = contactId;
   active.value = contactId;
+  contactName.value = username;
   chatStore.initIO();
   chatStore.clearChatInfo(true);
   await chatStore.mergeChats(currentContactId.value);
@@ -238,7 +248,7 @@ const onPreview = (content: string) => {
     display: flex;
     flex-direction: column;
     width: 260px;
-    border-right: 1px solid @border-color;
+    border-right: 1px solid var(--border-color);
 
     .search {
       padding: 10px;
@@ -350,7 +360,7 @@ const onPreview = (content: string) => {
       height: 55px;
       padding: 10px;
       box-sizing: border-box;
-      border-bottom: 1px solid @border-color;
+      border-bottom: 1px solid var(--border-color);
       font-size: 18px;
 
       .username {
@@ -470,8 +480,8 @@ const onPreview = (content: string) => {
       display: flex;
       flex-direction: column;
       justify-content: flex-end;
-      height: 120px;
-      border-top: 1px solid #ccc;
+      height: 130px;
+      border-top: 1px solid var(--border-color);
       box-sizing: border-box;
       background-color: var(--input-bg-color);
 
@@ -480,14 +490,14 @@ const onPreview = (content: string) => {
           display: flex;
           justify-content: center;
           position: absolute;
-          bottom: 20px;
+          bottom: 37px;
           left: 0;
           margin-top: 20px;
           width: 210px;
           padding: 10px 10px 5px;
           background-color: var(--input-bg-color);
           border-radius: 5px;
-          border: 1px solid @border-color;
+          border: 1px solid var(--border-color);
 
           .emoji-item {
             text-align: center;
@@ -499,8 +509,13 @@ const onPreview = (content: string) => {
 
         .emojiWrap {
           position: absolute;
-          top: -32px;
-          left: 5px;
+          top: -35px;
+          padding-left: 5px;
+          margin-top: 0;
+          box-sizing: border-box;
+          background-color: var(--input-bg-color);
+          height: 31px;
+          line-height: 31px;
         }
 
         .textAreaWrap {
@@ -509,9 +524,9 @@ const onPreview = (content: string) => {
 
         .el-textarea__inner {
           box-shadow: none;
-          height: 90px !important;
-          background-color: transparent;
-          padding: 5px;
+          height: 88px !important;
+          padding: 0 5px;
+          border-radius: initial;
 
           &:focus {
             box-shadow: none;
