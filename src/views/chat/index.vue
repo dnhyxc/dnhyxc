@@ -380,7 +380,11 @@ const onPreview = (content: string) => {
       overflow-y: auto;
 
       .messages {
+        display: flex;
+        flex-direction: column;
         height: auto;
+        width: 100%;
+        box-sizing: border-box;
         padding: 0 10px;
 
         .load-more {
@@ -398,6 +402,10 @@ const onPreview = (content: string) => {
           margin-bottom: 20px;
           text-align: center;
           margin-top: 20px;
+        }
+
+        .message-content {
+          max-width: calc(100vw - 374px);
         }
 
         .message-info {
