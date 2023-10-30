@@ -1,5 +1,5 @@
 import { useRouter } from 'vue-router';
-import { toRaw, onMounted, onUnmounted, ref, computed, watchEffect } from 'vue';
+import { toRaw, onMounted, onUnmounted, ref, computed, watchEffect, nextTick } from 'vue';
 import type { Ref } from 'vue';
 import { ElMessage } from 'element-plus';
 import {
@@ -185,4 +185,52 @@ export const useGetRouteAuthInfo = () => {
   if (noAuthMenus?.includes(name as string)) {
     router.push('/404');
   }
+};
+
+export const useContextMenu = (containerRef: Ref<HTMLElement>) => {
+  const showMenu = ref<boolean>(false);
+  const x = ref<number>(0);
+  const y = ref<number>(0);
+
+  const handleContextMenu = (e: MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    showMenu.value = true;
+    x.value = e.clientX;
+    y.value = e.clientY;
+  };
+
+  const closeMenu = () => {
+    showMenu.value = false;
+  };
+
+  onMounted(() => {
+    nextTick(() => {
+      if (!showMenu.value) {
+        const div = containerRef.value;
+        div.addEventListener('contextmenu', handleContextMenu);
+        window.addEventListener('click', closeMenu, true);
+        window.addEventListener('contextmenu', closeMenu, true);
+        window.addEventListener('scroll', closeMenu, true);
+      }
+    });
+  });
+
+  onUnmounted(() => {
+    nextTick(() => {
+      if (showMenu.value) {
+        const div = containerRef.value;
+        div.removeEventListener('contextmenu', handleContextMenu);
+        window.removeEventListener('click', closeMenu, true);
+        window.removeEventListener('contextmenu', closeMenu, true);
+        window.removeEventListener('scroll', closeMenu, true);
+      }
+    });
+  });
+
+  return {
+    showMenu,
+    x,
+    y,
+  };
 };

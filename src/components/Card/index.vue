@@ -5,75 +5,78 @@
  * index.vue
 -->
 <template>
-  <div class="card-wrap" @click.stop="toDetail(data)" @mousedown="(e: MouseEvent) => onMouseDown(e, data)">
-    <div class="card">
-      <div class="card-top">
-        <i v-if="data.isTop" class="font iconfont icon-zhiding" />
-        <div v-if="data?.isDelete" class="mask">
-          <span class="mask-text">已下架</span>
-        </div>
-        <div class="art-action">
-          <slot name="actions">
-            <div v-if="loginStore?.userInfo?.userId === data.authorId">
-              <span class="edit" @click.stop="toEdit(data)">编辑</span>
-              <span class="del" @click.stop="onReomve(data)">下架</span>
-            </div>
-          </slot>
-        </div>
-        <Image :url="data.coverImage || IMG1" :transition-img="IMG1" class="img" />
-        <div class="info">
-          <div class="desc" v-html="data.abstract" />
-        </div>
-        <ContentMenu
-          v-show="commonStore.showContextmenu && commonStore.currentArticleId === data.id"
-          :data="data"
-          :on-open-new-window="onOpenNewWindow"
-          :to-detail="toDetail"
-        />
-      </div>
-      <div class="card-bottom">
-        <slot>
-          <div class="header">
-            <div class="title" v-html="data.title" />
+  <NContextMenu
+    class="block"
+    :menu="[
+      { label: '新窗口打开', value: 1 },
+      { label: '当前页打开', value: 2 },
+    ]"
+    @select="onSelectMenu"
+  >
+    <div class="card-wrap" @click.stop="toDetail(data)">
+      <div class="card">
+        <div class="card-top">
+          <i v-if="data.isTop" class="font iconfont icon-zhiding" />
+          <div v-if="data?.isDelete" class="mask">
+            <span class="mask-text">已下架</span>
           </div>
-          <div class="art-info">
-            <div class="create-info">
-              <span class="author" @click.stop="toPersonal(data.authorId!)" v-html="data.authorName" />
-              <span class="date">{{ data.createTime ? formatDate(data.createTime, 'YYYY/MM/DD') : '-' }}</span>
+          <div class="art-action">
+            <slot name="actions">
+              <div v-if="loginStore?.userInfo?.userId === data.authorId">
+                <span class="edit" @click.stop="toEdit(data)">编辑</span>
+                <span class="del" @click.stop="onReomve(data)">下架</span>
+              </div>
+            </slot>
+          </div>
+          <Image :url="data.coverImage || IMG1" :transition-img="IMG1" class="img" />
+          <div class="info">
+            <div class="desc" v-html="data.abstract" />
+          </div>
+        </div>
+        <div class="card-bottom">
+          <slot>
+            <div class="header">
+              <div class="title" v-html="data.title" />
             </div>
-            <div class="classifys">
-              <span class="classify" @click.stop="toClassify(data.classify!)">
-                <span class="label">分类: </span>
-                <span v-html="data.classify" />
-              </span>
-              <span class="tag" @click.stop="toTag(data.tag!)">
-                <span class="label">标签: </span>
-                <span v-html="data.tag" />
-              </span>
-            </div>
-            <div class="actions">
-              <div class="action-icons">
-                <div class="action like" @click.stop="onLike(data)">
-                  <i
-                    :class="`font like-icon iconfont ${data.isLike ? 'icon-24gf-thumbsUp2' : 'icon-24gl-thumbsUp2'}`"
-                  />
-                  <span>{{ data.likeCount || '点赞' }}</span>
-                </div>
-                <div class="action comment" @click.stop="onComment(data)">
-                  <i class="font comment-icon iconfont icon-pinglun" />
-                  <span>{{ data.commentCount || '评论' }}</span>
-                </div>
-                <div class="action read-count">
-                  <i class="font read-icon iconfont icon-yanjing" />
-                  <span class="text">{{ data.readCount || '阅读' }}</span>
+            <div class="art-info">
+              <div class="create-info">
+                <span class="author" @click.stop="toPersonal(data.authorId!)" v-html="data.authorName" />
+                <span class="date">{{ data.createTime ? formatDate(data.createTime, 'YYYY/MM/DD') : '-' }}</span>
+              </div>
+              <div class="classifys">
+                <span class="classify" @click.stop="toClassify(data.classify!)">
+                  <span class="label">分类: </span>
+                  <span v-html="data.classify" />
+                </span>
+                <span class="tag" @click.stop="toTag(data.tag!)">
+                  <span class="label">标签: </span>
+                  <span v-html="data.tag" />
+                </span>
+              </div>
+              <div class="actions">
+                <div class="action-icons">
+                  <div class="action like" @click.stop="onLike(data)">
+                    <i
+                      :class="`font like-icon iconfont ${data.isLike ? 'icon-24gf-thumbsUp2' : 'icon-24gl-thumbsUp2'}`"
+                    />
+                    <span>{{ data.likeCount || '点赞' }}</span>
+                  </div>
+                  <div class="action comment" @click.stop="onComment(data)">
+                    <i class="font comment-icon iconfont icon-pinglun" />
+                    <span>{{ data.commentCount || '评论' }}</span>
+                  </div>
+                  <div class="action read-count">
+                    <i class="font read-icon iconfont icon-yanjing" />
+                    <span class="text">{{ data.readCount || '阅读' }}</span>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </slot>
+          </slot>
+        </div>
       </div>
     </div>
-  </div>
+  </NContextMenu>
 </template>
 
 <script setup lang="ts">
@@ -85,7 +88,7 @@ import { IMG1 } from '@/constant';
 import { loginStore } from '@/store';
 import { useCommonStore } from '@/store/common';
 import Image from '@/components/Image/index.vue';
-import ContentMenu from '@/components/ContentMenu/index.vue';
+import NContextMenu from '@/components/NContextMenu/index.vue';
 
 const commonStore = useCommonStore();
 
@@ -142,16 +145,16 @@ const onReomve = async (data: ArticleItem) => {
   props.deleteArticle(data.id);
 };
 
-// 监听鼠标右键，分别进行不同的操作
-const onMouseDown = async (e: MouseEvent, data: ArticleItem) => {
-  // 使用新窗口打开
-  if (e.button === 2) {
-    commonStore.showContextmenu = true;
-    commonStore.currentArticleId = data.id;
-  }
+// 选中菜单
+const onSelectMenu = (menu: { label: string; value: number }) => {
   if (props.withoutToDetail) return;
-  if (data?.isDelete) {
+  if (props.data?.isDelete) {
     return showMessage();
+  }
+  if (menu.value === 1) {
+    onOpenNewWindow(props.data);
+  } else {
+    toDetail(props.data);
   }
 };
 

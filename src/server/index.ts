@@ -444,6 +444,11 @@ export const mergeChats = async (chatId: string) => {
   return await post(API.MERGE_CHATS, copeParams({ chatId }));
 };
 
+// 删除消息
+export const deleteChats = async (delIds: string[]) => {
+  return await post(API.DELETE_CHATS, copeParams({ delIds }));
+};
+
 // 获取联系人
 export const getContactList = async (params: { pageNo: number; pageSize: number }) => {
   return await post(API.GET_CONTACT_LIST, copeParams(params));

@@ -169,9 +169,14 @@ const onShowEmoji = () => {
 };
 
 // 获取上传成功后的文件url
-const getUploadUrl = (url: string) => {
+const getUploadUrl = (url: string, name: string) => {
   const { username } = loginStore?.userInfo;
-  keyword.value = insertContent({ keyword: keyword.value, node: (inputRef?.value as any)?.textarea, username, url });
+  keyword.value = insertContent({
+    keyword: keyword.value,
+    node: (inputRef?.value as any)?.textarea,
+    username: name || username,
+    url,
+  });
   inputRef.value?.focus();
 };
 

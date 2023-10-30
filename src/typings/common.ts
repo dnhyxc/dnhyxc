@@ -491,6 +491,7 @@ export interface ChatItem {
   chatId: string;
   id: string;
   read: boolean;
+  isDelete?: boolean;
 }
 
 export interface ChatList {
@@ -515,4 +516,9 @@ export interface ContactItem {
 export interface ContactList {
   total: number;
   list: ContactItem[];
+}
+
+export interface Menu {
+  label: string;
+  value: any;
 }

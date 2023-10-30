@@ -55,7 +55,7 @@
           class="pullup-content"
         >
           <div v-for="i of collectStore.articleList" :key="i.id" class="pullup-list-item">
-            <Card :data="i" :like-list-article="likeListArticle" class="card" without-to-detail>
+            <Card :data="i" :like-list-article="likeListArticle" class="card">
               <template #actions>
                 <div v-if="personalStore.userInfo?.userId === loginStore.userInfo?.userId" class="action art-action">
                   <span class="move" @click.stop="onMoveTo(i)">转移</span>

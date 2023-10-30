@@ -18,6 +18,7 @@ interface IProps {
   contactPageNo: number;
   contactPageSize: number;
   contactTotal: number;
+  delIds: string[];
 }
 
 export const useChatStore = defineStore('chat', {
@@ -32,6 +33,7 @@ export const useChatStore = defineStore('chat', {
     contactPageNo: 0,
     contactPageSize: 30,
     contactTotal: 0,
+    delIds: [],
   }),
 
   actions: {
@@ -48,10 +50,10 @@ export const useChatStore = defineStore('chat', {
         JSON.stringify({
           action: 'chat',
           data: {
-            // from: userId,
-            // to,
-            from: to,
-            to: userId,
+            from: userId,
+            to,
+            // from: to,
+            // to: userId,
             content,
             chatId,
             createTime: new Date().valueOf(),
@@ -93,6 +95,24 @@ export const useChatStore = defineStore('chat', {
     async addChat(params: ChatItem) {
       this.addChatList = [...this.addChatList, params];
       this.updateMessage(params);
+    },
+
+    // 删除消息
+    async deleteChats() {
+      if (!this.delIds?.length) return;
+      const res = normalizeResult<{ data: string[] }>(await Service.deleteChats(this.delIds));
+      if (res.success) {
+        this.delIds = [];
+        console.log(res, '删除消息', this.delIds);
+      }
+    },
+
+    // 保存需要删除的消息 id
+    addDelIds(id: string) {
+      if (!this.delIds.includes(id)) {
+        this.delIds = [...this.delIds, id];
+      }
+      console.log(this.delIds, '222');
     },
 
     // 添加联系人

@@ -81,7 +81,7 @@ interface IProps {
   preview?: boolean;
   showImg?: boolean;
   fixedNumber?: number[];
-  getUploadUrl?: (url: string) => void;
+  getUploadUrl?: (url: string, name?: string) => void;
   needCropper?: boolean;
   delete?: boolean; // 控制点击删除图标时，是否删除数据库中的图片
   isAtlas?: boolean; // 是否是图片集上传
@@ -176,7 +176,7 @@ const onUpload = async (event: { file: Blob }) => {
   if (!props.needCropper) {
     const res = await uploadStore.uploadFile(event.file as File, props.isAtlas);
     if (res) {
-      props.getUploadUrl?.(res.filePath);
+      props.getUploadUrl?.(res.filePath, event.file.name);
       // 更新父组件传递过来的filePath
       emit('update:filePath', res.filePath);
       if (props.isAtlas) {

@@ -67,6 +67,8 @@ declare module '@vue/runtime-core' {
     Messages: typeof import('./src/components/Messages/index.vue')['default']
     MonacoEditor: typeof import('./src/components/MonacoEditor/index.vue')['default']
     Multibar: typeof import('./src/components/Multibar/index.vue')['default']
+    NContentMenu: typeof import('./src/components/NContentMenu/index.vue')['default']
+    NContextMenu: typeof import('./src/components/NContextMenu/index.vue')['default']
     PopContent: typeof import('./src/components/PopContent/index.vue')['default']
     Preview: typeof import('./src/components/Preview/index.vue')['default']
     PreviewHeader: typeof import('./src/components/PreviewHeader/index.vue')['default']

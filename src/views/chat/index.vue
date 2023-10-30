@@ -62,21 +62,42 @@
               <!-- <div v-if="chatList.length === 1" class="info">
                 由于对方并未关注你，在收到对方回复之前，你最多只能发送1条文字消息
               </div> -->
-              <div v-if="index === 0 || index % 10 === 0" class="time">
+              <div v-if="index === 0 || (index % 10 === 0 && !chatStore.delIds.includes(msg.id))" class="time">
                 {{ formatTimestamp(msg.createTime) }}
               </div>
-              <div v-if="msg.from === loginStore.userInfo.userId" class="message-info message-send">
+              <div
+                v-if="msg.from === loginStore.userInfo.userId"
+                :class="`message-info message-send ${chatStore.delIds.includes(msg.id) && 'message-del'}`"
+              >
                 <div class="message" @click="onPreview(msg.content)">
                   <span class="send-date">{{ formatDate(msg.createTime, 'MM/DD HH:mm') }}</span>
-                  <div v-html="replaceCommentContent(msg.content)" />
+                  <NContextMenu
+                    class="block"
+                    :menu="[
+                      { label: '删除', value: 1 },
+                      { label: '复制', value: 2 },
+                    ]"
+                    @select="(menu:Menu) => onSelectMenu(menu, msg)"
+                  >
+                    <div class="message-text" v-html="replaceCommentContent(msg.content)" />
+                  </NContextMenu>
                 </div>
                 <Image :url="HEAD_IMG" :transition-img="HEAD_IMG" class="head-img" />
               </div>
-              <div v-else class="message-info message-receive">
+              <div v-else :class="`message-info message-receive ${chatStore.delIds.includes(msg.id) && 'message-del'}`">
                 <Image :url="HEAD_IMG" :transition-img="HEAD_IMG" class="head-img" />
                 <div class="message" @click="onPreview(msg.content)">
                   <span class="send-date">{{ formatDate(msg.createTime, 'MM/DD HH:mm') }}</span>
-                  {{ msg.content }}
+                  <NContextMenu
+                    class="block"
+                    :menu="[
+                      { label: '删除', value: 1 },
+                      { label: '复制', value: 2 },
+                    ]"
+                    @select="(menu:Menu) => onSelectMenu(menu, msg)"
+                  >
+                    <div class="message-text" v-html="replaceCommentContent(msg.content)" />
+                  </NContextMenu>
                 </div>
               </div>
             </div>
@@ -97,13 +118,14 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, computed, nextTick, onUnmounted } from 'vue';
+import { onMounted, ref, computed, nextTick, onUnmounted, onBeforeUnmount } from 'vue';
 import { useRoute } from 'vue-router';
-import { HEAD_IMG, MATCH_LINK_REG } from '@/constant';
+import { HEAD_IMG } from '@/constant';
 import { chatStore, loginStore } from '@/store';
-import { ContactItem } from '@/typings/common';
+import { ContactItem, Menu, ChatItem } from '@/typings/common';
 import { formatTimestamp, formatDate, replaceCommentContent } from '@/utils';
 import Image from '@/components/Image/index.vue';
+import NContextMenu from '@/components/NContextMenu/index.vue';
 
 const route = useRoute();
 const { userId } = route?.query;
@@ -144,6 +166,11 @@ onMounted(async () => {
   (scrollRef.value?.wrapRef as HTMLElement)?.addEventListener('scroll', onScroll);
 });
 
+onBeforeUnmount(async () => {
+  // 页面离开时统一删除消息
+  await chatStore.deleteChats();
+});
+
 onUnmounted(() => {
   (scrollRef.value?.wrapRef as HTMLElement)?.removeEventListener('scroll', onScroll);
 });
@@ -168,6 +195,8 @@ const onActive = async (contact: ContactItem) => {
   await loadChatList();
   scrollToBottom();
   checkScroll();
+  // 统一删除消息
+  await chatStore.deleteChats();
 };
 
 // 判断是否有滚动条
@@ -221,10 +250,22 @@ const scrollToBottom = () => {
 
 // 预览图片
 const onPreview = (content: string) => {
-  const match = content.match(MATCH_LINK_REG);
-  if (match?.[1]) {
-    prevImg.value = match?.[1];
+  const regex = /<[^>]+>/g;
+  const matches = content.match(regex);
+  const links = matches?.map((match) => match.substring(1, match.length - 1).split(',')[1]);
+  if (links?.[0]) {
+    prevImg.value = links?.[0];
     previewVisible.value = true;
+  }
+};
+
+// 选中后菜单
+const onSelectMenu = (menu: Menu, data: ChatItem) => {
+  const { value } = menu;
+  if (value === 1) {
+    chatStore.addDelIds(data.id);
+  } else {
+    console.log('复制内容', data.content);
   }
 };
 </script>
@@ -416,7 +457,17 @@ const onPreview = (content: string) => {
             max-width: 65%;
             color: @font-1;
             border-radius: 5px;
+          }
+
+          .message-text {
             padding: 5px;
+
+            :deep {
+              img {
+                padding: 0 !important;
+                border-radius: 0 !important;
+              }
+            }
           }
 
           .head-img {
@@ -480,6 +531,11 @@ const onPreview = (content: string) => {
               }
             }
           }
+        }
+
+        .message-del {
+          display: none !important;
+          border: 1px solid red;
         }
       }
     }
