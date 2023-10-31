@@ -879,3 +879,17 @@ export const LOADING_SVG = `
 
 // 匹配链接
 export const MATCH_LINK_REG = /<dnhyxc,(https?:\/\/[^><]+)>/;
+
+// 联系人右键菜单
+export const CONTACT_MENU = [
+  { label: '消息置顶', value: 1 },
+  { label: '消息免打扰', value: 2 },
+  { label: '删除消息', value: 3 },
+  { label: '不显示消息', value: 4 },
+];
+
+// 聊天消息右键菜单
+export const CHAT_MENU = [
+  { label: '删除', value: 1 },
+  { label: '复制', value: 2 },
+];

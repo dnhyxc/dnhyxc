@@ -16,15 +16,12 @@
         <el-scrollbar ref="contactScrollRef" wrap-class="scrollbar-wrapper">
           <div class="friend-list">
             <div v-for="item in chatStore.contactList" :key="item.contactId" @click.stop="onActive(item)">
-              <NContextMenu
-                class="block"
-                :menu="[
-                  { label: '消息置顶', value: 1 },
-                  { label: '消息免打扰', value: 2 },
-                ]"
-                @select="(menu:Menu) => onSelectContact(menu, item)"
-              >
-                <div :class="`friend-item ${item.contactId === active && 'active'}`">
+              <NContextMenu class="block" :menu="CONTACT_MENU" @select="(menu:Menu) => onSelectContact(menu, item)">
+                <div
+                  :class="`friend-item ${item.contactId === active && 'active'} ${
+                    chatStore.delContactIds.includes(item.contactId) && 'del-friend-item'
+                  }`"
+                >
                   <div v-if="item.noReadCount" class="no-read-count">
                     {{ item.noReadCount > 99 ? `${item.noReadCount}+` : item.noReadCount }}
                   </div>
@@ -48,7 +45,7 @@
         </el-scrollbar>
       </div>
     </div>
-    <div class="content">
+    <div :class="`content ${!currentContactId && 'hide-content'}`">
       <div v-if="currentContactId" class="title">
         <span class="username">{{ contactName }}</span>
         <el-dropdown trigger="click" placement="bottom-end">
@@ -84,14 +81,7 @@
               >
                 <div class="message" @click="onPreview(msg.content)">
                   <span class="send-date">{{ formatDate(msg.createTime, 'MM/DD HH:mm') }}</span>
-                  <NContextMenu
-                    class="block"
-                    :menu="[
-                      { label: '删除', value: 1 },
-                      { label: '复制', value: 2 },
-                    ]"
-                    @select="(menu:Menu) => onSelectMenu(menu, msg)"
-                  >
+                  <NContextMenu class="block" :menu="CHAT_MENU" @select="(menu:Menu) => onSelectMenu(menu, msg)">
                     <div class="message-text" v-html="replaceCommentContent(msg.content)" />
                   </NContextMenu>
                 </div>
@@ -101,14 +91,7 @@
                 <Image :url="HEAD_IMG" :transition-img="HEAD_IMG" class="head-img" />
                 <div class="message" @click="onPreview(msg.content)">
                   <span class="send-date">{{ formatDate(msg.createTime, 'MM/DD HH:mm') }}</span>
-                  <NContextMenu
-                    class="block"
-                    :menu="[
-                      { label: '删除', value: 1 },
-                      { label: '复制', value: 2 },
-                    ]"
-                    @select="(menu:Menu) => onSelectMenu(menu, msg)"
-                  >
+                  <NContextMenu class="block" :menu="CHAT_MENU" @select="(menu:Menu) => onSelectMenu(menu, msg)">
                     <div class="message-text" v-html="replaceCommentContent(msg.content)" />
                   </NContextMenu>
                 </div>
@@ -138,7 +121,7 @@
 <script setup lang="ts">
 import { onMounted, ref, computed, nextTick, onUnmounted, onBeforeUnmount, Ref } from 'vue';
 import { useRoute } from 'vue-router';
-import { HEAD_IMG } from '@/constant';
+import { HEAD_IMG, CONTACT_MENU, CHAT_MENU } from '@/constant';
 import { chatStore, loginStore, messageStore } from '@/store';
 import { ContactItem, Menu, ChatItem } from '@/typings/common';
 import { formatTimestamp, formatDate, replaceCommentContent } from '@/utils';
@@ -325,7 +308,16 @@ const onSelectMenu = (menu: Menu, data: ChatItem) => {
 
 // 选中联系人菜单
 const onSelectContact = (menu: Menu, data: ContactItem) => {
+  const { value } = menu;
   console.log(menu, 'menu', data);
+  if (value === 3) {
+    chatStore.addDelContactId(data.contactId);
+    if (chatStore.delContactIds.includes(data.contactId)) {
+      currentContactId.value = '';
+    }
+  } else {
+    console.log('消息免打燃');
+  }
 };
 </script>
 
@@ -425,6 +417,10 @@ const onSelectContact = (menu: Menu, data: ContactItem) => {
               .ellipsisMore(1);
             }
           }
+        }
+
+        .del-friend-item {
+          display: none;
         }
 
         .active {
@@ -706,6 +702,10 @@ const onSelectContact = (menu: Menu, data: ContactItem) => {
       justify-content: center;
       flex-direction: column;
     }
+  }
+
+  .hide-content {
+    opacity: 0;
   }
 
   :deep {

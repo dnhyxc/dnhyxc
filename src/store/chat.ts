@@ -23,6 +23,7 @@ interface IProps {
   wrapRef: HTMLElement | null; // 滚动元素
   timer: ReturnType<typeof setTimeout> | null;
   unReadCount: number;
+  delContactIds: string[]; // 需要删除的联系人id
 }
 
 export const useChatStore = defineStore('chat', {
@@ -42,6 +43,7 @@ export const useChatStore = defineStore('chat', {
     wrapRef: null,
     timer: null,
     unReadCount: 0,
+    delContactIds: [],
   }),
 
   actions: {
@@ -171,6 +173,15 @@ export const useChatStore = defineStore('chat', {
           offset: 80,
         });
       }
+    },
+
+    // 保存需要删的联系人id
+    addDelContactId(contactId: string) {
+      console.log(contactId, '保存需要删的联系人id');
+      if (!this.delContactIds.includes(contactId)) {
+        this.delContactIds.push(contactId);
+      }
+      console.log(this.delContactIds, '保存需要删的联系人id');
     },
 
     // 获取用户信息
