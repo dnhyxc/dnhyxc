@@ -511,6 +511,8 @@ export interface ContactItem {
   message: string;
   sendTime: number;
   chatId: string;
+  noReadCount: number;
+  from: string;
 }
 
 export interface ContactList {

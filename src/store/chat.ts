@@ -5,7 +5,7 @@ import { normalizeResult } from '@/utils';
 import { useCheckUserId } from '@/hooks';
 import { createWebSocket, sendMessage } from '@/socket';
 import { loginStore } from '@/store';
-import { ChatItem, ChatList, ContactItem, ContactList } from '@/typings/common';
+import { ChatItem, ChatList, ContactItem, ContactList, UserInfoParams } from '@/typings/common';
 
 interface IProps {
   loading: boolean | null;
@@ -19,6 +19,10 @@ interface IProps {
   contactPageSize: number;
   contactTotal: number;
   delIds: string[];
+  chatUserId: string; // 当前的聊天对象userId
+  wrapRef: HTMLElement | null; // 滚动元素
+  timer: ReturnType<typeof setTimeout> | null;
+  unReadCount: number;
 }
 
 export const useChatStore = defineStore('chat', {
@@ -34,6 +38,10 @@ export const useChatStore = defineStore('chat', {
     contactPageSize: 30,
     contactTotal: 0,
     delIds: [],
+    chatUserId: '',
+    wrapRef: null,
+    timer: null,
+    unReadCount: 0,
   }),
 
   actions: {
@@ -45,6 +53,7 @@ export const useChatStore = defineStore('chat', {
     // 发送消息
     sendChatMessage({ to, content }: { to: string; content: string }) {
       const { userId } = loginStore.userInfo;
+      if (userId === to) return;
       const chatId = [userId, to].sort().join('_');
       sendMessage(
         JSON.stringify({
@@ -52,11 +61,11 @@ export const useChatStore = defineStore('chat', {
           data: {
             from: userId,
             to,
-            // from: to,
-            // to: userId,
             content,
             chatId,
             createTime: new Date().valueOf(),
+            action: 'CHAT',
+            toUserId: to, // 用于提示消息
           },
           userId: loginStore.userInfo?.userId,
         }),
@@ -93,8 +102,24 @@ export const useChatStore = defineStore('chat', {
 
     // 添加聊天消息
     async addChat(params: ChatItem) {
-      this.addChatList = [...this.addChatList, params];
+      if (params.from === params.to) return;
+      if (params.from === this.chatUserId || params.to === this.chatUserId) {
+        this.addChatList = [...this.addChatList, params];
+        if (this.timer) {
+          clearTimeout(this.timer);
+          this.timer = null;
+        }
+        this.timer = setTimeout(() => {
+          const scroll = this.wrapRef as HTMLDivElement;
+          const height = scroll.scrollHeight;
+          scroll.scrollTop = height;
+        }, 100);
+      }
       this.updateMessage(params);
+      const findOne = this.contactList.find((item) => item.chatId === params.chatId);
+      if (!findOne && params.to === loginStore.userInfo.userId) {
+        this.addAbsentContact(params as ContactItem & ChatItem);
+      }
     },
 
     // 删除消息
@@ -103,7 +128,6 @@ export const useChatStore = defineStore('chat', {
       const res = normalizeResult<{ data: string[] }>(await Service.deleteChats(this.delIds));
       if (res.success) {
         this.delIds = [];
-        console.log(res, '删除消息', this.delIds);
       }
     },
 
@@ -112,7 +136,22 @@ export const useChatStore = defineStore('chat', {
       if (!this.delIds.includes(id)) {
         this.delIds = [...this.delIds, id];
       }
-      console.log(this.delIds, '222');
+    },
+
+    // 获取未读消息
+    async getUnReadChat() {
+      if (!useCheckUserId()) return;
+      const chatId = [loginStore.userInfo.userId, this.chatUserId].sort().join('_');
+      const res = normalizeResult<{ noReadCount: number }>(await Service.getUnReadChat(chatId));
+      if (res.success) {
+        const newContacts = this.contactList.map((i) => {
+          if (i.chatId === chatId) {
+            i.noReadCount = res.data.noReadCount;
+          }
+          return i;
+        });
+        this.contactList = newContacts;
+      }
     },
 
     // 添加联系人
@@ -130,6 +169,14 @@ export const useChatStore = defineStore('chat', {
       }
     },
 
+    // 获取用户信息
+    async getUserInfo(userId: string) {
+      const res = normalizeResult<UserInfoParams>(await Service.getUserInfo({ userId }));
+      if (res.success) {
+        return res;
+      }
+    },
+
     // 获取联系人
     async getContactList() {
       // 检验是否有userId，如果没有禁止发送请求
@@ -140,7 +187,6 @@ export const useChatStore = defineStore('chat', {
       const res = normalizeResult<ContactList>(
         await Service.getContactList({ pageNo: this.contactPageNo, pageSize: this.contactPageSize }),
       );
-      this.loading = false;
       if (res.success) {
         this.contactList = [...this.contactList, ...res.data.list];
         this.contactTotal = res.data.total;
@@ -171,17 +217,42 @@ export const useChatStore = defineStore('chat', {
       });
     },
 
+    // 接收到未在聊天列表的人的消息时,添加到联系人列表
+    async addAbsentContact(params: ContactItem & ChatItem) {
+      const res = await this.getUserInfo(params.from);
+      if (res?.success) {
+        const { headUrl, username, job, userId } = res.data;
+        this.contactList = [
+          {
+            ...params,
+            headUrl: headUrl || '',
+            username: username!,
+            job: job || '',
+            message: params.content,
+            sendTime: params.createTime,
+            contactId: userId!,
+            noReadCount: 1,
+          },
+          ...this.contactList,
+        ];
+      }
+    },
+
     // 更新对应联系人的最新消息
     updateMessage(params: ChatItem) {
+      const chatId = [loginStore.userInfo.userId, this.chatUserId].sort().join('_');
       const newContacts = this.contactList.map((i) => {
         if (i.chatId === params.chatId) {
           i.message = params.content;
+          i.createTime = params.createTime;
+          i.sendTime = params.createTime;
+          // 判断是否是当前聊天窗口发来的消息，如果是，不需要增加未读数量
+          if (i.chatId !== chatId) {
+            i.noReadCount += 1;
+          }
         }
         return i;
       });
-
-      console.log(newContacts, 'newContacts');
-
       this.contactList = newContacts;
     },
 

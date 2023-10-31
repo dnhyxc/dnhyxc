@@ -21,13 +21,18 @@
               :class="`friend-item ${item.contactId === active && 'active'}`"
               @click.stop="onActive(item)"
             >
+              <div v-if="item.noReadCount" class="no-read-count">
+                {{ item.noReadCount > 99 ? `${item.noReadCount}+` : item.noReadCount }}
+              </div>
               <Image :url="item.headUrl || HEAD_IMG" :transition-img="HEAD_IMG" class="head-img" />
               <div class="user-info">
                 <div class="title">
                   <span class="username">{{ item.username }}</span>
                   <span class="time">{{ formatTimestamp(item.sendTime) }}</span>
                 </div>
-                <div class="message">{{ item.message }}</div>
+                <div class="message">
+                  <span>{{ item.message }}</span>
+                </div>
               </div>
             </div>
             <div class="load-more">加载更多</div>
@@ -121,7 +126,7 @@
 import { onMounted, ref, computed, nextTick, onUnmounted, onBeforeUnmount } from 'vue';
 import { useRoute } from 'vue-router';
 import { HEAD_IMG } from '@/constant';
-import { chatStore, loginStore } from '@/store';
+import { chatStore, loginStore, messageStore } from '@/store';
 import { ContactItem, Menu, ChatItem } from '@/typings/common';
 import { formatTimestamp, formatDate, replaceCommentContent } from '@/utils';
 import Image from '@/components/Image/index.vue';
@@ -152,6 +157,8 @@ const noMore = computed(() => {
 const chatList = computed(() => [...chatStore.chatList, ...chatStore.addChatList]);
 
 onMounted(async () => {
+  // 保存当前聊天对象的userId
+  chatStore.chatUserId = userId as string;
   chatStore.initIO();
   chatStore.clearChatInfo();
   chatStore.clearContactInfo();
@@ -164,6 +171,10 @@ onMounted(async () => {
   scrollToBottom();
   checkScroll();
   (scrollRef.value?.wrapRef as HTMLElement)?.addEventListener('scroll', onScroll);
+  // 获取未读消息数量
+  await chatStore.getUnReadChat();
+  // 进入页面是将聊天消息的推送设置为已读
+  setMessageReaded();
 });
 
 onBeforeUnmount(async () => {
@@ -182,11 +193,22 @@ const onScroll = (e: Event) => {
   }
 };
 
+// 设置提示消息推送已读
+const setMessageReaded = async () => {
+  await messageStore.getNoReadMsgCount();
+  // 获取未读消息id
+  const msgIds = messageStore.noReadMsgList?.filter((c) => c.action === 'CHAT').map((i) => i.id);
+  if (msgIds?.length) {
+    messageStore.setReadStatus(msgIds);
+  }
+};
+
 // 切换联系人
 const onActive = async (contact: ContactItem) => {
   const { contactId, username } = contact;
   isMounted.value = false;
   currentContactId.value = contactId;
+  chatStore.chatUserId = contactId;
   active.value = contactId;
   contactName.value = username;
   chatStore.initIO();
@@ -195,8 +217,12 @@ const onActive = async (contact: ContactItem) => {
   await loadChatList();
   scrollToBottom();
   checkScroll();
+  // 获取未读消息数量
+  await chatStore.getUnReadChat();
   // 统一删除消息
   await chatStore.deleteChats();
+  // 切换联系人是设置推送消息为已读
+  setMessageReaded();
 };
 
 // 判断是否有滚动条
@@ -230,19 +256,19 @@ const sendMessage = (content: string) => {
     to: currentContactId.value as string,
     content,
   });
-  scrollToBottom();
 };
 
 // 滚动到底部
 const scrollToBottom = () => {
   nextTick(() => {
+    chatStore.wrapRef = scrollRef.value?.wrapRef;
     if (timer) {
       clearTimeout(timer);
       timer = null;
     }
     timer = setTimeout(() => {
       const scroll = scrollRef.value?.wrapRef as HTMLDivElement;
-      const height = scrollRef.value?.wrapRef.scrollHeight;
+      const height = scroll.scrollHeight;
       scroll.scrollTop = height;
     }, 100);
   });
@@ -301,12 +327,27 @@ const onSelectMenu = (menu: Menu, data: ChatItem) => {
 
       .friend-list {
         .friend-item {
+          position: relative;
           display: flex;
           justify-content: space-between;
           height: 65px;
           padding: 10px;
           cursor: pointer;
           box-sizing: border-box;
+
+          .no-read-count {
+            position: absolute;
+            top: 3px;
+            right: 198px;
+            height: 16px;
+            line-height: 16px;
+            box-sizing: border-box;
+            background-color: @font-danger;
+            font-size: 10px;
+            color: @fff;
+            border-radius: 10px;
+            padding: 0 5px;
+          }
 
           .user-info {
             flex: 1;

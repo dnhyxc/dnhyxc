@@ -215,5 +215,8 @@ export const ADD_CONTACTS = '/api/addContacts';
 // 置顶联系人
 export const TO_TOP_CONTACTS = '/api/toTopContacts';
 
+// 获取未读消息数量
+export const GET_UNREAD_CHAT = '/api/getUnReadChat';
+
 // 删除联系人
 export const DELETE_CONTACTS = '/api/deleteContacts';

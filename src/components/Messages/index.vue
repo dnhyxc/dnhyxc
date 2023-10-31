@@ -41,8 +41,11 @@
                   </span>
                 </div>
                 <div class="desc">
-                  <span class="username" @click.stop="toPersonal(data?.fromUserId!)">{{ data?.fromUsername }}</span>
-                  <span class="action-type">{{ MESSAGE_ACTIONS[data?.action!] }}</span>
+                  <span v-if="data?.action !== 'CHAT'" class="username" @click.stop="toPersonal(data?.fromUserId!)">{{
+                    data?.fromUsername
+                  }}</span>
+                  <span v-if="data?.action !== 'CHAT'" class="action-type">{{ MESSAGE_ACTIONS[data?.action!] }}</span>
+                  <span v-if="data?.action === 'CHAT'" class="action-type">{{ data.content }}</span>
                 </div>
               </div>
             </template>
@@ -136,6 +139,10 @@ const toDetail = (data: ArticleItem) => {
       }
       reload && reload();
     }, 100);
+  }
+
+  if (data.action === 'CHAT' && route.path !== '/chat') {
+    router.push('/chat');
   }
 };
 

@@ -135,11 +135,17 @@ async function onMessage(event: any) {
         console.log(event.data);
       } else {
         // 解析处理数据
-        if (parseData.action === 'push') {
-          await messageStore.setMsgCount(parseData.data);
-          // 只在消息弹出框显示的时候才添加数据
-          if (messageStore.visible) {
-            messageStore.addMessage(parseData.data);
+        if (parseData.action === 'push' || parseData.action === 'chat') {
+          // 如果是自己发送的消息则不推送消息
+          if (
+            (parseData.action === 'chat' && parseData.data.from !== loginStore.userInfo.userId) ||
+            parseData.action !== 'chat'
+          ) {
+            await messageStore.setMsgCount(parseData.data);
+            // 只在消息弹出框显示的时候才添加数据
+            if (messageStore.visible) {
+              messageStore.addMessage(parseData.data);
+            }
           }
         }
         // 接收聊天消息

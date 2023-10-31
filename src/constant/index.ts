@@ -835,12 +835,14 @@ export const MESSAGE_ACTIONS = {
   CANCEL_COLLECT: '取消收藏了你的文章',
   FOLLOWED: '关注了你',
   CANCEL_FOLLOWED: '取消了对你的关注',
+  CHAT: '私信',
 };
 
 // 关注/取消关注标题
 export const FOLLOWED_INFO = {
   FOLLOWED: '关注信息',
   CANCEL_FOLLOWED: '取消关注信息',
+  CHAT: '私信',
 };
 
 // monaco-editor 语言列表

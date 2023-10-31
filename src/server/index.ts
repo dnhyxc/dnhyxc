@@ -468,3 +468,8 @@ export const toTopContacts = async (params: { contactId: string; createTime: num
 export const deleteContacts = async (contactId: string) => {
   return await post(API.DELETE_CONTACTS, copeParams({ contactId }));
 };
+
+// 获取未读消息数量
+export const getUnReadChat = async (chatId: string) => {
+  return await post(API.GET_UNREAD_CHAT, copeParams({ chatId }));
+};
