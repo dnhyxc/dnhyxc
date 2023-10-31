@@ -35,7 +35,7 @@ export const useChatStore = defineStore('chat', {
     pageNo: 0,
     pageSize: 30,
     contactPageNo: 0,
-    contactPageSize: 30,
+    contactPageSize: 10,
     contactTotal: 0,
     delIds: [],
     chatUserId: '',
@@ -76,6 +76,10 @@ export const useChatStore = defineStore('chat', {
     async getChatList(userId: string) {
       // 检验是否有userId，如果没有禁止发送请求
       if (!useCheckUserId()) return;
+      if (!userId) {
+        this.loading = false;
+        return;
+      }
       if (this.chatList.length !== 0 && this.chatList.length >= this.total) return;
       this.pageNo = this.pageNo + 1;
       // this.loading = true;
@@ -93,7 +97,7 @@ export const useChatStore = defineStore('chat', {
     // 合并消息
     async mergeChats(to: string) {
       // 检验是否有userId，如果没有禁止发送请求
-      if (!useCheckUserId()) return;
+      if (!useCheckUserId() || !to) return;
       this.loading = true;
       const { userId } = loginStore.userInfo;
       const chatId = [userId, to].sort().join('_');
@@ -140,7 +144,7 @@ export const useChatStore = defineStore('chat', {
 
     // 获取未读消息
     async getUnReadChat() {
-      if (!useCheckUserId()) return;
+      if (!useCheckUserId() || !this.chatUserId) return;
       const chatId = [loginStore.userInfo.userId, this.chatUserId].sort().join('_');
       const res = normalizeResult<{ noReadCount: number }>(await Service.getUnReadChat(chatId));
       if (res.success) {
@@ -183,7 +187,7 @@ export const useChatStore = defineStore('chat', {
       if (!useCheckUserId()) return;
       if (this.contactList.length !== 0 && this.contactList.length >= this.contactTotal) return;
       this.contactPageNo = this.contactPageNo + 1;
-      this.loading = true;
+      // this.loading = true;
       const res = normalizeResult<ContactList>(
         await Service.getContactList({ pageNo: this.contactPageNo, pageSize: this.contactPageSize }),
       );

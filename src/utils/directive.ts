@@ -179,7 +179,7 @@ export const mountDirectives = <T>(app: T | any) => {
   });
 
   // observe 监听元素，加载数据
-  app.directive('load', {
+  app.directive('dropdownLoad', {
     // 绑定元素的父组件挂载时调用
     mounted(observeNode: HTMLElement, binding: DirectiveBinding) {
       nextTick(() => {
@@ -200,6 +200,28 @@ export const mountDirectives = <T>(app: T | any) => {
             const afterHeight = parentNode.scrollHeight;
             const height = afterHeight - beforeHeight;
             (wrapRef! as HTMLElement).scrollTop = height;
+          }
+        });
+        (observeNode as any).ob.observe(observeNode);
+      });
+    },
+    beforeUnmount(observeNode: HTMLElement) {
+      (observeNode as any).ob.unobserve(observeNode);
+    },
+  });
+
+  // observe 监听元素，加载数据
+  app.directive('rollLoad', {
+    // 绑定元素的父组件挂载时调用
+    mounted(observeNode: HTMLElement, binding: DirectiveBinding) {
+      nextTick(() => {
+        (observeNode as any).ob = new IntersectionObserver(async (entries) => {
+          const noMore = computed(() => {
+            const { contactList, contactTotal } = binding.value.chatStore;
+            return !!(contactList.length >= contactTotal && contactList.length);
+          });
+          if (entries[0].isIntersecting && !noMore.value) {
+            await binding.value.loadContactList();
           }
         });
         (observeNode as any).ob.observe(observeNode);

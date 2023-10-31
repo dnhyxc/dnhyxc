@@ -30,7 +30,7 @@
       <el-button class="btn" type="primary" plain @click.stop="onFollow">
         {{ followStore.isFollowed ? '已关注' : '关注' }}
       </el-button>
-      <el-button class="btn" type="success" plain @click.stop="toChart">私信</el-button>
+      <el-button class="btn" type="success" plain @click.stop="toChat">私信</el-button>
     </div>
   </div>
 </template>
@@ -61,9 +61,9 @@ const toPersonal = () => {
 };
 
 // 去聊天页面
-const toChart = async () => {
+const toChat = async () => {
   await chatStore.addContacts(props.comment?.userId!);
-  router.push(`/chat?userId=${props.comment?.userId}`);
+  router.push(`/chat?userId=${props.comment?.userId}&username=${props.comment?.username}`);
 };
 </script>
 

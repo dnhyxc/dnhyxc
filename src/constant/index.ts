@@ -484,7 +484,7 @@ export const MENULIST = [
 ];
 
 // 需要登陆权限的路由
-export const WITH_AUTH_ROUTES = ['/create', '/timeline', '/personal', '/interact', '/tools'];
+export const WITH_AUTH_ROUTES = ['/create', '/timeline', '/personal', '/interact', '/tools', '/chat'];
 
 // 只能博主才能访问的页面
 export const AUTHOR_ROUTES = ['tools', 'picture'];

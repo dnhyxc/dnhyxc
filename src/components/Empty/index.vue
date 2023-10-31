@@ -7,12 +7,18 @@
 <template>
   <div class="empty-wrap">
     <img :src="EMPTY" />
-    <span class="empty-text">空空如也</span>
+    <span class="empty-text">{{ text || '空空如也' }}</span>
   </div>
 </template>
 
 <script setup lang="ts">
 import { EMPTY } from '@/constant';
+
+interface IProps {
+  text?: string;
+}
+
+defineProps<IProps>();
 </script>
 
 <style scoped lang="less">

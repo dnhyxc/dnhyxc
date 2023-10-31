@@ -27,7 +27,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, Ref } from 'vue';
 import { useContextMenu } from '@/hooks';
 
 interface IProps {
@@ -39,7 +39,8 @@ defineProps<IProps>();
 const emit = defineEmits(['select']);
 
 const containerRef = ref<HTMLElement | null>(null);
-const { x, y, showMenu } = useContextMenu(containerRef);
+
+const { x, y, showMenu } = useContextMenu(containerRef as Ref<HTMLElement>);
 
 const onSelect = (item: { label: string; value: any }) => {
   // 选中菜单后关闭菜单

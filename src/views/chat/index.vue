@@ -13,35 +13,43 @@
         </el-form>
       </div>
       <div class="friends-wrap">
-        <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
+        <el-scrollbar ref="contactScrollRef" wrap-class="scrollbar-wrapper">
           <div class="friend-list">
-            <div
-              v-for="item in chatStore.contactList"
-              :key="item.contactId"
-              :class="`friend-item ${item.contactId === active && 'active'}`"
-              @click.stop="onActive(item)"
-            >
-              <div v-if="item.noReadCount" class="no-read-count">
-                {{ item.noReadCount > 99 ? `${item.noReadCount}+` : item.noReadCount }}
-              </div>
-              <Image :url="item.headUrl || HEAD_IMG" :transition-img="HEAD_IMG" class="head-img" />
-              <div class="user-info">
-                <div class="title">
-                  <span class="username">{{ item.username }}</span>
-                  <span class="time">{{ formatTimestamp(item.sendTime) }}</span>
+            <div v-for="item in chatStore.contactList" :key="item.contactId" @click.stop="onActive(item)">
+              <NContextMenu
+                class="block"
+                :menu="[
+                  { label: '消息置顶', value: 1 },
+                  { label: '消息免打扰', value: 2 },
+                ]"
+                @select="(menu:Menu) => onSelectContact(menu, item)"
+              >
+                <div :class="`friend-item ${item.contactId === active && 'active'}`">
+                  <div v-if="item.noReadCount" class="no-read-count">
+                    {{ item.noReadCount > 99 ? `${item.noReadCount}+` : item.noReadCount }}
+                  </div>
+                  <Image :url="item.headUrl || HEAD_IMG" :transition-img="HEAD_IMG" class="head-img" />
+                  <div class="user-info">
+                    <div class="title">
+                      <span class="username">{{ item.username }}</span>
+                      <span class="time">{{ formatTimestamp(item.sendTime) }}</span>
+                    </div>
+                    <div class="message">
+                      <span>{{ item.message }}</span>
+                    </div>
+                  </div>
                 </div>
-                <div class="message">
-                  <span>{{ item.message }}</span>
-                </div>
-              </div>
+              </NContextMenu>
             </div>
-            <div class="load-more">加载更多</div>
+            <div v-rollLoad="{ loadContactList, chatStore }" class="load-more-contact">
+              <span v-if="!noMoreContacts && hasContactScroll" class="load-contact">loading...</span>
+            </div>
           </div>
         </el-scrollbar>
       </div>
     </div>
     <div class="content">
-      <div class="title">
+      <div v-if="currentContactId" class="title">
         <span class="username">{{ contactName }}</span>
         <el-dropdown trigger="click" placement="bottom-end">
           <i class="iconfont icon-gengduo3" />
@@ -58,7 +66,7 @@
           <div class="messages">
             <div
               v-if="!noMore && hasScroll && isMounted"
-              v-load="{ loadChatList, chatStore, scrollToBottom }"
+              v-dropdownLoad="{ loadChatList, chatStore, scrollToBottom }"
               class="load-more"
             >
               loading...
@@ -109,7 +117,7 @@
           </div>
         </el-scrollbar>
       </div>
-      <div class="draft-inp-wrap">
+      <div v-if="currentContactId" class="draft-inp-wrap">
         <DraftInput
           class="draft-send-inp"
           placeholder="请输入 (Enter换行，Ctrl + Enter 发送)"
@@ -119,11 +127,16 @@
       </div>
       <ImagePreview v-model:previewVisible="previewVisible" :select-image="{ url: prevImg }" />
     </div>
+    <div v-if="!currentContactId" class="empty-content">
+      <div class="empyt">
+        <Empty text="未选中或未发起私聊，快选个人畅所欲言吧" />
+      </div>
+    </div>
   </Loading>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, computed, nextTick, onUnmounted, onBeforeUnmount } from 'vue';
+import { onMounted, ref, computed, nextTick, onUnmounted, onBeforeUnmount, Ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { HEAD_IMG } from '@/constant';
 import { chatStore, loginStore, messageStore } from '@/store';
@@ -133,12 +146,14 @@ import Image from '@/components/Image/index.vue';
 import NContextMenu from '@/components/NContextMenu/index.vue';
 
 const route = useRoute();
-const { userId } = route?.query;
+const { userId, username } = route?.query;
 
 const keyword = ref<string>('');
 const active = ref<string>(userId as string);
-const contactName = ref<string>('');
+const contactName = ref<string>(username as string);
 const scrollRef = ref<any>(null);
+const contactScrollRef = ref<any>(null);
+const hasContactScroll = ref<boolean>(false);
 const hasScroll = ref<boolean>(false);
 const currentContactId = ref<string>(userId as string);
 const isMounted = ref<boolean>(false);
@@ -153,6 +168,11 @@ const noMore = computed(() => {
   return chatList.length >= total && chatList.length && total;
 });
 
+const noMoreContacts = computed(() => {
+  const { contactList, contactTotal } = chatStore;
+  return !!(contactList.length >= contactTotal && contactList.length);
+});
+
 // 合并原有消息与新发送的消息
 const chatList = computed(() => [...chatStore.chatList, ...chatStore.addChatList]);
 
@@ -161,15 +181,12 @@ onMounted(async () => {
   chatStore.chatUserId = userId as string;
   chatStore.initIO();
   chatStore.clearChatInfo();
-  chatStore.clearContactInfo();
-  await chatStore.getContactList();
-  contactName.value = chatStore.contactList.find((i) => i.contactId === userId)?.username as string;
   // 合并聊天记录
   await chatStore.mergeChats(currentContactId.value);
   // 获取聊天列表
   await loadChatList();
   scrollToBottom();
-  checkScroll();
+  checkScroll(scrollRef, hasScroll, contactScrollRef, hasContactScroll);
   (scrollRef.value?.wrapRef as HTMLElement)?.addEventListener('scroll', onScroll);
   // 获取未读消息数量
   await chatStore.getUnReadChat();
@@ -184,6 +201,7 @@ onBeforeUnmount(async () => {
 
 onUnmounted(() => {
   (scrollRef.value?.wrapRef as HTMLElement)?.removeEventListener('scroll', onScroll);
+  chatStore.clearContactInfo();
 });
 
 const onScroll = (e: Event) => {
@@ -216,7 +234,7 @@ const onActive = async (contact: ContactItem) => {
   await chatStore.mergeChats(currentContactId.value);
   await loadChatList();
   scrollToBottom();
-  checkScroll();
+  checkScroll(scrollRef, hasScroll);
   // 获取未读消息数量
   await chatStore.getUnReadChat();
   // 统一删除消息
@@ -226,17 +244,27 @@ const onActive = async (contact: ContactItem) => {
 };
 
 // 判断是否有滚动条
-const checkScroll = () => {
+const checkScroll = (elementRef: any, hasScroll: Ref<boolean>, contactRef?: any, contactHasScroll?: Ref<boolean>) => {
   nextTick(() => {
-    const scrollHeight = scrollRef.value?.wrapRef.scrollHeight;
-    const clientHeight = scrollRef.value?.wrapRef.clientHeight;
+    const scrollHeight = elementRef.value?.wrapRef.scrollHeight;
+    const clientHeight = elementRef.value?.wrapRef.clientHeight;
     hasScroll.value = scrollHeight > clientHeight;
+    if (contactRef && contactHasScroll) {
+      const scrollHeight = contactRef.value?.wrapRef.scrollHeight;
+      const clientHeight = contactRef.value?.wrapRef.clientHeight;
+      contactHasScroll.value = scrollHeight > clientHeight;
+    }
   });
 };
 
 // 加载更多数据
 const loadChatList = async () => {
   return chatStore.getChatList(currentContactId.value);
+};
+
+// 加载联系人列表
+const loadContactList = async () => {
+  await chatStore.getContactList();
 };
 
 // 搜索联系人
@@ -268,8 +296,8 @@ const scrollToBottom = () => {
     }
     timer = setTimeout(() => {
       const scroll = scrollRef.value?.wrapRef as HTMLDivElement;
-      const height = scroll.scrollHeight;
-      scroll.scrollTop = height;
+      const height = scroll?.scrollHeight;
+      height && (scroll.scrollTop = height);
     }, 100);
   });
 };
@@ -294,12 +322,18 @@ const onSelectMenu = (menu: Menu, data: ChatItem) => {
     console.log('复制内容', data.content);
   }
 };
+
+// 选中联系人菜单
+const onSelectContact = (menu: Menu, data: ContactItem) => {
+  console.log(menu, 'menu', data);
+};
 </script>
 
 <style scoped lang="less">
 @import '@/styles/index.less';
 
 .chart-wrap {
+  position: relative;
   display: flex;
   justify-content: space-between;
   border-radius: 5px;
@@ -316,6 +350,7 @@ const onSelectMenu = (menu: Menu, data: ChatItem) => {
     flex-direction: column;
     width: 260px;
     border-right: 1px solid var(--border-color);
+    box-sizing: border-box;
 
     .search {
       padding: 10px;
@@ -326,6 +361,15 @@ const onSelectMenu = (menu: Menu, data: ChatItem) => {
       overflow-y: auto;
 
       .friend-list {
+        .load-more-contact {
+          margin: 8px 0 10px;
+          text-align: center;
+
+          .load-contact {
+            font-size: 14px;
+            color: var(--font-4);
+          }
+        }
         .friend-item {
           position: relative;
           display: flex;
@@ -403,13 +447,13 @@ const onSelectMenu = (menu: Menu, data: ChatItem) => {
         }
 
         .load-more {
+          position: absolute;
+          top: -50px;
           text-align: center;
           height: 35px;
           line-height: 35px;
           font-size: 14px;
           color: var(--font-4);
-          position: absolute;
-          top: -50px;
         }
       }
     }
@@ -428,6 +472,16 @@ const onSelectMenu = (menu: Menu, data: ChatItem) => {
     }
   }
 
+  .empty-content {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: calc(100% - 260px);
+    height: 100%;
+    box-sizing: border-box;
+    background-color: var(--background);
+  }
+
   .content {
     display: flex;
     flex-direction: column;
@@ -444,6 +498,10 @@ const onSelectMenu = (menu: Menu, data: ChatItem) => {
       box-sizing: border-box;
       border-bottom: 1px solid var(--border-color);
       font-size: 18px;
+
+      .icon-gengduo3 {
+        cursor: pointer;
+      }
 
       .username {
         flex: 1;
@@ -588,7 +646,7 @@ const onSelectMenu = (menu: Menu, data: ChatItem) => {
       height: 130px;
       border-top: 1px solid var(--border-color);
       box-sizing: border-box;
-      background-color: var(--input-bg-color);
+      background-color: transparent;
 
       :deep {
         .emojis {
@@ -600,7 +658,7 @@ const onSelectMenu = (menu: Menu, data: ChatItem) => {
           margin-top: 20px;
           width: 210px;
           padding: 10px 10px 5px;
-          background-color: var(--input-bg-color);
+          background-color: transparent;
           border-radius: 5px;
           border: 1px solid var(--border-color);
 
@@ -618,7 +676,7 @@ const onSelectMenu = (menu: Menu, data: ChatItem) => {
           padding-left: 5px;
           margin-top: 0;
           box-sizing: border-box;
-          background-color: var(--input-bg-color);
+          background-color: transparent;
           height: 31px;
           line-height: 31px;
         }
@@ -632,12 +690,21 @@ const onSelectMenu = (menu: Menu, data: ChatItem) => {
           height: 88px !important;
           padding: 0 5px;
           border-radius: initial;
+          background-color: transparent;
 
           &:focus {
             box-shadow: none;
           }
         }
       }
+    }
+
+    .empyt-conyainer {
+      position: relative;
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      flex-direction: column;
     }
   }
 
