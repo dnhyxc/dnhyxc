@@ -230,3 +230,26 @@ export const useContextMenu = (containerRef: Ref<HTMLElement>) => {
     y,
   };
 };
+
+export const useViewPort = () => {
+  const vw = ref<number>(document.documentElement.clientWidth);
+  const vh = ref<number>(document.documentElement.clientHeight);
+
+  const onResize = () => {
+    vw.value = document.documentElement.clientWidth;
+    vh.value = document.documentElement.clientHeight;
+  };
+
+  onMounted(() => {
+    window.addEventListener('resize', onResize);
+  });
+
+  onUnmounted(() => {
+    window.removeEventListener('resize', onResize);
+  });
+
+  return {
+    vw,
+    vh,
+  };
+};

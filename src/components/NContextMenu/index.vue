@@ -12,11 +12,11 @@
         v-if="showMenu"
         class="context-menu"
         :style="{
-          left: x + 'px',
-          top: y + 'px',
+          left: pos.posX + 'px',
+          top: pos.posY + 'px',
         }"
       >
-        <div class="menu-list">
+        <div v-ob-size="onSizeChange" class="menu-list">
           <div v-for="item in menu" :key="item.label" class="menu-item" @click="onSelect(item)">
             {{ item.label }}
           </div>
@@ -27,8 +27,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, Ref } from 'vue';
-import { useContextMenu } from '@/hooks';
+import { computed, ref, Ref } from 'vue';
+import { useContextMenu, useViewPort } from '@/hooks';
 
 interface IProps {
   menu: { label: string; value: any }[];
@@ -39,14 +39,40 @@ defineProps<IProps>();
 const emit = defineEmits(['select']);
 
 const containerRef = ref<HTMLElement | null>(null);
+const w = ref<number>(0);
+const h = ref<number>(0);
 
 const { x, y, showMenu } = useContextMenu(containerRef as Ref<HTMLElement>);
+const { vw, vh } = useViewPort();
+
+const pos = computed(() => {
+  let posX = x.value;
+  let posY = y.value;
+
+  if (x.value > vw.value - w.value) {
+    posX = x.value - w.value;
+  }
+
+  if (y.value > vh.value - h.value) {
+    posY = vh.value - h.value;
+  }
+
+  return {
+    posX,
+    posY,
+  };
+});
 
 const onSelect = (item: { label: string; value: any }) => {
   // 选中菜单后关闭菜单
   showMenu.value = false;
   // 并返回选中的菜单
   emit('select', item);
+};
+
+const onSizeChange = (size: { width: number; height: number }) => {
+  w.value = size.width;
+  h.value = size.height;
 };
 </script>
 

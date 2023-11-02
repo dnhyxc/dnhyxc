@@ -231,4 +231,28 @@ export const mountDirectives = <T>(app: T | any) => {
       (observeNode as any)?.ob?.unobserve(observeNode);
     },
   });
+
+  // 计算菜单宽高
+  app.directive('ob-size', {
+    mounted(observeNode: HTMLElement, binding: DirectiveBinding) {
+      const map = new WeakMap();
+      (observeNode as any).ob = new ResizeObserver((entries) => {
+        for (const entry of entries) {
+          const handler = map.get(entry.target);
+          if (handler) {
+            const box = entry.borderBoxSize[0];
+            handler({
+              width: box.inlineSize,
+              height: box.blockSize,
+            });
+          }
+        }
+      });
+      (observeNode as any)?.ob?.observe(observeNode);
+      map.set(observeNode, binding.value);
+    },
+    beforeUnmount(observeNode: HTMLElement) {
+      (observeNode as any)?.ob?.unobserve(observeNode);
+    },
+  });
 };
