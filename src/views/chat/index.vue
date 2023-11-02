@@ -57,8 +57,12 @@
           <i class="iconfont icon-gengduo3" />
           <template #dropdown>
             <el-dropdown-menu>
-              <el-dropdown-item>消息置顶</el-dropdown-item>
-              <el-dropdown-item>消息免打扰</el-dropdown-item>
+              <el-dropdown-item @click="onChatTop">
+                {{ currentContact?.isTop ? '取消置顶' : '消息置顶' }}
+              </el-dropdown-item>
+              <el-dropdown-item @click="onChatUnDisturb">
+                {{ currentContact?.isUnDisturb ? '开启消息提醒' : '消息免打扰' }}
+              </el-dropdown-item>
             </el-dropdown-menu>
           </template>
         </el-dropdown>
@@ -101,7 +105,11 @@
                 <Image :url="loginStore.userInfo.headUrl || HEAD_IMG" :transition-img="HEAD_IMG" class="head-img" />
               </div>
               <div v-else :class="`message-info message-receive ${chatStore.delIds.includes(msg.id) && 'message-del'}`">
-                <Image :url="avatar || findAvatar || HEAD_IMG" :transition-img="HEAD_IMG" class="head-img" />
+                <Image
+                  :url="avatar || currentContact?.headUrl || HEAD_IMG"
+                  :transition-img="HEAD_IMG"
+                  class="head-img"
+                />
                 <div class="message" @click="onPreview(msg.content)">
                   <span class="send-date">{{ formatDate(msg.createTime, 'MM/DD HH:mm') }}</span>
                   <NContextMenu :menu="CHAT_MENU" @select="(menu:Menu) => onSelectMenu(menu, msg)">
@@ -178,10 +186,10 @@ const noMoreContacts = computed(() => {
 // 合并原有消息与新发送的消息
 const chatList = computed(() => [...chatStore.chatList, ...chatStore.addChatList]);
 
-// 获取初始化选中联系人头像
-const findAvatar = computed(() => {
+// 获取初始化选中联系人信息
+const currentContact = computed(() => {
   const { contactList } = chatStore;
-  return contactList.find((i) => i.contactId === currentContactId.value)?.headUrl;
+  return contactList.find((i) => i.contactId === currentContactId.value);
 });
 
 onMounted(async () => {
@@ -202,7 +210,7 @@ onMounted(async () => {
   setMessageReaded();
   // 如果进入聊天时，还没获取到头像，则说明当前选中的联系人还没有加载到，在后面分页中
   watchEffect(async () => {
-    if (!findAvatar.value && currentContactId.value) {
+    if (!currentContact.value?.headUrl && currentContactId.value) {
       const res = await chatStore.getUserInfo(currentContactId.value);
       if (res?.success) {
         avatar.value = res.data.headUrl as string;
@@ -219,8 +227,9 @@ onBeforeUnmount(() => {
 });
 
 onUnmounted(() => {
-  (scrollRef.value?.wrapRef as HTMLElement)?.removeEventListener('scroll', onScroll);
   chatStore.clearContactInfo();
+  (scrollRef.value?.wrapRef as HTMLElement)?.removeEventListener('scroll', onScroll);
+  window.removeEventListener('beforeunload', onBeforeunload);
 });
 
 // 页面刷新前删除选中的需要删除的联系人及消息
@@ -417,6 +426,22 @@ const onSelectContact = (menu: Menu, data: ContactItem) => {
     4: toPersonal,
   };
   actions[menu.value](data);
+};
+
+// 点击消息右上角消息免打扰
+const onChatUnDisturb = () => {
+  console.log(currentContact.value, 'data点击消息右上角消息免打扰');
+  if (currentContact.value) {
+    onUnDisturb(currentContact.value);
+  }
+};
+
+// 点击消息右上角消息置顶
+const onChatTop = () => {
+  console.log(currentContact.value, 'currentContact');
+  if (currentContact.value) {
+    setMsgTop(currentContact.value);
+  }
 };
 
 // TODO 删除最新消息时，未更改联系人中显示的最新消息
