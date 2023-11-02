@@ -208,10 +208,10 @@ export const useContextMenu = (containerRef: Ref<HTMLElement>) => {
     nextTick(() => {
       const div = containerRef.value;
       div.addEventListener('contextmenu', handleContextMenu);
+      window.addEventListener('click', closeMenu, true);
+      window.addEventListener('contextmenu', closeMenu, true);
+      window.addEventListener('scroll', closeMenu, true);
     });
-    window.addEventListener('click', closeMenu, true);
-    window.addEventListener('contextmenu', closeMenu, true);
-    window.addEventListener('scroll', closeMenu, true);
   });
 
   onUnmounted(() => {

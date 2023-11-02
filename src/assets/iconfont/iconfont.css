@@ -1,8 +1,8 @@
 @font-face {
   font-family: "iconfont"; /* Project id 3511354 */
-  src: url('iconfont.woff2?t=1698043001554') format('woff2'),
-       url('iconfont.woff?t=1698043001554') format('woff'),
-       url('iconfont.ttf?t=1698043001554') format('truetype');
+  src: url('iconfont.woff2?t=1698910969903') format('woff2'),
+       url('iconfont.woff?t=1698910969903') format('woff'),
+       url('iconfont.ttf?t=1698910969903') format('truetype');
 }
 
 .iconfont {
@@ -11,6 +11,18 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-tongzhi-qingwudarao-F:before {
+  content: "\e624";
+}
+
+.icon-tongzhi-qingwudarao-L:before {
+  content: "\e630";
+}
+
+.icon-miandarao:before {
+  content: "\e673";
 }
 
 .icon-biaoqing:before {

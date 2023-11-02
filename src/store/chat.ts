@@ -177,11 +177,18 @@ export const useChatStore = defineStore('chat', {
 
     // 保存需要删的联系人id
     addDelContactId(contactId: string) {
-      console.log(contactId, '保存需要删的联系人id');
       if (!this.delContactIds.includes(contactId)) {
         this.delContactIds.push(contactId);
       }
-      console.log(this.delContactIds, '保存需要删的联系人id');
+    },
+
+    // 删除消息
+    async deleteContacts() {
+      if (!this.delContactIds?.length) return;
+      const res = normalizeResult<{ data: string[] }>(await Service.deleteContacts(this.delContactIds));
+      if (res.success) {
+        this.delContactIds = [];
+      }
     },
 
     // 获取用户信息
@@ -198,7 +205,6 @@ export const useChatStore = defineStore('chat', {
       if (!useCheckUserId()) return;
       if (this.contactList.length !== 0 && this.contactList.length >= this.contactTotal) return;
       this.contactPageNo = this.contactPageNo + 1;
-      // this.loading = true;
       const res = normalizeResult<ContactList>(
         await Service.getContactList({ pageNo: this.contactPageNo, pageSize: this.contactPageSize }),
       );
@@ -208,28 +214,58 @@ export const useChatStore = defineStore('chat', {
       }
     },
 
-    // 置顶联系人
-    async toTopContacts(contactId: string) {
+    // 置顶联系人/消息免打扰
+    async onUppdateContact({
+      contactId,
+      createTime,
+      isTop,
+      isUnDisturb,
+      setTop,
+    }: {
+      contactId: string;
+      createTime?: number;
+      isTop?: boolean;
+      isUnDisturb?: null | boolean;
+      setTop?: boolean;
+    }) {
       if (!useCheckUserId()) return;
       const res = normalizeResult<{ userId: string }>(
-        await Service.toTopContacts({ contactId, createTime: new Date().valueOf() }),
+        await Service.uppdateContact({ contactId, createTime, isUnDisturb, isTop }),
       );
-      ElMessage({
-        message: res.message,
-        type: res.success ? 'success' : 'error',
-        offset: 80,
-      });
-    },
-
-    // 删除联系人
-    async deleteContacts(userId: string) {
-      if (!useCheckUserId()) return;
-      const res = normalizeResult<{ userId: string }>(await Service.deleteContacts(userId));
-      ElMessage({
-        message: res.message,
-        type: res.success ? 'success' : 'error',
-        offset: 80,
-      });
+      if (res.success) {
+        if (createTime && setTop) {
+          if (isTop) {
+            // 消息置顶，将选中的消息插入到最前面
+            const findIndex = this.contactList.findIndex((i) => i.contactId === contactId);
+            const contact = this.contactList.splice(findIndex, 1)[0];
+            contact.isTop = true;
+            this.contactList.unshift(contact);
+          } else {
+            // 取消消息置顶，将选中的消息先按isTop排序，值为true的放前面，再安createTime倒序排列
+            this.contactList = this.contactList
+              .map((i) => {
+                if (i.contactId === contactId) {
+                  i.isTop = isTop;
+                  i.createTime = createTime;
+                }
+                return i;
+              })
+              .sort((a, b) => {
+                if (a.isTop !== b.isTop) {
+                  return b.isTop - a.isTop;
+                }
+                return b.createTime - a.createTime;
+              });
+          }
+        } else {
+          this.contactList = this.contactList.map((i) => {
+            if (i.contactId === contactId) {
+              i.isUnDisturb = isUnDisturb;
+            }
+            return i;
+          });
+        }
+      }
     },
 
     // 接收到未在聊天列表的人的消息时,添加到联系人列表
@@ -272,8 +308,7 @@ export const useChatStore = defineStore('chat', {
     },
 
     // 清除数据
-    clearChatInfo(clearAll?: boolean) {
-      // clearAll && (this.chatList = []);
+    clearChatInfo() {
       this.chatList = [];
       this.pageNo = 0;
       this.total = 0;

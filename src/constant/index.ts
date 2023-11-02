@@ -504,7 +504,7 @@ export const MSG_CONFIG = () => ({
   draggable: true,
   showClose: false,
   customClass: 'MSG_CONFIG',
-  customStyle: { width: 'auto', padding: '0 30px 20px 30px' },
+  customStyle: { width: 'auto', padding: '20px 20px 40px', minWidth: '300px' },
 });
 
 // 首页展示的文章类型
@@ -881,11 +881,11 @@ export const LOADING_SVG = `
 export const MATCH_LINK_REG = /<dnhyxc,(https?:\/\/[^><]+)>/;
 
 // 联系人右键菜单
-export const CONTACT_MENU = [
-  { label: '消息置顶', value: 1 },
-  { label: '消息免打扰', value: 2 },
+export const CONTACT_MENU = (isTop: boolean, isDisturb: boolean) => [
+  { label: isTop ? '取消置顶' : '消息置顶', value: 1 },
+  { label: isDisturb ? '开启消息提醒' : '消息免打扰', value: 2 },
   { label: '删除消息', value: 3 },
-  { label: '不显示消息', value: 4 },
+  { label: '进入其主页', value: 4 },
 ];
 
 // 聊天消息右键菜单

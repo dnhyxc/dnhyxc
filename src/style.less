@@ -143,6 +143,7 @@ ul {
     height: 100%;
     background: var(--pop-before-bg-color);
     box-shadow: 2px 0 2px -2px var(--card-border) inset;
+    backdrop-filter: blur(3px);
   }
 }
 
@@ -166,6 +167,7 @@ ul {
     height: 100%;
     background: var(--pop-before-bg-color);
     border-radius: 5px;
+    backdrop-filter: blur(3px);
   }
 
   .el-popover__title {
@@ -185,12 +187,14 @@ ul {
 .MSG_CONFIG {
   background-color: var(--modal-bg-color);
   border: none;
+  backdrop-filter: blur(3px);
 
   .el-message-box__title {
     color: var(--font-1);
   }
 
   .el-message-box__message {
+    padding: 5px 0 15px;
     p {
       color: var(--font-3);
     }
@@ -198,7 +202,8 @@ ul {
 
   .el-button {
     padding-top: 10px;
-    width: 88px;
+    width: 100px;
+    height: 35px;
   }
 }
 
@@ -207,6 +212,7 @@ ul {
   justify-content: center;
   min-width: 50px !important;
   width: 50px !important;
+  backdrop-filter: blur(2px);
 }
 
 .draw-pop {
@@ -214,6 +220,7 @@ ul {
   justify-content: center;
   min-width: 32px !important;
   width: 32px !important;
+  backdrop-filter: blur(2px);
 }
 
 // 画板tips

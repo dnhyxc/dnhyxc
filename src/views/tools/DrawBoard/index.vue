@@ -488,7 +488,7 @@ const onClickTools = (key: string) => {
     }
 
     .el-color-picker__color-inner {
-      border-radius: 30px;
+      border-radius: 30px !important;
       width: 30px;
       height: 30px;
       box-shadow: 0 0 5px #999;

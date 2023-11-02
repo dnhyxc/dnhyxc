@@ -228,7 +228,7 @@ export const mountDirectives = <T>(app: T | any) => {
       });
     },
     beforeUnmount(observeNode: HTMLElement) {
-      (observeNode as any).ob.unobserve(observeNode);
+      (observeNode as any)?.ob?.unobserve(observeNode);
     },
   });
 };

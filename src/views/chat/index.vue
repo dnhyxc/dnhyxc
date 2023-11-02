@@ -16,7 +16,10 @@
         <el-scrollbar ref="contactScrollRef" wrap-class="scrollbar-wrapper">
           <div class="friend-list">
             <div v-for="item in chatStore.contactList" :key="item.contactId" @click.stop="onActive(item)">
-              <NContextMenu class="block" :menu="CONTACT_MENU" @select="(menu:Menu) => onSelectContact(menu, item)">
+              <NContextMenu
+                :menu="CONTACT_MENU(item.isTop, item.isUnDisturb)"
+                @select="(menu:Menu) => onSelectContact(menu, item)"
+              >
                 <div
                   :class="`friend-item ${item.contactId === active && 'active'} ${
                     chatStore.delContactIds.includes(item.contactId) && 'del-friend-item'
@@ -25,6 +28,7 @@
                   <div v-if="item.noReadCount" class="no-read-count">
                     {{ item.noReadCount > 99 ? `${item.noReadCount}+` : item.noReadCount }}
                   </div>
+                  <span v-if="item.isTop" class="is-top" />
                   <Image :url="item.headUrl || HEAD_IMG" :transition-img="HEAD_IMG" class="head-img" />
                   <div class="user-info">
                     <div class="title">
@@ -32,7 +36,8 @@
                       <span class="time">{{ formatTimestamp(item.sendTime) }}</span>
                     </div>
                     <div class="message">
-                      <span>{{ item.message }}</span>
+                      <span class="message-text">{{ item.message }}</span>
+                      <i v-if="item.isUnDisturb" class="is-undisturb iconfont icon-tongzhi-qingwudarao-F" />
                     </div>
                   </div>
                 </div>
@@ -68,6 +73,12 @@
             >
               loading...
             </div>
+            <div
+              v-if="!noMore && chatStore.total > chatStore.pageSize && showMore && (noMore || !hasScroll || !isMounted)"
+              class="on-load"
+            >
+              <span class="on-load-text" @click="onClickLoadMore">加载更多</span>
+            </div>
             <div v-for="(msg, index) in chatList" :key="msg.chatId" class="message-content">
               <!-- <div v-if="chatList.length === 1" class="info">
                 由于对方并未关注你，在收到对方回复之前，你最多只能发送1条文字消息
@@ -81,18 +92,22 @@
               >
                 <div class="message" @click="onPreview(msg.content)">
                   <span class="send-date">{{ formatDate(msg.createTime, 'MM/DD HH:mm') }}</span>
-                  <NContextMenu class="block" :menu="CHAT_MENU" @select="(menu:Menu) => onSelectMenu(menu, msg)">
-                    <div class="message-text" v-html="replaceCommentContent(msg.content)" />
+                  <NContextMenu :menu="CHAT_MENU" @select="(menu:Menu) => onSelectMenu(menu, msg)">
+                    <div class="chat-item">
+                      <div class="message-text" v-html="replaceCommentContent(msg.content)" />
+                    </div>
                   </NContextMenu>
                 </div>
-                <Image :url="HEAD_IMG" :transition-img="HEAD_IMG" class="head-img" />
+                <Image :url="loginStore.userInfo.headUrl || HEAD_IMG" :transition-img="HEAD_IMG" class="head-img" />
               </div>
               <div v-else :class="`message-info message-receive ${chatStore.delIds.includes(msg.id) && 'message-del'}`">
-                <Image :url="HEAD_IMG" :transition-img="HEAD_IMG" class="head-img" />
+                <Image :url="avatar || findAvatar || HEAD_IMG" :transition-img="HEAD_IMG" class="head-img" />
                 <div class="message" @click="onPreview(msg.content)">
                   <span class="send-date">{{ formatDate(msg.createTime, 'MM/DD HH:mm') }}</span>
-                  <NContextMenu class="block" :menu="CHAT_MENU" @select="(menu:Menu) => onSelectMenu(menu, msg)">
-                    <div class="message-text" v-html="replaceCommentContent(msg.content)" />
+                  <NContextMenu :menu="CHAT_MENU" @select="(menu:Menu) => onSelectMenu(menu, msg)">
+                    <div class="chat-item">
+                      <div class="message-text" v-html="replaceCommentContent(msg.content)" />
+                    </div>
                   </NContextMenu>
                 </div>
               </div>
@@ -119,15 +134,16 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, computed, nextTick, onUnmounted, onBeforeUnmount, Ref } from 'vue';
-import { useRoute } from 'vue-router';
+import { onMounted, ref, computed, nextTick, onUnmounted, onBeforeUnmount, Ref, watchEffect } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import { HEAD_IMG, CONTACT_MENU, CHAT_MENU } from '@/constant';
 import { chatStore, loginStore, messageStore } from '@/store';
 import { ContactItem, Menu, ChatItem } from '@/typings/common';
-import { formatTimestamp, formatDate, replaceCommentContent } from '@/utils';
+import { formatTimestamp, formatDate, replaceCommentContent, Message } from '@/utils';
 import Image from '@/components/Image/index.vue';
 import NContextMenu from '@/components/NContextMenu/index.vue';
 
+const router = useRouter();
 const route = useRoute();
 const { userId, username } = route?.query;
 
@@ -142,6 +158,9 @@ const currentContactId = ref<string>(userId as string);
 const isMounted = ref<boolean>(false);
 const previewVisible = ref<boolean>(false);
 const prevImg = ref<string>('');
+const avatar = ref<string>('');
+const showMore = ref<boolean>(false); // 是否显示加载更多
+
 let timer: ReturnType<typeof setTimeout> | null = null;
 
 const emit = defineEmits(['updateFocus']);
@@ -159,6 +178,12 @@ const noMoreContacts = computed(() => {
 // 合并原有消息与新发送的消息
 const chatList = computed(() => [...chatStore.chatList, ...chatStore.addChatList]);
 
+// 获取初始化选中联系人头像
+const findAvatar = computed(() => {
+  const { contactList } = chatStore;
+  return contactList.find((i) => i.contactId === currentContactId.value)?.headUrl;
+});
+
 onMounted(async () => {
   // 保存当前聊天对象的userId
   chatStore.chatUserId = userId as string;
@@ -175,11 +200,22 @@ onMounted(async () => {
   await chatStore.getUnReadChat();
   // 进入页面是将聊天消息的推送设置为已读
   setMessageReaded();
+  // 如果进入聊天时，还没获取到头像，则说明当前选中的联系人还没有加载到，在后面分页中
+  watchEffect(async () => {
+    if (!findAvatar.value && currentContactId.value) {
+      const res = await chatStore.getUserInfo(currentContactId.value);
+      if (res?.success) {
+        avatar.value = res.data.headUrl as string;
+      }
+    }
+  });
+  window.addEventListener('beforeunload', onBeforeunload);
 });
 
-onBeforeUnmount(async () => {
+onBeforeUnmount(() => {
   // 页面离开时统一删除消息
-  await chatStore.deleteChats();
+  chatStore.deleteChats();
+  chatStore.deleteContacts();
 });
 
 onUnmounted(() => {
@@ -187,9 +223,16 @@ onUnmounted(() => {
   chatStore.clearContactInfo();
 });
 
+// 页面刷新前删除选中的需要删除的联系人及消息
+const onBeforeunload = (e: Event) => {
+  chatStore.deleteChats();
+  chatStore.deleteContacts();
+};
+
+// 监听滚动，用于判断显示 loading 的时机
 const onScroll = (e: Event) => {
   const scrollTop = (e.target as HTMLElement).scrollTop;
-  if (scrollTop && scrollTop < 10) {
+  if (scrollTop && scrollTop <= 10) {
     isMounted.value = true;
   }
 };
@@ -213,7 +256,7 @@ const onActive = async (contact: ContactItem) => {
   active.value = contactId;
   contactName.value = username;
   chatStore.initIO();
-  chatStore.clearChatInfo(true);
+  chatStore.clearChatInfo();
   await chatStore.mergeChats(currentContactId.value);
   await loadChatList();
   scrollToBottom();
@@ -226,7 +269,7 @@ const onActive = async (contact: ContactItem) => {
   setMessageReaded();
 };
 
-// 判断是否有滚动条
+// 判断是否有滚动条，用户判断没有滚动时，不显示加载更多(loading)
 const checkScroll = (elementRef: any, hasScroll: Ref<boolean>, contactRef?: any, contactHasScroll?: Ref<boolean>) => {
   nextTick(() => {
     const scrollHeight = elementRef.value?.wrapRef.scrollHeight;
@@ -238,6 +281,17 @@ const checkScroll = (elementRef: any, hasScroll: Ref<boolean>, contactRef?: any,
       contactHasScroll.value = scrollHeight > clientHeight;
     }
   });
+};
+
+// 点击加载更多
+const onClickLoadMore = async () => {
+  const scroll = scrollRef.value?.wrapRef as HTMLDivElement;
+  const beforeHeight = scroll?.scrollHeight;
+  await loadChatList();
+  const afterHeight = scroll.scrollHeight;
+  const height = afterHeight - beforeHeight;
+  (scroll! as HTMLElement).scrollTop = height;
+  showMore.value = false;
 };
 
 // 加载更多数据
@@ -296,29 +350,76 @@ const onPreview = (content: string) => {
   }
 };
 
+// 删除消息
+const delMsg = (data: ChatItem) => {
+  Message('确定删除该消息吗', '删除消息').then(() => {
+    chatStore.addDelIds(data.id);
+    showMore.value = true;
+  });
+};
+
+// 复制内容
+const onCopy = (data: ChatItem) => {
+  navigator.clipboard.writeText(data.content);
+};
+
 // 选中后菜单
 const onSelectMenu = (menu: Menu, data: ChatItem) => {
-  const { value } = menu;
-  if (value === 1) {
-    chatStore.addDelIds(data.id);
-  } else {
-    console.log('复制内容', data.content);
-  }
+  const actions = {
+    1: delMsg,
+    2: onCopy,
+  };
+  actions[menu.value](data);
+};
+
+// 消息置顶
+const setMsgTop = (data: ContactItem) => {
+  chatStore.onUppdateContact({
+    contactId: data.contactId,
+    createTime: new Date().valueOf(),
+    isUnDisturb: data.isUnDisturb,
+    isTop: !data.isTop,
+    setTop: true,
+  });
+};
+
+// 消息秒打扰
+const onUnDisturb = (data: ContactItem) => {
+  chatStore.onUppdateContact({
+    contactId: data.contactId,
+    createTime: data.createTime,
+    isTop: data.isTop,
+    isUnDisturb: !data.isUnDisturb,
+  });
+};
+
+// 删除联系人
+const onRemoveContact = (data: ContactItem) => {
+  Message('删除后与该用户的聊天记录将不可恢复', '确定删除该聊天吗').then(() => {
+    chatStore.addDelContactId(data.contactId);
+    if (currentContactId.value === data.contactId) {
+      currentContactId.value = '';
+    }
+  });
+};
+
+// 去联系人主页
+const toPersonal = (data: ContactItem) => {
+  router.push(`/personal?authorId=${data.contactId}`);
 };
 
 // 选中联系人菜单
 const onSelectContact = (menu: Menu, data: ContactItem) => {
-  const { value } = menu;
-  console.log(menu, 'menu', data);
-  if (value === 3) {
-    chatStore.addDelContactId(data.contactId);
-    if (chatStore.delContactIds.includes(data.contactId)) {
-      currentContactId.value = '';
-    }
-  } else {
-    console.log('消息免打燃');
-  }
+  const actions = {
+    1: setMsgTop,
+    2: onUnDisturb,
+    3: onRemoveContact,
+    4: toPersonal,
+  };
+  actions[menu.value](data);
 };
+
+// TODO 删除最新消息时，未更改联系人中显示的最新消息
 </script>
 
 <style scoped lang="less">
@@ -385,6 +486,18 @@ const onSelectContact = (menu: Menu, data: ContactItem) => {
             padding: 0 5px;
           }
 
+          .is-top {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-width: 0 8px 8px 0;
+            border-color: transparent var(--active) transparent transparent;
+            transform: rotate(-90deg);
+          }
+
           .user-info {
             flex: 1;
             display: flex;
@@ -412,9 +525,22 @@ const onSelectContact = (menu: Menu, data: ContactItem) => {
             }
 
             .message {
-              font-size: 13px;
-              color: var(--font-3);
-              .ellipsisMore(1);
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+
+              .message-text {
+                flex: 1;
+                font-size: 13px;
+                color: var(--font-3);
+                .ellipsisMore(1);
+              }
+
+              .is-undisturb {
+                color: var(--font-6);
+                font-size: 13px;
+                margin-left: 10px;
+              }
             }
           }
         }
@@ -523,12 +649,18 @@ const onSelectContact = (menu: Menu, data: ContactItem) => {
         box-sizing: border-box;
         padding: 0 10px;
 
-        .load-more {
+        .load-more,
+        .on-load {
           text-align: center;
           line-height: 32px;
           height: 32px;
           color: var(--font-5);
           font-size: 14px;
+
+          .on-load-text {
+            color: var(--theme-blue);
+            cursor: pointer;
+          }
         }
 
         .info,
@@ -554,13 +686,20 @@ const onSelectContact = (menu: Menu, data: ContactItem) => {
             border-radius: 5px;
           }
 
-          .message-text {
-            padding: 5px;
+          .chat-item {
+            display: flex;
+            justify-content: space-between;
 
-            :deep {
-              img {
-                padding: 0 !important;
-                border-radius: 0 !important;
+            .message-text {
+              flex: 1;
+              text-align: justify;
+              padding: 5px 8px;
+
+              :deep {
+                img {
+                  padding: 3px 0 !important;
+                  border-radius: 0 !important;
+                }
               }
             }
           }
@@ -649,7 +788,7 @@ const onSelectContact = (menu: Menu, data: ContactItem) => {
           display: flex;
           justify-content: center;
           position: absolute;
-          bottom: 37px;
+          bottom: 42px;
           left: 0;
           margin-top: 20px;
           width: 210px;
@@ -657,6 +796,7 @@ const onSelectContact = (menu: Menu, data: ContactItem) => {
           background-color: transparent;
           border-radius: 5px;
           border: 1px solid var(--border-color);
+          backdrop-filter: blur(5px);
 
           .emoji-item {
             text-align: center;

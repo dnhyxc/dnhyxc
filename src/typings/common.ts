@@ -513,6 +513,8 @@ export interface ContactItem {
   chatId: string;
   noReadCount: number;
   from: string;
+  isTop: boolean;
+  isUnDisturb: boolean;
 }
 
 export interface ContactList {

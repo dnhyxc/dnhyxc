@@ -459,17 +459,22 @@ export const addContacts = async (params: { contactId: string; createTime: numbe
   return await post(API.ADD_CONTACTS, copeParams(params));
 };
 
-// 置顶联系人
-export const toTopContacts = async (params: { contactId: string; createTime: number }) => {
-  return await post(API.TO_TOP_CONTACTS, copeParams(params));
+// 更新联系人
+export const uppdateContact = async (params: { contactId: string; createTime: number; isTop: boolean }) => {
+  return await post(API.UPDATE_CONTACT, copeParams(params));
 };
 
 // 删除联系人
-export const deleteContacts = async (contactId: string) => {
-  return await post(API.DELETE_CONTACTS, copeParams({ contactId }));
+export const deleteContacts = async (contactIds: string[]) => {
+  return await post(API.DELETE_CONTACTS, copeParams({ contactIds }));
 };
 
 // 获取未读消息数量
 export const getUnReadChat = async (chatId: string) => {
   return await post(API.GET_UNREAD_CHAT, copeParams({ chatId }));
+};
+
+// 消息免打扰
+export const onNotDisturb = async (contactId: string) => {
+  return await post(API.ON_NOT_DISTURB, copeParams({ contactId }));
 };

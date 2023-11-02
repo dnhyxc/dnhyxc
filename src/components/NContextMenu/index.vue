@@ -67,6 +67,7 @@ const onSelect = (item: { label: string; value: any }) => {
     font-size: 13px;
     color: var(--font-1);
     border-radius: 5px;
+    backdrop-filter: blur(3px);
 
     .menu-item {
       padding: 5px;
