@@ -430,7 +430,6 @@ const onSelectContact = (menu: Menu, data: ContactItem) => {
 
 // 点击消息右上角消息免打扰
 const onChatUnDisturb = () => {
-  console.log(currentContact.value, 'data点击消息右上角消息免打扰');
   if (currentContact.value) {
     onUnDisturb(currentContact.value);
   }
@@ -438,13 +437,10 @@ const onChatUnDisturb = () => {
 
 // 点击消息右上角消息置顶
 const onChatTop = () => {
-  console.log(currentContact.value, 'currentContact');
   if (currentContact.value) {
     setMsgTop(currentContact.value);
   }
 };
-
-// TODO 删除最新消息时，未更改联系人中显示的最新消息
 </script>
 
 <style scoped lang="less">

@@ -223,3 +223,12 @@ export const DELETE_CONTACTS = '/api/deleteContacts';
 
 // 消息免打扰
 export const ON_NOT_DISTURB = '/api/onNotDisturb';
+
+// 更新最新消息
+export const UPDATE_NEW_CHAT = '/api/updateNewChat';
+
+// 删除最新消息
+export const DELETE_NEW_CHAT = '/api/deleteNewChat';
+
+// 删除缓存消息
+export const DELETE_CATCH_CHAT = '/api/deleteCatchChat';

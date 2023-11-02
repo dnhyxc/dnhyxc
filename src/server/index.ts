@@ -11,6 +11,7 @@ import {
   AdvancedSearchParams,
   BarrageItem,
   AtlasImgInfo,
+  ChatItem,
 } from '@/typings/common';
 import { loginStore } from '@/store';
 import { getStoreUserInfo } from '@/utils';
@@ -460,7 +461,12 @@ export const addContacts = async (params: { contactId: string; createTime: numbe
 };
 
 // 更新联系人
-export const uppdateContact = async (params: { contactId: string; createTime: number; isTop: boolean }) => {
+export const uppdateContact = async (params: {
+  contactId: string;
+  createTime?: number;
+  isTop?: boolean;
+  isUnDisturb?: null | boolean;
+}) => {
   return await post(API.UPDATE_CONTACT, copeParams(params));
 };
 
@@ -477,4 +483,19 @@ export const getUnReadChat = async (chatId: string) => {
 // 消息免打扰
 export const onNotDisturb = async (contactId: string) => {
   return await post(API.ON_NOT_DISTURB, copeParams({ contactId }));
+};
+
+// 更新最新消息
+export const updateNewChat = async (params: ChatItem) => {
+  return await post(API.UPDATE_NEW_CHAT, copeParams(params));
+};
+
+// 删除最新消息
+export const deleteNewChat = async (chatId: string) => {
+  return await post(API.DELETE_NEW_CHAT, copeParams({ chatId }));
+};
+
+// 删除缓存消息
+export const deleteCatchChat = async (id: string) => {
+  return await post(API.DELETE_CATCH_CHAT, copeParams({ id }));
 };

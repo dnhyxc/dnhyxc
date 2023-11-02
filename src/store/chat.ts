@@ -140,7 +140,33 @@ export const useChatStore = defineStore('chat', {
     // 保存需要删除的消息 id
     addDelIds(id: string) {
       if (!this.delIds.includes(id)) {
+        const beforeChatList = [...this.chatList, ...this.addChatList].filter((i) => !this.delIds.includes(i.id));
+        // 找出删除前的最后一个
+        const beforeLastOne = beforeChatList?.[beforeChatList.length - 1];
         this.delIds = [...this.delIds, id];
+        const chatList = [...this.chatList, ...this.addChatList].filter((i) => !this.delIds.includes(i.id));
+        // 找出删除后的最后一个
+        const lastOne = chatList?.[chatList.length - 1] || {
+          content: '',
+          createTime: 0,
+          chatId: beforeLastOne.chatId,
+        };
+        // 如果相等，则说明是删除的最后一个
+        if (beforeLastOne.id === id) {
+          this.updateMessage(lastOne);
+          // 调用接口更新最新消息及时间
+          if (lastOne.id) {
+            Service.updateNewChat(lastOne);
+          } else {
+            Service.deleteNewChat(beforeLastOne.chatId);
+          }
+        }
+        // 如果addChatList数组不为空，则说明有新加的消息，需要从缓存中删除
+        if (this.addChatList.length) {
+          this.addChatList = this.addChatList.filter((i) => i.id !== id);
+          // 删除缓存中的消息
+          Service.deleteCatchChat(id);
+        }
       }
     },
 
@@ -225,7 +251,7 @@ export const useChatStore = defineStore('chat', {
       contactId: string;
       createTime?: number;
       isTop?: boolean;
-      isUnDisturb?: null | boolean;
+      isUnDisturb?: boolean;
       setTop?: boolean;
     }) {
       if (!useCheckUserId()) return;
@@ -245,14 +271,14 @@ export const useChatStore = defineStore('chat', {
             this.contactList = this.contactList
               .map((i) => {
                 if (i.contactId === contactId) {
-                  i.isTop = isTop;
+                  i.isTop = isTop!;
                   i.createTime = createTime;
                 }
                 return i;
               })
               .sort((a, b) => {
                 if (a.isTop !== b.isTop) {
-                  return b.isTop - a.isTop;
+                  return (b.isTop as any) - (a.isTop as any);
                 }
                 return b.createTime - a.createTime;
               });
@@ -260,7 +286,7 @@ export const useChatStore = defineStore('chat', {
         } else {
           this.contactList = this.contactList.map((i) => {
             if (i.contactId === contactId) {
-              i.isUnDisturb = isUnDisturb;
+              i.isUnDisturb = isUnDisturb!;
             }
             return i;
           });

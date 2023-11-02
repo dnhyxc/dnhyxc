@@ -34,6 +34,7 @@ defineProps<IProps>();
   flex-direction: column;
   transform: translate(-50%, -50%);
   display: flex;
+  pointer-events: none;
   .clickNoSelectText();
 
   .empty-text {
