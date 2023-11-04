@@ -180,6 +180,7 @@ const onDelete = (id: string) => {
 
   :deep {
     .el-drawer__header {
+      position: relative;
       margin-bottom: 0;
     }
 

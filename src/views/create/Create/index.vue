@@ -265,15 +265,16 @@ const onSaveDraft = () => {
 @import '@/styles/index.less';
 
 .drawer-wrap {
+  :deep {
+    .el-drawer__header,
+    .el-drawer__body {
+      position: relative;
+    }
+  }
   .content {
     :deep {
       .el-drawer {
         min-width: 350px;
-      }
-
-      .el-drawer__header,
-      .el-drawer__body {
-        position: relative;
       }
 
       .el-date-picker {

@@ -309,7 +309,7 @@ const onScrollTo = (to?: number) => {
 
   :deep {
     .el-drawer__header {
-      // position: relative;
+      position: relative;
       margin-bottom: 0;
     }
 
