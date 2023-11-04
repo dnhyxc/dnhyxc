@@ -41,7 +41,6 @@ watchEffect(async () => {
 onMounted(async () => {
   // 获取路由权限
   await loginStore.getUserMenuRoles();
-  document.body.addEventListener('click', onBodyClick, false);
   if (checkOS() !== 'mac') {
     // 在 App 中监听主进程中发送的清除消息列表的消息，防止重复首次加载时重复监听的问题
     ipcRenderer.on('clear-message', async () => {
@@ -77,8 +76,6 @@ onMounted(async () => {
 });
 
 onUnmounted(() => {
-  document.body.removeEventListener('click', onBodyClick, false);
-
   if (timer) {
     clearTimeout(timer);
     timer = null;
@@ -97,12 +94,6 @@ watch(
     }
   },
 );
-
-// body点击事件，清除右键菜单设置
-const onBodyClick = (e: MouseEvent) => {
-  e.stopPropagation();
-  commonStore.clearContentmenuInfo();
-};
 
 // 刷新当前页面
 const reload = () => {

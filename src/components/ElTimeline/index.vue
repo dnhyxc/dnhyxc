@@ -14,59 +14,60 @@
         placement="top"
         class="timeline-item"
       >
-        <div
-          v-for="card in item.articles"
-          :key="card.id"
-          class="timeline-card"
-          @click.stop="toDetail(card)"
-          @mousedown.stop="(e: MouseEvent) => onMouseDown(e, card)"
-        >
-          <i v-if="card.isTop" class="font iconfont icon-zhiding" />
-          <div class="left">
-            <div class="date">
-              {{ card.createTime && formatDate(card.createTime) }}
-              <div v-if="card.authorId === loginStore.userInfo?.userId" class="right">
-                <span class="edit" @click.stop="toEdit(card)">编辑</span>
-                <span class="del" @click.stop="onReomve(card)">下架</span>
+        <div v-for="card in item.articles" :key="card.id" @click.stop="toDetail(card)">
+          <NContextMenu
+            class="block"
+            :menu="[
+              { label: '新窗口打开', value: 1 },
+              { label: '当前页打开', value: 2 },
+            ]"
+            @select="(menu: any) => onSelectMenu(menu, card)"
+          >
+            <div class="timeline-card">
+              <i v-if="card.isTop" class="font iconfont icon-zhiding" />
+              <div class="left">
+                <div class="date">
+                  {{ card.createTime && formatDate(card.createTime) }}
+                  <div v-if="card.authorId === loginStore.userInfo?.userId" class="right">
+                    <span class="edit" @click.stop="toEdit(card)">编辑</span>
+                    <span class="del" @click.stop="onReomve(card)">下架</span>
+                  </div>
+                </div>
+                <div class="title">
+                  {{ card.title }}
+                  <div class="author" @click.stop="toPersonal(card.authorId!)">{{ card.authorName || '-' }}</div>
+                </div>
+                <div class="abstract">{{ card.abstract }}</div>
+                <div class="actions">
+                  <div class="action-item">
+                    <div class="action like" @click.stop="likeListArticle(card)">
+                      <i
+                        :class="`font like-icon iconfont ${
+                          card.isLike ? 'icon-24gf-thumbsUp2' : 'icon-24gl-thumbsUp2'
+                        }`"
+                      />
+                      <span>{{ card.likeCount || '点赞' }}</span>
+                    </div>
+                    <div class="action comment" @click.stop="onComment(card)">
+                      <i class="font comment-icon iconfont icon-pinglun" />
+                      <span>{{ card.commentCount || '评论' }}</span>
+                    </div>
+                    <div class="action read-count">
+                      <i class="font read-icon iconfont icon-yanjing" />
+                      <span class="text read">{{ card.readCount || '阅读' }}</span>
+                    </div>
+                  </div>
+                  <div class="tag-list">
+                    <span class="classify" @click.stop="toClassify(card.classify!)">分类：{{ card.classify }}</span>
+                    <span class="tag" @click.stop="toTag(card.tag!)">标签：{{ card.tag }}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="right">
+                <Image :url="card.coverImage || IMG1" :transition-img="IMG1" class="img" />
               </div>
             </div>
-            <div class="title">
-              {{ card.title }}
-              <div class="author" @click.stop="toPersonal(card.authorId!)">{{ card.authorName || '-' }}</div>
-            </div>
-            <div class="abstract">{{ card.abstract }}</div>
-            <div class="actions">
-              <div class="action-item">
-                <div class="action like" @click.stop="likeListArticle(card)">
-                  <i
-                    :class="`font like-icon iconfont ${card.isLike ? 'icon-24gf-thumbsUp2' : 'icon-24gl-thumbsUp2'}`"
-                  />
-                  <span>{{ card.likeCount || '点赞' }}</span>
-                </div>
-                <div class="action comment" @click.stop="onComment(card)">
-                  <i class="font comment-icon iconfont icon-pinglun" />
-                  <span>{{ card.commentCount || '评论' }}</span>
-                </div>
-                <div class="action read-count">
-                  <i class="font read-icon iconfont icon-yanjing" />
-                  <span class="text read">{{ card.readCount || '阅读' }}</span>
-                </div>
-              </div>
-              <div class="tag-list">
-                <span class="classify" @click.stop="toClassify(card.classify!)">分类：{{ card.classify }}</span>
-                <span class="tag" @click.stop="toTag(card.tag!)">标签：{{ card.tag }}</span>
-              </div>
-            </div>
-          </div>
-          <div class="right">
-            <Image :url="card.coverImage || IMG1" :transition-img="IMG1" class="img" />
-          </div>
-          <ContentMenu
-            v-show="commonStore.showContextmenu && commonStore.currentArticleId === card.id"
-            :data="card"
-            :on-open-new-window="onOpenNewWindow"
-            :to-detail="toDetail"
-          />
+          </NContextMenu>
         </div>
       </el-timeline-item>
     </el-timeline>
@@ -77,7 +78,7 @@
 import { inject, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { formatDate, showMessage, ipcRenderers } from '@/utils';
-import { loginStore, commonStore } from '@/store';
+import { loginStore } from '@/store';
 import { IMG1 } from '@/constant';
 import { ArticleItem, TimelineArticles, TimelineResult } from '@/typings/common';
 
@@ -164,15 +165,6 @@ const onComment = (data: ArticleItem | TimelineArticles) => {
   router.push(`/detail/${data?.id}?scrollTo=1`);
 };
 
-// 监听鼠标右键，分别进行不同的操作
-const onMouseDown = (e: MouseEvent, data: ArticleItem | TimelineArticles) => {
-  // 使用新窗口打开
-  if (e.button === 2) {
-    commonStore.showContextmenu = true;
-    commonStore.currentArticleId = data.id!;
-  }
-};
-
 // 新窗口打开
 const onOpenNewWindow = (data: ArticleItem) => {
   if ((data as ArticleItem)?.isDelete) {
@@ -184,6 +176,15 @@ const onOpenNewWindow = (data: ArticleItem) => {
     id: data.id,
     userInfo: JSON.stringify({ userInfo, token }),
   });
+};
+
+// 选中菜单
+const onSelectMenu = (menu: { label: string; value: number }, data: TimelineArticles) => {
+  if (menu.value === 1) {
+    onOpenNewWindow(data as ArticleItem);
+  } else {
+    toDetail(data);
+  }
 };
 </script>
 
@@ -207,10 +208,6 @@ const onOpenNewWindow = (data: ArticleItem) => {
     margin-bottom: 15px;
     border-radius: 5px;
     cursor: pointer;
-
-    &:last-child {
-      margin-bottom: 0;
-    }
 
     .icon-zhiding {
       position: absolute;

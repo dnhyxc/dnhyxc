@@ -67,10 +67,6 @@ export const useScroller = () => {
   // 滚动事件
   const onScroll = (e: any) => {
     scrollTop.value = e.target.scrollTop;
-    // 滚动时隐藏右侧菜单，清除选中文章
-    if (commonStore.showContextmenu && commonStore.currentArticleId) {
-      commonStore.clearContentmenuInfo();
-    }
   };
 
   return { scrollRef, scrollTop };
@@ -187,7 +183,13 @@ export const useGetRouteAuthInfo = () => {
   }
 };
 
-export const useContextMenu = (containerRef: Ref<HTMLElement>) => {
+export const useContextMenu = (containerRef: Ref<HTMLElement>, noMenu?: boolean) => {
+  if (noMenu)
+    return {
+      showMenu: ref<boolean>(false),
+      x: ref<number>(0),
+      y: ref<number>(0),
+    };
   const showMenu = ref<boolean>(false);
   const x = ref<number>(0);
   const y = ref<number>(0);

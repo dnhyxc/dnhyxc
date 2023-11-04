@@ -5,58 +5,62 @@
  * index.vue
 -->
 <template>
-  <div class="timeline-card" @click.stop="toDetail(data)" @mousedown.stop="(e: MouseEvent) => onMouseDown(e, data)">
-    <i v-if="data.isTop && !isTimeLine" class="font iconfont icon-zhiding" />
-    <div class="title">
-      <slot name="title">
-        <div :class="`left ${data.isTop && !isTimeLine && 'is-top'}`" v-html="data.title" />
-        <div v-if="data.authorId === loginStore.userInfo?.userId" class="right">
-          <span class="edit" @click.stop="toEdit(data)">编辑</span>
-          <span class="del" @click.stop="onReomve(data)">下架</span>
-        </div>
-      </slot>
-    </div>
-    <div class="content">
-      <slot name="content">
-        <div class="art-info">
-          <div class="desc" v-html="data.abstract" />
-          <div class="tags">
-            <div class="author" @click.stop="toPersonal(data.authorId!)" v-html="data.authorName" />
-            <div class="right">
-              <el-tooltip class="box-item" effect="light" :content="`分类：${data.classify}`" placement="bottom">
-                <div class="classify" @click.stop="toClassify(data.classify!)" v-html="data.classify" />
-              </el-tooltip>
-              <el-tooltip class="box-item" effect="light" :content="`标签：${data.tag}`" placement="bottom">
-                <div class="tag" @click.stop="toTag(data.tag!)" v-html="data.tag" />
-              </el-tooltip>
+  <div class="timeline-card" @click.stop="toDetail(data)">
+    <NContextMenu
+      class="block"
+      :menu="[
+        { label: '新窗口打开', value: 1 },
+        { label: '当前页打开', value: 2 },
+      ]"
+      :no-menu="noMenu"
+      @select="onSelectMenu"
+    >
+      <i v-if="data.isTop && !isTimeLine" class="font iconfont icon-zhiding" />
+      <div class="title">
+        <slot name="title">
+          <div :class="`left ${data.isTop && !isTimeLine && 'is-top'}`" v-html="data.title" />
+          <div v-if="data.authorId === loginStore.userInfo?.userId" class="right">
+            <span class="edit" @click.stop="toEdit(data)">编辑</span>
+            <span class="del" @click.stop="onReomve(data)">下架</span>
+          </div>
+        </slot>
+      </div>
+      <div class="content">
+        <slot name="content">
+          <div class="art-info">
+            <div class="desc" v-html="data.abstract" />
+            <div class="tags">
+              <div class="author" @click.stop="toPersonal(data.authorId!)" v-html="data.authorName" />
+              <div class="right">
+                <el-tooltip class="box-item" effect="light" :content="`分类：${data.classify}`" placement="bottom">
+                  <div class="classify" @click.stop="toClassify(data.classify!)" v-html="data.classify" />
+                </el-tooltip>
+                <el-tooltip class="box-item" effect="light" :content="`标签：${data.tag}`" placement="bottom">
+                  <div class="tag" @click.stop="toTag(data.tag!)" v-html="data.tag" />
+                </el-tooltip>
+              </div>
+            </div>
+            <div class="actions">
+              <div class="action like" @click.stop="onLike(data)">
+                <i :class="`font like-icon iconfont ${data.isLike ? 'icon-24gf-thumbsUp2' : 'icon-24gl-thumbsUp2'}`" />
+                <span>{{ data.likeCount || '点赞' }}</span>
+              </div>
+              <div class="action comment" @click.stop="onComment(data)">
+                <i class="font comment-icon iconfont icon-pinglun" />
+                <span>{{ data.commentCount || '评论' }}</span>
+              </div>
+              <div class="action read-count">
+                <i class="font read-icon iconfont icon-yanjing" />
+                <span class="text read">{{ data.readCount || '阅读' }}</span>
+              </div>
             </div>
           </div>
-          <div class="actions">
-            <div class="action like" @click.stop="onLike(data)">
-              <i :class="`font like-icon iconfont ${data.isLike ? 'icon-24gf-thumbsUp2' : 'icon-24gl-thumbsUp2'}`" />
-              <span>{{ data.likeCount || '点赞' }}</span>
-            </div>
-            <div class="action comment" @click.stop="onComment(data)">
-              <i class="font comment-icon iconfont icon-pinglun" />
-              <span>{{ data.commentCount || '评论' }}</span>
-            </div>
-            <div class="action read-count">
-              <i class="font read-icon iconfont icon-yanjing" />
-              <span class="text read">{{ data.readCount || '阅读' }}</span>
-            </div>
+          <div class="img-wrap">
+            <Image :url="data.coverImage || IMG1" :transition-img="IMG1" class="img" />
           </div>
-        </div>
-        <div class="img-wrap">
-          <Image :url="data.coverImage || IMG1" :transition-img="IMG1" class="img" />
-        </div>
-        <ContentMenu
-          v-show="commonStore.showContextmenu && commonStore.currentArticleId === data.id"
-          :data="data"
-          :on-open-new-window="onOpenNewWindow"
-          :to-detail="toDetail"
-        />
-      </slot>
-    </div>
+        </slot>
+      </div>
+    </NContextMenu>
   </div>
 </template>
 
@@ -65,7 +69,7 @@ import { inject, ref, onUnmounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { IMG1 } from '@/constant';
 import { showMessage, ipcRenderers } from '@/utils';
-import { loginStore, commonStore } from '@/store';
+import { loginStore } from '@/store';
 import { TimelineArticles, ArticleItem } from '@/typings/common';
 import Image from '@/components/Image/index.vue';
 
@@ -79,16 +83,20 @@ interface IProps {
   likeListArticle?: (id: string, data?: ArticleItem) => void;
   deleteArticle?: (id: string) => void;
   toEdit?: (id: string) => void | null;
+  toCollect?: () => void | null;
   isCollect?: boolean;
   isTimeLine?: boolean;
+  noMenu?: boolean;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
   likeListArticle: () => {},
   deleteArticle: () => {},
   toEdit: undefined,
+  toCollect: undefined,
   isCollect: false,
   isTimeLine: false,
+  noMenu: false,
 });
 
 let timer: ReturnType<typeof setTimeout> | null = null;
@@ -158,7 +166,10 @@ const onLike = async (data: ArticleItem | TimelineArticles) => {
 // 前往详情/编辑
 const toDetail = async (data: ArticleItem | TimelineArticles) => {
   // props.isCollect 有值，说明是从我的收藏点击的，需要去收藏页详情
-  if (props.isCollect) return;
+  if (props.isCollect) {
+    props?.toCollect?.();
+    return;
+  }
   // 如果有props.toEdit，则说明是草稿箱点击的，需要去创建页进行编辑
   if (props.toEdit) {
     props.toEdit(data.id!);
@@ -178,15 +189,6 @@ const onComment = async (data: ArticleItem | TimelineArticles) => {
   router.push(`/detail/${data?.id}?scrollTo=1`);
 };
 
-// 监听鼠标右键，分别进行不同的操作
-const onMouseDown = async (e: MouseEvent, data: ArticleItem | TimelineArticles) => {
-  // 使用新窗口打开
-  if (e.button === 2) {
-    commonStore.showContextmenu = true;
-    commonStore.currentArticleId = data.id!;
-  }
-};
-
 // 新窗口打开
 const onOpenNewWindow = async (data: ArticleItem) => {
   if ((data as ArticleItem)?.isDelete) {
@@ -198,6 +200,15 @@ const onOpenNewWindow = async (data: ArticleItem) => {
     id: data.id,
     userInfo: JSON.stringify({ userInfo, token }),
   });
+};
+
+// 选中菜单
+const onSelectMenu = (menu: { label: string; value: number }) => {
+  if (menu.value === 1) {
+    onOpenNewWindow(props.data as ArticleItem);
+  } else {
+    toDetail(props.data);
+  }
 };
 </script>
 

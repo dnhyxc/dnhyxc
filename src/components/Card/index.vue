@@ -86,11 +86,8 @@ import { formatDate, showMessage, ipcRenderers } from '@/utils';
 import { ArticleItem } from '@/typings/common';
 import { IMG1 } from '@/constant';
 import { loginStore } from '@/store';
-import { useCommonStore } from '@/store/common';
 import Image from '@/components/Image/index.vue';
 import NContextMenu from '@/components/NContextMenu/index.vue';
-
-const commonStore = useCommonStore();
 
 const router = useRouter();
 const route = useRoute();
@@ -169,8 +166,6 @@ const onOpenNewWindow = async (data: ArticleItem) => {
     id: data.id, // articleId
     userInfo: JSON.stringify({ userInfo, token }),
   });
-  // 清除右键菜单选项
-  commonStore.clearContentmenuInfo();
 };
 
 // 当前页打开
@@ -179,8 +174,6 @@ const toDetail = async (data: ArticleItem) => {
     return showMessage();
   }
   router.push(`/detail/${data.id}?from=${route.name as string}`);
-  // 清除右键菜单选项
-  commonStore.clearContentmenuInfo();
 };
 
 // 去我的主页

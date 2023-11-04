@@ -32,9 +32,10 @@ import { useContextMenu, useViewPort } from '@/hooks';
 
 interface IProps {
   menu: { label: string; value: any }[];
+  noMenu?: boolean;
 }
 
-defineProps<IProps>();
+const props = defineProps<IProps>();
 
 const emit = defineEmits(['select']);
 
@@ -42,7 +43,7 @@ const containerRef = ref<HTMLElement | null>(null);
 const w = ref<number>(0);
 const h = ref<number>(0);
 
-const { x, y, showMenu } = useContextMenu(containerRef as Ref<HTMLElement>);
+const { x, y, showMenu } = useContextMenu(containerRef as Ref<HTMLElement>, props?.noMenu);
 const { vw, vh } = useViewPort();
 
 const pos = computed(() => {

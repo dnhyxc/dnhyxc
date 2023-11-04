@@ -165,7 +165,7 @@
       <div v-if="currentContactId" class="draft-inp-wrap">
         <DraftInput
           class="draft-send-inp"
-          placeholder="请输入 (Enter换行，Ctrl + Enter 发送)"
+          placeholder="enter 发送消息，ctrl + enter 换行"
           :on-hide-input="onHideInput"
           :send-message="sendMessage"
         />
@@ -283,6 +283,7 @@ onUnmounted(() => {
   (scrollRef.value?.wrapRef as HTMLElement)?.removeEventListener('scroll', onScroll);
   window.removeEventListener('beforeunload', onBeforeunload);
   window.removeEventListener('click', onClick);
+  console.clear();
 });
 
 // 页面刷新前删除选中的需要删除的联系人及消息

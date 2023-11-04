@@ -14,8 +14,6 @@ interface IProps {
   keyword?: string; // 列表文章搜索关键词
   reelScrollScale?: number; // 卷轴滚动宽度
   reelScrollRef: HTMLDivElement | null; // Reel 滚动容器
-  showContextmenu: boolean; // 是否显示右键菜单
-  currentArticleId: string; // 当前点击的文章id
   pageLoadStatus: boolean; // 判断页面是否加载完成
 }
 
@@ -35,8 +33,6 @@ export const useCommonStore = defineStore('common', {
     keyword: '',
     reelScrollScale: 0,
     reelScrollRef: null,
-    showContextmenu: false,
-    currentArticleId: '',
     pageLoadStatus: false,
   }),
 
@@ -67,12 +63,6 @@ export const useCommonStore = defineStore('common', {
     // 清空返回路径
     clearBackPath() {
       this.backPath = '/';
-    },
-
-    // 清除右键菜单设置
-    clearContentmenuInfo() {
-      this.showContextmenu = false;
-      this.currentArticleId = '';
     },
 
     // 修改页面加载状态

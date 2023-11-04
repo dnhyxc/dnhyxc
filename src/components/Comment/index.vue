@@ -20,7 +20,7 @@
       :key="i.commentId"
       class="commentWrap"
     >
-      <div class="avatar" @click.stop="toPersonal(i?.userId!)">
+      <div class="avatar">
         <el-popover
           :model:visible="popItem.commentId === i.commentId"
           placement="top-start"
@@ -29,7 +29,12 @@
           @show="showPop(i)"
         >
           <template #reference>
-            <Image :url="i.headUrl || HEAD_IMG" :transition-img="HEAD_IMG" class="image" />
+            <Image
+              :url="i.headUrl || HEAD_IMG"
+              :transition-img="HEAD_IMG"
+              class="image"
+              :on-click="()=>toPersonal(i?.userId!)"
+            />
           </template>
           <UserPopContent :comment="i" />
         </el-popover>

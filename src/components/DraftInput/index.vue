@@ -29,12 +29,13 @@
             class="textArea"
             @focus="onFocus"
             @change="onCommentChange"
+            @keydown.enter.native="onKeyDown"
           />
         </div>
         <div v-if="showIcon || !showAvatar" id="EMOJI_WRAP" class="emojiWrap">
           <div id="EMOJI_LIST" class="emoji-list">
             <div id="ICONFONT" class="iconfontWrap">
-              <span id="BIAOQING_XUE" class="iconfont" @click="onShowEmoji">
+              <span id="SHOW_EMOJI" class="iconfont" @click="onShowEmoji">
                 <i id="BIAOQING_XUE" class="font iconfont icon-xiaolian" />
                 <span id="BIAOQING_XUE" class="icon-text">表情</span>
               </span>
@@ -114,7 +115,7 @@ const picture = ref<string>('');
 onMounted(() => {
   nextTick(() => {
     document.body.addEventListener('click', onClickNode);
-    window.addEventListener('keydown', onKeyDown);
+    window.addEventListener('click', onHideEmoji, true);
   });
 
   // 监听props.focus为true的情况，设置输入框自动获取焦点
@@ -129,7 +130,7 @@ onMounted(() => {
 
 onUnmounted(() => {
   document.body.removeEventListener('click', onClickNode);
-  window.removeEventListener('keydown', onKeyDown);
+  window.removeEventListener('click', onHideEmoji, true);
 });
 
 // window点击事件，判断点击的元素是否存在id，如果不存在则隐藏相关按钮或输入框
@@ -140,11 +141,10 @@ const onClickNode = (e: any) => {
   }
 };
 
-// 监听是否是ctrl+enter组合键
-const onKeyDown = (event: KeyboardEvent) => {
-  if (event.ctrlKey && event.keyCode === 13) {
-    inputRef?.value?.blur();
-    submitComment();
+// 点击除了SHOW_EMOJI的元素关闭表情
+const onHideEmoji = (e: MouseEvent) => {
+  if ((e.target as HTMLElement).id !== 'SHOW_EMOJI') {
+    showEmoji.value = false;
   }
 };
 
@@ -160,7 +160,26 @@ const onFocus = () => {
 
 // 输入框onchange事件
 const onCommentChange = (word: string) => {
-  keyword.value = word.trim();
+  keyword.value = word;
+};
+
+// 输入框键盘摁下事件
+const onKeyDown = (e: KeyboardEvent) => {
+  if (e.ctrlKey && e.keyCode === 13) {
+    // 如果是私聊，则 ctrl + enter 为换行，否则就是发送评论
+    if (props?.sendMessage) {
+      keyword.value += '\n';
+    } else {
+      inputRef?.value?.blur();
+      submitComment();
+    }
+  } else {
+    if (props?.sendMessage) {
+      e.preventDefault();
+      props?.sendMessage?.(keyword.value.trim());
+      keyword.value = '';
+    }
+  }
 };
 
 // 显示表情
@@ -171,18 +190,25 @@ const onShowEmoji = () => {
 // 获取上传成功后的文件url
 const getUploadUrl = (url: string, name: string) => {
   const { username } = loginStore?.userInfo;
-  keyword.value = insertContent({
+  const value = insertContent({
     keyword: keyword.value,
     node: (inputRef?.value as any)?.textarea,
     username: name || username,
     url,
   });
+  // 私聊发送图片时，上传完毕之后，直接发送，不需要回填到输入框
+  if (props?.sendMessage) {
+    props?.sendMessage?.(value);
+  } else {
+    keyword.value = value;
+  }
   inputRef.value?.focus();
 };
 
 // 添加表情
 const addEmoji = (key: string) => {
   keyword.value = insertContent({ keyword: keyword.value, node: (inputRef?.value as any)?.textarea, emoji: key });
+  inputRef.value?.focus();
 };
 
 // 发布评论

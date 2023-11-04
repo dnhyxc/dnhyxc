@@ -116,13 +116,14 @@
                     class="author-line-card"
                   />
                 </div>
-                <!-- 点赞文章 -->
+                <!-- 我的收藏 -->
                 <div v-else class="list-wrap">
                   <LineCard
                     v-for="data in personalStore.articleList"
                     :key="data.id"
                     :data="data"
                     is-collect
+                    :no-menu="true"
                     class="author-line-card collect-card"
                     @click.stop="toDetail(data.id!)"
                   >
