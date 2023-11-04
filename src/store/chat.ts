@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { ElMessage } from 'element-plus';
 import * as Service from '@/server';
-import { normalizeResult } from '@/utils';
+import { normalizeResult, hlightKeyword } from '@/utils';
 import { useCheckUserId } from '@/hooks';
 import { createWebSocket, sendMessage } from '@/socket';
 import { loginStore } from '@/store';
@@ -24,6 +24,12 @@ interface IProps {
   timer: ReturnType<typeof setTimeout> | null;
   unReadCount: number;
   delContactIds: string[]; // 需要删除的联系人id
+  // 搜索联系人信息
+  searchList: ContactItem[];
+  searchPageNo: number;
+  searchPageSize: number;
+  searchTotal: number;
+  searchLoading: boolean | null;
 }
 
 export const useChatStore = defineStore('chat', {
@@ -36,7 +42,7 @@ export const useChatStore = defineStore('chat', {
     pageNo: 0,
     pageSize: 30,
     contactPageNo: 0,
-    contactPageSize: 10,
+    contactPageSize: 20,
     contactTotal: 0,
     delIds: [],
     chatUserId: '',
@@ -44,6 +50,11 @@ export const useChatStore = defineStore('chat', {
     timer: null,
     unReadCount: 0,
     delContactIds: [],
+    searchList: [],
+    searchPageNo: 0,
+    searchPageSize: 20,
+    searchTotal: 0,
+    searchLoading: null,
   }),
 
   actions: {
@@ -240,6 +251,24 @@ export const useChatStore = defineStore('chat', {
       }
     },
 
+    // 获取联系人
+    async searchContacts(keyword: string) {
+      // 检验是否有userId，如果没有禁止发送请求
+      if (!useCheckUserId() || !keyword) return;
+      if (this.searchList.length !== 0 && this.searchList.length >= this.searchTotal) return;
+      this.searchPageNo = this.searchPageNo + 1;
+      this.searchLoading = true;
+      const res = normalizeResult<ContactList>(
+        await Service.searchContacts({ pageNo: this.searchPageNo, pageSize: this.searchPageSize, keyword }),
+      );
+      this.searchLoading = false;
+      if (res.success) {
+        const searchList = [...this.searchList, ...res.data.list];
+        this.searchList = hlightKeyword(keyword, searchList);
+        this.searchTotal = res.data.total;
+      }
+    },
+
     // 置顶联系人/消息免打扰
     async onUppdateContact({
       contactId,
@@ -347,6 +376,15 @@ export const useChatStore = defineStore('chat', {
       this.contactPageNo = 0;
       this.contactTotal = 0;
       this.contactList = [];
+      this.loading = null;
+    },
+
+    // 清空搜索数据
+    clearSearchInfo() {
+      this.searchList = [];
+      this.searchPageNo = 0;
+      this.searchTotal = 0;
+      this.searchLoading = null;
     },
   },
 });

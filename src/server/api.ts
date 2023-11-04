@@ -232,3 +232,6 @@ export const DELETE_NEW_CHAT = '/api/deleteNewChat';
 
 // 删除缓存消息
 export const DELETE_CATCH_CHAT = '/api/deleteCatchChat';
+
+// 搜索联系人
+export const SEARCH_CONTACTS = '/api/searchContacts';

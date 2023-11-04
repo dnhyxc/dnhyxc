@@ -7,12 +7,19 @@
 <template>
   <Loading :loading="chatStore.loading" class="chart-wrap">
     <div class="friends-menu">
-      <div class="search">
-        <el-form @submit.native.prevent="onSearch">
-          <el-input v-model="keyword" size="large" placeholder="搜索联系人" clearable />
-        </el-form>
+      <div id="SEARCH" class="search">
+        <el-input
+          id="SEARCH_INPUT"
+          ref="inputRef"
+          v-model="keyword"
+          size="large"
+          placeholder="搜索联系人"
+          @focus="onFocus"
+          @keyup.enter="onSearch"
+        />
+        <i v-if="showClear" class="clear iconfont icon-shibai" />
       </div>
-      <div class="friends-wrap">
+      <div v-if="!showSearchList" class="friends-wrap">
         <el-scrollbar ref="contactScrollRef" wrap-class="scrollbar-wrapper">
           <div class="friend-list">
             <div v-for="item in chatStore.contactList" :key="item.contactId" @click.stop="onActive(item)">
@@ -46,13 +53,39 @@
             <div v-rollLoad="{ loadContactList, chatStore }" class="load-more-contact">
               <span v-if="!noMoreContacts && hasContactScroll" class="load-contact">loading...</span>
             </div>
+            <div v-if="noMoreContacts" class="no-more">没有更多了～～～</div>
           </div>
         </el-scrollbar>
       </div>
+      <Loading v-else :loading="chatStore.searchLoading" class="friends-wrap search-friends">
+        <el-scrollbar ref="contactScrollRef" wrap-class="scrollbar-wrapper">
+          <div
+            v-infinite-scroll="onSearchContacts"
+            :infinite-scroll-delay="300"
+            :infinite-scroll-disabled="disabled"
+            :infinite-scroll-distance="2"
+            class="friend-list"
+          >
+            <div v-for="item in chatStore.searchList" :key="item.contactId" @click.stop="onActive(item)">
+              <div :class="`friend-item ${item.contactId === active && 'active'}`">
+                <Image :url="item.headUrl || HEAD_IMG" :transition-img="HEAD_IMG" class="head-img" />
+                <div class="user-info search-user-info">
+                  <span class="username" v-html="item.username" />
+                </div>
+              </div>
+            </div>
+            <div v-if="noMoreSearchContacts" class="no-more">没有更多了～～～</div>
+            <div v-if="!chatStore.searchLoading && !chatStore.searchList?.length" class="empty">
+              <img :src="NO_DATA_SVG" alt="" class="no-data" />
+              <span>空空如也</span>
+            </div>
+          </div>
+        </el-scrollbar>
+      </Loading>
     </div>
     <div :class="`content ${!currentContactId && 'hide-content'}`">
       <div v-if="currentContactId" class="title">
-        <span class="username">{{ contactName }}</span>
+        <span class="username" v-html="contactName" />
         <el-dropdown trigger="click" placement="bottom-end">
           <i class="iconfont icon-gengduo3" />
           <template #dropdown>
@@ -87,7 +120,13 @@
               <!-- <div v-if="chatList.length === 1" class="info">
                 由于对方并未关注你，在收到对方回复之前，你最多只能发送1条文字消息
               </div> -->
-              <div v-if="index === 0 || (index % 10 === 0 && !chatStore.delIds.includes(msg.id))" class="time">
+              <div
+                v-if="
+                  (index === 0 && !chatStore.delIds.includes(msg.id)) ||
+                  (index % 10 === 0 && !chatStore.delIds.includes(msg.id))
+                "
+                class="time"
+              >
                 {{ formatTimestamp(msg.createTime) }}
               </div>
               <div
@@ -144,7 +183,7 @@
 <script setup lang="ts">
 import { onMounted, ref, computed, nextTick, onUnmounted, onBeforeUnmount, Ref, watchEffect } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { HEAD_IMG, CONTACT_MENU, CHAT_MENU } from '@/constant';
+import { HEAD_IMG, CONTACT_MENU, CHAT_MENU, NO_DATA_SVG } from '@/constant';
 import { chatStore, loginStore, messageStore } from '@/store';
 import { ContactItem, Menu, ChatItem } from '@/typings/common';
 import { formatTimestamp, formatDate, replaceCommentContent, Message } from '@/utils';
@@ -158,6 +197,7 @@ const { userId, username } = route?.query;
 const keyword = ref<string>('');
 const active = ref<string>(userId as string);
 const contactName = ref<string>(username as string);
+const inputRef = ref<HTMLInputElement | null>(null);
 const scrollRef = ref<any>(null);
 const contactScrollRef = ref<any>(null);
 const hasContactScroll = ref<boolean>(false);
@@ -168,6 +208,9 @@ const previewVisible = ref<boolean>(false);
 const prevImg = ref<string>('');
 const avatar = ref<string>('');
 const showMore = ref<boolean>(false); // 是否显示加载更多
+const showSearchList = ref<boolean>(false);
+const showClear = ref<boolean>(false);
+const searchName = ref<string>('');
 
 let timer: ReturnType<typeof setTimeout> | null = null;
 
@@ -182,6 +225,13 @@ const noMoreContacts = computed(() => {
   const { contactList, contactTotal } = chatStore;
   return !!(contactList.length >= contactTotal && contactList.length);
 });
+
+const noMoreSearchContacts = computed(() => {
+  const { searchList, searchTotal } = chatStore;
+  return searchList.length >= searchTotal && searchList.length;
+});
+
+const disabled = computed(() => chatStore.searchLoading || noMoreSearchContacts.value);
 
 // 合并原有消息与新发送的消息
 const chatList = computed(() => [...chatStore.chatList, ...chatStore.addChatList]);
@@ -218,6 +268,7 @@ onMounted(async () => {
     }
   });
   window.addEventListener('beforeunload', onBeforeunload);
+  window.addEventListener('click', onClick, true);
 });
 
 onBeforeUnmount(() => {
@@ -228,8 +279,10 @@ onBeforeUnmount(() => {
 
 onUnmounted(() => {
   chatStore.clearContactInfo();
+  chatStore.clearSearchInfo();
   (scrollRef.value?.wrapRef as HTMLElement)?.removeEventListener('scroll', onScroll);
   window.removeEventListener('beforeunload', onBeforeunload);
+  window.removeEventListener('click', onClick);
 });
 
 // 页面刷新前删除选中的需要删除的联系人及消息
@@ -244,6 +297,42 @@ const onScroll = (e: Event) => {
   if (scrollTop && scrollTop <= 10) {
     isMounted.value = true;
   }
+};
+
+// 点击搜索输入框，显示搜索联系人列表，否则显示联系人列表
+const onClick = (e: MouseEvent) => {
+  const id = (e.target as HTMLElement).id;
+  if (id === 'SEARCH' || id === 'SEARCH_INPUT') {
+    showSearchList.value = true;
+    return;
+  }
+  if (showSearchList.value) {
+    chatStore.clearContactInfo();
+    chatStore.clearSearchInfo();
+    showSearchList.value = false;
+    keyword.value = '';
+    searchName.value = '';
+    showClear.value = false;
+  }
+};
+
+// 获取焦点时显示清除图标
+const onFocus = () => {
+  showClear.value = true;
+};
+
+// 搜索联系人
+const onSearch = (e: KeyboardEvent) => {
+  const value = (e.target as HTMLInputElement).value;
+  if (value === searchName.value) return;
+  searchName.value = value;
+  chatStore.clearSearchInfo();
+  onSearchContacts();
+};
+
+// 搜索联系人列表
+const onSearchContacts = async () => {
+  await chatStore.searchContacts(keyword.value.trim());
 };
 
 // 设置提示消息推送已读
@@ -311,12 +400,6 @@ const loadChatList = async () => {
 // 加载联系人列表
 const loadContactList = async () => {
   await chatStore.getContactList();
-};
-
-// 搜索联系人
-const onSearch = () => {
-  const { userId } = route?.query;
-  console.log(keyword.value, 'values', userId);
 };
 
 // 隐藏回复输入框
@@ -467,10 +550,20 @@ const onChatTop = () => {
     box-sizing: border-box;
 
     .search {
+      position: relative;
       padding: 10px;
+
+      .clear {
+        position: absolute;
+        top: 21px;
+        right: 20px;
+        color: var(--font-5);
+        cursor: pointer;
+      }
     }
 
     .friends-wrap {
+      position: relative;
       flex: 1;
       overflow-y: auto;
 
@@ -484,6 +577,33 @@ const onChatTop = () => {
             color: var(--font-4);
           }
         }
+
+        .no-more {
+          margin: 5px 0 15px;
+          text-align: center;
+          font-size: 14px;
+          color: var(--font-5);
+        }
+
+        .empty {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          padding-bottom: 45px;
+          color: var(--font-3);
+          .no-data {
+            width: 60px;
+            height: 60px;
+            font-size: 14px;
+            margin-bottom: 20px;
+          }
+        }
+
         .friend-item {
           position: relative;
           display: flex;
@@ -492,6 +612,30 @@ const onChatTop = () => {
           padding: 10px;
           cursor: pointer;
           box-sizing: border-box;
+
+          &:hover {
+            background-color: @hover-bg-color;
+            .user-info {
+              .title {
+                color: @font-1;
+
+                .time {
+                  font-size: 12px;
+                  color: @font-3;
+                }
+              }
+
+              .message {
+                .message-text {
+                  color: @font-3;
+                }
+
+                .is-undisturb {
+                  color: @font-5;
+                }
+              }
+            }
+          }
 
           .no-read-count {
             position: absolute;
@@ -564,6 +708,12 @@ const onChatTop = () => {
               }
             }
           }
+
+          .search-user-info {
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+          }
         }
 
         .del-friend-item {
@@ -584,7 +734,13 @@ const onChatTop = () => {
             }
 
             .message {
-              color: @font-3;
+              .message-text {
+                color: @font-3;
+              }
+
+              .is-undisturb {
+                color: @font-5;
+              }
             }
           }
         }
@@ -650,6 +806,12 @@ const onChatTop = () => {
         flex: 1;
         margin-right: 5px;
         .ellipsisMore(1);
+
+        :deep {
+          span {
+            color: var(--font-1) !important;
+          }
+        }
       }
 
       .icon-gengduo3 {
@@ -873,6 +1035,7 @@ const onChatTop = () => {
     .el-input__wrapper {
       color: var(--font-1);
       background-color: var(--input-bg-color);
+      padding-right: 30px;
     }
 
     .el-input__inner {

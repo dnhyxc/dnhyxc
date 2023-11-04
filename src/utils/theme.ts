@@ -6,8 +6,8 @@ const fontStyle = {
   '--font-2': '#515767',
   '--font-3': '#4e5969',
   '--font-4': '#8a919f',
-  '--font-5': '#888',
-  '--font-6': '#f2f3f5',
+  '--font-5': '#999',
+  '--font-6': '#cacaca',
 };
 
 // img 主题字体颜色

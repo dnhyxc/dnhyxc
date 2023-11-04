@@ -220,7 +220,11 @@ export const mountDirectives = <T>(app: T | any) => {
             const { contactList, contactTotal } = binding.value.chatStore;
             return !!(contactList.length >= contactTotal && contactList.length);
           });
-          if (entries[0].isIntersecting && !noMore.value) {
+          const noSearchMore = computed(() => {
+            const { searchList, searchTotal } = binding.value.chatStore;
+            return !!(searchList.length >= searchTotal && searchList.length);
+          });
+          if (entries[0].isIntersecting && (!noMore.value || !noSearchMore.value)) {
             await binding.value.loadContactList();
           }
         });

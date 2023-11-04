@@ -16,7 +16,6 @@ import * as ipcRenderers from './ipcRenderer';
 import { modifyTheme } from './theme';
 import { eStore, setTheme, getTheme, removeTheme, getMsgStatus } from './store';
 import { compressImage } from './compress';
-import { ArticleItem } from '@/typings/common';
 export { Verify, checkNumber, checkMin, checkMax, verifyEmpty, verifyLength, verfiySpecialCharacters } from './verify';
 export * from './speak';
 export * from './codeTemplate';
@@ -1106,14 +1105,15 @@ export const checkImage = (link: string) => {
 };
 
 // 搜索关键词高亮
-export const hlightKeyword = <T extends ArticleItem>(keyword: string, list: Array<T>) => {
+export const hlightKeyword = (keyword: string, list: Array<any>) => {
   const reg = new RegExp(keyword, 'gi');
   return list.map((i) => {
-    i.abstract = i.abstract?.replace(reg, (key) => `<span style="color: #ff9900">${key}</span>`);
-    i.title = i.title?.replace(reg, (key) => `<span style="color: #ff9900">${key}</span>`);
-    i.authorName = i.authorName?.replace(reg, (key) => `<span style="color: #ff9900">${key}</span>`);
-    i.classify = i.classify?.replace(reg, (key) => `<span style="color: #ff9900">${key}</span>`);
-    i.tag = i.tag?.replace(reg, (key) => `<span style="color: #ff9900">${key}</span>`);
+    i.abstract = i.abstract?.replace(reg, (key: string) => `<span style="color: #ff9900">${key}</span>`);
+    i.title = i.title?.replace(reg, (key: string) => `<span style="color: #ff9900">${key}</span>`);
+    i.authorName = i.authorName?.replace(reg, (key: string) => `<span style="color: #ff9900">${key}</span>`);
+    i.classify = i.classify?.replace(reg, (key: string) => `<span style="color: #ff9900">${key}</span>`);
+    i.tag = i.tag?.replace(reg, (key: string) => `<span style="color: #ff9900">${key}</span>`);
+    i.username = i.username?.replace(reg, (key: string) => `<span style="color: #ff9900">${key}</span>`);
     return i;
   });
 };

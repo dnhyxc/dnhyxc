@@ -21,6 +21,7 @@ import MARK_SVG from '@/assets/svg/mark.svg';
 import CROP_SVG from '@/assets/svg/crop.svg';
 import BOARD_SVG from '@/assets/svg/board.svg';
 import CODE_SVG from '@/assets/svg/code.svg';
+import NO_DATA_SVG from '@/assets/svg/no_data.svg';
 
 export {
   EMPTY,
@@ -44,6 +45,7 @@ export {
   MARK_SVG,
   CROP_SVG,
   BOARD_SVG,
+  NO_DATA_SVG,
 };
 
 // 工具列表

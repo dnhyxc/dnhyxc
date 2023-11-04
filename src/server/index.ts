@@ -499,3 +499,8 @@ export const deleteNewChat = async (chatId: string) => {
 export const deleteCatchChat = async (id: string) => {
   return await post(API.DELETE_CATCH_CHAT, copeParams({ id }));
 };
+
+// 搜索联系人
+export const searchContacts = async (params: { keyword: string; pageNo: number; pageSize: number }) => {
+  return await post(API.SEARCH_CONTACTS, copeParams(params));
+};
