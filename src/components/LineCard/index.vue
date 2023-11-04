@@ -6,7 +6,7 @@
 -->
 <template>
   <div class="timeline-card" @click.stop="toDetail(data)">
-    <NContextMenu
+    <ContextMenu
       class="block"
       :menu="[
         { label: '新窗口打开', value: 1 },
@@ -60,7 +60,7 @@
           </div>
         </slot>
       </div>
-    </NContextMenu>
+    </ContextMenu>
   </div>
 </template>
 

@@ -5,7 +5,7 @@
  * index.vue
 -->
 <template>
-  <NContextMenu
+  <ContextMenu
     class="block"
     :menu="[
       { label: '新窗口打开', value: 1 },
@@ -76,7 +76,7 @@
         </div>
       </div>
     </div>
-  </NContextMenu>
+  </ContextMenu>
 </template>
 
 <script setup lang="ts">
@@ -87,7 +87,7 @@ import { ArticleItem } from '@/typings/common';
 import { IMG1 } from '@/constant';
 import { loginStore } from '@/store';
 import Image from '@/components/Image/index.vue';
-import NContextMenu from '@/components/NContextMenu/index.vue';
+import ContextMenu from '@/components/ContextMenu/index.vue';
 
 const router = useRouter();
 const route = useRoute();

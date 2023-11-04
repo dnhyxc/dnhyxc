@@ -23,7 +23,7 @@
         <el-scrollbar ref="contactScrollRef" wrap-class="scrollbar-wrapper">
           <div class="friend-list">
             <div v-for="item in chatStore.contactList" :key="item.contactId" @click.stop="onActive(item)">
-              <NContextMenu
+              <ContextMenu
                 :menu="CONTACT_MENU(item.isTop, item.isUnDisturb)"
                 @select="(menu:Menu) => onSelectContact(menu, item)"
               >
@@ -48,7 +48,7 @@
                     </div>
                   </div>
                 </div>
-              </NContextMenu>
+              </ContextMenu>
             </div>
             <div v-rollLoad="{ loadContactList, chatStore }" class="load-more-contact">
               <span v-if="!noMoreContacts && hasContactScroll" class="load-contact">loading...</span>
@@ -135,11 +135,11 @@
               >
                 <div class="message" @click="onPreview(msg.content)">
                   <span class="send-date">{{ formatDate(msg.createTime, 'MM/DD HH:mm') }}</span>
-                  <NContextMenu :menu="CHAT_MENU" @select="(menu:Menu) => onSelectMenu(menu, msg)">
+                  <ContextMenu :menu="CHAT_MENU" @select="(menu:Menu) => onSelectMenu(menu, msg)">
                     <div class="chat-item">
                       <div class="message-text" v-html="replaceCommentContent(msg.content)" />
                     </div>
-                  </NContextMenu>
+                  </ContextMenu>
                 </div>
                 <Image :url="loginStore.userInfo.headUrl || HEAD_IMG" :transition-img="HEAD_IMG" class="head-img" />
               </div>
@@ -151,11 +151,11 @@
                 />
                 <div class="message" @click="onPreview(msg.content)">
                   <span class="send-date">{{ formatDate(msg.createTime, 'MM/DD HH:mm') }}</span>
-                  <NContextMenu :menu="CHAT_MENU" @select="(menu:Menu) => onSelectMenu(menu, msg)">
+                  <ContextMenu :menu="CHAT_MENU" @select="(menu:Menu) => onSelectMenu(menu, msg)">
                     <div class="chat-item">
                       <div class="message-text" v-html="replaceCommentContent(msg.content)" />
                     </div>
-                  </NContextMenu>
+                  </ContextMenu>
                 </div>
               </div>
             </div>
@@ -188,7 +188,7 @@ import { chatStore, loginStore, messageStore } from '@/store';
 import { ContactItem, Menu, ChatItem } from '@/typings/common';
 import { formatTimestamp, formatDate, replaceCommentContent, Message } from '@/utils';
 import Image from '@/components/Image/index.vue';
-import NContextMenu from '@/components/NContextMenu/index.vue';
+import ContextMenu from '@/components/ContextMenu/index.vue';
 
 const router = useRouter();
 const route = useRoute();

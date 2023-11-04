@@ -15,7 +15,7 @@
         class="timeline-item"
       >
         <div v-for="card in item.articles" :key="card.id" @click.stop="toDetail(card)">
-          <NContextMenu
+          <ContextMenu
             class="block"
             :menu="[
               { label: '新窗口打开', value: 1 },
@@ -67,7 +67,7 @@
                 <Image :url="card.coverImage || IMG1" :transition-img="IMG1" class="img" />
               </div>
             </div>
-          </NContextMenu>
+          </ContextMenu>
         </div>
       </el-timeline-item>
     </el-timeline>
