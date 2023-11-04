@@ -271,6 +271,11 @@ const onSaveDraft = () => {
         min-width: 350px;
       }
 
+      .el-drawer__header,
+      .el-drawer__body {
+        position: relative;
+      }
+
       .el-date-picker {
         display: flex;
         width: 100%;
