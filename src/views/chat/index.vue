@@ -488,7 +488,7 @@ const onUnDisturb = (data: ContactItem) => {
 
 // 删除联系人
 const onRemoveContact = (data: ContactItem) => {
-  Message('删除后与该用户的聊天记录将不可恢复', '确定删除该聊天吗').then(() => {
+  Message('移除后可通过该用户主页重新建立私聊', '确定移除该聊天吗').then(() => {
     chatStore.addDelContactId(data.contactId);
     if (currentContactId.value === data.contactId) {
       currentContactId.value = '';
