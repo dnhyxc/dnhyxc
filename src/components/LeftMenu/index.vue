@@ -26,32 +26,46 @@
       </div>
     </el-scrollbar>
     <div class="setting">
-      <el-dropdown v-if="loginStore?.userInfo?.userId">
-        <el-avatar
-          shape="square"
-          :size="checkOS() === 'mac' ? 40 : 38"
-          fit="cover"
-          :src="loginStore.userInfo?.headUrl || HEAD_IMG"
-          class="avatar"
-          @click.stop="toPersonal"
-        />
-        <template #dropdown>
-          <el-dropdown-menu>
-            <el-dropdown-item @click="toPersonal">
-              <div class="dropdown">
-                <i class="iconfont icon-gerenzhongxin" />
-                <span class="dropdown-text">我的主页</span>
-              </div>
-            </el-dropdown-item>
-            <el-dropdown-item @click="onQuit">
-              <div class="dropdown">
-                <i class="iconfont icon-tuichu1" />
-                <span class="dropdown-text">退出登录</span>
-              </div>
-            </el-dropdown-item>
-          </el-dropdown-menu>
+      <el-popover
+        v-if="loginStore?.userInfo?.userId"
+        placement="top-start"
+        popper-class="login-popover"
+        :width="180"
+        :show-arrow="false"
+        trigger="hover"
+      >
+        <template #reference>
+          <el-avatar
+            shape="square"
+            :size="checkOS() === 'mac' ? 40 : 38"
+            fit="cover"
+            :src="loginStore.userInfo?.headUrl || HEAD_IMG"
+            class="avatar"
+            @click.stop="toPersonal"
+          />
         </template>
-      </el-dropdown>
+        <div class="drop-user-info-list">
+          <div class="user-info">
+            <el-avatar
+              shape="square"
+              :size="checkOS() === 'mac' ? 40 : 38"
+              fit="cover"
+              :src="loginStore.userInfo?.headUrl || HEAD_IMG"
+              class="avatar"
+              @click.stop="toPersonal"
+            />
+            <div class="username">{{ loginStore.userInfo?.username }}</div>
+          </div>
+          <div class="drop-item" @click="toPersonal">
+            <i class="iconfont icon-gerenzhongxin" />
+            <span class="dropdown-text">我的主页</span>
+          </div>
+          <div class="drop-item" @click="onQuit">
+            <i class="iconfont icon-tuichu1" />
+            <span class="dropdown-text">退出登录</span>
+          </div>
+        </div>
+      </el-popover>
       <div v-else class="login-btn" @click.stop="onLogin">
         <div class="login">登录</div>
       </div>
@@ -232,17 +246,6 @@ const onQuit = () => {
     .avatar {
       cursor: pointer;
     }
-
-    .dropdown {
-      display: flex;
-      align-items: center;
-
-      .clickNoSelectText();
-
-      .dropdown-text {
-        font-size: 13px;
-      }
-    }
   }
 }
 
@@ -280,6 +283,43 @@ const onQuit = () => {
     .icon-b-chat,
     .icon-outline-designtools {
       font-size: 30px;
+    }
+  }
+}
+
+.drop-user-info-list {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  .user-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+
+    .username {
+      font-size: 18px;
+      font-weight: 700;
+      margin-top: 10px;
+      text-align: center;
+      width: 100%;
+      .ellipsisMore(1);
+    }
+  }
+
+  .drop-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    font-size: 14px;
+    cursor: pointer;
+    margin-top: 10px;
+
+    .dropdown-text {
+      margin-left: 5px;
     }
   }
 }
