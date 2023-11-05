@@ -5,7 +5,7 @@ import { normalizeResult, hlightKeyword } from '@/utils';
 import { useCheckUserId } from '@/hooks';
 import { createWebSocket, sendMessage } from '@/socket';
 import { loginStore } from '@/store';
-import { ChatItem, ChatList, ContactItem, ContactList, UserInfoParams } from '@/typings/common';
+import { ChatItem, ChatInfo, ChatList, ContactItem, ContactList, UserInfoParams } from '@/typings/common';
 
 interface IProps {
   loading: boolean | null;
@@ -118,10 +118,11 @@ export const useChatStore = defineStore('chat', {
     },
 
     // 添加聊天消息
-    async addChat(params: ChatItem) {
+    async addChat(params: ChatInfo) {
       if (params.from === params.to) return;
+      const chatInfo = { userId: params.from, chat: params };
       if (params.from === this.chatUserId || params.to === this.chatUserId) {
-        this.addChatList = [...this.addChatList, params];
+        this.addChatList = [...this.addChatList, chatInfo];
         if (this.timer) {
           clearTimeout(this.timer);
           this.timer = null;
@@ -132,10 +133,10 @@ export const useChatStore = defineStore('chat', {
           scroll.scrollTop = height;
         }, 100);
       }
-      this.updateMessage(params);
+      this.updateMessage(chatInfo);
       const findOne = this.contactList.find((item) => item.chatId === params.chatId);
       if (!findOne && params.to === loginStore.userInfo.userId) {
-        this.addAbsentContact(params as ContactItem & ChatItem);
+        this.addAbsentContact(chatInfo as ContactItem & ChatItem);
       }
     },
 
@@ -151,30 +152,30 @@ export const useChatStore = defineStore('chat', {
     // 保存需要删除的消息 id
     addDelIds(id: string) {
       if (!this.delIds.includes(id)) {
-        const beforeChatList = [...this.chatList, ...this.addChatList].filter((i) => !this.delIds.includes(i.id));
+        const beforeChatList = [...this.chatList, ...this.addChatList].filter((i) => !this.delIds.includes(i.chat.id));
         // 找出删除前的最后一个
         const beforeLastOne = beforeChatList?.[beforeChatList.length - 1];
         this.delIds = [...this.delIds, id];
-        const chatList = [...this.chatList, ...this.addChatList].filter((i) => !this.delIds.includes(i.id));
+        const chatList = [...this.chatList, ...this.addChatList].filter((i) => !this.delIds.includes(i.chat.id));
         // 找出删除后的最后一个
         const lastOne = chatList?.[chatList.length - 1] || {
           content: '',
           createTime: 0,
-          chatId: beforeLastOne.chatId,
+          chatId: beforeLastOne.chat.chatId,
         };
         // 如果相等，则说明是删除的最后一个
-        if (beforeLastOne.id === id) {
+        if (beforeLastOne.chat.id === id) {
           this.updateMessage(lastOne);
           // 调用接口更新最新消息及时间
-          if (lastOne.id) {
+          if (lastOne.chat.id) {
             Service.updateNewChat(lastOne);
           } else {
-            Service.deleteNewChat(beforeLastOne.chatId);
+            Service.deleteNewChat(beforeLastOne.chat.chatId);
           }
         }
         // 如果addChatList数组不为空，则说明有新加的消息，需要从缓存中删除
         if (this.addChatList.length) {
-          this.addChatList = this.addChatList.filter((i) => i.id !== id);
+          this.addChatList = this.addChatList.filter((i) => i.chat.id !== id);
           // 删除缓存中的消息
           Service.deleteCatchChat(id);
         }
@@ -334,7 +335,7 @@ export const useChatStore = defineStore('chat', {
             headUrl: headUrl || '',
             username: username!,
             job: job || '',
-            message: params.content,
+            message: params.chat.content,
             sendTime: params.createTime,
             contactId: userId!,
             noReadCount: 1,
@@ -348,10 +349,10 @@ export const useChatStore = defineStore('chat', {
     updateMessage(params: ChatItem) {
       const chatId = [loginStore.userInfo.userId, this.chatUserId].sort().join('_');
       const newContacts = this.contactList.map((i) => {
-        if (i.chatId === params.chatId) {
-          i.message = params.content;
-          i.createTime = params.createTime;
-          i.sendTime = params.createTime;
+        if (i.chatId === params.chat.chatId) {
+          i.message = params.chat.content;
+          i.createTime = params.chat.createTime;
+          i.sendTime = params.chat.createTime;
           // 判断是否是当前聊天窗口发来的消息，如果是，不需要增加未读数量
           if (i.chatId !== chatId) {
             i.noReadCount += 1;

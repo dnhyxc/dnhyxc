@@ -482,8 +482,8 @@ export interface CodeList {
   list: CodeItem[];
 }
 
-// 聊天消息
-export interface ChatItem {
+// 消息详情
+export interface ChatInfo {
   from: string;
   to: string;
   content: string;
@@ -492,6 +492,12 @@ export interface ChatItem {
   id: string;
   read: boolean;
   isDelete?: boolean;
+}
+
+// 聊天消息
+export interface ChatItem {
+  userId: string;
+  chat: ChatInfo;
 }
 
 export interface ChatList {

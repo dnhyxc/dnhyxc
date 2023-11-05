@@ -116,44 +116,44 @@
             >
               <span class="on-load-text" @click="onClickLoadMore">加载更多</span>
             </div>
-            <div v-for="(msg, index) in chatList" :key="msg.chatId" class="message-content">
+            <div v-for="(msg, index) in chatList" :key="msg.chat.chatId" class="message-content">
               <!-- <div v-if="chatList.length === 1" class="info">
                 由于对方并未关注你，在收到对方回复之前，你最多只能发送1条文字消息
               </div> -->
               <div
                 v-if="
-                  (index === 0 && !chatStore.delIds.includes(msg.id)) ||
-                  (index % 10 === 0 && !chatStore.delIds.includes(msg.id))
+                  (index === 0 && !chatStore.delIds.includes(msg.chat.id)) ||
+                  (index % 10 === 0 && !chatStore.delIds.includes(msg.chat.id))
                 "
                 class="time"
               >
-                {{ formatTimestamp(msg.createTime) }}
+                {{ formatTimestamp(msg.chat.createTime) }}
               </div>
               <div
-                v-if="msg.from === loginStore.userInfo.userId"
-                :class="`message-info message-send ${chatStore.delIds.includes(msg.id) && 'message-del'}`"
+                v-if="msg.chat.from === loginStore.userInfo.userId"
+                :class="`message-info message-send ${chatStore.delIds.includes(msg.chat.id) && 'message-del'}`"
               >
-                <div class="message" @click="onPreview(msg.content)">
-                  <span class="send-date">{{ formatDate(msg.createTime, 'MM/DD HH:mm') }}</span>
+                <div class="message" @click="onPreview(msg.chat.content)">
+                  <span class="send-date">{{ formatDate(msg.chat.createTime, 'MM/DD HH:mm') }}</span>
                   <ContextMenu :menu="CHAT_MENU" @select="(menu:Menu) => onSelectMenu(menu, msg)">
                     <div class="chat-item">
-                      <div class="message-text" v-html="replaceCommentContent(msg.content)" />
+                      <div class="message-text" v-html="replaceCommentContent(msg.chat.content)" />
                     </div>
                   </ContextMenu>
                 </div>
                 <Image :url="loginStore.userInfo.headUrl || HEAD_IMG" :transition-img="HEAD_IMG" class="head-img" />
               </div>
-              <div v-else :class="`message-info message-receive ${chatStore.delIds.includes(msg.id) && 'message-del'}`">
+              <div v-else :class="`message-info message-receive ${chatStore.delIds.includes(msg.chat.id) && 'message-del'}`">
                 <Image
                   :url="avatar || currentContact?.headUrl || HEAD_IMG"
                   :transition-img="HEAD_IMG"
                   class="head-img"
                 />
-                <div class="message" @click="onPreview(msg.content)">
-                  <span class="send-date">{{ formatDate(msg.createTime, 'MM/DD HH:mm') }}</span>
+                <div class="message" @click="onPreview(msg.chat.content)">
+                  <span class="send-date">{{ formatDate(msg.chat.createTime, 'MM/DD HH:mm') }}</span>
                   <ContextMenu :menu="CHAT_MENU" @select="(menu:Menu) => onSelectMenu(menu, msg)">
                     <div class="chat-item">
-                      <div class="message-text" v-html="replaceCommentContent(msg.content)" />
+                      <div class="message-text" v-html="replaceCommentContent(msg.chat.content)" />
                     </div>
                   </ContextMenu>
                 </div>
@@ -446,14 +446,14 @@ const onPreview = (content: string) => {
 // 删除消息
 const delMsg = (data: ChatItem) => {
   Message('确定删除该消息吗', '删除消息').then(() => {
-    chatStore.addDelIds(data.id);
+    chatStore.addDelIds(data.chat.id);
     showMore.value = true;
   });
 };
 
 // 复制内容
 const onCopy = (data: ChatItem) => {
-  navigator.clipboard.writeText(data.content);
+  navigator.clipboard.writeText(data.chat.content);
 };
 
 // 选中后菜单
@@ -462,7 +462,7 @@ const onSelectMenu = (menu: Menu, data: ChatItem) => {
     1: delMsg,
     2: onCopy,
   };
-  actions[menu.value](data);
+  actions[menu.value](data.chat);
 };
 
 // 消息置顶
