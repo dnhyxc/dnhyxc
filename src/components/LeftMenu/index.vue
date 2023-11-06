@@ -298,6 +298,7 @@ const onQuit = () => {
     flex-direction: column;
     align-items: center;
     width: 100%;
+    margin-bottom: 5px;
 
     .username {
       font-size: 18px;
@@ -316,7 +317,13 @@ const onQuit = () => {
     width: 100%;
     font-size: 14px;
     cursor: pointer;
-    margin-top: 10px;
+    height: 32px;
+    line-height: 32px;
+
+    &:hover {
+      background: var(--border-color);
+      color: var(--theme-blue);
+    }
 
     .dropdown-text {
       margin-left: 5px;

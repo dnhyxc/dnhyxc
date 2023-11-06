@@ -122,8 +122,8 @@
               </div> -->
               <div
                 v-if="
-                  (index === 0 && !chatStore.delIds.includes(msg.chat.id)) ||
-                  (index % 10 === 0 && !chatStore.delIds.includes(msg.chat.id))
+                  (index === 0 && !chatStore.delIds.includes(msg.id)) ||
+                  (index % 10 === 0 && !chatStore.delIds.includes(msg.id))
                 "
                 class="time"
               >
@@ -131,7 +131,7 @@
               </div>
               <div
                 v-if="msg.chat.from === loginStore.userInfo.userId"
-                :class="`message-info message-send ${chatStore.delIds.includes(msg.chat.id) && 'message-del'}`"
+                :class="`message-info message-send ${chatStore.delIds.includes(msg.id) && 'message-del'}`"
               >
                 <div class="message" @click="onPreview(msg.chat.content)">
                   <span class="send-date">{{ formatDate(msg.chat.createTime, 'MM/DD HH:mm') }}</span>
@@ -143,7 +143,7 @@
                 </div>
                 <Image :url="loginStore.userInfo.headUrl || HEAD_IMG" :transition-img="HEAD_IMG" class="head-img" />
               </div>
-              <div v-else :class="`message-info message-receive ${chatStore.delIds.includes(msg.chat.id) && 'message-del'}`">
+              <div v-else :class="`message-info message-receive ${chatStore.delIds.includes(msg.id) && 'message-del'}`">
                 <Image
                   :url="avatar || currentContact?.headUrl || HEAD_IMG"
                   :transition-img="HEAD_IMG"
@@ -181,7 +181,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, computed, nextTick, onUnmounted, onBeforeUnmount, Ref, watchEffect } from 'vue';
+import { onMounted, ref, computed, nextTick, onUnmounted, onBeforeUnmount, Ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { HEAD_IMG, CONTACT_MENU, CHAT_MENU, NO_DATA_SVG } from '@/constant';
 import { chatStore, loginStore, messageStore } from '@/store';
@@ -254,19 +254,9 @@ onMounted(async () => {
   scrollToBottom();
   checkScroll(scrollRef, hasScroll, contactScrollRef, hasContactScroll);
   (scrollRef.value?.wrapRef as HTMLElement)?.addEventListener('scroll', onScroll);
-  // 获取未读消息数量
-  await chatStore.getUnReadChat();
-  // 进入页面是将聊天消息的推送设置为已读
   setMessageReaded();
-  // 如果进入聊天时，还没获取到头像，则说明当前选中的联系人还没有加载到，在后面分页中
-  watchEffect(async () => {
-    if (!currentContact.value?.headUrl && currentContactId.value) {
-      const res = await chatStore.getUserInfo(currentContactId.value);
-      if (res?.success) {
-        avatar.value = res.data.headUrl as string;
-      }
-    }
-  });
+  // 如果进入聊天时，还没获取到头像，则说明当前选中的联系人还没有加载到，在后面分页中，则调用获取用户信息接口获取
+  getUserInfo();
   window.addEventListener('beforeunload', onBeforeunload);
   window.addEventListener('click', onClick, true);
 });
@@ -297,6 +287,21 @@ const onScroll = (e: Event) => {
   const scrollTop = (e.target as HTMLElement).scrollTop;
   if (scrollTop && scrollTop <= 10) {
     isMounted.value = true;
+  }
+};
+
+// 当联系人未加载时,调用接口获取用户信息,从而获取头像
+const getUserInfo = async () => {
+  if (!currentContact.value?.headUrl && !avatar.value && currentContactId.value) {
+    const fromOtherUser = chatList.value?.length
+      ? chatList.value.some((i) => i.chat.from !== loginStore.userInfo.userId)
+      : false;
+    if (fromOtherUser) {
+      const res = await chatStore.getUserInfo(currentContactId.value);
+      if (res?.success) {
+        avatar.value = res.data.headUrl as string;
+      }
+    }
   }
 };
 
@@ -360,8 +365,6 @@ const onActive = async (contact: ContactItem) => {
   await loadChatList();
   scrollToBottom();
   checkScroll(scrollRef, hasScroll);
-  // 获取未读消息数量
-  await chatStore.getUnReadChat();
   // 统一删除消息
   await chatStore.deleteChats();
   // 切换联系人是设置推送消息为已读
@@ -446,7 +449,7 @@ const onPreview = (content: string) => {
 // 删除消息
 const delMsg = (data: ChatItem) => {
   Message('确定删除该消息吗', '删除消息').then(() => {
-    chatStore.addDelIds(data.chat.id);
+    chatStore.addDelIds(data.id);
     showMore.value = true;
   });
 };
@@ -462,7 +465,7 @@ const onSelectMenu = (menu: Menu, data: ChatItem) => {
     1: delMsg,
     2: onCopy,
   };
-  actions[menu.value](data.chat);
+  actions[menu.value](data);
 };
 
 // 消息置顶

@@ -497,6 +497,7 @@ export interface ChatInfo {
 // 聊天消息
 export interface ChatItem {
   userId: string;
+  id: string;
   chat: ChatInfo;
 }
 

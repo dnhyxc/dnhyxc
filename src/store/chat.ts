@@ -114,13 +114,22 @@ export const useChatStore = defineStore('chat', {
       this.loading = true;
       const { userId } = loginStore.userInfo;
       const chatId = [userId, to].sort().join('_');
-      await Service.mergeChats(chatId);
+      const res = normalizeResult<{ noReadCount: number }>(await Service.mergeChats(chatId));
+      if (res.success) {
+        const newContacts = this.contactList.map((i) => {
+          if (i.chatId === chatId) {
+            i.noReadCount = res.data.noReadCount;
+          }
+          return i;
+        });
+        this.contactList = newContacts;
+      }
     },
 
     // 添加聊天消息
     async addChat(params: ChatInfo) {
       if (params.from === params.to) return;
-      const chatInfo = { userId: params.from, chat: params };
+      const chatInfo = { userId: params.from, chat: params, id: params.id };
       if (params.from === this.chatUserId || params.to === this.chatUserId) {
         this.addChatList = [...this.addChatList, chatInfo];
         if (this.timer) {
@@ -152,49 +161,36 @@ export const useChatStore = defineStore('chat', {
     // 保存需要删除的消息 id
     addDelIds(id: string) {
       if (!this.delIds.includes(id)) {
-        const beforeChatList = [...this.chatList, ...this.addChatList].filter((i) => !this.delIds.includes(i.chat.id));
+        const beforeChatList = [...this.chatList, ...this.addChatList].filter((i) => !this.delIds.includes(i.id));
         // 找出删除前的最后一个
         const beforeLastOne = beforeChatList?.[beforeChatList.length - 1];
         this.delIds = [...this.delIds, id];
-        const chatList = [...this.chatList, ...this.addChatList].filter((i) => !this.delIds.includes(i.chat.id));
+        const chatList = [...this.chatList, ...this.addChatList].filter((i) => !this.delIds.includes(i.id));
         // 找出删除后的最后一个
         const lastOne = chatList?.[chatList.length - 1] || {
-          content: '',
-          createTime: 0,
-          chatId: beforeLastOne.chat.chatId,
+          chat: {
+            content: '',
+            createTime: 0,
+            chatId: beforeLastOne.chat.chatId,
+          },
         };
         // 如果相等，则说明是删除的最后一个
-        if (beforeLastOne.chat.id === id) {
+        if (beforeLastOne.id === id) {
           this.updateMessage(lastOne);
-          // 调用接口更新最新消息及时间
-          if (lastOne.chat.id) {
+          // 如果删除后,还能找出最后一个,则调用接口更新最新消息及时间
+          if (lastOne.id) {
             Service.updateNewChat(lastOne);
           } else {
+            // 进入这里说明删除的是最后一条消息,已经没有消息了,则需要把新添加的这条数据删除
             Service.deleteNewChat(beforeLastOne.chat.chatId);
           }
         }
         // 如果addChatList数组不为空，则说明有新加的消息，需要从缓存中删除
         if (this.addChatList.length) {
-          this.addChatList = this.addChatList.filter((i) => i.chat.id !== id);
+          this.addChatList = this.addChatList.filter((i) => i.id !== id);
           // 删除缓存中的消息
           Service.deleteCatchChat(id);
         }
-      }
-    },
-
-    // 获取未读消息
-    async getUnReadChat() {
-      if (!useCheckUserId() || !this.chatUserId) return;
-      const chatId = [loginStore.userInfo.userId, this.chatUserId].sort().join('_');
-      const res = normalizeResult<{ noReadCount: number }>(await Service.getUnReadChat(chatId));
-      if (res.success) {
-        const newContacts = this.contactList.map((i) => {
-          if (i.chatId === chatId) {
-            i.noReadCount = res.data.noReadCount;
-          }
-          return i;
-        });
-        this.contactList = newContacts;
       }
     },
 
