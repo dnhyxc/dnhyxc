@@ -82,7 +82,7 @@ const onSizeChange = (size: { width: number; height: number }) => {
 
 .context-menu {
   position: fixed;
-  min-width: 88px;
+  min-width: 100px;
   background: var(--modal-bg-color);
   border-radius: 5px;
   text-align: center;

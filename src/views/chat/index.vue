@@ -53,7 +53,9 @@
             <div v-rollLoad="{ loadContactList, chatStore }" class="load-more-contact">
               <span v-if="!noMoreContacts && hasContactScroll" class="load-contact">loading...</span>
             </div>
-            <div v-if="noMoreContacts" class="no-more">没有更多了～～～</div>
+            <div v-if="noMoreContacts && chatStore.contactList.length > chatStore.contactPageSize" class="no-more">
+              没有更多了～～～
+            </div>
           </div>
         </el-scrollbar>
       </div>
@@ -1080,6 +1082,8 @@ const onDblclick = (e: MouseEvent) => {
 
 :deep {
   .dropdown-text {
+    display: block;
+    text-align: center;
     .clickNoSelectText();
   }
 }
