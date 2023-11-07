@@ -886,8 +886,9 @@ export const MATCH_LINK_REG = /<dnhyxc,(https?:\/\/[^><]+)>/;
 export const CONTACT_MENU = (isTop: boolean, isDisturb: boolean) => [
   { label: isTop ? '取消置顶' : '消息置顶', value: 1 },
   { label: isDisturb ? '开启消息提醒' : '消息免打扰', value: 2 },
-  { label: '移除聊天', value: 3 },
-  { label: '进入其主页', value: 4 },
+  { label: '不显示聊天', value: 3 },
+  { label: '删除聊天', value: 4 },
+  { label: '进入其主页', value: 5 },
 ];
 
 // 聊天消息右键菜单

@@ -176,8 +176,10 @@ const onKeyDown = (e: KeyboardEvent) => {
   } else {
     if (props?.sendMessage) {
       e.preventDefault();
-      props?.sendMessage?.(keyword.value.trim());
-      keyword.value = '';
+      if (keyword.value.trim()) {
+        props?.sendMessage?.(keyword.value.trim());
+        keyword.value = '';
+      }
     }
   }
 };
@@ -191,13 +193,14 @@ const onShowEmoji = () => {
 const getUploadUrl = (url: string, name: string) => {
   const { username } = loginStore?.userInfo;
   const value = insertContent({
-    keyword: keyword.value,
+    keyword: props?.sendMessage ? '' : keyword.value,
     node: (inputRef?.value as any)?.textarea,
     username: name || username,
     url,
   });
   // 私聊发送图片时，上传完毕之后，直接发送，不需要回填到输入框
   if (props?.sendMessage) {
+    console.log(value, 'value');
     props?.sendMessage?.(value);
   } else {
     keyword.value = value;
@@ -255,6 +258,10 @@ const submitComment = async () => {
       color: var(--font-1);
       background-color: var(--input-bg-color);
     }
+
+    ::placeholder {
+      .clickNoSelectText();
+    }
   }
 
   .comments {
@@ -305,6 +312,7 @@ const submitComment = async () => {
       position: relative;
       margin-top: 10px;
       width: 100%;
+      .clickNoSelectText();
 
       .emoji-list {
         position: relative;

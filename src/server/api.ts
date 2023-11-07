@@ -203,8 +203,14 @@ export const GET_CHAT_LIST = '/api/getChatList';
 // 合并消息
 export const MERGE_CHATS = '/api/mergeChats';
 
+// 获取缓存消息
+export const GET_CACHE_CHATS = '/api/getCacheChats';
+
 // 删除消息
 export const DELETE_CHATS = '/api/deleteChats';
+
+// 删除联系人时，清空消息
+export const DELETE_CHAT_MESAAGE = '/api/deleteChatMesaage';
 
 // 获取联系人
 export const GET_CONTACT_LIST = '/api/getContactList';

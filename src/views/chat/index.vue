@@ -90,10 +90,10 @@
           <i class="iconfont icon-gengduo3" />
           <template #dropdown>
             <el-dropdown-menu>
-              <el-dropdown-item @click="onChatTop">
+              <el-dropdown-item class="dropdown-text" @click="onChatTop">
                 {{ currentContact?.isTop ? '取消置顶' : '消息置顶' }}
               </el-dropdown-item>
-              <el-dropdown-item @click="onChatUnDisturb">
+              <el-dropdown-item class="dropdown-text" @click="onChatUnDisturb">
                 {{ currentContact?.isUnDisturb ? '开启消息提醒' : '消息免打扰' }}
               </el-dropdown-item>
             </el-dropdown-menu>
@@ -120,13 +120,7 @@
               <!-- <div v-if="chatList.length === 1" class="info">
                 由于对方并未关注你，在收到对方回复之前，你最多只能发送1条文字消息
               </div> -->
-              <div
-                v-if="
-                  (index === 0 && !chatStore.delIds.includes(msg.id)) ||
-                  (index % 10 === 0 && !chatStore.delIds.includes(msg.id))
-                "
-                class="time"
-              >
+              <div v-if="index % 20 === 0" class="time">
                 {{ formatTimestamp(msg.chat.createTime) }}
               </div>
               <div
@@ -136,7 +130,7 @@
                 <div class="message" @click="onPreview(msg.chat.content)">
                   <span class="send-date">{{ formatDate(msg.chat.createTime, 'MM/DD HH:mm') }}</span>
                   <ContextMenu :menu="CHAT_MENU" @select="(menu:Menu) => onSelectMenu(menu, msg)">
-                    <div class="chat-item">
+                    <div class="chat-item" @dblclick="onDblclick">
                       <div class="message-text" v-html="replaceCommentContent(msg.chat.content)" />
                     </div>
                   </ContextMenu>
@@ -152,7 +146,7 @@
                 <div class="message" @click="onPreview(msg.chat.content)">
                   <span class="send-date">{{ formatDate(msg.chat.createTime, 'MM/DD HH:mm') }}</span>
                   <ContextMenu :menu="CHAT_MENU" @select="(menu:Menu) => onSelectMenu(menu, msg)">
-                    <div class="chat-item">
+                    <div class="chat-item" @dblclick="onDblclick">
                       <div class="message-text" v-html="replaceCommentContent(msg.chat.content)" />
                     </div>
                   </ContextMenu>
@@ -353,7 +347,8 @@ const setMessageReaded = async () => {
 
 // 切换联系人
 const onActive = async (contact: ContactItem) => {
-  const { contactId, username } = contact;
+  const { contactId, username, noReadCount, hasUnRead } = contact;
+  if (contact.contactId === currentContactId.value) return;
   isMounted.value = false;
   currentContactId.value = contactId;
   chatStore.chatUserId = contactId;
@@ -361,7 +356,12 @@ const onActive = async (contact: ContactItem) => {
   contactName.value = username;
   chatStore.initIO();
   chatStore.clearChatInfo();
-  await chatStore.mergeChats(currentContactId.value);
+  // 如果有未读消息(hasUnRead为true表示开启了消息免打扰)，则将缓存中的消息合到消息列表，否则从缓存中获取数据
+  if (noReadCount || hasUnRead) {
+    await chatStore.mergeChats(currentContactId.value);
+  } else {
+    await chatStore.getCacheChats(currentContactId.value);
+  }
   await loadChatList();
   scrollToBottom();
   checkScroll(scrollRef, hasScroll);
@@ -489,10 +489,22 @@ const onUnDisturb = (data: ContactItem) => {
   });
 };
 
-// 删除联系人
+// 移除联系人，不删除相关聊天信息
 const onRemoveContact = (data: ContactItem) => {
   Message('移除后可通过该用户主页重新建立私聊', '确定移除该聊天吗').then(() => {
     chatStore.addDelContactId(data.contactId);
+    if (currentContactId.value === data.contactId) {
+      currentContactId.value = '';
+    }
+  });
+};
+
+// 删除联系人，同时删除相关聊天记录
+const onDeleteContact = (data: ContactItem) => {
+  Message('删除后与该用户的聊天记录也将同时删除', '确定删除该聊天吗').then(() => {
+    chatStore.addDelContactId(data.contactId);
+    // 删除聊天记录
+    chatStore.deleteChatMesaage(data.chatId);
     if (currentContactId.value === data.contactId) {
       currentContactId.value = '';
     }
@@ -510,7 +522,8 @@ const onSelectContact = (menu: Menu, data: ContactItem) => {
     1: setMsgTop,
     2: onUnDisturb,
     3: onRemoveContact,
-    4: toPersonal,
+    4: onDeleteContact,
+    5: toPersonal,
   };
   actions[menu.value](data);
 };
@@ -527,6 +540,16 @@ const onChatTop = () => {
   if (currentContact.value) {
     setMsgTop(currentContact.value);
   }
+};
+
+// 双击选中消息内容
+const onDblclick = (e: MouseEvent) => {
+  const element = e.target as HTMLElement;
+  const selection = window.getSelection();
+  const range = document.createRange();
+  range.selectNodeContents(element);
+  selection?.removeAllRanges();
+  selection?.addRange(range);
 };
 </script>
 
@@ -552,6 +575,7 @@ const onChatTop = () => {
     width: 260px;
     border-right: 1px solid var(--border-color);
     box-sizing: border-box;
+    .clickNoSelectText();
 
     .search {
       position: relative;
@@ -668,11 +692,10 @@ const onChatTop = () => {
           }
 
           .user-info {
-            flex: 1;
+            width: calc(100% - 54px);
             display: flex;
             justify-content: space-between;
             flex-direction: column;
-            margin-left: 10px;
 
             .title {
               display: flex;
@@ -702,7 +725,7 @@ const onChatTop = () => {
                 flex: 1;
                 font-size: 13px;
                 color: var(--font-3);
-                .ellipsisMore(1);
+                .ellipsis();
               }
 
               .is-undisturb {
@@ -767,6 +790,7 @@ const onChatTop = () => {
     height: 45px;
     border-radius: 5px;
     cursor: pointer;
+    .clickNoSelectText();
 
     :deep {
       .image-item {
@@ -801,6 +825,7 @@ const onChatTop = () => {
       box-sizing: border-box;
       border-bottom: 1px solid var(--border-color);
       font-size: 18px;
+      .clickNoSelectText();
 
       .icon-gengduo3 {
         cursor: pointer;
@@ -843,6 +868,7 @@ const onChatTop = () => {
           height: 32px;
           color: var(--font-5);
           font-size: 14px;
+          .clickNoSelectText();
 
           .on-load-text {
             color: var(--theme-blue);
@@ -857,6 +883,7 @@ const onChatTop = () => {
           margin-bottom: 20px;
           text-align: center;
           margin-top: 20px;
+          .clickNoSelectText();
         }
 
         .message-content {
@@ -878,9 +905,11 @@ const onChatTop = () => {
             justify-content: space-between;
 
             .message-text {
-              flex: 1;
+              width: 100%;
               text-align: justify;
               padding: 5px 8px;
+              box-sizing: border-box;
+              -webkit-user-drag: none;
 
               :deep {
                 img {
@@ -956,7 +985,6 @@ const onChatTop = () => {
 
         .message-del {
           display: none !important;
-          border: 1px solid red;
         }
       }
     }
@@ -984,6 +1012,7 @@ const onChatTop = () => {
           border-radius: 5px;
           border: 1px solid var(--border-color);
           backdrop-filter: blur(5px);
+          .clickNoSelectText();
 
           .emoji-item {
             text-align: center;
@@ -1046,6 +1075,12 @@ const onChatTop = () => {
       color: var(--font-1);
       background-color: transparent;
     }
+  }
+}
+
+:deep {
+  .dropdown-text {
+    .clickNoSelectText();
   }
 }
 </style>

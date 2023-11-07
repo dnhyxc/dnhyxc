@@ -88,6 +88,7 @@ const onSizeChange = (size: { width: number; height: number }) => {
   text-align: center;
   box-shadow: 0 0 8px 0 var(--shadow-mack);
   z-index: 999;
+  .clickNoSelectText();
 
   .menu-list {
     padding: 5px 0;

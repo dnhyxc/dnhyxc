@@ -245,6 +245,7 @@ const onQuit = () => {
 
     .avatar {
       cursor: pointer;
+      .clickNoSelectText();
     }
   }
 }
@@ -292,6 +293,7 @@ const onQuit = () => {
   display: flex;
   flex-direction: column;
   align-items: center;
+  .clickNoSelectText();
 
   .user-info {
     display: flex;

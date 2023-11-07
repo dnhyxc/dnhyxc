@@ -445,9 +445,19 @@ export const mergeChats = async (chatId: string) => {
   return await post(API.MERGE_CHATS, copeParams({ chatId }));
 };
 
+// 获取缓存消息
+export const getCacheChats = async (chatId: string) => {
+  return await post(API.GET_CACHE_CHATS, copeParams({ chatId }));
+};
+
 // 删除消息
 export const deleteChats = async (delIds: string[]) => {
   return await post(API.DELETE_CHATS, copeParams({ delIds }));
+};
+
+// 删除联系人，清空消息
+export const deleteChatMesaage = async (chatId: string) => {
+  return await post(API.DELETE_CHAT_MESAAGE, copeParams({ chatId }));
 };
 
 // 获取联系人

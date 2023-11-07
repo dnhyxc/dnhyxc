@@ -483,7 +483,22 @@ export const replacePictures = (content: string) => {
     const index = word.indexOf(',');
     if (index > -1) {
       const arr = word.replace('<', '').replace('>', '').split(',');
-      return `<img id="__COMMENT_IMG__" style="border-radius: 5px;width: 100%;max-width: 250px;height:auto;display: block;padding: 5px 0;cursor: pointer;" src="${arr[1]}" title="${arr[0]}"/>`;
+      return `
+        <img 
+          id="__COMMENT_IMG__" 
+          style="border-radius: 5px;
+          width: 100%;
+          max-width: 250px;
+          height:auto;
+          display: block;
+          padding: 5px 0;
+          cursor: pointer;
+          pointer-events: none;
+          user-select: none;"
+          src="${arr[1]}" 
+          title="${arr[0]}"
+        />
+      `;
     } else {
       return word;
     }

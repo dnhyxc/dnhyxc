@@ -522,6 +522,7 @@ export interface ContactItem {
   from: string;
   isTop: boolean;
   isUnDisturb: boolean;
+  hasUnRead?: boolean;
 }
 
 export interface ContactList {

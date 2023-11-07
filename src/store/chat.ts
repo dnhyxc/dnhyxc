@@ -119,10 +119,24 @@ export const useChatStore = defineStore('chat', {
         const newContacts = this.contactList.map((i) => {
           if (i.chatId === chatId) {
             i.noReadCount = res.data.noReadCount;
+            i.hasUnRead = false;
           }
           return i;
         });
         this.contactList = newContacts;
+      }
+    },
+
+    // 合并消息
+    async getCacheChats(to: string) {
+      // 检验是否有userId，如果没有禁止发送请求
+      if (!useCheckUserId() || !to) return;
+      this.loading = true;
+      const { userId } = loginStore.userInfo;
+      const chatId = [userId, to].sort().join('_');
+      const res = normalizeResult<ChatItem[]>(await Service.getCacheChats(chatId));
+      if (res.success) {
+        this.addChatList = [...this.addChatList, ...res.data];
       }
     },
 
@@ -223,6 +237,13 @@ export const useChatStore = defineStore('chat', {
       if (res.success) {
         this.delContactIds = [];
       }
+    },
+
+    // 删除联系人的同时，删除与之的聊天记录
+    async deleteChatMesaage(chatId: string) {
+      normalizeResult<{ delNewChatCount: number; delCatchChat: number; delChatCount: number }>(
+        await Service.deleteChatMesaage(chatId),
+      );
     },
 
     // 获取用户信息
