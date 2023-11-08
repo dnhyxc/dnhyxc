@@ -12,7 +12,7 @@
           <div class="icon-wrap">
             <i class="page-icon iconfont icon-haidao_" />
           </div>
-          <div class="title">{{ commonStore.crumbsInfo.crumbsName }}</div>
+          <div class="title">{{ route.meta.title }}</div>
         </div>
         <div class="right">
           <div class="sticky">
