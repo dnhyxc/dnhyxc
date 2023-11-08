@@ -9,7 +9,6 @@
     <el-scrollbar ref="scrollRef">
       <div
         v-for="menu in menuList"
-        v-show="!menu.hide"
         :key="menu.key"
         class="menu-list"
         @click="(e: Event) => onSelectMenu(e, menu)"
@@ -17,8 +16,7 @@
         <el-tooltip class="box-item" effect="light" :content="menu.name" placement="right">
           <i
             :class="`${
-              ((activeMenu.path === menu.path && route.path.includes(menu.path)) ||
-                commonStore.activePath === menu.path) &&
+              ((activeMenu.path === menu.path && route.path.includes(menu.path)) || route.path === menu.path) &&
               'active'
             } ${menu.key} font iconfont ${menu.icon}`"
           />
@@ -78,7 +76,7 @@ import { ref, computed, watchEffect, inject, onUnmounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { MENULIST, HEAD_IMG } from '@/constant';
 import { MenuListParams } from '@/typings/common';
-import { commonStore, loginStore } from '@/store';
+import { loginStore } from '@/store';
 import { checkOS } from '@/utils';
 import { authRoutes } from '@/router';
 
@@ -123,20 +121,12 @@ watchEffect(() => {
 const onSelectMenu = (e: Event, menu: MenuListParams) => {
   e.stopPropagation();
   activeMenu.value = menu;
-  commonStore.setCrumbsInfo({
-    crumbsName: menu.name,
-    crumbsPath: menu.path,
-  });
   if (route.path === menu.path) return;
   router.push(menu.path);
 };
 
 // 去我的主页
 const toPersonal = () => {
-  commonStore.setCrumbsInfo({
-    crumbsName: '我的主页',
-    crumbsPath: '/personal',
-  });
   router.push('/personal');
   if (route.path === '/personal') {
     if (timer) {
@@ -156,10 +146,6 @@ const onLogin = () => {
 
 // 退出登录
 const onQuit = () => {
-  commonStore.setCrumbsInfo({
-    crumbsName: MENULIST[0].name,
-    crumbsPath: MENULIST[0].path,
-  });
   loginStore.onQuit();
   router.push('/login');
 };

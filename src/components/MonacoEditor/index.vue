@@ -10,7 +10,7 @@
       <div class="left">
         <div v-if="!readonly" class="code-action">
           <el-dropdown class="menu-list" max-height="200px">
-            <span class="action iconfont icon-wodedasai" title="切换语言" />
+            <span class="action iconfont icon-yuyan" title="切换语言" />
             <template #dropdown>
               <el-dropdown-menu>
                 <el-dropdown-item v-for="item in languages" :key="item" @click="onChangeLanguage(item)">
@@ -342,8 +342,8 @@ const onSaveDraft = () => {
         margin-right: 14px;
       }
 
-      .icon-wodedasai {
-        font-size: 21px;
+      .icon-yuyan {
+        font-size: 16px;
       }
 
       .icon-sketchpad-theme {

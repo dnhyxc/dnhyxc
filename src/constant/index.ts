@@ -454,42 +454,6 @@ export const MENULIST = [
     active: 'icon-yonghuziliao',
     show: true,
   },
-  // 以下加上是为了控制头部面包屑能展示对应的文案
-  {
-    name: '我的主页',
-    key: 'personal',
-    path: '/personal',
-    show: false,
-    hide: true,
-  },
-  {
-    name: '文章详情',
-    key: 'detail',
-    path: '/detail',
-    show: false,
-    hide: true,
-  },
-  {
-    name: '高级搜索',
-    key: 'search',
-    path: '/search',
-    show: false,
-    hide: true,
-  },
-  {
-    name: '收藏集',
-    key: 'collect',
-    path: '/collect',
-    show: false,
-    hide: true,
-  },
-  {
-    name: '私聊',
-    key: 'chat',
-    path: '/chat',
-    show: false,
-    hide: true,
-  },
 ];
 
 // 需要登陆权限的路由

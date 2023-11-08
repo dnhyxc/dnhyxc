@@ -16,7 +16,7 @@
       <el-tooltip effect="light" content="前进" placement="bottom">
         <i class="font iconfont icon-arrow-right-bold" @click="goForward" />
       </el-tooltip>
-      <div class="title">{{ commonStore.crumbsInfo.crumbsName }}</div>
+      <div class="title">{{ route.meta.title }}</div>
     </div>
     <div class="right">
       <div class="search-wrap">
@@ -143,7 +143,7 @@ import { ref, watchEffect, nextTick, onUnmounted, onMounted, watch } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { ipcRenderer } from 'electron';
 import { Search } from '@element-plus/icons-vue';
-import { ACTION_SVGS, MENULIST, CLOSE_CONFIG, CLOSE_PROMPT, NEED_HEAD_SEARCH } from '@/constant';
+import { ACTION_SVGS, CLOSE_CONFIG, CLOSE_PROMPT, NEED_HEAD_SEARCH } from '@/constant';
 import { commonStore, messageStore, loginStore } from '@/store';
 import { checkOS, ipcRenderers } from '@/utils';
 import Messages from '@/components/Messages/index.vue';
@@ -163,13 +163,6 @@ const timerRef = ref<ReturnType<typeof setTimeout> | null>();
 
 // 监听路由变化，设置当前选中菜单
 watchEffect(() => {
-  const menu = MENULIST.find((i) => route.path.includes(i.path));
-  commonStore.setCrumbsInfo({
-    crumbsName: menu?.name || '设置',
-    crumbsPath: route.path,
-  });
-  commonStore.setActivePath(route.path);
-
   // 监听不再提示的勾选状态，实时设置store
   if (remindStatus.value !== (store.get(CLOSE_PROMPT) as boolean)) {
     store.set(CLOSE_PROMPT, remindStatus.value);
@@ -265,10 +258,6 @@ const onSticky = () => {
 
 // 点击去设置页
 const toSetting = () => {
-  commonStore.setCrumbsInfo({
-    crumbsName: '账号设置',
-    crumbsPath: '/setting',
-  });
   router.push('/setting');
 };
 
@@ -281,10 +270,6 @@ const onClickSearch = () => {
       searchRef.value?.focus();
     });
   } else {
-    commonStore.setCrumbsInfo({
-      crumbsName: '高级搜索',
-      crumbsPath: '/search',
-    });
     router.push('/search');
   }
 };
@@ -298,10 +283,6 @@ const onCheckSearchType = (value: number) => {
       searchRef.value?.focus();
     });
   } else {
-    commonStore.setCrumbsInfo({
-      crumbsName: '高级搜索',
-      crumbsPath: '/search',
-    });
     router.push('/search');
   }
 };
