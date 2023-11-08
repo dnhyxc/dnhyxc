@@ -175,7 +175,7 @@ export const useDeleteArticle = ({
 export const useGetRouteAuthInfo = () => {
   const router = useRouter();
   const { menus } = loginStore;
-  const name = location.pathname.slice(1); // tools
+  const name = location.pathname.slice(1); // picture
   // 判断是否具备该菜单权限
   const noAuthMenus = AUTHOR_ROUTES.filter((i) => !menus?.some((j) => j === i));
   if (noAuthMenus?.includes(name as string)) {
