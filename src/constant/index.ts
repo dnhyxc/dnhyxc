@@ -483,6 +483,13 @@ export const MENULIST = [
     show: false,
     hide: true,
   },
+  {
+    name: '私聊',
+    key: 'chat',
+    path: '/chat',
+    show: false,
+    hide: true,
+  },
 ];
 
 // 需要登陆权限的路由

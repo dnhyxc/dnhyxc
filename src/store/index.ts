@@ -1,6 +1,6 @@
 import store from './initStore';
-import { useCommonStore } from './common';
 import { useLoginStore } from './login';
+import { useCommonStore } from './common';
 import { useCreateStore } from './create';
 import { useArticleStore } from './article';
 import { useCollectStore } from './collect';

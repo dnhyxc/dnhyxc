@@ -33,7 +33,6 @@ import { shell } from 'electron';
 import { onMounted, ref, computed } from 'vue';
 import { TOOL_LIST } from '@/constant';
 import { toolsStore } from '@/store';
-import { useGetRouteAuthInfo } from '@/hooks';
 import { ToolsItem } from '@/typings/common';
 import Compress from './Compress/index.vue';
 import Cropper from './Cropper/index.vue';
@@ -56,9 +55,6 @@ const watermarkVisible = ref<boolean>(false);
 const boardVisible = ref<boolean>(false);
 // 是否显示代码测试
 const codeRunVisible = ref<boolean>(false);
-
-// 判断是否有路由权限
-useGetRouteAuthInfo();
 
 onMounted(() => {
   // 获取工具列表

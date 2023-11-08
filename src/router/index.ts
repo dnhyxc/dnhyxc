@@ -1,5 +1,12 @@
-import { createRouter, RouteRecordRaw, createWebHistory } from 'vue-router';
+import {
+  createRouter,
+  RouteRecordRaw,
+  createWebHistory,
+  RouteLocationNormalized,
+  NavigationGuardNext,
+} from 'vue-router';
 import { ElMessage } from 'element-plus';
+import { loginStore } from '@/store';
 import { useCommonStore } from '@/store/common';
 import { locGetItem } from '@/utils';
 import { WITH_AUTH_ROUTES } from '@/constant';
@@ -16,6 +23,14 @@ export const authRoutes = [
       auth: true,
     },
     component: () => import('@/views/tools/index.vue'),
+    beforeEnter: async (to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) => {
+      const menus = (await loginStore.getUserMenuRoles()) as string[];
+      if (menus?.includes(to.name as string)) {
+        next();
+      } else {
+        next('/404');
+      }
+    },
   },
   {
     path: '/picture',
@@ -26,6 +41,14 @@ export const authRoutes = [
       auth: true,
     },
     component: () => import('@/views/picture/index.vue'),
+    beforeEnter: async (to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) => {
+      const menus = (await loginStore.getUserMenuRoles()) as string[];
+      if (menus?.includes(to.name as string)) {
+        next();
+      } else {
+        next('/404');
+      }
+    },
   },
 ];
 
