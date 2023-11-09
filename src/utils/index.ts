@@ -495,7 +495,7 @@ export const replacePictures = (content: string) => {
           cursor: pointer;
           -webkit-user-drag: none;
           user-select: none;"
-          src="${arr[1]}" 
+          src="${arr[1]}"
           title="${arr[0]}"
         />
       `;
