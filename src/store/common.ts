@@ -12,6 +12,7 @@ interface IProps {
   reelScrollScale?: number; // 卷轴滚动宽度
   reelScrollRef: HTMLDivElement | null; // Reel 滚动容器
   pageLoadStatus: boolean; // 判断页面是否加载完成
+  winStatus: boolean; // 窗口显示状态
 }
 
 // 公共store
@@ -26,6 +27,7 @@ export const useCommonStore = defineStore('common', {
     reelScrollScale: 0,
     reelScrollRef: null,
     pageLoadStatus: false,
+    winStatus: true,
   }),
 
   actions: {
@@ -42,6 +44,11 @@ export const useCommonStore = defineStore('common', {
     // 修改页面加载状态
     updatePageLoadStatus() {
       this.pageLoadStatus = true;
+    },
+
+    // 更改窗口显示状态
+    updateWinStatus(status: boolean) {
+      this.winStatus = status;
     },
   },
 });

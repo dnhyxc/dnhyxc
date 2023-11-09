@@ -72,6 +72,11 @@ onMounted(async () => {
     ipcRenderer.on('show-message-modal', (e, status) => {
       messageStore.visible = true;
     });
+
+    // 监听主进程发送的打开消息弹窗的消息
+    ipcRenderer.on('win-show-status', (e, status) => {
+      commonStore.updateWinStatus(status);
+    });
   }
 });
 

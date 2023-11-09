@@ -64,6 +64,16 @@ export const createWindow = () => {
     }
   });
 
+  // 监听窗口显示
+  globalInfo.win?.on('show', () => {
+    globalInfo.win?.webContents.send('win-show-status', true);
+  });
+
+  // 监听窗口隐藏
+  globalInfo.win?.on('hide', () => {
+    globalInfo.win?.webContents.send('win-show-status', false);
+  });
+
   // 只有显式调用quit才退出系统，区分MAC系统程序坞退出和点击X关闭退出
   app.on('before-quit', () => {
     // 清空用户信息

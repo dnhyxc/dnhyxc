@@ -183,6 +183,7 @@
 </template>
 
 <script setup lang="ts">
+import { clipboard } from 'electron';
 import { onMounted, ref, computed, nextTick, onUnmounted, onBeforeUnmount, Ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { HEAD_IMG, CONTACT_MENU, CHAT_MENU, NO_DATA_SVG } from '@/constant';
@@ -462,7 +463,7 @@ const delMsg = (data: ChatItem) => {
 
 // 复制内容
 const onCopy = (data: ChatItem) => {
-  navigator.clipboard.writeText(data.chat.content);
+  clipboard.writeText(data.chat.content);
 };
 
 // 图片另存为

@@ -484,8 +484,8 @@ export const replacePictures = (content: string) => {
     if (index > -1) {
       const arr = word.replace('<', '').replace('>', '').split(',');
       return `
-        <img 
-          id="__COMMENT_IMG__" 
+        <img
+          id="__COMMENT_IMG__"
           style="border-radius: 5px;
           width: 100%;
           max-width: 250px;
