@@ -131,7 +131,10 @@
               >
                 <div class="message" @click="onPreview(msg.chat.content)">
                   <span class="send-date">{{ formatDate(msg.chat.createTime, 'MM/DD HH:mm') }}</span>
-                  <ContextMenu :menu="CHAT_MENU" @select="(menu:Menu) => onSelectMenu(menu, msg)">
+                  <ContextMenu
+                    :menu="CHAT_MENU(!!checkWithLink(msg.chat.content, true))"
+                    @select="(menu:Menu) => onSelectMenu(menu, msg)"
+                  >
                     <div class="chat-item" @dblclick="onDblclick">
                       <div class="message-text" v-html="replaceCommentContent(msg.chat.content)" />
                     </div>
@@ -147,7 +150,10 @@
                 />
                 <div class="message" @click="onPreview(msg.chat.content)">
                   <span class="send-date">{{ formatDate(msg.chat.createTime, 'MM/DD HH:mm') }}</span>
-                  <ContextMenu :menu="CHAT_MENU" @select="(menu:Menu) => onSelectMenu(menu, msg)">
+                  <ContextMenu
+                    :menu="CHAT_MENU(!!checkWithLink(msg.chat.content, true))"
+                    @select="(menu:Menu) => onSelectMenu(menu, msg)"
+                  >
                     <div class="chat-item" @dblclick="onDblclick">
                       <div class="message-text" v-html="replaceCommentContent(msg.chat.content)" />
                     </div>
@@ -182,7 +188,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { HEAD_IMG, CONTACT_MENU, CHAT_MENU, NO_DATA_SVG } from '@/constant';
 import { chatStore, loginStore, messageStore } from '@/store';
 import { ContactItem, Menu, ChatItem } from '@/typings/common';
-import { formatTimestamp, formatDate, replaceCommentContent, Message } from '@/utils';
+import { formatTimestamp, formatDate, replaceCommentContent, Message, checkWithLink, onDownloadFile } from '@/utils';
 import Image from '@/components/Image/index.vue';
 import ContextMenu from '@/components/ContextMenu/index.vue';
 
@@ -439,9 +445,7 @@ const scrollToBottom = () => {
 
 // 预览图片
 const onPreview = (content: string) => {
-  const regex = /<[^>]+>/g;
-  const matches = content.match(regex);
-  const links = matches?.map((match) => match.substring(1, match.length - 1).split(',')[1]);
+  const links = checkWithLink(content);
   if (links?.[0]) {
     prevImg.value = links?.[0];
     previewVisible.value = true;
@@ -461,11 +465,20 @@ const onCopy = (data: ChatItem) => {
   navigator.clipboard.writeText(data.chat.content);
 };
 
+// 图片另存为
+const onSave = (data: ChatItem) => {
+  const links = checkWithLink(data.chat.content);
+  if (links?.[0]) {
+    onDownloadFile({ url: links?.[0] });
+  }
+};
+
 // 选中后菜单
 const onSelectMenu = (menu: Menu, data: ChatItem) => {
   const actions = {
     1: delMsg,
     2: onCopy,
+    3: onSave,
   };
   actions[menu.value](data);
 };

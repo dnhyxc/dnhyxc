@@ -863,7 +863,13 @@ export const CONTACT_MENU = (isTop: boolean, isDisturb: boolean) => [
 ];
 
 // 聊天消息右键菜单
-export const CHAT_MENU = [
-  { label: '删除', value: 1 },
-  { label: '复制', value: 2 },
-];
+export const CHAT_MENU = (save?: boolean) => {
+  const menus = [
+    { label: '删除', value: 1 },
+    { label: '复制', value: 2 },
+  ];
+  if (save) {
+    menus.push({ label: '另存为', value: 3 });
+  }
+  return menus;
+};

@@ -493,7 +493,7 @@ export const replacePictures = (content: string) => {
           display: block;
           padding: 5px 0;
           cursor: pointer;
-          pointer-events: none;
+          -webkit-user-drag: none;
           user-select: none;"
           src="${arr[1]}" 
           title="${arr[0]}"
@@ -1131,4 +1131,12 @@ export const hlightKeyword = (keyword: string, list: Array<any>) => {
     i.username = i.username?.replace(reg, (key: string) => `<span style="color: #ff9900">${key}</span>`);
     return i;
   });
+};
+
+// 判断链接是否包含图片
+export const checkWithLink = (content: string, check?: boolean) => {
+  const regex = /<[^>]+>/g;
+  const matches = content.match(regex);
+  const links = matches?.map((match) => match.substring(1, match.length - 1).split(',')[1]);
+  return check ? !!links?.[0] : links;
 };

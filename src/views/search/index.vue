@@ -226,7 +226,7 @@ const onScrollTo = () => {
 
     .icon-sousuo2,
     .text {
-      color: var(--fff);
+      color: @fff;
       font-size: 14px;
     }
 
