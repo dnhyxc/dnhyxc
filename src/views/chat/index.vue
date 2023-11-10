@@ -250,6 +250,8 @@ onMounted(async () => {
   chatStore.chatUserId = userId as string;
   chatStore.initIO();
   chatStore.clearChatInfo();
+  // 合并缓存联系人
+  await chatStore.mergeContacts();
   // 合并聊天记录
   await chatStore.mergeChats(currentContactId.value);
   // 获取聊天列表
@@ -309,10 +311,12 @@ const getUserInfo = async () => {
 };
 
 // 点击搜索输入框，显示搜索联系人列表，否则显示联系人列表
-const onClick = (e: MouseEvent) => {
+const onClick = async (e: MouseEvent) => {
   const id = (e.target as HTMLElement).id;
   if (id === 'SEARCH' || id === 'SEARCH_INPUT') {
     showSearchList.value = true;
+    // 合并缓存联系人
+    await chatStore.mergeContacts();
     return;
   }
   if (showSearchList.value) {
@@ -511,6 +515,7 @@ const onRemoveContact = (data: ContactItem) => {
     chatStore.addDelContactId(data.contactId);
     if (currentContactId.value === data.contactId) {
       currentContactId.value = '';
+      active.value = '';
     }
   });
 };
@@ -523,6 +528,7 @@ const onDeleteContact = (data: ContactItem) => {
     chatStore.deleteChatMesaage(data.chatId);
     if (currentContactId.value === data.contactId) {
       currentContactId.value = '';
+      active.value = '';
     }
   });
 };

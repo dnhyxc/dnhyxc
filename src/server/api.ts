@@ -241,3 +241,15 @@ export const DELETE_CATCH_CHAT = '/api/deleteCatchChat';
 
 // 搜索联系人
 export const SEARCH_CONTACTS = '/api/searchContacts';
+
+// 更新缓存联系人
+export const ON_UPDATE_CATCH_CONTACT = '/api/onUpdateCatchContact';
+
+// 合并联系人
+export const MERGE_CONTACTS = '/api/mergeContacts';
+
+// 获取缓存联系人
+export const GET_CATCH_CONTACT_LIST = '/api/getCatchContactList';
+
+// 删除缓存联系人
+export const DELETE_CATCH_CONTACTS = '/api/deleteCatchContacts';

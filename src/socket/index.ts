@@ -138,7 +138,9 @@ async function onMessage(event: any) {
         if (parseData.action === 'push' || parseData.action === 'chat') {
           // 如果是自己发送的消息则不推送消息
           if (
-            (parseData.action === 'chat' && parseData.data.from !== loginStore.userInfo.userId) ||
+            (parseData.action === 'chat' &&
+              parseData.data.from !== loginStore.userInfo.userId &&
+              location.pathname !== '/chat') ||
             parseData.action !== 'chat'
           ) {
             await messageStore.setMsgCount(parseData.data);

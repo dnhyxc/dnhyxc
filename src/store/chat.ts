@@ -15,6 +15,7 @@ interface IProps {
   pageSize: number;
   total: number;
   contactList: ContactItem[];
+  addContactList: ContactItem[];
   contactPageNo: number;
   contactPageSize: number;
   contactTotal: number;
@@ -38,6 +39,7 @@ export const useChatStore = defineStore('chat', {
     chatList: [],
     addChatList: [],
     contactList: [],
+    addContactList: [],
     total: 0,
     pageNo: 0,
     pageSize: 30,
@@ -158,8 +160,28 @@ export const useChatStore = defineStore('chat', {
       }
       this.updateMessage(chatInfo);
       const findOne = this.contactList.find((item) => item.chatId === params.chatId);
-      if (!findOne && params.to === loginStore.userInfo.userId) {
-        this.addAbsentContact(chatInfo as ContactItem & ChatItem);
+      const findDelId = this.delContactIds.find((i) => i === params.from);
+      if (params.to === loginStore.userInfo.userId && location.pathname === '/chat') {
+        if (!findOne) {
+          this.addAbsentContact(chatInfo as ContactItem & ChatItem);
+        }
+        // 判断当前用户是否被删除过，如果删除过，则将其从删除列表中去除，恢复显示
+        if (findOne && findOne?.contactId === findDelId) {
+          this.delContactIds = this.delContactIds.filter((i) => i !== findDelId);
+          this.contactList = this.contactList
+            .map((i) => {
+              if (i.contactId === findDelId) {
+                i.noReadCount = 1;
+              }
+              return i;
+            })
+            .sort((a, b) => {
+              if (a.isTop !== b.isTop) {
+                return (b.isTop as any) - (a.isTop as any);
+              }
+              return b.createTime - a.createTime;
+            });
+        }
       }
     },
 
@@ -227,10 +249,20 @@ export const useChatStore = defineStore('chat', {
     addDelContactId(contactId: string) {
       if (!this.delContactIds.includes(contactId)) {
         this.delContactIds.push(contactId);
+        this.deleteCatchContacts(contactId);
       }
     },
 
-    // 删除消息
+    // 删除缓存联系人
+    async deleteCatchContacts(contactId: string) {
+      if (!this.delContactIds?.length) return;
+      const res = normalizeResult<{ data: string[] }>(await Service.deleteCatchContacts(contactId));
+      if (res.success && this.chatUserId === contactId) {
+        this.chatUserId = '';
+      }
+    },
+
+    // 删除联系人
     async deleteContacts() {
       if (!this.delContactIds?.length) return;
       const res = normalizeResult<{ data: string[] }>(await Service.deleteContacts(this.delContactIds));
@@ -267,6 +299,23 @@ export const useChatStore = defineStore('chat', {
         this.contactList = [...this.contactList, ...res.data.list];
         this.contactTotal = res.data.total;
       }
+    },
+
+    // 获取缓存联系人
+    async getCatchContactList() {
+      // 检验是否有userId，如果没有禁止发送请求
+      if (!useCheckUserId()) return;
+      const res = normalizeResult<ContactItem[]>(await Service.getCatchContactList());
+      if (res.success) {
+        this.addContactList = [...this.addContactList, ...res.data];
+      }
+    },
+
+    // 合并缓存联系人
+    async mergeContacts() {
+      // 检验是否有userId，如果没有禁止发送请求
+      if (!useCheckUserId()) return;
+      normalizeResult<ContactItem[]>(await Service.mergeContacts());
     },
 
     // 获取联系人
@@ -343,22 +392,23 @@ export const useChatStore = defineStore('chat', {
 
     // 接收到未在聊天列表的人的消息时,添加到联系人列表
     async addAbsentContact(params: ContactItem & ChatItem) {
-      const res = await this.getUserInfo(params.from);
+      const res = await this.getUserInfo(params.chat.from);
       if (res?.success) {
         const { headUrl, username, job, userId } = res.data;
-        this.contactList = [
-          {
-            ...params,
-            headUrl: headUrl || '',
-            username: username!,
-            job: job || '',
-            message: params.chat.content,
-            sendTime: params.createTime,
-            contactId: userId!,
-            noReadCount: 1,
-          },
-          ...this.contactList,
-        ];
+        // @ts-ignore
+        const topIndex = this.contactList.findLastIndex((i) => i.isTop);
+        const contact = {
+          id: params.id,
+          chatId: params.chat.chatId,
+          headUrl: headUrl || '',
+          username: username!,
+          job: job || '',
+          message: params.chat.content,
+          sendTime: params.chat.createTime,
+          contactId: userId!,
+          noReadCount: 1,
+        } as ContactItem;
+        this.contactList.splice(topIndex, 0, contact);
       }
     },
 

@@ -221,7 +221,7 @@ export const useLoginStore = defineStore('login', {
       const res = normalizeResult<{ id: string; menus: string[] }>(await Service.getUserMenuRoles());
       if (res.success) {
         this.menus = res.data?.menus || [];
-        return res.data.menus;
+        return this.menus;
       } else {
         return [];
       }

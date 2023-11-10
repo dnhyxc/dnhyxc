@@ -514,3 +514,28 @@ export const deleteCatchChat = async (id: string) => {
 export const searchContacts = async (params: { keyword: string; pageNo: number; pageSize: number }) => {
   return await post(API.SEARCH_CONTACTS, copeParams(params));
 };
+
+// 获取缓存联系人
+export const getCatchContactList = async () => {
+  return await post(API.GET_CATCH_CONTACT_LIST, copeParams({}));
+};
+
+// 更新缓存联系人
+export const onUpdateCatchContact = async (params: {
+  contactId: string;
+  createTime?: number;
+  isTop?: boolean;
+  isUnDisturb?: null | boolean;
+}) => {
+  return await post(API.ON_UPDATE_CATCH_CONTACT, copeParams(params));
+};
+
+// 合并联系人
+export const mergeContacts = async () => {
+  return await post(API.MERGE_CONTACTS, copeParams({}));
+};
+
+// 删除缓存联系人
+export const deleteCatchContacts = async (contactId: string) => {
+  return await post(API.DELETE_CATCH_CONTACTS, copeParams({ contactId }));
+};

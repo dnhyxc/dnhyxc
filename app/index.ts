@@ -19,7 +19,8 @@ process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = 'true';
 // 限制只能启动一个应用
 const gotTheLock = app.requestSingleInstanceLock();
 
-if (!isMac) {
+// 判断是否是 mac 和开发环境
+if (!isMac && app.isPackaged) {
   if (!gotTheLock) {
     app.quit();
   } else {
