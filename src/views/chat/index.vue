@@ -272,7 +272,9 @@ onBeforeUnmount(() => {
   chatStore.deleteContacts();
 });
 
-onUnmounted(() => {
+onUnmounted(async () => {
+  // 合并聊天记录
+  await chatStore.mergeChats(currentContactId.value);
   chatStore.clearContactInfo();
   chatStore.clearSearchInfo();
   (scrollRef.value?.wrapRef as HTMLElement)?.removeEventListener('scroll', onScroll);
@@ -282,7 +284,9 @@ onUnmounted(() => {
 });
 
 // 页面刷新前删除选中的需要删除的联系人及消息
-const onBeforeunload = (e: Event) => {
+const onBeforeunload = async (e: Event) => {
+  // 合并聊天记录
+  await chatStore.mergeChats(currentContactId.value);
   chatStore.deleteChats();
   chatStore.deleteContacts();
 };
