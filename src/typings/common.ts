@@ -120,7 +120,7 @@ export interface GetArticleListParams {
 }
 
 // 文章列表返回数据
-export interface ArticleItem extends AddCollectionRes, ChatItem {
+export interface ArticleItem extends AddCollectionRes {
   abstract?: string;
   authorId?: string;
   authorName?: string;

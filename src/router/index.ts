@@ -1,3 +1,4 @@
+import { defineAsyncComponent } from 'vue';
 import {
   createRouter,
   RouteRecordRaw,
@@ -11,6 +12,7 @@ import { useCommonStore } from '@/store/common';
 import { locGetItem } from '@/utils';
 import { WITH_AUTH_ROUTES } from '@/constant';
 import eventBus from '@/utils/eventBus';
+import AsyncLoading from '@/components/AsyncLoading/index.vue';
 
 // 需要后台配置权限的路由配置
 export const authRoutes = [
@@ -22,7 +24,11 @@ export const authRoutes = [
       keepAlive: true,
       auth: true,
     },
-    component: () => import('@/views/tools/index.vue'),
+    component: () =>
+      defineAsyncComponent({
+        loader: () => import('@/views/tools/index.vue'),
+        loadingComponent: AsyncLoading,
+      }),
     beforeEnter: async (to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) => {
       const menus = (await loginStore.getUserMenuRoles()) as string[];
       if (menus?.includes(to.name as string)) {
