@@ -267,14 +267,14 @@ onMounted(async () => {
 });
 
 onBeforeUnmount(() => {
+  // 合并聊天记录
+  chatStore.mergeChats(currentContactId.value);
   // 页面离开时统一删除消息
   chatStore.deleteChats();
   chatStore.deleteContacts();
 });
 
-onUnmounted(async () => {
-  // 合并聊天记录
-  await chatStore.mergeChats(currentContactId.value);
+onUnmounted(() => {
   chatStore.clearContactInfo();
   chatStore.clearSearchInfo();
   (scrollRef.value?.wrapRef as HTMLElement)?.removeEventListener('scroll', onScroll);
@@ -284,9 +284,9 @@ onUnmounted(async () => {
 });
 
 // 页面刷新前删除选中的需要删除的联系人及消息
-const onBeforeunload = async (e: Event) => {
+const onBeforeunload = (e: Event) => {
   // 合并聊天记录
-  await chatStore.mergeChats(currentContactId.value);
+  chatStore.mergeChats(currentContactId.value);
   chatStore.deleteChats();
   chatStore.deleteContacts();
 };
@@ -301,14 +301,22 @@ const onScroll = (e: Event) => {
 
 // 当联系人未加载时,调用接口获取用户信息,从而获取头像
 const getUserInfo = async () => {
-  if (!currentContact.value?.headUrl && !avatar.value && currentContactId.value) {
+  // 如果路由没有携带username，则通过contactList找到对应的username
+  if (!username) {
+    const findOne = chatStore.contactList.find((i) => i.contactId === userId);
+    if (findOne) {
+      contactName.value = findOne?.username || '';
+    }
+  }
+  if (((!currentContact.value?.headUrl && !avatar.value) || !contactName.value) && currentContactId.value) {
     const fromOtherUser = chatList.value?.length
       ? chatList.value.some((i) => i.chat.from !== loginStore.userInfo.userId)
       : false;
     if (fromOtherUser) {
       const res = await chatStore.getUserInfo(currentContactId.value);
       if (res?.success) {
-        avatar.value = res.data.headUrl as string;
+        avatar.value = res.data?.headUrl!;
+        contactName.value = res.data?.username!;
       }
     }
   }

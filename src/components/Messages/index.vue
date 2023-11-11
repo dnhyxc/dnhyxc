@@ -66,7 +66,7 @@ import { messageStore, personalStore, loginStore } from '@/store';
 import { useScroller } from '@/hooks';
 import { scrollTo, formatDate } from '@/utils';
 import eventBus from '@/utils/eventBus';
-import { ArticleItem } from '@/typings/common';
+import { ArticleItem, ContactItem } from '@/typings/common';
 import { MESSAGE_ACTIONS, FOLLOWED_INFO } from '@/constant';
 
 const reload = inject<Function>('reload');
@@ -142,7 +142,7 @@ const toDetail = (data: ArticleItem) => {
   }
 
   if (data.action === 'CHAT' && route.path !== '/chat') {
-    router.push('/chat');
+    router.push(`/chat?userId=${(data as unknown as ContactItem).from}`);
   }
 };
 
