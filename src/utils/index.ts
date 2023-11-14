@@ -537,13 +537,13 @@ export const insertContent = ({
   const content = emoji || `<${username},${url}>`;
   if (keyword.substring(0, node?.selectionStart)) {
     const res = `${keyword.substring(0, node?.selectionStart)}${content}${keyword.substring(
-      node?.selectionEnd,
+      node?.selectionEnd!,
       node?.textLength,
     )}`;
     return res;
   } else {
     // selectionStart 为0时，默认向最后面插入
-    const res = `${keyword.substring(node?.selectionEnd, node?.textLength)}${content}${keyword.substring(
+    const res = `${keyword.substring(node?.selectionEnd!, node?.textLength)}${content}${keyword.substring(
       0,
       node?.selectionStart,
     )}`;

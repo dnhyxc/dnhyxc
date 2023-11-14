@@ -179,12 +179,43 @@
         <Empty text="未选中或未发起私聊，快选个人畅所欲言吧" />
       </div>
     </div>
+    <ElModel v-model:visible="sendVisible" title="发送消息">
+      <template #content>
+        <div class="model-content">
+          <div class="send-info">
+            <div class="title">发送给：</div>
+            <div class="send-user-info drag-img-info">
+              <Image :url="avatar || currentContact?.headUrl || HEAD_IMG" :transition-img="HEAD_IMG" class="head-img" />
+              <div class="username">{{ contactName }}</div>
+            </div>
+          </div>
+          <div class="drag-img-info">
+            <Image
+              :url="dragImgInfo.url || HEAD_IMG"
+              :transition-img="HEAD_IMG"
+              class="head-img"
+              @click="onPreviewDragImg"
+            />
+            <div class="img-info">
+              <div class="img-name">{{ dragImgInfo.name }}</div>
+              <div class="img-size">{{ (dragImgInfo.size / 1024).toFixed(1) }}K</div>
+            </div>
+          </div>
+        </div>
+      </template>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button class="btn" @click="onCancel">取消</el-button>
+          <el-button class="btn" type="primary" @click="onSubmit">发送</el-button>
+        </div>
+      </template>
+    </ElModel>
   </Loading>
 </template>
 
 <script setup lang="ts">
 import { clipboard } from 'electron';
-import { onMounted, ref, computed, nextTick, onUnmounted, onBeforeUnmount, Ref, reactive } from 'vue';
+import { onMounted, ref, computed, nextTick, onUnmounted, onBeforeUnmount, Ref, reactive, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { HEAD_IMG, CONTACT_MENU, CHAT_MENU, NO_DATA_SVG } from '@/constant';
 import { chatStore, loginStore, messageStore, uploadStore } from '@/store';
@@ -196,7 +227,7 @@ import {
   Message,
   checkWithLink,
   onDownloadFile,
-  // fileToBase64,
+  fileToBase64,
   insertContent,
 } from '@/utils';
 import Image from '@/components/Image/index.vue';
@@ -226,6 +257,18 @@ const showClear = ref<boolean>(false);
 const searchName = ref<string>('');
 const isDropOn = ref<boolean>(false); // 判断是否将图片拖拽到容器上面
 const menuAndHeadInfo = reactive<{ mw: number; hH: number }>({ mw: 0, hH: 0 });
+const sendVisible = ref<boolean>(false);
+const dragImgInfo = reactive<{
+  name: string;
+  size: number;
+  url: string;
+  file: File;
+}>({
+  name: '',
+  size: 0,
+  url: '',
+  file: {} as File,
+});
 
 let timer: ReturnType<typeof setTimeout> | null = null;
 
@@ -255,6 +298,11 @@ const chatList = computed(() => [...chatStore.chatList, ...chatStore.addChatList
 const currentContact = computed(() => {
   const { contactList } = chatStore;
   return contactList.find((i) => i.contactId === currentContactId.value);
+});
+
+// 监听发送拖拽图片窗口状态，将拖拽状态设置为false
+watch(sendVisible, () => {
+  isDropOn.value = false;
 });
 
 onMounted(async () => {
@@ -627,21 +675,41 @@ const onDrop = async (event: DragEvent) => {
   // 检查是否有拖入的文件
   if (fileList?.length! > 0) {
     const file = fileList?.[0] as File;
-    // const base64 = await fileToBase64(fileList?.[0]!);
-    const fileInfo = await uploadStore.uploadFile(file);
-    onDragover(event);
-    const content = insertContent({
-      keyword: '',
-      username: fileInfo?.compressFile.name,
-      url: fileInfo?.filePath,
-    });
-    sendMessage(content);
+    dragImgInfo.name = file.name;
+    dragImgInfo.size = file.size;
+    dragImgInfo.file = file;
+    const base64 = await fileToBase64(fileList?.[0]!);
+    dragImgInfo.url = base64 as string;
+    sendVisible.value = true;
   }
 };
 
 // 拖拽元素离开拖拽容器
 const onDragleave = (event: DragEvent) => {
   onDragover(event);
+};
+
+// 取消发送拖拽得图片
+const onCancel = () => {
+  sendVisible.value = false;
+};
+
+// 发送拖拽得图片
+const onSubmit = async () => {
+  const fileInfo = await uploadStore.uploadFile(dragImgInfo.file);
+  const content = insertContent({
+    keyword: '',
+    username: fileInfo?.compressFile.name,
+    url: fileInfo?.filePath,
+  });
+  sendMessage(content);
+  sendVisible.value = false;
+};
+
+// 预览拖拽图片
+const onPreviewDragImg = () => {
+  prevImg.value = dragImgInfo.url;
+  previewVisible.value = true;
 };
 </script>
 
@@ -1183,6 +1251,71 @@ const onDragleave = (event: DragEvent) => {
     .el-input__inner {
       color: var(--font-1);
       background-color: transparent;
+    }
+  }
+
+  .model-content {
+    .drag-img-info {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+
+      .head-img {
+        width: 50px;
+        height: 50px;
+        border-radius: 0;
+        cursor: pointer;
+        .clickNoSelectText();
+
+        :deep {
+          .image-item {
+            border-radius: 0;
+          }
+        }
+      }
+
+      .img-info {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        height: 50px;
+        margin-left: 10px;
+        color: var(--font-1);
+
+        .img-name {
+          font-size: 16px;
+          .ellipsisMore(1);
+        }
+
+        .img-size {
+          font-size: 14px;
+          color: var(--font-5);
+        }
+      }
+    }
+
+    .send-info {
+      color: var(--font-1);
+      .title {
+        font-size: 16px;
+        margin-bottom: 10px;
+      }
+
+      .send-user-info {
+        margin-bottom: 35px;
+        .username {
+          margin-left: 10px;
+          font-size: 16px;
+        }
+      }
+    }
+  }
+
+  .dialog-footer {
+    .btn {
+      width: 120px;
+      height: 38px;
     }
   }
 }
