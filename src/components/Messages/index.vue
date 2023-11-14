@@ -21,7 +21,9 @@
             :key="data.id"
             :data="data"
             :is-collect="true"
-            class="line-card"
+            :class="`line-card ${
+              (data?.articleId || (data.action === 'CHAT' && route.path !== '/chat')) && 'push-card'
+            }`"
             @click.stop="toDetail(data)"
           >
             <template #title>
@@ -166,6 +168,17 @@ const onScrollTo = (to?: number) => {
     flex-direction: column;
     padding: 5px 3px;
 
+    .line-card {
+      cursor: default;
+    }
+
+    .push-card {
+      cursor: pointer;
+      &:hover {
+        box-shadow: 0 0 5px var(--theme-blue);
+      }
+    }
+
     .left {
       flex: 1;
       font-weight: 700;
@@ -182,6 +195,7 @@ const onScrollTo = (to?: number) => {
         margin-left: 10px;
         color: @font-danger;
         display: none;
+        cursor: pointer;
       }
 
       .del {
@@ -225,6 +239,7 @@ const onScrollTo = (to?: number) => {
             .username {
               margin-right: 10px;
               color: var(--theme-blue);
+              cursor: pointer;
 
               &:hover {
                 color: var(--active-color);

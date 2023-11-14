@@ -5,7 +5,7 @@
  * index.vue
 -->
 <template>
-  <Loading :loading="chatStore.loading" class="chart-wrap">
+  <Loading :loading="chatStore.loading" class="chart-wrap" @dragover="onDragover" @dragleave="onDragleave">
     <div class="friends-menu">
       <div id="SEARCH" class="search">
         <el-input
@@ -85,7 +85,7 @@
         </el-scrollbar>
       </Loading>
     </div>
-    <div :class="`content ${!currentContactId && 'hide-content'}`">
+    <div :class="`content ${!currentContactId && 'hide-content'}`" @drop="onDrop">
       <div v-if="currentContactId" class="title">
         <span class="username" v-html="contactName" />
         <el-dropdown trigger="click" placement="bottom-end">
@@ -102,7 +102,7 @@
           </template>
         </el-dropdown>
       </div>
-      <div class="message-wrap">
+      <div ref="messageRef" :class="`message-wrap ${isDropOn && 'on-drop'}`">
         <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
           <div class="messages">
             <div
@@ -184,12 +184,21 @@
 
 <script setup lang="ts">
 import { clipboard } from 'electron';
-import { onMounted, ref, computed, nextTick, onUnmounted, onBeforeUnmount, Ref } from 'vue';
+import { onMounted, ref, computed, nextTick, onUnmounted, onBeforeUnmount, Ref, reactive } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { HEAD_IMG, CONTACT_MENU, CHAT_MENU, NO_DATA_SVG } from '@/constant';
-import { chatStore, loginStore, messageStore } from '@/store';
+import { chatStore, loginStore, messageStore, uploadStore } from '@/store';
 import { ContactItem, Menu, ChatItem } from '@/typings/common';
-import { formatTimestamp, formatDate, replaceCommentContent, Message, checkWithLink, onDownloadFile } from '@/utils';
+import {
+  formatTimestamp,
+  formatDate,
+  replaceCommentContent,
+  Message,
+  checkWithLink,
+  onDownloadFile,
+  // fileToBase64,
+  insertContent,
+} from '@/utils';
 import Image from '@/components/Image/index.vue';
 import ContextMenu from '@/components/ContextMenu/index.vue';
 
@@ -201,6 +210,7 @@ const keyword = ref<string>('');
 const active = ref<string>(userId as string);
 const contactName = ref<string>(username as string);
 const inputRef = ref<HTMLInputElement | null>(null);
+const messageRef = ref<HTMLElement | null>(null);
 const scrollRef = ref<any>(null);
 const contactScrollRef = ref<any>(null);
 const hasContactScroll = ref<boolean>(false);
@@ -214,6 +224,8 @@ const showMore = ref<boolean>(false); // 是否显示加载更多
 const showSearchList = ref<boolean>(false);
 const showClear = ref<boolean>(false);
 const searchName = ref<string>('');
+const isDropOn = ref<boolean>(false); // 判断是否将图片拖拽到容器上面
+const menuAndHeadInfo = reactive<{ mw: number; hH: number }>({ mw: 0, hH: 0 });
 
 let timer: ReturnType<typeof setTimeout> | null = null;
 
@@ -264,6 +276,12 @@ onMounted(async () => {
   getUserInfo();
   window.addEventListener('beforeunload', onBeforeunload);
   window.addEventListener('click', onClick, true);
+  // 获取左侧页面左侧菜单
+  const pageMenu = document.querySelector('#__LEFT_MENU__') as HTMLDivElement;
+  // 获取页面头部
+  const pageHead = document.querySelector('#__HEADER__') as HTMLDivElement;
+  menuAndHeadInfo.mw = pageMenu.offsetWidth;
+  menuAndHeadInfo.hH = pageHead.offsetHeight;
 });
 
 onBeforeUnmount(() => {
@@ -585,6 +603,46 @@ const onDblclick = (e: MouseEvent) => {
   selection?.removeAllRanges();
   selection?.addRange(range);
 };
+
+// 拖拽元素进入容器
+const onDragover = (event: DragEvent) => {
+  event.preventDefault();
+  const { clientX, clientY } = event;
+  const { offsetLeft, offsetTop, clientWidth, clientHeight } = messageRef.value as HTMLElement;
+  const top = offsetTop + menuAndHeadInfo.hH;
+  const bottom = top + clientHeight;
+  const left = offsetLeft + menuAndHeadInfo.mw;
+  const right = left + clientWidth;
+  if (left < clientX && clientX < right && top < clientY && clientY < bottom) {
+    isDropOn.value = true;
+  } else {
+    isDropOn.value = false;
+  }
+};
+
+// 拖拽元素完成
+const onDrop = async (event: DragEvent) => {
+  event.preventDefault();
+  const fileList = event.dataTransfer?.files;
+  // 检查是否有拖入的文件
+  if (fileList?.length! > 0) {
+    const file = fileList?.[0] as File;
+    // const base64 = await fileToBase64(fileList?.[0]!);
+    const fileInfo = await uploadStore.uploadFile(file);
+    onDragover(event);
+    const content = insertContent({
+      keyword: '',
+      username: fileInfo?.compressFile.name,
+      url: fileInfo?.filePath,
+    });
+    sendMessage(content);
+  }
+};
+
+// 拖拽元素离开拖拽容器
+const onDragleave = (event: DragEvent) => {
+  onDragover(event);
+};
 </script>
 
 <style scoped lang="less">
@@ -886,6 +944,7 @@ const onDblclick = (e: MouseEvent) => {
     .message-wrap {
       flex: 1;
       overflow-y: auto;
+      transition: all 0.3s ease-in-out;
 
       .messages {
         display: flex;
@@ -1021,6 +1080,22 @@ const onDblclick = (e: MouseEvent) => {
           display: none !important;
         }
       }
+    }
+
+    .on-drop {
+      position: relative;
+      &::before {
+        content: '';
+        position: absolute;
+        top: -1;
+        left: -1;
+        width: 100%;
+        height: 100%;
+        box-sizing: border-box;
+        border: 3px dashed var(--theme-blue);
+        background-color: var(--pre-hover-bg);
+      }
+      transition: all 0.3s ease-in-out;
     }
 
     .draft-inp-wrap {

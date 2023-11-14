@@ -200,7 +200,6 @@ const getUploadUrl = (url: string, name: string) => {
   });
   // 私聊发送图片时，上传完毕之后，直接发送，不需要回填到输入框
   if (props?.sendMessage) {
-    console.log(value, 'value');
     props?.sendMessage?.(value);
   } else {
     keyword.value = value;

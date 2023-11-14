@@ -263,6 +263,20 @@ export const url2Base64 = (src: string, type?: string) => {
   });
 };
 
+// File to base64
+export const fileToBase64 = (file: File) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      resolve(reader.result);
+    };
+    reader.onerror = (error) => {
+      reject(error);
+    };
+    reader.readAsDataURL(file);
+  });
+};
+
 // 将网络图片转换成base64格式
 export const image2Base64 = (image: any, type?: string) => {
   const canvas = document.createElement('canvas');
@@ -515,23 +529,23 @@ export const insertContent = ({
   emoji,
 }: {
   keyword: string; // textarea输入内容
-  node: HTMLTextAreaElement; // textarea输入框元素
+  node?: HTMLTextAreaElement; // textarea输入框元素
   username?: string; // 用户名称
   url?: string; // 图片地址
   emoji?: string; // 表情内容
 }) => {
   const content = emoji || `<${username},${url}>`;
-  if (keyword.substring(0, node.selectionStart)) {
-    const res = `${keyword.substring(0, node.selectionStart)}${content}${keyword.substring(
-      node.selectionEnd,
-      node.textLength,
+  if (keyword.substring(0, node?.selectionStart)) {
+    const res = `${keyword.substring(0, node?.selectionStart)}${content}${keyword.substring(
+      node?.selectionEnd,
+      node?.textLength,
     )}`;
     return res;
   } else {
     // selectionStart 为0时，默认向最后面插入
-    const res = `${keyword.substring(node.selectionEnd, node.textLength)}${content}${keyword.substring(
+    const res = `${keyword.substring(node?.selectionEnd, node?.textLength)}${content}${keyword.substring(
       0,
-      node.selectionStart,
+      node?.selectionStart,
     )}`;
     return res;
   }
