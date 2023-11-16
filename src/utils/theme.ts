@@ -1,4 +1,4 @@
-import { IMG1, IMG2, IMG3, IMG4, HEAD_IMG, CYWL, CLOUD } from '@/constant';
+import { IMG1, IMG2, IMG3, IMG4, HEAD_IMG, CYWL, CLOUD, SEA, FRESH, DAWN } from '@/constant';
 
 // 公共字体设置
 const fontStyle = {
@@ -155,6 +155,10 @@ const imageStyles = {
   '--p-code-color': '#dcffd6',
   // 行内 code 背景颜色
   '--p-code-bg-color': 'rgba(27, 31, 35, 0.08)',
+  // border 颜色
+  '--border-color': '#e4e6eb',
+  // 主题色
+  '--theme-blue': '#57a0ff',
 };
 
 // 清新绿（默认主题）
@@ -345,6 +349,45 @@ const lateralFace = {
   '--login-bg-img': 'url(@/assets/images/face.jpg)',
 };
 
+// 岛屿
+const sea = {
+  ...imageStyles,
+  '--card-border': 'rgba(245, 250, 248, 0.2)',
+  // 字体颜色
+  '--bg-image-url': `url(${SEA})`,
+  // 图片背景兼容字体颜色
+  '--font-color': '#fff',
+  '--pre-bg-color': 'rgba(0, 0, 0, 0.3)',
+  // 文章预览背景图片
+  '--pre-hover-bg': 'rgba(0, 0, 0, 0.3)',
+  '--login-bg-img': 'url(@/assets/images/sea.jpg)',
+  '--backdrop-filter': 'blur(1px)',
+};
+
+// 小清新
+const fresh = {
+  ...imageStyles,
+  '--bg-image-url': `url(${FRESH})`,
+  '--login-bg-img': 'url(@/assets/images/fresh.jpg)',
+  '--backdrop-filter': 'blur(0px)',
+  '--theme-blue': '#7bff00',
+};
+
+// 黎明之岛
+const dawn = {
+  ...imageStyles,
+  '--card-border': 'rgba(245, 250, 248, 0.2)',
+  // 字体颜色
+  '--bg-image-url': `url(${DAWN})`,
+  // 图片背景兼容字体颜色
+  '--font-color': '#fff',
+  '--pre-bg-color': 'rgba(0, 0, 0, 0.3)',
+  // 文章预览背景图片
+  '--pre-hover-bg': 'rgba(0, 0, 0, 0.3)',
+  '--login-bg-img': 'url(@/assets/images/dawn.jpg)',
+  '--backdrop-filter': 'blur(1px)',
+};
+
 // 少司命
 const ShaoSiming = {
   ...imageStyles,
@@ -477,6 +520,9 @@ const themeTypes = {
   danQingHuang,
   danQingZi,
   cloud,
+  sea,
+  fresh,
+  dawn,
 };
 
 // 设置背景颜色

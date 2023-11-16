@@ -5,46 +5,48 @@
  * index.vue
 -->
 <template>
-  <el-dialog v-model="visible" :close-on-click-modal="false" align-center width="88vw" @close="onClose">
-    <template #header>
-      <div class="actions">
-        <span class="title">{{ title || '图片预览' }}</span>
-        <div class="icon-list">
-          <el-tooltip effect="light" :content="isMaxed ? '不能再大了' : '放大'" placement="top">
-            <i class="font iconfont icon-fangda" @click="onScaleMax" />
-          </el-tooltip>
-          <el-tooltip effect="light" :content="isMined ? '不能再小了' : '缩小'" placement="top">
-            <i class="font iconfont icon-suoxiao" @click="onScaleMin" />
-          </el-tooltip>
-          <el-tooltip effect="light" content="旋转" placement="top">
-            <i class="font iconfont icon-rotate" @click="onRotate" />
-          </el-tooltip>
-          <el-tooltip effect="light" content="下载" placement="top">
-            <i class="font iconfont icon-xiazai1" @click="onDownload" />
-          </el-tooltip>
-          <el-tooltip effect="light" content="重置" placement="top">
-            <i class="font iconfont icon-zhongzhi1" @click="onRefresh" />
-          </el-tooltip>
-          <el-tooltip v-if="showPrevAndNext" effect="light" content="上一张" placement="top">
-            <i class="font iconfont icon-arrow-left-bold" @click="onPrev" />
-          </el-tooltip>
-          <el-tooltip v-if="showPrevAndNext" effect="light" content="下一张" placement="top">
-            <i class="font iconfont icon-arrow-right-bold" @click="onNext" />
-          </el-tooltip>
+  <div class="prev-dialog-wrap">
+    <el-dialog v-model="visible" :close-on-click-modal="false" align-center width="88vw" @close="onClose">
+      <template #header>
+        <div class="actions">
+          <span class="title">{{ title || '图片预览' }}</span>
+          <div class="icon-list">
+            <el-tooltip effect="light" :content="isMaxed ? '不能再大了' : '放大'" placement="top">
+              <i class="font iconfont icon-fangda" @click="onScaleMax" />
+            </el-tooltip>
+            <el-tooltip effect="light" :content="isMined ? '不能再小了' : '缩小'" placement="top">
+              <i class="font iconfont icon-suoxiao" @click="onScaleMin" />
+            </el-tooltip>
+            <el-tooltip effect="light" content="旋转" placement="top">
+              <i class="font iconfont icon-rotate" @click="onRotate" />
+            </el-tooltip>
+            <el-tooltip effect="light" content="下载" placement="top">
+              <i class="font iconfont icon-xiazai1" @click="onDownload" />
+            </el-tooltip>
+            <el-tooltip effect="light" content="重置" placement="top">
+              <i class="font iconfont icon-zhongzhi1" @click="onRefresh" />
+            </el-tooltip>
+            <el-tooltip v-if="showPrevAndNext && prevImages.length > 1" effect="light" content="上一张" placement="top">
+              <i class="font iconfont icon-arrow-left-bold" @click="onPrev" />
+            </el-tooltip>
+            <el-tooltip v-if="showPrevAndNext && prevImages.length > 1" effect="light" content="下一张" placement="top">
+              <i class="font iconfont icon-arrow-right-bold" @click="onNext" />
+            </el-tooltip>
+          </div>
         </div>
+      </template>
+      <div class="image-preview-wrap">
+        <img
+          ref="imgRef"
+          v-move.imageInfo="imageInfo"
+          :src="currentImage.url"
+          alt=""
+          class="preview-img"
+          :style="{ transform: `rotate(${imageInfo.rotate}deg) scale(${imageInfo.scale})` }"
+        />
       </div>
-    </template>
-    <div class="image-preview-wrap">
-      <img
-        ref="imgRef"
-        v-move.imageInfo="imageInfo"
-        :src="currentImage.url"
-        alt=""
-        class="preview-img"
-        :style="{ transform: `rotate(${imageInfo.rotate}deg) scale(${imageInfo.scale})` }"
-      />
-    </div>
-  </el-dialog>
+    </el-dialog>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -59,6 +61,7 @@ interface IProps {
   showPrevAndNext?: boolean;
   showWaterModal?: Function;
   title?: string;
+  prevImgs?: { id: string; url: string }[];
 }
 
 const props = defineProps<IProps>();
@@ -87,6 +90,10 @@ const visible = computed({
     currentImage.value = props.selectImage;
     onRefresh();
   },
+});
+
+const prevImages = computed(() => {
+  return props.prevImgs || pictureStore.atlasList;
 });
 
 watchEffect(() => {
@@ -172,37 +179,47 @@ const onRefresh = () => {
 const onPrev = () => {
   onRefresh();
   let prevIndex;
-  const findIndex = pictureStore.atlasList.findIndex((i) => i.id === currentImage?.value?.id);
+  const findIndex = prevImages.value.findIndex((i) => i?.id === currentImage?.value?.id);
   if (findIndex === 0) {
-    prevIndex = pictureStore.atlasList.length - 1;
+    prevIndex = prevImages.value.length - 1;
   } else {
     prevIndex = findIndex - 1;
   }
-  currentImage.value = pictureStore.atlasList[prevIndex];
+  currentImage.value = prevImages.value[prevIndex] as AtlasItemParams;
 };
 
 // 后一张
 const onNext = () => {
   onRefresh();
   let nextIndex;
-  const findIndex = pictureStore.atlasList.findIndex((i) => i.id === currentImage?.value?.id);
-  if (findIndex === pictureStore.atlasList.length - 1) {
+  const findIndex = prevImages.value?.findIndex((i) => i.id === currentImage?.value?.id);
+  if (findIndex === prevImages.value?.length - 1) {
     nextIndex = 0;
   } else {
     nextIndex = findIndex + 1;
   }
-  currentImage.value = pictureStore.atlasList[nextIndex];
+  currentImage.value = prevImages.value[nextIndex] as AtlasItemParams;
 };
 </script>
 
 <style scoped lang="less">
 @import '@/styles/index.less';
 
+.prev-dialog-wrap {
+  :deep {
+    .el-dialog__body {
+      padding: 10px 20px 20px;
+    }
+  }
+}
+
 .image-preview-wrap {
   position: relative;
   width: 100%;
-  height: 72.5vh;
+  height: 71.5vh;
+  max-height: 71.5vh;
   overflow: hidden;
+  .clickNoSelectText();
 
   .preview-img {
     // 设置图片展示不变性且完整显示图像

@@ -452,7 +452,7 @@ const toTag = (name: string) => {
           .read-count {
             cursor: pointer;
             &:hover {
-              color: @sub-2-blue;
+              color: var(--theme-blue);
             }
           }
         }

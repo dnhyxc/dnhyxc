@@ -7,12 +7,7 @@
 <template>
   <div id="__LEFT_MENU__" :class="`${checkOS() === 'mac' && 'mac-left-menu-wrap'} left-menu-wrap`">
     <el-scrollbar ref="scrollRef">
-      <div
-        v-for="menu in menuList"
-        :key="menu.key"
-        class="menu-list"
-        @click="(e: Event) => onSelectMenu(e, menu)"
-      >
+      <div v-for="menu in menuList" :key="menu.key" class="menu-list" @click="(e: Event) => onSelectMenu(e, menu)">
         <el-tooltip class="box-item" effect="light" :content="menu.name" placement="right">
           <i
             :class="`${
@@ -279,6 +274,7 @@ const onQuit = () => {
   display: flex;
   flex-direction: column;
   align-items: center;
+  color: var(--font-1);
   .clickNoSelectText();
 
   .user-info {
@@ -287,7 +283,6 @@ const onQuit = () => {
     align-items: center;
     width: 100%;
     margin-bottom: 5px;
-
     .username {
       font-size: 18px;
       font-weight: 700;

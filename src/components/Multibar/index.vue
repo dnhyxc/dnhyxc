@@ -36,7 +36,13 @@
         }}
       </span>
     </div>
-    <el-popover placement="top-start" :width="130" trigger="hover" popper-style="min-width: 130px">
+    <el-popover
+      placement="top-start"
+      :width="130"
+      trigger="hover"
+      popper-style="min-width: 130px"
+      popper-class="custom-dropdown-styles"
+    >
       <template #default>
         <div class="pop-content">
           <el-popover
@@ -44,6 +50,7 @@
             trigger="hover"
             :width="120"
             popper-style="min-width: 120px; padding: 5px;"
+            popper-class="custom-dropdown-styles"
           >
             <template #reference>
               <div class="pop-item">

@@ -14,6 +14,12 @@ import { WITH_AUTH_ROUTES } from '@/constant';
 import eventBus from '@/utils/eventBus';
 import AsyncLoading from '@/components/AsyncLoading/index.vue';
 
+const importComponent = (path: string) =>
+  defineAsyncComponent({
+    loader: () => import(`@/views/${path}/index.vue`),
+    loadingComponent: AsyncLoading,
+  });
+
 // 需要后台配置权限的路由配置
 export const authRoutes = [
   {
@@ -24,11 +30,7 @@ export const authRoutes = [
       keepAlive: true,
       auth: true,
     },
-    component: () =>
-      defineAsyncComponent({
-        loader: () => import('@/views/tools/index.vue'),
-        loadingComponent: AsyncLoading,
-      }),
+    component: importComponent('tools'),
     beforeEnter: async (to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) => {
       const menus = (await loginStore.getUserMenuRoles()) as string[];
       if (menus?.includes(to.name as string)) {

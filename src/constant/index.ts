@@ -10,8 +10,11 @@ import IMG1 from '@/assets/images/1.jpg';
 import IMG2 from '@/assets/images/2.png';
 import IMG3 from '@/assets/images/3.jpg';
 import IMG4 from '@/assets/images/4.jpg';
+import SEA from '@/assets/images/sea.jpg';
 import CYWL from '@/assets/images/cywl.jpg';
 import CLOUD from '@/assets/images/cloud.jpeg';
+import DAWN from '@/assets/images/dawn.jpg';
+import FRESH from '@/assets/images/fresh.jpg';
 import * as API from '@/server/api';
 import GITHUB_SVG from '@/assets/svg/github.svg';
 import COMPRESS_SVG from '@/assets/svg/compress.svg';
@@ -35,6 +38,9 @@ export {
   IMG1,
   IMG2,
   IMG3,
+  SEA,
+  DAWN,
+  FRESH,
   IMG4,
   CYWL,
   CLOUD,
@@ -260,6 +266,18 @@ export const IMG_THEME_TYPES = [
   {
     key: 'island',
     name: '海岛',
+  },
+  {
+    key: 'sea',
+    name: '岛屿',
+  },
+  {
+    key: 'fresh',
+    name: '小清新',
+  },
+  {
+    key: 'dawn',
+    name: '黎明之岛',
   },
 ];
 

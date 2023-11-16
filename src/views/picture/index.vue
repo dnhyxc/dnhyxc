@@ -56,7 +56,7 @@
                     </span>
                   </div>
                   <div class="actions">
-                    <el-dropdown placement="bottom-end">
+                    <el-dropdown placement="bottom-end"  trigger="click"  popper-class="custom-dropdown-styles">
                       <i class="iconfont icon-gengduo3" />
                       <template #dropdown>
                         <el-dropdown-menu>

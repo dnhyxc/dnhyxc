@@ -178,10 +178,11 @@ ul {
   }
 
   .el-popper__arrow {
-    &::before {
-      background: var(--modal-bg-color) !important;
-      border: 1px solid var(--card-border) !important;
-    }
+    // &::before {
+    //   background: var(--modal-bg-color) !important;
+    //   border: 1px solid var(--card-border) !important;
+    // }
+    display: none;
   }
 }
 
@@ -233,4 +234,27 @@ ul {
 // 画板tips
 .tip-text {
   .clickNoSelectText();
+}
+
+// 下拉菜单
+.custom-dropdown-styles {
+  background: transparent !important;
+  backdrop-filter: blur(5px);
+
+  .el-dropdown-menu {
+    background: var(--modal-bg-color) !important;
+  }
+
+  .el-dropdown-menu__item {
+    color: var(--font-color);
+  }
+
+  .el-dropdown-menu__item:not(.is-disabled):focus {
+    background-color: var(--border-color);
+    color: var(--theme-blue);
+  }
+
+  .el-popper__arrow::before {
+    display: none;
+  }
 }

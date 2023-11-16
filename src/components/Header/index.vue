@@ -25,6 +25,7 @@
           effect="light"
           content="搜索"
           placement="bottom"
+          popper-class="custom-dropdown-styles"
         >
           <i class="font iconfont icon-sousuo2 search-icon" @click="onClickSearch" />
           <template #dropdown>

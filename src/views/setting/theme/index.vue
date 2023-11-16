@@ -189,12 +189,30 @@ const changeTheme = (key: string) => {
         .girl {
           background-image: url('@/assets/images/cywl.jpg');
           .bgStyles;
-          color: @fff;
+          color: @font-1;
         }
         .cloud {
           background-image: url('@/assets/images/cloud.jpeg');
           .bgStyles;
           color: @font-1;
+        }
+
+        .sea {
+          background-image: url('@/assets/images/sea.jpg');
+          .bgStyles;
+          color: @fff;
+        }
+
+        .fresh {
+          background-image: url('@/assets/images/fresh.jpg');
+          .bgStyles;
+          color: @fff;
+        }
+
+        .dawn {
+          background-image: url('@/assets/images/dawn.jpg');
+          .bgStyles;
+          color: @fff;
         }
 
         .active {

@@ -164,23 +164,19 @@ export const useChatStore = defineStore('chat', {
       if (params.to === loginStore.userInfo.userId && location.pathname === '/chat') {
         if (!findOne) {
           this.addAbsentContact(chatInfo as ContactItem & ChatItem);
-        }
-        // 判断当前用户是否被删除过，如果删除过，则将其从删除列表中去除，恢复显示
-        if (findOne && findOne?.contactId === findDelId) {
+        } else if (findOne && findOne?.contactId === findDelId) {
+          // 判断当前用户是否被删除过，如果删除过，则将其从删除列表中去除，恢复显示
           this.delContactIds = this.delContactIds.filter((i) => i !== findDelId);
-          this.contactList = this.contactList
-            .map((i) => {
-              if (i.contactId === findDelId) {
-                i.noReadCount = 1;
-              }
-              return i;
-            })
-            .sort((a, b) => {
-              if (a.isTop !== b.isTop) {
-                return (b.isTop as any) - (a.isTop as any);
-              }
-              return b.createTime - a.createTime;
-            });
+          const delContact = this.contactList.find((i) => i.contactId === findDelId);
+          const contactList = this.contactList.map((i) => {
+            if (i.contactId === findDelId) {
+              // 如果当前联系人设置了消息免打扰，则需要将未读消息清除，不增加未读聊天数量，否则才增加未读消息数量
+              !delContact?.isUnDisturb ? (i.noReadCount = 1) : (i.noReadCount = 0);
+            }
+            return i;
+          });
+          // 按照置顶/时间排序
+          this.contactList = this.sortContacts(contactList);
         }
       }
     },
@@ -364,20 +360,15 @@ export const useChatStore = defineStore('chat', {
             this.contactList.unshift(contact);
           } else {
             // 取消消息置顶，将选中的消息先按isTop排序，值为true的放前面，再安createTime倒序排列
-            this.contactList = this.contactList
-              .map((i) => {
-                if (i.contactId === contactId) {
-                  i.isTop = isTop!;
-                  i.createTime = createTime;
-                }
-                return i;
-              })
-              .sort((a, b) => {
-                if (a.isTop !== b.isTop) {
-                  return (b.isTop as any) - (a.isTop as any);
-                }
-                return b.createTime - a.createTime;
-              });
+            const contactList = this.contactList.map((i) => {
+              if (i.contactId === contactId) {
+                i.isTop = isTop!;
+                i.createTime = createTime;
+              }
+              return i;
+            });
+            // 按照置顶/时间排序
+            this.contactList = this.sortContacts(contactList);
           }
         } else {
           this.contactList = this.contactList.map((i) => {
@@ -408,7 +399,8 @@ export const useChatStore = defineStore('chat', {
           contactId: userId!,
           noReadCount: 1,
         } as ContactItem;
-        this.contactList.splice(topIndex, 0, contact);
+        // 向最后一个置顶元素后插入新的有新消息的联系人
+        this.contactList.splice(topIndex + 1, 0, contact);
       }
     },
 
@@ -422,12 +414,23 @@ export const useChatStore = defineStore('chat', {
           i.sendTime = params.chat.createTime;
           // 判断是否是当前聊天窗口发来的消息，如果是，不需要增加未读数量
           if (i.chatId !== chatId) {
-            i.noReadCount += 1;
+            // 如果当前联系人设置了消息免打扰，则需要将未读消息清除，不增加未读聊天数量，否则才增加未读消息数量
+            !i.isUnDisturb ? (i.noReadCount += 1) : (i.noReadCount = 0);
           }
         }
         return i;
       });
       this.contactList = newContacts;
+    },
+
+    // 联系人排序
+    sortContacts(contacts: ContactItem[]) {
+      return contacts.sort((a, b) => {
+        if (a.isTop !== b.isTop) {
+          return (b.isTop as any) - (a.isTop as any);
+        }
+        return b.createTime - a.createTime;
+      });
     },
 
     // 清除数据

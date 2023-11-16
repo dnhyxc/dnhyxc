@@ -88,7 +88,7 @@
     <div :class="`content ${!currentContactId && 'hide-content'}`" @drop="onDrop">
       <div v-if="currentContactId" class="title">
         <span class="username" v-html="contactName" />
-        <el-dropdown trigger="click" placement="bottom-end">
+        <el-dropdown trigger="click" placement="bottom-end" popper-class="custom-dropdown-styles">
           <i class="iconfont icon-gengduo3" />
           <template #dropdown>
             <el-dropdown-menu>
@@ -129,7 +129,7 @@
                 v-if="msg.chat.from === loginStore.userInfo.userId"
                 :class="`message-info message-send ${chatStore.delIds.includes(msg.id) && 'message-del'}`"
               >
-                <div class="message" @click="onPreview(msg.chat.content)">
+                <div class="message" @click="onPreview(msg)">
                   <span class="send-date">{{ formatDate(msg.chat.createTime, 'MM/DD HH:mm') }}</span>
                   <ContextMenu
                     :menu="CHAT_MENU(!!checkWithLink(msg.chat.content, true))"
@@ -148,7 +148,7 @@
                   :transition-img="HEAD_IMG"
                   class="head-img"
                 />
-                <div class="message" @click="onPreview(msg.chat.content)">
+                <div class="message" @click="onPreview(msg)">
                   <span class="send-date">{{ formatDate(msg.chat.createTime, 'MM/DD HH:mm') }}</span>
                   <ContextMenu
                     :menu="CHAT_MENU(!!checkWithLink(msg.chat.content, true))"
@@ -172,7 +172,12 @@
           :send-message="sendMessage"
         />
       </div>
-      <ImagePreview v-model:previewVisible="previewVisible" :select-image="{ url: prevImg }" />
+      <ImagePreview
+        v-model:previewVisible="previewVisible"
+        :select-image="prevImg"
+        :prev-imgs="prevType === 'img' ? prevImgs : undefined"
+        :show-prev-and-next="prevType === 'img'"
+      />
     </div>
     <div v-if="!currentContactId" class="empty-content">
       <div class="empyt">
@@ -249,7 +254,8 @@ const hasScroll = ref<boolean>(false);
 const currentContactId = ref<string>(userId as string);
 const isMounted = ref<boolean>(false);
 const previewVisible = ref<boolean>(false);
-const prevImg = ref<string>('');
+const prevImg = ref<{ id: number | string; url: string }>({ id: 0, url: '' });
+const prevType = ref<string>('img');
 const avatar = ref<string>('');
 const showMore = ref<boolean>(false); // 是否显示加载更多
 const showSearchList = ref<boolean>(false);
@@ -293,6 +299,22 @@ const disabled = computed(() => chatStore.searchLoading || noMoreSearchContacts.
 
 // 合并原有消息与新发送的消息
 const chatList = computed(() => [...chatStore.chatList, ...chatStore.addChatList]);
+
+// 获取所有的图片资源
+const prevImgs = computed(() => {
+  const urls: { id: number | string; url: string }[] = [];
+  chatList.value.forEach((i) => {
+    const { content, createTime } = i.chat;
+    const links = checkWithLink(content) as string[];
+    if (links?.length) {
+      urls.push({
+        id: createTime,
+        url: links?.[0],
+      });
+    }
+  });
+  return urls;
+});
 
 // 获取初始化选中联系人信息
 const currentContact = computed(() => {
@@ -372,6 +394,9 @@ const getUserInfo = async () => {
     const findOne = chatStore.contactList.find((i) => i.contactId === userId);
     if (findOne) {
       contactName.value = findOne?.username || '';
+    } else {
+      // 如果没找到，需要清除当前聊天联系人id，防止右侧消息页面不显示为选中联系人的页面提示
+      currentContactId.value = '';
     }
   }
   if (((!currentContact.value?.headUrl && !avatar.value) || !contactName.value) && currentContactId.value) {
@@ -383,6 +408,7 @@ const getUserInfo = async () => {
       if (res?.success) {
         avatar.value = res.data?.headUrl!;
         contactName.value = res.data?.username!;
+        currentContactId.value = res.data?.userId!;
       }
     }
   }
@@ -527,10 +553,15 @@ const scrollToBottom = () => {
 };
 
 // 预览图片
-const onPreview = (content: string) => {
+const onPreview = (data: ChatItem) => {
+  prevType.value = 'img';
+  const { content, createTime } = data.chat;
   const links = checkWithLink(content);
   if (links?.[0]) {
-    prevImg.value = links?.[0];
+    prevImg.value = {
+      id: createTime,
+      url: links?.[0],
+    };
     previewVisible.value = true;
   }
 };
@@ -666,6 +697,10 @@ const onDragover = (event: DragEvent) => {
   } else {
     isDropOn.value = false;
   }
+  // 如果显示了发送弹窗，则拖拽区域拖拽标识要去除
+  if (sendVisible.value) {
+    isDropOn.value = false;
+  }
 };
 
 // 拖拽元素完成
@@ -708,7 +743,11 @@ const onSubmit = async () => {
 
 // 预览拖拽图片
 const onPreviewDragImg = () => {
-  prevImg.value = dragImgInfo.url;
+  prevType.value = 'drag';
+  prevImg.value = {
+    id: new Date().valueOf(),
+    url: dragImgInfo.url,
+  };
   previewVisible.value = true;
 };
 </script>
@@ -1324,6 +1363,7 @@ const onPreviewDragImg = () => {
   .dropdown-text {
     display: block;
     text-align: center;
+    color: var(--font-1);
     .clickNoSelectText();
   }
 }
