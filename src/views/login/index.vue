@@ -65,9 +65,7 @@ const switchDom = (type: string) => {
     top: 0;
     left: 0;
     background-image: var(--login-bg-img);
-    // background-image: url('@/assets/images/cywl.jpg');
     background-position: center;
-    background-size: 100% 100%;
     background-repeat: no-repeat;
     background-size: cover;
   }
