@@ -14,7 +14,7 @@ import SEA from '@/assets/images/sea.jpg';
 import CYWL from '@/assets/images/cywl.jpg';
 import CLOUD from '@/assets/images/cloud.jpeg';
 import DAWN from '@/assets/images/dawn.jpg';
-import FRESH from '@/assets/images/fresh.jpg';
+import FRESH from '@/assets/images/fresh.jpeg';
 import * as API from '@/server/api';
 import GITHUB_SVG from '@/assets/svg/github.svg';
 import COMPRESS_SVG from '@/assets/svg/compress.svg';

@@ -204,7 +204,7 @@ const changeTheme = (key: string) => {
         }
 
         .fresh {
-          background-image: url('@/assets/images/fresh.jpg');
+          background-image: url('@/assets/images/fresh.jpeg');
           .bgStyles;
           color: @fff;
         }
