@@ -220,7 +220,7 @@ const onQuit = () => {
       .bgLgColor();
       font-size: 14px;
       cursor: pointer;
-      color: var(--theme-blue);
+      color: var(--active);
       box-shadow: 0 0 2px var(--shadow-color) inset;
     }
 
