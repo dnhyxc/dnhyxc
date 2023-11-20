@@ -19,7 +19,7 @@
               </el-dropdown-menu>
             </template>
           </el-dropdown>
-          <el-dropdown class="menu-list">
+          <el-dropdown class="menu-list" trigger="click">
             <span class="action iconfont icon-sketchpad-theme" title="切换主题" />
             <template #dropdown>
               <el-dropdown-menu>
@@ -288,7 +288,7 @@ const onSaveDraft = () => {
     height: 40px;
     padding: 0 10px;
     box-sizing: border-box;
-    background-color: @fff;
+    background-color: var(--pre-hover-bg);
     border-bottom: 1px solid var(--card-border);
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
@@ -329,7 +329,7 @@ const onSaveDraft = () => {
         margin-right: 14px;
 
         &:hover {
-          color: @blue-1;
+          color: var(--active);
         }
       }
 
@@ -368,7 +368,7 @@ const onSaveDraft = () => {
       display: flex;
       justify-content: flex-end;
       font-size: 14px;
-      color: @font-4;
+      color: var(--font-6);
 
       .language-text {
         height: 30px;
