@@ -66,6 +66,7 @@ const draftVisible = ref<boolean>(false); // 草稿箱弹窗状态
 const editType = ref<boolean>(false); // 编辑器类型
 const theme = ref<string>('vs'); // 主题
 const isSaveDraft = ref<boolean>(false); // 是否是保存草稿
+const prevContent = ref<string>('');
 
 onMounted(() => {
   document.addEventListener('keydown', onKeyDown);
@@ -106,11 +107,14 @@ watch(
 );
 
 // 监听键盘事件
-const onKeyDown = (event: KeyboardEvent) => {
-  if (event.ctrlKey && event.key === 's') {
+const onKeyDown = async (event: KeyboardEvent) => {
+  if ((event.ctrlKey || event.metaKey) && event.key === 's') {
     event.preventDefault();
+    const { createInfo, articleDraft } = createStore;
+    if (prevContent.value === createInfo.content) return;
     // 调用接口保存草稿
-    createStore.articleDraft();
+    await articleDraft();
+    prevContent.value = createInfo.content!;
   }
 };
 
