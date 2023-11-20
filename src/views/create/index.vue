@@ -33,6 +33,7 @@
     <CreateDrawer
       :key="JSON.stringify(createStore.classifys)"
       v-model="visible"
+      v-model:isSaveDraft="isSaveDraft"
       :article-id="(route?.query?.id as string)"
     />
     <DraftList v-model:draft-visible="draftVisible" />
@@ -40,7 +41,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onActivated, onDeactivated, watch, defineAsyncComponent } from 'vue';
+import { ref, onActivated, onDeactivated, watch, defineAsyncComponent, onMounted, onUnmounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { ElMessage } from 'element-plus';
 import { articleStore, createStore } from '@/store';
@@ -64,6 +65,15 @@ const visible = ref<boolean>(false); // 权限设置弹窗的状态
 const draftVisible = ref<boolean>(false); // 草稿箱弹窗状态
 const editType = ref<boolean>(false); // 编辑器类型
 const theme = ref<string>('vs'); // 主题
+const isSaveDraft = ref<boolean>(false); // 是否是保存草稿
+
+onMounted(() => {
+  document.addEventListener('keydown', onKeyDown);
+});
+
+onUnmounted(() => {
+  document.removeEventListener('keydown', onKeyDown);
+});
 
 // 组件启用时，如果有文章id，则请求文章详情
 onActivated(() => {
@@ -76,6 +86,14 @@ onActivated(() => {
     router,
     toHome: !!route.query?.toHome,
   });
+  createStore.clearCreateDraftInfo();
+});
+
+// 组件弃用时，关闭草稿列表弹窗
+onDeactivated(() => {
+  draftVisible.value = false;
+  // 清空草稿信息
+  // createStore.clearCreateDraftInfo();
 });
 
 watch(
@@ -87,26 +105,25 @@ watch(
   },
 );
 
-// 组件弃用时，关闭草稿列表弹窗
-onDeactivated(() => {
-  draftVisible.value = false;
-  // 清空草稿信息
-  createStore.clearCreateDraftInfo();
-});
+// 监听键盘事件
+const onKeyDown = (event: KeyboardEvent) => {
+  if (event.ctrlKey && event.key === 's') {
+    event.preventDefault();
+    // 调用接口保存草稿
+    createStore.articleDraft();
+  }
+};
 
 // 点击编辑器header发布文章按钮
 const onPublish = () => {
   visible.value = true;
+  isSaveDraft.value = false;
 };
 
 // 保存草稿
 const onSaveDraft = (editor?: any) => {
-  createStore.articleDraft();
-  createStore.clearCreateInfo(true);
-  // 清空 mocaco 中的编辑内容
-  if (editor) {
-    editor.getModel()?.setValue('');
-  }
+  visible.value = true;
+  isSaveDraft.value = true;
 };
 
 // 切换编辑器

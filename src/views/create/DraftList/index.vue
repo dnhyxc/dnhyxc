@@ -25,14 +25,14 @@
                 v-for="data in createStore.draftList"
                 :key="data.id"
                 :data="data"
-                class="line-card"
+                :class="`line-card ${createStore.draftArticleId == data.id && 'active-line-card'}`"
                 :to-edit="toEdit"
               >
                 <template #title>
                   <div class="left">{{ data.title }}</div>
-                  <div class="right">
+                  <div v-if="createStore.draftArticleId !== data.id" class="right">
                     <span class="edit" @click.stop="toEdit(data.id!)">编辑</span>
-                    <span class="del" @click.stop="onReomve(data.id!)">删除</span>
+                    <span class="del" @click.stop="onReomve(data.id!)"> 删除 </span>
                   </div>
                 </template>
                 <template #content>
@@ -204,12 +204,12 @@ const onScrollTo = (to?: number) => {
       font-size: 14px;
 
       .edit {
-        margin-right: 10px;
         color: @theme-blue;
       }
 
       .del {
         color: @font-danger;
+        margin-left: 10px;
       }
 
       .edit,
@@ -303,6 +303,10 @@ const onScrollTo = (to?: number) => {
         &:last-child {
           margin-bottom: 0;
         }
+      }
+
+      .active-line-card {
+        box-shadow: 0 0 5px var(--active);
       }
     }
   }

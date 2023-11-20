@@ -117,6 +117,8 @@ export const useArticleStore = defineStore('article', {
         this.articleDetail = res.data;
         // isEdit 为 true，则说明是编辑，需要缓存编辑内容
         if (isEdit) {
+          // 如果有草稿id，需要同时清除
+          createStore.clearCreateDraftInfo();
           createStore.createInfo = {
             authorId: res.data.authorId,
             title: res.data.title,

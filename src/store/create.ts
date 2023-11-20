@@ -110,6 +110,7 @@ export const useCreateStore = defineStore('create', {
     async articleDraft(props?: CreateArticleParams) {
       const params = {
         ...this.createInfo,
+        createTime: new Date().valueOf(),
         authorId: loginStore.userInfo?.userId,
         articleId: props?.draftId || this.draftArticleId,
         ...props,
@@ -125,8 +126,9 @@ export const useCreateStore = defineStore('create', {
       );
 
       if (res.success) {
+        this.draftArticleId = res.data.id;
         // 保存、编辑成功后，清除存储的draftId
-        this.clearCreateDraftInfo();
+        // this.clearCreateDraftInfo();
         ElMessage({
           message: res.message,
           type: 'success',
@@ -175,7 +177,10 @@ export const useCreateStore = defineStore('create', {
         await Service.getDraftInfoById({ id: draftId! || this.draftArticleId }),
       );
       if (res.success) {
-        this.createInfo = res.data as CreateArticleParams;
+        this.createInfo = {
+          ...this.createInfo,
+          ...res.data,
+        } as CreateArticleParams;
         this.draftArticleId = res.data.id!;
         this.draftInfo = res.data;
       } else {
@@ -227,6 +232,7 @@ export const useCreateStore = defineStore('create', {
         abstract: '',
         articleId: '',
       };
+      this.clearCreateDraftInfo();
     },
 
     // 清除获取草稿列表相关数据

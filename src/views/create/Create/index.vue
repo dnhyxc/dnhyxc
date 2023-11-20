@@ -30,7 +30,7 @@
             label="分类"
             :rules="[
               {
-                required: true,
+                required: !isSaveDraft,
                 message: '请输入文章分类',
                 trigger: 'blur',
               },
@@ -58,7 +58,7 @@
             label="标签"
             :rules="[
               {
-                required: true,
+                required: !isSaveDraft,
                 message: '请输入文章标签',
                 trigger: 'blur',
               },
@@ -79,11 +79,12 @@
             </div>
           </el-form-item>
           <el-form-item
+            v-if="!isSaveDraft"
             prop="createTime"
             label="时间"
             :rules="[
               {
-                required: true,
+                required: !isSaveDraft,
                 message: '请选择发文时间',
                 trigger: 'blur',
               },
@@ -114,7 +115,7 @@
             label="摘要"
             :rules="[
               {
-                required: true,
+                required: !isSaveDraft,
                 message: '请输入文章摘要',
                 trigger: 'blur',
               },
@@ -133,9 +134,10 @@
       </div>
       <template #footer>
         <div class="footer">
-          <el-button @click="onCancel">取消</el-button>
-          <el-button type="primary" @click="onSaveDraft">保存</el-button>
-          <el-button type="primary" @click="onSubmit">{{ articleId ? '更新' : '发布' }}</el-button>
+          <el-button class="btn" @click="onCancel">取消</el-button>
+          <el-button class="btn" type="primary" @click="onSubmit">
+            {{ articleId ? '更新' : isSaveDraft ? '保存' : '发布' }}
+          </el-button>
         </div>
       </template>
     </el-drawer>
@@ -155,11 +157,13 @@ const router = useRouter();
 
 interface IProps {
   modelValue: boolean;
+  isSaveDraft: boolean;
   articleId?: string;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
   modelValue: false,
+  isSaveDraft: false,
   articleId: '',
 });
 
@@ -199,7 +203,7 @@ const getUploadUrl = async (url: string) => {
   }
 };
 
-// 组件弃用时，如果有文章 id 则清除 createStore 中的 createInfo 属性，并且重置表单数据
+// 组件弃用时，如果有文章 id，则清除 createStore 中的 createInfo 属性，并且重置表单数据
 onDeactivated(() => {
   if (createStore?.createInfo?.articleId) {
     createStore.clearCreateInfo(true);
@@ -224,6 +228,15 @@ const onCancel = () => {
 
 // 新建/更新文章
 const onSubmit = () => {
+  if (props.isSaveDraft) {
+    onSaveDraft();
+  } else {
+    onCreate();
+  }
+};
+
+// 创建/更新文章
+const onCreate = () => {
   if (!formRef.value) return;
   formRef.value.validate(async (valid) => {
     if (valid) {
@@ -250,9 +263,7 @@ const onSaveDraft = () => {
   if (!formRef.value) return;
   formRef.value.validate(async (valid) => {
     if (valid) {
-      createStore.articleDraft();
-      createStore.clearCreateInfo(true);
-      formRef.value?.resetFields();
+      await createStore.articleDraft();
       emit('update:modelValue', false);
     } else {
       return false;
@@ -362,6 +373,12 @@ const onSaveDraft = () => {
     justify-content: flex-end;
     align-items: center;
     z-index: 92;
+
+    .btn {
+      width: 122px;
+      height: 33px;
+      padding: 8px 15px 7px;
+    }
   }
 }
 </style>
