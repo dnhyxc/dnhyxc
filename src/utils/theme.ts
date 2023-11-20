@@ -370,7 +370,12 @@ const fresh = {
   '--bg-image-url': `url(${FRESH})`,
   '--login-bg-img': 'url(@/assets/images/fresh.jpg)',
   '--backdrop-filter': 'blur(0px)',
-  '--theme-blue': '#7bff00',
+  // '--theme-blue': '#7bff00',
+  // '--theme-blue': '#00d625',
+  '--theme-blue': '#fbff00',
+  // 文章预览背景图片
+  '--pre-hover-bg': 'rgba(0, 0, 0, 0.3)',
+  '--h-color': '#fbff00',
 };
 
 // 黎明之岛

@@ -304,7 +304,7 @@ const onQuit = () => {
     line-height: 32px;
 
     &:hover {
-      background: var(--border-color);
+      background: var(--menu-hover-color);
       color: var(--theme-blue);
     }
 

@@ -234,6 +234,7 @@ const onCollect = () => {
     font-size: 14px;
     text-align: center;
     cursor: pointer;
+    color: var(--font-1);
 
     &:hover {
       color: var(--theme-blue);

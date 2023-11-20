@@ -111,7 +111,7 @@ const changeTheme = (key: string) => {
           margin-bottom: 10px;
 
           &:hover {
-            box-shadow: 0 0 10px @theme-blue;
+            box-shadow: 0 0 10px var(--theme-blue);
           }
 
           &:last-child {
@@ -216,7 +216,7 @@ const changeTheme = (key: string) => {
         }
 
         .active {
-          box-shadow: 0 0 10px @theme-blue;
+          box-shadow: 0 0 10px var(--theme-blue);
         }
       }
     }

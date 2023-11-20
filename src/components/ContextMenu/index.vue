@@ -105,7 +105,7 @@ const onSizeChange = (size: { width: number; height: number }) => {
       cursor: pointer;
 
       &:hover {
-        background: var(--border-color);
+        background: var(--menu-hover-color);
         color: var(--theme-blue);
       }
     }
