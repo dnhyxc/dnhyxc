@@ -327,6 +327,11 @@ watch(sendVisible, () => {
   isDropOn.value = false;
 });
 
+// 监听预览窗口状态，将拖拽状态设置为false
+watch(previewVisible, () => {
+  isDropOn.value = false;
+});
+
 onMounted(async () => {
   // 保存当前聊天对象的userId
   chatStore.chatUserId = userId as string;
@@ -486,6 +491,8 @@ const onActive = async (contact: ContactItem) => {
   await chatStore.deleteChats();
   // 切换联系人是设置推送消息为已读
   setMessageReaded();
+  // 切换用户时，将拖拽状态设置为false
+  isDropOn.value = false;
 };
 
 // 判断是否有滚动条，用户判断没有滚动时，不显示加载更多(loading)

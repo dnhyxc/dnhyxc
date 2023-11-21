@@ -142,6 +142,9 @@ const onGetDraftList = () => {
 
 // 编辑
 const toEdit = (id: string) => {
+  // 手动去除query articleId 参数
+  router.replace('/create');
+  createStore?.clearCreateInfo(true);
   // 保存草稿id
   createStore.draftArticleId = id;
   emit('update:draftVisible', false);

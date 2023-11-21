@@ -180,6 +180,7 @@ export const useCreateStore = defineStore('create', {
         this.createInfo = {
           ...this.createInfo,
           ...res.data,
+          createTime: new Date().valueOf(),
         } as CreateArticleParams;
         this.draftArticleId = res.data.id!;
         this.draftInfo = res.data;

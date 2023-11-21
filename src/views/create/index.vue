@@ -100,7 +100,7 @@ onDeactivated(() => {
 
 onBeforeRouteLeave(async (to, from, next) => {
   const { createInfo } = createStore;
-  if (!createInfo.content || isPublish.value) {
+  if (!createInfo.content?.trim() || isPublish.value) {
     next();
   } else {
     try {
@@ -126,7 +126,7 @@ watch(
 
 const onSave = async () => {
   const { createInfo, articleDraft } = createStore;
-  if (prevContent.value === createInfo.content) return;
+  if (!createInfo.content?.trim() || prevContent.value.trim() === createInfo.content?.trim()) return;
   // 调用接口保存草稿
   await articleDraft();
   prevContent.value = createInfo.content!;
