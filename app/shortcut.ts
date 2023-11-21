@@ -17,6 +17,7 @@ export const registerShortcut = (app: App) => {
     globalShortcut.register('Shift+Ctrl+D+N+H', () => {
       globalInfo.win?.webContents.openDevTools();
     });
+    globalShortcut.register('CommandOrControl+R', () => {});
   }
 
   if (isDev && isMac) {
@@ -24,6 +25,10 @@ export const registerShortcut = (app: App) => {
       globalInfo.win?.webContents.openDevTools();
     });
   }
+
+  globalShortcut.register('CommandOrControl+F+5', () => {
+    globalInfo.win?.webContents.send('force-reload');
+  });
 
   globalShortcut.register('Alt+CommandOrControl+I', () => {
     console.log('alt + ctrl + I');
