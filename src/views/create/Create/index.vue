@@ -158,6 +158,7 @@ const router = useRouter();
 interface IProps {
   modelValue: boolean;
   isSaveDraft: boolean;
+  isPublish: boolean;
   articleId?: string;
 }
 
@@ -167,7 +168,7 @@ const props = withDefaults(defineProps<IProps>(), {
   articleId: '',
 });
 
-const emit = defineEmits(['update:modelValue']);
+const emit = defineEmits(['update:modelValue', 'update:isPublish']);
 
 const uploadPath = ref<string>('');
 const formRef = ref<FormInstance>();
@@ -191,7 +192,6 @@ const getUploadUrl = async (url: string) => {
         coverImage: url,
         articleId: createStore?.createInfo?.articleId,
       },
-      undefined, // router
       false, // 是否需要提示
     );
     // 如果文件不一致，则说明重新上传了新的图片，则需要删除老图片
@@ -224,6 +224,7 @@ const onTagCommand = (item: { label: string; key: string }) => {
 // 取消
 const onCancel = () => {
   emit('update:modelValue', false);
+  emit('update:isPublish', false);
 };
 
 // 新建/更新文章
@@ -240,18 +241,19 @@ const onCreate = () => {
   if (!formRef.value) return;
   formRef.value.validate(async (valid) => {
     if (valid) {
-      await createStore.createArticle(
-        {
-          ...createStore?.createInfo,
-          coverImage: uploadPath.value || createStore?.createInfo?.coverImage,
-          articleId: createStore?.createInfo?.articleId,
-          createTime: createStore?.createInfo?.createTime?.valueOf(),
-        },
-        router,
-      );
-      createStore.clearCreateInfo(true);
-      formRef.value?.resetFields();
-      emit('update:modelValue', false);
+      const res = await createStore.createArticle({
+        ...createStore?.createInfo,
+        coverImage: uploadPath.value || createStore?.createInfo?.coverImage,
+        articleId: createStore?.createInfo?.articleId,
+        createTime: createStore?.createInfo?.createTime?.valueOf(),
+      });
+      if (res) {
+        createStore.clearCreateInfo(true);
+        formRef.value?.resetFields();
+        emit('update:isPublish', true);
+        emit('update:modelValue', false);
+        router?.push('/home');
+      }
     } else {
       return false;
     }
@@ -265,6 +267,7 @@ const onSaveDraft = () => {
     if (valid) {
       await createStore.articleDraft();
       emit('update:modelValue', false);
+      emit('update:isPublish', false);
     } else {
       return false;
     }

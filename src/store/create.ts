@@ -71,7 +71,7 @@ export const useCreateStore = defineStore('create', {
     },
 
     // 创建文章
-    async createArticle(params: CreateArticleParams, router?: Router, needMsg = true) {
+    async createArticle(params: CreateArticleParams, needMsg = true, router?: Router) {
       const { userInfo } = loginStore;
       try {
         // 检验是否有userId，如果没有禁止发送请求
@@ -92,7 +92,7 @@ export const useCreateStore = defineStore('create', {
               offset: 80,
               duration: 2000,
             });
-          router?.push('/home');
+          return res.success;
         } else {
           ElMessage({
             message: res.message,

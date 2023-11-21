@@ -34,6 +34,7 @@
       :key="JSON.stringify(createStore.classifys)"
       v-model="visible"
       v-model:isSaveDraft="isSaveDraft"
+      v-model:isPublish="isPublish"
       :article-id="(route?.query?.id as string)"
     />
     <DraftList v-model:draft-visible="draftVisible" />
@@ -42,10 +43,10 @@
 
 <script setup lang="ts">
 import { ref, onActivated, onDeactivated, watch, defineAsyncComponent, onMounted, onUnmounted } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { useRoute, useRouter, onBeforeRouteLeave } from 'vue-router';
 import { ElMessage } from 'element-plus';
 import { articleStore, createStore } from '@/store';
-import { checkOS } from '@/utils';
+import { checkOS, Message } from '@/utils';
 import AsyncLoading from '@/components/AsyncLoading/index.vue';
 import CreateDrawer from './Create/index.vue';
 import DraftList from './DraftList/index.vue';
@@ -67,6 +68,7 @@ const editType = ref<boolean>(false); // 编辑器类型
 const theme = ref<string>('vs'); // 主题
 const isSaveDraft = ref<boolean>(false); // 是否是保存草稿
 const prevContent = ref<string>('');
+const isPublish = ref<boolean>(false);
 
 onMounted(() => {
   document.addEventListener('keydown', onKeyDown);
@@ -88,13 +90,29 @@ onActivated(() => {
     toHome: !!route.query?.toHome,
   });
   createStore.clearCreateDraftInfo();
+  isPublish.value = false;
 });
 
 // 组件弃用时，关闭草稿列表弹窗
 onDeactivated(() => {
   draftVisible.value = false;
-  // 清空草稿信息
-  // createStore.clearCreateDraftInfo();
+});
+
+onBeforeRouteLeave(async (to, from, next) => {
+  const { createInfo } = createStore;
+  if (!createInfo.content || isPublish.value) {
+    next();
+  } else {
+    try {
+      const res = await Message('保存到草稿后，可从草稿中选择进行继续编辑', '是否保存草稿？');
+      if (res === 'confirm') {
+        await onSave();
+        next();
+      }
+    } catch (error) {
+      next();
+    }
+  }
 });
 
 watch(
@@ -106,15 +124,19 @@ watch(
   },
 );
 
+const onSave = async () => {
+  const { createInfo, articleDraft } = createStore;
+  if (prevContent.value === createInfo.content) return;
+  // 调用接口保存草稿
+  await articleDraft();
+  prevContent.value = createInfo.content!;
+};
+
 // 监听键盘事件
-const onKeyDown = async (event: KeyboardEvent) => {
+const onKeyDown = (event: KeyboardEvent) => {
   if ((event.ctrlKey || event.metaKey) && event.key === 's') {
     event.preventDefault();
-    const { createInfo, articleDraft } = createStore;
-    if (prevContent.value === createInfo.content) return;
-    // 调用接口保存草稿
-    await articleDraft();
-    prevContent.value = createInfo.content!;
+    onSave();
   }
 };
 
