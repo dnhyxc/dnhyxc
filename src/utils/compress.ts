@@ -10,7 +10,7 @@ interface IProps {
 
 export const compressImage = ({
   file,
-  quality = 0.2,
+  quality = 1,
   maxWidth,
   maxHeight,
   mimeType = 'image/jpeg',

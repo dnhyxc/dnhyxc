@@ -40,7 +40,10 @@ const onResetPwd = (Form: FormData<FormInstance>) => {
   if (!Form.formRef) return;
   Form.formRef.validate(async (valid: any) => {
     if (valid) {
-      loginStore.onResetPwd({ username: Form.resetForm.username, password: Form.resetForm.confirmPwd! }, router);
+      loginStore.onResetPwd(
+        { username: Form.resetForm.username, phone: Form.resetForm.phone, password: Form.resetForm.confirmPwd! },
+        router,
+      );
     } else {
       return false;
     }
@@ -50,7 +53,10 @@ const onResetPwd = (Form: FormData<FormInstance>) => {
 const onEnter = (formRef: Ref<FormInstance>, resetForm: ResetFormParams) => {
   formRef.value.validate(async (valid: any) => {
     if (valid) {
-      loginStore.onResetPwd({ username: resetForm.username, password: resetForm.confirmPwd! }, router);
+      loginStore.onResetPwd(
+        { username: resetForm.username, phone: resetForm.phone, password: resetForm.confirmPwd! },
+        router,
+      );
     } else {
       return false;
     }
@@ -71,12 +77,12 @@ const toLogin = () => {
   flex-direction: column;
   justify-content: center;
   box-sizing: border-box;
-  height: 375px;
+  height: 520px;
   padding: 20px 20px 38px 20px;
   border-radius: 5px;
-  background: rgba(225, 225, 225, 0.1);
-  box-shadow: 0 0 1px @page-color inset;
-  backdrop-filter: blur(1px);
+  background: var(--login-bg);
+  box-shadow: 0 0 2px @page-color inset;
+
   .title {
     height: 50px;
     line-height: 50px;

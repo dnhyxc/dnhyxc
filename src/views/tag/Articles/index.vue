@@ -207,16 +207,18 @@ const likeListArticle = async (id: string, data?: ArticleItem) => {
       justify-content: space-between;
       align-items: center;
       font-size: 18px;
-      color: var(--active-color);
+      color: var(--font-1);
       margin-bottom: 6px;
       padding-bottom: 9px;
-      border-radius: 5px;
-      padding: 2px 5px 8px;
-      .textLg();
+      padding: 8px 5px 2px;
 
       .font {
         font-size: 18px;
         cursor: pointer;
+
+        &:hover {
+          color: var(--active-color);
+        }
       }
     }
 
@@ -302,11 +304,11 @@ const likeListArticle = async (id: string, data?: ArticleItem) => {
       display: inline-block;
       font-size: 18px;
       font-weight: 700;
-      color: var(--active-color);
+      color: var(--font-1);
       padding-top: 2px;
+      padding-left: 5px;
       padding-bottom: 8px;
       border-radius: 5px;
-      .textLg();
     }
 
     .content {

@@ -15,6 +15,7 @@ export interface MenuListParams {
 export interface LoginParams {
   username: string;
   password: string;
+  phone?: string;
 }
 
 // 用户信息属性声明
@@ -185,6 +186,7 @@ export interface TimelineResult {
 // 重置密码表单参数
 export interface ResetFormParams {
   username: string;
+  phone: string;
   newPwd?: string;
   confirmPwd?: string;
 }

@@ -109,7 +109,6 @@ defineExpose({
 
   .auth {
     color: @font-warning;
-    .textLg();
   }
 }
 </style>

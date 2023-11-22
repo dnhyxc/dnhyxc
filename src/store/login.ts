@@ -46,10 +46,12 @@ export const useLoginStore = defineStore('login', {
       try {
         // 密码加密传到后端
         const password = encrypt(data.password);
+        const phone = encrypt(data.phone!);
         const res = normalizeResult<UserLoginParams>(
           await Service.register({
             username: data.username,
             password,
+            phone,
           }),
         );
         if (res.success) {
@@ -65,7 +67,7 @@ export const useLoginStore = defineStore('login', {
             offset: 80,
           });
         }
-        return res;
+        return res.success;
       } catch (error) {
         throw error;
       }
@@ -113,10 +115,12 @@ export const useLoginStore = defineStore('login', {
     // 重置密码
     async onResetPwd(params: LoginParams, router?: Router) {
       const res = normalizeResult<UserInfoParams>(
-        await Service.resetPassword({ ...params, password: encrypt(params.password) }),
+        await Service.resetPassword({ ...params, phone: encrypt(params.phone!), password: encrypt(params.password) }),
       );
       // 重置成功后直接登录
       if (res.success) {
+        // 先退出登录，防止自己踢自己
+        this.onQuit();
         await this.onLogin(params, router);
         ElMessage({
           message: res.message,
@@ -130,10 +134,11 @@ export const useLoginStore = defineStore('login', {
           offset: 80,
         });
       }
+      return res.success;
     },
 
     // 账号注销
-    async onLogout(router: Router) {
+    async onLogout(router?: Router) {
       Message('', '确定要注销该账号吗？').then(async () => {
         const res = normalizeResult<string>(await Service.logout());
         if (res.success) {
@@ -143,7 +148,7 @@ export const useLoginStore = defineStore('login', {
             type: 'success',
             offset: 80,
           });
-          router.push('/home');
+          router?.push('/home');
         } else {
           ElMessage({
             message: res.message,

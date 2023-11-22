@@ -58,7 +58,7 @@ export const logout = async () => {
 };
 
 // 重置密码
-export const resetPassword = async (params: { username: string; password: string }) => {
+export const resetPassword = async (params: { username: string; password: string; phone: string }) => {
   return await put(API.RESET_PASSWORD, params);
 };
 

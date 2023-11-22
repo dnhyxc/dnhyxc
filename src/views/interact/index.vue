@@ -210,19 +210,21 @@ const onScrollTo = (to?: number, isDelete: boolean = false) => {
       align-items: center;
       justify-content: space-between;
       height: 50px;
-      padding: 0 10px;
+      padding: 4px 10px 5px;
+      margin-bottom: 10px;
       color: var(--font-1);
+      border-bottom: 1px solid var(--card-border);
 
       .text {
         font-size: 18px;
-        .textLg();
+        color: var(--font-1);
       }
 
       .clear {
         margin-left: 5px;
         font-size: 16px;
         cursor: pointer;
-        .textLg();
+        color: var(--theme-blue);
 
         &:hover {
           color: @font-danger;
@@ -232,7 +234,10 @@ const onScrollTo = (to?: number, isDelete: boolean = false) => {
       .font {
         font-size: 20px;
         cursor: pointer;
-        .textLg();
+
+        &:hover {
+          color: var(--active-color);
+        }
       }
     }
 
@@ -267,7 +272,7 @@ const onScrollTo = (to?: number, isDelete: boolean = false) => {
             cursor: pointer;
 
             .username {
-              .textLg();
+              color: var(--font-1);
               font-size: 13px;
               .ellipsisMore(1);
             }

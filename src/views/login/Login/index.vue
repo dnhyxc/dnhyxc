@@ -20,6 +20,14 @@
           @keyup.enter="onEnter"
         />
       </el-form-item>
+      <el-form-item v-if="isRegister" prop="phone" class="form-item">
+        <el-input
+          v-model="loginForm.phone"
+          size="large"
+          placeholder="请输入手机号码（号码会被加密，无需担心泄露）"
+          @keyup.enter="onEnter"
+        />
+      </el-form-item>
       <el-form-item v-if="!isRegister" prop="code" class="form-item code-item">
         <el-input
           v-model="loginForm.code"
@@ -106,18 +114,20 @@ const validateCode = (rule: any, value: any, callback: any) => {
 };
 
 const rules = reactive<FormRules>({
-  username: [{ validator: validateUsername, trigger: 'blur', required: true }],
-  password: [{ validator: validatePassword, trigger: 'blur', required: true }],
-  code: [{ validator: validateCode, trigger: 'blur', required: true }],
+  username: [{ validator: validateUsername, trigger: 'change', required: true }],
+  password: [{ validator: validatePassword, trigger: 'change', required: true }],
+  code: [{ validator: validateCode, trigger: 'change', required: true }],
 });
 
 const loginForm = reactive<{
   username: string;
   password: string;
+  phone: string;
   code: string;
 }>({
   username: import.meta.env.DEV ? 'dnhyxc' : loginStore.userInfo?.username || '',
   password: import.meta.env.DEV ? 'dnh12345678.' : '',
+  phone: '',
   code: '',
 });
 
@@ -152,8 +162,10 @@ const onSubmit = (formEl: FormInstance, type: string) => {
       if (type === 'login') {
         await loginStore.onLogin(loginForm, router);
       } else {
-        await loginStore.onRegister(loginForm);
-        isRegister.value = false;
+        const res = await loginStore.onRegister(loginForm);
+        if (res) {
+          isRegister.value = false;
+        }
       }
     } else {
       return false;
@@ -215,12 +227,28 @@ const onResetCode = () => {
   flex-direction: column;
   justify-content: center;
   box-sizing: border-box;
-  height: 375px;
+  height: 520px;
   padding: 10px 20px 20px;
   border-radius: 5px;
-  background: rgba(225, 225, 225, 0.1);
+  background: var(--login-bg);
   box-shadow: 0 0 2px @page-color inset;
-  backdrop-filter: blur(1px);
+
+  :deep {
+    .el-input__wrapper {
+      color: var(--font-2);
+      background-color: var(--input-bg-color);
+      backdrop-filter: blur(3px);
+    }
+
+    .el-input__inner {
+      color: var(--font-2);
+      background-color: transparent;
+
+      &::-webkit-input-placeholder {
+        color: var(--placeholder-color);
+      }
+    }
+  }
   .title {
     height: 50px;
     line-height: 50px;
@@ -277,10 +305,12 @@ const onResetCode = () => {
   }
 
   .reset-wrap {
+    position: relative;
     display: flex;
     justify-content: flex-end;
     padding: 0 50px;
     margin-top: 10px;
+    z-index: 99;
 
     .action {
       color: var(--theme-blue);

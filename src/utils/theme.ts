@@ -54,6 +54,8 @@ const removeStyle = {
   // 登录背景
   '--login-bg-img': 'linear-gradient(to top, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%)',
   '--border-color': '#e4e6eb',
+  '--login-bg': 'rgba(225, 225, 225, 0.1)',
+  '--placeholder-color': '#a8abb2',
 };
 
 // 炫彩背景公共配置
@@ -159,6 +161,7 @@ const imageStyles = {
   '--border-color': '#e4e6eb',
   // 主题色
   '--theme-blue': '#57a0ff',
+  '--placeholder-color': '#d6d6d6',
 };
 
 // 清新绿（默认主题）
@@ -376,6 +379,8 @@ const fresh = {
   // 文章预览背景图片
   '--pre-hover-bg': 'rgba(0, 0, 0, 0.3)',
   '--h-color': '#fbff00',
+  '--login-bg': 'rgba(0, 0, 0, 0.1)',
+  '--placeholder-color': '#d5d5d5',
 };
 
 // 黎明之岛
@@ -465,6 +470,7 @@ const girl = {
   // loading 背景颜色
   '--loading-color': 'rgba(255, 255, 255, 0.5)',
   '--login-bg-img': 'url(@/assets/images/cywl.jpg)',
+  '--placeholder-color': '#626262',
 };
 
 // 云间
@@ -506,6 +512,7 @@ const cloud = {
   // loading 背景颜色
   '--loading-color': 'rgba(255, 255, 255, 0.5)',
   '--login-bg-img': 'url(@/assets/images/cywl.jpg)',
+  '--login-bg': 'rgba(255, 255, 255, 0.1)',
   // border 颜色
   '--border-color': '#ffffffa1',
 };

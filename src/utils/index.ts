@@ -432,6 +432,22 @@ export const verifyResetPassword = (value: string, newPwd: string) => {
   };
 };
 
+// 手机号校验
+export const verifyPhone = (value: string) => {
+  const pwdRegex = /^1[3456789]\d{9}$/;
+  if (pwdRegex.test(value)) {
+    return {
+      msg: '',
+      status: true,
+    };
+  } else {
+    return {
+      msg: '手机号码格式错误',
+      status: false,
+    };
+  }
+};
+
 // 识别图片主色的方法
 export const getImageColor = (img: HTMLImageElement) => {
   // 创建画布

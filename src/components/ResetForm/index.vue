@@ -10,6 +10,14 @@
     <el-form-item prop="username" class="form-item">
       <el-input v-model.trim="resetForm.username" size="large" placeholder="请输入用户名" @keyup.enter="onEnter" />
     </el-form-item>
+    <el-form-item v-if="needPwd" prop="phone" class="form-item">
+      <el-input
+        v-model.trim="resetForm.phone"
+        size="large"
+        placeholder="请输入手机号码（号码会被加密，无需担心泄露）"
+        @keyup.enter="onEnter"
+      />
+    </el-form-item>
     <el-form-item v-if="needPwd" prop="newPwd" class="form-item">
       <el-input
         v-model.trim="resetForm.newPwd"
@@ -40,7 +48,7 @@
 import { ref, reactive } from 'vue';
 import type { FormInstance, FormRules } from 'element-plus';
 import { ResetFormParams } from '@/typings/common';
-import { verifyUsername, verifyPassword, verifyResetPassword } from '@/utils';
+import { verifyUsername, verifyPassword, verifyResetPassword, verifyPhone } from '@/utils';
 
 interface IProps {
   dataSource?: ResetFormParams;
@@ -51,6 +59,7 @@ interface IProps {
 const props = withDefaults(defineProps<IProps>(), {
   dataSource: () => ({
     username: '',
+    phone: '',
     newPwd: '',
     confirmPwd: '',
   }),
@@ -95,10 +104,22 @@ const validateConfirmPwd = (rule: any, value: any, callback: any) => {
   }
 };
 
+const validatePhone = (rule: any, value: any, callback: any) => {
+  const { msg, status } = verifyPhone(value);
+  if (value === '') {
+    callback(new Error('手机号码不能为空'));
+  } else if (!status) {
+    callback(new Error(msg));
+  } else {
+    callback();
+  }
+};
+
 const rules = reactive<FormRules>({
-  username: [{ validator: validateUsername, trigger: 'blur', required: true }],
-  newPwd: [{ validator: validatePassword, trigger: 'blur', required: true }],
-  confirmPwd: [{ validator: validateConfirmPwd, trigger: 'blur', required: true }],
+  username: [{ validator: validateUsername, trigger: 'change', required: true }],
+  newPwd: [{ validator: validatePassword, trigger: 'change', required: true }],
+  confirmPwd: [{ validator: validateConfirmPwd, trigger: 'change', required: true }],
+  phone: [{ validator: validatePhone, trigger: 'change', required: true }],
 });
 
 const onEnter = () => {
@@ -126,17 +147,23 @@ const onEnter = () => {
     .el-input__wrapper {
       color: var(--font-2);
       background-color: var(--input-bg-color);
+      backdrop-filter: blur(3px);
     }
 
     .el-input__inner {
       color: var(--font-2);
       background-color: transparent;
+
+      &::-webkit-input-placeholder {
+        color: var(--placeholder-color);
+      }
     }
   }
 
   .form-item {
     margin-bottom: 30px;
     padding: 0 50px;
+    box-sizing: border-box;
   }
 
   .action-list {

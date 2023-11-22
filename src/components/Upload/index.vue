@@ -86,6 +86,7 @@ interface IProps {
   delete?: boolean; // 控制点击删除图标时，是否删除数据库中的图片
   isAtlas?: boolean; // 是否是图片集上传
   multiple?: boolean; // 是否支持多文件上传
+  quality?: number; // 图片压缩比，如果传 0 表示不需要压缩
 }
 
 const props = withDefaults(defineProps<IProps>(), {
@@ -98,6 +99,7 @@ const props = withDefaults(defineProps<IProps>(), {
   delete: false,
   isAtlas: false,
   multiple: false,
+  quality: 0.5,
 });
 
 const emit = defineEmits(['update:filePath']);
@@ -174,7 +176,9 @@ const onUpload = async (event: { file: Blob }) => {
   fileInfo.value = event.file as File;
   // 不需要进行裁剪
   if (!props.needCropper) {
-    const res = await uploadStore.uploadFile(event.file as File, props.isAtlas);
+    console.log(props.isAtlas, props.quality, 'props.isAtlas, props.quality');
+
+    const res = await uploadStore.uploadFile(event.file as File, props.isAtlas, props.quality);
     if (res) {
       props.getUploadUrl?.(res.filePath, event.file.name);
       // 更新父组件传递过来的filePath
@@ -277,7 +281,7 @@ const onFinish = () => {
     reader.readAsDataURL(blob);
     // 将 Blob 转成 File
     const file = new File([blob], fileInfo.value?.name || '', { type: fileInfo.value?.type }) as File;
-    const res = await uploadStore.uploadFile(file);
+    const res = await uploadStore.uploadFile(file, false, props.quality);
     if (res) {
       props.getUploadUrl?.(res.filePath);
       // 保存老封面图

@@ -13,11 +13,23 @@
     <template #default>
       <div class="atlas-header-wrap">
         <div class="upload-btn">
-          <Upload multiple is-atlas :preview="false" :show-img="false" :fixed-number="[800, 320]" :need-cropper="false">
+          <Upload
+            multiple
+            is-atlas
+            :preview="false"
+            :show-img="false"
+            :fixed-number="[800, 320]"
+            :need-cropper="false"
+            :quality="1"
+          >
             <div class="upload-text"><i class="iconfont icon-upload" />上传图片</div>
           </Upload>
         </div>
         <div class="delete-wrap">
+          <i
+            :class="`scroll-icon iconfont ${scrollTop > 0 ? 'icon-shuangjiantou-shang' : 'icon-shuangjiantou-xia'}`"
+            @click="onScrollTo"
+          />
           <el-checkbox
             :indeterminate="
               selectedImageIds.length && selectedImageIds.length < pictureStore.atlasList.length ? true : false
@@ -56,7 +68,7 @@
                     </span>
                   </div>
                   <div class="actions">
-                    <el-dropdown placement="bottom-end"  trigger="click"  popper-class="custom-dropdown-styles">
+                    <el-dropdown placement="bottom-end" trigger="click" popper-class="custom-dropdown-styles">
                       <i class="iconfont icon-gengduo3" />
                       <template #dropdown>
                         <el-dropdown-menu>
@@ -77,7 +89,6 @@
               </div>
             </div>
           </div>
-          <ToTopIcon v-if="scrollTop >= 500" :on-scroll-to="onScrollTo" />
         </div>
         <div v-if="noMore" class="no-more">没有更多了～～～</div>
         <Empty v-if="showEmpty" />
@@ -193,7 +204,8 @@ const onDeleteImage = (item: AtlasItemParams) => {
 
 // 置顶
 const onScrollTo = () => {
-  scrollTo(scrollRef, 0);
+  const bottom = scrollRef.value?.wrapRef?.firstElementChild?.offsetHeight;
+  scrollTo(scrollRef, scrollTop.value > 0 ? 0 : bottom);
 };
 </script>
 
@@ -245,8 +257,16 @@ const onScrollTo = () => {
       display: flex;
       align-items: center;
 
+      .scroll-icon {
+        margin-right: 16px;
+        font-size: 18px;
+        color: var(--theme-blue);
+        cursor: pointer;
+      }
+
       .select-all {
         margin-left: 2px;
+        color: var(--theme-blue);
       }
 
       .delete-btn {
@@ -265,14 +285,18 @@ const onScrollTo = () => {
   }
 
   .img-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(245px, 1fr));
-    justify-content: center; /* 水平居中 */
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
     padding: 0 6px;
-    // grid-gap: 1px 0; /* 可以设置相应的间距 */
+
+    &::after {
+      content: '';
+      flex: auto;
+    }
 
     .img-item-wrap {
-      width: 245px;
+      width: 25%;
       height: 220px;
       padding: 5px;
       border-radius: 5px;

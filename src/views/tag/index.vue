@@ -98,7 +98,7 @@ const onCheckTag = (tag: string) => {
     flex-direction: column;
     box-sizing: border-box;
     margin-left: 10px;
-    padding: 10px 0;
+    padding: 8px 0 10px;
     margin-top: 3px;
     width: 220px;
     height: 100%;
@@ -115,19 +115,21 @@ const onCheckTag = (tag: string) => {
     .title {
       display: flex;
       justify-content: space-between;
+      align-items: center;
       font-size: 18px;
       color: var(--active-color);
       border-bottom: 1px solid var(--card-border);
-      margin-left: 13px;
-      margin-right: 13px;
       margin-bottom: 6px;
-      padding-bottom: 9px;
-      border-radius: 5px;
-      .textLg();
+      padding: 0 13px 9px;
+      color: var(--font-1);
 
       .font {
         font-size: 18px;
         cursor: pointer;
+
+        &:hover {
+          color: var(--active-color);
+        }
       }
     }
 

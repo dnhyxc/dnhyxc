@@ -1,3 +1,4 @@
+/* eslint-disable indent */
 import { defineStore } from 'pinia';
 import * as Service from '@/server';
 import { normalizeResult, md5HashName, compressImage } from '@/utils';
@@ -16,13 +17,20 @@ export const useUploadStore = defineStore('upload', {
 
   actions: {
     // 文件上传
-    async uploadFile(file: File, isAtlas?: boolean) {
+    async uploadFile(file: File, isAtlas?: boolean, quality = 0.5) {
+      console.log(quality, 'qualityqualityquality');
+
       // 上传前先压缩图片
-      const { file: compressFile } = await compressImage({
-        file,
-        quality: !isAtlas ? 0.5 : 0.4,
-        mimeType: file.type,
-      });
+      const { file: compressFile } = quality !== 1
+        ? await compressImage({
+            file,
+            quality, // 压缩比例
+            mimeType: file.type,
+          })
+        : { file };
+
+      console.log(compressFile, 'compressFile', file, quality);
+
       // 检验是否有userId，如果没有禁止发送请求
       if (!useCheckUserId()) return;
       const formData = new FormData();

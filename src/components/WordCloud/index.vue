@@ -6,7 +6,6 @@
 -->
 <template>
   <div class="word-cloud">
-    <div class="title">{{ title }}</div>
     <div ref="charts" :style="{ ...styles }" />
     <div v-if="loading !== null && !loading && !data?.length" class="empty-wrap">
       <img :src="EMPTY" />
@@ -164,15 +163,6 @@ const resize = () => {
   position: relative;
   height: 100%;
   width: 100%;
-
-  .title {
-    position: absolute;
-    top: 10px;
-    right: 15px;
-    font-size: 18px;
-    color: var(--active-color);
-    .textLg();
-  }
 
   .empty-wrap {
     position: absolute;

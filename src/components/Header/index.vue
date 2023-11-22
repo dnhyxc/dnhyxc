@@ -410,6 +410,10 @@ const onDeleteAll = async () => {
           }
           .el-input__inner {
             color: var(--font-color);
+
+            &::-webkit-input-placeholder {
+              color: var(--placeholder-color);
+            }
           }
         }
       }

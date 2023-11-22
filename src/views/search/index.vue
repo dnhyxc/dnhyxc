@@ -237,8 +237,8 @@ const onScrollTo = () => {
 
   :deep {
     .el-input-group__append {
-      background-color: var(--theme-blue);
-      box-shadow: 0 1px 0 0 var(--theme-blue) inset, 0 -1px 0 0 @theme-blue inset, -1px 0 0 0 var(--theme-blue) inset;
+      background-color: @theme-blue;
+      box-shadow: 0 1px 0 0 @theme-blue inset, 0 -1px 0 0 @theme-blue inset, -1px 0 0 0 @theme-blue inset;
     }
 
     .scrollbar-wrapper(12px);
@@ -251,6 +251,10 @@ const onScrollTo = () => {
 
     .el-input__inner {
       color: var(--font-color);
+
+      &::-webkit-input-placeholder {
+        color: var(--placeholder-color);
+      }
     }
   }
 
@@ -320,7 +324,7 @@ const onScrollTo = () => {
     }
 
     .active {
-      background-color: var(--theme-blue);
+      background-color: @theme-blue;
       color: @fff;
     }
   }

@@ -46,7 +46,7 @@
         <i class="edit-font font iconfont icon-tuichu1" @click="onReset('logout')">&nbsp;注销</i>
       </div>
     </div>
-    <el-dialog v-model="visible" :title="resetType === 'password' ? '重置密码' : '账号注销'" width="500">
+    <el-dialog v-model="visible" draggable :title="resetType === 'password' ? '重置密码' : '账号注销'" width="540">
       <ResetForm
         :key="visible ? 1 : 0"
         :on-enter="onResetEnter"
@@ -112,6 +112,7 @@ const dataSource = reactive<ResetFormParams>({
   username: loginStore.userInfo?.username || '',
   newPwd: '',
   confirmPwd: '',
+  phone: '',
 });
 
 // 当前正在编辑的 item（掘金、知乎...）
@@ -168,14 +169,17 @@ const onResetPwd = (Form: FormData<FormInstance>) => {
   if (!Form.formRef) return;
   Form.formRef.validate(async (valid) => {
     if (valid) {
-      const { username, confirmPwd } = Form.resetForm;
+      const { username, confirmPwd, phone } = Form.resetForm;
       if (resetType.value === 'password') {
         // 重置密码
-        await loginStore.onResetPwd({ username, password: confirmPwd! });
-        Form.formRef.resetFields();
-        Form.resetForm = { username: '', confirmPwd: '', newPwd: '' };
-        // 成功时关闭弹窗
-        visible.value = false;
+        const res = await loginStore.onResetPwd({ username, password: confirmPwd!, phone });
+        if (res) {
+          Form.formRef.resetFields();
+          Form.resetForm = { username: '', confirmPwd: '', newPwd: '', phone: '' };
+          // 成功时关闭弹窗
+          visible.value = false;
+          router.push('/login');
+        }
       } else {
         if (username !== loginStore.userInfo?.username) {
           ElMessage({
@@ -187,7 +191,7 @@ const onResetPwd = (Form: FormData<FormInstance>) => {
         }
         await loginStore.onLogout(router);
         Form.formRef.resetFields();
-        Form.resetForm = { username: '', confirmPwd: '', newPwd: '' };
+        Form.resetForm = { username: '', confirmPwd: '', newPwd: '', phone: '' };
         // 成功时关闭弹窗
         visible.value = false;
       }
@@ -215,7 +219,7 @@ const onResetEnter = async (formRef: Ref<FormInstance>, resetForm: ResetFormPara
   }
   // 重置密码，成功时关闭弹窗
   formRef.value.resetFields();
-  resetForm = { username: '', confirmPwd: '', newPwd: '' };
+  resetForm = { username: '', confirmPwd: '', newPwd: '', phone: '' };
   setTimeout(() => {
     visible.value = false;
   }, 50);
@@ -224,7 +228,7 @@ const onResetEnter = async (formRef: Ref<FormInstance>, resetForm: ResetFormPara
 // 取消重置密码
 const onCancelResetPwd = (Form: FormData<FormInstance>) => {
   Form.formRef.resetFields();
-  Form.resetForm = { username: '', confirmPwd: '', newPwd: '' };
+  Form.resetForm = { username: '', confirmPwd: '', newPwd: '', phone: '' };
   visible.value = false;
 };
 </script>
@@ -245,6 +249,12 @@ const onCancelResetPwd = (Form: FormData<FormInstance>) => {
   height: 100%;
   padding: 10px 0 10px 0;
   border-radius: 5px;
+
+  :deep {
+    .el-dialog__body {
+      padding: 20px 20px 30px;
+    }
+  }
 
   .item {
     display: flex;
