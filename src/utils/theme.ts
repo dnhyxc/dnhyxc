@@ -56,6 +56,7 @@ const removeStyle = {
   '--border-color': '#e4e6eb',
   '--login-bg': 'rgba(225, 225, 225, 0.1)',
   '--placeholder-color': '#a8abb2',
+  '--theme-blue': '#57a0ff',
 };
 
 // 炫彩背景公共配置
@@ -373,8 +374,6 @@ const fresh = {
   '--bg-image-url': `url(${FRESH})`,
   '--login-bg-img': 'url(@/assets/images/fresh.jpg)',
   '--backdrop-filter': 'blur(0px)',
-  // '--theme-blue': '#7bff00',
-  // '--theme-blue': '#00d625',
   '--theme-blue': '#fbff00',
   // 文章预览背景图片
   '--pre-hover-bg': 'rgba(0, 0, 0, 0.3)',
