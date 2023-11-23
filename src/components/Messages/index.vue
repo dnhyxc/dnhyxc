@@ -53,7 +53,6 @@
             </template>
           </LineCard>
         </div>
-        <ToTopIcon v-if="scrollTop >= 500" class="msg-to-top" :on-scroll-to="onScrollTo" />
       </div>
       <div v-if="noMore" class="no-more">没有更多了～～～</div>
       <Empty v-if="showEmpty" />
@@ -150,8 +149,14 @@ const toDetail = (data: ArticleItem) => {
 
 // 置顶
 const onScrollTo = (to?: number) => {
-  scrollTo(scrollRef, to || 0);
+  const bottom = scrollRef.value?.wrapRef?.firstElementChild?.offsetHeight;
+  scrollTo(scrollRef, to || scrollTop.value > 0 ? 0 : bottom);
 };
+
+defineExpose({
+  onScrollTo,
+  scrollTop,
+});
 </script>
 
 <style scoped lang="less">

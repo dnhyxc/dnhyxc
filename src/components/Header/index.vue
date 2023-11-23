@@ -71,9 +71,15 @@
       >
         <div class="title-popover">
           <span class="title-text">我的消息列表</span>
-          <span v-if="messageStore.msgList?.length" class="del-all" @click="onDeleteAll">全部删除</span>
+          <span class="del-action">
+            <i
+              :class="`scroll-icon iconfont ${scrollTop > 0 ? 'icon-shuangjiantou-shang' : 'icon-shuangjiantou-xia'}`"
+              @click="onScrollTo"
+            />
+            <span v-if="messageStore.msgList?.length" class="del-all" @click="onDeleteAll"> 全部删除 </span>
+          </span>
         </div>
-        <Messages />
+        <Messages ref="messageRef" />
         <template #reference>
           <div class="bell">
             <el-tooltip effect="light" content="消息" placement="bottom">
@@ -161,6 +167,8 @@ const stickyStatus = ref<boolean>(false);
 const closeVisible = ref<boolean>(false);
 const remindStatus = ref<boolean>((store.get(CLOSE_PROMPT) as boolean) || false);
 const timerRef = ref<ReturnType<typeof setTimeout> | null>();
+const messageRef = ref<any>();
+const scrollTop = ref<number>(0);
 
 // 监听路由变化，设置当前选中菜单
 watchEffect(() => {
@@ -168,6 +176,7 @@ watchEffect(() => {
   if (remindStatus.value !== (store.get(CLOSE_PROMPT) as boolean)) {
     store.set(CLOSE_PROMPT, remindStatus.value);
   }
+  scrollTop.value = messageRef.value?.scrollTop;
 });
 
 onMounted(() => {
@@ -299,6 +308,11 @@ const onEnter = async (e: Event) => {
 // 删除全部消息
 const onDeleteAll = async () => {
   await messageStore.deleteAllMessage();
+};
+
+// 滚动到顶部
+const onScrollTo = () => {
+  messageRef.value?.onScrollTo();
 };
 </script>
 
@@ -565,6 +579,26 @@ const onDeleteAll = async () => {
   padding: 0 3px 10px;
   font-size: 16px;
   z-index: 99;
+
+  .title-text {
+    color: var(--font-color);
+  }
+
+  .del-action {
+    display: flex;
+    align-items: center;
+  }
+
+  .scroll-icon {
+    font-size: 16px;
+    margin-right: 10px;
+    cursor: pointer;
+    color: var(--theme-blue);
+
+    &:hover {
+      color: var(--active-color);
+    }
+  }
 
   .del-all {
     font-size: 14px;
