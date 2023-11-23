@@ -171,7 +171,7 @@ const initEditor = () => {
       editor = monaco.editor.create(editorRef?.value!, {
         value: props.isCodeEdit ? (props.readonly ? props.code : content.value) : createStore.createInfo.content, // 编辑器初始显示文字
         language: language.value, // 语言
-        theme: props.theme || 'vs', // 官方自带三种主题vs, hc-black, or vs-dark
+        theme: props.theme || 'vs-dark', // 官方自带三种主题vs, hc-black, or vs-dark
         automaticLayout: true, // 自适应布局
         foldingStrategy: 'indentation',
         renderLineHighlight: props.readonly ? 'none' : 'all', // 行亮 all line none
@@ -288,8 +288,9 @@ const onSaveDraft = () => {
     height: 40px;
     padding: 0 10px;
     box-sizing: border-box;
-    background-color: var(--pre-hover-bg);
-    border-bottom: 1px solid var(--card-border);
+    background-color: @fff;
+    // background-color: var(--pre-hover-bg);
+    border-bottom: 1px solid var(--border-color);
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
 
@@ -368,7 +369,7 @@ const onSaveDraft = () => {
       display: flex;
       justify-content: flex-end;
       font-size: 14px;
-      color: var(--font-6);
+      color: @font-5;
 
       .language-text {
         height: 30px;

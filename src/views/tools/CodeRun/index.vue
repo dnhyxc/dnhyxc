@@ -133,7 +133,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, nextTick, onUnmounted, computed } from 'vue';
+import { ref, onMounted, nextTick, onUnmounted, computed, watch } from 'vue';
 import type { FormInstance } from 'element-plus';
 import { codeTemplate, htmlTemplate, JSONParse } from '@/utils';
 import { codeStore } from '@/store';
@@ -149,7 +149,7 @@ const previewRef = ref<HTMLDivElement | null>(null);
 // 代码运行的结果
 const codeResults = ref<string>('');
 // 主题颜色
-const theme = ref<string>('vs');
+const theme = ref<string>('vs-dark');
 const iframeNode = ref<HTMLIFrameElement | null>(null);
 // 编辑的语言
 const language = ref<string>('javascript');
@@ -182,6 +182,17 @@ const onKeydown = (event: KeyboardEvent) => {
 
 const background = computed(() => {
   return theme.value !== 'vs' ? '#1e1e1e' : '#fff';
+});
+
+const fontColor = computed(() => {
+  return theme.value !== 'vs' ? '#fff' : '#000';
+});
+
+// 解决切换主题预览背景不跟随改变的问题
+watch(background, (newVal, oldVal) => {
+  if (newVal !== oldVal) {
+    run({ data: { content: '' } });
+  }
 });
 
 const bindEvents = () => {
@@ -226,15 +237,15 @@ const createIframe = ({ code, display, id }: { code: string; display: string; id
 };
 
 // 运行代码
-const run = (monacoData: any) => {
-  const { content: code } = monacoData.data;
+const run = (monacoData?: any) => {
+  const { content: code } = monacoData?.data;
   prevCode.value = code;
   console.clear();
   // 首先清除原有的代码执行结果
   codeResults.value = '';
   if (language.value === 'html') {
     createIframe({
-      code: htmlTemplate(code, { background: background.value }),
+      code: htmlTemplate(code, { background: background.value, color: fontColor.value }),
       display: 'block',
       id: '__HTML_RESULT__',
     });
@@ -452,7 +463,7 @@ const onClear = (monacoData?: any) => {
           padding: 0 10px;
           box-sizing: border-box;
           background-color: v-bind(background);
-          border-bottom: 1px solid var(--card-border);
+          border-bottom: 1px solid var(--border-color);
           border-top-left-radius: 5px;
           border-top-right-radius: 5px;
 
@@ -475,7 +486,7 @@ const onClear = (monacoData?: any) => {
         #__HTML_RESULT__ {
           height: 100%;
           width: 100%;
-          background-color: @fff;
+          background-color: v-bind(background);
           border: none;
           box-sizing: border-box;
         }
