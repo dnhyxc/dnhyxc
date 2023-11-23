@@ -95,7 +95,6 @@ const onScrollTo = () => {
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
-  // height: calc(100vh - 345px);
   border-radius: 5px;
   overflow: hidden;
   box-shadow: 0 0 8px 0 var(--shadow-mack);
@@ -118,6 +117,10 @@ const onScrollTo = () => {
       font-size: 20px;
       font-weight: 700;
       cursor: pointer;
+
+      &:hover {
+        color: var(--active);
+      }
     }
   }
 
@@ -137,7 +140,7 @@ const onScrollTo = () => {
     .ellipsisMore(1);
 
     &:hover {
-      .textLg();
+      color: var(--theme-blue);
     }
   }
 

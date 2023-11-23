@@ -240,9 +240,9 @@ const toTag = (name: string) => {
         .edit {
           display: inline-block;
           margin-right: 10px;
-          color: @fff;
+          color: var(--yellow-1);
           font-size: 14px;
-          backdrop-filter: blur(10px);
+          backdrop-filter: blur(3px);
           padding: 0px 5px 2px;
           border-radius: 5px;
           background-color: @card-action-color;

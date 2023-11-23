@@ -56,7 +56,12 @@ const removeStyle = {
   '--border-color': '#e4e6eb',
   '--login-bg': 'rgba(225, 225, 225, 0.1)',
   '--placeholder-color': '#a8abb2',
-  '--theme-blue': '#57a0ff',
+  // 主题色
+  // '--theme-blue': '#57a0ff',
+  '--theme-blue': '#089220',
+  '--el-color-primary': '#089220',
+  '--el-color-primary-light-3': '#40a700',
+  '--el-color-primary-light-5': '#70c870',
 };
 
 // 炫彩背景公共配置
@@ -160,9 +165,12 @@ const imageStyles = {
   '--p-code-bg-color': 'rgba(27, 31, 35, 0.08)',
   // border 颜色
   '--border-color': '#e4e6eb',
-  // 主题色
-  '--theme-blue': '#57a0ff',
   '--placeholder-color': '#d6d6d6',
+  // 主题色
+  '--theme-blue': '#089220',
+  '--el-color-primary': '#089220',
+  '--el-color-primary-light-3': '#40a700',
+  '--el-color-primary-light-5': '#70c870',
 };
 
 // 清新绿（默认主题）
@@ -351,6 +359,8 @@ const lateralFace = {
   // 文章预览背景图片
   '--pre-hover-bg': 'rgba(0, 0, 0, 0.3)',
   '--login-bg-img': 'url(@/assets/images/face.jpg)',
+  '--theme-blue': '#00d625',
+  '--el-color-primary': '#00d625',
 };
 
 // 岛屿
@@ -374,12 +384,15 @@ const fresh = {
   '--bg-image-url': `url(${FRESH})`,
   '--login-bg-img': 'url(@/assets/images/fresh.jpg)',
   '--backdrop-filter': 'blur(0px)',
-  '--theme-blue': '#fbff00',
   // 文章预览背景图片
   '--pre-hover-bg': 'rgba(0, 0, 0, 0.3)',
-  '--h-color': '#fbff00',
   '--login-bg': 'rgba(0, 0, 0, 0.1)',
   '--placeholder-color': '#d5d5d5',
+  // 主题色
+  '--theme-blue': '#25e001',
+  '--el-color-primary': '#25e001',
+  '--el-color-primary-light-3': '#80c952',
+  '--el-color-primary-light-5': '#9aea80',
 };
 
 // 黎明之岛

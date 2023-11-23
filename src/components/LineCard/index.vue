@@ -249,7 +249,6 @@ const onSelectMenu = (menu: { label: string; value: number }) => {
 
     .left {
       flex: 1;
-      // max-width: calc(100% - 110px);
       font-weight: 700;
       .ellipsisMore(1);
     }
@@ -267,7 +266,7 @@ const onSelectMenu = (menu: { label: string; value: number }) => {
 
       .edit {
         margin-right: 5px;
-        color: var(--card-action-font-color);
+        color: var(--yellow-1);
       }
 
       .del {

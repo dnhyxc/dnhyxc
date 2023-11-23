@@ -191,7 +191,7 @@ const onScrollTo = (height?: number) => {
         display: flex;
         justify-content: flex-start;
         padding: 5px 20px 15px;
-        color: var(--card-action-font-color);
+        color: var(--el-color-primary-dark-2);
 
         .classify {
           .label {

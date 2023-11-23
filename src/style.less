@@ -2,7 +2,7 @@
 
 .webkitScrollbarStyle(transparent, @gray-1-1);
 
-body {
+:root {
   // 默认主题背景颜色
   --background: @theme;
   // 默认 Card 组件卡片渐变背景色，@bg-lg-2
@@ -24,6 +24,7 @@ body {
   --active-color: @active;
   // 主题文字颜色
   --theme-blue: @theme-blue;
+  --yellow-1: @yellow-1;
   --card-border: @card-border;
   // 字体颜色
   --font-1: @font-1;
@@ -91,6 +92,17 @@ body {
   --login-bg: @login-bg;
   --placeholder-color: @placeholder-color;
 
+  // element 主题色
+  --el-color-primary: @theme-blue;
+  --el-color-primary-dark-2: @primary-dark-2;
+  --el-color-primary-light-3: @primary-light-3;
+  --el-color-primary-light-5: @primary-light-5;
+  --el-color-primary-light-7: @primary-light-7;
+  --el-color-primary-light-8: @primary-light-8;
+  --el-color-primary-light-9: @primary-light-9;
+}
+
+body {
   margin: 0;
   padding: 0;
   display: flex;
