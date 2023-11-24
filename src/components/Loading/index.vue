@@ -5,24 +5,18 @@
  * index.vue
 -->
 <template>
-  <div
-    v-loading="loading"
-    element-loading-text="正在努力加载中 . . ."
-    :element-loading-spinner="LOADING_SVG"
-    element-loading-svg-view-box="-10, -10, 50, 50"
-    element-loading-background="rgba(249, 255, 249, 0.8)"
-    class="loading-wrap"
-  >
+  <div class="loading-wrap">
+    <AsyncLoading v-if="loading" class="async-load-wrap">
+      <div class="load-text">{{ loadText || '正在卖力加载中' }}</div>
+    </AsyncLoading>
     <slot></slot>
   </div>
 </template>
 
 <script setup lang="ts">
-import { LOADING_SVG } from '@/constant';
-
 interface IProps {
   loading: boolean | null;
-  loadIcon?: string;
+  loadText?: string;
 }
 
 defineProps<IProps>();
@@ -31,10 +25,20 @@ defineProps<IProps>();
 <style scoped lang="less">
 @import '@/styles/index.less';
 
-:deep {
-  .el-loading-mask {
-    background-color: var(--loading-color) !important;
-    border-radius: 5px;
+.loading-wrap {
+  position: relative;
+  border-radius: 5px;
+
+  .async-load-wrap {
+    position: absolute;
+    backdrop-filter: blur(5px);
+    background-color: var(--loading-color);
+    z-index: 99;
+
+    .load-text {
+      margin-top: 20px;
+      color: var(--loading-text-color);
+    }
   }
 }
 </style>

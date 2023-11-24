@@ -87,6 +87,12 @@ const onScrollTo = () => {
   width: calc(100% - 9px);
   padding: 10px 5px 10px 0;
 
+  :deep {
+    .async-loading {
+      margin-top: -9px;
+    }
+  }
+
   .timeline-card {
     position: relative;
     display: flex;

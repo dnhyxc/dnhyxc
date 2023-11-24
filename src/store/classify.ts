@@ -30,6 +30,7 @@ export const useClassifyStore = defineStore('classify', {
   actions: {
     // 获取文章分类数
     async getClassifys() {
+      this.loading = true;
       const res = normalizeResult<Classifys[]>(await Service.getTagList('classify'));
       if (res.success) {
         this.classifys = res.data;

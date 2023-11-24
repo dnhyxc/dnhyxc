@@ -26,7 +26,7 @@
           v-infinite-scroll="onFetchData"
           :infinite-scroll-delay="200"
           :infinite-scroll-disabled="disabled"
-          :infinite-scroll-distance="1"
+          :infinite-scroll-distance="2"
           class="comment-list"
         >
           <div

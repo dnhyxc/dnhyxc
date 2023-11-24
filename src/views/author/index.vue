@@ -411,6 +411,10 @@ const onScrollTo = (to?: number) => {
 
             .link {
               color: var(--theme-blue);
+
+              &:hover {
+                color: var(--el-color-primary-light-5);
+              }
             }
           }
         }
@@ -473,7 +477,7 @@ const onScrollTo = (to?: number) => {
           width: calc(50% - 5px);
           padding: 10px 10px;
           box-shadow: 0 0 5px var(--shadow-mack);
-          background-image: linear-gradient(225deg, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
+          background-image: linear-gradient(225deg, var(--bg-lg-color2) 100%, var(--bg-lg-color1) 100%);
           margin-bottom: 10px;
           border-radius: 5px;
           margin-right: 10px;

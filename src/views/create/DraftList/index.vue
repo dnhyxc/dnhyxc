@@ -207,7 +207,7 @@ const onScrollTo = (to?: number) => {
       font-size: 14px;
 
       .edit {
-        color: @theme-blue;
+        color: var(--theme-blue);
       }
 
       .del {
@@ -269,7 +269,7 @@ const onScrollTo = (to?: number) => {
               .username {
                 margin-right: 10px;
                 &:hover {
-                  color: @sub-2-blue;
+                  color: var(--theme-blue);
                 }
               }
             }
@@ -296,7 +296,7 @@ const onScrollTo = (to?: number) => {
                 cursor: pointer;
 
                 &:hover {
-                  color: @sub-2-blue;
+                  color: var(--theme-blue);
                 }
               }
             }
@@ -305,6 +305,10 @@ const onScrollTo = (to?: number) => {
 
         &:last-child {
           margin-bottom: 0;
+        }
+
+        &:hover {
+          box-shadow: 0 0 5px var(--el-color-primary-light-5);
         }
       }
 

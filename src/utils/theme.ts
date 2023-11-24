@@ -56,6 +56,7 @@ const removeStyle = {
   '--border-color': '#e4e6eb',
   '--login-bg': 'rgba(225, 225, 225, 0.1)',
   '--placeholder-color': '#a8abb2',
+  '--loading-text-color': '#089220',
   // 主题色
   // '--theme-blue': '#57a0ff',
   '--theme-blue': '#089220',
@@ -166,6 +167,7 @@ const imageStyles = {
   // border 颜色
   '--border-color': '#e4e6eb',
   '--placeholder-color': '#d6d6d6',
+  '--loading-text-color': '#089220',
   // 主题色
   '--theme-blue': '#089220',
   '--el-color-primary': '#089220',
@@ -388,9 +390,12 @@ const fresh = {
   '--pre-hover-bg': 'rgba(0, 0, 0, 0.3)',
   '--login-bg': 'rgba(0, 0, 0, 0.1)',
   '--placeholder-color': '#d5d5d5',
+  '--h-color': '#61dc00',
+  '--loading-color': 'rgba(102, 151, 9, 0.2)',
+  '--loading-text-color': '#2aff00',
   // 主题色
-  '--theme-blue': '#25e001',
-  '--el-color-primary': '#25e001',
+  '--theme-blue': '#61dc00',
+  '--el-color-primary': '#61dc00',
   '--el-color-primary-light-3': '#80c952',
   '--el-color-primary-light-5': '#9aea80',
 };

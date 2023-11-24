@@ -5,7 +5,7 @@
  * index.vue
 -->
 <template>
-  <div class="tag-wrap">
+  <Loading :loading="tagStore.loading" class="tag-wrap">
     <div class="cloud-content">
       <WordCloud :data="tagStore.tags" class="word-cloud-wrap" :callback="onCheckTag" :loading="tagStore.loading" />
     </div>
@@ -24,8 +24,7 @@
         </div>
       </el-scrollbar>
     </div>
-  </div>
-  <RouterView />
+  </Loading>
 </template>
 
 <script setup lang="ts">

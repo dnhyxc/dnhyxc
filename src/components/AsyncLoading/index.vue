@@ -8,6 +8,7 @@
   <div class="async-loading">
     <div class="loader-wrapper">
       <div class="loader"></div>
+      <slot></slot>
     </div>
   </div>
 </template>
@@ -25,6 +26,7 @@
 
   .loader-wrapper {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     position: relative;
@@ -39,7 +41,7 @@
       height: 50px;
       border-radius: 50%;
       border: 3px solid transparent;
-      border-top-color: var(--theme-blue);
+      border-top-color: var(--loading-text-color);
       animation: spin 2s linear infinite;
       z-index: 99;
 
@@ -52,7 +54,7 @@
         bottom: 5px;
         border-radius: 50%;
         border: 3px solid transparent;
-        border-top-color: var(--theme-blue);
+        border-top-color: var(--loading-text-color);
         animation: spin 3s linear infinite;
       }
 
@@ -65,7 +67,7 @@
         bottom: 15px;
         border-radius: 50%;
         border: 3px solid transparent;
-        border-top-color: var(--theme-blue);
+        border-top-color: var(--loading-text-color);
         animation: spin 1.5s linear infinite;
       }
     }

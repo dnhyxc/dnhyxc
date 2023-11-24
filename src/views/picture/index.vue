@@ -22,7 +22,7 @@
             :need-cropper="false"
             :quality="1"
           >
-            <div class="upload-text"><i class="iconfont icon-upload" />上传图片</div>
+            <el-button type="primary" link class="upload-text"><i class="iconfont icon-upload" />上传图片</el-button>
           </Upload>
         </div>
         <div class="delete-wrap">
@@ -239,16 +239,9 @@ const onScrollTo = () => {
       border-radius: 5px;
 
       .upload-text {
-        color: var(--theme-blue);
-
         .icon-upload {
           margin-right: 5px;
           font-size: 18px;
-        }
-
-        &:hover {
-          // border: 1px dashed @blue-1;
-          color: @blue-1;
         }
       }
     }

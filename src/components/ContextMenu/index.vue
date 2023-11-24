@@ -96,6 +96,7 @@ const onSizeChange = (size: { width: number; height: number }) => {
     color: var(--font-1);
     border-radius: 5px;
     backdrop-filter: blur(3px);
+    background: var(--menu-hover-color);
 
     .menu-item {
       padding: 5px;
@@ -105,7 +106,7 @@ const onSizeChange = (size: { width: number; height: number }) => {
       cursor: pointer;
 
       &:hover {
-        background: var(--menu-hover-color);
+        background: var(--pre-bg-color);
         color: var(--theme-blue);
       }
     }

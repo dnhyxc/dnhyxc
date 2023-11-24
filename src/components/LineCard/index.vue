@@ -315,7 +315,7 @@ const onSelectMenu = (menu: { label: string; value: number }) => {
           min-width: 100px;
           cursor: pointer;
           &:hover {
-            color: @sub-2-blue;
+            color: var(--theme-blue);
           }
         }
 
@@ -335,7 +335,7 @@ const onSelectMenu = (menu: { label: string; value: number }) => {
             cursor: pointer;
 
             &:hover {
-              color: @sub-2-blue;
+              color: var(--theme-blue);
             }
           }
 
@@ -390,7 +390,7 @@ const onSelectMenu = (menu: { label: string; value: number }) => {
         .read-count {
           cursor: pointer;
           &:hover {
-            color: @sub-2-blue;
+            color: var(--theme-blue);
           }
         }
       }

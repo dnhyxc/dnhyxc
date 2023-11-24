@@ -38,6 +38,7 @@
   --tab-color: @tab-color;
   --theme: @theme;
   --loading-color: @loading-color;
+  --loading-text-color: @loading-text-color;
   // @menu-weak
   --menu-weak: @menu-weak;
   --shadow-mack: @shadow-mack-color;
@@ -88,6 +89,7 @@
   --img-hue-rotate: @img-hue-rotate;
   // 菜单选中/hover颜色
   --menu-hover-color: @menu-hover-color;
+  --menu-hover-text-color: @menu-hover-text-color;
   // 登录表单背景颜色
   --login-bg: @login-bg;
   --placeholder-color: @placeholder-color;
@@ -160,7 +162,6 @@ ul {
     content: '';
     width: 100%;
     height: 100%;
-    // background: var(--pop-before-bg-color);
     box-shadow: 2px 0 2px -2px var(--card-border) inset;
     backdrop-filter: blur(3px);
   }
@@ -269,7 +270,7 @@ ul {
   }
 
   .el-dropdown-menu__item:not(.is-disabled):focus {
-    background-color: var(--menu-hover-color);
+    background-color: var(--pre-bg-color);
     color: var(--theme-blue);
   }
 

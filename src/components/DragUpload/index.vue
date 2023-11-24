@@ -99,6 +99,11 @@ const onUpload = async (event: { file: File }) => {
     }
   }
 
+  .el-icon--upload,
+  .el-upload__text {
+    color: @placeholder-color;
+  }
+
   &:hover {
     .el-icon--upload,
     .el-upload__text {

@@ -166,6 +166,7 @@ defineExpose({
   display: flex;
   flex-direction: column;
   height: 300px;
+  width: auto;
   overflow: auto;
 
   .list-wrap {

@@ -240,7 +240,7 @@ const onSelectMenu = (menu: { label: string; value: number }, data: TimelineArti
 
         .edit {
           margin-right: 10px;
-          color: var(--card-action-font-color);
+          color: var(--theme-blue);
           font-size: 16px;
         }
 
@@ -268,7 +268,7 @@ const onSelectMenu = (menu: { label: string; value: number }, data: TimelineArti
           .ellipsisMore(1);
           cursor: pointer;
           &:hover {
-            color: @sub-2-blue;
+            color: var(--theme-blue);
           }
         }
       }
@@ -344,7 +344,7 @@ const onSelectMenu = (menu: { label: string; value: number }, data: TimelineArti
             cursor: pointer;
 
             &:hover {
-              color: @sub-2-blue;
+              color: var(--theme-blue);
             }
           }
         }
@@ -354,7 +354,7 @@ const onSelectMenu = (menu: { label: string; value: number }, data: TimelineArti
         .read-count {
           cursor: pointer;
           &:hover {
-            color: @sub-2-blue;
+            color: var(--theme-blue);
           }
         }
       }
