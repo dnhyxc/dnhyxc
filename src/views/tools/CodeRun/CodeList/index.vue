@@ -173,7 +173,7 @@ const onDelete = (id: string) => {
     .no-more {
       text-align: center;
       color: var(--font-4);
-      margin: 20px 0 2px;
+      margin: 18px 0 2px;
       .clickNoSelectText();
     }
   }
@@ -182,10 +182,11 @@ const onDelete = (id: string) => {
     .el-drawer__header {
       position: relative;
       margin-bottom: 0;
+      padding: 17px 12px 0 24px;
     }
 
     .el-drawer__body {
-      padding: 15px 15px 20px;
+      padding: 13px 18px 20px;
     }
   }
 }

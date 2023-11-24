@@ -236,7 +236,7 @@ const onScrollTo = (to?: number) => {
         box-shadow: 0 0 5px var(--shadow-mack);
         background-image: linear-gradient(225deg, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
         border-radius: 5px;
-        margin: 0 7px 10px 5px;
+        margin: 0 5px 10px 5px;
 
         :deep {
           .art-info {
@@ -318,10 +318,11 @@ const onScrollTo = (to?: number) => {
     .el-drawer__header {
       position: relative;
       margin-bottom: 0;
+      padding: 20px 12px 0 24px;
     }
 
     .el-drawer__body {
-      padding: 20px 15px;
+      padding: 16px 18px 20px;
     }
   }
 
