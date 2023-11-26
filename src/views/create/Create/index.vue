@@ -8,7 +8,11 @@
   <div class="drawer-wrap">
     <el-drawer v-model="visible" size="350" :show-close="false">
       <template #header="{ titleId, titleClass }">
-        <h3 :id="titleId" :class="titleClass">{{ articleId ? '更新文章' : '发布文章' }}</h3>
+        <h3 :id="titleId" :class="titleClass">
+          {{
+            isSaveDraft ? (createStore.draftArticleId ? '更新草稿' : '保存草稿') : articleId ? '更新文章' : '发布文章'
+          }}
+        </h3>
       </template>
       <div class="content">
         <el-form ref="formRef" label-width="52px" :model="createStore?.createInfo">
@@ -136,7 +140,7 @@
         <div class="footer">
           <el-button class="btn" @click="onCancel">取消</el-button>
           <el-button class="btn" type="primary" @click="onSubmit">
-            {{ articleId ? '更新' : isSaveDraft ? '保存' : '发布' }}
+            {{ articleId ? '更新' : isSaveDraft ? (createStore.draftArticleId ? '更新' : '保存') : '发布' }}
           </el-button>
         </div>
       </template>
@@ -352,6 +356,7 @@ const onSaveDraft = () => {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      width: 100%;
 
       .icon-xiajiantou {
         font-size: 14px;
