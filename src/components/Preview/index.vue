@@ -91,7 +91,7 @@ const onCopyCodeSuccess = (value: string) => {
 
     .vuepress-markdown-body {
       box-sizing: border-box;
-      max-width: 66vw;
+      max-width: calc(66vw + 8px);
       // max-width: calc(100vw - 350px);
       padding: 20px;
       background-color: transparent;

@@ -22,6 +22,19 @@ import '@kangc/v-md-editor/lib/plugins/emoji/emoji.css';
 import '@kangc/v-md-editor/lib/style/preview.css';
 import '@kangc/v-md-editor/lib/plugins/copy-code/copy-code.css';
 
+// 扩展高亮语言
+const codeHighlightExtensionMap = {
+  vue: 'html',
+  react: 'js',
+  json: 'js',
+  ts: 'js',
+  typescript: 'js',
+  c: 'js',
+  java: 'js',
+  go: 'js',
+  'c++': 'js',
+};
+
 export const usePlugins = <T>(app: T | any) => {
   // 挂载瀑布流组件
   app.use(VueMasonryPlugin);
@@ -36,13 +49,7 @@ export const usePlugins = <T>(app: T | any) => {
   VueMarkdownEditor.use(vuepressTheme, {
     Prism,
     // 扩展高亮语言
-    codeHighlightExtensionMap: {
-      vue: 'html',
-      react: 'js',
-      json: 'js',
-      ts: 'js',
-      typescript: 'js',
-    },
+    codeHighlightExtensionMap,
   });
 
   VueMarkdownEditor.use(createHighlightLinesPlugin());
@@ -51,13 +58,7 @@ export const usePlugins = <T>(app: T | any) => {
   VMdPreview.use(vuepressTheme, {
     Prism,
     // 扩展高亮语言
-    codeHighlightExtensionMap: {
-      vue: 'html',
-      react: 'js',
-      json: 'js',
-      ts: 'js',
-      typescript: 'js',
-    },
+    codeHighlightExtensionMap,
   });
 
   // 显示行号

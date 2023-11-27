@@ -396,6 +396,10 @@ const onScrollTo = () => {
         cursor: pointer;
         -webkit-app-region: no-drag;
         color: var(--font-color);
+
+        &:hover {
+          color: var(--active-color);
+        }
       }
 
       .senior-search {
@@ -406,6 +410,10 @@ const onScrollTo = () => {
         color: var(--font-color);
         font-size: 20px;
         cursor: pointer;
+
+        &:hover {
+          color: var(--active-color);
+        }
       }
 
       .search-inp {
@@ -458,6 +466,10 @@ const onScrollTo = () => {
         font-size: 17px;
         cursor: pointer;
         color: var(--font-color);
+
+        &:hover {
+          color: var(--active-color);
+        }
       }
     }
 
@@ -473,6 +485,12 @@ const onScrollTo = () => {
         margin-left: 15px;
         margin-top: 1px;
         color: var(--font-color);
+      }
+
+      &:hover {
+        .font {
+          color: var(--active-color);
+        }
       }
 
       .active {
@@ -492,6 +510,12 @@ const onScrollTo = () => {
         margin-left: 15px;
         color: var(--font-color);
       }
+
+      &:hover {
+        .font {
+          color: var(--active-color);
+        }
+      }
     }
 
     .page-actions {
@@ -509,6 +533,10 @@ const onScrollTo = () => {
       .icon-text {
         margin-left: 15px;
         font-size: 16px;
+      }
+
+      &:hover {
+        color: var(--active-color);
       }
     }
   }
