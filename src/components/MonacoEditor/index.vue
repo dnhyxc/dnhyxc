@@ -193,6 +193,7 @@ const initEditor = () => {
         overviewRulerBorder: false, // 不要滚动条的边框
         tabSize: 2,
         colorDecorators: true, // 呈现内联色彩装饰器和颜色选择器
+        wordWrap: 'on', // 超出一屏自动换行
       });
     }
 
