@@ -28,6 +28,7 @@
               </el-dropdown-menu>
             </template>
           </el-dropdown>
+          <span class="action iconfont icon-info-circle-color" title="快捷键说明" @click="onShowInfo" />
           <span v-if="!isCodeEdit" class="action iconfont icon-markdown" title="切换编辑器" @click="onChangeEditor" />
         </div>
         <div v-if="!isCodeEdit" class="create-action">
@@ -54,7 +55,19 @@
         <span v-else class="language-text result-text">{{ language }} 运行结果</span>
       </div>
     </div>
-    <div ref="editorRef" :class="`${theme !== 'vs' && 'dark-monaco-editor-wrap'} monaco-editor-wrap`"></div>
+    <div ref="editorRef" :class="`${theme !== 'vs' && 'dark-monaco-editor-wrap'} monaco-editor-wrap`" />
+    <ElModel v-model:visible="visible" title="vscode 快捷键说明" :footer="false" :width="'86vw'" :draggable="false">
+      <template #content>
+        <div class="model-content">
+          <el-scrollbar>
+            <div v-for="item in VS_CODE_SHORTCUT_KEYS" :key="item.name" class="shortcuts">
+              <span class="key-name">{{ item.name }}</span>
+              <span>{{ item.desc }}</span>
+            </div>
+          </el-scrollbar>
+        </div>
+      </template>
+    </ElModel>
   </div>
 </template>
 
@@ -67,7 +80,7 @@ import cssWorker from 'monaco-editor/esm/vs/language/css/css.worker?worker';
 import htmlWorker from 'monaco-editor/esm/vs/language/html/html.worker?worker';
 import tsWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker?worker';
 import EditorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker';
-import { MONACO_EDITOR_LANGUAGES, CODE_RUN_LANGUAGES } from '@/constant';
+import { MONACO_EDITOR_LANGUAGES, CODE_RUN_LANGUAGES, VS_CODE_SHORTCUT_KEYS } from '@/constant';
 import { createStore } from '@/store';
 
 interface IProps {
@@ -97,6 +110,8 @@ const editorRef = ref<HTMLDivElement | null>(null);
 const language = ref<string>(props.isCodeEdit ? 'javascript' : 'markdown');
 // 编辑代码模式时的默认值
 const content = ref<string | undefined>('');
+// 是否显示快捷键提示弹窗
+const visible = ref<boolean>(false);
 
 let editor: monaco.editor.IStandaloneCodeEditor | null = null;
 
@@ -271,6 +286,11 @@ const onSaveDraft = () => {
   }
   props.onSaveDraft?.(editor as any);
 };
+
+// 显示快捷键提示弹窗
+const onShowInfo = () => {
+  visible.value = true;
+};
 </script>
 
 <style scoped lang="less">
@@ -352,6 +372,10 @@ const onSaveDraft = () => {
         font-size: 15px;
       }
 
+      .icon-info-circle-color {
+        font-size: 17px;
+      }
+
       .icon-markdown {
         font-size: 25px;
       }
@@ -404,6 +428,21 @@ const onSaveDraft = () => {
   .dark-toolbar,
   .dark-monaco-editor-wrap {
     background-color: #1e1e1e;
+  }
+
+  .model-content {
+    height: 72vh;
+
+    .shortcuts {
+      display: flex;
+      justify-content: flex-start;
+      padding: 10px 0;
+      color: var(--font-1);
+
+      .key-name {
+        width: 35%;
+      }
+    }
   }
 }
 </style>

@@ -6,9 +6,17 @@
 -->
 <template>
   <div class="model-wrap">
-    <el-dialog v-model="visible" :title="title" width="400px" destroy-on-close center draggable align-center>
+    <el-dialog
+      v-model="visible"
+      destroy-on-close
+      center
+      align-center
+      :title="title"
+      :width="width"
+      :draggable="draggable"
+    >
       <slot name="content"></slot>
-      <template #footer>
+      <template v-if="footer" #footer>
         <slot name="footer">
           <span class="dialog-footer">
             <el-button class="btn" @click="visible = false">取消</el-button>
@@ -26,9 +34,18 @@ import { computed } from 'vue';
 interface IProps {
   visible: boolean;
   title?: string;
+  width?: string;
+  footer?: boolean;
+  draggable?: boolean;
 }
 
-const props = defineProps<IProps>();
+const props = withDefaults(defineProps<IProps>(), {
+  visible: false,
+  title: '',
+  width: '400px',
+  footer: true,
+  draggable: true,
+});
 
 const emit = defineEmits(['update:visible']);
 

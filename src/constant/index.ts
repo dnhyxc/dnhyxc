@@ -891,3 +891,115 @@ export const CHAT_MENU = (save?: boolean) => {
   }
   return menus;
 };
+
+// vscode 快捷键说明
+export const VS_CODE_SHORTCUT_KEYS = [
+  {
+    name: 'Ctrl + X',
+    desc: '剪切行（空选定） Cut line (empty selection)',
+  },
+  {
+    name: 'Ctrl + C',
+    desc: '复制行（空选定）Copy line (empty selection)',
+  },
+  {
+    name: 'Alt + ↑ / ↓',
+    desc: '向上/向下移动行 Move line up/down',
+  },
+  {
+    name: 'Shift + Alt + ↓ / ↑',
+    desc: '向上/向下复制行 Copy line up/down',
+  },
+  {
+    name: 'Ctrl + Shift + K',
+    desc: '删除行 Delete line',
+  },
+  {
+    name: 'Ctrl + Enter',
+    desc: '在下面插入行 Insert line below',
+  },
+  {
+    name: 'Ctrl + Shift + Enter',
+    desc: '在上面插入行 Insert line above',
+  },
+  {
+    name: 'Ctrl + Shift + \\',
+    desc: '跳到匹配的括号 Jump to matching bracket',
+  },
+  {
+    name: 'Ctrl + ] / [',
+    desc: '增加/减少缩进行 Indent/outdent line',
+  },
+  {
+    name: 'Ctrl + Home',
+    desc: '转到文件开头 Go to beginning of file',
+  },
+  {
+    name: 'Ctrl + End',
+    desc: '转到文件末尾 Go to end of file',
+  },
+  {
+    name: 'Ctrl + ↑ / ↓',
+    desc: '向上/向下滚动行 Scroll line up/down',
+  },
+  {
+    name: 'Ctrl + /',
+    desc: '切换行注释 Toggle line comment',
+  },
+  {
+    name: 'Ctrl + F',
+    desc: '查找 Find',
+  },
+  {
+    name: 'Alt + C / R / W',
+    desc: '切换区分大小写/正则表达式/整个词 Toggle case-sensitive / regex / whole word',
+  },
+  {
+    name: 'Alt + 单击',
+    desc: '插入光标 Insert cursor',
+  },
+  {
+    name: 'Ctrl + Alt + ↑ / ↓',
+    desc: '在上/下插入光标 Insert cursor above / below',
+  },
+  {
+    name: 'Ctrl + U',
+    desc: '撤消上一个光标操作 Undo last cursor operation',
+  },
+  {
+    name: 'Shift + Alt + I',
+    desc: '在选定的每一行的末尾插入光标 Insert cursor at end of each line selected',
+  },
+  {
+    name: 'Ctrl + I',
+    desc: '选择当前行 Select current line',
+  },
+  {
+    name: 'Ctrl + Shift + L',
+    desc: '选择当前选择的所有出现 Select all occurrences of current selection',
+  },
+  {
+    name: 'Ctrl + F2',
+    desc: '选择当前字的所有出现 Select all occurrences of current word',
+  },
+  {
+    name: 'Shift + Alt + →',
+    desc: '展开选择 Expand selection',
+  },
+  {
+    name: 'Shift + Alt + ←',
+    desc: '缩小选择 Shrink selection',
+  },
+  {
+    name: 'Shift + Alt + （拖动鼠标）',
+    desc: '列（框）选择 Column (box) selection',
+  },
+  {
+    name: 'Ctrl + Shift + Alt +（箭头键）',
+    desc: '列（框）选择 Column (box) selection',
+  },
+  {
+    name: 'Ctrl + Shift + Alt + PgUp / PgDown',
+    desc: '列（框）选择页上/下 Column (box) selection page up/down',
+  },
+];
