@@ -5,7 +5,7 @@ import { normalizeResult, hlightKeyword } from '@/utils';
 import { useCheckUserId } from '@/hooks';
 import { createWebSocket, sendMessage } from '@/socket';
 import { loginStore } from '@/store';
-import { ChatItem, ChatInfo, ChatList, ContactItem, ContactList, UserInfoParams } from '@/typings/common';
+import { ChatItem, ChatInfo, ChatList, ContactItem, ContactList, UserInfoParams, ReplyInfo } from '@/typings/common';
 
 interface IProps {
   loading: boolean | null;
@@ -66,7 +66,7 @@ export const useChatStore = defineStore('chat', {
     },
 
     // 发送消息
-    sendChatMessage({ to, content }: { to: string; content: string }) {
+    sendChatMessage({ to, content, replyInfo }: { to: string; content: string; replyInfo?: ReplyInfo }) {
       const { userId } = loginStore.userInfo;
       if (userId === to) return;
       const chatId = [userId, to].sort().join('_');
@@ -77,6 +77,7 @@ export const useChatStore = defineStore('chat', {
             from: userId,
             to,
             content,
+            replyInfo,
             chatId,
             createTime: new Date().valueOf(),
             action: 'CHAT',

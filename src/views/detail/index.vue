@@ -192,6 +192,7 @@ const onScrollTo = (height?: number) => {
         justify-content: flex-start;
         padding: 5px 20px 15px;
         color: var(--el-color-primary-dark-2);
+        margin-bottom: 30px;
 
         .classify {
           .label {

@@ -885,6 +885,7 @@ export const CHAT_MENU = (save?: boolean) => {
   const menus = [
     { label: '删除', value: 1 },
     { label: '复制', value: 2 },
+    { label: '回复', value: 4 },
   ];
   if (save) {
     menus.push({ label: '另存为', value: 3 });

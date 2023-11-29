@@ -115,11 +115,11 @@ const imageStyles = {
   '--shadow-color': 'rgba(245, 250, 248, 0.2)',
   // 字体颜色
   '--font-1': '#fff',
-  '--font-2': '#fff',
-  '--font-3': '#fff',
-  '--font-4': '#fff',
-  '--font-5': '#f2f3f5',
-  '--font-6': '#f2f3f5',
+  '--font-2': '#f2f2f2',
+  '--font-3': '#ebebeb',
+  '--font-4': '#e8e8e8',
+  '--font-5': '#dfdfdf',
+  '--font-6': '#cdcdcd',
   // loading 背景颜色
   '--loading-color': 'rgba(0, 0, 0, 0.1)',
   // 组件边框颜色
@@ -386,6 +386,9 @@ const fresh = {
   '--bg-image-url': `url(${FRESH})`,
   '--login-bg-img': 'url(@/assets/images/fresh.jpg)',
   '--backdrop-filter': 'blur(0px)',
+  // 文章各种卡片渐变颜色
+  '--bg-lg-color1': 'rgba(0, 0, 0, 0.25)',
+  '--bg-lg-color2': 'rgba(0, 0, 0, 0.15)',
   // 文章预览背景图片
   '--pre-hover-bg': 'rgba(0, 0, 0, 0.3)',
   '--login-bg': 'rgba(0, 0, 0, 0.1)',

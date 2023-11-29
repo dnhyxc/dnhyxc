@@ -188,7 +188,7 @@ defineExpose({
     .left {
       flex: 1;
       font-weight: 700;
-      color: var(--font-3);
+      color: var(--font-1);
       .ellipsisMore(1);
     }
 
@@ -223,6 +223,7 @@ defineExpose({
         .art-info {
           flex: 1;
           margin-right: 0;
+          color: var(--font-1);
 
           .pushDate {
             font-size: 14px;
@@ -286,7 +287,7 @@ defineExpose({
 
   .no-more {
     text-align: center;
-    color: var(--font-4);
+    color: var(--font-3);
     margin: 0 0 5px;
     .clickNoSelectText();
   }

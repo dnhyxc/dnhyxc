@@ -13,6 +13,31 @@
       </div>
       <div id="INPUT" class="input">
         <div id="TEXTAREA_WRAP" class="textAreaWrap">
+          <div v-if="sendMessage && (showIcon || !showAvatar)" id="EMOJI_WRAP" class="emojiWrap">
+            <div id="EMOJI_LIST" class="emoji-list">
+              <div id="ICONFONT" class="iconfontWrap">
+                <span id="SHOW_EMOJI" class="iconfont" @click="onShowEmoji">
+                  <i id="BIAOQING_XUE" class="font iconfont icon-xiaolian" />
+                  <span id="BIAOQING_XUE" class="icon-text">表情</span>
+                </span>
+                <span id="BIAOQING_XUE" class="iconfont">
+                  <Upload
+                    v-model:file-path="picture"
+                    :preview="false"
+                    :show-img="false"
+                    :need-cropper="false"
+                    :fixed-number="[600, 338]"
+                    :get-upload-url="getUploadUrl"
+                  >
+                    <i id="CHARUTUPIAN" class="font iconfont icon-tupian" />
+                    <span id="CHARUTUPIAN" class="icon-text">图片</span>
+                  </Upload>
+                </span>
+              </div>
+              <Emoji v-show="showEmoji" v-model:showEmoji="showEmoji" class="emojis" :add-emoji="addEmoji" />
+            </div>
+          </div>
+          <slot name="reply"></slot>
           <el-input
             id="TEXTAREA_WRAP"
             ref="inputRef"
@@ -32,7 +57,7 @@
             @keydown.enter.native="onKeyDown"
           />
         </div>
-        <div v-if="showIcon || !showAvatar" id="EMOJI_WRAP" class="emojiWrap">
+        <div v-if="!sendMessage && (showIcon || !showAvatar)" id="EMOJI_WRAP" class="emojiWrap">
           <div id="EMOJI_LIST" class="emoji-list">
             <div id="ICONFONT" class="iconfontWrap">
               <span id="SHOW_EMOJI" class="iconfont" @click="onShowEmoji">
@@ -240,6 +265,11 @@ const submitComment = async () => {
     }
   }
 };
+
+defineExpose({
+  keyword,
+  inputRef,
+});
 </script>
 
 <style scoped lang="less">
@@ -248,7 +278,7 @@ const submitComment = async () => {
 .DraftInput {
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
+  justify-content: flex-start;
   width: 100%;
   height: 100%;
 
@@ -275,7 +305,6 @@ const submitComment = async () => {
 
   .content {
     display: flex;
-    padding-top: 20px;
 
     .avatar {
       margin-right: 20px;

@@ -30,9 +30,9 @@ export const registerShortcut = (app: App) => {
     globalInfo.win?.webContents.send('force-reload');
   });
 
-  globalShortcut.register('Alt+CommandOrControl+I', () => {
-    console.log('alt + ctrl + I');
-  });
+  // globalShortcut.register('Alt+CommandOrControl+I', () => {
+  //   console.log('alt + ctrl + I');
+  // });
 
   // 快捷键 Alt+Shift+Q 显示隐藏
   globalShortcut.register((store.get('OPEN_SHORTCUT') as string) || 'Shift+Alt+Q', () => {

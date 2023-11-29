@@ -9,27 +9,32 @@
     <div :class="`${theme !== 'vs' && 'dark-toolbar'} toolbar`">
       <div class="left">
         <div v-if="!readonly" class="code-action">
-          <el-dropdown class="menu-list" max-height="200px">
+          <el-dropdown class="menu-list" max-height="200px" popper-class="custom-dropdown-styles">
             <span class="action iconfont icon-yuyan" title="切换语言" />
             <template #dropdown>
               <el-dropdown-menu>
-                <el-dropdown-item v-for="item in languages" :key="item" @click="onChangeLanguage(item)">
+                <el-dropdown-item
+                  v-for="item in languages"
+                  :key="item"
+                  class="dropdown-text"
+                  @click="onChangeLanguage(item)"
+                >
                   {{ item }}
                 </el-dropdown-item>
               </el-dropdown-menu>
             </template>
           </el-dropdown>
-          <el-dropdown class="menu-list" trigger="click">
+          <el-dropdown class="menu-list" popper-class="custom-dropdown-styles">
             <span class="action iconfont icon-sketchpad-theme" title="切换主题" />
             <template #dropdown>
               <el-dropdown-menu>
-                <el-dropdown-item @click="onSelectTheme('vs')">晶莹白</el-dropdown-item>
-                <el-dropdown-item @click="onSelectTheme('vs-dark')">暗夜黑</el-dropdown-item>
+                <el-dropdown-item class="dropdown-text" @click="onSelectTheme('vs')">晶莹白</el-dropdown-item>
+                <el-dropdown-item class="dropdown-text" @click="onSelectTheme('vs-dark')">暗夜黑</el-dropdown-item>
               </el-dropdown-menu>
             </template>
           </el-dropdown>
-          <span class="action iconfont icon-info-circle-color" title="快捷键说明" @click="onShowInfo" />
-          <span v-if="!isCodeEdit" class="action iconfont icon-markdown" title="切换编辑器" @click="onChangeEditor" />
+          <span class="action iconfont icon-tishi" title="快捷键说明" @click="onShowInfo" />
+          <span v-if="!isCodeEdit" class="action iconfont icon-bianjiqi" title="切换编辑器" @click="onChangeEditor" />
         </div>
         <div v-if="!isCodeEdit" class="create-action">
           <el-button
@@ -62,7 +67,7 @@
           <el-scrollbar>
             <div v-for="item in VS_CODE_SHORTCUT_KEYS" :key="item.name" class="shortcuts">
               <span class="key-name">{{ item.name }}</span>
-              <span>{{ item.desc }}</span>
+              <span class="key-desc">{{ item.desc }}</span>
             </div>
           </el-scrollbar>
         </div>
@@ -372,12 +377,13 @@ const onShowInfo = () => {
         font-size: 15px;
       }
 
-      .icon-info-circle-color {
-        font-size: 17px;
+      .icon-tishi {
+        font-size: 16px;
+        margin-top: -2px;
       }
 
-      .icon-markdown {
-        font-size: 25px;
+      .icon-bianjiqi {
+        font-size: 17px;
       }
 
       .clear {
@@ -435,13 +441,29 @@ const onShowInfo = () => {
 
     .shortcuts {
       display: flex;
-      justify-content: flex-start;
+      justify-content: center;
       padding: 10px 0;
       color: var(--font-1);
 
       .key-name {
-        width: 35%;
+        margin-right: 20px;
+        font-weight: 700;
       }
+
+      .key-desc {
+        color: var(--font-3);
+      }
+    }
+  }
+}
+
+:deep {
+  .dropdown-text {
+    color: var(--font-1);
+
+    &:hover {
+      color: var(--theme-blue);
+      background-color: var(--pre-bg-color);
     }
   }
 }

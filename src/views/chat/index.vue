@@ -136,6 +136,18 @@
                     @select="(menu:Menu) => onSelectMenu(menu, msg)"
                   >
                     <div class="chat-item" @dblclick="onDblclick">
+                      <div v-if="msg.chat.replyInfo?.content" class="reply-content">
+                        <div class="reply-time">
+                          <span class="reply-title">
+                            回复
+                            <span class="username">{{ msg.chat.replyInfo?.username }}</span>
+                          </span>
+                          <span class="user-time">
+                            {{ formatDate(msg.chat.replyInfo?.createTime, 'HH:mm') }}
+                          </span>
+                        </div>
+                        <div class="reply-text" v-html="replaceCommentContent(msg.chat.replyInfo?.content || '')" />
+                      </div>
                       <div class="message-text" v-html="replaceCommentContent(msg.chat.content)" />
                     </div>
                   </ContextMenu>
@@ -155,6 +167,18 @@
                     @select="(menu:Menu) => onSelectMenu(menu, msg)"
                   >
                     <div class="chat-item" @dblclick="onDblclick">
+                      <div v-if="msg.chat.replyInfo?.content" class="reply-content">
+                        <div class="reply-time">
+                          <span class="reply-title">
+                            回复
+                            <span class="username">{{ msg.chat.replyInfo?.username }}</span>
+                          </span>
+                          <span class="user-time">
+                            {{ formatDate(msg.chat.replyInfo?.createTime, 'HH:mm') }}
+                          </span>
+                        </div>
+                        <div class="reply-text" v-html="replaceCommentContent(msg.chat.replyInfo?.content || '')" />
+                      </div>
                       <div class="message-text" v-html="replaceCommentContent(msg.chat.content)" />
                     </div>
                   </ContextMenu>
@@ -165,12 +189,20 @@
         </el-scrollbar>
       </div>
       <div v-if="currentContactId" class="draft-inp-wrap">
-        <DraftInput
-          class="draft-send-inp"
-          placeholder="enter 发送消息，ctrl + enter 换行"
-          :on-hide-input="onHideInput"
-          :send-message="sendMessage"
-        />
+        <DraftInput ref="draftInputRef" placeholder="enter 发送消息，ctrl + enter 换行" :send-message="sendMessage">
+          <template #reply>
+            <div v-if="replyInfo" class="reply-info">
+              <div class="reply-user-info">
+                <div class="reply-user-time">
+                  回复 <span class="username">{{ replyInfo?.username }}</span>
+                  {{ formatDate(replyInfo?.chat?.createTime, 'HH:mm') }}
+                  <i class="iconfont icon-guanbi clear-reply" @click="onClearReply" />
+                </div>
+                <div class="reply-content" :title="replyInfo?.chat?.content">{{ replyInfo?.chat?.content }}</div>
+              </div>
+            </div>
+          </template>
+        </DraftInput>
       </div>
       <ImagePreview
         v-model:previewVisible="previewVisible"
@@ -224,7 +256,7 @@ import { onMounted, ref, computed, nextTick, onUnmounted, onBeforeUnmount, Ref, 
 import { useRoute, useRouter } from 'vue-router';
 import { HEAD_IMG, CONTACT_MENU, CHAT_MENU, NO_DATA_SVG } from '@/constant';
 import { chatStore, loginStore, messageStore, uploadStore } from '@/store';
-import { ContactItem, Menu, ChatItem } from '@/typings/common';
+import { ContactItem, Menu, ChatItem, ReplyChatInfo } from '@/typings/common';
 import {
   formatTimestamp,
   formatDate,
@@ -245,6 +277,7 @@ const { userId, username } = route?.query;
 const keyword = ref<string>('');
 const active = ref<string>(userId as string);
 const contactName = ref<string>(username as string);
+const draftInputRef = ref<any>(null);
 const inputRef = ref<HTMLInputElement | null>(null);
 const messageRef = ref<HTMLElement | null>(null);
 const scrollRef = ref<any>(null);
@@ -264,6 +297,7 @@ const searchName = ref<string>('');
 const isDropOn = ref<boolean>(false); // 判断是否将图片拖拽到容器上面
 const menuAndHeadInfo = reactive<{ mw: number; hH: number }>({ mw: 0, hH: 0 });
 const sendVisible = ref<boolean>(false);
+const replyInfo = ref<ChatItem | null>(null);
 const dragImgInfo = reactive<{
   name: string;
   size: number;
@@ -277,8 +311,6 @@ const dragImgInfo = reactive<{
 });
 
 let timer: ReturnType<typeof setTimeout> | null = null;
-
-const emit = defineEmits(['updateFocus']);
 
 const noMore = computed(() => {
   const { chatList, total } = chatStore;
@@ -330,6 +362,11 @@ watch(sendVisible, () => {
 // 监听预览窗口状态，将拖拽状态设置为false
 watch(previewVisible, () => {
   isDropOn.value = false;
+});
+
+// 监听聊天联系人id，清除回复信息
+watch(currentContactId, () => {
+  replyInfo.value = null;
 });
 
 onMounted(async () => {
@@ -530,17 +567,26 @@ const loadContactList = async () => {
   await chatStore.getContactList();
 };
 
-// 隐藏回复输入框
-const onHideInput = () => {
-  emit('updateFocus', false);
-};
-
 // 发送消息
 const sendMessage = (content: string) => {
-  chatStore.sendChatMessage({
+  const params: ReplyChatInfo = {
     to: currentContactId.value as string,
     content,
-  });
+  };
+  if (replyInfo.value) {
+    const {
+      chat: { content, createTime },
+      username,
+    } = replyInfo.value;
+    params.replyInfo = {
+      content,
+      createTime,
+      username: username!,
+    };
+  }
+  chatStore.sendChatMessage(params);
+  // 发送消息之后清空回复信息
+  replyInfo.value = null;
 };
 
 // 滚动到底部
@@ -594,12 +640,30 @@ const onSave = (data: ChatItem) => {
   }
 };
 
+// 清空回复内容
+const onClearReply = () => {
+  replyInfo.value = null;
+};
+
+// 回复
+const onReply = (data: ChatItem) => {
+  const { from } = data.chat;
+  const { userId, username } = loginStore.userInfo;
+  replyInfo.value = {
+    ...data,
+    username: from === userId ? username : contactName.value,
+  };
+  // 设置输入框聚焦
+  draftInputRef.value?.inputRef?.focus();
+};
+
 // 选中后菜单
 const onSelectMenu = (menu: Menu, data: ChatItem) => {
   const actions = {
     1: delMsg,
     2: onCopy,
     3: onSave,
+    4: onReply,
   };
   actions[menu.value](data);
 };
@@ -1109,7 +1173,35 @@ const onPreviewDragImg = () => {
 
           .chat-item {
             display: flex;
-            justify-content: space-between;
+            flex-direction: column;
+            .reply-content {
+              padding: 5px 8px;
+              color: @font-3;
+              font-size: 13px;
+              background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.25) 100%);
+              border-top-left-radius: 4px;
+              border-top-right-radius: 4px;
+
+              .reply-time {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+
+                .reply-title {
+                  .username {
+                    margin-left: 5px;
+                  }
+                }
+
+                .user-time {
+                  margin-left: 20px;
+                }
+              }
+
+              .reply-text {
+                margin-top: 5px;
+              }
+            }
 
             .message-text {
               width: 100%;
@@ -1216,17 +1308,55 @@ const onPreviewDragImg = () => {
       display: flex;
       flex-direction: column;
       justify-content: flex-end;
-      height: 130px;
-      border-top: 1px solid var(--border-color);
+      min-height: 181px;
       box-sizing: border-box;
       background-color: transparent;
+      border-top: 1px solid var(--border-color);
+
+      .reply-info {
+        padding: 5px;
+        box-sizing: border-box;
+        font-size: 14px;
+
+        .reply-user-info {
+          padding: 5px 5px 6px;
+          border-radius: 5px;
+          background-image: linear-gradient(to right, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
+          color: @placeholder-color;
+          color: var(--font-6);
+
+          .reply-user-time {
+            position: relative;
+            .clear-reply {
+              position: absolute;
+              right: 0;
+              top: 0;
+              font-size: 16px;
+              cursor: pointer;
+
+              &:hover {
+                color: var(--active);
+              }
+            }
+          }
+
+          .username {
+            margin: 0 5px;
+          }
+
+          .reply-content {
+            margin-top: 5px;
+            .ellipsisMore(1);
+          }
+        }
+      }
 
       :deep {
         .emojis {
           display: flex;
           justify-content: center;
           position: absolute;
-          bottom: 42px;
+          bottom: 36px;
           left: 0;
           margin-top: 20px;
           width: 210px;
@@ -1246,8 +1376,6 @@ const onPreviewDragImg = () => {
         }
 
         .emojiWrap {
-          position: absolute;
-          top: -35px;
           padding-left: 5px;
           margin-top: 0;
           box-sizing: border-box;
@@ -1255,14 +1383,13 @@ const onPreviewDragImg = () => {
           height: 31px;
           line-height: 31px;
         }
-
         .textAreaWrap {
           height: 100%;
         }
 
         .el-textarea__inner {
           box-shadow: none;
-          height: 88px !important;
+          height: 80px !important;
           padding: 0 5px;
           border-radius: initial;
           background-color: transparent;
