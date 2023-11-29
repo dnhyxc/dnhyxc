@@ -42,7 +42,7 @@
             id="TEXTAREA_WRAP"
             ref="inputRef"
             v-model="keyword"
-            :autosize="{ minRows: 3, maxRows: 10 }"
+            :autosize="{ minRows: 3 }"
             maxlength="1000"
             :resize="sendMessage && 'none'"
             type="textarea"

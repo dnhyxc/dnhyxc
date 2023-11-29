@@ -1308,7 +1308,8 @@ const onPreviewDragImg = () => {
       display: flex;
       flex-direction: column;
       justify-content: flex-end;
-      min-height: 181px;
+      height: 160px;
+      overflow: auto;
       box-sizing: border-box;
       background-color: transparent;
       border-top: 1px solid var(--border-color);
@@ -1389,10 +1390,12 @@ const onPreviewDragImg = () => {
 
         .el-textarea__inner {
           box-shadow: none;
-          height: 80px !important;
+          min-height: auto !important;
           padding: 0 5px;
           border-radius: initial;
           background-color: transparent;
+          overflow: hidden;
+          box-sizing: border-box;
 
           &:focus {
             box-shadow: none;
