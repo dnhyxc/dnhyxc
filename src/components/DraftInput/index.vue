@@ -37,25 +37,27 @@
               <Emoji v-show="showEmoji" v-model:showEmoji="showEmoji" class="emojis" :add-emoji="addEmoji" />
             </div>
           </div>
-          <slot name="reply"></slot>
-          <el-input
-            id="TEXTAREA_WRAP"
-            ref="inputRef"
-            v-model="keyword"
-            :autosize="{ minRows: 3 }"
-            maxlength="1000"
-            :resize="sendMessage && 'none'"
-            type="textarea"
-            :placeholder="
-              selectComment?.content
-                ? `回复 ${selectComment?.content}...`
-                : placeholder || '请输入评论（Enter换行，Ctrl + Enter 发送）'
-            "
-            class="textArea"
-            @focus="onFocus"
-            @change="onCommentChange"
-            @keydown.enter.native="onKeyDown"
-          />
+          <div class="emoji-image-wrap">
+            <slot name="reply"></slot>
+            <el-input
+              id="TEXTAREA_WRAP"
+              ref="inputRef"
+              v-model="keyword"
+              :autosize="{ minRows: 3 }"
+              maxlength="1000"
+              :resize="sendMessage && 'none'"
+              type="textarea"
+              :placeholder="
+                selectComment?.content
+                  ? `回复 ${selectComment?.content}...`
+                  : placeholder || '请输入评论（Enter换行，Ctrl + Enter 发送）'
+              "
+              class="textArea"
+              @focus="onFocus"
+              @change="onCommentChange"
+              @keydown.enter.native="onKeyDown"
+            />
+          </div>
         </div>
         <div v-if="!sendMessage && (showIcon || !showAvatar)" id="EMOJI_WRAP" class="emojiWrap">
           <div id="EMOJI_LIST" class="emoji-list">
@@ -336,6 +338,11 @@ defineExpose({
           background-color: var(--fff);
         }
       }
+    }
+
+    .emoji-image-wrap {
+      height: 128px;
+      overflow-y: auto;
     }
 
     .emojiWrap {

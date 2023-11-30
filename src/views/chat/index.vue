@@ -146,7 +146,11 @@
                             {{ formatDate(msg.chat.replyInfo?.createTime, 'HH:mm') }}
                           </span>
                         </div>
-                        <div class="reply-text" v-html="replaceCommentContent(msg.chat.replyInfo?.content || '')" />
+                        <div
+                          class="reply-text"
+                          @click.stop="onPreview({ chat: msg.chat.replyInfo }  as any, 'reply')"
+                          v-html="replaceCommentContent(msg.chat.replyInfo?.content || '')"
+                        />
                       </div>
                       <div class="message-text" v-html="replaceCommentContent(msg.chat.content)" />
                     </div>
@@ -177,7 +181,11 @@
                             {{ formatDate(msg.chat.replyInfo?.createTime, 'HH:mm') }}
                           </span>
                         </div>
-                        <div class="reply-text" v-html="replaceCommentContent(msg.chat.replyInfo?.content || '')" />
+                        <div
+                          class="reply-text"
+                          @click.stop="onPreview({ chat: msg.chat.replyInfo } as any, 'reply')"
+                          v-html="replaceCommentContent(msg.chat.replyInfo?.content || '')"
+                        />
                       </div>
                       <div class="message-text" v-html="replaceCommentContent(msg.chat.content)" />
                     </div>
@@ -196,7 +204,7 @@
                 <div class="reply-user-time">
                   回复 <span class="username">{{ replyInfo?.username }}</span>
                   {{ formatDate(replyInfo?.chat?.createTime, 'HH:mm') }}
-                  <i class="iconfont icon-guanbi clear-reply" @click="onClearReply" />
+                  <i class="iconfont icon-shibai clear-reply" @click="onClearReply" />
                 </div>
                 <div class="reply-content" :title="replyInfo?.chat?.content">{{ replyInfo?.chat?.content }}</div>
               </div>
@@ -606,8 +614,8 @@ const scrollToBottom = () => {
 };
 
 // 预览图片
-const onPreview = (data: ChatItem) => {
-  prevType.value = 'img';
+const onPreview = (data: ChatItem, type?: string) => {
+  prevType.value = type || 'img';
   const { content, createTime } = data.chat;
   const links = checkWithLink(content);
   if (links?.[0]) {
@@ -1309,7 +1317,6 @@ const onPreviewDragImg = () => {
       flex-direction: column;
       justify-content: flex-end;
       height: 160px;
-      overflow: auto;
       box-sizing: border-box;
       background-color: transparent;
       border-top: 1px solid var(--border-color);
@@ -1332,7 +1339,7 @@ const onPreviewDragImg = () => {
               position: absolute;
               right: 0;
               top: 0;
-              font-size: 16px;
+              font-size: 18px;
               cursor: pointer;
 
               &:hover {

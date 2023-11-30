@@ -332,6 +332,10 @@ const showPop = async (item: CommentParams) => {
   color: var(--font-2);
 
   :deep {
+    .emoji-image-wrap {
+      height: auto;
+      overflow-y: hidden;
+    }
     .el-dialog__body {
       padding: 10px;
     }

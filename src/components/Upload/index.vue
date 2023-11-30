@@ -176,8 +176,6 @@ const onUpload = async (event: { file: Blob }) => {
   fileInfo.value = event.file as File;
   // 不需要进行裁剪
   if (!props.needCropper) {
-    console.log(props.isAtlas, props.quality, 'props.isAtlas, props.quality');
-
     const res = await uploadStore.uploadFile(event.file as File, props.isAtlas, props.quality);
     if (res) {
       props.getUploadUrl?.(res.filePath, event.file.name);

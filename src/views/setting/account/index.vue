@@ -254,6 +254,15 @@ const onCancelResetPwd = (Form: FormData<FormInstance>) => {
     .el-dialog__body {
       padding: 20px 20px 30px;
     }
+
+    .el-input__inner {
+      color: var(--font-1);
+      background-color: transparent;
+
+      &::-webkit-input-placeholder {
+        color: var(--placeholder-color);
+      }
+    }
   }
 
   .item {

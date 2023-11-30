@@ -18,8 +18,6 @@ export const useUploadStore = defineStore('upload', {
   actions: {
     // 文件上传
     async uploadFile(file: File, isAtlas?: boolean, quality = 0.5) {
-      console.log(quality, 'qualityqualityquality');
-
       // 上传前先压缩图片
       const { file: compressFile } = quality !== 1
         ? await compressImage({
@@ -28,9 +26,6 @@ export const useUploadStore = defineStore('upload', {
             mimeType: file.type,
           })
         : { file };
-
-      console.log(compressFile, 'compressFile', file, quality);
-
       // 检验是否有userId，如果没有禁止发送请求
       if (!useCheckUserId()) return;
       const formData = new FormData();

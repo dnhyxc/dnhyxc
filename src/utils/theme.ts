@@ -392,7 +392,7 @@ const fresh = {
   // 文章预览背景图片
   '--pre-hover-bg': 'rgba(0, 0, 0, 0.3)',
   '--login-bg': 'rgba(0, 0, 0, 0.1)',
-  '--placeholder-color': '#d5d5d5',
+  '--placeholder-color': '#d2d2d2',
   '--h-color': '#61dc00',
   '--loading-color': 'rgba(102, 151, 9, 0.2)',
   '--loading-text-color': '#2aff00',
@@ -490,7 +490,7 @@ const girl = {
   // loading 背景颜色
   '--loading-color': 'rgba(255, 255, 255, 0.5)',
   '--login-bg-img': 'url(@/assets/images/cywl.jpg)',
-  '--placeholder-color': '#626262',
+  '--placeholder-color': '#626262 #aeaeae',
 };
 
 // 云间
@@ -535,6 +535,7 @@ const cloud = {
   '--login-bg': 'rgba(255, 255, 255, 0.1)',
   // border 颜色
   '--border-color': '#ffffffa1',
+  '--placeholder-color': '#aeaeae',
 };
 
 const themeTypes = {

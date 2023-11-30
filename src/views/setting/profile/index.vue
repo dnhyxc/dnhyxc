@@ -332,11 +332,19 @@ const onEnter = () => {
       .el-input__inner {
         color: var(--font-1);
         background-color: transparent;
+
+        &::-webkit-input-placeholder {
+          color: var(--placeholder-color);
+        }
       }
 
       .el-textarea__inner {
         color: var(--font-1);
         background-color: var(--input-bg-color);
+
+        &::-webkit-input-placeholder {
+          color: var(--placeholder-color);
+        }
       }
 
       .el-textarea .el-input__count {
