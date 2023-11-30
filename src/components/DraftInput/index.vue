@@ -43,7 +43,7 @@
               id="TEXTAREA_WRAP"
               ref="inputRef"
               v-model="keyword"
-              :autosize="{ minRows: 3 }"
+              :autosize="{ minRows }"
               maxlength="1000"
               :resize="sendMessage && 'none'"
               type="textarea"
@@ -55,7 +55,7 @@
               class="textArea"
               @focus="onFocus"
               @change="onCommentChange"
-              @keydown.enter.native="onKeyDown"
+              @keydown.enter.native="onKeyChange"
             />
           </div>
         </div>
@@ -119,6 +119,7 @@ interface IProps {
   onHideInput?: Function;
   sendMessage?: Function | null;
   placeholder?: string;
+  minRows?: number;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
@@ -131,6 +132,7 @@ const props = withDefaults(defineProps<IProps>(), {
   onHideInput: () => {},
   sendMessage: null,
   placeholder: '',
+  minRows: 3,
 });
 
 const inputRef = ref<HTMLDivElement | null>(null);
@@ -191,7 +193,7 @@ const onCommentChange = (word: string) => {
 };
 
 // 输入框键盘摁下事件
-const onKeyDown = (e: KeyboardEvent) => {
+const onKeyChange = (e: KeyboardEvent) => {
   if (e.ctrlKey && e.keyCode === 13) {
     // 如果是私聊，则 ctrl + enter 为换行，否则就是发送评论
     if (props?.sendMessage) {
@@ -366,7 +368,7 @@ defineExpose({
 
       .iconfontWrap {
         display: flex;
-        color: var(--font-2);
+        color: var(--font-1);
 
         & > span:first-child {
           margin-right: 20px;

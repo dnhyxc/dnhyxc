@@ -140,7 +140,7 @@
                         <div class="reply-time">
                           <span class="reply-title">
                             回复
-                            <span class="username">{{ msg.chat.replyInfo?.username }}</span>
+                            <span class="username" v-html="msg.chat.replyInfo?.username" />
                           </span>
                           <span class="user-time">
                             {{ formatDate(msg.chat.replyInfo?.createTime, 'HH:mm') }}
@@ -148,7 +148,7 @@
                         </div>
                         <div
                           class="reply-text"
-                          @click.stop="onPreview({ chat: msg.chat.replyInfo }  as any, 'reply')"
+                          @click.stop="onPreview({ chat: msg.chat.replyInfo } as any, 'reply')"
                           v-html="replaceCommentContent(msg.chat.replyInfo?.content || '')"
                         />
                       </div>
@@ -175,7 +175,7 @@
                         <div class="reply-time">
                           <span class="reply-title">
                             回复
-                            <span class="username">{{ msg.chat.replyInfo?.username }}</span>
+                            <span class="username" v-html="msg.chat.replyInfo?.username" />
                           </span>
                           <span class="user-time">
                             {{ formatDate(msg.chat.replyInfo?.createTime, 'HH:mm') }}
@@ -197,12 +197,17 @@
         </el-scrollbar>
       </div>
       <div v-if="currentContactId" class="draft-inp-wrap">
-        <DraftInput ref="draftInputRef" placeholder="enter 发送消息，ctrl + enter 换行" :send-message="sendMessage">
+        <DraftInput
+          ref="draftInputRef"
+          placeholder="enter 发送消息，ctrl + enter 换行"
+          :send-message="sendMessage"
+          :min-rows="6"
+        >
           <template #reply>
             <div v-if="replyInfo" class="reply-info">
               <div class="reply-user-info">
                 <div class="reply-user-time">
-                  回复 <span class="username">{{ replyInfo?.username }}</span>
+                  回复 <span class="username" v-html="replyInfo?.username" />
                   {{ formatDate(replyInfo?.chat?.createTime, 'HH:mm') }}
                   <i class="iconfont icon-shibai clear-reply" @click="onClearReply" />
                 </div>
@@ -396,6 +401,7 @@ onMounted(async () => {
   getUserInfo();
   window.addEventListener('beforeunload', onBeforeunload);
   window.addEventListener('click', onClick, true);
+  document.addEventListener('keydown', onKeyDown);
   // 获取左侧页面左侧菜单
   const pageMenu = document.querySelector('#__LEFT_MENU__') as HTMLDivElement;
   // 获取页面头部
@@ -418,6 +424,7 @@ onUnmounted(() => {
   (scrollRef.value?.wrapRef as HTMLElement)?.removeEventListener('scroll', onScroll);
   window.removeEventListener('beforeunload', onBeforeunload);
   window.removeEventListener('click', onClick);
+  document.body.removeEventListener('keydown', onKeyDown);
   console.clear();
 });
 
@@ -427,6 +434,18 @@ const onBeforeunload = (e: Event) => {
   chatStore.mergeChats(currentContactId.value);
   chatStore.deleteChats();
   chatStore.deleteContacts();
+};
+
+// 监听键盘回退事件，将回复信息清空
+const onKeyDown = (e: KeyboardEvent) => {
+  if (
+    e.keyCode === 8 &&
+    document.activeElement?.id === 'TEXTAREA_WRAP' &&
+    replyInfo.value &&
+    !draftInputRef.value?.keyword
+  ) {
+    replyInfo.value = null;
+  }
 };
 
 // 监听滚动，用于判断显示 loading 的时机
@@ -858,7 +877,6 @@ const onPreviewDragImg = () => {
     .search {
       position: relative;
       padding: 10px;
-
       .clear {
         position: absolute;
         top: 21px;
@@ -1198,6 +1216,11 @@ const onPreviewDragImg = () => {
                 .reply-title {
                   .username {
                     margin-left: 5px;
+                    :deep {
+                      span {
+                        color: @font-3 !important;
+                      }
+                    }
                   }
                 }
 
@@ -1208,6 +1231,12 @@ const onPreviewDragImg = () => {
 
               .reply-text {
                 margin-top: 5px;
+
+                :deep {
+                  #__COMMENT_IMG__ {
+                    max-width: 80px !important;
+                  }
+                }
               }
             }
 
@@ -1330,8 +1359,7 @@ const onPreviewDragImg = () => {
           padding: 5px 5px 6px;
           border-radius: 5px;
           background-image: linear-gradient(to right, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
-          color: @placeholder-color;
-          color: var(--font-6);
+          color: var(--font-5);
 
           .reply-user-time {
             position: relative;
@@ -1350,6 +1378,12 @@ const onPreviewDragImg = () => {
 
           .username {
             margin: 0 5px;
+
+            :deep {
+              span {
+                color: var(--font-5) !important;
+              }
+            }
           }
 
           .reply-content {
@@ -1434,6 +1468,10 @@ const onPreviewDragImg = () => {
     .el-input__inner {
       color: var(--font-1);
       background-color: transparent;
+
+      &::-webkit-input-placeholder {
+        color: var(--placeholder-color);
+      }
     }
   }
 
