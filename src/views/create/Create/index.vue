@@ -172,7 +172,7 @@ const props = withDefaults(defineProps<IProps>(), {
   articleId: '',
 });
 
-const emit = defineEmits(['update:modelValue', 'update:isPublish']);
+const emit = defineEmits(['update:modelValue', 'update:isPublish', 'update:prevContent']);
 
 const uploadPath = ref<string>('');
 const formRef = ref<FormInstance>();
@@ -272,6 +272,8 @@ const onSaveDraft = () => {
       await createStore.articleDraft();
       emit('update:modelValue', false);
       emit('update:isPublish', false);
+      const { createInfo } = createStore;
+      emit('update:prevContent', createInfo.content!);
     } else {
       return false;
     }

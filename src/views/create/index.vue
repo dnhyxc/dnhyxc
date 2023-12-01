@@ -17,6 +17,7 @@
       :copy-code-success="onCopyCodeSuccess"
       :height="checkOS() === 'mac' ? 'calc(100vh - 98px)' : null"
       show-vscode
+      :show-dot="prevContent.trim() !== createStore.createInfo.content?.trim() ? 1 : 0"
     />
     <MonacoEditor
       v-if="editType"
@@ -28,6 +29,7 @@
       :on-show-draft="showDraft"
       :article-id="(route?.query?.id as string)"
       :on-save-draft="onSaveDraft"
+      :show-dot="prevContent.trim() !== createStore.createInfo.content?.trim() ? 1 : 0"
       class="create-monaco-eritor"
     />
     <CreateDrawer
@@ -35,6 +37,7 @@
       v-model="visible"
       v-model:isSaveDraft="isSaveDraft"
       v-model:isPublish="isPublish"
+      v-model:prevContent="prevContent"
       :article-id="(route?.query?.id as string)"
     />
     <DraftList v-model:draft-visible="draftVisible" />
@@ -79,16 +82,17 @@ onUnmounted(() => {
 });
 
 // 组件启用时，如果有文章id，则请求文章详情
-onActivated(() => {
+onActivated(async () => {
   // 启用组建时，获取创建文章的分类列表
   createStore.getAddedClassifys(router);
   if (!route.query.id) return;
-  articleStore?.getArticleDetail({
+  await articleStore?.getArticleDetail({
     id: route.query.id as string,
     isEdit: true,
     router,
     toHome: !!route.query?.toHome,
   });
+  prevContent.value = createStore.createInfo?.content || '';
   createStore.clearCreateDraftInfo();
   isPublish.value = false;
 });
@@ -100,16 +104,17 @@ onDeactivated(() => {
 
 onBeforeRouteLeave(async (to, from, next) => {
   const { createInfo } = createStore;
-  if (!createInfo.content?.trim() || isPublish.value) {
+  if (!createInfo.content?.trim() || isPublish.value || prevContent.value.trim() === createInfo.content?.trim()) {
     next();
   } else {
     try {
-      const res = await Message('保存到草稿后，可从草稿中选择进行继续编辑', '是否保存草稿？');
+      const res = await Message('保存到草稿后，可从草稿中选择进行继续编辑', '是否保存编辑内容到草稿？');
       if (res === 'confirm') {
         await onSave();
         next();
       }
     } catch (error) {
+      prevContent.value = '';
       next();
     }
   }
@@ -117,9 +122,10 @@ onBeforeRouteLeave(async (to, from, next) => {
 
 watch(
   () => createStore.draftArticleId,
-  (newVal) => {
+  async (newVal) => {
     if (newVal) {
-      createStore.getDraftDetail(newVal as string);
+      await createStore.getDraftDetail(newVal as string);
+      prevContent.value = createStore.createInfo?.content || '';
     }
   },
 );
@@ -162,6 +168,7 @@ const onClear = () => {
   // 手动去除query articleId 参数
   router.replace('/create');
   createStore?.clearCreateInfo(true);
+  prevContent.value = '';
 };
 
 // 弹窗显示、隐藏

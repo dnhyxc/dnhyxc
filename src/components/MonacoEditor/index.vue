@@ -6,6 +6,7 @@
 -->
 <template>
   <div class="container">
+    <div v-if="showDot" class="save-info">未保存</div>
     <div :class="`${theme !== 'vs' && 'dark-toolbar'} toolbar`">
       <div class="left">
         <div v-if="!readonly" class="code-action">
@@ -48,7 +49,7 @@
             清
           </el-button>
           <span class="action" title="草稿列表" @click="onShowDraft">稿</span>
-          <span class="action" title="保存草稿" @click="onSaveDraft">存</span>
+          <span class="action save-draft" title="保存草稿" @click="onSaveDraft">存</span>
           <span class="action" title="发布文章" @click="onPublish">发</span>
         </div>
         <div v-if="isCodeEdit" class="create-action prev-action">
@@ -103,6 +104,7 @@ interface IProps {
   getCodeContent?: (code: string) => void;
   saveText?: string;
   language?: string;
+  showDot?: number;
 }
 
 const props = defineProps<IProps>();
@@ -302,10 +304,21 @@ const onShowInfo = () => {
 @import '@/styles/index.less';
 
 .container {
+  position: relative;
   height: 100%;
   border-radius: 5px;
   box-sizing: border-box;
   box-shadow: 0 0 8px 0 var(--shadow-mack);
+
+  .save-info {
+    position: absolute;
+    top: 12px;
+    right: 288px;
+    color: @font-danger;
+    font-size: 12px;
+    z-index: 99;
+    .clickNoSelectText();
+  }
 
   .toolbar {
     display: flex;
@@ -315,7 +328,6 @@ const onShowInfo = () => {
     padding: 0 10px;
     box-sizing: border-box;
     background-color: @fff;
-    // background-color: var(--pre-hover-bg);
     border-bottom: 1px solid var(--border-color);
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
@@ -357,6 +369,22 @@ const onShowInfo = () => {
 
         &:hover {
           color: var(--active);
+        }
+      }
+
+      .save-draft {
+        position: relative;
+
+        &::before {
+          position: absolute;
+          right: -6px;
+          top: -3px;
+          content: '';
+          width: 8px;
+          height: 7px;
+          background: @font-danger;
+          border-radius: 8px;
+          opacity: v-bind(showDot);
         }
       }
 

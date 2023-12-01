@@ -12,6 +12,7 @@
       @upload-image="onUploadImage"
       @copy-code-success="onCopyCodeSuccess"
     />
+    <div v-if="showDot" class="save-info">未保存</div>
   </div>
 </template>
 
@@ -76,6 +77,7 @@ interface IProps {
   onChangeEditor?: () => void;
   copyCodeSuccess?: (value?: string) => void;
   showVscode?: boolean;
+  showDot?: number;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
@@ -87,6 +89,7 @@ const props = withDefaults(defineProps<IProps>(), {
   onSaveDraft: () => {},
   onChangeEditor: () => {},
   copyCodeSuccess: () => {},
+  showDot: 0,
 });
 
 // tool menu
@@ -176,7 +179,18 @@ const onCopyCodeSuccess = (value: string) => {
 @import '@/styles/index.less';
 
 .container {
+  position: relative;
   margin-top: 3px;
+
+  .save-info {
+    position: absolute;
+    top: 12px;
+    right: 145px;
+    color: @font-danger;
+    font-size: 12px;
+    z-index: 99;
+    .clickNoSelectText();
+  }
 
   :deep {
     .v-md-editor {
@@ -287,8 +301,24 @@ const onCopyCodeSuccess = (value: string) => {
       line-height: 30px;
     }
 
+    .v-md-editor__toolbar-item-save {
+      position: relative;
+      &::before {
+        position: absolute;
+        right: 0px;
+        top: 1px;
+        content: '';
+        width: 7px;
+        height: 7px;
+        background: @font-danger;
+        border-radius: 8px;
+        opacity: v-bind(showDot);
+      }
+    }
+
     .v-md-editor__toolbar-item-monaco {
       font-size: 16px;
+      margin-top: -2px;
     }
   }
 }
