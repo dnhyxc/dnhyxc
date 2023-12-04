@@ -256,6 +256,7 @@ const onCreate = () => {
         formRef.value?.resetFields();
         emit('update:isPublish', true);
         emit('update:modelValue', false);
+        emit('update:prevContent', createStore.createInfo.content!);
         router?.push('/home');
       }
     } else {

@@ -30,9 +30,14 @@
               >
                 <template #title>
                   <div class="left">{{ data.title }}</div>
-                  <div v-if="createStore.draftArticleId !== data.id" class="right">
-                    <span class="edit" @click.stop="toEdit(data.id!)">编辑</span>
-                    <span class="del" @click.stop="onReomve(data.id!)"> 删除 </span>
+                  <div class="right">
+                    <span class="preview" @click.stop="toPreview(data.id!)">预览</span>
+                    <span v-if="createStore.draftArticleId !== data.id" class="edit" @click.stop="toEdit(data.id!)"
+                      >编辑</span
+                    >
+                    <span v-if="createStore.draftArticleId !== data.id" class="del" @click.stop="onReomve(data.id!)">
+                      删除
+                    </span>
                   </div>
                 </template>
                 <template #content>
@@ -140,6 +145,12 @@ const onGetDraftList = () => {
   createStore.getDraftList();
 };
 
+// 预览
+const toPreview = (id: string) => {
+  // 手动去除query articleId 参数
+  router.push(`/draft?id=${id}`);
+};
+
 // 编辑
 const toEdit = (id: string) => {
   // 手动去除query articleId 参数
@@ -206,8 +217,13 @@ const onScrollTo = (to?: number) => {
       align-items: center;
       font-size: 14px;
 
+      .preview,
       .edit {
         color: var(--theme-blue);
+      }
+
+      .edit {
+        margin-left: 10px;
       }
 
       .del {
@@ -215,6 +231,7 @@ const onScrollTo = (to?: number) => {
         margin-left: 10px;
       }
 
+      .preview,
       .edit,
       .del {
         &:hover {

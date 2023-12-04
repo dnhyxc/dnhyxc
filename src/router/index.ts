@@ -239,6 +239,15 @@ export const routes: Array<RouteRecordRaw> = [
         component: () => import('@/views/detail/index.vue'),
       },
       {
+        path: '/draft',
+        name: 'draft',
+        meta: {
+          title: '草稿预览',
+          keepAlive: false,
+        },
+        component: () => import('@/views/draft/index.vue'),
+      },
+      {
         path: '/chat',
         name: 'chat',
         meta: {

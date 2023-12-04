@@ -233,8 +233,40 @@ const onCopyCodeSuccess = (value: string) => {
       background-color: transparent;
       color: var(--e-edit-color);
 
+      td,
+      th {
+        border: 1px solid var(--card-border);
+      }
+
+      & tr:nth-child(2n) {
+        background-color: var(--pre-hover-bg);
+      }
+
       code {
         color: var(--code-color);
+      }
+
+      & .token.attr-value,
+      & .token.char,
+      & .token.regex,
+      & .token.string,
+      & .token.variable {
+        color: var(--markdown-return-color);
+      }
+
+      & .token.atrule,
+      & .token.builtin,
+      & .token.important,
+      & .token.keyword,
+      & .token.selector {
+        color: var(--markdown-const-color);
+      }
+
+      & .token.class-name,
+      & .token.constant,
+      & .token.property,
+      & .token.symbol {
+        color: var(--markdown-param-color);
       }
     }
 

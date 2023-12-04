@@ -111,9 +111,9 @@ const onCopyCodeSuccess = (value: string) => {
       }
 
       code {
-        color: var(--p-code-color);
         background-color: var(--p-code-bg-color);
         font-size: 15px;
+        color: var(--code-color);
       }
 
       pre {
@@ -124,6 +124,10 @@ const onCopyCodeSuccess = (value: string) => {
         }
       }
 
+      a {
+        color: var(--el-color-primary-dark-2);
+      }
+
       h1,
       h2,
       h3,
@@ -132,6 +136,49 @@ const onCopyCodeSuccess = (value: string) => {
       h6 {
         color: var(--h-color);
         font-weight: 700;
+      }
+
+      td,
+      th {
+        border: 1px solid var(--card-border);
+      }
+
+      & tr:nth-child(2n) {
+        background-color: var(--pre-hover-bg);
+      }
+      & .token.block-comment,
+      & .token.cdata,
+      & .token.comment,
+      & .token.doctype,
+      & .token.prolog {
+        color: var(--font-6);
+      }
+
+      & .token.punctuation {
+        color: var(--font-5);
+      }
+
+      & .token.attr-value,
+      & .token.char,
+      & .token.regex,
+      & .token.string,
+      & .token.variable {
+        color: var(--markdown-return-color);
+      }
+
+      & .token.atrule,
+      & .token.builtin,
+      & .token.important,
+      & .token.keyword,
+      & .token.selector {
+        color: var(--markdown-const-color);
+      }
+
+      & .token.class-name,
+      & .token.constant,
+      & .token.property,
+      & .token.symbol {
+        color: var(--markdown-param-color);
       }
     }
   }
