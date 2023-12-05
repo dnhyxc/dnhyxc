@@ -103,6 +103,11 @@ const onCopyCodeSuccess = (value: string) => {
         right: 8px;
       }
 
+      strong {
+        font-weight: 700;
+        color: var(--markdown-strong-color);
+      }
+
       blockquote {
         color: var(--font-5);
         background: var(--shade-3);

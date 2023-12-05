@@ -24,8 +24,10 @@ interface IProps {
   loading: boolean | null;
   draftArticleId: string; // 草稿id
   draftInfo: ArticleDetailParams;
+  draftDetail: ArticleDetailParams; // 草稿预览详情
   oldCoverImage: string; // 保存老的文章封面图
   classifys?: ClassifyList[]; // 分类
+  loadDraft?: boolean;
 }
 
 export const useCreateStore = defineStore('create', {
@@ -49,6 +51,8 @@ export const useCreateStore = defineStore('create', {
     loading: null,
     draftArticleId: '',
     draftInfo: {},
+    loadDraft: false,
+    draftDetail: {},
   }),
 
   actions: {
@@ -171,19 +175,24 @@ export const useCreateStore = defineStore('create', {
     },
 
     // 获取草稿详情
-    async getDraftDetail(draftId: string) {
+    async getDraftDetail(draftId: string, isPreview?: boolean) {
       if (!draftId && !this.draftArticleId) return;
+      this.loadDraft = true;
       const res = normalizeResult<ArticleDetailParams>(
         await Service.getDraftInfoById({ id: draftId! || this.draftArticleId }),
       );
+      this.loadDraft = false;
       if (res.success) {
-        this.createInfo = {
-          ...this.createInfo,
-          ...res.data,
-          createTime: new Date().valueOf(),
-        } as CreateArticleParams;
-        this.draftArticleId = res.data.id!;
-        this.draftInfo = res.data;
+        if (!isPreview) {
+          this.createInfo = {
+            ...this.createInfo,
+            ...res.data,
+            createTime: new Date().valueOf(),
+          } as CreateArticleParams;
+          this.draftArticleId = res.data.id!;
+          this.draftInfo = res.data;
+        }
+        this.draftDetail = res.data;
       } else {
         ElMessage({
           message: res.message,
@@ -247,6 +256,11 @@ export const useCreateStore = defineStore('create', {
     // 清空草稿相关数据
     clearCreateDraftInfo() {
       this.draftArticleId = '';
+    },
+
+    // 清除草稿详情
+    clearDraftDetail() {
+      this.draftDetail = {};
     },
   },
 });

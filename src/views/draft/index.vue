@@ -10,47 +10,47 @@
       <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
         <div ref="articleInfoRef" class="article-info">
           <div class="title-wrap">
-            <div class="title">{{ createStore.draftInfo.title }}</div>
+            <div class="title">{{ createStore.draftDetail.title }}</div>
             <div class="user-info">
               <Image
-                :url="createStore.draftInfo?.headUrl || HEAD_IMG"
+                :url="createStore.draftDetail?.headUrl || HEAD_IMG"
                 :transition-img="HEAD_IMG"
-                :on-click="() => toPersonal(createStore.draftInfo?.authorId)"
+                :on-click="() => toPersonal(createStore.draftDetail?.authorId)"
                 class="herd-img"
               />
               <div class="create-info">
-                <div class="username" @click="() => toPersonal(createStore.draftInfo?.authorId)">
-                  {{ createStore.draftInfo?.authorName }}
+                <div class="username" @click="() => toPersonal(createStore.draftDetail?.authorId)">
+                  {{ createStore.draftDetail?.authorName }}
                 </div>
                 <div>
-                  {{ formatDate(createStore.draftInfo?.createTime!, 'YYYY年MM月DD日 HH:mm') }}
+                  {{ formatDate(createStore.draftDetail?.createTime!, 'YYYY年MM月DD日 HH:mm') }}
                 </div>
               </div>
             </div>
             <Image
-              v-if="createStore.draftInfo?.coverImage"
-              :url="createStore.draftInfo?.coverImage || HEAD_IMG"
+              v-if="createStore.draftDetail?.coverImage"
+              :url="createStore.draftDetail?.coverImage || HEAD_IMG"
               :transition-img="HEAD_IMG"
               class="image"
             />
-            <p v-if="createStore.draftInfo.abstract" class="desc">{{ createStore.draftInfo?.abstract }}</p>
+            <p v-if="createStore.draftDetail.abstract" class="desc">{{ createStore.draftDetail?.abstract }}</p>
           </div>
           <Preview
-            v-if="createStore.draftInfo.content"
-            :mackdown="createStore.draftInfo.content"
+            v-if="!createStore.loadDraft"
+            :mackdown="createStore.draftDetail.content"
             :copy-code-success="onCopyCodeSuccess"
           />
           <div class="classifys">
-            <div v-if="createStore.draftInfo.classify" class="classify">
+            <div v-if="createStore.draftDetail.classify" class="classify">
               <span class="label">分类：</span>
-              <span class="tag_item" @click.stop="toClassify(createStore.draftInfo.classify!)">{{
-                createStore.draftInfo.classify
+              <span class="tag_item" @click.stop="toClassify(createStore.draftDetail.classify!)">{{
+                createStore.draftDetail.classify
               }}</span>
             </div>
-            <div v-if="createStore.draftInfo.tag" class="classify tag">
+            <div v-if="createStore.draftDetail.tag" class="classify tag">
               <span class="label">标签：</span>
-              <span class="tag_item" @click.stop="toTag(createStore.draftInfo.tag!)">{{
-                createStore.draftInfo.tag
+              <span class="tag_item" @click.stop="toTag(createStore.draftDetail.tag!)">{{
+                createStore.draftDetail.tag
               }}</span>
             </div>
           </div>
@@ -58,14 +58,14 @@
       </el-scrollbar>
       <ToTopIcon v-if="scrollTop >= 500" :on-scroll-to="onScrollTo" />
     </div>
-    <div v-if="commonStore?.tocTitles?.length > 0" class="right">
+    <div v-if="commonStore?.tocTitles?.length > 0 && !createStore.loadDraft" class="right">
       <Toc class="toc-list" />
     </div>
   </Loading>
 </template>
 
 <script setup lang="ts">
-import { onMounted, defineAsyncComponent } from 'vue';
+import { onMounted, defineAsyncComponent, onUnmounted, nextTick } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { ElMessage } from 'element-plus';
 import { useScroller } from '@/hooks';
@@ -81,8 +81,15 @@ const router = useRouter();
 
 const { scrollRef, scrollTop } = useScroller();
 
-onMounted(async () => {
-  await createStore.getDraftDetail(route.query.id as string);
+onMounted(() => {
+  nextTick(() => {
+    commonStore.detailScrollRef = scrollRef.value;
+  });
+  createStore.getDraftDetail(route.query.id as string, true);
+});
+
+onUnmounted(() => {
+  createStore.clearDraftDetail();
 });
 
 // 复制成功回调

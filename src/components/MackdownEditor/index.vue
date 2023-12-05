@@ -242,6 +242,11 @@ const onCopyCodeSuccess = (value: string) => {
         background-color: var(--pre-hover-bg);
       }
 
+      strong {
+        font-weight: 700;
+        color: var(--markdown-strong-color);
+      }
+
       code {
         color: var(--code-color);
       }

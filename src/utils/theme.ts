@@ -29,7 +29,8 @@ const commomStyle = {
   '--el-color-primary-light-5': '#70c870',
   '--code-color': '#1cbc00',
   // markdown return color
-  '--markdown-return-color': '#fbff00', // 6e00ff
+  '--markdown-return-color': '#fbff00',
+  '--markdown-strong-color': '#ff9900',
 };
 
 // 公共需要去除的样式
@@ -72,6 +73,7 @@ const removeStyle = {
   // 主题色
   // '--theme-blue': '#57a0ff',
   ...commomStyle,
+  '--markdown-return-color': '#ff0000',
 };
 
 // 背景图片公共配置
@@ -408,6 +410,7 @@ const fresh = {
   '--el-color-primary-light-3': '#80c952',
   '--el-color-primary-light-5': '#9aea80',
   '--code-color': '#26ff00',
+  '--markdown-strong-color': '#fbff00',
 };
 
 // 黎明之岛
