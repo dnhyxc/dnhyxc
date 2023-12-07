@@ -1,4 +1,4 @@
-import { IMG1, IMG2, IMG3, IMG4, HEAD_IMG, CYWL, CLOUD, SEA, FRESH, DAWN } from '@/constant';
+import { IMG1, IMG2, IMG3, IMG4, HEAD_IMG, CYWL, CLOUD, SEA, FRESH, LIGHTHOUSE } from '@/constant';
 
 // 公共字体设置
 const fontStyle = {
@@ -24,6 +24,7 @@ const imgThemeColor = {
 const commomStyle = {
   // 主题色
   '--theme-blue': '#089220',
+  '--el-color-primary-dark-2': '#1eca00',
   '--el-color-primary': '#089220',
   '--el-color-primary-light-3': '#40a700',
   '--el-color-primary-light-5': '#70c870',
@@ -31,6 +32,17 @@ const commomStyle = {
   // markdown return color
   '--markdown-return-color': '#fbff00',
   '--markdown-strong-color': '#ff9900',
+};
+
+// 主题相关颜色
+const themeColors = {
+  // 主题色
+  '--theme-blue': '#61dc00',
+  '--el-color-primary': '#61dc00',
+  '--el-color-primary-light-3': '#80c952',
+  '--el-color-primary-light-5': '#9aea80',
+  '--code-color': '#26ff00',
+  '--markdown-strong-color': '#fbff00',
 };
 
 // 公共需要去除的样式
@@ -388,44 +400,15 @@ const sea = {
   '--backdrop-filter': 'blur(1px)',
 };
 
-// 小清新
-const fresh = {
+// 灯塔
+const lighthouse = {
   ...imageStyles,
-  '--bg-image-url': `url(${FRESH})`,
-  '--login-bg-img': 'url(@/assets/images/fresh.jpg)',
-  '--backdrop-filter': 'blur(0px)',
-  // 文章各种卡片渐变颜色
-  '--bg-lg-color1': 'rgba(0, 0, 0, 0.25)',
-  '--bg-lg-color2': 'rgba(0, 0, 0, 0.15)',
-  // 文章预览背景图片
-  '--pre-hover-bg': 'rgba(0, 0, 0, 0.3)',
-  '--login-bg': 'rgba(0, 0, 0, 0.1)',
-  '--placeholder-color': '#d2d2d2',
-  '--h-color': '#61dc00',
-  '--loading-color': 'rgba(102, 151, 9, 0.2)',
-  '--loading-text-color': '#2aff00',
+  '--bg-image-url': `url(${LIGHTHOUSE})`,
+  '--h-color': '#a2ff00',
+  '--backdrop-filter': 'blur(2px)',
+  '--login-bg-img': 'url(@/assets/images/lighthouse.webp)',
   // 主题色
-  '--theme-blue': '#61dc00',
-  '--el-color-primary': '#61dc00',
-  '--el-color-primary-light-3': '#80c952',
-  '--el-color-primary-light-5': '#9aea80',
-  '--code-color': '#26ff00',
-  '--markdown-strong-color': '#fbff00',
-};
-
-// 黎明之岛
-const dawn = {
-  ...imageStyles,
-  '--card-border': 'rgba(245, 250, 248, 0.2)',
-  // 字体颜色
-  '--bg-image-url': `url(${DAWN})`,
-  // 图片背景兼容字体颜色
-  '--font-color': '#fff',
-  '--pre-bg-color': 'rgba(0, 0, 0, 0.3)',
-  // 文章预览背景图片
-  '--pre-hover-bg': 'rgba(0, 0, 0, 0.3)',
-  '--login-bg-img': 'url(@/assets/images/dawn.jpg)',
-  '--backdrop-filter': 'blur(1px)',
+  ...themeColors,
 };
 
 // 少司命
@@ -503,6 +486,26 @@ const girl = {
   '--placeholder-color': '#626262 #aeaeae',
 };
 
+// 小清新
+const fresh = {
+  ...imageStyles,
+  '--bg-image-url': `url(${FRESH})`,
+  '--login-bg-img': 'url(@/assets/images/fresh.jpg)',
+  '--backdrop-filter': 'blur(0px)',
+  // 文章各种卡片渐变颜色
+  '--bg-lg-color1': 'rgba(0, 0, 0, 0.25)',
+  '--bg-lg-color2': 'rgba(0, 0, 0, 0.15)',
+  // 文章预览背景图片
+  '--pre-hover-bg': 'rgba(0, 0, 0, 0.3)',
+  '--login-bg': 'rgba(0, 0, 0, 0.1)',
+  '--placeholder-color': '#d2d2d2',
+  '--h-color': '#61dc00',
+  '--loading-color': 'rgba(102, 151, 9, 0.2)',
+  '--loading-text-color': '#2aff00',
+  // 主题色
+  ...themeColors,
+};
+
 // 云间
 const cloud = {
   ...imageStyles,
@@ -548,6 +551,7 @@ const cloud = {
   '--placeholder-color': '#aeaeae',
   // markdown return color
   '--markdown-return-color': '#6e00ff',
+  '--el-color-primary-dark-2': '#268900',
 };
 
 const themeTypes = {
@@ -567,7 +571,7 @@ const themeTypes = {
   cloud,
   sea,
   fresh,
-  dawn,
+  lighthouse,
 };
 
 // 设置背景颜色

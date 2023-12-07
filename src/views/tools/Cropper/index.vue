@@ -307,7 +307,7 @@ const onClose = () => {
     justify-content: space-between;
     flex-direction: column;
     border-bottom: 1px solid var(--card-border);
-    background-color: var(--pre-hover-bg);
+    // background-color: var(--pre-hover-bg);
     overflow: auto;
     height: calc(100% - 88px);
     box-sizing: border-box;
@@ -327,6 +327,10 @@ const onClose = () => {
           border-radius: 0;
           border: none;
           background-color: transparent;
+
+          &:hover {
+            background-color: var(--upload-hover-bg-color);
+          }
         }
       }
     }

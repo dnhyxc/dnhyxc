@@ -71,6 +71,15 @@ const onUpload = async (event: { file: File }) => {
       width: 100%;
       padding: 10px 0 20px 0;
       background-color: var(--input-bg-color);
+
+      &:hover {
+        background-color: var(--upload-hover-bg-color);
+
+        .el-icon--upload,
+        .el-upload__text {
+          color: @theme-blue;
+        }
+      }
     }
 
     .upload {
@@ -101,14 +110,7 @@ const onUpload = async (event: { file: File }) => {
 
   .el-icon--upload,
   .el-upload__text {
-    color: @placeholder-color;
-  }
-
-  &:hover {
-    .el-icon--upload,
-    .el-upload__text {
-      color: @theme-blue;
-    }
+    color: var(--font-6);
   }
 }
 </style>

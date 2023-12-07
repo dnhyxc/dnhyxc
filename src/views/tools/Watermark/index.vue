@@ -321,7 +321,7 @@ const onClose = () => {
 
     .img-wrap {
       flex: 1;
-      background-color: var(--pre-hover-bg);
+      // background-color: var(--pre-hover-bg);
 
       .prev {
         display: flex;
@@ -379,6 +379,10 @@ const onClose = () => {
               border: none;
               border-radius: 0;
               background-color: transparent;
+
+              &:hover {
+                background-color: var(--upload-hover-bg-color);
+              }
             }
           }
         }
@@ -396,7 +400,7 @@ const onClose = () => {
       flex-direction: column;
       width: 220px;
       height: calc(100% - 20px);
-      background-color: var(--pre-hover-bg);
+      // background-color: var(--pre-hover-bg);
       border-left: 1px solid var(--card-border);
       padding: 10px;
 

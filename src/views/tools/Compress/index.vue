@@ -403,6 +403,10 @@ const onClosePreview = () => {
     .el-upload-dragger {
       padding: 10px 0 20px 0;
       background-color: var(--input-bg-color);
+
+      &:hover {
+        background-color: var(--upload-hover-bg-color);
+      }
     }
 
     .el-slider__button {

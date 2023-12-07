@@ -296,6 +296,10 @@ const onClose = () => {
               border: none;
               border-radius: 0;
               background-color: transparent;
+
+              &:hover {
+                background-color: var(--upload-hover-bg-color);
+              }
             }
           }
         }
