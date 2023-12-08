@@ -1,4 +1,4 @@
-import { IMG1, IMG2, IMG3, IMG4, HEAD_IMG, CYWL, CLOUD, SEA, FRESH, LIGHTHOUSE } from '@/constant';
+import { IMG1, IMG2, IMG3, IMG4, HEAD_IMG, CYWL, CLOUD, SEA, FRESH, SUN } from '@/constant';
 
 // 公共字体设置
 const fontStyle = {
@@ -400,13 +400,14 @@ const sea = {
   '--backdrop-filter': 'blur(1px)',
 };
 
-// 灯塔
-const lighthouse = {
+// 日出
+const sun = {
   ...imageStyles,
-  '--bg-image-url': `url(${LIGHTHOUSE})`,
+  '--bg-image-url': `url(${SUN})`,
   '--h-color': '#a2ff00',
-  '--backdrop-filter': 'blur(2px)',
-  '--login-bg-img': 'url(@/assets/images/lighthouse.webp)',
+  '--backdrop-filter': 'blur(0)',
+  '--login-bg-img': 'url(@/assets/images/sun.jpg)',
+  '--font-color': '#fff',
   // 主题色
   ...themeColors,
 };
@@ -571,7 +572,7 @@ const themeTypes = {
   cloud,
   sea,
   fresh,
-  lighthouse,
+  sun,
 };
 
 // 设置背景颜色

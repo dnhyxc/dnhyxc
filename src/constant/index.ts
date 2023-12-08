@@ -14,7 +14,7 @@ import SEA from '@/assets/images/sea.jpg';
 import CYWL from '@/assets/images/cywl.jpg';
 import CLOUD from '@/assets/images/cloud.jpeg';
 import FRESH from '@/assets/images/fresh.jpeg';
-import LIGHTHOUSE from '@/assets/images/lighthouse.webp';
+import SUN from '@/assets/images/sun.jpg';
 import * as API from '@/server/api';
 import GITHUB_SVG from '@/assets/svg/github.svg';
 import COMPRESS_SVG from '@/assets/svg/compress.svg';
@@ -40,7 +40,7 @@ export {
   IMG3,
   SEA,
   FRESH,
-  LIGHTHOUSE,
+  SUN,
   IMG4,
   CYWL,
   CLOUD,
@@ -276,8 +276,8 @@ export const IMG_THEME_TYPES = [
     name: '小清新',
   },
   {
-    key: 'lighthouse',
-    name: '灯塔',
+    key: 'sun',
+    name: '日出',
   },
 ];
 

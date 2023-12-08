@@ -208,8 +208,8 @@ const changeTheme = (key: string) => {
           color: @fff;
         }
 
-        .lighthouse {
-          background-image: url('@/assets/images/lighthouse.webp');
+        .sun {
+          background-image: url('@/assets/images/sun.jpg');
           .bgStyles;
           color: @fff;
         }
