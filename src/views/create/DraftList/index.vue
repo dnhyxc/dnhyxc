@@ -31,10 +31,10 @@
                 <template #title>
                   <div class="left">{{ data.title }}</div>
                   <div class="right">
+                    <span v-if="createStore.draftArticleId !== data.id" class="edit" @click.stop="toEdit(data.id!)">
+                      编辑
+                    </span>
                     <span class="preview" @click.stop="toPreview(data.id!)">预览</span>
-                    <span v-if="createStore.draftArticleId !== data.id" class="edit" @click.stop="toEdit(data.id!)"
-                      >编辑</span
-                    >
                     <span v-if="createStore.draftArticleId !== data.id" class="del" @click.stop="onReomve(data.id!)">
                       删除
                     </span>
@@ -222,7 +222,7 @@ const onScrollTo = (to?: number) => {
         color: var(--theme-blue);
       }
 
-      .edit {
+      .preview {
         margin-left: 10px;
       }
 

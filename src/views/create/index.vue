@@ -27,6 +27,7 @@
       :on-publish="onPublish"
       :on-clear="onClear"
       :on-show-draft="showDraft"
+      :to-preview="toPreview"
       :article-id="(route?.query?.id as string)"
       :on-save-draft="onSaveDraft"
       :show-dot="prevContent.trim() !== createStore.createInfo.content?.trim() ? 1 : 0"
@@ -184,6 +185,14 @@ const onCopyCodeSuccess = (value?: string) => {
     type: 'success',
     offset: 80,
   });
+};
+
+// 预览
+const toPreview = (id: string) => {
+  console.log(id, 'id');
+
+  // 手动去除query articleId 参数
+  router.push(`/draft?id=${id}`);
 };
 </script>
 

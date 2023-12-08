@@ -6,7 +6,7 @@
 -->
 <template>
   <div class="container">
-    <div v-if="showDot" class="save-info">未保存</div>
+    <div v-if="showDot" :class="`save-info ${createStore.draftArticleId && 'save-info-prev'}`">未保存</div>
     <div :class="`${theme !== 'vs' && 'dark-toolbar'} toolbar`">
       <div class="left">
         <div v-if="!readonly" class="code-action">
@@ -49,6 +49,7 @@
             清
           </el-button>
           <span class="action" title="草稿列表" @click="onShowDraft">稿</span>
+          <span v-if="createStore.draftArticleId" class="action" title="预览草稿" @click="onPreviewDraft">览</span>
           <span class="action save-draft" title="保存草稿" @click="onSaveDraft">存</span>
           <span class="action" title="发布文章" @click="onPublish">发</span>
         </div>
@@ -95,6 +96,7 @@ interface IProps {
   onPublish?: () => void;
   onClear?: () => void;
   onShowDraft?: () => void;
+  toPreview?: (id: string) => void;
   onSaveDraft?: (editor: monaco.editor.IStandaloneCodeEditor) => void;
   isCodeEdit?: boolean;
   readonly?: boolean;
@@ -294,6 +296,12 @@ const onSaveDraft = () => {
   props.onSaveDraft?.(editor as any);
 };
 
+// 预览
+const onPreviewDraft = () => {
+  if (!createStore?.draftArticleId) return;
+  props?.toPreview?.(createStore?.draftArticleId);
+};
+
 // 显示快捷键提示弹窗
 const onShowInfo = () => {
   visible.value = true;
@@ -318,6 +326,10 @@ const onShowInfo = () => {
     font-size: 12px;
     z-index: 99;
     .clickNoSelectText();
+  }
+
+  .save-info-prev {
+    right: 316px;
   }
 
   .toolbar {
