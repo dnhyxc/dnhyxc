@@ -77,11 +77,6 @@ onMounted(async () => {
     ipcRenderer.on('win-show-status', (e, status) => {
       commonStore.updateWinStatus(status);
     });
-
-    // 监听主进程发送的强制刷新页面的消息
-    ipcRenderer.on('force-reload', (e, status) => {
-      window.location.reload();
-    });
   }
 });
 
