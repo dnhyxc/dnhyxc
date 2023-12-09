@@ -176,7 +176,7 @@ const onQuit = () => {
       font-weight: 700;
       color: @sub-2-blue;
       cursor: pointer;
-      .textLg();
+      .menuLg();
     }
 
     .active {

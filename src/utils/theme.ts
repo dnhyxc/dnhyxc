@@ -1,5 +1,21 @@
 import { IMG1, IMG2, IMG3, IMG4, HEAD_IMG, CYWL, CLOUD, SEA, FRESH, SUN } from '@/constant';
 
+// 菜单图标样式
+export const MENU_LG_DEFAULT_COLORS = `
+  linear-gradient(45deg, #3f51b1 0%, #5a55ae 13%, #7b5fac 25%, #8f6aae 38%, #a86aa4 50%, #cc6b8e 62%, #f18271 75%, #f3a469 87%, #f7c978 100%)
+`;
+
+// 菜单图标选中样式
+export const MENU_LG_ACTIVE_DEFAULT_COLORS = 'linear-gradient(-45deg, #30cfd0 0%, #330867 100%)';
+
+// 菜单渐变颜色
+const MENU_LG_COLORS = `
+  linear-gradient(45deg, #89ff00, #acf500, #c7ea00, #dcdf00, #edd400, #f4c900, #fabd00, #ffb100, #ffa200, #ff9300, #ff8300, #ff7200)
+`;
+
+// 菜单选中颜色
+const MENU_ACTIVE_LG_COLORS = 'linear-gradient(to left bottom, #ffa000, #ff9700, #ff8e00, #ff8500, #ff7b00)';
+
 // 公共字体设置
 const fontStyle = {
   '--font-1': '#252933',
@@ -86,6 +102,8 @@ const removeStyle = {
   // '--theme-blue': '#57a0ff',
   ...commomStyle,
   '--markdown-return-color': '#ff0000',
+  '--lg-colors': `${MENU_LG_DEFAULT_COLORS}`,
+  '--lg-active-colors': `${MENU_LG_ACTIVE_DEFAULT_COLORS}`,
 };
 
 // 背景图片公共配置
@@ -159,6 +177,8 @@ const imageStyles = {
   '--border-color': '#e4e6eb',
   '--placeholder-color': '#d6d6d6',
   '--loading-text-color': '#089220',
+  '--lg-colors': `${MENU_LG_DEFAULT_COLORS}`,
+  '--lg-active-colors': `${MENU_LG_ACTIVE_DEFAULT_COLORS}`,
   // 主题色
   ...commomStyle,
 };
@@ -501,8 +521,12 @@ const fresh = {
   '--login-bg': 'rgba(0, 0, 0, 0.1)',
   '--placeholder-color': '#d2d2d2',
   '--h-color': '#61dc00',
+  '--font-color': '#fff',
   '--loading-color': 'rgba(102, 151, 9, 0.2)',
   '--loading-text-color': '#2aff00',
+  // 菜单字体渐变
+  '--lg-colors': `${MENU_LG_COLORS}`,
+  '--lg-active-colors': `${MENU_ACTIVE_LG_COLORS}`,
   // 主题色
   ...themeColors,
 };

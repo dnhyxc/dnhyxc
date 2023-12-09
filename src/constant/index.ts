@@ -281,6 +281,26 @@ export const IMG_THEME_TYPES = [
   },
 ];
 
+// 菜单渐变颜色
+export const MENU_LG_COLORS = `linear-gradient(
+    to right bottom,
+    #89ff00,
+    #acf500,
+    #c7ea00,
+    #dcdf00,
+    #edd400,
+    #f4c900,
+    #fabd00,
+    #ffb100,
+    #ffa200,
+    #ff9300,
+    #ff8300,
+    #ff7200
+  )`;
+
+// 菜单选中颜色
+export const MENU_ACTIVE_LG_COLORS = 'linear-gradient (to right top, #ffb200, #fc9f00, #f88b00, #f27708, #eb6312)';
+
 // 生成的验证码长度
 export const CODE_LENGTH = 4;
 // 随机生成的字符集

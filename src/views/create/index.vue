@@ -189,8 +189,6 @@ const onCopyCodeSuccess = (value?: string) => {
 
 // 预览
 const toPreview = (id: string) => {
-  console.log(id, 'id');
-
   // 手动去除query articleId 参数
   router.push(`/draft?id=${id}`);
 };

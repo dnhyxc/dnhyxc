@@ -13,18 +13,16 @@
 
 .textLg() {
   @supports (-webkit-background-clip: text) or (background-clip: text) {
-    background-image: linear-gradient(
-      45deg,
-      #3f51b1 0%,
-      #5a55ae 13%,
-      #7b5fac 25%,
-      #8f6aae 38%,
-      #a86aa4 50%,
-      #cc6b8e 62%,
-      #f18271 75%,
-      #f3a469 87%,
-      #f7c978 100%
-    );
+    background-image: @lg-colors;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+}
+
+.menuLg() {
+  @supports (-webkit-background-clip: text) or (background-clip: text) {
+    background-image: var(--lg-colors);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
@@ -33,7 +31,7 @@
 
 .textLgActive() {
   @supports (-webkit-background-clip: text) or (background-clip: text) {
-    background-image: linear-gradient(-45deg, #30cfd0 0%, #330867 100%);
+    background-image: var(--lg-active-colors);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;

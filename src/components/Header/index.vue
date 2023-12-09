@@ -353,7 +353,7 @@ const onScrollTo = () => {
         color: var(--theme-blue);
         cursor: pointer;
         -webkit-app-region: no-drag;
-        .textLg();
+        .menuLg();
       }
     }
     .font {

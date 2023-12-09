@@ -278,7 +278,7 @@ const onScrollTo = (height?: number) => {
           font-size: 35px;
           margin-bottom: 2px;
           margin-right: 20px;
-          color: @sub-2-blue;
+          color: var(--theme-blue);
           cursor: pointer;
           -webkit-app-region: no-drag;
           .textLg();
@@ -310,7 +310,7 @@ const onScrollTo = (height?: number) => {
           color: var(--font-color);
         }
         .active {
-          color: @sub-2-blue;
+          color: var(--theme-blue);
         }
       }
       .page-actions {
