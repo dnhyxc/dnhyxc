@@ -4,7 +4,7 @@
  * @since: 2023-06-21
  * index.vue
  */
-import { globalShortcut, App } from 'electron';
+import { globalShortcut, App, BrowserWindow } from 'electron';
 import Store from 'electron-store';
 import { isDev, isMac, globalInfo, clearGlobalInfo } from './constant';
 
@@ -27,7 +27,10 @@ export const registerShortcut = (app: App) => {
   }
 
   globalShortcut.register('CommandOrControl+F+5', () => {
-    globalInfo.win?.webContents.send('force-reload');
+    const win = BrowserWindow.getFocusedWindow();
+    if (win) {
+      win.reload();
+    }
   });
 
   // globalShortcut.register('Alt+CommandOrControl+I', () => {
