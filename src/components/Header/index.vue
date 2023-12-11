@@ -356,11 +356,14 @@ const onScrollTo = () => {
         .menuLg();
       }
     }
+
     .font {
       margin-right: 20px;
       cursor: pointer;
       -webkit-app-region: no-drag;
       color: var(--font-color);
+      height: 50px;
+      line-height: 50px;
 
       &:hover {
         color: var(--active-color);
