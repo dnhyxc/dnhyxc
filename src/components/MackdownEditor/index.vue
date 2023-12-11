@@ -233,6 +233,20 @@ const onCopyCodeSuccess = (value: string) => {
       background-color: transparent;
       color: var(--e-edit-color);
 
+      a {
+        color: var(--el-color-primary-dark-2);
+      }
+
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        color: var(--h-color);
+        font-weight: 700;
+      }
+
       td,
       th {
         border: 1px solid var(--card-border);
@@ -242,12 +256,21 @@ const onCopyCodeSuccess = (value: string) => {
         background-color: var(--pre-hover-bg);
       }
 
+      blockquote {
+        color: var(--font-5);
+        background: var(--shade-3);
+        border-left: 4px solid var(--active-color);
+        border-radius: 5px;
+      }
+
       strong {
         font-weight: 700;
         color: var(--markdown-strong-color);
       }
 
       code {
+        background-color: var(--p-code-bg-color);
+        font-size: 15px;
         color: var(--code-color);
       }
 
