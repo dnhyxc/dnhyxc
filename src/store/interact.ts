@@ -59,15 +59,6 @@ export const useInteractStore = defineStore('interact', {
       this.interactLoading = false;
       if (res.success) {
         this.barrageList = res.data;
-      } else if (res.code === 409) {
-        ElMessage({
-          message: res.message,
-          type: 'error',
-          offset: 80,
-        });
-        // 未登录时清空用户信息
-        loginStore.onQuit();
-        router?.push('/home');
       } else {
         ElMessage({
           message: res.message,
@@ -92,13 +83,6 @@ export const useInteractStore = defineStore('interact', {
         this.interactList = reset ? res.data.list : [...this.interactList, ...res.data.list];
         this.total = res.data.total;
         onScroll?.(2, isDelete);
-      } else if (res.code !== 409) {
-        ElMessage({
-          message: res.message,
-          type: 'error',
-          offset: 80,
-          duration: 2000,
-        });
       }
     },
 

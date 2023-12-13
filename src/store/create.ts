@@ -57,20 +57,10 @@ export const useCreateStore = defineStore('create', {
 
   actions: {
     // 获取后台添加的文章分类列表
-    async getAddedClassifys(router: Router) {
+    async getAddedClassifys() {
       const res = normalizeResult<ClassifyList[]>(await Service.getAddedClassifys());
       if (res.success) {
         this.classifys = res.data;
-      } else if (res.code === 409) {
-        ElMessage({
-          message: res.message,
-          type: 'error',
-          offset: 80,
-          duration: 2000,
-        });
-        // 未登录时清空用户信息
-        loginStore.onQuit();
-        router?.push('/home');
       }
     },
 

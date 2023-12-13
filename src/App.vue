@@ -10,7 +10,7 @@ import { ipcRenderer } from 'electron';
 import { ref, nextTick, provide, onMounted, onBeforeMount, watchEffect, watch, onUnmounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { commonStore, messageStore, personalStore, loginStore } from '@/store';
-import { modifyTheme, getTheme, ipcRenderers, getMsgStatus, checkOS } from '@/utils';
+import { modifyTheme, getTheme, ipcRenderers, getMsgStatus, checkOS, EventBus } from '@/utils';
 
 const route = useRoute();
 
@@ -39,6 +39,10 @@ watchEffect(async () => {
 });
 
 onMounted(async () => {
+  EventBus.on('quit', () => {
+    loginStore.onQuit();
+    router.push('/login');
+  });
   // 获取路由权限
   await loginStore.getUserMenuRoles();
   if (checkOS() !== 'mac') {

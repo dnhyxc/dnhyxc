@@ -85,7 +85,7 @@ onUnmounted(() => {
 // 组件启用时，如果有文章id，则请求文章详情
 onActivated(async () => {
   // 启用组建时，获取创建文章的分类列表
-  createStore.getAddedClassifys(router);
+  createStore.getAddedClassifys();
   if (!route.query.id) return;
   await articleStore?.getArticleDetail({
     id: route.query.id as string,
