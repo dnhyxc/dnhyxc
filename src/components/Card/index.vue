@@ -242,7 +242,7 @@ const toTag = (name: string) => {
           margin-right: 10px;
           color: var(--yellow-1);
           font-size: 14px;
-          backdrop-filter: blur(3px);
+          backdrop-filter: blur(10px);
           padding: 0px 5px 2px;
           border-radius: 5px;
           background-color: @card-action-color;

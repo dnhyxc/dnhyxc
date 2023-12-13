@@ -160,7 +160,8 @@ const toTag = (name: string) => {
 
               &:hover {
                 color: var(--theme-blue);
-                background-color: rgba(225, 225, 225, 0.85);
+                backdrop-filter: blur(10px);
+                background-color: @card-action-color;
               }
             }
           }
@@ -181,7 +182,8 @@ const toTag = (name: string) => {
 
             &:hover {
               color: var(--theme-blue);
-              background-color: rgba(225, 225, 225, 0.85);
+              backdrop-filter: blur(10px);
+              background-color: @card-action-color;
             }
           }
 
