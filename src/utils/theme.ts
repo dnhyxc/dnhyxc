@@ -1,4 +1,4 @@
-import { IMG1, IMG2, IMG3, IMG4, HEAD_IMG, CYWL, CLOUD, SEA, FRESH, SUN } from '@/constant';
+import { IMG1, BEAUTY, IMG3, IMG4, HEAD_IMG, SNOW, CLOUD, SEA, FRESH, SUN } from '@/constant';
 
 // 菜单图标样式
 export const MENU_LG_DEFAULT_COLORS = `
@@ -443,12 +443,18 @@ const ShaoSiming = {
 // 动漫
 const beauty = {
   ...imageStyles,
-  '--bg-image-url': `url(${IMG2})`,
+  '--backdrop-filter': 'blur(0)',
   // 图片背景兼容字体颜色
   '--font-color': '#fff',
-  // h1.h2.h3...标题颜色
-  '--h-color': '#a2ff00',
-  '--login-bg-img': 'url(@/assets/images/2.jpg)',
+  '--h-color': '#61dc00',
+  '--shade-3': 'rgba(255, 255, 255, 0.1)',
+  // loading 背景颜色
+  '--loading-color': 'rgba(0, 0, 0, 0.69)',
+  '--loading-text-color': '#2aff00',
+  '--bg-image-url': `url(${BEAUTY})`,
+  '--login-bg-img': 'url(@/assets/images/beauty.jpg)',
+  // 主题色
+  ...themeColors,
 };
 
 // 机车
@@ -467,47 +473,6 @@ const island = {
   '--login-bg-img': 'url(@/assets/images/4.jpg)',
 };
 
-const girl = {
-  ...imageStyles,
-  '--bg-image-url': `url(${CYWL})`,
-  '--backdrop-filter': 'blur(0px)',
-  ...imgThemeColor,
-  // 文章预览背景图片
-  '--pre-hover-bg': 'rgba(255, 255, 242, 0.5)',
-  '--pre-bg-color': 'rgb(255, 255, 242, 0.65)',
-  // 文章各种卡片渐变颜色
-  '--bg-lg-color1': 'rgba(245, 250, 248, 0.25)',
-  '--bg-lg-color2': 'rgba(255, 255, 242, 0.85)',
-  // 时间轴背景颜色
-  '--timeline-lg-color1': 'rgba(255, 255, 242, 0.85)',
-  '--timeline-lg-color2': 'rgba(245, 250, 248, 0.25)',
-  // 各组件阴影颜色
-  '--shadow-color': 'rgba(255, 255, 242, 0.5)',
-  '--shadow-mack': 'rgba(205, 205, 205, 0.85)',
-  '--fff': 'rgba(255, 255, 242, 0.5)',
-  '--e-edit-color': '#000',
-  '--layer-2-2': 'rgba(255, 255, 242, 0.5)',
-  '--input-bg-color': 'rgba(255, 255, 242, 0.5)',
-  // 弹窗before背景颜色
-  '--pop-before-bg-color': 'rgb(255, 255, 228, 0.35)',
-  '--tab-color': 'rgba(232, 229, 218, 0.5)',
-  '--card-action-font-color': '#000',
-  '--card-border': 'rgba(182, 182, 182, 0.5)',
-  '--modal-bg-color': 'rgb(223, 223, 223, 0.8)',
-  '--to-top-bg-color': 'rgba(255, 255, 242, 0.65)',
-  '--pop-menu-color': 'rgba(255, 255, 242, 0.85)',
-  '--h-color': '#089220',
-  // 行内 code 字体颜色
-  '--p-code-color': '#0f6600',
-  // 行内 code 背景颜色
-  '--p-code-bg-color': 'rgba(255, 255, 242, 0.5)',
-  // loading 背景颜色
-  '--loading-color': 'rgba(255, 255, 255, 0.5)',
-  '--login-bg-img': 'url(@/assets/images/cywl.jpg)',
-  '--placeholder-color': '#626262 #aeaeae',
-};
-
-// 小清新
 const fresh = {
   ...imageStyles,
   '--bg-image-url': `url(${FRESH})`,
@@ -579,6 +544,25 @@ const cloud = {
   '--el-color-primary-dark-2': '#268900',
 };
 
+const snow = {
+  ...imageStyles,
+  '--bg-image-url': `url(${SNOW})`,
+  '--backdrop-filter': 'blur(1px)',
+  '--login-bg-img': 'url(@/assets/images/snow.jpg)',
+  // 文章各种卡片渐变颜色
+  '--bg-lg-color1': 'rgba(0, 0, 0, 0.25)',
+  '--bg-lg-color2': 'rgba(0, 0, 0, 0.15)',
+  // loading 背景颜色
+  '--loading-color': 'rgba(255, 255, 255, 0.3)',
+  '--loading-text-color': '#2aff00',
+  // 文章预览背景图片
+  '--pre-hover-bg': 'rgba(0, 0, 0, 0.3)',
+  '--placeholder-color': '#bfbfbf',
+  '--h-color': '#61dc00',
+  // 主题色
+  ...themeColors,
+};
+
 const themeTypes = {
   freshGreen,
   black,
@@ -590,7 +574,7 @@ const themeTypes = {
   beauty,
   island,
   locomotive,
-  girl,
+  snow,
   danQingHuang,
   danQingZi,
   cloud,

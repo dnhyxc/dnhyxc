@@ -352,6 +352,10 @@ const onScrollTo = (to?: number, isDelete: boolean = false) => {
           .el-input__inner {
             color: var(--font-1);
             background-color: transparent;
+
+            &::-webkit-input-placeholder {
+              color: var(--placeholder-color);
+            }
           }
         }
       }

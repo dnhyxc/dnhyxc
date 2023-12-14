@@ -168,9 +168,9 @@ const changeTheme = (key: string) => {
         }
 
         .beauty {
-          background-image: url('@/assets/images/2.png');
+          background-image: url('@/assets/images/beauty.jpg');
           .bgStyles;
-          color: @font-1;
+          color: @fff;
         }
 
         .locomotive {
@@ -185,8 +185,8 @@ const changeTheme = (key: string) => {
           color: @font-1;
         }
 
-        .girl {
-          background-image: url('@/assets/images/cywl.jpg');
+        .snow {
+          background-image: url('@/assets/images/snow.jpg');
           .bgStyles;
           color: @font-1;
         }
