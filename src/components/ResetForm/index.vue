@@ -116,10 +116,10 @@ const validatePhone = (rule: any, value: any, callback: any) => {
 };
 
 const rules = reactive<FormRules>({
-  username: [{ validator: validateUsername, trigger: 'change', required: true }],
-  newPwd: [{ validator: validatePassword, trigger: 'change', required: true }],
-  confirmPwd: [{ validator: validateConfirmPwd, trigger: 'change', required: true }],
-  phone: [{ validator: validatePhone, trigger: 'change', required: true }],
+  username: [{ validator: validateUsername, trigger: 'blur', required: true }],
+  newPwd: [{ validator: validatePassword, trigger: 'blur', required: true }],
+  confirmPwd: [{ validator: validateConfirmPwd, trigger: 'blur', required: true }],
+  phone: [{ validator: validatePhone, trigger: 'blur', required: true }],
 });
 
 const onEnter = () => {

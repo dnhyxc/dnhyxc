@@ -15,7 +15,7 @@
               {
                 required: true,
                 message: '请输入图片名称',
-                trigger: 'change',
+                trigger: 'blur',
               },
             ]"
           >

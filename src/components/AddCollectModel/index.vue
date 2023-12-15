@@ -17,7 +17,7 @@
             label="名称 :"
             :rules="[
               {
-                trigger: 'change',
+                trigger: 'blur',
               },
             ]"
             class="form-item"
@@ -28,7 +28,7 @@
             prop="desc"
             label="描述 :"
             :rules="{
-              trigger: 'change',
+              trigger: 'blur',
             }"
             class="form-item"
           >
@@ -45,7 +45,7 @@
             prop="status"
             label="状态 :"
             :rules="{
-              trigger: 'change',
+              trigger: 'blur',
             }"
             class="form-item"
           >

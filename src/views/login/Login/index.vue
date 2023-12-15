@@ -114,9 +114,9 @@ const validateCode = (rule: any, value: any, callback: any) => {
 };
 
 const rules = reactive<FormRules>({
-  username: [{ validator: validateUsername, trigger: 'change', required: true }],
-  password: [{ validator: validatePassword, trigger: 'change', required: true }],
-  code: [{ validator: validateCode, trigger: 'change', required: true }],
+  username: [{ validator: validateUsername, trigger: 'blur', required: true }],
+  password: [{ validator: validatePassword, trigger: 'blur', required: true }],
+  code: [{ validator: validateCode, trigger: 'blur', required: true }],
 });
 
 const loginForm = reactive<{
