@@ -449,6 +449,7 @@ const beauty = {
   '--h-color': '#61dc00',
   '--shade-3': 'rgba(255, 255, 255, 0.1)',
   '--pre-hover-bg': 'rgba(255, 255, 255, 0.1)',
+  '--pre-bg-color': 'rgb(255, 255, 255, 0.1)',
   // loading 背景颜色
   '--loading-color': 'rgba(0, 0, 0, 0.69)',
   '--loading-text-color': '#2aff00',
