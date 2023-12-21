@@ -148,8 +148,14 @@ const onCopyCodeSuccess = (value: string) => {
         border: 1px solid var(--card-border);
       }
 
+      table{
+        thead{
+          background-color: var(--table-even-bg);
+        }
+      }
+
       & tr:nth-child(2n) {
-        background-color: var(--pre-hover-bg);
+        background-color: var(--table-even-bg);
       }
       & .token.block-comment,
       & .token.cdata,
