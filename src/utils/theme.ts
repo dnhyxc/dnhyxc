@@ -450,6 +450,7 @@ const beauty = {
   '--shade-3': 'rgba(255, 255, 255, 0.1)',
   '--pre-bg-color': 'rgb(255, 255, 255, 0.05)',
   '--pre-hover-bg': 'rgb(0, 0, 0, 0.35)',
+  '--placeholder-color': '#686868',
   // loading 背景颜色
   '--loading-color': 'rgba(0, 0, 0, 0.69)',
   '--loading-text-color': '#2aff00',

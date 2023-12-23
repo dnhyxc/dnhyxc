@@ -16,6 +16,9 @@
       <el-tooltip effect="light" content="前进" placement="bottom">
         <i class="font iconfont icon-arrow-right-bold" @click="goForward" />
       </el-tooltip>
+      <el-tooltip effect="light" content="刷新" placement="bottom">
+        <i class="font iconfont icon-reload" @click="onReload" />
+      </el-tooltip>
       <div class="title">{{ route.meta.title }}</div>
     </div>
     <div class="right">
@@ -214,6 +217,11 @@ const goForward = () => {
   router.go(1);
 };
 
+// 刷新
+const onReload = () => {
+  location.reload();
+};
+
 // 返回首页
 const goHome = () => {
   router.push('/home');
@@ -358,17 +366,22 @@ const onScrollTo = () => {
     }
 
     .font {
-      margin-right: 20px;
       cursor: pointer;
       -webkit-app-region: no-drag;
       color: var(--font-color);
       height: 30px;
+      width: 30px;
       line-height: 30px;
+      text-align: center;
 
       &:hover {
         color: var(--active-color);
         font-weight: 700;
       }
+    }
+
+    .icon-reload {
+      margin-right: 10px;
     }
 
     .title {
@@ -589,7 +602,8 @@ const onScrollTo = () => {
   padding: 28px 22px 10px 10px;
 
   .left {
-    padding-left: 51px;
+    // padding-left: 51px;
+    padding-left: 45px;
 
     .icon-wrap {
       top: 30px;
