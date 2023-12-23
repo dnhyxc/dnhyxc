@@ -27,7 +27,8 @@ export const createWindow = () => {
     minWidth: 1080,
     minHeight: 750,
     titleBarStyle: 'hidden',
-    backgroundColor: '#d7fffe',
+    // backgroundColor: '#d7fffe',
+    backgroundColor: '#111',
     webPreferences: {
       contextIsolation: false,
       nodeIntegration: true,

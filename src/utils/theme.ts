@@ -458,6 +458,7 @@ const beauty = {
   '--pre-hover-bg': 'rgb(0, 0, 0, 0.35)',
   // table 偶数项背景颜色
   '--table-even-bg': 'rgba(255, 255, 255, 0.1)',
+  '--placeholder-color': '#686868',
   // loading 背景颜色
   '--loading-color': 'rgba(0, 0, 0, 0.69)',
   '--loading-text-color': '#2aff00',
