@@ -74,6 +74,8 @@ const removeStyle = {
   '--pre-bg-color': '#fff',
   // 文章预览背景颜色
   '--pre-hover-bg': 'initial',
+  // table 偶数项背景颜色
+  '--table-even-bg': '#f6f8fa',
   // 右键菜单背景颜色
   '--shade-2': 'transparent',
   // 文章说明背景颜色
@@ -155,6 +157,8 @@ const imageStyles = {
   '--pre-bg-color': 'rgba(0, 0, 0, 0.3)',
   // 文章预览背景颜色
   '--pre-hover-bg': 'rgba(0, 0, 0, 0.15)',
+  // table 偶数项背景颜色
+  '--table-even-bg': 'rgba(0, 0, 0, 0.3)',
   // 右键菜单背景颜色
   '--shade-2': 'rgba(0, 0, 0, 0.3)',
   // 文章说明背景颜色
@@ -400,6 +404,8 @@ const lateralFace = {
   '--pre-bg-color': 'rgba(0, 0, 0, 0.3)',
   // 文章预览背景图片
   '--pre-hover-bg': 'rgba(0, 0, 0, 0.3)',
+  // table 偶数项背景颜色
+  '--table-even-bg': 'rgba(0, 0, 0, 0.3)',
   '--login-bg-img': 'url(@/assets/images/face.jpg)',
   '--theme-blue': '#00d625',
   '--el-color-primary': '#00d625',
@@ -450,6 +456,8 @@ const beauty = {
   '--shade-3': 'rgba(255, 255, 255, 0.1)',
   '--pre-bg-color': 'rgb(255, 255, 255, 0.05)',
   '--pre-hover-bg': 'rgb(0, 0, 0, 0.35)',
+  // table 偶数项背景颜色
+  '--table-even-bg': 'rgba(255, 255, 255, 0.1)',
   '--placeholder-color': '#686868',
   // loading 背景颜色
   '--loading-color': 'rgba(0, 0, 0, 0.69)',
@@ -508,6 +516,8 @@ const cloud = {
   // 文章预览背景图片
   '--pre-hover-bg': 'rgba(255, 255, 255, 0.3)',
   '--pre-bg-color': 'rgb(255, 255, 255, 0.35)',
+  // table 偶数项背景颜色
+  '--table-even-bg': 'rgba(255, 255, 255, 0.25)',
   // 文章各种卡片渐变颜色
   '--bg-lg-color1': 'rgba(255, 255, 255, 0.5)',
   '--bg-lg-color2': 'rgba(255, 255, 255, 0.25)',
