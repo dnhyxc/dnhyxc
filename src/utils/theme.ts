@@ -464,6 +464,7 @@ const beauty = {
   '--loading-text-color': '#2aff00',
   '--bg-image-url': `url(${BEAUTY})`,
   '--login-bg-img': 'url(@/assets/images/beauty.jpg)',
+  '--layer-2-2': 'rgb(255, 255, 255, 0.06)',
   // 主题色
   ...themeColors,
 };
