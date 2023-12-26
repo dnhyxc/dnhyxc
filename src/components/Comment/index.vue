@@ -24,6 +24,8 @@
         <el-popover
           :model:visible="popItem.commentId === i.commentId"
           placement="top-start"
+          popper-class="msg-popover"
+          :show-arrow="false"
           :width="180"
           trigger="hover"
           @show="showPop(i)"
@@ -95,6 +97,8 @@
               <el-popover
                 :model:visible="popItem.commentId === j.commentId"
                 placement="top-start"
+                popper-class="msg-popover"
+                :show-arrow="false"
                 :width="180"
                 trigger="hover"
                 @show="showPop(j)"
@@ -315,11 +319,7 @@ const onPreviewImage = (e: Event) => {
 const showPop = async (item: CommentParams) => {
   popItem.value = item;
   followStore.clearInteractList();
-  await Promise.all([
-    followStore.findFollowed(item.userId as string),
-    followStore.getFollowList(item.userId),
-    followStore.getFollowMeList(item.userId),
-  ]);
+  await followStore.findFollowed(item.userId as string, true);
 };
 </script>
 
@@ -342,6 +342,10 @@ const showPop = async (item: CommentParams) => {
 
     .el-dialog__close {
       color: var(--font-1);
+    }
+
+    .pop-container {
+      position: relative;
     }
   }
 
