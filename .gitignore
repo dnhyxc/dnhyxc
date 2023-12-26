@@ -10,6 +10,7 @@ buildInfo.html
 
 node_modules
 dist
+dist.zip
 dist-electron
 dnhyxc
 dist-ssr
