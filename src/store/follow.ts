@@ -80,7 +80,7 @@ export const useFollowStore = defineStore('follow', {
     },
 
     // 分页获取关注用户列表
-    async getFollowList(userId?: string) {
+    async getFollowList(userId?: string, pageNo?: number, pageSize?: number) {
       const { userInfo, token } = getStoreUserInfo();
       if (!loginStore.token && !token) return;
       if (this.followList.length !== 0 && this.followList.length >= this.total) return;
@@ -89,8 +89,8 @@ export const useFollowStore = defineStore('follow', {
       const res = normalizeResult<FollowList>(
         await Service.getFollowList({
           userId: userId || userInfo?.userId,
-          pageNo: this.pageNo,
-          pageSize: this.pageSize,
+          pageNo: pageNo || this.pageNo,
+          pageSize: pageSize || this.pageSize,
         }),
       );
       personalStore.loading = false;
@@ -107,7 +107,7 @@ export const useFollowStore = defineStore('follow', {
     },
 
     // 分页获取关注我的用户列表
-    async getFollowMeList(userId?: string) {
+    async getFollowMeList(userId?: string, pageNo?: number, pageSize?: number) {
       const { userInfo, token } = getStoreUserInfo();
       if (!loginStore.token && !token) return;
       if (this.followMeList.length !== 0 && this.followMeList.length >= this.total) return;
@@ -116,8 +116,8 @@ export const useFollowStore = defineStore('follow', {
       const res = normalizeResult<FollowList>(
         await Service.getFollowMeList({
           userId: userId || loginStore.userInfo.userId || userInfo?.userId,
-          pageNo: this.pageNo,
-          pageSize: this.pageSize,
+          pageNo: pageNo || this.pageNo,
+          pageSize: pageSize || this.pageSize,
         }),
       );
       personalStore.loading = false;
@@ -134,12 +134,16 @@ export const useFollowStore = defineStore('follow', {
     },
 
     // 查询是否关注该用户
-    async findFollowed(authorId: string) {
+    async findFollowed(authorId: string, needInfo?: boolean) {
       // 检验是否有userId，如果没有禁止发送请求
       if (!useCheckUserId(false)) return;
       const res = normalizeResult<boolean>(await Service.findFollowed(authorId));
       if (res.success) {
         this.isFollowed = res.data;
+        if (needInfo) {
+          this.getFollowList(authorId, 1, 9999);
+          this.getFollowMeList(authorId, 1, 9999);
+        }
       }
     },
 

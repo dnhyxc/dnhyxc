@@ -64,7 +64,7 @@ const followTimer = ref<boolean>(false);
 
 onMounted(() => {
   if (articleStore.articleDetail?.authorId && !route.path.includes('/article')) {
-    followStore.findFollowed(articleStore.articleDetail?.authorId!);
+    followStore.findFollowed(articleStore.articleDetail?.authorId!, true);
   }
 });
 

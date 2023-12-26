@@ -52,8 +52,11 @@ const router = useRouter();
 const props = defineProps<IPorps>();
 
 // 关注/取消关注
-const onFollow = () => {
-  followStore.manageFollow(props.comment?.userId as string, loginStore?.userInfo.userId!);
+const onFollow = async () => {
+  await followStore.manageFollow(props.comment?.userId as string, loginStore?.userInfo.userId!);
+  followStore.clearInteractList();
+  followStore.getFollowList(props.comment?.userId, 1, 9999);
+  followStore.getFollowMeList(props.comment?.userId, 1, 9999);
 };
 
 const toPersonal = () => {
@@ -71,6 +74,7 @@ const toChat = async () => {
 @import '@/styles/index.less';
 
 .pop-container {
+  position: relative;
   .header {
     display: flex;
     flex-direction: column;
@@ -97,6 +101,7 @@ const toChat = async () => {
       flex-direction: column;
       text-align: center;
       margin-top: 10px;
+      color: var(--font-1);
 
       .username {
         font-size: 16px;
@@ -132,7 +137,7 @@ const toChat = async () => {
       align-items: center;
       flex-direction: column;
       margin-top: 10px;
-      color: var(--font-5);
+      color: var(--font-2);
     }
   }
 }

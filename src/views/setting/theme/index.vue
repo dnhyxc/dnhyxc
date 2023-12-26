@@ -176,7 +176,7 @@ const changeTheme = (key: string) => {
         .locomotive {
           background-image: url('@/assets/images/3.jpg');
           .bgStyles;
-          color: @font-1;
+          color: @fff;
         }
 
         .island {

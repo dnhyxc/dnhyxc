@@ -263,7 +263,7 @@ export const IMG_THEME_TYPES = [
   },
   {
     key: 'locomotive',
-    name: '机车',
+    name: '智子',
   },
   {
     key: 'island',
