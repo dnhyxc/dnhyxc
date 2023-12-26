@@ -105,8 +105,12 @@ const validateCode = (rule: any, value: any, callback: any) => {
   if (import.meta.env.DEV) return true;
   const { msg, status } = verifyCode(value, charater.value);
   if (value === '') {
+    // 校验错误之后重置验证码
+    onResetCode()
     callback(new Error('验证码不能为空'));
   } else if (!status) {
+    // 校验错误之后重置验证码
+    onResetCode()
     callback(new Error(msg));
   } else {
     callback();
