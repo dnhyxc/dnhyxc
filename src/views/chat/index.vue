@@ -202,6 +202,7 @@
           placeholder="enter 发送消息，ctrl + enter 换行"
           :send-message="sendMessage"
           :min-rows="6"
+          emoji-image-wrap-height="128px"
         >
           <template #reply>
             <div v-if="replyInfo" class="reply-info">

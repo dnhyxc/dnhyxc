@@ -120,6 +120,7 @@ interface IProps {
   sendMessage?: Function | null;
   placeholder?: string;
   minRows?: number;
+  emojiImageWrapHeight?: string;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
@@ -132,7 +133,8 @@ const props = withDefaults(defineProps<IProps>(), {
   onHideInput: () => {},
   sendMessage: null,
   placeholder: '',
-  minRows: 3,
+  minRows: 4,
+  emojiImageWrapHeight: '95px',
 });
 
 const inputRef = ref<HTMLDivElement | null>(null);
@@ -343,7 +345,7 @@ defineExpose({
     }
 
     .emoji-image-wrap {
-      height: 128px;
+      height: v-bind(emojiImageWrapHeight);
       overflow-y: auto;
     }
 
