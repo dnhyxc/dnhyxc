@@ -468,11 +468,16 @@ const beauty = {
   ...themeColors,
 };
 
-// 机车
+// 三体智子
 const locomotive = {
   ...imageStyles,
+  '--backdrop-filter': 'blur(1.5px)',
+  '--font-color': '#fff',
   '--bg-image-url': `url(${IMG3})`,
   '--login-bg-img': 'url(@/assets/images/3.jpg)',
+  '--loading-text-color': '#2aff00',
+  // 主题色
+  ...themeColors,
 };
 
 // 海岛

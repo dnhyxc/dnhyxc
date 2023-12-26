@@ -233,6 +233,11 @@ const onCopyCodeSuccess = (value: string) => {
       background-color: transparent;
       color: var(--e-edit-color);
 
+      .v-md-pre-wrapper {
+        background-color: var(--pre-bg-color);
+        box-shadow: 0 0 2px var(--card-border);
+      }
+
       a {
         color: var(--el-color-primary-dark-2);
       }
@@ -271,6 +276,29 @@ const onCopyCodeSuccess = (value: string) => {
       code {
         font-size: 15px;
         color: var(--code-color);
+      }
+
+      pre {
+        code {
+          color: var(--code-color);
+          background-color: transparent;
+          font-size: 15px;
+        }
+      }
+
+      & tr:nth-child(2n) {
+        background-color: var(--table-even-bg);
+      }
+      & .token.block-comment,
+      & .token.cdata,
+      & .token.comment,
+      & .token.doctype,
+      & .token.prolog {
+        color: var(--font-6);
+      }
+
+      & .token.punctuation {
+        color: var(--font-5);
       }
 
       & .token.attr-value,

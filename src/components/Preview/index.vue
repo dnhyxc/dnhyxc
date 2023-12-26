@@ -148,8 +148,8 @@ const onCopyCodeSuccess = (value: string) => {
         border: 1px solid var(--card-border);
       }
 
-      table{
-        thead{
+      table {
+        thead {
           background-color: var(--table-even-bg);
         }
       }
