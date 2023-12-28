@@ -87,6 +87,13 @@ import cssWorker from 'monaco-editor/esm/vs/language/css/css.worker?worker';
 import htmlWorker from 'monaco-editor/esm/vs/language/html/html.worker?worker';
 import tsWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker?worker';
 import EditorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker';
+import prettier from 'prettier';
+import parserMarkdown from 'prettier/parser-markdown';
+import parserBabel from 'prettier/parser-babel';
+import parserTypescript from 'prettier/parser-typescript';
+import parserHtml from 'prettier/parser-html';
+import parserYaml from 'prettier/parser-yaml';
+import parserPostcss from 'prettier/parser-postcss';
 import { MONACO_EDITOR_LANGUAGES, CODE_RUN_LANGUAGES, VS_CODE_SHORTCUT_KEYS } from '@/constant';
 import { createStore } from '@/store';
 
@@ -232,6 +239,27 @@ const initEditor = () => {
     });
   });
 };
+
+// markdown 格式化
+const provider = {
+  provideDocumentFormattingEdits: (model: any, options: any, token: any) => {
+    const text = model.getValue();
+    const formattedText = prettier.format(text, {
+      parser: 'markdown',
+      singleQuote: true,
+      plugins: [parserMarkdown, parserBabel, parserTypescript, parserHtml, parserPostcss, parserYaml],
+    });
+    return [
+      {
+        range: model.getFullModelRange(),
+        text: formattedText,
+      },
+    ];
+  },
+};
+
+// 注册 markdown 格式化
+monaco.languages.registerDocumentFormattingEditProvider('markdown', provider);
 
 // 设置主题颜色
 const setTheme = (type: string) => {
