@@ -352,6 +352,7 @@ const onClear = (monacoData?: any) => {
     border-bottom: 1px solid var(--card-border);
 
     .title-text {
+      font-size: 18px;
       margin-right: 10px;
     }
 

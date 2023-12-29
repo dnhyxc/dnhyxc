@@ -13,6 +13,7 @@
       <Watermark v-if="watermarkVisible" v-model:modal-visible="watermarkVisible" />
       <Compress v-if="compressVisible" v-model:modal-visible="compressVisible" />
       <CodeRun v-if="codeRunVisible" v-model:modal-visible="codeRunVisible" />
+      <EpubPreview v-if="epubVisible" v-model:modal-visible="epubVisible" />
       <div v-if="!visible" class="navs-wrap">
         <div class="tools">
           <div>
@@ -42,6 +43,7 @@ import Watermark from './Watermark/index.vue';
 import DrawBoard from './DrawBoard/index.vue';
 import CodeRun from './CodeRun/index.vue';
 import Links from './Links/index.vue';
+import EpubPreview from './EpubPreview/index.vue';
 
 // 图片压缩弹窗
 const compressVisible = ref<boolean>(false);
@@ -55,6 +57,8 @@ const watermarkVisible = ref<boolean>(false);
 const boardVisible = ref<boolean>(false);
 // 是否显示代码测试
 const codeRunVisible = ref<boolean>(false);
+// 是否显示电子书
+const epubVisible = ref<boolean>(false);
 
 onMounted(() => {
   // 获取工具列表
@@ -68,7 +72,8 @@ const visible = computed(() => {
     cropperVisible.value ||
     watermarkVisible.value ||
     compressVisible.value ||
-    codeRunVisible.value
+    codeRunVisible.value ||
+    epubVisible.value
   );
 });
 
@@ -107,6 +112,11 @@ const showCodeRun = () => {
   codeRunVisible.value = true;
 };
 
+// 查看电子书
+const showEpub = () => {
+  epubVisible.value = true;
+};
+
 // 策略模式实现点击每个nav card的效果
 const onClickNavIcon = (item: ToolsItem) => {
   const actions = {
@@ -117,6 +127,7 @@ const onClickNavIcon = (item: ToolsItem) => {
     tool: openWithBrowser,
     board: toDrawBoard,
     codeRun: showCodeRun,
+    epub: showEpub,
   };
   actions[item.key](item);
 };

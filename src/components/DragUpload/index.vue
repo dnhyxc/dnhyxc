@@ -9,13 +9,16 @@
     <el-upload
       class="upload"
       drag
+      :accept="uploadInfoText ? '.epub' : '.*'"
       multiple
       :show-file-list="false"
       :before-upload="beforeUpload"
       :http-request="onUpload"
     >
       <el-icon class="el-icon--upload"><upload-filled /></el-icon>
-      <div class="el-upload__text">拖拽或点击文件上传（仅支持 png、jpg、jpeg、gif 格式的图片）</div>
+      <div class="el-upload__text">
+        拖拽或点击文件上传（仅支持 {{ uploadInfoText || 'png、jpg、jpeg、gif 格式的图片' }}）
+      </div>
       <slot name="info"></slot>
     </el-upload>
   </div>
@@ -29,20 +32,29 @@ import { FILE_TYPE, FILE_UPLOAD_MSG } from '@/constant';
 
 interface IProps {
   onUpload: (event: { file: File }) => void;
+  uploadInfoText?: string;
 }
 
 const props = defineProps<IProps>();
 
 // 上传校验
 const beforeUpload: UploadProps['beforeUpload'] = (rawFile) => {
-  if (!FILE_TYPE.includes(rawFile.type)) {
-    ElMessage.error(FILE_UPLOAD_MSG);
-    return false;
-  } else if (rawFile.size / 1024 / 1024 > 20) {
-    ElMessage.error('图片不能超过20M');
-    return false;
+  if (props.uploadInfoText) {
+    if (rawFile.type !== 'application/epub') {
+      ElMessage.error('只允许上传 epub 格式的文件');
+      return false;
+    }
+    return true;
+  } else {
+    if (!FILE_TYPE.includes(rawFile.type)) {
+      ElMessage.error(FILE_UPLOAD_MSG);
+      return false;
+    } else if (rawFile.size / 1024 / 1024 > 20) {
+      ElMessage.error('图片不能超过20M');
+      return false;
+    }
+    return true;
   }
-  return true;
 };
 
 // 自定义上传

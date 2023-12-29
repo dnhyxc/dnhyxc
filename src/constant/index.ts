@@ -64,6 +64,7 @@ export const TOOL_LIST = [
   { toolName: '画板', key: 'board', id: 'board', toolUrl: BOARD_SVG },
   { toolName: '代码测试', key: 'codeRun', id: 'codeRun', toolUrl: CODE_SVG },
   { toolName: '语音播报', key: 'textToSpeech', id: 'textToSpeech', toolUrl: YUYIN_SVG },
+  { toolName: '电子书', key: 'epub', id: 'epub', toolUrl: YUYIN_SVG },
 ];
 
 // 常用图片截取比例
@@ -1024,5 +1025,45 @@ export const VS_CODE_SHORTCUT_KEYS = [
   {
     name: 'Ctrl + Shift + Alt + PgUp / PgDown',
     desc: '列（框）选择页上/下 Column (box) selection page up/down',
+  },
+];
+
+// epub 主题
+export const EPUB_THEMES = [
+  {
+    name: 'default',
+    style: {
+      body: {
+        color: '#000',
+        background: '#fff',
+      },
+    },
+  },
+  {
+    name: 'eye',
+    style: {
+      body: {
+        color: '#000',
+        background: '#ceeaba',
+      },
+    },
+  },
+  {
+    name: 'night',
+    style: {
+      body: {
+        color: '#fff',
+        background: '#050505',
+      },
+    },
+  },
+  {
+    name: 'gold',
+    style: {
+      body: {
+        color: '#000',
+        background: 'rgb(238, 232, 170)',
+      },
+    },
   },
 ];

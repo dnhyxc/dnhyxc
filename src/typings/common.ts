@@ -551,3 +551,19 @@ export interface Menu {
   label: string;
   value: any;
 }
+
+export interface BookTocList {
+  id: string;
+  href: string;
+  label: string;
+  parent: string;
+  subitems: BookTocItem[];
+}
+
+export interface BookTocItem {
+  id: string;
+  href: string;
+  label: string;
+  parent: string;
+  subitems: BookTocItem[];
+}

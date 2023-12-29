@@ -3,12 +3,15 @@ import { usePlugins, mountDirectives, EventBus } from '@/utils';
 import router from '@/router';
 import store from '@/store/initStore';
 import App from './App.vue';
+import TreeNode from '@/components/TreeNode/index.vue';
 
 import '@/assets/iconfont/iconfont.css';
 import './style.less';
 
 // 创建vue实例
 const app = createApp(App);
+
+app.component('TreeNode', TreeNode);
 
 // 挂在路由
 app.use(router);

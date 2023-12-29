@@ -465,6 +465,7 @@ const beauty = {
   '--bg-image-url': `url(${BEAUTY})`,
   '--login-bg-img': 'url(@/assets/images/beauty.jpg)',
   '--layer-2-2': 'rgb(255, 255, 255, 0.06)',
+  '--card-border': 'rgba(182, 182, 182, 0.5)',
   // 主题色
   ...themeColors,
 };
