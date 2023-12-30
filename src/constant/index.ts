@@ -26,6 +26,7 @@ import CROP_SVG from '@/assets/svg/crop.svg';
 import BOARD_SVG from '@/assets/svg/board.svg';
 import CODE_SVG from '@/assets/svg/code.svg';
 import NO_DATA_SVG from '@/assets/svg/no_data.svg';
+import BOOK_SVG from '@/assets/svg/book.svg';
 
 export {
   EMPTY,
@@ -54,6 +55,7 @@ export {
   CROP_SVG,
   BOARD_SVG,
   NO_DATA_SVG,
+  BOOK_SVG,
 };
 
 // 工具列表
@@ -64,7 +66,7 @@ export const TOOL_LIST = [
   { toolName: '画板', key: 'board', id: 'board', toolUrl: BOARD_SVG },
   { toolName: '代码测试', key: 'codeRun', id: 'codeRun', toolUrl: CODE_SVG },
   { toolName: '语音播报', key: 'textToSpeech', id: 'textToSpeech', toolUrl: YUYIN_SVG },
-  { toolName: '电子书', key: 'epub', id: 'epub', toolUrl: YUYIN_SVG },
+  { toolName: '览电子书', key: 'epub', id: 'epub', toolUrl: BOOK_SVG },
 ];
 
 // 常用图片截取比例
@@ -1031,7 +1033,7 @@ export const VS_CODE_SHORTCUT_KEYS = [
 // epub 主题
 export const EPUB_THEMES = [
   {
-    name: 'default',
+    name: '默认',
     style: {
       body: {
         color: '#000',
@@ -1040,7 +1042,7 @@ export const EPUB_THEMES = [
     },
   },
   {
-    name: 'eye',
+    name: '护眼',
     style: {
       body: {
         color: '#000',
@@ -1049,7 +1051,7 @@ export const EPUB_THEMES = [
     },
   },
   {
-    name: 'night',
+    name: '暗夜',
     style: {
       body: {
         color: '#fff',
@@ -1058,11 +1060,65 @@ export const EPUB_THEMES = [
     },
   },
   {
-    name: 'gold',
+    name: '淡绿',
     style: {
       body: {
         color: '#000',
-        background: 'rgb(238, 232, 170)',
+        background: '#eefbee',
+      },
+    },
+  },
+  {
+    name: '松石绿',
+    style: {
+      body: {
+        color: '#000',
+        background: '#d7fffe',
+      },
+    },
+  },
+  {
+    name: '明黄',
+    style: {
+      body: {
+        color: '#000',
+        background: '#feffed',
+      },
+    },
+  },
+  {
+    name: '米黄',
+    style: {
+      body: {
+        color: '#000',
+        background: '#f5f5dc',
+      },
+    },
+  },
+  {
+    name: '浅灰',
+    style: {
+      body: {
+        color: '#000',
+        background: '#d8e0e6',
+      },
+    },
+  },
+  {
+    name: '透明白',
+    style: {
+      body: {
+        color: '#fff',
+        background: 'transparent',
+      },
+    },
+  },
+  {
+    name: '透明黑',
+    style: {
+      body: {
+        color: '#000',
+        background: 'transparent',
       },
     },
   },

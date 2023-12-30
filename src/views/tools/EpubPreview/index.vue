@@ -67,27 +67,32 @@
             </template>
             <div class="themes-list">
               <span class="theme-info" :style="{ color: fontColor }">主题</span>
-              <span
-                v-for="theme in EPUB_THEMES"
-                :key="theme.name"
-                class="theme"
-                :style="{ background: theme.style.body.background }"
-                @click="onThemeChange(theme.style.body)"
-              />
+              <div v-for="theme in EPUB_THEMES" :key="theme.name" class="theme-item">
+                <el-tooltip placement="top">
+                  <template #content>
+                    <span>{{ theme.name }}</span>
+                  </template>
+                  <span
+                    class="theme"
+                    :style="{ background: theme.style.body.background }"
+                    @click="onThemeChange(theme.style.body)"
+                  />
+                </el-tooltip>
+              </div>
             </div>
           </el-popover>
         </div>
       </div>
       <div class="book-actions">
-        <el-button type="primary" @click="onPrev">上一章</el-button>
-        <el-button type="primary" @click="onNext">下一章</el-button>
+        <el-button type="primary" link class="btn" @click="onPrev">上一章</el-button>
+        <el-button type="primary" link class="btn" @click="onNext">下一章</el-button>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref, watch } from 'vue';
+import { onMounted, onUnmounted, ref, watch, nextTick } from 'vue';
 import type { UploadProps } from 'element-plus';
 import { ElMessage } from 'element-plus';
 import ePub, { Rendition } from 'epubjs';
@@ -147,7 +152,9 @@ onUnmounted(() => {
 });
 
 const onResize = () => {
-  rendition?.resize(previewRef.value!.clientWidth, previewRef.value!.clientHeight);
+  nextTick(() => {
+    rendition?.resize(previewRef.value!.clientWidth, previewRef.value!.clientHeight);
+  });
 };
 
 // 上传校验
@@ -195,14 +202,12 @@ const renderBook = (buffer: Buffer | string) => {
     snap: true,
     defaultDirection: 'ltr',
   });
-  console.log(rendition, 'rendition');
   // 渲染电子书
   rendition?.display();
   setFontSize('16px');
   setLineHeight('28px');
   // 获取目录
   book.ready.then(() => {
-    console.log(book.navigation.toc, 'ook.navigation.toc', book.navigation);
     tocList.value = book?.navigation?.toc || [];
     defaultSelectedTocId.value = book?.navigation?.toc?.[0].id;
     flattenItems(book?.navigation?.toc || []);
@@ -236,10 +241,6 @@ const onThemeChange = (body: { background: string; color: string }) => {
   const { background, color } = body;
   themeColor.value = background;
   fontColor.value = color;
-  // if (background === 'transparent') {
-  //   rendition?.themes.override('color', getComputedStyle(document.body).getPropertyValue('--font-1'));
-  // } else {
-  // }
   rendition?.themes.override('color', color);
   rendition?.themes.override('background', background);
 };
@@ -453,7 +454,7 @@ const onScrollTo = () => {
 
       .font-set {
         .set-icon {
-          font-size: 25px;
+          font-size: 20px;
           cursor: pointer;
           margin-right: 15px;
           color: v-bind(fontColor);
@@ -464,8 +465,14 @@ const onScrollTo = () => {
         }
 
         .star-icon {
-          font-size: 26px;
+          font-size: 21px;
         }
+      }
+    }
+
+    .book-actions {
+      .btn {
+        font-size: 18px;
       }
     }
   }
@@ -484,15 +491,20 @@ const onScrollTo = () => {
     min-width: 32px;
   }
 
-  .theme {
-    display: block;
+  .theme-item {
     width: 35px;
     height: 35px;
-    border-radius: 35px;
     margin-right: 10px;
-    box-shadow: 0 0 10px var(--card-border);
     box-sizing: border-box;
-    cursor: pointer;
+
+    .theme {
+      display: block;
+      width: 100%;
+      height: 100%;
+      border-radius: 35px;
+      box-shadow: 0 0 10px var(--card-border);
+      cursor: pointer;
+    }
 
     &:last-child {
       margin-right: 0;
