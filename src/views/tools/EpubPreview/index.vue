@@ -95,7 +95,7 @@
 import { onMounted, onUnmounted, ref, watch, nextTick } from 'vue';
 import type { UploadProps } from 'element-plus';
 import { ElMessage } from 'element-plus';
-import ePub, { Rendition } from 'epubjs';
+import ePub from 'epubjs';
 import { useChildScroller } from '@/hooks';
 import { scrollTo, debounce } from '@/utils';
 import { EPUB_THEMES } from '@/constant';
@@ -123,7 +123,7 @@ const currentBook = ref<File | null>(null);
 // ePub 实例
 let book: any = null;
 // 渲染元素
-let rendition: Rendition | null = null;
+let rendition: any = null;
 // 全部目录
 const allTocs: BookTocList[] = [];
 
