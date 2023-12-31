@@ -122,6 +122,11 @@ const changeTheme = (key: string) => {
           background-color: #f9fff9;
           color: @font-1;
         }
+        
+        .emeraldGreen {
+          background-color: #ceeaba;
+          color: @font-1;
+        }
 
         .black {
           background-color: #171718;

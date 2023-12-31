@@ -225,6 +225,10 @@ export const THEME_TYPES = [
     name: '清新绿',
   },
   {
+    key: 'emeraldGreen',
+    name: '护眼绿',
+  },
+  {
     key: 'lightcyan',
     name: '极光绿',
   },

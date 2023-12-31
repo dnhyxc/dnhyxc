@@ -8,7 +8,7 @@
   "scripts": {
     "dev": "cross-env NODE_ENV=development vite",
     "build": "rimraf dist dnhyxc && vue-tsc --noEmit && cross-env NODE_ENV=production && vite build && electron-builder",
-    "build:vue": "rimraf dist && vue-tsc --noEmit && cross-env NODE_ENV=production && vite build",
+    "build:vue": "rimraf dist && vue-tsc --noEmit && cross-env NODE_ENV=production && node --max_old_space_size=4096 node_modules/vite/bin/vite.js build",
     "build:ele": "rimraf dnhyxc && vue-tsc --noEmit && cross-env NODE_ENV=production && electron-builder",
     "preview": "vite preview",
     "eslint": "eslint --ext .js,.vue --ignore-path .gitignore --fix src",
@@ -94,6 +94,7 @@
     "less-loader": "^11.1.0",
     "lint-staged": "^13.1.0",
     "prettier": "^2.8.3",
+    "rollup-plugin-external-globals": "^0.9.1",
     "rollup-plugin-visualizer": "^5.9.0",
     "typescript": "^4.9.3",
     "unplugin-auto-import": "^0.12.2",
