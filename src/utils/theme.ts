@@ -259,11 +259,11 @@ const emeraldGreen = {
   // 主题背景颜色
   '--background': '#ceeaba',
   // 文章各种卡片渐变颜色
-  '--bg-lg-color1': '#fffeff',
-  '--bg-lg-color2': '#ceeaba',
+  '--bg-lg-color1': '#f2ffe9',
+  '--bg-lg-color2': '#dcffc3',
   // 时间轴背景颜色
-  '--timeline-lg-color1': '#fffeff',
-  '--timeline-lg-color2': '#ceeaba',
+  '--timeline-lg-color1': '#f2ffe9',
+  '--timeline-lg-color2': '#dcffc3',
 };
 
 // 黑色主题
