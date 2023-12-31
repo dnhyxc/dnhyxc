@@ -8,6 +8,7 @@ import Components from 'unplugin-vue-components/vite';
 import ElementPlus from 'unplugin-element-plus/vite';
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers';
 import visualizer from 'rollup-plugin-visualizer';
+// import externalGlobals from 'rollup-plugin-external-globals';
 
 export default defineConfig({
   // Failed to load module script: Expected a JavaScript module script but the server responded with a MIME type of "text/html". Strict MIME type checking is enforced for module scripts per HTML spec.
