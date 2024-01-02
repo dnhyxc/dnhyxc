@@ -19,6 +19,7 @@ import { usePictureStore } from './picture';
 import { useConvertStore } from './convert';
 import { useCodeStore } from './code';
 import { useChatStore } from './chat';
+import { useBookStore } from './book';
 
 // 公共store，传入 store 用于防止在使用时，出现 pinia 注册比 Vue app 注册早，导致使用 pinia 报错
 export const commonStore = useCommonStore(store);
@@ -79,3 +80,6 @@ export const codeStore = useCodeStore(store);
 
 // 聊天消息列表
 export const chatStore = useChatStore(store);
+
+// 书籍列表
+export const bookStore = useBookStore(store);

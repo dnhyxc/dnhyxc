@@ -49,12 +49,12 @@ withDefaults(defineProps<IProps>(), {
     cursor: pointer;
 
     &:hover {
-      color: var(--theme-blue);
+      color: var(--el-color-primary-light-5);
     }
   }
 
   .active {
-    color: var(--active);
+    color: var(--theme-blue);
   }
 }
 </style>

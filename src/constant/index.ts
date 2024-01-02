@@ -1038,6 +1038,7 @@ export const VS_CODE_SHORTCUT_KEYS = [
 export const EPUB_THEMES = [
   {
     name: '默认',
+    key: 'light',
     style: {
       body: {
         color: '#000',
@@ -1047,6 +1048,7 @@ export const EPUB_THEMES = [
   },
   {
     name: '护眼',
+    key: 'emeraldGreen',
     style: {
       body: {
         color: '#000',
@@ -1056,6 +1058,7 @@ export const EPUB_THEMES = [
   },
   {
     name: '暗夜',
+    key: 'black',
     style: {
       body: {
         color: '#fff',
@@ -1065,6 +1068,7 @@ export const EPUB_THEMES = [
   },
   {
     name: '淡绿',
+    key: 'freshGreen',
     style: {
       body: {
         color: '#000',
@@ -1074,6 +1078,7 @@ export const EPUB_THEMES = [
   },
   {
     name: '松石绿',
+    key: 'lightcyan',
     style: {
       body: {
         color: '#000',
@@ -1083,6 +1088,7 @@ export const EPUB_THEMES = [
   },
   {
     name: '明黄',
+    key: 'danQingHuang',
     style: {
       body: {
         color: '#000',
@@ -1092,6 +1098,7 @@ export const EPUB_THEMES = [
   },
   {
     name: '米黄',
+    key: 'beige',
     style: {
       body: {
         color: '#000',
@@ -1101,6 +1108,7 @@ export const EPUB_THEMES = [
   },
   {
     name: '浅灰',
+    key: 'gray',
     style: {
       body: {
         color: '#000',
@@ -1110,6 +1118,7 @@ export const EPUB_THEMES = [
   },
   {
     name: '透明白',
+    key: 'tw',
     style: {
       body: {
         color: '#fff',
@@ -1119,6 +1128,7 @@ export const EPUB_THEMES = [
   },
   {
     name: '透明黑',
+    key: 'tb',
     style: {
       body: {
         color: '#000',
@@ -1127,3 +1137,22 @@ export const EPUB_THEMES = [
     },
   },
 ];
+
+export const BOOK_THEME = {
+  light: 'light',
+  black: 'black',
+  freshGreen: 'freshGreen',
+  emeraldGreen: 'emeraldGreen',
+  lightcyan: 'lightcyan',
+  danQingHuang: 'danQingHuang',
+  cloud: 'tb',
+  snow: 'tw',
+  lateralFace: 'tw',
+  ShaoSiming: 'tw',
+  beauty: 'tw',
+  locomotive: 'tw',
+  island: 'tw',
+  sea: 'tw',
+  fresh: 'tw',
+  sun: 'tw',
+};

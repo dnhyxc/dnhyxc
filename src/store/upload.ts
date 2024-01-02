@@ -19,13 +19,14 @@ export const useUploadStore = defineStore('upload', {
     // 文件上传
     async uploadFile(file: File, isAtlas?: boolean, quality = 0.5) {
       // 上传前先压缩图片
-      const { file: compressFile } = quality !== 1
-        ? await compressImage({
-            file,
-            quality, // 压缩比例
-            mimeType: file.type,
-          })
-        : { file };
+      const { file: compressFile } =
+        quality !== 1
+          ? await compressImage({
+              file,
+              quality, // 压缩比例
+              mimeType: file.type,
+            })
+          : { file };
       // 检验是否有userId，如果没有禁止发送请求
       if (!useCheckUserId()) return;
       const formData = new FormData();
@@ -48,6 +49,29 @@ export const useUploadStore = defineStore('upload', {
         return {
           filePath: res.data.filePath,
           compressFile,
+        };
+      }
+    },
+
+    // 上传除图片之外的文件
+    async uploadOtherFile(file: File) {
+      // 检验是否有userId，如果没有禁止发送请求
+      if (!useCheckUserId()) return;
+      const formData = new FormData();
+      // 根据文件资源生成 MD5 hash
+      const fileName = (await md5HashName(file)) as string;
+      const findIndex = file?.name?.lastIndexOf('.');
+      const ext = file.name.slice(findIndex + 1);
+      // 修改文件名称，__ATLAS__ 用户区分是否是上传的图片集图片
+      const newFile = new File([file], `__FILE__${fileName}.${ext}`, {
+        type: file.type,
+      });
+      formData.append('file', newFile);
+      const res = normalizeResult<{ filePath: string }>(await Service.uploadFile(formData));
+      if (res.success) {
+        return {
+          filePath: res.data.filePath,
+          fileName,
         };
       }
     },

@@ -357,7 +357,7 @@ const onClear = (monacoData?: any) => {
     }
 
     .demo-list {
-      font-size: 14px;
+      font-size: 16px;
       color: var(--theme-blue);
       cursor: pointer;
 

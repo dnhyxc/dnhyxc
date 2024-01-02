@@ -8,6 +8,7 @@
   <div class="loading-wrap">
     <AsyncLoading v-if="loading" class="async-load-wrap">
       <div class="load-text">{{ loadText || '正在卖力加载中' }}</div>
+      <slot name="loadInfo"></slot>
     </AsyncLoading>
     <slot></slot>
   </div>

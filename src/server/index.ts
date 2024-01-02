@@ -539,3 +539,23 @@ export const mergeContacts = async () => {
 export const deleteCatchContacts = async (contactId: string) => {
   return await post(API.DELETE_CATCH_CONTACTS, copeParams({ contactId }));
 };
+
+// 添加书籍
+export const addBook = async (params: AtlasImgInfo) => {
+  return await post(API.ADD_BOOK, copeParams(params));
+};
+
+// 更新书籍
+export const updateBookInfo = async (params: { id: string; fileName: string }) => {
+  return await post(API.UPDATE_BOOK_INFO, copeParams(params));
+};
+
+// 获取书籍列表
+export const getBookList = async ({ pageNo, pageSize }: { pageNo: number; pageSize: number }) => {
+  return await post(API.GET_BOOK_LIST, copeParams({ pageNo, pageSize }));
+};
+
+// 删除书籍
+export const deleteBook = async ({ id, url }: { id: string; url?: string }) => {
+  return await post(API.DELETE_BOOK, copeParams({ id, url }));
+};

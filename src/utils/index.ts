@@ -1170,3 +1170,52 @@ export const checkWithLink = (content: string, check?: boolean) => {
   const links = matches?.map((match) => match.substring(1, match.length - 1).split(',')[1]);
   return check ? !!links?.[0] : links;
 };
+
+// 用于存储上一个 ReadableStreamDefaultReader 对象
+let previousReader: any = null;
+// 计算资源加载的进度
+export const calculateLoadProgress = (
+  url: string,
+  getProgress: (progress: number) => void,
+): Promise<ArrayBuffer | any> => {
+  return fetch(url)
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`资源加载失败: ${response.status} ${response.statusText}`);
+      }
+      const contentLength = response.headers.get('content-length') as string;
+      const totalBytes = parseInt(contentLength, 10);
+      let loadedBytes = 0;
+      // 如果上一个读取器存在，则取消它
+      if (previousReader) {
+        previousReader.cancel();
+      }
+      const reader = response.body?.getReader();
+      previousReader = reader; // 将当前读取器保存为上一个读取器
+      const chunks = [] as Uint8Array[];
+      const readChunk = (): any => {
+        return reader!.read().then(({ done, value }) => {
+          if (done) {
+            return chunks;
+          }
+          loadedBytes += value.byteLength;
+          const progress = Math.round((loadedBytes / totalBytes) * 100);
+          getProgress(progress);
+          chunks.push(value);
+          return readChunk();
+        });
+      };
+      return readChunk();
+    })
+    .then((_chunks) => {
+      const blob = new Blob(_chunks);
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.readAsArrayBuffer(blob);
+      });
+    })
+    .catch((error) => {
+      console.error('资源加载失败:', error);
+    });
+};

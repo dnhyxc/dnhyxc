@@ -253,3 +253,15 @@ export const GET_CATCH_CONTACT_LIST = '/api/getCatchContactList';
 
 // 删除缓存联系人
 export const DELETE_CATCH_CONTACTS = '/api/deleteCatchContacts';
+
+// 添加书籍
+export const ADD_BOOK = '/api/addBook';
+
+// 更新书籍
+export const UPDATE_BOOK_INFO = '/api/updateBookInfo';
+
+// 获取书籍列表
+export const GET_BOOK_LIST = '/api/getBookList';
+
+// 删除书籍
+export const DELETE_BOOK = '/api/deleteBook';

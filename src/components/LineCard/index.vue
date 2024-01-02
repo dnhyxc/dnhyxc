@@ -82,7 +82,7 @@ interface IProps {
   data: TimelineArticles;
   likeListArticle?: (id: string, data?: ArticleItem) => void;
   deleteArticle?: (id: string) => void;
-  toEdit?: (id: string) => void | null;
+  toEdit?: (id: string, data: any) => void | null;
   toCollect?: () => void | null;
   isCollect?: boolean;
   isTimeLine?: boolean;
@@ -172,7 +172,7 @@ const toDetail = async (data: ArticleItem | TimelineArticles) => {
   }
   // 如果有props.toEdit，则说明是草稿箱点击的，需要去创建页进行编辑
   if (props.toEdit) {
-    props.toEdit(data.id!);
+    props.toEdit(data.id!, data);
     return;
   }
   if ((data as ArticleItem)?.isDelete) {
