@@ -31,15 +31,15 @@
                   <div
                     v-if="loginStore.userInfo.auth === 1"
                     class="left"
-                    :title="data.fileName"
+                    :title="data.fileName.replace(/\.epub$/, '')"
                     :contenteditable="true"
                     @click.stop="() => {}"
                     @keydown="(e) => onRename(e, data.id)"
                   >
-                    {{ data.fileName }}
+                    {{ data.fileName.replace(/\.epub$/, '') }}
                   </div>
-                  <div v-else class="left" :title="data.fileName">
-                    {{ data.fileName }}
+                  <div v-else class="left" :title="data.fileName.replace(/\.epub$/, '')">
+                    {{ data.fileName.replace(/\.epub$/, '') }}
                   </div>
                   <div class="right">
                     <span v-if="loginStore.userInfo.auth === 1" class="del" @click.stop="onReomve(data.id!)">删除</span>
