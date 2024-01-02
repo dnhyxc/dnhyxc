@@ -81,16 +81,11 @@ export const useBookStore = defineStore('book', {
     // 更新书籍信息
     async updateBookInfo(params: { id: string; fileName: string }) {
       const res = normalizeResult<{ count: number }>(await Service.updateBookInfo(params));
-      if (res.success) {
-        this.clearBookInfo();
-        this.getBookList();
-      } else {
-        ElMessage({
-          message: res.message,
-          type: 'error',
-          offset: 80,
-        });
-      }
+      ElMessage({
+        message: res.message,
+        type: res.success ? 'success' : 'error',
+        offset: 80,
+      });
     },
 
     // 清除数据

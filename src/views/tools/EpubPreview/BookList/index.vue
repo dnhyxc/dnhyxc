@@ -28,15 +28,26 @@
                 :to-edit="onRead"
               >
                 <template #title>
-                  <div class="left" :title="data.fileName">{{ data.fileName }}</div>
+                  <div
+                    v-if="loginStore.userInfo.auth === 1"
+                    class="left"
+                    :title="data.fileName"
+                    :contenteditable="true"
+                    @click.stop="() => {}"
+                    @keydown="(e) => onRename(e, data.id)"
+                  >
+                    {{ data.fileName }}
+                  </div>
+                  <div v-else class="left" :title="data.fileName">
+                    {{ data.fileName }}
+                  </div>
                   <div class="right">
-                    <span class="edit" @click.stop="toEdit(data.id!)">编辑</span>
-                    <span class="del" @click.stop="onReomve(data.id!)">删除</span>
+                    <span v-if="loginStore.userInfo.auth === 1" class="del" @click.stop="onReomve(data.id!)">删除</span>
                   </div>
                 </template>
                 <template #content>
                   <div class="art-info">
-                    <div class="desc">添加时间：{{ formatDate(data.createTime, 'YYYY-DD-MM') }}</div>
+                    <div class="desc">添加时间：{{ formatDate(data.createTime, 'YYYY/MM/DD') }}</div>
                     <div class="desc">书籍大小：{{ (data.size / 1024 / 1024).toFixed(2) }} MB</div>
                     <div v-if="data.type" class="desc">书籍类型：{{ data.type.split('/')[1] }}</div>
                   </div>
@@ -55,7 +66,7 @@
 
 <script setup lang="ts">
 import { computed, ref, watch, nextTick, onUnmounted } from 'vue';
-import { bookStore } from '@/store';
+import { bookStore, loginStore } from '@/store';
 import { scrollTo, Message, formatDate } from '@/utils';
 import Loading from '@/components/Loading/index.vue';
 import ToTopIcon from '@/components/ToTopIcon/index.vue';
@@ -125,9 +136,13 @@ const onRead = (url: string, data: any) => {
   props.readBook && props.readBook(data);
 };
 
-// 编辑书名
-const toEdit = (id: string) => {
-  console.log(id, '编辑书名');
+const onRename = async (e: KeyboardEvent, id: string) => {
+  if (e.key === 'Enter') {
+    e.preventDefault(); // 阻止默认的换行行为
+    const node = e.target as HTMLElement;
+    await bookStore.updateBookInfo({ id, fileName: node.innerText });
+    node.blur();
+  }
 };
 
 // 删除
