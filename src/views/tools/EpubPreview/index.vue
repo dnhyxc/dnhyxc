@@ -127,15 +127,15 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref, watch, nextTick, computed } from 'vue';
+import { onMounted, onUnmounted, ref, watch, nextTick, computed, reactive } from 'vue';
 import type { UploadProps } from 'element-plus';
 import { ElMessage } from 'element-plus';
 import ePub from 'epubjs';
 import { useChildScroller } from '@/hooks';
-import { scrollTo, debounce, getTheme, calculateLoadProgress } from '@/utils';
+import { scrollTo, debounce, getTheme, calculateLoadProgress, Message } from '@/utils';
 import { EPUB_THEMES, BOOK_THEME } from '@/constant';
 import { uploadStore, bookStore, loginStore } from '@/store';
-import { AtlasItemParams, BookTocItem, BookTocList } from '@/typings/common';
+import { AtlasItemParams, BookTocItem, BookTocList, BookRecord } from '@/typings/common';
 import BookList from './BookList/index.vue';
 
 interface IProps {
@@ -169,12 +169,22 @@ const bookName = ref<string>('');
 const bookSize = ref<number>(0);
 // 当前加载书籍的大小
 const loadBookSize = ref<number>(0);
+// 当前目录位置
+const currentTocInfo = reactive<{ tocId: string; tocName: string; tocHref: string; bookId: string }>({
+  tocId: '',
+  tocHref: '',
+  bookId: '',
+  tocName: '',
+});
+
 // ePub 实例
 let book: any = null;
 // 渲染元素
 let rendition: any = null;
 // 全部目录
 const allTocs: BookTocList[] = [];
+// 定时器
+let timer: ReturnType<typeof setTimeout> | null = null;
 
 const { scrollChildRef, scrollChildTop } = useChildScroller();
 
@@ -195,6 +205,16 @@ watch(fontSize, () => {
 watch(lineHeight, () => {
   setLineHeight(`${lineHeight.value}px`);
 });
+
+// 监听目录信息，保存阅读目录
+watch(
+  () => currentTocInfo.tocId,
+  (newVal, oldVal) => {
+    if (newVal !== oldVal) {
+      createRecord();
+    }
+  },
+);
 
 onMounted(() => {
   window.addEventListener('resize', debounce(onResize, 100));
@@ -225,6 +245,21 @@ const onKeydown = (event: KeyboardEvent) => {
   }
 };
 
+const createRecord = (top?: boolean) => {
+  if (!currentTocInfo.bookId || !currentTocInfo.tocId || !currentTocInfo.tocName || !currentTocInfo.tocHref) return;
+  const params: BookRecord = {
+    bookId: currentTocInfo.bookId,
+    tocHref: currentTocInfo.tocHref,
+    tocId: currentTocInfo.tocId,
+    tocName: currentTocInfo.tocName?.trim(),
+  };
+  if (top) {
+    const scrollNode = previewRef.value?.firstElementChild?.firstElementChild;
+    params.position = scrollNode?.scrollTop || 0;
+  }
+  bookStore.createReadBookRecords(params);
+};
+
 // 上传校验
 const beforeUpload: UploadProps['beforeUpload'] = (rawFile) => {
   loadType.value = 'upload';
@@ -237,20 +272,25 @@ const beforeUpload: UploadProps['beforeUpload'] = (rawFile) => {
 
 // 自定义上传
 const onUpload = (event: { file: File }) => {
+  // 选择其它书籍时，保存上一次阅读书籍的位置
+  createRecord(true);
   resetRendition();
   loading.value = true;
   bookName.value = event.file.name.replace(/\.epub$/, '');
   const reader = new FileReader();
   reader.onload = async (e: Event) => {
     const buffer = (e.target as FileReader).result as string;
-    renderBook(buffer);
     const { auth } = loginStore?.userInfo;
     // 只有博主才能上传
     if (auth === 1) {
       const res = await uploadStore.uploadOtherFile(event.file);
       if (res) {
-        bookStore.addBook(res.filePath, event.file);
+        await bookStore.addBook(res.filePath, event.file);
+        currentTocInfo.bookId = bookStore.currentUploadId;
+        renderBook(buffer);
       }
+    } else {
+      renderBook(buffer);
     }
   };
   reader.readAsArrayBuffer(event.file);
@@ -291,15 +331,46 @@ const renderBook = (buffer: ArrayBuffer | string) => {
   rendition?.display();
   setFontSize('16px');
   setLineHeight('25px');
-  book.ready.then(() => {
-    tocList.value = book?.navigation?.toc || [];
-    defaultSelectedTocId.value = book?.navigation?.toc?.[0].id;
-    flattenItems(book?.navigation?.toc || []);
-    loading.value = false;
-  });
+  book.ready
+    .then(() => {
+      tocList.value = book?.navigation?.toc || [];
+      defaultSelectedTocId.value = book?.navigation?.toc?.[0].id;
+      flattenItems(book?.navigation?.toc || []);
+      loading.value = false;
+    })
+    .then(() => {
+      getReadBookRecords();
+    });
   const theme = getTheme();
   const findTheme = EPUB_THEMES.find((i) => i.key === BOOK_THEME[theme]) || EPUB_THEMES[0];
   onThemeChange(findTheme!.style.body);
+};
+
+// 获取读书记录
+const getReadBookRecords = async () => {
+  if (!currentTocInfo.bookId) return;
+  await bookStore.getReadBookRecords(currentTocInfo.bookId);
+  if (bookStore.bookRecordInfo) {
+    const { tocName, tocId, tocHref, position } = bookStore.bookRecordInfo;
+    const res = await Message(`${tocName}`, '是否跳转到历史阅读目录？', 'info');
+    if (res === 'confirm') {
+      onJumpTo(tocHref!);
+      setActiveToc(tocId!);
+      const scrollNode = previewRef.value?.firstElementChild?.firstElementChild;
+      if (scrollNode) {
+        if (timer) {
+          clearTimeout(timer);
+          timer = null;
+        }
+        timer = setTimeout(() => {
+          scrollNode.scrollTo({
+            top: position,
+            behavior: 'smooth',
+          });
+        }, 500);
+      }
+    }
+  }
 };
 
 // 获取加载进度
@@ -310,14 +381,19 @@ const getProgress = (num: number) => {
 
 // 阅读
 const readBook = (data: AtlasItemParams) => {
+  // 选择其它书籍时，保存上一次阅读书籍的位置
+  createRecord(true);
   resetRendition();
-  const { url, size, fileName } = data;
+  const { url, size, fileName, id } = data;
+  currentTocInfo.bookId = id;
   bookSize.value = size / 1024 / 1024;
   loadType.value = 'line';
   loading.value = true;
   bookName.value = fileName.replace('.epub', '');
+  // 获取加载进度
   const start = performance.now();
   calculateLoadProgress(url, getProgress).then((arrayBuffer) => {
+    // calculateLoadProgress('/public/test.epub', getProgress).then((arrayBuffer) => {
     const end = performance.now();
     const duration = ((end - start) / 1000).toFixed(2);
     loadTime.value = duration;
@@ -367,6 +443,9 @@ const onPrev = () => {
   if (index > 0) {
     const currentToc = allTocs[index - 1];
     setActiveToc(currentToc.id);
+    currentTocInfo.tocHref = currentToc.href;
+    currentTocInfo.tocId = currentToc.id;
+    currentTocInfo.tocName = currentToc.label;
   }
   rendition?.prev();
 };
@@ -377,14 +456,20 @@ const onNext = () => {
   const currentToc = allTocs[index + 1];
   if (index < allTocs.length - 1) {
     setActiveToc(currentToc.id);
+    currentTocInfo.tocHref = currentToc.href;
+    currentTocInfo.tocId = currentToc.id;
+    currentTocInfo.tocName = currentToc.label;
   }
   rendition?.next();
 };
 
 // 选择菜单
 const onSelected = (node: BookTocItem) => {
-  const { id, href } = node;
+  const { id, href, label } = node;
   setActiveToc(id);
+  currentTocInfo.tocHref = href;
+  currentTocInfo.tocId = id;
+  currentTocInfo.tocName = label;
   onJumpTo(href);
 };
 
@@ -397,6 +482,8 @@ const setActiveToc = (id: string) => {
   const active = document.querySelector(`#${id}`) as HTMLElement;
   defaultSelectedTocId.value = id;
   active.classList.add('active');
+  // 滚动到目录
+  scrollTo(scrollChildRef, active.offsetTop);
 };
 
 // 跳转到指定章节
@@ -405,6 +492,7 @@ const onJumpTo = (href: string) => {
 };
 
 const onClose = () => {
+  createRecord(true);
   emit('update:modalVisible', false);
 };
 

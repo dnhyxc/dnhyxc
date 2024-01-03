@@ -69,8 +69,8 @@ export const uniqueFunc = (arr: any, uniId: string) => {
 };
 
 // 二次确认弹窗
-export const Message = (title: string = '确定下架该文章吗？', content: string = '下架文章') => {
-  return ElMessageBox.confirm(title, content, MSG_CONFIG() as ElMessageBoxOptions);
+export const Message = (title: string = '确定下架该文章吗？', content: string = '下架文章', type?: string) => {
+  return ElMessageBox.confirm(title, content, MSG_CONFIG(type) as ElMessageBoxOptions);
 };
 
 // 格式化时间

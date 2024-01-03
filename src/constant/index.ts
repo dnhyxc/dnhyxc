@@ -516,10 +516,10 @@ export const NEED_HEAD_SEARCH = ['/home', '/classify', '/tag/list'];
 export const CLEAR_PARAMS_LIST_ROUTES = ['/home', '/seach'];
 
 // 二次确认弹窗配置
-export const MSG_CONFIG = () => ({
+export const MSG_CONFIG = (type = 'warning') => ({
   confirmButtonText: '确定',
   cancelButtonText: '取消',
-  type: 'warning',
+  type,
   center: true,
   draggable: true,
   showClose: false,

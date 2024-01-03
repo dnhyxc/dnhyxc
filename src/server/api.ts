@@ -265,3 +265,12 @@ export const GET_BOOK_LIST = '/api/getBookList';
 
 // 删除书籍
 export const DELETE_BOOK = '/api/deleteBook';
+
+// 添加读书记录
+export const CREATE_READ_BOOK_RECORDS = '/api/createReadBookRecords';
+
+// 获取读书记录
+export const GET_READ_BOOK_RECORDS = '/api/getReadBookRecords';
+
+// 删除读书记录
+export const DELETE_READ_BOOK_RECORDS = '/api/deleteReadBookRecords';

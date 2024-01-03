@@ -567,3 +567,14 @@ export interface BookTocItem {
   parent: string;
   subitems: BookTocItem[];
 }
+
+export interface BookRecord {
+  bookId: string;
+  tocId: string;
+  tocHref: string;
+  tocName: string;
+  position?: number;
+  userId?: string;
+  createTime?: number;
+  id?: string;
+}

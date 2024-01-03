@@ -3,7 +3,7 @@ import { ElMessage } from 'element-plus';
 import * as Service from '@/server';
 import { normalizeResult } from '@/utils';
 import { useCheckUserId } from '@/hooks';
-import { AtlasList, AtlasItemParams } from '@/typings/common';
+import { AtlasList, AtlasItemParams, BookRecord } from '@/typings/common';
 
 interface IProps {
   loading: boolean | null;
@@ -11,6 +11,8 @@ interface IProps {
   pageNo: number;
   pageSize: number;
   total: number;
+  currentUploadId: string;
+  bookRecordInfo: Partial<BookRecord | null>; // 赋值为可选属性
 }
 
 export const useBookStore = defineStore('book', {
@@ -20,6 +22,8 @@ export const useBookStore = defineStore('book', {
     total: 0,
     pageNo: 0,
     pageSize: 30,
+    bookRecordInfo: null,
+    currentUploadId: '',
   }),
 
   actions: {
@@ -35,6 +39,7 @@ export const useBookStore = defineStore('book', {
       );
 
       if (res.success) {
+        this.currentUploadId = res.data.id;
         if (res.code === 201) return;
         this.bookList = [res.data, ...this.bookList];
       } else {
@@ -81,6 +86,42 @@ export const useBookStore = defineStore('book', {
     // 更新书籍信息
     async updateBookInfo(params: { id: string; fileName: string }) {
       const res = normalizeResult<{ count: number }>(await Service.updateBookInfo(params));
+      ElMessage({
+        message: res.message,
+        type: res.success ? 'success' : 'error',
+        offset: 80,
+      });
+    },
+
+    // 添加读书记录
+    async createReadBookRecords(params: BookRecord) {
+      const res = normalizeResult<BookRecord>(await Service.createReadBookRecords(params));
+      if (!res.success) {
+        ElMessage({
+          message: res.message,
+          type: 'error',
+          offset: 80,
+        });
+      }
+    },
+
+    // 获取读书记录
+    async getReadBookRecords(bookId: string) {
+      const res = normalizeResult<BookRecord>(await Service.getReadBookRecords({ bookId }));
+      if (res.success) {
+        this.bookRecordInfo = res.data;
+      } else {
+        ElMessage({
+          message: res.message,
+          type: res.success ? 'success' : 'error',
+          offset: 80,
+        });
+      }
+    },
+
+    // 删除读书记录
+    async deleteReadBookRecords(bookId: string) {
+      const res = normalizeResult<{ count: number }>(await Service.deleteReadBookRecords({ bookId }));
       ElMessage({
         message: res.message,
         type: res.success ? 'success' : 'error',
