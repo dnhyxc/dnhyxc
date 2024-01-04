@@ -127,6 +127,16 @@ const changeTheme = (key: string) => {
           background-color: #ceeaba;
           color: @font-1;
         }
+        
+        .electrum {
+          background-color: #f5f5dc;
+          color: @font-1;
+        }
+        
+        .skygray {
+          background-color: #d8e0e6;
+          color: @font-1;
+        }
 
         .black {
           background-color: #171718;

@@ -237,6 +237,14 @@ export const THEME_TYPES = [
     name: '丹青黄',
   },
   {
+    key: 'electrum',
+    name: '琥珀金',
+  },
+  {
+    key: 'skygray',
+    name: '天空灰',
+  },
+  {
     key: 'danQingZi',
     name: '丹青白',
   },
@@ -1145,6 +1153,8 @@ export const BOOK_THEME = {
   emeraldGreen: 'emeraldGreen',
   lightcyan: 'lightcyan',
   danQingHuang: 'danQingHuang',
+  electrum: 'beige',
+  skygray: 'gray',
   cloud: 'tb',
   snow: 'tw',
   lateralFace: 'tw',

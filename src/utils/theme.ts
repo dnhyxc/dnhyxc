@@ -264,6 +264,35 @@ const emeraldGreen = {
   // 时间轴背景颜色
   '--timeline-lg-color1': '#f2ffe9',
   '--timeline-lg-color2': '#dcffc3',
+  '--loading-color': 'rgba(249, 255, 249, 0.35)',
+};
+
+// 天空灰
+const skygray = {
+  ...freshGreen,
+  // 主题背景颜色
+  '--background': '#d8e0e6',
+  // 文章各种卡片渐变颜色
+  '--bg-lg-color1': '#e7eff4',
+  '--bg-lg-color2': '#d5e7f3',
+  // 时间轴背景颜色
+  '--timeline-lg-color1': '#e7eff4',
+  '--timeline-lg-color2': '#d5e7f3',
+  '--loading-color': 'rgba(216, 225, 230, 0.35)',
+};
+
+// 琥珀金
+const electrum = {
+  ...freshGreen,
+  // 主题背景颜色
+  '--background': '#f5f5dc',
+  // 文章各种卡片渐变颜色
+  '--bg-lg-color1': '#fffff2',
+  '--bg-lg-color2': '#ffffd8',
+  // 时间轴背景颜色
+  '--timeline-lg-color1': '#fffff2',
+  '--timeline-lg-color2': '#ffffd8',
+  '--loading-color': 'rgba(252, 255, 234, 0.35)',
 };
 
 // 黑色主题
@@ -328,7 +357,7 @@ const lightcyan = {
   // 字体颜色
   ...fontStyle,
   // loading 背景颜色
-  '--loading-color': 'rgba(249, 255, 249, 0.8)',
+  '--loading-color': 'rgba(249, 255, 249, 0.35)',
   // 组件边框颜色
   '--card-border': '#efefef',
   '--fff': '#fffeff',
@@ -599,6 +628,8 @@ const snow = {
 const themeTypes = {
   freshGreen,
   emeraldGreen,
+  electrum,
+  skygray,
   black,
   lightcyan,
   light,
