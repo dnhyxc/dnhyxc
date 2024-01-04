@@ -110,6 +110,7 @@ export const useBookStore = defineStore('book', {
       const res = normalizeResult<BookRecord>(await Service.getReadBookRecords({ bookId }));
       if (res.success) {
         this.bookRecordInfo = res.data;
+        return res.data;
       } else {
         ElMessage({
           message: res.message,
