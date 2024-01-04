@@ -219,7 +219,13 @@ onUnmounted(() => {
 
 onBeforeRouteLeave(async (to, from, next) => {
   // 页面离开时时，保存上一次阅读书籍的位置
-  if (!currentTocInfo.bookId || !currentTocInfo.tocId || !currentTocInfo.tocName || !currentTocInfo.tocHref) {
+  if (
+    !currentTocInfo.bookId ||
+    !currentTocInfo.tocId ||
+    !currentTocInfo.tocName ||
+    !currentTocInfo.tocHref ||
+    progress.value < 100
+  ) {
     next();
   } else {
     const scrollNode = previewRef.value?.firstElementChild?.firstElementChild;
@@ -254,7 +260,14 @@ const onKeydown = (event: KeyboardEvent) => {
 };
 
 const createRecord = (top?: boolean) => {
-  if (!currentTocInfo.bookId || !currentTocInfo.tocId || !currentTocInfo.tocName || !currentTocInfo.tocHref) return;
+  if (
+    !currentTocInfo.bookId ||
+    !currentTocInfo.tocId ||
+    !currentTocInfo.tocName ||
+    !currentTocInfo.tocHref ||
+    progress.value < 100
+  )
+    return;
   const params: BookRecord = {
     bookId: currentTocInfo.bookId,
     tocHref: currentTocInfo.tocHref,
