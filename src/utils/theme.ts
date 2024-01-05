@@ -72,6 +72,8 @@ const removeStyle = {
   '--font-color': '',
   // 详情代码块背景颜色
   '--pre-bg-color': '#fff',
+  // editor 代码块颜色
+  '--code-pre-bg': '#282c34',
   // 文章预览背景颜色
   '--pre-hover-bg': 'initial',
   // table 偶数项背景颜色
@@ -155,6 +157,8 @@ const imageStyles = {
   '--font-color': '#000',
   // 详情代码块背景颜色
   '--pre-bg-color': 'rgba(0, 0, 0, 0.3)',
+  // editor 代码块颜色
+  '--code-pre-bg': 'rgba(0, 0, 0, 0.3)',
   // 文章预览背景颜色
   '--pre-hover-bg': 'rgba(0, 0, 0, 0.15)',
   // table 偶数项背景颜色
@@ -333,6 +337,8 @@ const black = {
   '--layer-2-2': 'rgba(38, 42, 51, 0.98)',
   ...removeStyle,
   '--pre-bg-color': '#282828',
+  // editor 代码块颜色
+  '--code-pre-bg': '#282828',
   '--pop-menu-color': '#333',
 };
 
@@ -444,6 +450,8 @@ const lateralFace = {
   // 图片背景兼容字体颜色
   '--font-color': '#fff',
   '--pre-bg-color': 'rgba(0, 0, 0, 0.3)',
+  // editor 代码块颜色
+  '--code-pre-bg': 'rgba(0, 0, 0, 0.3)',
   // 文章预览背景图片
   '--pre-hover-bg': 'rgba(0, 0, 0, 0.3)',
   // table 偶数项背景颜色
@@ -462,6 +470,8 @@ const sea = {
   // 图片背景兼容字体颜色
   '--font-color': '#fff',
   '--pre-bg-color': 'rgba(0, 0, 0, 0.3)',
+  // editor 代码块颜色
+  '--code-pre-bg': 'rgba(0, 0, 0, 0.3)',
   // 文章预览背景图片
   '--pre-hover-bg': 'rgba(0, 0, 0, 0.3)',
   '--login-bg-img': 'url(@/assets/images/sea.jpg)',
@@ -497,6 +507,8 @@ const beauty = {
   '--h-color': '#61dc00',
   '--shade-3': 'rgba(255, 255, 255, 0.1)',
   '--pre-bg-color': 'rgb(255, 255, 255, 0.05)',
+  // editor 代码块颜色
+  '--code-pre-bg': 'rgb(255, 255, 255, 0.05)',
   '--pre-hover-bg': 'rgb(0, 0, 0, 0.35)',
   // table 偶数项背景颜色
   '--table-even-bg': 'rgba(255, 255, 255, 0.1)',
@@ -565,6 +577,8 @@ const cloud = {
   // 文章预览背景图片
   '--pre-hover-bg': 'rgba(255, 255, 255, 0.3)',
   '--pre-bg-color': 'rgb(255, 255, 255, 0.35)',
+  // editor 代码块颜色
+  '--code-pre-bg': 'rgb(255, 255, 255, 0.35)',
   // table 偶数项背景颜色
   '--table-even-bg': 'rgba(255, 255, 255, 0.25)',
   // 文章各种卡片渐变颜色

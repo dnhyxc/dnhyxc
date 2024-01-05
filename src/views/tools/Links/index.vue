@@ -9,8 +9,8 @@
     <div class="tool-title">
       前端编程导航
       <div class="sort">
-        <el-button type="primary" link @click="onSort">{{ enabled ? '关闭排序' : '开启排序' }}</el-button>
-        <el-button v-show="enabled" type="primary" link @click="onSaveSort">保存排序</el-button>
+        <span class="btn" @click="onSort">{{ enabled ? '关闭排序' : '开启排序' }}</span>
+        <span v-show="enabled" class="btn" @click="onSaveSort">保存排序</span>
       </div>
     </div>
     <div class="tool-list">
@@ -98,6 +98,21 @@ const onSaveSort = () => {
     margin-bottom: 10px;
     padding: 0 5px;
     color: var(--font-1);
+
+    .btn {
+      color: var(--theme-blue);
+      font-size: 14px;
+      cursor: pointer;
+      font-weight: 500;
+
+      &:last-child {
+        margin-left: 10px;
+      }
+
+      &:hover {
+        color: var(--el-color-primary-light-5);
+      }
+    }
   }
 
   .tool-list {

@@ -9,7 +9,7 @@
     <el-upload
       class="upload"
       drag
-      :accept="uploadInfoText ? '.epub' : '.*'"
+      :accept="accept || '.*'"
       multiple
       :show-file-list="false"
       :before-upload="beforeUpload"
@@ -33,14 +33,15 @@ import { FILE_TYPE, FILE_UPLOAD_MSG } from '@/constant';
 interface IProps {
   onUpload: (event: { file: File }) => void;
   uploadInfoText?: string;
+  accept?: string;
 }
 
 const props = defineProps<IProps>();
 
 // 上传校验
 const beforeUpload: UploadProps['beforeUpload'] = (rawFile) => {
-  if (props.uploadInfoText) {
-    if (rawFile.type !== 'application/epub') {
+  if (props.accept) {
+    if (rawFile.type !== `application/${props.accept.replace('.', '')}`) {
       ElMessage.error('只允许上传 epub 格式的文件');
       return false;
     }

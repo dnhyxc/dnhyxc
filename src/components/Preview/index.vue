@@ -86,7 +86,7 @@ const onCopyCodeSuccess = (value: string) => {
 
   :deep {
     .v-md-pre-wrapper {
-      background: var(--pre-bg-color);
+      background: var(--code-pre-bg);
     }
 
     .vuepress-markdown-body {

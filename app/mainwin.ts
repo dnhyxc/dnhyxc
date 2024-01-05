@@ -32,7 +32,8 @@ export const createWindow = () => {
     webPreferences: {
       contextIsolation: false,
       nodeIntegration: true,
-      partition: String(+new Date()), // 防止加载线上项目地址缓存在磁盘中
+      // 注意：配置了这个属性后，会影响 iframe pdf 的加载
+      // partition: String(+new Date()), // 防止加载线上项目地址缓存在磁盘中
     },
     icon: path.join(__dirname, getIconPath()),
     // show: false,

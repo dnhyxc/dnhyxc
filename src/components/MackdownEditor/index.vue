@@ -234,7 +234,8 @@ const onCopyCodeSuccess = (value: string) => {
       color: var(--e-edit-color);
 
       .v-md-pre-wrapper {
-        background-color: var(--pre-bg-color);
+        background-color: var(--code-pre-bg);
+        // background-color: var(--pre-bg-color);
         box-shadow: 0 0 2px var(--card-border);
       }
 

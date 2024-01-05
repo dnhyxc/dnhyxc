@@ -14,6 +14,7 @@
       <Compress v-if="compressVisible" v-model:modal-visible="compressVisible" />
       <CodeRun v-if="codeRunVisible" v-model:modal-visible="codeRunVisible" />
       <EpubPreview v-if="epubVisible" v-model:modal-visible="epubVisible" />
+      <PdfPreview v-if="pdfVisible" v-model:modal-visible="pdfVisible" />
       <div v-if="!visible" class="navs-wrap">
         <div class="tools">
           <div>
@@ -44,6 +45,7 @@ import DrawBoard from './DrawBoard/index.vue';
 import CodeRun from './CodeRun/index.vue';
 import Links from './Links/index.vue';
 import EpubPreview from './EpubPreview/index.vue';
+import PdfPreview from './PdfPreview/index.vue';
 
 // 图片压缩弹窗
 const compressVisible = ref<boolean>(false);
@@ -59,6 +61,8 @@ const boardVisible = ref<boolean>(false);
 const codeRunVisible = ref<boolean>(false);
 // 是否显示电子书
 const epubVisible = ref<boolean>(false);
+// 是否显示pdf预览
+const pdfVisible = ref<boolean>(false);
 
 onMounted(() => {
   // 获取工具列表
@@ -73,7 +77,8 @@ const visible = computed(() => {
     watermarkVisible.value ||
     compressVisible.value ||
     codeRunVisible.value ||
-    epubVisible.value
+    epubVisible.value ||
+    pdfVisible.value
   );
 });
 
@@ -117,6 +122,11 @@ const showEpub = () => {
   epubVisible.value = true;
 };
 
+// 查看pdf
+const showPdf = () => {
+  pdfVisible.value = true;
+};
+
 // 策略模式实现点击每个nav card的效果
 const onClickNavIcon = (item: ToolsItem) => {
   const actions = {
@@ -128,6 +138,7 @@ const onClickNavIcon = (item: ToolsItem) => {
     board: toDrawBoard,
     codeRun: showCodeRun,
     epub: showEpub,
+    pdf: showPdf,
   };
   actions[item.key](item);
 };
