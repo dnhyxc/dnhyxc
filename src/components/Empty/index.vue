@@ -38,7 +38,7 @@ defineProps<IProps>();
   .clickNoSelectText();
 
   .empty-text {
-    color: var(--font-3);
+    color: var(--font-6);
   }
 }
 </style>

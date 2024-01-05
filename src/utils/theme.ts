@@ -132,7 +132,7 @@ const imageStyles = {
   '--font-3': '#ebebeb',
   '--font-4': '#e8e8e8',
   '--font-5': '#dfdfdf',
-  '--font-6': '#cdcdcd',
+  '--font-6': '#959595',
   // loading 背景颜色
   '--loading-color': 'rgba(0, 0, 0, 0.1)',
   // 组件边框颜色
@@ -316,12 +316,12 @@ const black = {
   // 各组件阴影颜色
   '--shadow-color': '#555',
   // 字体颜色
-  '--font-1': '#f5f5f5',
-  '--font-2': '#f5f5f5',
-  '--font-3': '#f5f5f5',
-  '--font-4': '#f5f5f5',
-  '--font-5': '#f2f3f5',
-  '--font-6': '#f2f3f5',
+  '--font-1': '#fff',
+  '--font-2': '#f2f2f2',
+  '--font-3': '#ebebeb',
+  '--font-4': '#e8e8e8',
+  '--font-5': '#dfdfdf',
+  '--font-6': '#959595',
   // loading 背景颜色
   '--loading-color': 'rgba(0, 0, 0, 0.65)',
   // 组件边框颜色
