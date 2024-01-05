@@ -41,7 +41,7 @@
         </div>
       </template>
       <div v-if="!bookName" class="content">
-        <DragUpload class="drag-upload" :on-upload="onUpload" upload-info-text="epub 格式的文件" />
+        <DragUpload class="drag-upload" accept=".epub" :on-upload="onUpload" upload-info-text="epub 格式的文件" />
       </div>
       <div v-else class="content">
         <div ref="previewRef" class="preview-wrap">

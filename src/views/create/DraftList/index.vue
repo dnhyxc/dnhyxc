@@ -273,21 +273,18 @@ const onScrollTo = (to?: number) => {
               align-items: center;
               font-size: 14px;
               cursor: pointer;
-              .username,
-              .date {
-                flex: 1;
-                .ellipsisMore(1);
-              }
-
-              .date {
-                text-align: right;
-              }
 
               .username {
                 margin-right: 10px;
+                .ellipsisMore(1);
                 &:hover {
                   color: var(--theme-blue);
                 }
+              }
+
+              .date {
+                flex: 1;
+                text-align: right;
               }
             }
 

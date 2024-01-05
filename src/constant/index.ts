@@ -27,6 +27,7 @@ import BOARD_SVG from '@/assets/svg/board.svg';
 import CODE_SVG from '@/assets/svg/code.svg';
 import NO_DATA_SVG from '@/assets/svg/no_data.svg';
 import BOOK_SVG from '@/assets/svg/book.svg';
+import PDF_SVG from '@/assets/svg/pdf.svg';
 
 export {
   EMPTY,
@@ -67,6 +68,7 @@ export const TOOL_LIST = [
   { toolName: '代码测试', key: 'codeRun', id: 'codeRun', toolUrl: CODE_SVG },
   { toolName: '语音播报', key: 'textToSpeech', id: 'textToSpeech', toolUrl: YUYIN_SVG },
   { toolName: '览电子书', key: 'epub', id: 'epub', toolUrl: BOOK_SVG },
+  { toolName: 'PDF 预览', key: 'pdf', id: 'pdf', toolUrl: PDF_SVG },
 ];
 
 // 常用图片截取比例

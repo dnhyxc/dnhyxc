@@ -16,12 +16,19 @@
           :before-upload="beforeUpload"
           :http-request="onUpload"
         >
-          <span type="primary" link class="book-btn upload-text">选择本地书籍</span>
+          <span type="primary" link class="book-btn upload-text">
+            {{ iframeUrl ? '重新选择 PDF 文件' : '选择 PDF 文件' }}
+          </span>
         </el-upload>
       </div>
       <span class="close" @click="onClose">关闭</span>
     </div>
-    <div class="content">pdfjs无法渲染啊</div>
+    <Loading v-if="!iframeUrl" :loading="loading" class="content">
+      <DragUpload class="drag-upload" :on-upload="onUpload" accept=".pdf" upload-info-text="pdf 格式的文件" />
+    </Loading>
+    <Loading v-else class="content" :loading="loading">
+      <iframe ref="iframeRef" :src="iframeUrl" frameborder="0" class="iframe" />
+    </Loading>
   </div>
 </template>
 
@@ -42,7 +49,9 @@ defineProps<IProps>();
 
 const emit = defineEmits<Emits>();
 
+const iframeRef = ref<HTMLIFrameElement | null>(null);
 const iframeUrl = ref<string>('');
+const loading = ref<boolean>(false);
 
 // 上传校验
 const beforeUpload: UploadProps['beforeUpload'] = (rawFile) => {
@@ -55,14 +64,13 @@ const beforeUpload: UploadProps['beforeUpload'] = (rawFile) => {
 
 // 自定义上传
 const onUpload = ({ file }: { file: File }) => {
+  loading.value = true;
   const reader = new FileReader();
   reader.onload = async (e: Event) => {
     const buffer = (e.target as FileReader).result as string;
-    console.log(file.type, 'file.type');
-
     const fileBlob = new Blob([buffer], { type: file.type });
-    console.log(fileBlob, 'fileBlob');
     iframeUrl.value = URL.createObjectURL(fileBlob);
+    loading.value = false;
   };
   reader.readAsArrayBuffer(file);
 };
@@ -76,7 +84,6 @@ const onClose = () => {
 @import '@/styles/index.less';
 
 .pdf-preview-wrap {
-  border: 1px solid red;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -101,6 +108,31 @@ const onClose = () => {
       .title {
         color: var(--font-1);
       }
+
+      .book-btn {
+        color: var(--theme-blue);
+        font-size: 16px;
+        margin-left: 10px;
+        cursor: pointer;
+
+        &:hover {
+          color: var(--el-color-primary-light-5);
+        }
+      }
+
+      .uploader {
+        margin-left: 10px;
+        font-size: 14px;
+
+        .upload-text {
+          padding: 0;
+          margin-left: 0;
+          .icon-upload {
+            margin-right: 5px;
+            font-size: 18px;
+          }
+        }
+      }
     }
 
     .close {
@@ -118,9 +150,35 @@ const onClose = () => {
     flex: 1;
     overflow: auto;
     box-sizing: border-box;
-    padding: 10px;
+    border-radius: 0;
 
-    iframe {
+    .drag-upload {
+      width: 100%;
+      height: 100%;
+      box-sizing: border-box;
+      border-bottom-left-radius: 5px;
+      border-bottom-right-radius: 5px;
+      padding: 0;
+
+      &:hover {
+        border: 1px dashed var(--theme-blue);
+      }
+
+      :deep {
+        .el-upload-dragger {
+          border: none;
+          border-radius: 0;
+          background-color: transparent;
+
+          &:hover {
+            background-color: var(--upload-hover-bg-color);
+          }
+        }
+      }
+    }
+
+    .iframe {
+      display: flex;
       width: 100%;
       height: 100%;
     }
