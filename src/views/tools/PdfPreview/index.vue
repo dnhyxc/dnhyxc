@@ -16,8 +16,8 @@
           :before-upload="beforeUpload"
           :http-request="onUpload"
         >
-          <span type="primary" link class="book-btn upload-text">
-            {{ iframeUrl ? '重新选择 PDF 文件' : '选择 PDF 文件' }}
+          <span class="book-btn upload-text">
+            {{ iframeUrl ? `重新选择 PDF 文件《${fileName}》` : '选择 PDF 文件' }}
           </span>
         </el-upload>
       </div>
@@ -51,6 +51,7 @@ const emit = defineEmits<Emits>();
 
 const iframeRef = ref<HTMLIFrameElement | null>(null);
 const iframeUrl = ref<string>('');
+const fileName = ref<string>('');
 const loading = ref<boolean>(false);
 
 // 上传校验
@@ -65,14 +66,10 @@ const beforeUpload: UploadProps['beforeUpload'] = (rawFile) => {
 // 自定义上传
 const onUpload = ({ file }: { file: File }) => {
   loading.value = true;
-  const reader = new FileReader();
-  reader.onload = async (e: Event) => {
-    const buffer = (e.target as FileReader).result as string;
-    const fileBlob = new Blob([buffer], { type: file.type });
-    iframeUrl.value = URL.createObjectURL(fileBlob);
-    loading.value = false;
-  };
-  reader.readAsArrayBuffer(file);
+  const fileURL = URL.createObjectURL(file);
+  iframeUrl.value = fileURL;
+  fileName.value = file.name;
+  loading.value = false;
 };
 
 const onClose = () => {
@@ -102,11 +99,17 @@ const onClose = () => {
     color: var(--font-1);
 
     .left {
+      flex: 1;
       display: flex;
       align-items: center;
 
       .title {
         color: var(--font-1);
+      }
+
+      .uploader {
+        flex: 1;
+        margin-right: 20px;
       }
 
       .book-btn {
@@ -127,6 +130,7 @@ const onClose = () => {
         .upload-text {
           padding: 0;
           margin-left: 0;
+          .ellipsisMore(1);
           .icon-upload {
             margin-right: 5px;
             font-size: 18px;

@@ -266,7 +266,7 @@ const onSelectMenu = (menu: { label: string; value: number }) => {
 
       .edit {
         margin-right: 5px;
-        color: var(--yellow-1);
+        color: var(--theme-blue);
       }
 
       .del {
@@ -278,7 +278,7 @@ const onSelectMenu = (menu: { label: string; value: number }) => {
         backdrop-filter: blur(10px);
         padding: 0px 5px 2px;
         border-radius: 5px;
-        background-color: var(--card-action-color);
+        background-color: var(--hover-bg-color);
 
         &:hover {
           color: var(--active-color);

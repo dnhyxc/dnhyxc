@@ -64,9 +64,9 @@ export const TOOL_LIST = [
   { toolName: '图片压缩', key: 'compress', id: 'compress', toolUrl: COMPRESS_SVG },
   { toolName: '图片裁剪', key: 'cropper', id: 'cropper', toolUrl: CROP_SVG },
   { toolName: '水印设置', key: 'watermark', id: 'watermark', toolUrl: MARK_SVG },
+  { toolName: '语音播报', key: 'textToSpeech', id: 'textToSpeech', toolUrl: YUYIN_SVG },
   { toolName: '画板', key: 'board', id: 'board', toolUrl: BOARD_SVG },
   { toolName: '代码测试', key: 'codeRun', id: 'codeRun', toolUrl: CODE_SVG },
-  { toolName: '语音播报', key: 'textToSpeech', id: 'textToSpeech', toolUrl: YUYIN_SVG },
   { toolName: '览电子书', key: 'epub', id: 'epub', toolUrl: BOOK_SVG },
   { toolName: 'PDF 预览', key: 'pdf', id: 'pdf', toolUrl: PDF_SVG },
 ];

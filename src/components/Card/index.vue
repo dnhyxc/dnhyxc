@@ -240,22 +240,22 @@ const toTag = (name: string) => {
         .edit {
           display: inline-block;
           margin-right: 10px;
-          color: var(--yellow-1);
+          color: var(--theme-blue);
           font-size: 14px;
-          backdrop-filter: blur(10px);
+          backdrop-filter: blur(5px);
           padding: 0px 5px 2px;
           border-radius: 5px;
-          background-color: @card-action-color;
+          background-color: var(--hover-bg-color);
         }
 
         .del {
           display: inline-block;
           color: @font-danger;
           font-size: 14px;
-          backdrop-filter: blur(10px);
+          backdrop-filter: blur(5px);
           padding: 0px 5px 2px;
           border-radius: 5px;
-          background-color: @card-action-color;
+          background-color: var(--hover-bg-color);
         }
 
         .edit,
