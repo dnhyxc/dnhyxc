@@ -39,6 +39,11 @@ export const createWindow = () => {
     // show: false,
   });
 
+  // 程序启动前，先清空之前的缓存信息
+  globalInfo.win?.webContents.session.clearStorageData({
+    storages: ['localstorage'],
+  });
+
   // 设置mac扩展坞图标
   if (isMac) {
     app.dock.setIcon(path.join(__dirname, isDev ? '../public/mac/favicon.ico' : '../dist/mac/favicon.ico'));
