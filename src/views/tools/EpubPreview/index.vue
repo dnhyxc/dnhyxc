@@ -12,7 +12,7 @@
         <span type="primary" link class="book-btn" @click="showBookList">在线书籍列表</span>
         <el-upload
           class="uploader"
-          accept=".epub"
+          accept=".epub,.epub.zip"
           :show-file-list="false"
           :before-upload="beforeUpload"
           :http-request="onUpload"
@@ -41,7 +41,13 @@
         </div>
       </template>
       <div v-if="!bookName" class="content">
-        <DragUpload class="drag-upload" accept=".epub" :on-upload="onUpload" upload-info-text="epub 格式的文件" />
+        <DragUpload
+          class="drag-upload"
+          accept=".epub,.epub+zip"
+          file-type="epub"
+          :on-upload="onUpload"
+          upload-info-text="epub 格式的文件"
+        />
       </div>
       <div v-else class="content">
         <div ref="previewRef" class="preview-wrap">
@@ -284,7 +290,7 @@ const createRecord = (top?: boolean) => {
 // 上传校验
 const beforeUpload: UploadProps['beforeUpload'] = (rawFile) => {
   loadType.value = 'upload';
-  if (rawFile.type !== 'application/epub') {
+  if (!rawFile.type.includes('epub')) {
     ElMessage.error('只允许上传 epub 格式的文件');
     return false;
   }

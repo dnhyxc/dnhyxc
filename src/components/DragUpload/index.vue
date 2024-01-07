@@ -34,15 +34,17 @@ interface IProps {
   onUpload: (event: { file: File }) => void;
   uploadInfoText?: string;
   accept?: string;
+  fileType?: string;
 }
 
 const props = defineProps<IProps>();
 
 // 上传校验
 const beforeUpload: UploadProps['beforeUpload'] = (rawFile) => {
-  if (props.accept) {
-    if (rawFile.type !== `application/${props.accept.replace('.', '')}`) {
-      ElMessage.error('只允许上传 epub 格式的文件');
+  if (props.fileType) {
+    if (!rawFile.type.includes(props.fileType)) {
+      const type = props.fileType === 'epub' ? 'epub，epub+zip' : props.fileType;
+      ElMessage.error(`只允许上传 ${type} 格式的文件`);
       return false;
     }
     return true;

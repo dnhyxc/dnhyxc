@@ -24,7 +24,13 @@
       <span class="close" @click="onClose">关闭</span>
     </div>
     <Loading v-if="!iframeUrl" :loading="loading" class="content">
-      <DragUpload class="drag-upload" :on-upload="onUpload" accept=".pdf" upload-info-text="pdf 格式的文件" />
+      <DragUpload
+        class="drag-upload"
+        :on-upload="onUpload"
+        accept=".pdf"
+        file-type="pdf"
+        upload-info-text="pdf 格式的文件"
+      />
     </Loading>
     <Loading v-else class="content" :loading="loading">
       <iframe ref="iframeRef" :src="iframeUrl" frameborder="0" class="iframe" />
