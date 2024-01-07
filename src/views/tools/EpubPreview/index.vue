@@ -551,6 +551,7 @@ const onScrollTo = () => {
     justify-content: space-between;
     font-size: 18px;
     height: 45px;
+    min-height: 45px;
     padding: 0 10px;
     border-bottom: 1px solid var(--card-border);
     box-sizing: border-box;
@@ -659,10 +660,10 @@ const onScrollTo = () => {
         box-sizing: border-box;
         border-right: 1px solid var(--card-border);
         box-sizing: border-box;
+        height: calc(100vh - 185px);
 
         #preview {
           width: calc(100vw - 342px);
-          height: calc(100vh - 172px);
         }
       }
 
@@ -676,7 +677,7 @@ const onScrollTo = () => {
       .toc-list-wrap {
         width: 260px;
         min-width: 260px;
-        height: calc(100vh - 172px);
+        height: calc(100vh - 272px);
         color: v-bind(fontColor);
 
         .toc-title {
