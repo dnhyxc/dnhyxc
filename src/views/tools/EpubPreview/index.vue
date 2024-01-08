@@ -53,7 +53,7 @@
         <div ref="previewRef" :class="`preview-wrap ${checkOS() === 'mac' && 'mac-preview-wrap'}`">
           <div id="preview" />
         </div>
-        <div class="toc-list-wrap">
+        <div :class="`toc-list-wrap ${checkOS() === 'mac' && 'mac-toc-list-wrap'}`">
           <div v-if="tocList.length > 0" class="toc-title">
             <span>目录总览</span>
             <i
@@ -674,18 +674,18 @@ const onScrollTo = () => {
         height: calc(100vh - 185px);
       }
 
-      :deep {
-        .scrollbar-wrapper {
-          overflow-x: hidden;
-          height: calc(100vh - 212px);
-        }
-      }
-
       .toc-list-wrap {
         width: 260px;
         min-width: 260px;
         height: calc(100vh - 172px);
         color: v-bind(fontColor);
+
+        :deep {
+          .scrollbar-wrapper {
+            overflow-x: hidden;
+            height: calc(100vh - 212px);
+          }
+        }
 
         .toc-title {
           display: flex;
@@ -711,6 +711,17 @@ const onScrollTo = () => {
         .toc-wrap {
           box-sizing: border-box;
           color: v-bind(fontColor);
+        }
+      }
+
+      .mac-toc-list-wrap {
+        height: calc(100vh - 185px);
+
+        :deep {
+          .scrollbar-wrapper {
+            overflow-x: hidden;
+            height: calc(100vh - 225px);
+          }
         }
       }
     }
