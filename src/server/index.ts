@@ -547,7 +547,14 @@ export const addBook = async (params: AtlasImgInfo) => {
 };
 
 // 更新书籍
-export const updateBookInfo = async (params: { id: string; fileName: string }) => {
+export const updateBookInfo = async (params: {
+  id: string;
+  fileName: string;
+  coverImg: string;
+  author: string;
+  translator: string;
+  language: string;
+}) => {
   return await post(API.UPDATE_BOOK_INFO, copeParams(params));
 };
 

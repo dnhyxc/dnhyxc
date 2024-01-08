@@ -84,8 +84,30 @@ export const useBookStore = defineStore('book', {
     },
 
     // 更新书籍信息
-    async updateBookInfo(params: { id: string; fileName: string }) {
+    async updateBookInfo(params: {
+      id: string;
+      fileName: string;
+      coverImg: string;
+      author: string;
+      translator: string;
+      language: string;
+    }) {
       const res = normalizeResult<{ count: number }>(await Service.updateBookInfo(params));
+      if (res.success) {
+        this.bookList = this.bookList.map((item) => {
+          if (item.id === params.id) {
+            return {
+              ...item,
+              fileName: params.fileName,
+              coverImg: params.coverImg,
+              author: params.author,
+              translator: params.translator,
+              language: params.language,
+            };
+          }
+          return item;
+        });
+      }
       ElMessage({
         message: res.message,
         type: res.success ? 'success' : 'error',

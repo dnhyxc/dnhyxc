@@ -28,6 +28,7 @@ import CODE_SVG from '@/assets/svg/code.svg';
 import NO_DATA_SVG from '@/assets/svg/no_data.svg';
 import BOOK_SVG from '@/assets/svg/book.svg';
 import PDF_SVG from '@/assets/svg/pdf.svg';
+import HTTP from '@/assets/images/http.jpg';
 
 export {
   EMPTY,
@@ -57,6 +58,7 @@ export {
   BOARD_SVG,
   NO_DATA_SVG,
   BOOK_SVG,
+  HTTP,
 };
 
 // 工具列表

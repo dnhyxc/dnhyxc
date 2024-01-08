@@ -20,54 +20,85 @@
             class="pullup-content"
           >
             <div class="list-wrap">
-              <LineCard
+              <div
                 v-for="data in bookStore.bookList"
                 :key="data.id"
                 :data="data"
                 :class="`line-card ${false && 'active-line-card'}`"
-                :to-edit="onRead"
+                @click="() => onRead(data)"
               >
-                <template #title>
-                  <div
-                    v-if="loginStore.userInfo.auth === 1"
-                    class="left"
-                    :title="data.fileName.replace(/\.epub$/, '')"
-                    :contenteditable="true"
-                    @click.stop="() => {}"
-                    @keydown="(e) => onRename(e, data.id)"
-                  >
-                    {{ data.fileName.replace(/\.epub$/, '') }}
+                <div class="cover">
+                  <Image :url="data?.coverImg" :transition-img="HTTP" class="img" />
+                </div>
+                <div class="book-info">
+                  <div class="title">
+                    <div class="left" :title="data.fileName.replace(/\.epub$/, '')">
+                      {{ data.fileName.replace(/\.epub$/, '') }}
+                    </div>
+                    <div v-if="loginStore.userInfo.auth === 1" class="right">
+                      <span class="edit" @click.stop="onEdit(data)">编辑</span>
+                      <span class="del" @click.stop="onReomve(data.id!)">删除</span>
+                    </div>
                   </div>
-                  <div v-else class="left" :title="data.fileName.replace(/\.epub$/, '')">
-                    {{ data.fileName.replace(/\.epub$/, '') }}
-                  </div>
-                  <div class="right">
-                    <span v-if="loginStore.userInfo.auth === 1" class="del" @click.stop="onReomve(data.id!)">删除</span>
-                  </div>
-                </template>
-                <template #content>
-                  <div class="art-info">
+                  <div class="book-desc">
+                    <div class="desc">作者：{{ data.author || '-' }}</div>
+                    <div class="desc">译者：{{ data.translator || '-' }}</div>
+                    <div class="desc">语言：{{ data.language || '-' }}</div>
                     <div class="desc">添加时间：{{ formatDate(data.createTime, 'YYYY/MM/DD') }}</div>
-                    <div class="desc">书籍大小：{{ (data.size / 1024 / 1024).toFixed(2) }} MB</div>
-                    <div v-if="data.type" class="desc">书籍类型：{{ data.type.split('/')[1] }}</div>
                   </div>
-                </template>
-              </LineCard>
+                </div>
+              </div>
             </div>
             <ToTopIcon v-if="scrollTop >= 500" :on-scroll-to="onScrollTo" />
           </div>
           <div v-if="noMore" class="no-more">没有更多了～～～</div>
           <Empty v-if="showEmpty" />
         </el-scrollbar>
+        <div class="edit-wrap">
+          <el-dialog v-model="editVisible" title="编辑书籍" width="400px">
+            <el-form ref="formRef" :model="bookForm" class="form-wrap" @submit.native.prevent>
+              <el-form-item prop="coverImg" label="书籍封面" class="form-item">
+                <div class="cover-img-wrap">
+                  <Upload v-model:file-path="bookForm.coverImg" :need-cropper="false">
+                    <template #preview>
+                      <img :src="bookForm.coverImg" class="img" />
+                    </template>
+                  </Upload>
+                </div>
+              </el-form-item>
+              <el-form-item prop="fileName" label="书籍名称" class="form-item">
+                <el-input v-model="bookForm.fileName" placeholder="请输入书籍名称" />
+              </el-form-item>
+              <el-form-item prop="author" label="书籍作者" :title="bookForm.author" class="form-item">
+                <el-input v-model="bookForm.author" placeholder="请输入书籍作者" />
+              </el-form-item>
+              <el-form-item prop="translator" label="书籍译者" class="form-item">
+                <el-input v-model="bookForm.translator" placeholder="请输入书籍译者" />
+              </el-form-item>
+              <el-form-item prop="language" label="书籍语言" class="form-item">
+                <el-input v-model="bookForm.language" placeholder="请输入书籍语言" />
+              </el-form-item>
+            </el-form>
+            <template #footer>
+              <span class="dialog-footer">
+                <el-button @click="onCancel">取消</el-button>
+                <el-button type="primary" @click="onSubmit">确定</el-button>
+              </span>
+            </template>
+          </el-dialog>
+        </div>
       </Loading>
     </el-drawer>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch, nextTick, onUnmounted } from 'vue';
+import { computed, ref, reactive, watch, nextTick, onUnmounted } from 'vue';
+import type { FormInstance } from 'element-plus';
 import { bookStore, loginStore } from '@/store';
+import { HTTP } from '@/constant';
 import { scrollTo, Message, formatDate } from '@/utils';
+import { AtlasItemParams } from '@/typings/common';
 import Loading from '@/components/Loading/index.vue';
 import ToTopIcon from '@/components/ToTopIcon/index.vue';
 import Empty from '@/components/Empty/index.vue';
@@ -80,10 +111,26 @@ interface IProps {
 const props = defineProps<IProps>();
 
 const emit = defineEmits(['update:visible']);
+const formRef = ref<FormInstance>();
 
-// const isMounted = ref<boolean>(false);
 const scrollRef = ref<any>(null);
 const scrollTop = ref<number>(0);
+const editVisible = ref<boolean>(false);
+const bookForm = reactive<{
+  fileName: string;
+  coverImg: string;
+  id: string;
+  author: string;
+  translator: string;
+  language: string;
+}>({
+  id: '',
+  fileName: '',
+  coverImg: '',
+  author: '',
+  translator: '',
+  language: '',
+});
 
 const visible = computed({
   get() {
@@ -132,17 +179,46 @@ const onGetBookList = () => {
 };
 
 // 阅读
-const onRead = (url: string, data: any) => {
+const onRead = (data: AtlasItemParams) => {
   props.readBook && props.readBook(data);
 };
 
-const onRename = async (e: KeyboardEvent, id: string) => {
-  if (e.key === 'Enter') {
-    e.preventDefault(); // 阻止默认的换行行为
-    const node = e.target as HTMLElement;
-    await bookStore.updateBookInfo({ id, fileName: node.innerText });
-    node.blur();
-  }
+const resetForm = () => {
+  bookForm.id = '';
+  bookForm.fileName = '';
+  bookForm.coverImg = '';
+  bookForm.author = '';
+  bookForm.translator = '';
+  bookForm.language = '';
+};
+
+// 编辑
+const onEdit = (data: AtlasItemParams) => {
+  bookForm.id = data.id;
+  bookForm.fileName = data.fileName;
+  bookForm.coverImg = data.coverImg || '';
+  bookForm.author = data.author || '';
+  bookForm.translator = data.translator || '';
+  bookForm.language = data.language || '';
+  editVisible.value = true;
+};
+
+const onCancel = () => {
+  resetForm();
+  editVisible.value = false;
+};
+
+const onSubmit = async () => {
+  await bookStore.updateBookInfo({
+    id: bookForm.id,
+    fileName: bookForm.fileName,
+    coverImg: bookForm.coverImg,
+    author: bookForm.author,
+    translator: bookForm.translator,
+    language: bookForm.language,
+  });
+  resetForm();
+  editVisible.value = false;
 };
 
 // 删除
@@ -179,44 +255,6 @@ const onScrollTo = (to?: number) => {
       padding: 16px 18px 20px;
     }
   }
-  .title {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    font-size: 16px;
-    margin-bottom: 10px;
-    color: var(--font-1);
-
-    .left {
-      flex: 1;
-      font-weight: 700;
-      margin-right: 10px;
-      .ellipsisMore(1);
-    }
-
-    .right {
-      display: flex;
-      align-items: center;
-      font-size: 14px;
-
-      .edit {
-        color: var(--theme-blue);
-      }
-
-      .del {
-        color: @font-danger;
-        margin-left: 10px;
-      }
-
-      .edit,
-      .del {
-        &:hover {
-          color: @active;
-        }
-      }
-    }
-  }
 
   .content {
     position: relative;
@@ -226,20 +264,86 @@ const onScrollTo = (to?: number) => {
       padding: 5px 0;
 
       .line-card {
+        display: flex;
+        justify-content: space-around;
         padding: 10px 10px;
         box-shadow: 0 0 5px var(--shadow-mack);
         background-image: linear-gradient(225deg, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
         border-radius: 5px;
         margin: 0 5px 10px 5px;
+        cursor: pointer;
 
-        :deep {
-          .art-info {
-            flex: 1;
-            margin-right: 0;
+        .cover {
+          width: 30%;
+          height: auto;
+          max-height: 120px;
+          margin: auto 10px auto 0;
 
+          :deep {
+            .image-item {
+              border-radius: 0;
+              max-height: 120px;
+            }
+          }
+        }
+
+        .book-info {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+
+          .title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: var(--font-1);
+
+            .left {
+              flex: 1;
+              font-weight: 700;
+              margin-right: 10px;
+              .ellipsisMore(1);
+            }
+
+            .right {
+              display: none;
+              align-items: center;
+              font-size: 14px;
+
+              .del {
+                color: @font-danger;
+                margin-left: 10px;
+              }
+
+              .edit {
+                color: var(--theme-blue);
+              }
+
+              .edit,
+              .del {
+                &:hover {
+                  color: @active;
+                }
+              }
+            }
+          }
+
+          &:hover {
+            .title {
+              .right {
+                display: flex;
+              }
+            }
+          }
+
+          .book-desc {
             .desc {
               .ellipsisMore(1);
-              margin-bottom: 10px;
+              margin-bottom: 5px;
               font-size: 14px;
               color: var(--font-5);
 
@@ -270,6 +374,40 @@ const onScrollTo = (to?: number) => {
     color: var(--font-4);
     margin: 15px 0 6px;
     .clickNoSelectText();
+  }
+
+  .edit-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    :deep {
+      .el-form-item__label {
+        color: var(--font-3);
+      }
+      .el-dialog__body {
+        padding: 20px 20px 0 20px !important;
+      }
+    }
+
+    .book-cover,
+    .book-name {
+      display: block;
+      font-size: 14px;
+      color: var(--font-3);
+      margin-bottom: 10px;
+    }
+
+    .cover-img-wrap {
+      width: 120px;
+      height: 175px;
+
+      .img {
+        width: 100%;
+        height: auto;
+        max-height: 175px;
+      }
+    }
   }
 }
 </style>

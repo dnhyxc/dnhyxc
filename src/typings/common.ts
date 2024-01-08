@@ -442,6 +442,10 @@ export interface AtlasItemParams {
   size: number;
   fileName: string;
   type: string;
+  coverImg?: string;
+  author?: string;
+  translator?: string;
+  language?: string;
   userId?: string;
   isDelete?: boolean;
 }

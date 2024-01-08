@@ -23,7 +23,7 @@ const imgRef = ref<HTMLImageElement | null>(null);
 let timer: ReturnType<typeof setTimeout> | null = null;
 
 interface IProps {
-  url: string;
+  url?: string;
   urls?: string[];
   onClick?: Function;
   transitionImg?: string;
@@ -31,6 +31,7 @@ interface IProps {
 }
 
 const props = withDefaults(defineProps<IProps>(), {
+  url: '',
   urls: () => [],
   onClick: () => {},
   transitionImg: '',
@@ -63,10 +64,10 @@ const loadImage = () => {
     }
     timer = setTimeout(() => {
       loaded.value = true;
-      loadUrl.value = props.url;
+      loadUrl.value = props.url as string;
     });
   };
-  img.src = props.url;
+  img.src = props.url as string;
 };
 
 // 图片加载失败事件

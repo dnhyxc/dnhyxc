@@ -50,7 +50,7 @@
         />
       </div>
       <div v-else class="content">
-        <div ref="previewRef" class="preview-wrap">
+        <div ref="previewRef" :class="`preview-wrap ${checkOS() === 'mac' && 'mac-preview-wrap'}`">
           <div id="preview" />
         </div>
         <div class="toc-list-wrap">
@@ -139,7 +139,7 @@ import type { UploadProps } from 'element-plus';
 import { ElMessage } from 'element-plus';
 import ePub from 'epubjs';
 import { useChildScroller } from '@/hooks';
-import { scrollTo, debounce, getTheme, calculateLoadProgress, Message } from '@/utils';
+import { scrollTo, debounce, getTheme, calculateLoadProgress, Message, checkOS } from '@/utils';
 import { EPUB_THEMES, BOOK_THEME } from '@/constant';
 import { uploadStore, bookStore, loginStore } from '@/store';
 import { AtlasItemParams, BookTocItem, BookTocList, BookRecord } from '@/typings/common';
@@ -606,6 +606,9 @@ const onScrollTo = () => {
     flex: 1;
     display: flex;
     flex-direction: column;
+    border-radius: 0;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
 
     .load-info {
       display: flex;
@@ -660,11 +663,15 @@ const onScrollTo = () => {
         box-sizing: border-box;
         border-right: 1px solid var(--card-border);
         box-sizing: border-box;
-        height: calc(100vh - 185px);
+        height: calc(100vh - 172px);
 
         #preview {
           width: calc(100vw - 342px);
         }
+      }
+
+      .mac-preview-wrap {
+        height: calc(100vh - 185px);
       }
 
       :deep {
@@ -677,7 +684,7 @@ const onScrollTo = () => {
       .toc-list-wrap {
         width: 260px;
         min-width: 260px;
-        height: calc(100vh - 272px);
+        height: calc(100vh - 172px);
         color: v-bind(fontColor);
 
         .toc-title {
