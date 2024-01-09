@@ -9,6 +9,7 @@
     <div class="header">
       <div class="left">
         <span class="title">PDF 预览</span>
+        <span type="primary" link class="book-btn" @click="showBookList">在线 PDF 列表</span>
         <el-upload
           class="uploader"
           accept=".pdf"
@@ -23,25 +24,75 @@
       </div>
       <span class="close" @click="onClose">关闭</span>
     </div>
-    <Loading v-if="!iframeUrl" :loading="loading" class="content">
-      <DragUpload
-        class="drag-upload"
-        :on-upload="onUpload"
-        accept=".pdf"
-        file-type="pdf"
-        upload-info-text="pdf 格式的文件"
-      />
+    <Loading :loading="loading" class="content">
+      <template #loadInfo>
+        <div v-if="loadType === 'line'" class="load-info">
+          <el-progress :show-text="false" :stroke-width="12" :percentage="progress" class="progress-bar" />
+          <div class="load-time">
+            <span class="progress">
+              已加载 {{ progress }}% ({{ loadPdfSize.toFixed(2) }}MB / {{ pdfSize.toFixed(2) }}MB)
+            </span>
+            <span v-if="progress >= 99" class="duration">，耗时 {{ loadTime }} 秒 </span>
+          </div>
+        </div>
+      </template>
+      <div v-if="!iframeUrl" class="preview-wrap">
+        <DragUpload
+          class="drag-upload"
+          :on-upload="onUpload"
+          accept=".pdf"
+          file-type="pdf"
+          upload-info-text="pdf 格式的文件"
+        />
+      </div>
+      <div v-else class="preview-wrap">
+        <iframe :src="iframeUrl" frameborder="0" class="iframe" />
+        <div class="actions" @click="addTagVisible = true">
+          <i class="iconfont icon-biaoqian" title="保存书签" />
+        </div>
+      </div>
     </Loading>
-    <Loading v-else class="content" :loading="loading">
-      <iframe ref="iframeRef" :src="iframeUrl" frameborder="0" class="iframe" />
-    </Loading>
+    <PdfList v-model:visible="visible" :read-book="previewPdf" />
+    <div class="add-tag-wrap">
+      <el-dialog v-model="addTagVisible" title="保存书签" align-center draggable width="400px">
+        <el-form ref="formRef" :model="tagForm" label-width="79px" class="form-wrap" @submit.native.prevent>
+          <el-form-item prop="tocName" label="章节名称" class="form-item">
+            <el-input v-model="tagForm.tocName" placeholder="请输入章节名称" />
+          </el-form-item>
+          <el-form-item
+            prop="tocId"
+            label="章节页码"
+            class="form-item"
+            :rules="[
+              {
+                required: true,
+                message: '请输入章节页码',
+              },
+            ]"
+          >
+            <el-input v-model="tagForm.tocId" placeholder="请输入章节页码" />
+          </el-form-item>
+        </el-form>
+        <template #footer>
+          <span class="dialog-footer">
+            <el-button @click="onCancel">取消</el-button>
+            <el-button type="primary" @click="onSubmit">确定</el-button>
+          </span>
+        </template>
+      </el-dialog>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, reactive } from 'vue';
+import { onBeforeRouteLeave, useRouter } from 'vue-router';
 import { ElMessage } from 'element-plus';
-import type { UploadProps } from 'element-plus';
+import type { UploadProps, FormInstance } from 'element-plus';
+import { loginStore, uploadStore, bookStore } from '@/store';
+import { calculateLoadProgress, Message } from '@/utils';
+import { AtlasItemParams, BookRecord } from '@/typings/common';
+import PdfList from './PdfList/index.vue';
 
 interface IProps {
   modalVisible: boolean;
@@ -51,18 +102,97 @@ interface Emits {
   (e: 'update:modalVisible', visible: boolean): void;
 }
 
+const router = useRouter();
+
 defineProps<IProps>();
 
 const emit = defineEmits<Emits>();
 
-const iframeRef = ref<HTMLIFrameElement | null>(null);
 const iframeUrl = ref<string>('');
 const fileName = ref<string>('');
 const loading = ref<boolean>(false);
+const visible = ref<boolean>(false);
+// 选择渠道
+const loadType = ref<string>('upload');
+// 加载进度
+const progress = ref<number>(0);
+// 加载时间
+const loadTime = ref<string>('0');
+// 当前选择的书籍大小
+const pdfSize = ref<number>(0);
+// 当前加载书籍的大小
+const loadPdfSize = ref<number>(0);
+const addTagVisible = ref<boolean>(false);
+const formRef = ref<FormInstance>();
+const tagForm = reactive<{
+  tocId: string;
+  tocHref: string;
+  bookId: string;
+  tocName: string;
+}>({
+  tocId: '',
+  tocHref: '',
+  bookId: '',
+  tocName: '',
+});
+const activePdf = ref<AtlasItemParams | null>(null);
+const toPath = ref<string>('');
+const canGo = ref<boolean>(false);
+const canClose = ref<boolean>(true);
+const canLoadPdf = ref<boolean>(true);
+const canUpload = ref<boolean>(true);
+const rawFile = ref<File | null>(null);
+
+onBeforeRouteLeave(async (to, from, next) => {
+  // 页面离开时时，保存上一次阅读的位置
+  if (!tagForm.bookId || (loadType.value === 'line' && progress.value < 100)) {
+    next();
+  } else {
+    if (!canGo.value) {
+      try {
+        const res = await Message('', '是否保存阅读记录后再离开？', 'info');
+        if (res === 'confirm') {
+          addTagVisible.value = true;
+          toPath.value = to.path;
+          canGo.value ? next(true) : next(false);
+          canGo.value = false;
+          addTagVisible.value = false;
+        }
+      } catch (error) {
+        next(true);
+      }
+    } else {
+      next(true);
+    }
+  }
+});
+
+const onUploadFile = async () => {
+  if (!rawFile.value) return;
+  resetRendition();
+  loading.value = true;
+  fileName.value = rawFile.value.name;
+  const { auth } = loginStore?.userInfo;
+  // 只有博主才能上传
+  if (auth === 1) {
+    const fileURL = URL.createObjectURL(rawFile.value);
+    const res = await uploadStore.uploadOtherFile(rawFile.value);
+    if (res) {
+      await bookStore.addBook(res.filePath, rawFile.value);
+      tagForm.bookId = bookStore.currentUploadId;
+      getReadBookRecords(fileURL);
+    }
+  } else {
+    const fileURL = URL.createObjectURL(rawFile.value);
+    iframeUrl.value = fileURL;
+    loading.value = false;
+  }
+};
 
 // 上传校验
-const beforeUpload: UploadProps['beforeUpload'] = (rawFile) => {
-  if (rawFile.type !== 'application/pdf') {
+const beforeUpload: UploadProps['beforeUpload'] = async (file) => {
+  loadType.value = 'upload';
+  if (file.type !== 'application/pdf') {
     ElMessage.error('只允许上传 epub 格式的文件');
     return false;
   }
@@ -70,16 +200,160 @@ const beforeUpload: UploadProps['beforeUpload'] = (rawFile) => {
 };
 
 // 自定义上传
-const onUpload = ({ file }: { file: File }) => {
-  loading.value = true;
-  const fileURL = URL.createObjectURL(file);
-  iframeUrl.value = fileURL;
-  fileName.value = file.name;
-  loading.value = false;
+const onUpload = async ({ file }: { file: File }) => {
+  rawFile.value = file;
+  if (!iframeUrl.value) {
+    onUploadFile();
+  } else {
+    try {
+      const res = await Message('', '是否保存阅读记录后再离开？', 'info');
+      if (res === 'confirm') {
+        addTagVisible.value = true;
+        canUpload.value = false;
+      }
+    } catch (error) {
+      onUploadFile();
+    }
+  }
 };
 
-const onClose = () => {
-  emit('update:modalVisible', false);
+// 显示书籍列表
+const showBookList = () => {
+  visible.value = true;
+};
+
+// 获取加载进度
+const getProgress = (num: number) => {
+  progress.value = num;
+  loadPdfSize.value = pdfSize.value * (num / 100);
+};
+
+// 重置阅读属性设置
+const resetRendition = () => {
+  fileName.value = '';
+  loading.value = false;
+  progress.value = 0;
+  loadTime.value = '0';
+  loadPdfSize.value = 0;
+  pdfSize.value = 0;
+};
+
+const loadPdf = () => {
+  if (!activePdf.value) return;
+  resetRendition();
+  visible.value = false;
+  loading.value = true;
+  loadType.value = 'line';
+  const { url, size, fileName: name, id } = activePdf.value;
+  tagForm.bookId = id;
+  pdfSize.value = size / 1024 / 1024;
+  fileName.value = name;
+  // 获取加载进度
+  const start = performance.now();
+  calculateLoadProgress(url, getProgress, 'blob').then((blob) => {
+    const end = performance.now();
+    const duration = ((end - start) / 1000).toFixed(2);
+    loadTime.value = duration;
+    const fileURL = URL.createObjectURL(blob);
+    getReadBookRecords(fileURL);
+  });
+};
+
+const previewPdf = async (data: AtlasItemParams) => {
+  activePdf.value = data;
+  if (!iframeUrl.value || progress.value < 100) {
+    loadPdf();
+  } else {
+    try {
+      const res = await Message('', '是否保存阅读记录后再离开？', 'info');
+      if (res === 'confirm') {
+        addTagVisible.value = true;
+        canLoadPdf.value = false;
+      }
+    } catch (error) {
+      loadPdf();
+    }
+  }
+};
+
+// 获取读书记录
+const getReadBookRecords = async (fileURL: string) => {
+  if (!tagForm.bookId) return;
+  await bookStore.getReadBookRecords(tagForm.bookId);
+  if (bookStore.bookRecordInfo) {
+    const { tocName, tocId, tocHref, bookId } = bookStore.bookRecordInfo;
+    tagForm.tocHref = tocHref!;
+    tagForm.tocId = tocId!;
+    tagForm.tocName = tocName!;
+    tagForm.bookId = bookId!;
+    try {
+      const res = await Message(`第 ${tocId} 页 ${tocName || ''}`, '是否跳转到历史阅读目录？', 'info');
+      if (res === 'confirm') {
+        console.log(`${fileURL}#${tocId}`, tocId);
+        iframeUrl.value = `${fileURL}#page=${tocId}`;
+        loading.value = false;
+      }
+    } catch (error) {
+      iframeUrl.value = fileURL;
+      loading.value = false;
+    }
+  } else {
+    iframeUrl.value = fileURL;
+    loading.value = false;
+  }
+};
+
+const onCancel = () => {
+  addTagVisible.value = false;
+  if (toPath.value) {
+    canGo.value = true;
+    router.push(toPath.value);
+  }
+};
+
+const onSubmit = async () => {
+  if (!tagForm.bookId || !tagForm.tocId) {
+    ElMessage.error('请填写页码');
+    return;
+  }
+  const params: BookRecord = {
+    bookId: tagForm.bookId,
+    tocHref: tagForm.tocHref,
+    tocId: tagForm.tocId,
+    tocName: tagForm.tocName.trim(),
+  };
+  await bookStore.createReadBookRecords(params);
+  addTagVisible.value = false;
+  if (toPath.value) {
+    canGo.value = true;
+    router.push(toPath.value);
+  }
+  if (!canClose.value) {
+    emit('update:modalVisible', false);
+    canClose.value = true;
+  }
+  if (!canLoadPdf.value) {
+    loadPdf();
+  }
+  if (!canUpload.value) {
+    onUploadFile();
+  }
+};
+
+const onClose = async () => {
+  if (iframeUrl.value) {
+    try {
+      const res = await Message('', '是否保存阅读记录后再离开？', 'info');
+      if (res === 'confirm') {
+        addTagVisible.value = true;
+        canClose.value = false;
+      }
+    } catch (error) {
+      emit('update:modalVisible', false);
+    }
+  } else {
+    emit('update:modalVisible', false);
+  }
 };
 </script>
 
@@ -157,10 +431,64 @@ const onClose = () => {
   }
 
   .content {
+    display: flex;
+    width: 100%;
     flex: 1;
     overflow: auto;
     box-sizing: border-box;
     border-radius: 0;
+
+    .load-info {
+      display: flex;
+      justify-content: space-between;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 10px;
+      color: var(--loading-text-color);
+
+      .progress-bar {
+        width: 230px;
+      }
+
+      .load-time {
+        font-size: 12px;
+        margin-top: 9px;
+      }
+    }
+
+    .preview-wrap {
+      position: relative;
+      flex: 1;
+
+      .iframe {
+        display: flex;
+        width: 100%;
+        height: 100%;
+      }
+
+      .actions {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: absolute;
+        top: 10px;
+        right: 137px;
+        width: 36px;
+        height: 36px;
+        box-sizing: border-box;
+        cursor: pointer;
+
+        &:hover {
+          border-radius: 36px;
+          background: #424649;
+        }
+
+        .iconfont {
+          font-size: 15px;
+          color: @fff;
+        }
+      }
+    }
 
     .drag-upload {
       width: 100%;
@@ -186,11 +514,16 @@ const onClose = () => {
         }
       }
     }
+  }
 
-    .iframe {
-      display: flex;
-      width: 100%;
-      height: 100%;
+  .add-tag-wrap {
+    :deep {
+      .el-form-item__label {
+        color: var(--font-3);
+      }
+      .el-dialog__body {
+        padding: 20px 20px 0 20px !important;
+      }
     }
   }
 }

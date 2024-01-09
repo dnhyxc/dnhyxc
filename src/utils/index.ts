@@ -1177,6 +1177,7 @@ let previousReader: any = null;
 export const calculateLoadProgress = (
   url: string,
   getProgress: (progress: number) => void,
+  needFileType = 'arrayBuffer',
 ): Promise<ArrayBuffer | any> => {
   return fetch(url)
     .then((response) => {
@@ -1208,12 +1209,19 @@ export const calculateLoadProgress = (
       return readChunk();
     })
     .then((_chunks) => {
-      const blob = new Blob(_chunks);
-      return new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.onloadend = () => resolve(reader.result);
-        reader.readAsArrayBuffer(blob);
-      });
+      if (needFileType === 'blob') {
+        const blob = new Blob(_chunks, { type: 'application/pdf' });
+        return new Promise((resolve) => {
+          resolve(blob);
+        });
+      } else {
+        const blob = new Blob(_chunks);
+        return new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result);
+          reader.readAsArrayBuffer(blob);
+        });
+      }
     })
     .catch((error) => {
       console.error('资源加载失败:', error);

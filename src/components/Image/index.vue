@@ -7,8 +7,9 @@
 <template>
   <div class="image-wrap-style" @click="onClickImg">
     <img v-if="url" ref="imgRef" :src="loaded ? loadUrl : transitionImg" alt="" class="image-item" @error="onError" />
-    <div v-else class="loading-img">
-      <div class="loading">loading...</div>
+    <div v-if="!url" class="loading-img">
+      <img v-if="transitionImg" :src="transitionImg" alt="" class="image-item" />
+      <div v-else class="loading">loading...</div>
     </div>
     <img v-for="i in urls" v-show="urls?.length! > 0" :key="i" :src="i" alt="" class="image-item" />
   </div>

@@ -52,14 +52,14 @@ export const useBookStore = defineStore('book', {
     },
 
     // 获取书籍列表
-    async getBookList() {
+    async getBookList(searchBookType = 'epub') {
       // 检验是否有userId，如果没有禁止发送请求
       if (!useCheckUserId()) return;
       if (this.bookList.length !== 0 && this.bookList.length >= this.total) return;
       this.pageNo = this.pageNo + 1;
       this.loading = true;
       const res = normalizeResult<AtlasList>(
-        await Service.getBookList({ pageNo: this.pageNo, pageSize: this.pageSize }),
+        await Service.getBookList({ pageNo: this.pageNo, pageSize: this.pageSize, bookType: searchBookType }),
       );
       this.loading = false;
       if (res.success) {

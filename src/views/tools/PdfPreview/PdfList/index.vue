@@ -111,11 +111,10 @@ interface IProps {
 const props = defineProps<IProps>();
 
 const emit = defineEmits(['update:visible']);
-const formRef = ref<FormInstance>();
-
 const scrollRef = ref<any>(null);
 const scrollTop = ref<number>(0);
 const editVisible = ref<boolean>(false);
+const formRef = ref<FormInstance>();
 const bookForm = reactive<{
   fileName: string;
   coverImg: string;
@@ -153,7 +152,7 @@ const onScroll = (e: any) => {
   scrollTop.value = e.target.scrollTop;
 };
 
-// 监听弹窗显示状态，实时拉取书籍列表
+// 监听弹窗显示状态，实时拉取草稿列表
 watch(
   () => visible.value,
   (newVal) => {
@@ -173,9 +172,9 @@ onUnmounted(() => {
   scrollRef.value?.wrapRef.removeEventListener('scroll', onScroll);
 });
 
-// 获取书籍列表
+// 获取pdf列表
 const onGetBookList = () => {
-  bookStore.getBookList();
+  bookStore.getBookList('pdf');
 };
 
 // 阅读

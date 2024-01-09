@@ -559,8 +559,8 @@ export const updateBookInfo = async (params: {
 };
 
 // 获取书籍列表
-export const getBookList = async ({ pageNo, pageSize }: { pageNo: number; pageSize: number }) => {
-  return await post(API.GET_BOOK_LIST, copeParams({ pageNo, pageSize }));
+export const getBookList = async (params: { pageNo: number; pageSize: number; bookType: string }) => {
+  return await post(API.GET_BOOK_LIST, copeParams(params));
 };
 
 // 删除书籍
