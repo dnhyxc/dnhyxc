@@ -18,7 +18,7 @@
           :http-request="onUpload"
         >
           <span type="primary" link class="book-btn upload-text">
-            {{ bookName ? '重新从本地选择' : '选择本地书籍' }}
+            {{ bookName ? `重新从本地选择《${loadBookName}》` : '选择本地书籍' }}
           </span>
         </el-upload>
       </div>
@@ -139,8 +139,8 @@ import type { UploadProps } from 'element-plus';
 import { ElMessage } from 'element-plus';
 import ePub from 'epubjs';
 import { useChildScroller } from '@/hooks';
-import { scrollTo, debounce, getTheme, calculateLoadProgress, Message, checkOS } from '@/utils';
-import { EPUB_THEMES, BOOK_THEME } from '@/constant';
+import { scrollTo, debounce, getTheme, calculateLoadProgress, Message, checkOS, getUniqueFileName } from '@/utils';
+import { EPUB_THEMES, BOOK_THEME, DOMAIN_URL } from '@/constant';
 import { uploadStore, bookStore, loginStore } from '@/store';
 import { AtlasItemParams, BookTocItem, BookTocList, BookRecord } from '@/typings/common';
 import BookList from './BookList/index.vue';
@@ -230,7 +230,7 @@ onBeforeRouteLeave(async (to, from, next) => {
     !currentTocInfo.tocId ||
     !currentTocInfo.tocName ||
     !currentTocInfo.tocHref ||
-    progress.value < 100
+    (progress.value < 100 && loadType.value !== 'upload')
   ) {
     next();
   } else {
@@ -271,7 +271,7 @@ const createRecord = (top?: boolean) => {
     !currentTocInfo.tocId ||
     !currentTocInfo.tocName ||
     !currentTocInfo.tocHref ||
-    progress.value < 100
+    (progress.value < 100 && loadType.value !== 'upload')
   )
     return;
   const params: BookRecord = {
@@ -317,6 +317,13 @@ const onUpload = (event: { file: File }) => {
         renderBook(buffer);
       }
     } else {
+      const { newFile } = await getUniqueFileName(event.file);
+      const isDev = import.meta.env.DEV;
+      const filePath = isDev
+        ? `http://localhost:9112/files/${newFile.name}`
+        : `http://${DOMAIN_URL}/files/${newFile.name}`;
+      await bookStore.addBook(filePath, event.file);
+      currentTocInfo.bookId = bookStore.currentUploadId;
       renderBook(buffer);
     }
   };

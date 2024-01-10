@@ -58,17 +58,8 @@ export const useUploadStore = defineStore('upload', {
       // 检验是否有userId，如果没有禁止发送请求
       if (!useCheckUserId()) return;
       const formData = new FormData();
-      // // 根据文件资源生成 MD5 hash
-      // const fileName = (await md5HashName(file)) as string;
-      // const findIndex = file?.name?.lastIndexOf('.');
-      // const ext = file.name.slice(findIndex + 1);
-      // // 修改文件名称，__ATLAS__ 用户区分是否是上传的图片集图片
-      // const newFile = new File([file], `__FILE__${fileName}.${ext}`, {
-      //   type: file.type,
-      // });
+      // 根据文件资源生成 MD5 hash
       const { fileName, newFile } = await getUniqueFileName(file);
-      console.log(fileName, newFile, 'fileName, newFile');
-
       formData.append('file', newFile);
       const res = normalizeResult<{ filePath: string }>(await Service.uploadFile(formData));
       if (res.success) {
