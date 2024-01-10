@@ -1,5 +1,6 @@
 /* eslint-disable indent */
 import { defineStore } from 'pinia';
+import { ElMessage } from 'element-plus';
 import * as Service from '@/server';
 import { normalizeResult, md5HashName, getUniqueFileName, compressImage } from '@/utils';
 import { useCheckUserId } from '@/hooks';
@@ -54,9 +55,17 @@ export const useUploadStore = defineStore('upload', {
     },
 
     // 上传除图片之外的文件
-    async uploadOtherFile(file: File) {
+    async uploadOtherFile(file: File): Promise<{ newFile: File; fileName: string; filePath: string }> {
       // 检验是否有userId，如果没有禁止发送请求
       if (!useCheckUserId()) return;
+      if (file.size / 1024 / 1024 > 100) {
+        ElMessage({
+          message: '文件大小超过 100 M，无法上传！',
+          type: 'warning',
+          offset: 80,
+        });
+        return false;
+      }
       const formData = new FormData();
       // 根据文件资源生成 MD5 hash
       const { fileName, newFile } = await getUniqueFileName(file);

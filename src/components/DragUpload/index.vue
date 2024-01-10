@@ -34,6 +34,7 @@ interface IProps {
   onUpload: (event: { file: File }) => void;
   uploadInfoText?: string;
   accept?: string;
+  limitSize?: number;
   fileType?: string;
 }
 

@@ -9,7 +9,7 @@
     <div class="header">
       <div class="left">
         <span class="title">电子书预览</span>
-        <span type="primary" link class="book-btn" @click="showBookList">在线书籍列表</span>
+        <el-button type="primary" link class="book-btn" @click="showBookList">在线书籍列表</el-button>
         <el-upload
           class="uploader"
           accept=".epub,.epub.zip"
@@ -17,9 +17,9 @@
           :before-upload="beforeUpload"
           :http-request="onUpload"
         >
-          <span type="primary" link class="book-btn upload-text">
+          <el-button type="primary" link class="book-btn upload-text">
             {{ bookName ? `重新从本地选择《${loadBookName}》` : '选择本地书籍' }}
-          </span>
+          </el-button>
         </el-upload>
       </div>
       <span class="close" @click="onClose">关闭</span>
@@ -192,6 +192,8 @@ let rendition: any = null;
 const allTocs: BookTocList[] = [];
 // 定时器
 let timer: ReturnType<typeof setTimeout> | null = null;
+// 用于存储上一个 ReadableStreamDefaultReader 对象
+let previousReader: any = null;
 
 const { scrollChildRef, scrollChildTop } = useChildScroller();
 
@@ -315,19 +317,24 @@ const onUpload = (event: { file: File }) => {
         await bookStore.addBook(res.filePath, event.file);
         currentTocInfo.bookId = bookStore.currentUploadId;
         renderBook(buffer);
+      } else {
+        renderBook(buffer);
       }
     } else {
       const { newFile } = await getUniqueFileName(event.file);
-      const isDev = import.meta.env.DEV;
-      const filePath = isDev
-        ? `http://localhost:9112/files/${newFile.name}`
-        : `http://${DOMAIN_URL}/files/${newFile.name}`;
+      const filePath = getFilePath(newFile.name);
       await bookStore.addBook(filePath, event.file);
       currentTocInfo.bookId = bookStore.currentUploadId;
       renderBook(buffer);
     }
   };
   reader.readAsArrayBuffer(event.file);
+};
+
+const getFilePath = (fileName: string) => {
+  const isDev = import.meta.env.DEV;
+  const filePath = isDev ? `http://localhost:9112/files/${fileName}` : `http://${DOMAIN_URL}/files/${fileName}`;
+  return filePath;
 };
 
 // 重置阅读属性设置
@@ -417,6 +424,10 @@ const getProgress = (num: number) => {
   loadBookSize.value = bookSize.value * (num / 100);
 };
 
+const addPreviousReader = (render: any) => {
+  previousReader = render;
+};
+
 // 阅读
 const readBook = (data: AtlasItemParams) => {
   // 选择其它书籍时，保存上一次阅读书籍的位置
@@ -430,12 +441,16 @@ const readBook = (data: AtlasItemParams) => {
   bookName.value = fileName.replace('.epub', '');
   // 获取加载进度
   const start = performance.now();
-  calculateLoadProgress(url, getProgress).then((arrayBuffer) => {
-    const end = performance.now();
-    const duration = ((end - start) / 1000).toFixed(2);
-    loadTime.value = duration;
-    renderBook(arrayBuffer);
-  });
+  calculateLoadProgress({ url, getProgress, previousReader, addPreviousReader })
+    .then((arrayBuffer) => {
+      const end = performance.now();
+      const duration = ((end - start) / 1000).toFixed(2);
+      loadTime.value = duration;
+      renderBook(arrayBuffer);
+    })
+    .catch(() => {
+      loading.value = false;
+    });
   visible.value = false;
 };
 
@@ -576,6 +591,7 @@ const onScrollTo = () => {
         color: var(--theme-blue);
         font-size: 16px;
         margin-left: 10px;
+        padding-top: 4px;
         cursor: pointer;
 
         &:hover {
@@ -616,6 +632,20 @@ const onScrollTo = () => {
     border-radius: 0;
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
+
+    :deep {
+      .async-loading {
+        border-radius: 0;
+        border-bottom-left-radius: 5px;
+        border-bottom-right-radius: 5px;
+
+        .loader-wrapper {
+          border-radius: 0;
+          border-bottom-left-radius: 5px;
+          border-bottom-right-radius: 5px;
+        }
+      }
+    }
 
     .load-info {
       display: flex;

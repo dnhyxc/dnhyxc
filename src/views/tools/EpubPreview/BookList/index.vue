@@ -24,11 +24,11 @@
                 v-for="data in bookStore.bookList"
                 :key="data.id"
                 :data="data"
-                :class="`line-card ${false && 'active-line-card'}`"
+                class="line-card"
                 @click="() => onRead(data)"
               >
                 <div class="cover">
-                  <Image :url="data?.coverImg" :transition-img="HTTP" class="img" />
+                  <Image :url="data?.coverImg" :transition-img="BOOK_SVG" class="img" />
                 </div>
                 <div class="book-info">
                   <div class="title">
@@ -96,7 +96,7 @@
 import { computed, ref, reactive, watch, nextTick, onUnmounted } from 'vue';
 import type { FormInstance } from 'element-plus';
 import { bookStore, loginStore } from '@/store';
-import { HTTP } from '@/constant';
+import { BOOK_SVG } from '@/constant';
 import { scrollTo, Message, formatDate } from '@/utils';
 import { AtlasItemParams } from '@/typings/common';
 import Loading from '@/components/Loading/index.vue';

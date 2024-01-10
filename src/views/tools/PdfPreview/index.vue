@@ -9,17 +9,18 @@
     <div class="header">
       <div class="left">
         <span class="title">PDF 预览</span>
-        <span type="primary" link class="book-btn" @click="showBookList">在线 PDF 列表</span>
+        <el-button type="primary" link class="book-btn" @click="showBookList">在线 PDF 列表</el-button>
         <el-upload
           class="uploader"
           accept=".pdf"
+          :disabled="loading"
           :show-file-list="false"
           :before-upload="beforeUpload"
           :http-request="onUpload"
         >
-          <span class="book-btn upload-text">
+          <el-button :disabled="loading" type="primary" link class="book-btn upload-text">
             {{ iframeUrl ? `重新选择 PDF 文件《${fileName}》` : '选择 PDF 文件' }}
-          </span>
+          </el-button>
         </el-upload>
       </div>
       <span class="close" @click="onClose">关闭</span>
@@ -52,7 +53,7 @@
         </div>
       </div>
     </Loading>
-    <PdfList v-model:visible="visible" :read-book="previewPdf" />
+    <PdfList v-model:visible="visible" v-model:loadStatus="loading" :read-book="previewPdf" />
     <div class="add-tag-wrap">
       <el-dialog v-model="addTagVisible" title="保存书签" align-center draggable width="400px">
         <el-form ref="formRef" :model="tagForm" label-width="79px" class="form-wrap" @submit.native.prevent>
@@ -143,6 +144,10 @@ const canClose = ref<boolean>(true);
 const canLoadPdf = ref<boolean>(true);
 const canUpload = ref<boolean>(true);
 const rawFile = ref<File | null>(null);
+// 定时器
+let timer: ReturnType<typeof setTimeout> | null = null;
+// 用于存储上一个 ReadableStreamDefaultReader 对象
+let previousReader: any = null;
 
 onBeforeRouteLeave(async (to, from, next) => {
   // 页面离开时时，保存上一次阅读的位置
@@ -174,24 +179,30 @@ const onUploadFile = async () => {
   fileName.value = rawFile.value.name;
   const { auth } = loginStore?.userInfo;
   const fileURL = URL.createObjectURL(rawFile.value);
-  // 只有博主才能上传
   if (auth === 1) {
     const res = await uploadStore.uploadOtherFile(rawFile.value);
     if (res) {
       await bookStore.addBook(res.filePath, rawFile.value);
       tagForm.bookId = bookStore.currentUploadId;
       getReadBookRecords(fileURL);
+    } else {
+      iframeUrl.value = fileURL;
+      clearLoading();
     }
   } else {
     const { newFile } = await getUniqueFileName(rawFile.value);
-    const isDev = import.meta.env.DEV;
-    const filePath = isDev
-      ? `http://localhost:9112/files/${newFile.name}`
-      : `http://${DOMAIN_URL}/files/${newFile.name}`;
+    const filePath = getFilePath(newFile.name);
+    console.log(filePath, 'filePath2222');
     await bookStore.addBook(filePath, rawFile.value);
     tagForm.bookId = bookStore.currentUploadId;
     getReadBookRecords(fileURL);
   }
+};
+
+const getFilePath = (fileName: string) => {
+  const isDev = import.meta.env.DEV;
+  const filePath = isDev ? `http://localhost:9112/files/${fileName}` : `http://${DOMAIN_URL}/files/${fileName}`;
+  return filePath;
 };
 
 // 上传校验
@@ -243,8 +254,20 @@ const resetRendition = () => {
   pdfSize.value = 0;
 };
 
+const addPreviousReader = (render: any) => {
+  previousReader = render;
+};
+
 const loadPdf = () => {
   if (!activePdf.value) return;
+  if (loading.value) {
+    ElMessage({
+      message: '文件正在加载，请稍后再试',
+      type: 'warning',
+      offset: 80,
+    });
+    return;
+  }
   resetRendition();
   visible.value = false;
   loading.value = true;
@@ -255,13 +278,17 @@ const loadPdf = () => {
   fileName.value = name;
   // 获取加载进度
   const start = performance.now();
-  calculateLoadProgress(url, getProgress, 'blob').then((blob) => {
-    const end = performance.now();
-    const duration = ((end - start) / 1000).toFixed(2);
-    loadTime.value = duration;
-    const fileURL = URL.createObjectURL(blob);
-    getReadBookRecords(fileURL);
-  });
+  calculateLoadProgress({ url, getProgress, needFileType: 'blob', previousReader, addPreviousReader })
+    .then((blob) => {
+      const end = performance.now();
+      const duration = ((end - start) / 1000).toFixed(2);
+      loadTime.value = duration;
+      const fileURL = URL.createObjectURL(blob);
+      getReadBookRecords(fileURL);
+    })
+    .catch(() => {
+      loading.value = false;
+    });
 };
 
 const previewPdf = async (data: AtlasItemParams) => {
@@ -295,16 +322,26 @@ const getReadBookRecords = async (fileURL: string) => {
       const res = await Message(`第 ${tocId} 页 ${tocName || ''}`, '是否跳转到历史阅读目录？', 'info');
       if (res === 'confirm') {
         iframeUrl.value = `${fileURL}#page=${tocId}`;
-        loading.value = false;
+        clearLoading();
       }
     } catch (error) {
       iframeUrl.value = fileURL;
-      loading.value = false;
+      clearLoading();
     }
   } else {
     iframeUrl.value = fileURL;
-    loading.value = false;
+    clearLoading();
   }
+};
+
+const clearLoading = () => {
+  if (timer) {
+    clearTimeout(timer);
+    timer = null;
+  }
+  timer = setTimeout(() => {
+    loading.value = false;
+  }, 10000);
 };
 
 const onCancel = () => {
@@ -391,16 +428,11 @@ const onClose = async () => {
         color: var(--font-1);
       }
 
-      .uploader {
-        flex: 1;
-        margin-right: 20px;
-      }
-
       .book-btn {
         color: var(--theme-blue);
         font-size: 16px;
         margin-left: 10px;
-        cursor: pointer;
+        padding-top: 4px;
 
         &:hover {
           color: var(--el-color-primary-light-5);
@@ -408,6 +440,8 @@ const onClose = async () => {
       }
 
       .uploader {
+        flex: 1;
+        margin-right: 20px;
         margin-left: 10px;
         font-size: 14px;
 

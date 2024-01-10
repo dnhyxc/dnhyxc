@@ -32,7 +32,11 @@ export const useToolsStore = defineStore('tools', {
           this.toolList = list;
           this.total = total;
         } else {
-          ElMessage.error(res.message);
+          ElMessage({
+            message: res.message,
+            type: 'error',
+            offset: 80,
+          });
         }
       } catch (error) {
         throw error;

@@ -69,11 +69,11 @@ export const useBookStore = defineStore('book', {
     },
 
     // 删除书籍列表
-    async deleteBook({ id, url }: { id: string; url?: string }) {
+    async deleteBook({ id, url, searchBookType = 'epub' }: { id: string; url?: string; searchBookType?: string }) {
       const res = normalizeResult<{ url: string }>(await Service.deleteBook({ id, url }));
       if (res.success) {
         this.clearBookInfo();
-        this.getBookList();
+        this.getBookList(searchBookType);
       } else {
         ElMessage({
           message: res.message,

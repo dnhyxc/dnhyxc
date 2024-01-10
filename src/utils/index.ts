@@ -1190,13 +1190,21 @@ export const checkWithLink = (content: string, check?: boolean) => {
 };
 
 // 用于存储上一个 ReadableStreamDefaultReader 对象
-let previousReader: any = null;
+// let previousReader: any = null;
 // 计算资源加载的进度
-export const calculateLoadProgress = (
-  url: string,
-  getProgress: (progress: number) => void,
+export const calculateLoadProgress = ({
+  url,
+  getProgress,
   needFileType = 'arrayBuffer',
-): Promise<ArrayBuffer | any> => {
+  previousReader,
+  addPreviousReader,
+}: {
+  url: string;
+  getProgress: (progress: number) => void;
+  previousReader: any;
+  addPreviousReader: (previousReader: any) => void;
+  needFileType?: string;
+}): Promise<ArrayBuffer | any> => {
   return fetch(url)
     .then((response) => {
       if (!response.ok) {
@@ -1207,10 +1215,13 @@ export const calculateLoadProgress = (
       let loadedBytes = 0;
       // 如果上一个读取器存在，则取消它
       if (previousReader) {
+        console.log('cancelcancelcancel', previousReader);
         previousReader.cancel();
       }
       const reader = response.body?.getReader();
-      previousReader = reader; // 将当前读取器保存为上一个读取器
+      // 将当前读取器保存为上一个读取器
+      // previousReader = reader;
+      addPreviousReader && addPreviousReader(reader);
       const chunks = [] as Uint8Array[];
       const readChunk = (): any => {
         return reader!.read().then(({ done, value }) => {

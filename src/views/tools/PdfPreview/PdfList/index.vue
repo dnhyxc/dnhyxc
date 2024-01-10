@@ -24,11 +24,11 @@
                 v-for="data in bookStore.bookList"
                 :key="data.id"
                 :data="data"
-                :class="`line-card ${false && 'active-line-card'}`"
+                :class="`line-card ${loadStatus && 'disabled-line-card'}`"
                 @click="() => onRead(data)"
               >
                 <div class="cover">
-                  <Image :url="data?.coverImg" :transition-img="HTTP" class="img" />
+                  <Image :url="data?.coverImg" :transition-img="BOOK_SVG" class="img" />
                 </div>
                 <div class="book-info">
                   <div class="title">
@@ -96,7 +96,7 @@
 import { computed, ref, reactive, watch, nextTick, onUnmounted } from 'vue';
 import type { FormInstance } from 'element-plus';
 import { bookStore, loginStore } from '@/store';
-import { HTTP } from '@/constant';
+import { BOOK_SVG } from '@/constant';
 import { scrollTo, Message, formatDate } from '@/utils';
 import { AtlasItemParams } from '@/typings/common';
 import Loading from '@/components/Loading/index.vue';
@@ -105,6 +105,7 @@ import Empty from '@/components/Empty/index.vue';
 
 interface IProps {
   visible: boolean;
+  loadStatus: boolean;
   readBook: (data: any) => void;
 }
 
@@ -223,7 +224,7 @@ const onSubmit = async () => {
 // 删除
 const onReomve = (id: string) => {
   Message('', '确定删除该书籍吗？').then(async () => {
-    await bookStore.deleteBook({ id });
+    await bookStore.deleteBook({ id, searchBookType: 'pdf' });
     // 删除之后，自动跳转到原来所在位置
     onScrollTo(scrollTop.value);
   });
@@ -362,8 +363,22 @@ const onScrollTo = (to?: number) => {
         }
       }
 
-      .active-line-card {
-        box-shadow: 0 0 5px var(--active);
+      .disabled-line-card {
+        position: relative;
+
+        &::after {
+          content: '';
+          height: 100%;
+          width: 100%;
+          position: absolute;
+          top: 0;
+          left: 0;
+          cursor: not-allowed;
+        }
+
+        &:hover {
+          box-shadow: 0 0 5px var(--active);
+        }
       }
     }
   }
