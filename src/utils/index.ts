@@ -1215,8 +1215,8 @@ export const calculateLoadProgress = ({
       let loadedBytes = 0;
       // 如果上一个读取器存在，则取消它
       if (previousReader) {
-        console.log('cancelcancelcancel', previousReader);
         previousReader.cancel();
+        addPreviousReader && addPreviousReader(null);
       }
       const reader = response.body?.getReader();
       // 将当前读取器保存为上一个读取器

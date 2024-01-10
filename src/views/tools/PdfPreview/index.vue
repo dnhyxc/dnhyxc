@@ -8,20 +8,23 @@
   <div class="pdf-preview-wrap">
     <div class="header">
       <div class="left">
-        <span class="title">PDF 预览</span>
-        <el-button type="primary" link class="book-btn" @click="showBookList">在线 PDF 列表</el-button>
-        <el-upload
-          class="uploader"
-          accept=".pdf"
-          :disabled="loading"
-          :show-file-list="false"
-          :before-upload="beforeUpload"
-          :http-request="onUpload"
-        >
-          <el-button :disabled="loading" type="primary" link class="book-btn upload-text">
-            {{ iframeUrl ? `重新选择 PDF 文件《${fileName}》` : '选择 PDF 文件' }}
-          </el-button>
-        </el-upload>
+        <div class="actions">
+          <span class="title">PDF 预览</span>
+          <el-button type="primary" link class="book-btn" @click="showBookList">在线 PDF 列表</el-button>
+          <el-upload
+            class="uploader"
+            accept=".pdf"
+            :disabled="loading"
+            :show-file-list="false"
+            :before-upload="beforeUpload"
+            :http-request="onUpload"
+          >
+            <el-button :disabled="loading" type="primary" link class="book-btn upload-text">
+              {{ iframeUrl ? '重新选择 PDF 文件' : '选择 PDF 文件' }}
+            </el-button>
+          </el-upload>
+        </div>
+        <span class="pdf-name">{{ fileName }}</span>
       </div>
       <span class="close" @click="onClose">关闭</span>
     </div>
@@ -34,6 +37,7 @@
               已加载 {{ progress }}% ({{ loadPdfSize.toFixed(2) }}MB / {{ pdfSize.toFixed(2) }}MB)
             </span>
             <span v-if="progress >= 99" class="duration">，耗时 {{ loadTime }} 秒 </span>
+            <div class="abort-btn" @click="onAbort">停止加载</div>
           </div>
         </div>
       </template>
@@ -56,7 +60,7 @@
     <PdfList v-model:visible="visible" v-model:loadStatus="loading" :read-book="previewPdf" />
     <div class="add-tag-wrap">
       <el-dialog v-model="addTagVisible" title="保存书签" align-center draggable width="400px">
-        <el-form ref="formRef" :model="tagForm" label-width="79px" class="form-wrap" @submit.native.prevent>
+        <el-form ref="formRef" :model="tagForm" label-width="82px" class="form-wrap" @submit.native.prevent>
           <el-form-item prop="tocName" label="章节名称" class="form-item">
             <el-input v-model="tagForm.tocName" placeholder="请输入章节名称" />
           </el-form-item>
@@ -258,6 +262,15 @@ const addPreviousReader = (render: any) => {
   previousReader = render;
 };
 
+// 停止加载
+const onAbort = () => {
+  if (previousReader) {
+    previousReader.cancel();
+    previousReader = null;
+    loading.value = false;
+  }
+};
+
 const loadPdf = () => {
   if (!activePdf.value) return;
   if (loading.value) {
@@ -278,7 +291,13 @@ const loadPdf = () => {
   fileName.value = name;
   // 获取加载进度
   const start = performance.now();
-  calculateLoadProgress({ url, getProgress, needFileType: 'blob', previousReader, addPreviousReader })
+  calculateLoadProgress({
+    url,
+    getProgress,
+    needFileType: 'blob',
+    previousReader,
+    addPreviousReader,
+  })
     .then((blob) => {
       const end = performance.now();
       const duration = ((end - start) / 1000).toFixed(2);
@@ -423,37 +442,49 @@ const onClose = async () => {
       flex: 1;
       display: flex;
       align-items: center;
+      justify-content: flex-start;
 
-      .title {
-        color: var(--font-1);
-      }
+      .actions {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
 
-      .book-btn {
-        color: var(--theme-blue);
-        font-size: 16px;
-        margin-left: 10px;
-        padding-top: 4px;
-
-        &:hover {
-          color: var(--el-color-primary-light-5);
+        .title {
+          color: var(--font-1);
         }
-      }
 
-      .uploader {
-        flex: 1;
-        margin-right: 20px;
-        margin-left: 10px;
-        font-size: 14px;
+        .book-btn {
+          color: var(--theme-blue);
+          font-size: 16px;
+          margin-left: 10px;
+          padding-top: 2px;
 
-        .upload-text {
-          padding: 0;
-          margin-left: 0;
-          .ellipsisMore(1);
-          .icon-upload {
-            margin-right: 5px;
-            font-size: 18px;
+          &:hover {
+            color: var(--el-color-primary-light-5);
           }
         }
+
+        .uploader {
+          margin-left: 10px;
+          font-size: 14px;
+          padding-top: 2px;
+
+          .upload-text {
+            padding: 0;
+            margin-left: 0;
+            .icon-upload {
+              margin-right: 5px;
+              font-size: 18px;
+            }
+          }
+        }
+      }
+
+      .pdf-name {
+        font-size: 16px;
+        margin: 0 10px;
+        color: var(--font-1);
+        .ellipsisMore(1);
       }
     }
 
@@ -491,6 +522,13 @@ const onClose = async () => {
       .load-time {
         font-size: 12px;
         margin-top: 9px;
+      }
+
+      .abort-btn {
+        text-align: center;
+        font-size: 16px;
+        cursor: pointer;
+        margin-top: 5px;
       }
     }
 

@@ -8,19 +8,24 @@
   <div class="epub-wrap">
     <div class="header">
       <div class="left">
-        <span class="title">电子书预览</span>
-        <el-button type="primary" link class="book-btn" @click="showBookList">在线书籍列表</el-button>
-        <el-upload
-          class="uploader"
-          accept=".epub,.epub.zip"
-          :show-file-list="false"
-          :before-upload="beforeUpload"
-          :http-request="onUpload"
-        >
-          <el-button type="primary" link class="book-btn upload-text">
-            {{ bookName ? `重新从本地选择《${loadBookName}》` : '选择本地书籍' }}
-          </el-button>
-        </el-upload>
+        <div class="actions">
+          <span class="title">电子书预览</span>
+          <el-button type="primary" link class="book-btn" @click="showBookList">在线书籍列表</el-button>
+          <el-upload
+            class="uploader"
+            accept=".epub,.epub.zip"
+            :show-file-list="false"
+            :before-upload="beforeUpload"
+            :http-request="onUpload"
+          >
+            <el-button type="primary" link class="book-btn upload-text">
+              {{ bookName ? '重新从本地选择' : '选择本地书籍' }}
+            </el-button>
+          </el-upload>
+        </div>
+        <span class="book-name">
+          {{ bookName }}
+        </span>
       </div>
       <span class="close" @click="onClose">关闭</span>
     </div>
@@ -36,7 +41,7 @@
             <span class="progress">
               已加载 {{ progress }}% ({{ loadBookSize.toFixed(2) }}MB / {{ bookSize.toFixed(2) }}MB)
             </span>
-            <span v-if="progress >= 99" class="duration">，耗时 {{ loadTime }} 秒 </span>
+            <span v-if="progress >= 99" class="duration">，耗时 {{ loadTime }} 秒</span>
           </div>
         </div>
       </template>
@@ -580,37 +585,52 @@ const onScrollTo = () => {
     color: var(--font-1);
 
     .left {
+      flex: 1;
       display: flex;
       align-items: center;
+      justify-content: flex-start;
 
-      .title {
-        color: v-bind(fontColor);
-      }
+      .actions {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
 
-      .book-btn {
-        color: var(--theme-blue);
-        font-size: 16px;
-        margin-left: 10px;
-        padding-top: 4px;
-        cursor: pointer;
-
-        &:hover {
-          color: var(--el-color-primary-light-5);
+        .title {
+          color: var(--font-1);
         }
-      }
 
-      .uploader {
-        margin-left: 10px;
-        font-size: 14px;
+        .book-btn {
+          color: var(--theme-blue);
+          font-size: 16px;
+          margin-left: 10px;
+          padding-top: 2px;
 
-        .upload-text {
-          padding: 0;
-          margin-left: 0;
-          .icon-upload {
-            margin-right: 5px;
-            font-size: 18px;
+          &:hover {
+            color: var(--el-color-primary-light-5);
           }
         }
+
+        .uploader {
+          margin-left: 10px;
+          font-size: 14px;
+          padding-top: 2px;
+
+          .upload-text {
+            padding: 0;
+            margin-left: 0;
+            .icon-upload {
+              margin-right: 5px;
+              font-size: 18px;
+            }
+          }
+        }
+      }
+
+      .book-name {
+        font-size: 16px;
+        margin: 0 10px;
+        color: var(--font-1);
+        .ellipsisMore(1);
       }
     }
 

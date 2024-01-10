@@ -55,7 +55,7 @@ export const useUploadStore = defineStore('upload', {
     },
 
     // 上传除图片之外的文件
-    async uploadOtherFile(file: File): Promise<{ newFile: File; fileName: string; filePath: string }> {
+    async uploadOtherFile(file: File) {
       // 检验是否有userId，如果没有禁止发送请求
       if (!useCheckUserId()) return;
       if (file.size / 1024 / 1024 > 100) {
