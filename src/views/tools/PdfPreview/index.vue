@@ -90,7 +90,8 @@ import { onBeforeRouteLeave, useRouter } from 'vue-router';
 import { ElMessage } from 'element-plus';
 import type { UploadProps, FormInstance } from 'element-plus';
 import { loginStore, uploadStore, bookStore } from '@/store';
-import { calculateLoadProgress, Message } from '@/utils';
+import { DOMAIN_URL } from '@/constant';
+import { calculateLoadProgress, Message, getUniqueFileName } from '@/utils';
 import { AtlasItemParams, BookRecord } from '@/typings/common';
 import PdfList from './PdfList/index.vue';
 
@@ -156,7 +157,6 @@ onBeforeRouteLeave(async (to, from, next) => {
           toPath.value = to.path;
           canGo.value ? next(true) : next(false);
           canGo.value = false;
-          addTagVisible.value = false;
         }
       } catch (error) {
         next(true);
@@ -173,9 +173,9 @@ const onUploadFile = async () => {
   loading.value = true;
   fileName.value = rawFile.value.name;
   const { auth } = loginStore?.userInfo;
+  const fileURL = URL.createObjectURL(rawFile.value);
   // 只有博主才能上传
   if (auth === 1) {
-    const fileURL = URL.createObjectURL(rawFile.value);
     const res = await uploadStore.uploadOtherFile(rawFile.value);
     if (res) {
       await bookStore.addBook(res.filePath, rawFile.value);
@@ -183,9 +183,14 @@ const onUploadFile = async () => {
       getReadBookRecords(fileURL);
     }
   } else {
-    const fileURL = URL.createObjectURL(rawFile.value);
-    iframeUrl.value = fileURL;
-    loading.value = false;
+    const { newFile } = await getUniqueFileName(rawFile.value);
+    const isDev = import.meta.env.DEV;
+    const filePath = isDev
+      ? `http://localhost:9112/files/${newFile.name}`
+      : `http://${DOMAIN_URL}/files/${newFile.name}`;
+    await bookStore.addBook(filePath, rawFile.value);
+    tagForm.bookId = bookStore.currentUploadId;
+    getReadBookRecords(fileURL);
   }
 };
 
@@ -202,11 +207,11 @@ const beforeUpload: UploadProps['beforeUpload'] = async (file) => {
 // 自定义上传
 const onUpload = async ({ file }: { file: File }) => {
   rawFile.value = file;
-  if (!iframeUrl.value) {
+  if (!iframeUrl.value || !tagForm.bookId) {
     onUploadFile();
   } else {
     try {
-      const res = await Message('', '是否保存阅读记录后再离开？', 'info');
+      const res = await Message('', '是否保存阅读记录后再重新选择？', 'info');
       if (res === 'confirm') {
         addTagVisible.value = true;
         canUpload.value = false;
@@ -278,7 +283,7 @@ const previewPdf = async (data: AtlasItemParams) => {
 
 // 获取读书记录
 const getReadBookRecords = async (fileURL: string) => {
-  if (!tagForm.bookId) return;
+  if (!tagForm.bookId || !location.pathname.includes('tools') || !fileURL) return;
   await bookStore.getReadBookRecords(tagForm.bookId);
   if (bookStore.bookRecordInfo) {
     const { tocName, tocId, tocHref, bookId } = bookStore.bookRecordInfo;
@@ -289,7 +294,6 @@ const getReadBookRecords = async (fileURL: string) => {
     try {
       const res = await Message(`第 ${tocId} 页 ${tocName || ''}`, '是否跳转到历史阅读目录？', 'info');
       if (res === 'confirm') {
-        console.log(`${fileURL}#${tocId}`, tocId);
         iframeUrl.value = `${fileURL}#page=${tocId}`;
         loading.value = false;
       }

@@ -662,6 +662,24 @@ export const md5HashName = (file: File) => {
   });
 };
 
+// 得到唯一文件名称
+export const getUniqueFileName = async (file: File, mark?: string): Promise<{ fileName: string; newFile: File }> => {
+  return new Promise((resolve, reject) => {
+    md5HashName(file).then((md5) => {
+      const findIndex = file?.name?.lastIndexOf('.');
+      const ext = file.name.slice(findIndex + 1);
+      // 修改文件名称，__FILE__ 用户区分是否是上传的图片集图片
+      const newFile = new File([file], `${mark || '__FILE__'}${md5}.${ext}`, {
+        type: file.type,
+      });
+      resolve({
+        fileName: md5 as string,
+        newFile,
+      });
+    });
+  });
+};
+
 // 生成唯一id
 export const uuid = () => {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
