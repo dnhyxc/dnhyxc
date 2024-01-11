@@ -1205,22 +1205,22 @@ export const calculateLoadProgress = ({
   addPreviousReader: (previousReader: any) => void;
   needFileType?: string;
 }): Promise<ArrayBuffer | any> => {
+  let contentLength = '';
+  let totalBytes = 0;
   return fetch(url)
     .then((response) => {
       if (!response.ok) {
         throw new Error(`资源加载失败: ${response.status} ${response.statusText}`);
       }
-      const contentLength = response.headers.get('content-length') as string;
-      const totalBytes = parseInt(contentLength, 10);
+      contentLength = response.headers.get('content-length') as string;
+      totalBytes = parseInt(contentLength, 10);
       let loadedBytes = 0;
       // 如果上一个读取器存在，则取消它
       if (previousReader) {
-        console.log('cancelcancelcancel', previousReader);
         previousReader.cancel();
       }
       const reader = response.body?.getReader();
       // 将当前读取器保存为上一个读取器
-      // previousReader = reader;
       addPreviousReader && addPreviousReader(reader);
       const chunks = [] as Uint8Array[];
       const readChunk = (): any => {
@@ -1240,16 +1240,28 @@ export const calculateLoadProgress = ({
     .then((_chunks) => {
       if (needFileType === 'blob') {
         const blob = new Blob(_chunks, { type: 'application/pdf' });
-        return new Promise((resolve) => {
-          resolve(blob);
-        });
+        if (blob?.size < totalBytes) {
+          return new Promise((resolve) => {
+            resolve(null);
+          });
+        } else {
+          return new Promise((resolve) => {
+            resolve(blob);
+          });
+        }
       } else {
         const blob = new Blob(_chunks);
-        return new Promise((resolve) => {
-          const reader = new FileReader();
-          reader.onloadend = () => resolve(reader.result);
-          reader.readAsArrayBuffer(blob);
-        });
+        if (blob?.size < totalBytes) {
+          return new Promise((resolve) => {
+            resolve(null);
+          });
+        } else {
+          return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(reader.result);
+            reader.readAsArrayBuffer(blob);
+          });
+        }
       }
     })
     .catch((error) => {
