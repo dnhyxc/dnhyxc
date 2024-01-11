@@ -202,6 +202,7 @@ const onUploadFile = async () => {
       clearLoading();
     }
   } else {
+    // 如果不是博主，则只保存选择的书籍
     const { newFile } = await getUniqueFileName(rawFile.value);
     const filePath = getFilePath(newFile.name);
     await bookStore.addBook(filePath, rawFile.value);
