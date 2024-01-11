@@ -28,9 +28,16 @@
       </div>
       <span class="close" @click="onClose">关闭</span>
     </div>
-    <Loading :loading="loading" class="content">
+    <Loading
+      :loading="loading"
+      :load-text="`${fileName ? `正在快马加鞭的加载《${fileName}》` : '正在快马加鞭的加载'}`"
+      class="content"
+    >
+      <template #abort>
+        <div v-if="loadType === 'line' && progress < 100" class="abort" @click="onAbort">停止加载</div>
+      </template>
       <template #loadInfo>
-        <div v-if="loadType === 'line'" class="load-info">
+        <div v-if="loadType === 'line' && progress < 100" class="load-info">
           <el-progress :show-text="false" :stroke-width="12" :percentage="progress" class="progress-bar" />
           <div class="load-time">
             <span class="progress">
@@ -155,22 +162,27 @@ let previousReader: any = null;
 
 onBeforeRouteLeave(async (to, from, next) => {
   // 页面离开时时，保存上一次阅读的位置
-  if (!tagForm.bookId || (loadType.value === 'line' && progress.value < 100)) {
+  if (!tagForm.bookId || (loadType.value === 'line' && !iframeUrl.value && progress.value < 100)) {
+    // 页面离开时停止加载资源
+    onAbort();
     next();
   } else {
-    if (!canGo.value) {
+    if (!canGo.value && !loading.value) {
       try {
         const res = await Message('', '是否保存阅读记录后再离开？', 'info');
         if (res === 'confirm') {
           addTagVisible.value = true;
           toPath.value = to.path;
           canGo.value ? next(true) : next(false);
-          canGo.value = false;
         }
       } catch (error) {
+        // 页面离开时停止加载资源
+        onAbort();
         next(true);
       }
     } else {
+      // 页面离开时停止加载资源
+      onAbort();
       next(true);
     }
   }
@@ -194,9 +206,9 @@ const onUploadFile = async () => {
       clearLoading();
     }
   } else {
+    // 如果不是博主，则只保存选择的书籍
     const { newFile } = await getUniqueFileName(rawFile.value);
     const filePath = getFilePath(newFile.name);
-    console.log(filePath, 'filePath2222');
     await bookStore.addBook(filePath, rawFile.value);
     tagForm.bookId = bookStore.currentUploadId;
     getReadBookRecords(fileURL);
@@ -266,21 +278,11 @@ const addPreviousReader = (render: any) => {
 const onAbort = () => {
   if (previousReader) {
     previousReader.cancel();
-    previousReader = null;
-    loading.value = false;
   }
 };
 
 const loadPdf = () => {
-  if (!activePdf.value) return;
-  if (loading.value) {
-    ElMessage({
-      message: '文件正在加载，请稍后再试',
-      type: 'warning',
-      offset: 80,
-    });
-    return;
-  }
+  if (!activePdf.value || loading.value) return;
   resetRendition();
   visible.value = false;
   loading.value = true;
@@ -299,11 +301,15 @@ const loadPdf = () => {
     addPreviousReader,
   })
     .then((blob) => {
-      const end = performance.now();
-      const duration = ((end - start) / 1000).toFixed(2);
-      loadTime.value = duration;
-      const fileURL = URL.createObjectURL(blob);
-      getReadBookRecords(fileURL);
+      if (blob) {
+        const end = performance.now();
+        const duration = ((end - start) / 1000).toFixed(2);
+        loadTime.value = duration;
+        const fileURL = URL.createObjectURL(blob);
+        getReadBookRecords(fileURL);
+      } else {
+        loading.value = false;
+      }
     })
     .catch(() => {
       loading.value = false;
@@ -312,7 +318,7 @@ const loadPdf = () => {
 
 const previewPdf = async (data: AtlasItemParams) => {
   activePdf.value = data;
-  if (!iframeUrl.value || progress.value < 100) {
+  if (!iframeUrl.value) {
     loadPdf();
   } else {
     try {
@@ -386,9 +392,13 @@ const onSubmit = async () => {
   addTagVisible.value = false;
   if (toPath.value) {
     canGo.value = true;
+    // 页面离开时停止加载资源
+    onAbort();
     router.push(toPath.value);
   }
   if (!canClose.value) {
+    // 页面关闭时停止加载资源
+    onAbort();
     emit('update:modalVisible', false);
     canClose.value = true;
   }
@@ -401,7 +411,7 @@ const onSubmit = async () => {
 };
 
 const onClose = async () => {
-  if (iframeUrl.value) {
+  if (iframeUrl.value && !loading.value) {
     try {
       const res = await Message('', '是否保存阅读记录后再离开？', 'info');
       if (res === 'confirm') {
@@ -409,9 +419,13 @@ const onClose = async () => {
         canClose.value = false;
       }
     } catch (error) {
+      // 页面关闭时停止加载资源
+      onAbort();
       emit('update:modalVisible', false);
     }
   } else {
+    // 页面关闭时停止加载资源
+    onAbort();
     emit('update:modalVisible', false);
   }
 };
@@ -507,6 +521,23 @@ const onClose = async () => {
     box-sizing: border-box;
     border-radius: 0;
 
+    :deep {
+      .load-text {
+        margin-top: 15px;
+      }
+    }
+
+    .abort {
+      font-size: 15px;
+      margin-top: 20px;
+      cursor: pointer;
+      color: var(--active);
+
+      &:hover {
+        color: @font-danger;
+      }
+    }
+
     .load-info {
       display: flex;
       justify-content: space-between;
@@ -524,11 +555,15 @@ const onClose = async () => {
         margin-top: 9px;
       }
 
-      .abort-btn {
-        text-align: center;
-        font-size: 16px;
-        cursor: pointer;
+      .abort {
+        font-size: 15px;
         margin-top: 5px;
+        cursor: pointer;
+        color: var(--active);
+
+        &:hover {
+          color: @font-danger;
+        }
       }
     }
 

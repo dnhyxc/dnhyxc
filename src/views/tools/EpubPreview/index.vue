@@ -34,8 +34,11 @@
       :load-text="`${loadBookName ? `正在快马加鞭的加载《${loadBookName}》` : '正在快马加鞭的加载'}`"
       class="loading"
     >
+      <template #abort>
+        <div v-if="loadType === 'line' && progress < 100" class="abort" @click="onAbort">停止加载</div>
+      </template>
       <template #loadInfo>
-        <div v-if="loadType === 'line'" class="load-info">
+        <div v-if="loadType === 'line' && progress < 100" class="load-info">
           <el-progress :show-text="false" :stroke-width="12" :percentage="progress" class="progress-bar" />
           <div class="load-time">
             <span class="progress">
@@ -239,9 +242,13 @@ onBeforeRouteLeave(async (to, from, next) => {
     !currentTocInfo.tocHref ||
     (progress.value < 100 && loadType.value !== 'upload')
   ) {
+    // 页面离开时停止加载资源
+    onAbort();
     next();
   } else {
     const scrollNode = previewRef.value?.firstElementChild?.firstElementChild;
+    // 页面离开时停止加载资源
+    onAbort();
     await bookStore.createReadBookRecords({
       bookId: currentTocInfo.bookId,
       tocHref: currentTocInfo.tocHref,
@@ -433,6 +440,13 @@ const addPreviousReader = (render: any) => {
   previousReader = render;
 };
 
+// 停止加载
+const onAbort = () => {
+  if (previousReader) {
+    previousReader.cancel();
+  }
+};
+
 // 阅读
 const readBook = (data: AtlasItemParams) => {
   // 选择其它书籍时，保存上一次阅读书籍的位置
@@ -448,10 +462,14 @@ const readBook = (data: AtlasItemParams) => {
   const start = performance.now();
   calculateLoadProgress({ url, getProgress, previousReader, addPreviousReader })
     .then((arrayBuffer) => {
-      const end = performance.now();
-      const duration = ((end - start) / 1000).toFixed(2);
-      loadTime.value = duration;
-      renderBook(arrayBuffer);
+      if (arrayBuffer) {
+        const end = performance.now();
+        const duration = ((end - start) / 1000).toFixed(2);
+        loadTime.value = duration;
+        renderBook(arrayBuffer);
+      } else {
+        resetRendition();
+      }
     })
     .catch(() => {
       loading.value = false;
@@ -551,6 +569,8 @@ const onJumpTo = (href: string) => {
 
 const onClose = () => {
   createRecord(true);
+  // 关闭时停止加载资源
+  onAbort();
   emit('update:modalVisible', false);
 };
 
@@ -664,6 +684,21 @@ const onScrollTo = () => {
           border-bottom-left-radius: 5px;
           border-bottom-right-radius: 5px;
         }
+      }
+
+      .load-text {
+        margin-top: 15px;
+      }
+    }
+
+    .abort {
+      font-size: 15px;
+      margin-top: 20px;
+      cursor: pointer;
+      color: var(--active);
+
+      &:hover {
+        color: @font-danger;
       }
     }
 
