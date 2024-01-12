@@ -50,7 +50,6 @@
               已加载 {{ progress }}% ({{ loadPdfSize.toFixed(2) }}MB / {{ pdfSize.toFixed(2) }}MB)
             </span>
             <span v-if="progress >= 99" class="duration">，耗时 {{ loadTime }} 秒 </span>
-            <div class="abort-btn" @click="onAbort">停止加载</div>
           </div>
         </div>
       </template>
