@@ -507,6 +507,7 @@ const onClose = async () => {
         font-size: 16px;
         margin: 0 10px;
         color: var(--font-1);
+        padding-top: 1px;
         .ellipsisMore(1);
       }
     }
@@ -531,6 +532,18 @@ const onClose = async () => {
     border-radius: 0;
 
     :deep {
+      .async-loading {
+        border-radius: 0;
+        border-bottom-left-radius: 5px;
+        border-bottom-right-radius: 5px;
+
+        .loader-wrapper {
+          border-radius: 0;
+          border-bottom-left-radius: 5px;
+          border-bottom-right-radius: 5px;
+        }
+      }
+
       .load-text {
         margin-top: 15px;
       }
