@@ -107,15 +107,17 @@ interface IProps {
   visible: boolean;
   loadStatus: boolean;
   readBook: (data: any) => void;
+  loadType?: string; // 需要加载的类型，epub、pdf
 }
 
 const props = defineProps<IProps>();
 
 const emit = defineEmits(['update:visible']);
+
+const formRef = ref<FormInstance>();
 const scrollRef = ref<any>(null);
 const scrollTop = ref<number>(0);
 const editVisible = ref<boolean>(false);
-const formRef = ref<FormInstance>();
 const bookForm = reactive<{
   fileName: string;
   coverImg: string;
@@ -153,7 +155,7 @@ const onScroll = (e: any) => {
   scrollTop.value = e.target.scrollTop;
 };
 
-// 监听弹窗显示状态，实时拉取草稿列表
+// 监听弹窗显示状态，实时拉取书籍列表
 watch(
   () => visible.value,
   (newVal) => {
@@ -173,9 +175,9 @@ onUnmounted(() => {
   scrollRef.value?.wrapRef.removeEventListener('scroll', onScroll);
 });
 
-// 获取pdf列表
+// 获取书籍列表
 const onGetBookList = () => {
-  bookStore.getBookList('pdf');
+  bookStore.getBookList(props.loadType);
 };
 
 // 阅读
@@ -224,7 +226,7 @@ const onSubmit = async () => {
 // 删除
 const onReomve = (id: string) => {
   Message('', '确定删除该书籍吗？').then(async () => {
-    await bookStore.deleteBook({ id, searchBookType: 'pdf' });
+    await bookStore.deleteBook({ id, searchBookType: props.loadType });
     // 删除之后，自动跳转到原来所在位置
     onScrollTo(scrollTop.value);
   });

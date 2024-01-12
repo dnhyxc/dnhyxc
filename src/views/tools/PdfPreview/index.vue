@@ -10,7 +10,13 @@
       <div class="left">
         <div class="actions">
           <span class="title">PDF 预览</span>
-          <el-button type="primary" link class="book-btn" @click="showBookList">在线 PDF 列表</el-button>
+          <el-button
+            type="primary"
+            link
+            :class="`book-btn ${checkOS() !== 'mac' && 'mac-book-btn'}`"
+            @click="showBookList"
+            >在线 PDF 列表</el-button
+          >
           <el-upload
             class="uploader"
             accept=".pdf"
@@ -64,7 +70,7 @@
         </div>
       </div>
     </Loading>
-    <PdfList v-model:visible="visible" v-model:loadStatus="loading" :read-book="previewPdf" />
+    <BookList v-model:visible="visible" v-model:loadStatus="loading" :read-book="previewPdf" load-type="pdf" />
     <div class="add-tag-wrap">
       <el-dialog v-model="addTagVisible" title="保存书签" align-center draggable width="400px">
         <el-form ref="formRef" :model="tagForm" label-width="82px" class="form-wrap" @submit.native.prevent>
@@ -103,9 +109,9 @@ import { ElMessage } from 'element-plus';
 import type { UploadProps, FormInstance } from 'element-plus';
 import { loginStore, uploadStore, bookStore } from '@/store';
 import { DOMAIN_URL } from '@/constant';
-import { calculateLoadProgress, Message, getUniqueFileName } from '@/utils';
+import { calculateLoadProgress, Message, getUniqueFileName, checkOS } from '@/utils';
 import { AtlasItemParams, BookRecord } from '@/typings/common';
-import PdfList from './PdfList/index.vue';
+import BookList from '../BookList/index.vue';
 
 interface IProps {
   modalVisible: boolean;
@@ -465,17 +471,21 @@ const onClose = async () => {
 
         .title {
           color: var(--font-1);
+          min-width: 86px;
         }
 
         .book-btn {
           color: var(--theme-blue);
           font-size: 16px;
-          margin-left: 10px;
           padding-top: 2px;
 
           &:hover {
             color: var(--el-color-primary-light-5);
           }
+        }
+
+        .mac-book-btn {
+          padding-top: 5px;
         }
 
         .uploader {

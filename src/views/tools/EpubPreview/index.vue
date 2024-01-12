@@ -10,15 +10,22 @@
       <div class="left">
         <div class="actions">
           <span class="title">电子书预览</span>
-          <el-button type="primary" link class="book-btn" @click="showBookList">在线书籍列表</el-button>
+          <el-button
+            type="primary"
+            link
+            :class="`book-btn ${checkOS() !== 'mac' && 'mac-book-btn'}`"
+            @click="showBookList"
+            >在线书籍列表</el-button
+          >
           <el-upload
             class="uploader"
+            :disabled="loading"
             accept=".epub,.epub.zip"
             :show-file-list="false"
             :before-upload="beforeUpload"
             :http-request="onUpload"
           >
-            <el-button type="primary" link class="book-btn upload-text">
+            <el-button :disabled="loading" type="primary" link class="book-btn upload-text">
               {{ bookName ? '重新从本地选择' : '选择本地书籍' }}
             </el-button>
           </el-upload>
@@ -136,7 +143,7 @@
         </div>
       </div>
     </Loading>
-    <BookList v-model:visible="visible" :read-book="readBook" />
+    <BookList v-model:visible="visible" v-model:loadStatus="loading" :read-book="readBook" />
   </div>
 </template>
 
@@ -151,7 +158,7 @@ import { scrollTo, debounce, getTheme, calculateLoadProgress, Message, checkOS, 
 import { EPUB_THEMES, BOOK_THEME, DOMAIN_URL } from '@/constant';
 import { uploadStore, bookStore, loginStore } from '@/store';
 import { AtlasItemParams, BookTocItem, BookTocList, BookRecord } from '@/typings/common';
-import BookList from './BookList/index.vue';
+import BookList from '../BookList/index.vue';
 
 interface IProps {
   modalVisible: boolean;
@@ -449,6 +456,7 @@ const onAbort = () => {
 
 // 阅读
 const readBook = (data: AtlasItemParams) => {
+  if (loading.value) return;
   // 选择其它书籍时，保存上一次阅读书籍的位置
   createRecord(true);
   resetRendition();
@@ -617,17 +625,21 @@ const onScrollTo = () => {
 
         .title {
           color: var(--font-1);
+          min-width: 100px;
         }
 
         .book-btn {
           color: var(--theme-blue);
           font-size: 16px;
-          margin-left: 10px;
           padding-top: 2px;
 
           &:hover {
             color: var(--el-color-primary-light-5);
           }
+        }
+
+        .mac-book-btn {
+          padding-top: 5px;
         }
 
         .uploader {
