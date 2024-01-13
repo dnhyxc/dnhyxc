@@ -660,7 +660,7 @@ const onScrollTo = () => {
 
       .book-name {
         font-size: 16px;
-        margin: 0 10px;
+        margin: 0 10px 0 13px;
         padding-top: 1px;
         color: var(--font-1);
         .ellipsisMore(1);

@@ -378,7 +378,21 @@ const onCancel = () => {
   addTagVisible.value = false;
   if (toPath.value) {
     canGo.value = true;
+    // 页面离开时停止加载资源
+    onAbort();
     router.push(toPath.value);
+  }
+  if (!canClose.value) {
+    // 页面关闭时停止加载资源
+    onAbort();
+    emit('update:modalVisible', false);
+    canClose.value = true;
+  }
+  if (!canLoadPdf.value) {
+    loadPdf();
+  }
+  if (!canUpload.value) {
+    onUploadFile();
   }
 };
 
@@ -505,7 +519,7 @@ const onClose = async () => {
 
       .pdf-name {
         font-size: 16px;
-        margin: 0 10px;
+        margin: 0 10px 0 13px;
         color: var(--font-1);
         padding-top: 1px;
         .ellipsisMore(1);
