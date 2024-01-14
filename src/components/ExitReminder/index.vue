@@ -16,11 +16,14 @@
 <script setup lang="ts">
 import { inject } from 'vue';
 import { loginStore } from '@/store';
+import { ipcRenderers } from '@/utils';
 
 const reload = inject<Function>('reload');
 
 // 退出登录
 const onQuit = () => {
+  // 退出登陆前通知主进程清空缓存
+  ipcRenderers.clearCache();
   loginStore.onQuit();
   loginStore.logoutStatus = false;
   reload && reload();

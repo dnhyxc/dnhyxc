@@ -235,3 +235,11 @@ ipcMain.on('msg-status', (event, status) => {
     globalInfo.msgStatus = false;
   }
 });
+
+// 设置消息提醒设置
+ipcMain.on('clear-cache', (event, status) => {
+  // 程序启动前，先清空之前的缓存信息
+  globalInfo.win?.webContents.session.clearStorageData({
+    storages: ['localstorage'],
+  });
+});

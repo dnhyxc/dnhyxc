@@ -168,3 +168,8 @@ export const showMessageWinModal = (count: number) => {
 export const sendToPersonalWin = (userId: string) => {
   ipcRenderer.send('to-personal', userId);
 };
+
+// 通知主进程清空缓存
+export const clearCache = () => {
+  ipcRenderer.send('clear-cache');
+};
