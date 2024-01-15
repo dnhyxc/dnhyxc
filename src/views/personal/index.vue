@@ -82,7 +82,12 @@
                 v-for="tab in tabs"
                 :key="tab.value"
                 :label="tab.name"
-                :class="`${!personalStore.articleList?.length && !followStore.followList?.length && 'tab-pane'}`"
+                :class="`${
+                  !personalStore.articleList?.length &&
+                  !followStore.followList?.length &&
+                  !followStore.followMeList?.length &&
+                  'tab-pane'
+                }`"
               >
                 <!-- 我的文章/点赞文章 -->
                 <div v-if="tab.value === '1' || tab.value === '5'" class="list-wrap">
@@ -212,10 +217,13 @@ const previewVisible = ref<boolean>(false);
 
 const noMore = computed(() => {
   const { articleList, total, currentTabKey } = personalStore;
-  const { followList, total: followTotal } = followStore;
-  return currentTabKey === '2'
-    ? followList?.length && followList?.length >= followTotal
-    : articleList.length && articleList.length >= total;
+  const { followList, total: followTotal, followMeList } = followStore;
+  if (currentTabKey === '2') {
+    return followList?.length && followList?.length >= followTotal;
+  } else if (currentTabKey === '3') {
+    return followMeList?.length && followMeList?.length >= followTotal;
+  }
+  return articleList.length && articleList.length >= total;
 });
 const disabled = computed(() => personalStore.loading || noMore.value);
 const showEmpty = computed(() => {
