@@ -1189,8 +1189,6 @@ export const checkWithLink = (content: string, check?: boolean) => {
   return check ? !!links?.[0] : links;
 };
 
-// 用于存储上一个 ReadableStreamDefaultReader 对象
-// let previousReader: any = null;
 // 计算资源加载的进度
 export const calculateLoadProgress = ({
   url,
