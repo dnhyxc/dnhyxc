@@ -13,7 +13,7 @@
         <span v-show="enabled" class="btn" @click="onSaveSort">保存排序</span>
       </div>
     </div>
-    <div class="tool-list">
+    <div :class="`tool-list ${checkOS() === 'mac' && 'mac-tool-list'}`">
       <el-scrollbar wrap-class="scrollbar-wrapper">
         <draggable
           v-model="toolsStore.toolList"
@@ -45,6 +45,7 @@ import draggable from 'vuedraggable';
 import { toolsStore } from '@/store';
 import { TOOL_SVG } from '@/constant';
 import { ToolsItem } from '@/typings/common';
+import { checkOS } from '@/utils';
 
 interface IProps {
   onClickNavIcon: (item: ToolsItem) => void;
@@ -117,8 +118,11 @@ const onSaveSort = () => {
     display: flex;
     max-height: 100%;
     box-sizing: border-box;
+    height: calc(100vh - 270px);
+  }
+
+  .mac-tool-list {
     height: calc(100vh - 285px);
-    // height: calc(100vh - 260px);
   }
 
   .navigation-list {

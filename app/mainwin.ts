@@ -8,7 +8,7 @@ import path from 'path';
 import { app, BrowserWindow, ipcMain, dialog } from 'electron';
 import Store from 'electron-store';
 import { getIconPath } from './tray';
-import { DOMAIN_URL, globalInfo, isDev, isMac, globalChildWins } from './constant';
+import { DOMAIN_URL, globalInfo, isDev, isMac, globalChildWins, CATCHS } from './constant';
 import { createChildWin } from './childwin';
 
 // 控制是否退出
@@ -41,7 +41,7 @@ export const createWindow = () => {
 
   // 程序启动前，先清空之前的缓存信息
   globalInfo.win?.webContents.session.clearStorageData({
-    storages: ['localstorage'],
+    storages: CATCHS,
   });
 
   // 设置mac扩展坞图标
@@ -240,6 +240,6 @@ ipcMain.on('msg-status', (event, status) => {
 ipcMain.on('clear-cache', (event, status) => {
   // 程序启动前，先清空之前的缓存信息
   globalInfo.win?.webContents.session.clearStorageData({
-    storages: ['localstorage'],
+    storages: CATCHS,
   });
 });

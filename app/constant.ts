@@ -49,3 +49,14 @@ export const isMac: boolean = process.platform === 'darwin';
 export const globalChildWins = {
   newWins: new Map(),
 };
+
+export const CATCHS = [
+  'appcache',
+  'filesystem',
+  'indexdb',
+  'localstorage',
+  'shadercache',
+  'websql',
+  'serviceworkers',
+  'cachestorage',
+];
