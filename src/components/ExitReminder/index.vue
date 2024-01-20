@@ -14,11 +14,11 @@
 </template>
 
 <script setup lang="ts">
-import { inject } from 'vue';
+import { useRouter } from 'vue-router';
 import { loginStore } from '@/store';
 import { ipcRenderers } from '@/utils';
 
-const reload = inject<Function>('reload');
+const router = useRouter();
 
 // 退出登录
 const onQuit = () => {
@@ -26,7 +26,7 @@ const onQuit = () => {
   ipcRenderers.clearCache();
   loginStore.onQuit();
   loginStore.logoutStatus = false;
-  reload && reload();
+  router.push('/login');
 };
 </script>
 
