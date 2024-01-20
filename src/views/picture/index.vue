@@ -93,7 +93,12 @@
         <div v-if="noMore" class="no-more">没有更多了～～～</div>
         <Empty v-if="showEmpty" />
         <ImagePreview v-model:previewVisible="previewVisible" :select-image="selectImage" show-prev-and-next />
-        <RenameModal :key="renameVisible" v-model:renameVisible="renameVisible" :img-id="renameId" />
+        <RenameModal
+          :key="renameVisible"
+          v-model:renameVisible="renameVisible"
+          :img-id="renameId"
+          :rename-file-name="renameFileName"
+        />
       </el-scrollbar>
     </template>
   </Loading>
@@ -118,6 +123,7 @@ const selectImage = ref<AtlasItemParams>();
 const selectedImageIds = ref<string[]>([]);
 const renameVisible = ref<boolean>(false);
 const renameId = ref<string>('');
+const renameFileName = ref<string>('');
 
 const noMore = computed(() => {
   const { atlasList, total } = pictureStore;
@@ -173,6 +179,7 @@ const onSelectAll = () => {
 
 const onRename = (item: AtlasItemParams) => {
   renameId.value = item.id;
+  renameFileName.value = item.fileName;
   renameVisible.value = true;
 };
 
@@ -308,6 +315,11 @@ const onScrollTo = () => {
         box-sizing: border-box;
         box-shadow: 0 0 5px 0 var(--shadow-mack);
         background-image: linear-gradient(to top, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
+        transition: all 0.3s;
+
+        &:hover {
+          box-shadow: 0 0 5px 0 var(--theme-blue);
+        }
 
         .header {
           display: flex;
@@ -342,6 +354,12 @@ const onScrollTo = () => {
             align-items: center;
             height: 100%;
             margin-right: -5px;
+
+            &:hover {
+              .icon-gengduo3 {
+                color: var(--active);
+              }
+            }
 
             .icon-gengduo3 {
               color: var(--font-1);

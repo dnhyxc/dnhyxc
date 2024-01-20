@@ -223,6 +223,10 @@ const toTag = (name: string) => {
           display: block;
         }
       }
+
+      .card-bottom {
+        background-image: linear-gradient(225deg, var(--bg-lg-color2) 0%, var(--bg-lg-color2) 100%);
+      }
     }
 
     .card-top {
@@ -326,6 +330,7 @@ const toTag = (name: string) => {
     }
 
     .card-bottom {
+      position: relative;
       padding: 5px;
       background-blend-mode: multiply, multiply;
       border-bottom-left-radius: 5px;

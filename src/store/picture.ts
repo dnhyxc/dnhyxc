@@ -82,8 +82,12 @@ export const usePictureStore = defineStore('picture', {
     async updateImagesInfo(params: { id: string; fileName: string }) {
       const res = normalizeResult<{ count: number }>(await Service.updateFileInfo(params));
       if (res.success) {
-        this.clearAtlasInfo();
-        this.getAtlasList();
+        this.atlasList = this.atlasList.map((i) => {
+          if (i.id === params.id) {
+            i.fileName = params.fileName;
+          }
+          return i;
+        });
       } else {
         ElMessage({
           message: res.message,

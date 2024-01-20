@@ -361,7 +361,11 @@ const onScrollTo = () => {
         color: var(--theme-blue);
         cursor: pointer;
         -webkit-app-region: no-drag;
+        transition: all 0.3s;
         .menuLg();
+        &:hover{
+          transform: scale(1.15);
+        }
       }
     }
 

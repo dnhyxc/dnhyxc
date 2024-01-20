@@ -176,7 +176,11 @@ const onQuit = () => {
       font-weight: 700;
       color: @sub-2-blue;
       cursor: pointer;
+      transition: all 0.3s;
       .menuLg();
+      &:hover {
+        transform: scale(1.15);
+      }
     }
 
     .active {

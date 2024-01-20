@@ -46,13 +46,14 @@ import { pictureStore } from '@/store';
 
 interface IProps {
   imgId: string;
+  renameFileName: string;
   renameVisible: boolean;
 }
 
 const props = defineProps<IProps>();
 
 const formRef = ref<FormInstance>();
-const renameForm = reactive<{ fileName: string }>({ fileName: '' });
+const renameForm = reactive<{ fileName: string }>({ fileName: props.renameFileName });
 const emit = defineEmits(['update:renameVisible']);
 
 // 局部自动获取焦点指令
