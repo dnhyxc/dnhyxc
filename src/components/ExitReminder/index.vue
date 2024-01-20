@@ -8,7 +8,7 @@
   <div class="exit-reminder-wrap">
     <div class="message">
       <div class="info">该账号已在别处登录，当前账号已被强制退出</div>
-      <div class="button" @click="onQuit()">确定</div>
+      <div class="button" @click="onQuit()">前往登录</div>
     </div>
   </div>
 </template>
@@ -20,7 +20,7 @@ import { ipcRenderers } from '@/utils';
 
 const router = useRouter();
 
-// 退出登录
+// 前往登录
 const onQuit = () => {
   // 退出登陆前通知主进程清空缓存
   ipcRenderers.clearCache();

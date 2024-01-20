@@ -12,9 +12,7 @@
           <Image :url="data?.toolUrl || TOOL_SVG" :transition-img="TOOL_SVG" class="prew-img" />
         </slot>
       </div>
-      <el-tooltip effect="light" :content="data?.toolName" placement="bottom" :enterable="false">
-        <div class="item-bottom">{{ data?.toolName }}</div>
-      </el-tooltip>
+      <div class="item-bottom" :title="data?.toolName">{{ data?.toolName }}</div>
     </div>
   </div>
 </template>
@@ -52,6 +50,7 @@ defineProps<IProps>();
 
       .prew-img {
         display: block;
+        transition: all 0.3s;
 
         :deep {
           .image-item {
@@ -73,6 +72,10 @@ defineProps<IProps>();
   &:hover {
     .navigation-item {
       box-shadow: 0 0 5px 0 var(--theme-blue);
+
+      .prew-img {
+        transform: scale(1.1);
+      }
     }
   }
 }

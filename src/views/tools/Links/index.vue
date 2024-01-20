@@ -29,9 +29,7 @@
                 <div class="item-top">
                   <Image :url="element?.toolUrl || TOOL_SVG" :transition-img="TOOL_SVG" class="prew-img" />
                 </div>
-                <el-tooltip effect="light" :content="element?.toolName" placement="bottom" :enterable="false">
-                  <div class="item-bottom">{{ element?.toolName }}</div>
-                </el-tooltip>
+                <div class="item-bottom" :title="element?.toolName">{{ element?.toolName }}</div>
               </div>
             </div>
           </template>
@@ -155,6 +153,7 @@ const onSaveSort = () => {
 
           .prew-img {
             display: block;
+            transition: all 0.3s;
 
             :deep {
               .image-item {
@@ -176,6 +175,10 @@ const onSaveSort = () => {
       &:hover {
         .navigation-item {
           box-shadow: 0 0 5px 0 var(--theme-blue);
+
+          .prew-img {
+            transform: scale(1.1);
+          }
         }
       }
     }
