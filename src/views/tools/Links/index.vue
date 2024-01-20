@@ -119,7 +119,8 @@ const onSaveSort = () => {
     display: flex;
     max-height: 100%;
     box-sizing: border-box;
-    height: calc(100vh - 260px);
+    height: calc(100vh - 285px);
+    // height: calc(100vh - 260px);
   }
 
   .navigation-list {
