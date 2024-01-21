@@ -15,6 +15,7 @@
       <CodeRun v-if="codeRunVisible" v-model:modal-visible="codeRunVisible" />
       <EpubPreview v-if="epubVisible" v-model:modal-visible="epubVisible" />
       <PdfPreview v-if="pdfVisible" v-model:modal-visible="pdfVisible" />
+      <Transcribe v-if="transcribeVisible" v-model:modal-visible="transcribeVisible" />
       <div v-if="!visible" class="navs-wrap">
         <div class="tools">
           <div>
@@ -46,6 +47,7 @@ import CodeRun from './CodeRun/index.vue';
 import Links from './Links/index.vue';
 import EpubPreview from './EpubPreview/index.vue';
 import PdfPreview from './PdfPreview/index.vue';
+import Transcribe from './Transcribe/index.vue';
 
 // 图片压缩弹窗
 const compressVisible = ref<boolean>(false);
@@ -63,6 +65,8 @@ const codeRunVisible = ref<boolean>(false);
 const epubVisible = ref<boolean>(false);
 // 是否显示pdf预览
 const pdfVisible = ref<boolean>(false);
+// 是否显示屏幕录制
+const transcribeVisible = ref<boolean>(false);
 
 onMounted(() => {
   // 获取工具列表
@@ -78,7 +82,8 @@ const visible = computed(() => {
     compressVisible.value ||
     codeRunVisible.value ||
     epubVisible.value ||
-    pdfVisible.value
+    pdfVisible.value ||
+    transcribeVisible.value
   );
 });
 
@@ -127,6 +132,11 @@ const showPdf = () => {
   pdfVisible.value = true;
 };
 
+// 显示屏幕录制
+const showTranscribe = () => {
+  transcribeVisible.value = true;
+};
+
 // 策略模式实现点击每个nav card的效果
 const onClickNavIcon = (item: ToolsItem) => {
   const actions = {
@@ -139,6 +149,7 @@ const onClickNavIcon = (item: ToolsItem) => {
     codeRun: showCodeRun,
     epub: showEpub,
     pdf: showPdf,
+    transcribe: showTranscribe,
   };
   actions[item.key](item);
 };

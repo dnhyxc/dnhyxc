@@ -152,6 +152,14 @@ export const formatTimestamp = (timestamp: number) => {
   }
 };
 
+export const formatDuration = (duration: number) => {
+  const minutes = Math.floor(duration / 60);
+  const seconds = duration % 60;
+  const formattedMinutes = String(minutes).padStart(2, '0');
+  const formattedSeconds = String(seconds).padStart(2, '0');
+  return `${formattedMinutes}:${formattedSeconds}`;
+};
+
 // 滚动到某位置
 const cubic = (value: number) => Math.pow(value, 3);
 const easeInOutCubic = (value: number) => (value < 0.5 ? cubic(value * 2) / 2 : 1 - cubic((1 - value) * 2) / 2);
@@ -766,36 +774,25 @@ export const debounce = (fn: Function, delay = 1000, immediate = false) => {
 };
 
 export const onDownloadFile = async ({ url, type = 'png' }: { url: string; type?: string }) => {
-  if (url.includes('data:image')) {
+  if (url.includes('data:image') || type === 'blob') {
     ipcRenderers.sendDownload(url as string);
-    // 设置一次性监听，防止重复触发
-    ipcRenderer.once('download-file', (e, res: string) => {
-      if (res) {
-        ElMessage({
-          message: '下载成功',
-          type: 'success',
-          offset: 80,
-          duration: 2000,
-        });
-      }
-    });
   } else {
     const base64url = await url2Base64(url, type);
     if (base64url) {
       ipcRenderers.sendDownload(base64url as string);
-      // 设置一次性监听，防止重复触发
-      ipcRenderer.once('download-file', (e, res: string) => {
-        if (res) {
-          ElMessage({
-            message: '下载成功',
-            type: 'success',
-            offset: 80,
-            duration: 2000,
-          });
-        }
-      });
     }
   }
+  // 设置一次性监听，防止重复触发
+  ipcRenderer.once('download-file', (e, res: string) => {
+    if (res) {
+      ElMessage({
+        message: '下载成功',
+        type: 'success',
+        offset: 80,
+        duration: 2000,
+      });
+    }
+  });
 };
 
 /**

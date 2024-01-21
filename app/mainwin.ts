@@ -5,7 +5,7 @@
  * index.vue
  */
 import path from 'path';
-import { app, BrowserWindow, ipcMain, dialog } from 'electron';
+import { app, BrowserWindow, ipcMain, dialog, desktopCapturer } from 'electron';
 import Store from 'electron-store';
 import { getIconPath } from './tray';
 import { DOMAIN_URL, globalInfo, isDev, isMac, globalChildWins, CATCHS } from './constant';
@@ -241,5 +241,12 @@ ipcMain.on('clear-cache', (event, status) => {
   // 程序启动前，先清空之前的缓存信息
   globalInfo.win?.webContents.session.clearStorageData({
     storages: CATCHS,
+  });
+});
+
+// 监听开启屏幕录制
+ipcMain.on('load-transcribe', () => {
+  desktopCapturer.getSources({ types: ['window', 'screen'] }).then((sources) => {
+    globalInfo.win?.webContents?.send('share-screen-sources', sources);
   });
 });
