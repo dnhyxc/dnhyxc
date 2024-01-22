@@ -11,10 +11,13 @@ import { registerShortcut, unRegisterShortcut } from './shortcut';
 import { createContextMenu, getIconPath } from './tray';
 import { createMessageWin, showMessage, checkTrayLeave, messageWinStatus } from './message';
 import { createWindow } from './mainwin';
-import { globalInfo, isMac } from './constant';
+import { globalInfo, isMac, DOMAIN_URL } from './constant';
 
 // 屏蔽警告
 process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = 'true';
+
+// 添加命令行开关
+app.commandLine.appendSwitch('unsafely-treat-insecure-origin-as-secure', DOMAIN_URL);
 
 // 限制只能启动一个应用
 const gotTheLock = app.requestSingleInstanceLock();
