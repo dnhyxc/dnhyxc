@@ -255,3 +255,26 @@ export const useViewPort = () => {
     vh,
   };
 };
+
+// 检测网络在线状态
+export const useListeningNetwork = () => {
+  onMounted(() => {
+    window.addEventListener('online', onListenOnline);
+    window.addEventListener('offline', onListenOffline);
+  });
+
+  onUnmounted(() => {
+    window.removeEventListener('online', onListenOnline);
+    window.removeEventListener('offline', onListenOffline);
+  });
+
+  const onListenOnline = () => {
+    console.log('在线');
+    commonStore.networkStatus = window.navigator.onLine;
+  };
+
+  const onListenOffline = () => {
+    console.log('离线线');
+    commonStore.networkStatus = window.navigator.onLine;
+  };
+};

@@ -13,6 +13,7 @@ interface IProps {
   reelScrollRef: HTMLDivElement | null; // Reel 滚动容器
   pageLoadStatus: boolean; // 判断页面是否加载完成
   winStatus: boolean; // 窗口显示状态
+  networkStatus: boolean; // 网络状态
 }
 
 // 公共store
@@ -28,6 +29,7 @@ export const useCommonStore = defineStore('common', {
     reelScrollRef: null,
     pageLoadStatus: false,
     winStatus: true,
+    networkStatus: window.navigator.onLine,
   }),
 
   actions: {

@@ -7,8 +7,10 @@
 <template>
   <div class="exit-reminder-wrap">
     <div class="message">
-      <div class="info">该账号已在别处登录，当前账号已被强制退出</div>
-      <div class="button" @click="onQuit()">前往登录</div>
+      <slot>
+        <div class="info">该账号已在别处登录，当前账号已被强制退出</div>
+        <div class="button" @click="onQuit()">前往登录</div>
+      </slot>
     </div>
   </div>
 </template>
@@ -44,6 +46,7 @@ const onQuit = () => {
   width: 100%;
   height: 100%;
   background-color: var(--pop-before-bg-color);
+  backdrop-filter: blur(3px);
   z-index: 102;
 
   .message {

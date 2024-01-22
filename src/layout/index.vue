@@ -1,6 +1,11 @@
 <template>
   <div class="wrap">
     <ExitReminder v-if="loginStore.logoutStatus" />
+    <ExitReminder v-if="!commonStore.networkStatus" class="outLine">
+      <template #default>
+        <div class="info">网络出现了一点小问题，正在尝试连接...</div>
+      </template>
+    </ExitReminder>
     <div class="el-container-wrap">
       <el-container>
         <el-main class="el-main">
@@ -26,13 +31,17 @@
 
 <script setup lang="ts">
 import { ref, nextTick, provide } from 'vue';
-import { loginStore } from '@/store';
+import { loginStore, commonStore } from '@/store';
+import { useListeningNetwork } from '@/hooks';
 import { checkOS } from '@/utils';
 import Header from '@/components/Header/index.vue';
 import LeftMenu from '@/components/LeftMenu/index.vue';
 import ExitReminder from '@/components/ExitReminder/index.vue';
 
 const isRouterAlive = ref<boolean>(true);
+
+// 监听网络状态
+useListeningNetwork();
 
 // 刷新当前页面
 const reload = () => {
@@ -72,6 +81,20 @@ provide('reload', reload);
       .el-container {
         height: 100vh;
       }
+    }
+  }
+
+  .outLine {
+    :deep {
+      .message {
+        height: 110px;
+      }
+    }
+
+    .info {
+      color: @font-warning;
+      text-align: center;
+      font-size: 18px;
     }
   }
 
