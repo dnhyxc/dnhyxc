@@ -269,12 +269,10 @@ export const useListeningNetwork = () => {
   });
 
   const onListenOnline = () => {
-    console.log('在线');
     commonStore.networkStatus = window.navigator.onLine;
   };
 
   const onListenOffline = () => {
-    console.log('离线线');
     commonStore.networkStatus = window.navigator.onLine;
   };
 };
