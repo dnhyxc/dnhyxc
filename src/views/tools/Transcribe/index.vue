@@ -22,26 +22,45 @@
     <div class="footer">
       <div class="left">
         <el-radio-group v-model="needAudio" :disabled="transcribeStatus || disabled">
-          <el-radio label="仅录制屏幕" link />
-          <el-radio label="录制声音及屏幕" link />
+          <el-radio label="仅录制屏幕" />
+          <el-radio label="录制声音及屏幕" />
         </el-radio-group>
       </div>
       <div class="right">
         <el-button v-if="blobUrl" type="primary" link @click="onDownload">下载 {{ videoSize }}</el-button>
         <el-button
-          :disabled="disabled"
-          :type="transcribeStatus ? 'warning' : blobUrl ? 'info' : 'primary'"
           link
+          :type="transcribeStatus ? 'warning' : blobUrl ? 'info' : 'primary'"
+          class="start-btn"
           @click="onTrancribe"
         >
-          {{
-            transcribeStatus
-              ? `停止录制 ${formatDuration(elapsedTime)}`
-              : blobUrl
-              ? `录制完毕 ${formatDuration(elapsedTime)}`
-              : '开始录制'
-          }}
+          <span class="text" :title="activeSource.name">
+            {{
+              transcribeStatus
+                ? `停止录制 ${formatDuration(elapsedTime)}`
+                : blobUrl
+                ? `录制完毕 ${formatDuration(elapsedTime)}`
+                : '开始录制'
+            }}
+            -
+            {{ activeSource.name }}
+          </span>
         </el-button>
+        <el-dropdown
+          type="primary"
+          class="select-btn"
+          :disabled="transcribeStatus || disabled"
+          popper-class="custom-dropdown-styles"
+        >
+          <i :class="`iconfont icon-mulu ${(transcribeStatus || disabled) && 'disabled-menu'}`"></i>
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item v-for="source in mediaSources" :key="source.id" @click="createMedia(source.id, source)">
+                {{ source.name }}
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
         <el-button :disabled="!blobUrl" type="danger" link @click="onRestore">重置</el-button>
       </div>
     </div>
@@ -49,8 +68,8 @@
 </template>
 
 <script setup lang="ts">
-import { ipcRenderer } from 'electron';
-import { onMounted, onUnmounted, ref, nextTick } from 'vue';
+import { ipcRenderer, DesktopCapturerSource } from 'electron';
+import { onMounted, onUnmounted, ref, reactive, nextTick } from 'vue';
 import { onDownloadFile, formatDuration } from '@/utils';
 
 interface IProps {
@@ -66,6 +85,14 @@ defineProps<IProps>();
 const emit = defineEmits<Emits>();
 
 const loading = ref<boolean>(false);
+const mediaSources = ref<DesktopCapturerSource[]>([]);
+const activeSource = reactive<{
+  id: string;
+  name: string;
+}>({
+  id: 'screen:0:0',
+  name: '屏幕 1',
+});
 const mediaRecorder = ref<MediaRecorder | null>(null);
 const chunks = ref<Blob[]>([]);
 const screenStream = ref<MediaStream | null>(null);
@@ -82,18 +109,22 @@ const videoSize = ref<string>('');
 let timer: ReturnType<typeof setTimeout> | null = null;
 
 onMounted(() => {
+  ipcRenderer.send('load-transcribe');
   ipcRenderer.on('share-screen-sources', getSources);
 });
 
 onUnmounted(() => {
   ipcRenderer.removeListener('share-screen-sources', getSources);
-  if (timer) {
-    clearInterval(timer);
-    timer = null;
-  }
+  onRestore();
 });
 
-const getSources = async (e: any, sources: any[]) => {
+const getSources = async (e: any, sources: DesktopCapturerSource[]) => {
+  mediaSources.value = sources;
+};
+
+const createMedia = async (id: string, source?: DesktopCapturerSource) => {
+  activeSource.id = id;
+  activeSource.name = source?.name || activeSource.name;
   const stream = await navigator.mediaDevices.getUserMedia({
     // 这里设置 audio: true 录制声音会崩溃
     audio: false,
@@ -101,7 +132,7 @@ const getSources = async (e: any, sources: any[]) => {
       // @ts-ignore
       mandatory: {
         chromeMediaSource: 'desktop',
-        chromeMediaSourceId: 'screen:0:0',
+        chromeMediaSourceId: id, // 如果id为空，如果有分屏，会把主屏和分屏录制在同一个画面
       },
     },
   });
@@ -113,8 +144,6 @@ const getSources = async (e: any, sources: any[]) => {
 
   screenStream.value = combinedSource;
 
-  videoPreviewRef.value!.style.width = '100%';
-
   mediaRecorder.value = new MediaRecorder(combinedSource, { mimeType: 'video/webm' });
 
   // 监听录制流
@@ -123,8 +152,13 @@ const getSources = async (e: any, sources: any[]) => {
       chunks.value.push(event.data);
     }
   });
+
   // 开始录制
   mediaRecorder.value.start();
+
+  // 设置视频预览宽度
+  videoPreviewRef.value!.style.width = '100%';
+
   // 设置录制开始时间
   startTime.value = Date.now();
   timer = setInterval(() => {
@@ -165,10 +199,8 @@ const transcribeWithAudio = async (stream: MediaStream): Promise<MediaStream> =>
       ...stream.getVideoTracks(),
       ...systemSoundDestination.stream.getAudioTracks(),
     ]);
-
     return combinedSource;
   }
-
   return stream;
 };
 
@@ -176,7 +208,7 @@ const transcribeWithAudio = async (stream: MediaStream): Promise<MediaStream> =>
 const onTrancribe = () => {
   loading.value = true;
   if (!transcribeStatus.value) {
-    ipcRenderer.send('load-transcribe');
+    createMedia(activeSource.id);
   } else {
     onStopTrancribe();
   }
@@ -208,6 +240,8 @@ const onRestore = () => {
   startTime.value = 0;
   elapsedTime.value = 0;
   videoSize.value = '';
+  activeSource.id = 'screen:0:0';
+  activeSource.name = '屏幕 1';
   if (timer) {
     clearInterval(timer);
     timer = null;
@@ -220,7 +254,6 @@ const onDownload = () => {
 
 // 关闭屏幕录制页面
 const onClose = () => {
-  onRestore();
   emit('update:modalVisible', false);
 };
 </script>
@@ -281,6 +314,7 @@ const onClose = () => {
         font-size: 50px;
       }
     }
+
     .video-preview {
       display: flex;
       align-items: center;
@@ -302,6 +336,9 @@ const onClose = () => {
     box-sizing: border-box;
 
     .left {
+      flex: 1;
+      min-width: 250px;
+
       :deep {
         .el-radio {
           margin-right: 18px;
@@ -319,8 +356,31 @@ const onClose = () => {
     }
 
     .right {
+      flex: 1;
       display: flex;
       justify-content: flex-end;
+
+      .select-btn {
+        margin: 0 10px 0 2px;
+      }
+
+      .start-btn {
+        .text {
+          max-width: 450px;
+          .ellipsis();
+        }
+      }
+
+      .icon-mulu {
+        color: var(--theme-blue);
+        font-size: 18px;
+        cursor: pointer;
+      }
+
+      .disabled-menu {
+        color: @info-text-color;
+        cursor: not-allowed;
+      }
     }
   }
 }
