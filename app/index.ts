@@ -16,7 +16,7 @@ import { globalInfo, isMac, DOMAIN_URL } from './constant';
 // 屏蔽警告
 process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = 'true';
 
-// 添加命令行开关
+// 解决 http 下无法使用媒体api（navigator.mediaDevices.getUserMedia）的问题
 app.commandLine.appendSwitch('unsafely-treat-insecure-origin-as-secure', DOMAIN_URL);
 
 // 限制只能启动一个应用
