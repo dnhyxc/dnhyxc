@@ -9,7 +9,7 @@
     <el-upload
       class="upload"
       drag
-      :accept="accept || '.*'"
+      :accept="accept || '.jpeg,.png,.jpg,.gif,.webp,.svg+xml,.svg'"
       multiple
       :show-file-list="false"
       :before-upload="beforeUpload"
@@ -87,6 +87,7 @@ const onUpload = async (event: { file: File }) => {
       width: 100%;
       padding: 10px 0 20px 0;
       background-color: var(--input-bg-color);
+      border-width: 2px;
 
       &:hover {
         background-color: var(--upload-hover-bg-color);
