@@ -147,11 +147,9 @@
 </template>
 
 <script setup lang="ts">
-import { ipcRenderer } from 'electron';
 import { computed, ref, reactive, onUnmounted, watch } from 'vue';
 import type { CSSProperties } from 'vue';
 import type { FormInstance, FormRules } from 'element-plus';
-import { ElMessage } from 'element-plus';
 import {
   compressImage,
   getImgInfo,
@@ -159,8 +157,8 @@ import {
   checkNumber,
   checkMin,
   checkMax,
-  ipcRenderers,
   onlineImgToFile,
+  onDownloadFile,
 } from '@/utils';
 import OnlineImage from '../OnlineImage/index.vue';
 
@@ -362,19 +360,7 @@ const onDownload = () => {
   if (!compressFile.value) return;
   const blob = new Blob([compressFile.value], { type: compressFile.value?.type });
   const url = window.URL.createObjectURL(blob);
-  ipcRenderers.sendDownload(url);
-  // 设置一次性监听，防止重复触发
-  ipcRenderer.once('download-file', (e, res: string) => {
-    if (res) {
-      window.URL.revokeObjectURL(url);
-      ElMessage({
-        message: '保存成功',
-        type: 'success',
-        offset: 80,
-        duration: 2000,
-      });
-    }
-  });
+  onDownloadFile({ url, type: 'blob' });
 };
 
 // 关闭图片压缩
