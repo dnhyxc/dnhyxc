@@ -77,12 +77,13 @@ export const useCheckUserId = (needMsg: boolean = true) => {
   // 获取存储在localstorage中的登录信息
   const { userInfo: storeUserInfo } = getStoreUserInfo();
   const { userInfo } = loginStore;
-  if (!userInfo?.userId && !storeUserInfo?.userId && needMsg) {
-    ElMessage({
-      message: '请先登录后再操作哦！',
-      type: 'warning',
-      offset: 80,
-    });
+  if (!userInfo?.userId && !storeUserInfo?.userId) {
+    needMsg &&
+      ElMessage({
+        message: '请先登录后再操作哦！',
+        type: 'warning',
+        offset: 80,
+      });
     return false;
   }
   return true;

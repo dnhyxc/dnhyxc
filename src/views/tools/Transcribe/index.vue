@@ -301,6 +301,7 @@ const onClose = () => {
   .content {
     flex: 1;
     overflow: hidden;
+    border-radius: 0;
 
     .empty {
       display: flex;
