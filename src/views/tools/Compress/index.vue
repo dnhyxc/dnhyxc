@@ -27,7 +27,10 @@
         <OnlineImage v-else :on-use-online-url="onUseOnlineUrl" />
         <div v-if="sourceUrl" class="image-container">
           <div class="contrast">
-            <span class="title">压缩前后对比</span>
+            <span class="title">
+              {{ selectFile!.name?.length > 50 ? selectFile?.name?.slice(0, 50) + '...' : selectFile?.name }}
+              压缩前后对比
+            </span>
             <span class="center">点击图片可进行预览</span>
           </div>
           <div class="img-list">
@@ -46,31 +49,25 @@
           </div>
           <div v-if="base64Url" class="compress-info">
             <span class="title">压缩比例：{{ sliderValue }}%</span>
+            <span class="size-info">
+              压缩后文件大小相差：{{
+                selectFile?.size && compressFile?.size
+                  ? (selectFile.size / 1024 - compressFile.size / 1024).toFixed(2)
+                  : '-'
+              }}
+              KB
+            </span>
+            <span class="size-info">宽度相差：{{ sourceFileInfo.width - (compresWidth as number) }}</span>
+            <span class="size-info"> 高度相差：{{ sourceFileInfo.height - (compressHeight as number) }} </span>
             <div class="compress-size">
               <div class="size-item">
                 <span class="comp-width">原始宽度：{{ sourceFileInfo.width }}</span>
                 <span class="comp-height">原始高度：{{ sourceFileInfo.height }}</span>
-              </div>
-              <div class="size-item">
-                <span class="comp-width">压缩宽度：{{ compresWidth }}</span>
-                <span class="comp-height"
-                  >压缩高度：{{
+                <span class="comp-width comp-info">压缩宽度：{{ compresWidth }}</span>
+                <span class="comp-height">
+                  压缩高度：{{
                     Number(compressHeight) > Number(sourceFileInfo.height) ? sourceFileInfo.height : compressHeight
-                  }}</span
-                >
-              </div>
-              <div class="size-item">
-                <span class="comp-width">宽度相差：{{ sourceFileInfo.width - (compresWidth as number) }}</span>
-                <span class="comp-height"> 高度相差：{{ sourceFileInfo.height - (compressHeight as number) }} </span>
-              </div>
-              <div class="size-item">
-                <span class="comp-width">
-                  压缩后文件大小相差：{{
-                    selectFile?.size && compressFile?.size
-                      ? (selectFile.size / 1024 - compressFile.size / 1024).toFixed(2)
-                      : '-'
                   }}
-                  KB
                 </span>
               </div>
             </div>
@@ -571,19 +568,27 @@ const onClosePreview = () => {
       margin-top: 20px;
       padding: 0 10px;
 
-      .title {
+      .title,
+      .size-info {
         display: inline-block;
         margin-bottom: 10px;
         font-weight: initial;
         color: var(--font-1);
       }
 
+      .size-info {
+        margin-left: 20px;
+      }
+
       .compress-size {
         color: var(--font-1);
         .size-item {
-          margin-bottom: 10px;
-          .comp-width {
-            margin-right: 10px;
+          .comp-info {
+            margin-left: 20px;
+          }
+
+          .comp-height {
+            margin-left: 20px;
           }
         }
       }

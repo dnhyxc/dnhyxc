@@ -45,8 +45,9 @@ const commomStyle = {
   '--el-color-primary-light-3': '#40a700',
   '--el-color-primary-light-5': '#70c870',
   '--code-color': '#1cbc00',
+  '--markdown-param-color': '#f8c555',
   // markdown return color
-  '--markdown-return-color': '#fbff00',
+  '--markdown-return-color': '#37c26b',
   '--markdown-strong-color': '#ff9900',
   '--lg-colors': `${MENU_LG_DEFAULT_COLORS}`,
   '--lg-active-colors': `${MENU_LG_ACTIVE_DEFAULT_COLORS}`,
@@ -108,7 +109,6 @@ const removeStyle = {
   // 主题色
   // '--theme-blue': '#57a0ff',
   ...commomStyle,
-  '--markdown-return-color': '#ff0000',
 };
 
 // 背景图片公共配置
@@ -188,6 +188,8 @@ const imageStyles = {
   '--loading-text-color': '#089220',
   // 主题色
   ...commomStyle,
+  '--markdown-param-color': '#ff0090',
+  '--markdown-return-color': '#35e878',
 };
 
 // 炫彩背景公共配置
@@ -569,6 +571,7 @@ const fresh = {
   '--lg-colors': `${MENU_LG_COLORS}`,
   '--lg-active-colors': `${MENU_ACTIVE_LG_COLORS}`,
   '--card-btn-mark': 'rgba(0, 0, 0, 0.5)',
+  '--markdown-return-color': '#fbff00',
   // 主题色
   ...themeColors,
 };
