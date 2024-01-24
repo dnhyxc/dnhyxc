@@ -48,6 +48,9 @@ const commomStyle = {
   // markdown return color
   '--markdown-return-color': '#fbff00',
   '--markdown-strong-color': '#ff9900',
+  '--lg-colors': `${MENU_LG_DEFAULT_COLORS}`,
+  '--lg-active-colors': `${MENU_LG_ACTIVE_DEFAULT_COLORS}`,
+  '--card-btn-mark': 'rgba(255, 255, 255, 0.5)',
 };
 
 // 主题相关颜色
@@ -106,8 +109,6 @@ const removeStyle = {
   // '--theme-blue': '#57a0ff',
   ...commomStyle,
   '--markdown-return-color': '#ff0000',
-  '--lg-colors': `${MENU_LG_DEFAULT_COLORS}`,
-  '--lg-active-colors': `${MENU_LG_ACTIVE_DEFAULT_COLORS}`,
 };
 
 // 背景图片公共配置
@@ -185,8 +186,6 @@ const imageStyles = {
   '--border-color': '#e4e6eb',
   '--placeholder-color': '#d6d6d6',
   '--loading-text-color': '#089220',
-  '--lg-colors': `${MENU_LG_DEFAULT_COLORS}`,
-  '--lg-active-colors': `${MENU_LG_ACTIVE_DEFAULT_COLORS}`,
   // 主题色
   ...commomStyle,
 };
@@ -459,6 +458,7 @@ const lateralFace = {
   '--login-bg-img': 'url(@/assets/images/face.jpg)',
   '--theme-blue': '#00d625',
   '--el-color-primary': '#00d625',
+  '--card-btn-mark': 'rgba(0, 0, 0, 0.45)',
 };
 
 // 岛屿
@@ -486,6 +486,7 @@ const sun = {
   '--backdrop-filter': 'blur(0)',
   '--login-bg-img': 'url(@/assets/images/sun.jpg)',
   '--font-color': '#fff',
+  '--card-btn-mark': 'rgba(0, 0, 0, 0.5)',
   // 主题色
   ...themeColors,
 };
@@ -520,6 +521,7 @@ const beauty = {
   '--login-bg-img': 'url(@/assets/images/beauty.jpg)',
   '--layer-2-2': 'rgb(255, 255, 255, 0.06)',
   '--card-border': 'rgba(182, 182, 182, 0.5)',
+  '--card-btn-mark': 'rgba(0, 0, 0, 0.5)',
   // 主题色
   ...themeColors,
 };
@@ -532,6 +534,7 @@ const locomotive = {
   '--bg-image-url': `url(${IMG3})`,
   '--login-bg-img': 'url(@/assets/images/3.jpg)',
   '--loading-text-color': '#2aff00',
+  '--card-btn-mark': 'rgba(0, 0, 0, 0.5)',
   // 主题色
   ...themeColors,
 };
@@ -543,6 +546,7 @@ const island = {
   '--backdrop-filter': 'blur(3px)',
   '--h-color': '#a2ff00',
   '--login-bg-img': 'url(@/assets/images/4.jpg)',
+  '--card-btn-mark': 'rgba(255, 255, 255, 0.65)',
 };
 
 const fresh = {
@@ -564,6 +568,7 @@ const fresh = {
   // 菜单字体渐变
   '--lg-colors': `${MENU_LG_COLORS}`,
   '--lg-active-colors': `${MENU_ACTIVE_LG_COLORS}`,
+  '--card-btn-mark': 'rgba(0, 0, 0, 0.5)',
   // 主题色
   ...themeColors,
 };
@@ -635,6 +640,7 @@ const snow = {
   '--pre-hover-bg': 'rgba(0, 0, 0, 0.3)',
   '--placeholder-color': '#bfbfbf',
   '--h-color': '#61dc00',
+  '--card-btn-mark': 'rgba(0, 0, 0, 0.5)',
   // 主题色
   ...themeColors,
 };
