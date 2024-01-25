@@ -41,7 +41,7 @@
             class="edit-btn"
             @click.stop="onEditArticle"
           >
-            编辑
+            <i class="edit-icon iconfont icon-12bianji3x" />编辑
           </el-button>
         </div>
       </div>
@@ -168,6 +168,11 @@ const onFollow = async (authorId: string) => {
       .edit-btn {
         font-size: 15px;
         padding: 1px 2px;
+
+        .edit-icon {
+          margin-right: 3px;
+          padding-bottom: 4px;
+        }
       }
     }
   }
