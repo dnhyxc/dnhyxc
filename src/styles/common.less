@@ -29,6 +29,15 @@
   }
 }
 
+.headerTextLg() {
+  @supports (-webkit-background-clip: text) or (background-clip: text) {
+    background-image: var(--header-text-color);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+}
+
 .textLgActive() {
   @supports (-webkit-background-clip: text) or (background-clip: text) {
     background-image: var(--lg-active-colors);

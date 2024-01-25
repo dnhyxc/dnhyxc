@@ -53,6 +53,8 @@ const commomStyle = {
   '--lg-colors': `${MENU_LG_DEFAULT_COLORS}`,
   '--lg-active-colors': `${MENU_LG_ACTIVE_DEFAULT_COLORS}`,
   '--card-btn-mark': 'rgba(255, 255, 255, 0.5)',
+  // 头部字体颜色
+  '--header-text-color': 'linear-gradient(45deg, var(--font-1) 0%, var(--font-1) 100%)',
 };
 
 // 主题相关颜色
@@ -451,6 +453,8 @@ const lateralFace = {
   '--bg-image-url': `url(${HEAD_IMG})`,
   // 图片背景兼容字体颜色
   '--font-color': '#fff',
+  // 头部字体颜色
+  '--header-text-color': 'linear-gradient(45deg, #fff 0%, #fff 100%)',
   '--pre-bg-color': 'rgba(0, 0, 0, 0.3)',
   // editor 代码块颜色
   '--code-pre-bg': 'rgba(0, 0, 0, 0.3)',
@@ -472,6 +476,8 @@ const sea = {
   '--bg-image-url': `url(${SEA})`,
   // 图片背景兼容字体颜色
   '--font-color': '#fff',
+  // 头部字体颜色
+  '--header-text-color': 'linear-gradient(45deg, #fff 0%, #fff 100%)',
   '--pre-bg-color': 'rgba(0, 0, 0, 0.3)',
   // editor 代码块颜色
   '--code-pre-bg': 'rgba(0, 0, 0, 0.3)',
@@ -489,6 +495,8 @@ const sun = {
   '--backdrop-filter': 'blur(0)',
   '--login-bg-img': 'url(@/assets/images/sun.jpg)',
   '--font-color': '#fff',
+  // 头部字体颜色
+  '--header-text-color': 'linear-gradient(45deg, #fff 0%, #fff 100%)',
   '--card-btn-mark': 'rgba(0, 0, 0, 0.5)',
   // 主题色
   ...themeColors,
@@ -499,6 +507,8 @@ const ShaoSiming = {
   ...imageStyles,
   '--bg-image-url': `url(${IMG1})`,
   '--h-color': '#a2ff00',
+  // 头部字体颜色
+  '--header-text-color': 'linear-gradient(45deg, #000 0%, #000 100%)',
   '--login-bg-img': 'url(@/assets/images/1.jpg)',
 };
 
@@ -508,6 +518,8 @@ const beauty = {
   '--backdrop-filter': 'blur(0)',
   // 图片背景兼容字体颜色
   '--font-color': '#fff',
+  // 头部字体颜色
+  '--header-text-color': `${MENU_LG_DEFAULT_COLORS}`,
   '--h-color': '#61dc00',
   '--shade-3': 'rgba(255, 255, 255, 0.1)',
   '--pre-bg-color': 'rgb(255, 255, 255, 0.05)',
@@ -535,6 +547,8 @@ const locomotive = {
   ...imageStyles,
   '--backdrop-filter': 'blur(1.5px)',
   '--font-color': '#fff',
+  // 头部字体颜色
+  '--header-text-color': 'linear-gradient(45deg, #fff 0%, #fff 100%)',
   '--bg-image-url': `url(${IMG3})`,
   '--login-bg-img': 'url(@/assets/images/3.jpg)',
   '--loading-text-color': '#2aff00',
@@ -549,6 +563,8 @@ const island = {
   '--bg-image-url': `url(${IMG4})`,
   '--backdrop-filter': 'blur(3px)',
   '--h-color': '#a2ff00',
+  // 头部字体颜色
+  '--header-text-color': 'linear-gradient(45deg, #000 0%, #000 100%)',
   '--login-bg-img': 'url(@/assets/images/4.jpg)',
   '--card-btn-mark': 'rgba(255, 255, 255, 0.65)',
 };
@@ -567,6 +583,8 @@ const fresh = {
   '--placeholder-color': '#d2d2d2',
   '--h-color': '#61dc00',
   '--font-color': '#fff',
+  // 头部字体颜色
+  '--header-text-color': `${MENU_LG_COLORS}`,
   '--loading-color': 'rgba(102, 151, 9, 0.2)',
   '--loading-text-color': '#2aff00',
   // 菜单字体渐变

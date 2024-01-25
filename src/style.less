@@ -116,6 +116,7 @@
 
   // 菜单渐变颜色
   --lg-colors: @lg-colors;
+  --header-text-color: @lg-colors;
   // 菜单选中颜色
   --lg-active-colors: @lg-active-colors;
   // 预览table 偶数项背景颜色
@@ -282,7 +283,8 @@ ul {
 }
 
 // 下拉菜单
-.custom-dropdown-styles {
+.custom-dropdown-styles,
+.header-search-popover {
   background: transparent !important;
   backdrop-filter: blur(5px);
 
@@ -302,4 +304,10 @@ ul {
   .el-popper__arrow::before {
     display: none;
   }
+}
+
+.header-search-popover {
+  width: 90px !important;
+  min-width: auto !important;
+  padding: 0 !important;
 }
