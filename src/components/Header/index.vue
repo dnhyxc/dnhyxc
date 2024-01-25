@@ -342,7 +342,7 @@ const onScrollTo = () => {
     justify-content: flex-start;
     padding-left: 41px;
     color: var(--font-1);
-    font-weight: 700;
+    font-weight: var(--font-weight);
 
     .icon-wrap {
       position: absolute;
@@ -393,6 +393,7 @@ const onScrollTo = () => {
     .title {
       font-size: 18px;
       color: var(--font-color);
+      font-weight: 700;
       .headerTextLg();
     }
   }
@@ -401,7 +402,7 @@ const onScrollTo = () => {
     display: flex;
     align-items: center;
     color: var(--font-1);
-    font-weight: 700;
+    font-weight: var(--font-weight);
 
     .search-wrap {
       display: flex;

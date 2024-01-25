@@ -55,6 +55,7 @@ const commomStyle = {
   '--card-btn-mark': 'rgba(255, 255, 255, 0.5)',
   // 头部字体颜色
   '--header-text-color': 'linear-gradient(45deg, var(--font-1) 0%, var(--font-1) 100%)',
+  '--font-weight': 'normal',
 };
 
 // 主题相关颜色
@@ -520,6 +521,7 @@ const beauty = {
   '--font-color': '#fff',
   // 头部字体颜色
   '--header-text-color': `${MENU_LG_DEFAULT_COLORS}`,
+  '--font-weight': '700',
   '--h-color': '#61dc00',
   '--shade-3': 'rgba(255, 255, 255, 0.1)',
   '--pre-bg-color': 'rgb(255, 255, 255, 0.05)',
@@ -585,6 +587,7 @@ const fresh = {
   '--font-color': '#fff',
   // 头部字体颜色
   '--header-text-color': `${MENU_LG_COLORS}`,
+  '--font-weight': '700',
   '--loading-color': 'rgba(102, 151, 9, 0.2)',
   '--loading-text-color': '#2aff00',
   // 菜单字体渐变
@@ -646,6 +649,9 @@ const cloud = {
   // markdown return color
   '--markdown-return-color': '#6e00ff',
   '--el-color-primary-dark-2': '#268900',
+  // 头部字体颜色
+  '--header-text-color': `${MENU_LG_DEFAULT_COLORS}`,
+  '--font-weight': '700',
 };
 
 const snow = {
