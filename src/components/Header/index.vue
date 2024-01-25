@@ -58,9 +58,7 @@
           @keyup.enter="onEnter"
         >
           <template #suffix>
-            <el-icon class="el-input__icon" @click="onEnter">
-              <Search />
-            </el-icon>
+            <i class="iconfont icon-shibai clear-search-icon" @click="onEnter" />
           </template>
         </el-input>
       </div>
@@ -79,7 +77,7 @@
               :class="`scroll-icon iconfont ${scrollTop > 0 ? 'icon-shuangjiantou-shang' : 'icon-shuangjiantou-xia'}`"
               @click="onScrollTo"
             />
-            <span v-if="messageStore.msgList?.length" class="del-all" @click="onDeleteAll"> 全部删除 </span>
+            <span v-if="messageStore.msgList?.length" class="del-all" @click="onDeleteAll">全部删除</span>
           </span>
         </div>
         <Messages ref="messageRef" />
@@ -152,7 +150,6 @@ import Store from 'electron-store';
 import { ref, watchEffect, nextTick, onUnmounted, onMounted, watch } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { ipcRenderer } from 'electron';
-import { Search } from '@element-plus/icons-vue';
 import { ACTION_SVGS, CLOSE_CONFIG, CLOSE_PROMPT, NEED_HEAD_SEARCH } from '@/constant';
 import { commonStore, messageStore, loginStore } from '@/store';
 import { checkOS, ipcRenderers } from '@/utils';
@@ -444,8 +441,10 @@ const onScrollTo = () => {
         margin-left: 15px;
         -webkit-app-region: no-drag;
 
-        .el-input__icon {
-          font-size: 16px;
+        .clear-search-icon {
+          color: var(--placeholder-color);
+          margin-bottom: 1px;
+          cursor: pointer;
         }
 
         :deep {
