@@ -190,7 +190,7 @@ const imageStyles = {
   // 主题色
   ...commomStyle,
   '--markdown-param-color': '#19dcc6',
-  '--markdown-return-color': '#96e072',
+  '--markdown-return-color': '#93e86a',
 };
 
 // 炫彩背景公共配置
