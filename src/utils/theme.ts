@@ -56,6 +56,7 @@ const commomStyle = {
   // 头部字体颜色
   '--header-text-color': 'linear-gradient(45deg, var(--font-1) 0%, var(--font-1) 100%)',
   '--font-weight': 'normal',
+  '--search-border-color': '#fff',
 };
 
 // 主题相关颜色
@@ -540,6 +541,7 @@ const beauty = {
   '--card-border': 'rgba(182, 182, 182, 0.5)',
   '--card-btn-mark': 'rgba(0, 0, 0, 0.5)',
   '--markdown-function-color': '#fcf168',
+  '--search-border-color': '#a86aa5',
   // 主题色
   ...themeColors,
 };
@@ -595,6 +597,7 @@ const fresh = {
   '--lg-active-colors': `${MENU_ACTIVE_LG_COLORS}`,
   '--card-btn-mark': 'rgba(0, 0, 0, 0.5)',
   '--markdown-return-color': '#fbff00',
+  '--search-border-color': '#fabd00',
   // 主题色
   ...themeColors,
 };

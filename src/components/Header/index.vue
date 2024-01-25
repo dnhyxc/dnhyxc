@@ -410,12 +410,6 @@ const onScrollTo = () => {
       -webkit-app-region: no-drag;
       color: var(--font-1);
 
-      :deep {
-        .el-dropdown {
-          color: var(--font-1);
-        }
-      }
-
       .font {
         height: 30px;
         line-height: 30px;
@@ -458,6 +452,7 @@ const onScrollTo = () => {
           .el-input__wrapper {
             background-color: var(--input-bg-color);
             border-radius: 30px;
+            box-shadow: 0 0 0 1px var(--search-border-color) inset;
           }
           .el-input__inner {
             color: var(--font-color);
