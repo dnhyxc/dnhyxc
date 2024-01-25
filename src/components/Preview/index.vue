@@ -101,43 +101,16 @@ const onCopyCodeSuccess = (value: string) => {
         right: 8px;
       }
 
-      strong {
-        font-weight: 700;
-        color: var(--markdown-strong-color);
-      }
+      .titleHsize();
 
-      blockquote {
-        color: var(--font-5);
-        background: var(--shade-3);
-        border-left: 4px solid var(--active-color);
-        border-radius: 5px;
-      }
+      .codeStyle();
 
       code {
         background-color: var(--p-code-bg-color);
-        font-size: 15px;
-        color: var(--code-color);
       }
 
       pre {
         max-width: calc(100vw - 450px);
-
-        code {
-          color: var(--code-color);
-          background-color: transparent;
-          font-size: 15px;
-        }
-      }
-
-      a {
-        color: var(--el-color-primary-dark-2);
-      }
-
-      .titleHsize();
-
-      td,
-      th {
-        border: 1px solid var(--card-border);
       }
 
       table {
@@ -148,40 +121,6 @@ const onCopyCodeSuccess = (value: string) => {
 
       & tr:nth-child(2n) {
         background-color: var(--table-even-bg);
-      }
-      & .token.block-comment,
-      & .token.cdata,
-      & .token.comment,
-      & .token.doctype,
-      & .token.prolog {
-        color: var(--font-6);
-      }
-
-      & .token.punctuation {
-        color: var(--font-5);
-      }
-
-      & .token.attr-value,
-      & .token.char,
-      & .token.regex,
-      & .token.string,
-      & .token.variable {
-        color: var(--markdown-return-color);
-      }
-
-      & .token.atrule,
-      & .token.builtin,
-      & .token.important,
-      & .token.keyword,
-      & .token.selector {
-        color: var(--markdown-const-color);
-      }
-
-      & .token.class-name,
-      & .token.constant,
-      & .token.property,
-      & .token.symbol {
-        color: var(--markdown-param-color);
       }
     }
   }
