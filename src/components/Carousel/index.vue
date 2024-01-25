@@ -105,6 +105,11 @@ const toTag = (name: string) => {
       height: 100%;
       border-radius: 5px;
       padding: 0 5px;
+      &:hover {
+        .img {
+          filter: contrast(80%);
+        }
+      }
 
       .article-info {
         position: absolute;
@@ -118,6 +123,7 @@ const toTag = (name: string) => {
         box-sizing: border-box;
         padding: 6px 5px 5px;
         border-radius: 5px;
+        z-index: 999;
 
         .top {
           box-sizing: border-box;
@@ -132,7 +138,6 @@ const toTag = (name: string) => {
             .title {
               display: inline-block;
               font-size: 18px;
-              backdrop-filter: blur(3px);
               padding: 0 5px 2px 5px;
               margin: 5px 0 0 5px;
               border-radius: 5px;
@@ -148,7 +153,6 @@ const toTag = (name: string) => {
             .author,
             .date {
               color: @fff;
-              backdrop-filter: blur(3px);
               padding: 0 5px 2px 5px;
               border-radius: 5px;
             }
@@ -174,7 +178,6 @@ const toTag = (name: string) => {
           .classify,
           .tag {
             display: inline-block;
-            backdrop-filter: blur(3px);
             color: @fff;
             padding: 0 5px 2px 5px;
             margin: 0 5px 5px 0;
@@ -183,7 +186,7 @@ const toTag = (name: string) => {
             &:hover {
               color: var(--theme-blue);
               backdrop-filter: blur(10px);
-              background-color: @card-action-color;
+              background-color: var(--card-btn-mark);
             }
           }
 
@@ -198,6 +201,8 @@ const toTag = (name: string) => {
           box-sizing: border-box;
           width: 100%;
           height: 210px;
+          filter: contrast(100%);
+          transition: all 0.5s;
 
           .image-item {
             border-radius: 5px;

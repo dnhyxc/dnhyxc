@@ -38,14 +38,20 @@
             v-if="loginStore?.userInfo?.userId === articleStore?.articleDetail?.authorId"
             type="primary"
             link
+            class="edit-btn"
             @click.stop="onEditArticle"
           >
-            编辑
+            <i class="edit-icon iconfont icon-12bianji3x" />编辑
           </el-button>
         </div>
       </div>
     </div>
-    <Image :url="articleStore?.articleDetail?.coverImage || HEAD_IMG" :transition-img="HEAD_IMG" class="image" />
+    <Image
+      v-if="articleStore?.articleDetail?.coverImage"
+      :url="articleStore?.articleDetail?.coverImage"
+      :transition-img="HEAD_IMG"
+      class="image"
+    />
     <p class="desc">{{ articleStore?.articleDetail?.abstract }}</p>
   </div>
 </template>
@@ -157,6 +163,16 @@ const onFollow = async (authorId: string) => {
 
       .read-count {
         margin: 0 15px;
+      }
+
+      .edit-btn {
+        font-size: 15px;
+        padding: 1px 2px;
+
+        .edit-icon {
+          margin-right: 3px;
+          padding-bottom: 4px;
+        }
       }
     }
   }

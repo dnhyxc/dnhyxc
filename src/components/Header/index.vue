@@ -23,21 +23,21 @@
     </div>
     <div class="right">
       <div class="search-wrap">
-        <el-dropdown
+        <el-popover
           v-if="!commonStore.showSearch && NEED_HEAD_SEARCH.includes(route.path)"
-          effect="light"
-          content="搜索"
           placement="bottom"
-          popper-class="custom-dropdown-styles"
+          popper-class="header-search-popover"
+          :show-arrow="false"
+          trigger="hover"
         >
-          <i class="font iconfont icon-sousuo2 search-icon" @click="onClickSearch" />
-          <template #dropdown>
-            <el-dropdown-menu>
-              <el-dropdown-item @click="onCheckSearchType(1)">普通搜索</el-dropdown-item>
-              <el-dropdown-item @click="onCheckSearchType(2)">高级搜索</el-dropdown-item>
-            </el-dropdown-menu>
+          <template #reference>
+            <i class="font iconfont icon-sousuo2 search-icon" @click="onClickSearch" />
           </template>
-        </el-dropdown>
+          <div class="search-list">
+            <div class="search-item" @click="onCheckSearchType(1)">普通搜索</div>
+            <div class="search-item" @click="onCheckSearchType(2)">高级搜索</div>
+          </div>
+        </el-popover>
         <el-tooltip
           v-if="!commonStore.showSearch && !NEED_HEAD_SEARCH.includes(route.path) && route.path !== '/search'"
           effect="light"
@@ -58,9 +58,7 @@
           @keyup.enter="onEnter"
         >
           <template #suffix>
-            <el-icon class="el-input__icon" @click="onEnter">
-              <Search />
-            </el-icon>
+            <i class="iconfont icon-shibai clear-search-icon" @click="onEnter" />
           </template>
         </el-input>
       </div>
@@ -79,7 +77,7 @@
               :class="`scroll-icon iconfont ${scrollTop > 0 ? 'icon-shuangjiantou-shang' : 'icon-shuangjiantou-xia'}`"
               @click="onScrollTo"
             />
-            <span v-if="messageStore.msgList?.length" class="del-all" @click="onDeleteAll"> 全部删除 </span>
+            <span v-if="messageStore.msgList?.length" class="del-all" @click="onDeleteAll">全部删除</span>
           </span>
         </div>
         <Messages ref="messageRef" />
@@ -152,7 +150,6 @@ import Store from 'electron-store';
 import { ref, watchEffect, nextTick, onUnmounted, onMounted, watch } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { ipcRenderer } from 'electron';
-import { Search } from '@element-plus/icons-vue';
 import { ACTION_SVGS, CLOSE_CONFIG, CLOSE_PROMPT, NEED_HEAD_SEARCH } from '@/constant';
 import { commonStore, messageStore, loginStore } from '@/store';
 import { checkOS, ipcRenderers } from '@/utils';
@@ -340,8 +337,9 @@ const onScrollTo = () => {
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    padding-left: 50px;
+    padding-left: 41px;
     color: var(--font-1);
+    font-weight: var(--font-weight);
 
     .icon-wrap {
       position: absolute;
@@ -357,13 +355,13 @@ const onScrollTo = () => {
         line-height: 40px;
         font-size: 35px;
         margin-bottom: 2px;
-        margin-right: 20px;
         color: var(--theme-blue);
         cursor: pointer;
         -webkit-app-region: no-drag;
         transition: all 0.3s;
+        font-weight: 500;
         .menuLg();
-        &:hover{
+        &:hover {
           transform: scale(1.15);
         }
       }
@@ -373,6 +371,7 @@ const onScrollTo = () => {
       cursor: pointer;
       -webkit-app-region: no-drag;
       color: var(--font-color);
+      .headerTextLg();
       height: 30px;
       width: 30px;
       line-height: 30px;
@@ -390,8 +389,9 @@ const onScrollTo = () => {
 
     .title {
       font-size: 18px;
-      font-weight: 700;
       color: var(--font-color);
+      font-weight: 700;
+      .headerTextLg();
     }
   }
 
@@ -399,23 +399,22 @@ const onScrollTo = () => {
     display: flex;
     align-items: center;
     color: var(--font-1);
+    font-weight: var(--font-weight);
+
     .search-wrap {
       display: flex;
       align-items: center;
       -webkit-app-region: no-drag;
       color: var(--font-1);
 
-      :deep {
-        .el-dropdown {
-          color: var(--font-1);
-        }
-      }
-
       .font {
+        height: 30px;
+        line-height: 30px;
         font-size: 15px;
         cursor: pointer;
         -webkit-app-region: no-drag;
         color: var(--font-color);
+        .headerTextLg();
 
         &:hover {
           color: var(--active-color);
@@ -428,6 +427,7 @@ const onScrollTo = () => {
 
       .icon-qiehuan {
         color: var(--font-color);
+        .headerTextLg();
         font-size: 20px;
         cursor: pointer;
 
@@ -441,14 +441,17 @@ const onScrollTo = () => {
         margin-left: 15px;
         -webkit-app-region: no-drag;
 
-        .el-input__icon {
-          font-size: 16px;
+        .clear-search-icon {
+          color: var(--placeholder-color);
+          margin-bottom: 1px;
+          cursor: pointer;
         }
 
         :deep {
           .el-input__wrapper {
             background-color: var(--input-bg-color);
             border-radius: 30px;
+            box-shadow: 0 0 0 1px var(--search-border-color) inset;
           }
           .el-input__inner {
             color: var(--font-color);
@@ -467,6 +470,9 @@ const onScrollTo = () => {
       align-items: center;
       -webkit-app-region: no-drag;
       margin-left: 15px;
+      height: 30px;
+      line-height: 30px;
+      cursor: pointer;
 
       .msg-count {
         position: absolute;
@@ -475,7 +481,6 @@ const onScrollTo = () => {
         font-size: 12px;
         color: @font-danger;
         font-weight: 700;
-        cursor: pointer;
       }
 
       .max-msg-count {
@@ -486,6 +491,7 @@ const onScrollTo = () => {
         font-size: 17px;
         cursor: pointer;
         color: var(--font-color);
+        .headerTextLg();
 
         &:hover {
           color: var(--active-color);
@@ -500,11 +506,14 @@ const onScrollTo = () => {
       -webkit-app-region: no-drag;
 
       .font {
+        height: 30px;
+        line-height: 30px;
         font-size: 16px;
         cursor: pointer;
         margin-left: 15px;
         margin-top: 1px;
         color: var(--font-color);
+        .headerTextLg();
       }
 
       &:hover {
@@ -525,10 +534,13 @@ const onScrollTo = () => {
       -webkit-app-region: no-drag;
 
       .font {
+        height: 30px;
+        line-height: 30px;
         font-size: 19px;
         cursor: pointer;
         margin-left: 15px;
         color: var(--font-color);
+        .headerTextLg();
       }
 
       &:hover {
@@ -549,6 +561,9 @@ const onScrollTo = () => {
       -webkit-app-region: no-drag;
       cursor: pointer;
       color: var(--font-color);
+      height: 30px;
+      line-height: 30px;
+      .headerTextLg();
 
       .icon-text {
         margin-left: 15px;
@@ -606,7 +621,6 @@ const onScrollTo = () => {
   padding: 28px 22px 10px 10px;
 
   .left {
-    // padding-left: 51px;
     padding-left: 45px;
 
     .icon-wrap {
@@ -631,6 +645,7 @@ const onScrollTo = () => {
 
   .title-text {
     color: var(--font-color);
+    .headerTextLg();
   }
 
   .del-action {
@@ -655,6 +670,23 @@ const onScrollTo = () => {
     cursor: pointer;
     .clickNoSelectText();
     z-index: 99;
+
+    &:hover {
+      color: var(--active-color);
+    }
+  }
+}
+
+.search-list {
+  position: relative;
+  z-index: 99;
+
+  .search-item {
+    height: 32px;
+    line-height: 32px;
+    text-align: center;
+    cursor: pointer;
+    color: var(--font-color);
 
     &:hover {
       color: var(--active-color);

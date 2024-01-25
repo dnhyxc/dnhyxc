@@ -269,20 +269,28 @@ export const IMG_THEME_TYPES = [
     name: '云间',
   },
   {
-    key: 'snow',
-    name: '雪山',
+    key: 'beauty',
+    name: '动漫',
+  },
+  {
+    key: 'fresh',
+    name: '小清新',
   },
   {
     key: 'lateralFace',
     name: '侧脸',
   },
   {
-    key: 'ShaoSiming',
-    name: '少司命',
+    key: 'sun',
+    name: '日出',
   },
   {
-    key: 'beauty',
-    name: '动漫',
+    key: 'snow',
+    name: '雪山',
+  },
+  {
+    key: 'ShaoSiming',
+    name: '少司命',
   },
   {
     key: 'locomotive',
@@ -295,14 +303,6 @@ export const IMG_THEME_TYPES = [
   {
     key: 'sea',
     name: '岛屿',
-  },
-  {
-    key: 'fresh',
-    name: '小清新',
-  },
-  {
-    key: 'sun',
-    name: '日出',
   },
 ];
 

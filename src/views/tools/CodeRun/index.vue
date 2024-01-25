@@ -94,9 +94,15 @@
         </div>
       </div>
     </div>
-    <el-dialog v-model="visible" :close-on-click-modal="false" title="保存代码示例" width="500px" draggable>
+    <el-dialog
+      v-model="visible"
+      :close-on-click-modal="false"
+      :title="`${codeStore.currentCodeId && codeContent ? '更新' : '保存'}代码示例`"
+      width="500px"
+      draggable
+    >
       <div class="dialog-content">
-        <el-form ref="formRef" label-width="80px" :model="codeStore.codeInfo">
+        <el-form ref="formRef" label-position="top" :model="codeStore.codeInfo">
           <el-form-item
             prop="title"
             label="示例名称"
@@ -113,7 +119,7 @@
           <el-form-item prop="abstract" label="示例描述">
             <el-input
               v-model="codeStore.codeInfo.abstract"
-              :autosize="{ minRows: 3, maxRows: 5 }"
+              :autosize="{ minRows: 4, maxRows: 6 }"
               type="textarea"
               maxlength="500"
               show-word-limit
@@ -123,8 +129,10 @@
           </el-form-item>
         </el-form>
         <div class="actions">
-          <el-button type="primary" @click="onSaveDemo">保存示例</el-button>
-          <el-button @click="onCancel">取消保存</el-button>
+          <el-button type="primary" @click="onSaveDemo">
+            {{ codeStore.currentCodeId && codeContent ? '更新' : '保存' }}
+          </el-button>
+          <el-button @click="onCancel">取消</el-button>
         </div>
       </div>
     </el-dialog>
@@ -496,6 +504,36 @@ const onClear = (monacoData?: any) => {
   }
 
   .dialog-content {
+    :deep {
+      .el-form-item__label {
+        color: var(--font-3);
+      }
+      .el-input__wrapper {
+        color: var(--font-1);
+        background-color: var(--input-bg-color);
+      }
+      .el-input__inner {
+        color: var(--font-color);
+        background-color: transparent;
+
+        &::-webkit-input-placeholder {
+          color: var(--placeholder-color);
+        }
+      }
+
+      .el-textarea .el-input__count {
+        background: none;
+      }
+
+      .el-textarea__inner {
+        color: var(--font-1);
+        background-color: var(--input-bg-color);
+
+        &::-webkit-input-placeholder {
+          color: var(--placeholder-color);
+        }
+      }
+    }
     .inp {
       margin: 10px 0;
     }

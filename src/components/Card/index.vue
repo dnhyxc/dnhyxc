@@ -222,6 +222,11 @@ const toTag = (name: string) => {
         .art-action {
           display: block;
         }
+        .info {
+          opacity: 1;
+          transition: all 0.5s;
+          background-color: @shade-3;
+        }
       }
 
       .card-bottom {
@@ -249,7 +254,7 @@ const toTag = (name: string) => {
           backdrop-filter: blur(5px);
           padding: 0px 5px 2px;
           border-radius: 5px;
-          background-color: var(--hover-bg-color);
+          background-color: var(--card-btn-mark);
         }
 
         .del {
@@ -259,7 +264,7 @@ const toTag = (name: string) => {
           backdrop-filter: blur(5px);
           padding: 0px 5px 2px;
           border-radius: 5px;
-          background-color: var(--hover-bg-color);
+          background-color: var(--card-btn-mark);
         }
 
         .edit,
@@ -306,14 +311,15 @@ const toTag = (name: string) => {
         width: 100%;
         max-height: 42%;
         overflow: hidden;
+        transition: all 0.5s;
+        opacity: 0;
 
         .desc {
           display: table-cell;
           vertical-align: middle;
           .ellipsisMore(3);
           font-size: 13px;
-          backdrop-filter: blur(2px);
-          padding: 4px 5px 5px 5px;
+          padding: 5px;
           line-height: 18px;
           color: @fff;
         }
