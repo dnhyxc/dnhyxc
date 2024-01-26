@@ -116,27 +116,10 @@
       <el-button type="primary" :disabled="!compressFile" @click="onDownload">下载</el-button>
       <el-button type="warning" :disabled="!base64Url" @click="onRefresh">重置</el-button>
     </div>
-    <el-dialog v-model="previewVisible" draggable align-center title="图片预览" width="80%" @close="onClosePreview">
+    <el-dialog v-model="previewVisible" draggable align-center title="图片预览" width="90%" @close="onClosePreview">
       <div class="preview-dialog">
         <el-scrollbar class="scroll-wrap" max-height="75vh">
-          <div v-if="previewUrls?.[1]" class="after">压缩后图片预览</div>
-          <el-image v-if="previewUrls?.[1]" class="prew-img prev-after-img" :src="previewUrls?.[1]">
-            <template #placeholder>
-              <div class="image-slot">Loading...</div>
-            </template>
-            <template #error>
-              <div class="image-slot">图片加载失败</div>
-            </template>
-          </el-image>
-          <div v-if="previewUrls?.[0]" class="before">压缩前图片预览</div>
-          <el-image v-if="previewUrls?.[0]" class="prew-img" :src="previewUrls?.[0]">
-            <template #placeholder>
-              <div class="image-slot">Loading...</div>
-            </template>
-            <template #error>
-              <div class="image-slot">图片加载失败</div>
-            </template>
-          </el-image>
+          <Contrast :before-img="previewUrls?.[0]" :after-img="previewUrls?.[1] || previewUrls?.[0]" />
         </el-scrollbar>
       </div>
     </el-dialog>
@@ -158,6 +141,7 @@ import {
   onDownloadFile,
 } from '@/utils';
 import OnlineImage from '../OnlineImage/index.vue';
+import Contrast from '@/components/Contrast/index.vue';
 
 interface IProps {
   modalVisible: boolean;
