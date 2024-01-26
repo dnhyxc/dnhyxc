@@ -244,13 +244,15 @@ const onScrollTo = (height?: number) => {
 }
 
 .mac-detail-wrap {
+  padding-right: 0;
+
   .content {
-    height: calc(100vh - 88px);
+    height: calc(100vh - 95px);
   }
 
   .right {
     margin-right: 3px;
-    max-height: calc(100vh - 88px);
+    max-height: calc(100vh - 95px);
   }
 }
 </style>

@@ -449,6 +449,7 @@ const onScrollTo = () => {
 
         :deep {
           .el-input__wrapper {
+            height: 30px;
             background-color: var(--input-bg-color);
             border-radius: 30px;
             box-shadow: 0 0 0 1px var(--search-border-color) inset;
