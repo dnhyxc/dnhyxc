@@ -48,9 +48,10 @@ export const getFlashIconPath = () => {
 
 // 托盘图标闪烁
 let isFlashing = false;
-let flashInterval: ReturnType<typeof setTimeout> | null = null;
+let flashInterval: ReturnType<typeof setInterval> | null = null;
 
 export const startFlash = () => {
+  if (isMac) return;
   const flashImg = getFlashIconPath();
   const img = getIconPath();
   if (!isFlashing) {
@@ -66,11 +67,12 @@ export const startFlash = () => {
 
 // 停止闪动
 export const stopFlash = () => {
+  if (isMac) return;
   const img = getIconPath();
   if (isFlashing) {
     isFlashing = false;
     if (flashInterval) {
-      clearInterval(flashInterval);
+      clearInterval(flashInterval as unknown as number);
       flashInterval = null;
     }
     globalInfo.tray?.setImage(path.join(__dirname, img));
