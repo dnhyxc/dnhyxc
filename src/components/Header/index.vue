@@ -86,7 +86,7 @@
             <el-tooltip effect="light" content="消息" placement="bottom">
               <div class="msg">
                 <span
-                  v-if="messageStore.msgCount"
+                  v-if="messageStore.msgCount && !messageStore.visible"
                   :class="`${messageStore.msgCount > 99 && 'max-msg-count'} msg-count`"
                 >
                   {{ messageStore.msgCount > 99 ? '99+' : messageStore.msgCount }}

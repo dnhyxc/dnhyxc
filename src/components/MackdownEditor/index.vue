@@ -150,7 +150,7 @@ const toolbar = reactive<Toolbar>({
     },
   },
   monaco: {
-    text: 'code',
+    text: 'vscode',
     title: '切换编辑器',
     action(editor) {
       props?.onChangeEditor?.();
