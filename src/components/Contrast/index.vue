@@ -118,17 +118,17 @@ const onMove = (e: MouseEvent) => {
 
       &::after {
         content: '\2b0c';
-        width: 10px;
-        height: 30px;
+        width: 16px;
+        height: 60px;
         background-color: @fff;
         position: absolute;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
         color: @000;
-        font-size: 13px;
+        font-size: 16px;
         text-align: center;
-        line-height: 30px;
+        line-height: 60px;
         border-radius: 20px;
         box-shadow: 0 0 8px @shade-2;
         transition: all 0.3s ease;
@@ -136,10 +136,10 @@ const onMove = (e: MouseEvent) => {
 
       &:hover::after {
         content: '\2b0c';
-        width: 14px;
-        height: 50px;
-        font-size: 20px;
-        line-height: 50px;
+        width: 16px;
+        height: 80px;
+        font-size: 16px;
+        line-height: 80px;
       }
     }
   }
