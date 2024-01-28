@@ -42,7 +42,7 @@ watchEffect(async () => {
 watch(
   () => messageStore.msgCount,
   (newVal, oldVal) => {
-    if (newVal !== oldVal && checkOS() === 'mac') {
+    if (newVal !== oldVal && checkOS() === 'mac' && !messageStore.visible) {
       ipcRenderers.sendMessageFlashInfo({ messageStore, msgStatus: getMsgStatus() as number });
     }
   },
