@@ -5,6 +5,7 @@
       v-model="createStore.createInfo.content"
       placeholder="编辑内容"
       autofocus
+      mode="edit"
       :height="height || 'calc(100vh - 84px)'"
       :disabled-menus="[]"
       :left-toolbar="toolMenu"
@@ -227,6 +228,7 @@ const onCopyCodeSuccess = (value: string) => {
 
     .v-md-editor__preview-wrapper {
       color: var(--font-2);
+      border-left: 1px solid var(--card-border);
     }
 
     .vuepress-markdown-body {
@@ -262,7 +264,7 @@ const onCopyCodeSuccess = (value: string) => {
       -webkit-app-region: no-drag;
     }
     .v-md-editor__editor-wrapper {
-      border-right: 1px solid var(--card-border);
+      border-right: none;
     }
 
     .v-md-editor__toolbar-item {

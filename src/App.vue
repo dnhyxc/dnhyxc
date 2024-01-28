@@ -38,6 +38,16 @@ watchEffect(async () => {
   }
 });
 
+// 监听mac未读消息，设置托盘未读消息数
+watch(
+  () => messageStore.msgCount,
+  (newVal, oldVal) => {
+    if (newVal !== oldVal && checkOS() === 'mac' && !messageStore.visible) {
+      ipcRenderers.sendMessageFlashInfo({ messageStore, msgStatus: getMsgStatus() as number });
+    }
+  },
+);
+
 onMounted(async () => {
   EventBus.on('quit', () => {
     loginStore.onQuit();

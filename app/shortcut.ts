@@ -51,7 +51,7 @@ export const registerShortcut = (app: App) => {
   });
 
   // 全屏/还原
-  globalShortcut.register((store.get('FULL_SHORTCUT') as string) || 'Shift+Alt+F', () => {
+  globalShortcut.register((store.get('FULL_SHORTCUT') as string) || 'Shift+Alt+R', () => {
     if (globalInfo.win?.isMaximized()) {
       globalInfo.win.restore();
     } else {

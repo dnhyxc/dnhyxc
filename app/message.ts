@@ -5,10 +5,8 @@
  * index.vue
  */
 import { BrowserWindow, screen, ipcMain, Rectangle } from 'electron';
-import { DOMAIN_URL, globalInfo, isDev } from './constant';
+import { DOMAIN_URL, globalInfo, isDev, isMac } from './constant';
 import { startFlash, stopFlash } from './tray';
-
-// let messageWin: BrowserWindow | null = null;
 
 export const messageWinStatus = {
   isLeave: true,
@@ -73,6 +71,10 @@ export const createMessageWin = () => {
 
 // 监听是否有未读消息
 ipcMain.on('show-message', (event, status) => {
+  if (isMac) {
+    const unReadMsgCount = JSON.parse(status).count;
+    globalInfo.tray?.setTitle(`${unReadMsgCount}`);
+  }
   messageWinStatus.hasUnreadMsg = true;
   startFlash();
   globalInfo.messageWin?.webContents.send('message-info', status);
@@ -80,6 +82,10 @@ ipcMain.on('show-message', (event, status) => {
 
 // 监听消息是否已读
 ipcMain.on('hide-message', (event, status) => {
+  if (isMac) {
+    const unReadMsgCount = JSON.parse(status).count;
+    globalInfo.tray?.setTitle(`${unReadMsgCount || ''}`);
+  }
   messageWinStatus.hasUnreadMsg = false;
   stopFlash();
   globalInfo.messageWin?.webContents.send('message-info', status);
@@ -135,6 +141,7 @@ export const showMessage = () => {
 };
 
 export const hideMessage = () => {
+  if (isMac) return;
   globalInfo.messageWin?.hide();
 };
 
