@@ -198,6 +198,10 @@ const onCopyCodeSuccess = (value: string) => {
       background-color: var(--fff);
     }
 
+    .v-md-editor__toolbar-divider {
+      margin: 0 8px;
+    }
+
     .v-md-editor__right-area {
       background-color: var(--fff);
       border-radius: 5px;
