@@ -31,6 +31,7 @@
       :article-id="(route?.query?.id as string)"
       :on-save-draft="onSaveDraft"
       :show-dot="prevContent.trim() !== createStore.createInfo.content?.trim() ? 1 : 0"
+      :prev-content="prevContent"
       class="create-monaco-eritor"
     />
     <CreateDrawer

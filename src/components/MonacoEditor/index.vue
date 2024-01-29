@@ -6,7 +6,6 @@
 -->
 <template>
   <div class="container">
-    <div v-if="showDot" :class="`save-info ${createStore.draftArticleId && 'save-info-prev'}`">未保存</div>
     <div :class="`${theme !== 'vs' && 'dark-toolbar'} toolbar`">
       <div class="left">
         <div v-if="!readonly" class="code-action">
@@ -38,8 +37,12 @@
           <span v-if="!isCodeEdit" class="action iconfont icon-bianjiqi" title="切换编辑器" @click="onChangeEditor" />
         </div>
         <div v-if="!isCodeEdit" class="create-action">
+          <div v-if="showDot" class="action un-save" @click="onDiffValue">未保存</div>
+          <div v-if="showDot" class="action" @click="onDiffValue">
+            {{ showDiff ? '关闭对比' : '对比变更' }}
+          </div>
           <el-button
-            class="clear"
+            class="action clear"
             type="warning"
             link
             title="清空内容"
@@ -62,7 +65,18 @@
         <span v-else class="language-text result-text">{{ language }} 运行结果</span>
       </div>
     </div>
-    <div ref="editorRef" :class="`${theme !== 'vs' && 'dark-monaco-editor-wrap'} monaco-editor-wrap`" />
+    <div
+      v-show="!showDiff"
+      ref="editorRef"
+      :class="`${theme !== 'vs' && 'dark-monaco-editor-wrap'} monaco-editor-wrap`"
+    />
+    <DiffMonacoEditor
+      v-show="showDiff"
+      :value="createStore.createInfo.content"
+      :old-value="prevContent"
+      language="markdown"
+      :height="checkOS() === 'mac' ? 'calc(100vh - 138px)' : 'calc(100vh - 125px)'"
+    />
     <ElModel v-model:visible="visible" title="vscode 快捷键说明" :footer="false" :width="'86vw'" :draggable="false">
       <template #content>
         <div class="model-content">
@@ -79,7 +93,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, nextTick, onDeactivated, computed, watchEffect } from 'vue';
+import { ref, onMounted, nextTick, onDeactivated, computed, watchEffect, watch } from 'vue';
 import * as monaco from 'monaco-editor';
 import { ElMessage } from 'element-plus';
 import jsonWorker from 'monaco-editor/esm/vs/language/json/json.worker?worker';
@@ -95,6 +109,7 @@ import parserHtml from 'prettier/parser-html';
 import parserYaml from 'prettier/parser-yaml';
 import parserPostcss from 'prettier/parser-postcss';
 import { MONACO_EDITOR_LANGUAGES, CODE_RUN_LANGUAGES, VS_CODE_SHORTCUT_KEYS } from '@/constant';
+import { checkOS } from '@/utils';
 import { createStore } from '@/store';
 
 interface IProps {
@@ -114,6 +129,7 @@ interface IProps {
   saveText?: string;
   language?: string;
   showDot?: number;
+  prevContent?: string;
 }
 
 const props = defineProps<IProps>();
@@ -128,6 +144,8 @@ const language = ref<string>(props.isCodeEdit ? 'javascript' : 'markdown');
 const content = ref<string | undefined>('');
 // 是否显示快捷键提示弹窗
 const visible = ref<boolean>(false);
+// 控制是否显示对比内容
+const showDiff = ref<boolean>(false);
 
 let editor: monaco.editor.IStandaloneCodeEditor | null = null;
 
@@ -162,6 +180,15 @@ self.MonacoEnvironment = {
 onMounted(() => {
   initEditor();
 });
+
+watch(
+  () => props.showDot,
+  (newVal) => {
+    if (!newVal) {
+      showDiff.value = false;
+    }
+  },
+);
 
 watchEffect(() => {
   // 设置编辑内容
@@ -334,6 +361,11 @@ const onPreviewDraft = () => {
 const onShowInfo = () => {
   visible.value = true;
 };
+
+// 显示变更内容
+const onDiffValue = () => {
+  showDiff.value = !showDiff.value;
+};
 </script>
 
 <style scoped lang="less">
@@ -345,20 +377,7 @@ const onShowInfo = () => {
   border-radius: 5px;
   box-sizing: border-box;
   box-shadow: 0 0 8px 0 var(--shadow-mack);
-
-  .save-info {
-    position: absolute;
-    top: 12px;
-    right: 288px;
-    color: @font-danger;
-    font-size: 12px;
-    z-index: 99;
-    .clickNoSelectText();
-  }
-
-  .save-info-prev {
-    right: 316px;
-  }
+  overflow: hidden;
 
   .toolbar {
     display: flex;
@@ -373,6 +392,8 @@ const onShowInfo = () => {
     border-top-right-radius: 5px;
 
     .create-action {
+      height: 30px;
+      line-height: 30px;
       .ellipsisMore(1);
     }
 
@@ -400,16 +421,30 @@ const onShowInfo = () => {
       }
 
       .action {
+        display: inline-block;
         color: var(--theme-blue);
         font-size: 14px;
-        height: 30px;
-        line-height: 30px;
+        height: 20px;
+        line-height: 20px;
         cursor: pointer;
         margin-right: 14px;
 
         &:hover {
           color: var(--active);
         }
+
+        .diff {
+          margin-left: 14px;
+        }
+      }
+
+      .un-save {
+        font-size: 12px;
+        color: @font-danger;
+        &:hover {
+          color: @font-danger;
+        }
+        cursor: default;
       }
 
       .save-draft {
@@ -459,8 +494,9 @@ const onShowInfo = () => {
         color: @font-warning;
         margin-right: 14px;
         padding: 0;
-        height: 30px;
-        line-height: 30px;
+        margin-top: -1px;
+        height: 20px;
+        line-height: 20px;
       }
     }
 
