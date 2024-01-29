@@ -31,7 +31,7 @@ const defaultOpts = reactive({
   theme: props.theme || 'vs-dark', // 编辑器主题：vs, hc-black, or vs-dark，更多选择详见官网
   roundedSelection: false, // 右侧不显示编辑器预览框
   autoIndent: true, // 自动缩进
-  readOnly: false, // 是否只读
+  readOnly: true, // 是否只读
   renderLineHighlight: 'none',
   lineNumbers: 'on',
   diffWordWrap: true,
