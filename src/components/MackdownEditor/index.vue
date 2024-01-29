@@ -297,6 +297,10 @@ const onCopyCodeSuccess = (value: string) => {
       background-color: transparent;
       border-bottom-left-radius: 5px;
       color: var(--font-2);
+
+      &::placeholder {
+        color: var(--placeholder-color);
+      }
     }
     .vuepress-markdown-body:not(.custom) {
       padding: 16px 20px;
