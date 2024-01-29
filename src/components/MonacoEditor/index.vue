@@ -72,8 +72,8 @@
     />
     <DiffMonacoEditor
       v-show="showDiff"
-      :value="createStore.createInfo.content"
-      :old-value="prevContent"
+      :value="createStore.createInfo.content || ''"
+      :old-value="prevContent || ''"
       language="markdown"
       :height="checkOS() === 'mac' ? 'calc(100vh - 138px)' : 'calc(100vh - 125px)'"
     />
@@ -111,6 +111,7 @@ import parserPostcss from 'prettier/parser-postcss';
 import { MONACO_EDITOR_LANGUAGES, CODE_RUN_LANGUAGES, VS_CODE_SHORTCUT_KEYS } from '@/constant';
 import { checkOS } from '@/utils';
 import { createStore } from '@/store';
+import DiffMonacoEditor from '@/components/MonacoDiffEditor/index.vue';
 
 interface IProps {
   editType?: boolean;
