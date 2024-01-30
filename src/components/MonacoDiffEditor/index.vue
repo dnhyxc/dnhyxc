@@ -116,5 +116,11 @@ const init = () => {
   .diff-editor {
     height: v-bind(height);
   }
+
+  :deep {
+    .monaco-diff-editor.side-by-side .editor.modified {
+      box-shadow: 0 0 1px 0 var(--border-color);
+    }
+  }
 }
 </style>
