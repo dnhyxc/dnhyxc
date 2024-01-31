@@ -154,7 +154,6 @@ const onClick = (name: string) => {
   box-sizing: border-box;
   border-radius: 5px;
   -webkit-user-drag: none;
-  padding: 0 5px;
 
   .card-list {
     box-sizing: border-box;
@@ -168,11 +167,9 @@ const onClick = (name: string) => {
     .card {
       box-sizing: border-box;
       display: inline-block;
-      width: calc((100vw - 116px) / 4);
+      width: calc((100vw - 78px) / 4);
       height: 100%;
-      margin-right: 12px;
-      box-shadow: 0 0 8px var(--shadow-mack);
-      background-image: linear-gradient(to bottom, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
+      padding: 0 5px;
       border-radius: 5px;
       -webkit-user-drag: none;
       cursor: pointer;
@@ -189,8 +186,10 @@ const onClick = (name: string) => {
         height: 100%;
         box-sizing: border-box;
         border-radius: 5px;
-        padding: 10px 15px;
+        padding: 10px 15px 8px;
         color: var(--font-1);
+        box-shadow: 0 0 3px var(--shadow-mack) inset;
+        background-image: linear-gradient(to bottom, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
 
         .name {
           font-size: 18px;
@@ -221,8 +220,10 @@ const onClick = (name: string) => {
     }
 
     .active {
-      .clickNoSelectText();
-      .bgLgColor();
+      .content {
+        .clickNoSelectText();
+        .bgLgColor();
+      }
     }
   }
 }
