@@ -42,7 +42,12 @@
         </div>
       </el-carousel-item>
     </el-carousel>
-    <div v-for="(item, index) in mostLikeAndNewArticles" :key="item.id" class="hot" @click="toDetail(item.id)">
+    <div
+      v-for="(item, index) in mostLikeAndNewArticles"
+      :key="item.id"
+      :class="`hot ${checkOS() === 'mac' && 'mac-hot'}`"
+      @click="toDetail(item.id)"
+    >
       <div class="carousel-item">
         <div class="article-info">
           <div class="top">
@@ -71,7 +76,7 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
 import { ArticleItem } from '@/typings/common';
-import { formatGapTime } from '@/utils';
+import { checkOS, formatGapTime } from '@/utils';
 import { IMG1 } from '@/constant';
 import Image from '@/components/Image/index.vue';
 
@@ -117,25 +122,6 @@ const toTag = (name: string) => {
   border-radius: 5px;
   padding-top: 5px;
   box-sizing: border-box;
-
-  .hot {
-    flex: 0.5;
-
-    .header {
-      justify-content: center;
-      .title {
-        margin: 5px 0 0 !important;
-      }
-    }
-
-    .create-info {
-      text-align: center;
-
-      .author {
-        margin: 0 10px 0 0 !important;
-      }
-    }
-  }
 
   .carousel {
     flex: 1;
@@ -273,6 +259,35 @@ const toTag = (name: string) => {
           border-radius: 5px;
           .imgStyle();
         }
+      }
+    }
+  }
+
+  .hot {
+    flex: 0.5;
+
+    .header {
+      justify-content: center;
+      .title {
+        margin: 5px 0 0 !important;
+      }
+    }
+
+    .create-info {
+      text-align: center;
+
+      .author {
+        margin: 0 10px 0 0 !important;
+      }
+    }
+  }
+
+  .mac-hot {
+    .carousel-item {
+      padding: 0 3px 0 5px;
+
+      &:first-child {
+        padding-right: 5px;
       }
     }
   }

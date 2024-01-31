@@ -7,7 +7,7 @@
 <template>
   <div ref="scrollWrap" class="scroll">
     <el-scrollbar ref="scrollRef">
-      <div ref="cardList" class="card-list">
+      <div ref="cardList" :class="`card-list ${checkOS() === 'mac' && 'mac-card-list'}`">
         <slot name="card">
           <div
             v-for="(i, index) in classifys"
@@ -30,6 +30,7 @@
 import { ref, onMounted, reactive, watchEffect, onUnmounted } from 'vue';
 import { Classifys } from '@/typings/common';
 import { commonStore } from '@/store';
+import { checkOS } from '@/utils';
 
 interface IProps {
   classifys: Classifys[]; // 分类
@@ -224,6 +225,12 @@ const onClick = (name: string) => {
         .clickNoSelectText();
         .bgLgColor();
       }
+    }
+  }
+
+  .mac-card-list {
+    .card {
+      width: calc((100vw - 82px) / 4);
     }
   }
 }

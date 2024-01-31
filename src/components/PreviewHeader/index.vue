@@ -34,15 +34,13 @@
         <div>
           <span>{{ formatDate(articleStore?.articleDetail?.createTime!, 'YYYY年MM月DD日 HH:mm') }}</span>
           <span class="read-count">阅读 {{ articleStore?.articleDetail?.readCount }}</span>
-          <el-button
+          <span
             v-if="loginStore?.userInfo?.userId === articleStore?.articleDetail?.authorId"
-            type="primary"
-            link
             class="edit-btn"
             @click.stop="onEditArticle"
           >
             <i class="edit-icon iconfont icon-12bianji3x" />编辑
-          </el-button>
+          </span>
         </div>
       </div>
     </div>
@@ -168,6 +166,12 @@ const onFollow = async (authorId: string) => {
       .edit-btn {
         font-size: 15px;
         padding: 1px 2px;
+        cursor: pointer;
+        color: var(--theme-blue);
+
+        &:hover {
+          color: var(--el-color-primary-light-5);
+        }
 
         .edit-icon {
           margin-right: 3px;

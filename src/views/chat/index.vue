@@ -871,7 +871,7 @@ const onPreviewDragImg = () => {
     display: flex;
     flex-direction: column;
     width: 260px;
-    border-right: 1px solid var(--border-color);
+    border-right: 1px solid var(--shadow-mack);
     box-sizing: border-box;
     .clickNoSelectText();
 
@@ -1120,7 +1120,7 @@ const onPreviewDragImg = () => {
       height: 55px;
       padding: 10px;
       box-sizing: border-box;
-      border-bottom: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--shadow-mack);
       font-size: 18px;
       .clickNoSelectText();
 
@@ -1349,7 +1349,7 @@ const onPreviewDragImg = () => {
       height: 160px;
       box-sizing: border-box;
       background-color: transparent;
-      border-top: 1px solid var(--border-color);
+      border-top: 1px solid var(--shadow-mack);
 
       .reply-info {
         padding: 5px;
@@ -1406,7 +1406,7 @@ const onPreviewDragImg = () => {
           padding: 10px 10px 5px;
           background-color: transparent;
           border-radius: 5px;
-          border: 1px solid var(--border-color);
+          border: 1px solid var(--shadow-mack);
           backdrop-filter: blur(5px);
           .clickNoSelectText();
 
