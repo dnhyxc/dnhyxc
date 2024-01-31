@@ -38,6 +38,7 @@ interface IProps {
   articleDetail: ArticleItem; // 文章详情
   anotherArticleList: ArticleItem[]; // 详情上下篇文章列表
   recommendArticleList: ArticleItem[]; // 随机文章列表
+  mostLikeAndNewArticles: ArticleItem[]; // 随机文章列表
   commentList: CommentParams[]; // 评论列表
   detailArtLikeCount: number; // 详情文章点赞数量
   hot?: boolean; // 是否查询最热文章
@@ -64,6 +65,7 @@ export const useArticleStore = defineStore('article', {
     hot: false,
     articleLikeStatus: false,
     stickyStatus: false,
+    mostLikeAndNewArticles: [],
   }),
 
   actions: {
@@ -688,6 +690,14 @@ export const useArticleStore = defineStore('article', {
       const res = normalizeResult<{ id: string; isLike: boolean }>(await Service.checkArticleLikeStatus(id));
       if (res.success) {
         this.articleLikeStatus = res.data.isLike;
+      }
+    },
+
+    // 校验文章点赞状态
+    async findMostLikeAndNewArticles() {
+      const res = normalizeResult<ArticleItem[]>(await Service.findMostLikeAndNewArticles());
+      if (res.success) {
+        this.mostLikeAndNewArticles = res.data;
       }
     },
 

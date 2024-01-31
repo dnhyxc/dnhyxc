@@ -274,3 +274,6 @@ export const GET_READ_BOOK_RECORDS = '/api/getReadBookRecords';
 
 // 删除读书记录
 export const DELETE_READ_BOOK_RECORDS = '/api/deleteReadBookRecords';
+
+// 获取最新及最多点赞的文章
+export const FIND_MOST_LIKE_AND_NEW_ARTICLES = '/api/findMostLikeAndNewArticles';

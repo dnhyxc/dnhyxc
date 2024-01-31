@@ -42,44 +42,27 @@
         </div>
       </el-carousel-item>
     </el-carousel>
-    <div class="hot">
+    <div v-for="(item, index) in mostLikeAndNewArticles" :key="item.id" class="hot" @click="toDetail(item.id)">
       <div class="carousel-item">
         <div class="article-info">
           <div class="top">
             <div class="header">
-              <div class="title">火热文章</div>
+              <div class="title title-text">{{ index ? '最热文章' : '最新文章' }}</div>
             </div>
-            <div class="create-info">
-              <span class="author" @click.stop="toPersonal('1')">火热作者</span>
-              <span class="date">2022/02/09 09:02</span>
-            </div>
-          </div>
-          <div class="bottom hot-bottom">
-            <span class="classify" @click.stop="toClassify('前端')">分类: 前端</span>
-            <span class="tag" @click.stop="toTag('前端')">标签: 前端</span>
-          </div>
-        </div>
-        <Image :url="IMG1" :transition-img="IMG1" class="img" />
-      </div>
-    </div>
-    <div class="hot">
-      <div class="carousel-item">
-        <div class="article-info">
-          <div class="top">
             <div class="header">
-              <div class="title">火热文章</div>
+              <div class="title">{{ item.title }}</div>
             </div>
             <div class="create-info">
-              <span class="author" @click.stop="toPersonal('1')">火热作者</span>
-              <span class="date">2022/02/09 09:02</span>
+              <span class="author" @click.stop="toPersonal(item.authorId!)">{{ item.authorName }}</span>
+              <span class="date">{{ formatGapTime(item.createTime!) }}</span>
             </div>
           </div>
           <div class="bottom hot-bottom">
-            <span class="classify" @click.stop="toClassify('前端')">分类: 前端</span>
-            <span class="tag" @click.stop="toTag('前端')">标签: 前端</span>
+            <span class="classify" @click.stop="toClassify(item.classify!)">分类: {{ item.classify }}</span>
+            <span class="tag" @click.stop="toTag(item.tag!)">标签: {{ item.tag }}</span>
           </div>
         </div>
-        <Image :url="IMG1" :transition-img="IMG1" class="img" />
+        <Image :url="item.coverImage || IMG1" :transition-img="IMG1" class="img" />
       </div>
     </div>
   </div>
@@ -96,6 +79,7 @@ const router = useRouter();
 
 interface IProps {
   data: ArticleItem[];
+  mostLikeAndNewArticles: ArticleItem[];
 }
 
 defineProps<IProps>();
@@ -136,6 +120,21 @@ const toTag = (name: string) => {
 
   .hot {
     flex: 0.5;
+
+    .header {
+      justify-content: center;
+      .title {
+        margin: 5px 0 0 !important;
+      }
+    }
+
+    .create-info {
+      text-align: center;
+
+      .author {
+        margin: 0 10px 0 0 !important;
+      }
+    }
   }
 
   .carousel {
@@ -153,6 +152,10 @@ const toTag = (name: string) => {
     &:hover {
       .img {
         filter: contrast(80%);
+      }
+
+      .title-text {
+        color: var(--active) !important;
       }
     }
 
@@ -246,7 +249,15 @@ const toTag = (name: string) => {
       }
 
       .hot-bottom {
-        margin-bottom: 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 0 0 5px 0;
+        text-align: center;
+
+        .tag {
+          margin-left: 0;
+        }
       }
     }
 

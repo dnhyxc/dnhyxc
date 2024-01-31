@@ -8,7 +8,10 @@
   <Loading :loading="articleStore.loading" class="home-wrap">
     <template #default>
       <div class="carousel-content">
-        <Carousel :data="articleStore.recommendArticleList" />
+        <Carousel
+          :data="articleStore.recommendArticleList"
+          :most-like-and-new-articles="articleStore.mostLikeAndNewArticles"
+        />
         <div class="search-btns">
           <el-button type="primary" link :class="searchType === 1 && 'active'" @click="searchNewArticles">
             推荐文章
@@ -75,6 +78,7 @@ const { deleteArticle } = useDeleteArticle({ pageType: 'home' });
 onMounted(() => {
   isMounted.value = true;
   articleStore.getArticleByRandom();
+  articleStore.findMostLikeAndNewArticles();
   onFetchData();
   // 监听详情点赞状态，实时更改列表对应文章的点赞状态
   ipcRenderer.on('refresh', (_, params: WinRefreshParams) => {

@@ -582,3 +582,8 @@ export const getReadBookRecords = async (params: { bookId: string }) => {
 export const deleteReadBookRecords = async (params: { bookId: string }) => {
   return await post(API.DELETE_READ_BOOK_RECORDS, copeParams(params));
 };
+
+// 获取最新及最多点赞的文章
+export const findMostLikeAndNewArticles = async () => {
+  return await post(API.FIND_MOST_LIKE_AND_NEW_ARTICLES, copeParams({}));
+};
