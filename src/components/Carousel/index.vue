@@ -6,7 +6,14 @@
 -->
 <template>
   <div class="carousel-wrap">
-    <el-carousel v-if="data?.length > 0" :interval="6000" trigger="click" type="card" height="210px" class="carousel">
+    <el-carousel
+      v-if="data?.length > 0"
+      :interval="5000"
+      trigger="click"
+      height="200px"
+      indicator-position="none"
+      class="carousel"
+    >
       <el-carousel-item v-for="item in data" :key="item" @click="toDetail(item.id)">
         <div class="carousel-item">
           <div class="article-info">
@@ -28,13 +35,53 @@
         </div>
       </el-carousel-item>
     </el-carousel>
-    <el-carousel v-else :interval="5000" trigger="click" type="card" height="210px" class="carousel">
+    <el-carousel v-else :interval="5000" trigger="click" direction="vertical" height="200px" class="carousel">
       <el-carousel-item v-for="item in 5" :key="item">
         <div class="carousel-item">
           <Image :url="IMG1" :transition-img="IMG1" class="img" />
         </div>
       </el-carousel-item>
     </el-carousel>
+    <div class="hot">
+      <div class="carousel-item">
+        <div class="article-info">
+          <div class="top">
+            <div class="header">
+              <div class="title">火热文章</div>
+            </div>
+            <div class="create-info">
+              <span class="author" @click.stop="toPersonal('1')">火热作者</span>
+              <span class="date">2022/02/09 09:02</span>
+            </div>
+          </div>
+          <div class="bottom hot-bottom">
+            <span class="classify" @click.stop="toClassify('前端')">分类: 前端</span>
+            <span class="tag" @click.stop="toTag('前端')">标签: 前端</span>
+          </div>
+        </div>
+        <Image :url="IMG1" :transition-img="IMG1" class="img" />
+      </div>
+    </div>
+    <div class="hot">
+      <div class="carousel-item">
+        <div class="article-info">
+          <div class="top">
+            <div class="header">
+              <div class="title">火热文章</div>
+            </div>
+            <div class="create-info">
+              <span class="author" @click.stop="toPersonal('1')">火热作者</span>
+              <span class="date">2022/02/09 09:02</span>
+            </div>
+          </div>
+          <div class="bottom hot-bottom">
+            <span class="classify" @click.stop="toClassify('前端')">分类: 前端</span>
+            <span class="tag" @click.stop="toTag('前端')">标签: 前端</span>
+          </div>
+        </div>
+        <Image :url="IMG1" :transition-img="IMG1" class="img" />
+      </div>
+    </div>
   </div>
 </template>
 
@@ -78,156 +125,142 @@ const toTag = (name: string) => {
 @import '@/styles/index.less';
 
 .carousel-wrap {
-  height: 230px;
-  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  height: 220px;
+  margin-bottom: 30px;
   padding: 0 1px 10px 0;
   border-radius: 5px;
+  padding-top: 5px;
   box-sizing: border-box;
 
-  :deep {
-    .el-carousel__mask {
-      background-color: var(--card-shadow);
-      // background-color: @carousel-bg-color;
-    }
-    .el-carousel__item--card {
-      box-sizing: border-box;
-      border-radius: 5px;
-    }
+  .hot {
+    flex: 0.5;
   }
 
   .carousel {
+    flex: 1;
     border-radius: 5px;
-    padding-top: 2px;
+  }
 
-    .carousel-item {
-      position: relative;
-      box-sizing: border-box;
-      height: 100%;
-      border-radius: 5px;
-      padding: 0 5px;
-      &:hover {
-        .img {
-          filter: contrast(80%);
-        }
+  .carousel-item {
+    position: relative;
+    box-sizing: border-box;
+    height: 100%;
+    border-radius: 5px;
+    padding: 0 5px;
+
+    &:hover {
+      .img {
+        filter: contrast(80%);
       }
+    }
 
-      .article-info {
-        position: absolute;
-        top: 0;
-        left: 0;
-        display: flex;
-        justify-content: space-between;
-        flex-direction: column;
-        width: 100%;
-        height: 100%;
+    .article-info {
+      position: absolute;
+      top: 0;
+      left: 0;
+      display: flex;
+      justify-content: space-between;
+      flex-direction: column;
+      width: 100%;
+      height: 100%;
+      box-sizing: border-box;
+      padding: 6px 5px 5px;
+      border-radius: 5px;
+
+      .top {
+        position: relative;
+        z-index: 88;
         box-sizing: border-box;
-        padding: 6px 5px 5px;
-        border-radius: 5px;
-        z-index: 999;
 
-        .top {
+        .header {
+          display: flex;
+          align-items: center;
           box-sizing: border-box;
+          width: 100%;
+          overflow: hidden;
 
-          .header {
-            display: flex;
-            align-items: center;
-            box-sizing: border-box;
-            width: 100%;
-            overflow: hidden;
-
-            .title {
-              display: inline-block;
-              font-size: 18px;
-              padding: 0 5px 2px 5px;
-              margin: 5px 0 0 5px;
-              border-radius: 5px;
-              color: @fff;
-              .ellipsisMore(1);
-            }
-          }
-
-          .create-info {
-            margin-top: 8px;
+          .title {
+            display: inline-block;
+            font-size: 18px;
+            padding: 0 5px 2px 5px;
+            margin: 5px 0 0 5px;
+            border-radius: 5px;
+            color: @fff;
             .ellipsisMore(1);
-
-            .author,
-            .date {
-              color: @fff;
-              padding: 0 5px 2px 5px;
-              border-radius: 5px;
-            }
-
-            .author {
-              display: inline-block;
-              padding: 0 5px 2px 5px;
-              margin: 0 10px 0 5px;
-
-              &:hover {
-                color: var(--theme-blue);
-                backdrop-filter: blur(10px);
-                background-color: @card-action-color;
-              }
-            }
           }
         }
 
-        .bottom {
-          box-sizing: border-box;
-          text-align: right;
+        .create-info {
+          margin-top: 8px;
+          .ellipsisMore(1);
 
-          .classify,
-          .tag {
-            display: inline-block;
+          .author,
+          .date {
             color: @fff;
             padding: 0 5px 2px 5px;
-            margin: 0 5px 5px 0;
             border-radius: 5px;
+          }
+
+          .author {
+            display: inline-block;
+            padding: 0 5px 2px 5px;
+            margin: 0 10px 0 5px;
+            cursor: pointer;
 
             &:hover {
               color: var(--theme-blue);
               backdrop-filter: blur(10px);
-              background-color: var(--card-btn-mark);
+              background-color: @card-action-color;
             }
-          }
-
-          .tag {
-            margin-left: 10px;
           }
         }
       }
 
-      :deep {
-        .img {
-          box-sizing: border-box;
-          width: 100%;
-          height: 210px;
-          filter: contrast(100%);
-          transition: all 0.5s;
+      .bottom {
+        position: relative;
+        z-index: 88;
+        box-sizing: border-box;
+        text-align: right;
 
-          .image-item {
-            border-radius: 5px;
-            .imgStyle();
+        .classify,
+        .tag {
+          display: inline-block;
+          color: @fff;
+          padding: 0 5px 2px 5px;
+          margin: 0 5px 5px 0;
+          border-radius: 5px;
+          cursor: pointer;
+
+          &:hover {
+            color: var(--theme-blue);
+            backdrop-filter: blur(10px);
+            background-color: var(--card-btn-mark);
           }
         }
+
+        .tag {
+          margin-left: 10px;
+        }
+      }
+
+      .hot-bottom {
+        margin-bottom: 10px;
       }
     }
 
     :deep {
-      .is-active {
-        // box-shadow: 0 0 3px var(--shadow-mack);
-        border-radius: 5px;
-      }
-    }
-  }
+      .img {
+        box-sizing: border-box;
+        width: 100%;
+        height: 200px;
+        filter: contrast(100%);
+        transition: all 0.5s;
 
-  :deep {
-    // 更改轮播图小圆点样式
-    .el-carousel__indicators--outside {
-      .is-active {
-        box-shadow: none;
-
-        button {
-          background-color: var(--theme-blue);
+        .image-item {
+          border-radius: 5px;
+          .imgStyle();
         }
       }
     }
