@@ -15,6 +15,7 @@ dist-electron
 dnhyxc
 dist-ssr
 *.local
+components.d.ts
 
 # Editor directories and files
 .vscode/*
