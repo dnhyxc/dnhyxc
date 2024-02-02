@@ -253,7 +253,6 @@ const toTag = (name: string) => {
         flex-direction: column;
         align-items: center;
         margin: 0 0 5px 0;
-        text-align: center;
 
         .tag {
           margin-left: 0;
