@@ -290,6 +290,8 @@ const onScrollTo = (to?: number) => {
     border-radius: 5px;
     padding-bottom: 20px;
     margin-top: 2px;
+    border: 1px solid var(--card-border);
+    box-sizing: border-box;
 
     .img-wrap {
       width: 100%;

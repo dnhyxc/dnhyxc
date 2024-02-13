@@ -111,11 +111,11 @@ const toTag = (name: string) => {
 .carousel-wrap {
   display: flex;
   justify-content: space-between;
-  height: 220px;
-  margin-bottom: 30px;
-  padding: 0 1px 10px 0;
+  // height: 220px;
+  // margin-bottom: 30px;
+  // padding: 0 0 10px 0;
   border-radius: 5px;
-  padding-top: 5px;
+  // padding-top: 5px;
   box-sizing: border-box;
 
   .hot {

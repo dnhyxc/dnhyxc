@@ -12,6 +12,8 @@
           :data="articleStore.recommendArticleList"
           :most-like-and-new-articles="articleStore.mostLikeAndNewArticles"
         />
+      </div>
+      <div class="article-type">
         <div class="search-btns">
           <el-button type="primary" link :class="searchType === 1 && 'active'" @click="searchNewArticles">
             推荐文章
@@ -158,11 +160,26 @@ const likeListArticle = async (id: string, data: ArticleItem) => {
 
   .carousel-content {
     position: relative;
+    height: 220px;
+    width: calc(100% - 10px);
+    padding: 5px 0;
+    margin-left: 5px;
+    margin-bottom: 5px;
+    box-shadow: 0 0 5px 0 var(--card-shadow);
+    border-radius: 5px;
+  }
+
+  .article-type {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 10px 0 8px;
+    margin: 5px 0;
 
     .search-btns {
-      position: absolute;
-      left: 11px;
-      bottom: 10px;
+      // position: absolute;
+      // left: 11px;
+      // bottom: 10px;
 
       .active {
         color: var(--active-color);
@@ -170,9 +187,9 @@ const likeListArticle = async (id: string, data: ArticleItem) => {
     }
 
     .recommend {
-      position: absolute;
-      right: 11px;
-      bottom: 10px;
+      // position: absolute;
+      // right: 11px;
+      // bottom: 10px;
       color: var(--active-color);
     }
   }

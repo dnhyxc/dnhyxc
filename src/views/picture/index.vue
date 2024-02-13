@@ -225,7 +225,7 @@ const onScrollTo = () => {
   justify-content: center;
   box-sizing: border-box;
   height: calc(100% - 3px);
-  padding: 5px 0;
+  padding: 5px 0 11px 0;
   margin: 3px 4px 0 5px;
   border-radius: 5px;
 

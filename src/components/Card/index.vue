@@ -204,6 +204,12 @@ const toTag = (name: string) => {
   flex-wrap: wrap;
   border-radius: 5px;
   box-shadow: 0 0 5px 0 var(--card-shadow);
+  padding: 5px;
+  background-image: linear-gradient(to top, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
+
+  &:hover {
+    background-image: linear-gradient(225deg, var(--bg-lg-color2) 0%, var(--bg-lg-color2) 100%);
+  }
 
   .card {
     position: relative;
@@ -228,10 +234,6 @@ const toTag = (name: string) => {
           background-color: @shade-3;
         }
       }
-
-      .card-bottom {
-        background-image: linear-gradient(225deg, var(--bg-lg-color2) 0%, var(--bg-lg-color2) 100%);
-      }
     }
 
     .card-top {
@@ -252,7 +254,7 @@ const toTag = (name: string) => {
           color: var(--theme-blue);
           font-size: 14px;
           backdrop-filter: blur(5px);
-          padding: 0px 5px 2px;
+          padding: 0 5px 2px;
           border-radius: 5px;
           background-color: var(--card-btn-mark);
         }
@@ -337,11 +339,10 @@ const toTag = (name: string) => {
 
     .card-bottom {
       position: relative;
-      padding: 5px;
+      padding-top: 5px;
       background-blend-mode: multiply, multiply;
       border-bottom-left-radius: 5px;
       border-bottom-right-radius: 5px;
-      background-image: linear-gradient(to bottom, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
 
       .header {
         display: flex;

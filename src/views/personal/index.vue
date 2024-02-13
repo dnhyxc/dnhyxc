@@ -423,6 +423,8 @@ const onScrollTo = (to?: number) => {
     background-image: linear-gradient(225deg, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
     border-radius: 5px;
     margin-bottom: 10px;
+    border: 1px solid var(--card-border);
+    box-sizing: border-box;
 
     .left {
       width: 130px;
