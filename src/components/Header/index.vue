@@ -571,6 +571,10 @@ const onScrollTo = () => {
         font-size: 16px;
       }
 
+      .icon-3zuidahua-1 {
+        font-size: 15px;
+      }
+
       &:hover {
         color: var(--active-color);
       }

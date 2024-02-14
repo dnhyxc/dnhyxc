@@ -15,14 +15,14 @@
       </div>
       <div class="article-type">
         <div class="search-btns">
-          <el-button type="primary" link :class="searchType === 1 && 'active'" @click="searchNewArticles">
+          <div type="primary" :class="`${searchType === 1 && 'active'} type-btn`" @click="searchNewArticles">
             推荐文章
-            <span v-if="searchType === 1">（{{ articleStore.total }} 篇）</span>
-          </el-button>
-          <el-button type="danger" link :class="searchType === 2 && 'active'" @click="searchHotArticles">
+            <span v-if="searchType === 1">({{ articleStore.total }} 篇)</span>
+          </div>
+          <div type="primary" :class="`${searchType === 2 && 'active'} type-btn`" @click="searchHotArticles">
             最热文章
-            <span v-if="searchType === 2">（{{ articleStore.total }} 篇）</span>
-          </el-button>
+            <span v-if="searchType === 2">({{ articleStore.total }} 篇)</span>
+          </div>
         </div>
         <div class="recommend">{{ ATRICLE_TYPE[searchType] }}</div>
       </div>
@@ -166,6 +166,7 @@ const likeListArticle = async (id: string, data: ArticleItem) => {
     margin-left: 5px;
     margin-bottom: 5px;
     box-shadow: 0 0 5px 0 var(--card-shadow);
+    background-image: linear-gradient(to top, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
     border-radius: 5px;
   }
 
@@ -173,13 +174,25 @@ const likeListArticle = async (id: string, data: ArticleItem) => {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 10px 0 8px;
+    padding: 0 10px 1px 8px;
     margin: 5px 0;
 
     .search-btns {
-      // position: absolute;
-      // left: 11px;
-      // bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+
+      .type-btn {
+        padding: 0;
+        color: var(--theme-blue);
+        margin-right: 15px;
+        cursor: pointer;
+        font-size: 14px;
+
+        &:hover {
+          color: var(--el-color-primary-light-5);
+        }
+      }
 
       .active {
         color: var(--active-color);
@@ -187,9 +200,6 @@ const likeListArticle = async (id: string, data: ArticleItem) => {
     }
 
     .recommend {
-      // position: absolute;
-      // right: 11px;
-      // bottom: 10px;
       color: var(--active-color);
     }
   }

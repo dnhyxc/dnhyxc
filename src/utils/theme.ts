@@ -517,6 +517,8 @@ const ShaoSiming = {
 // 动漫
 const beauty = {
   ...imageStyles,
+  '--bg-lg-color1': 'rgba(0, 0, 0, 0.5)',
+  '--bg-lg-color2': 'rgba(0, 0, 0, 0.3)',
   '--backdrop-filter': 'blur(0)',
   // 图片背景兼容字体颜色
   '--font-color': '#fff',
