@@ -32,6 +32,7 @@
       :on-save-draft="onSaveDraft"
       :show-dot="prevContent.trim() !== createStore.createInfo.content?.trim() ? 1 : 0"
       :prev-content="prevContent"
+      :code="createStore.draftDetail.content"
       class="create-monaco-eritor"
     />
     <CreateDrawer
@@ -47,7 +48,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onActivated, onDeactivated, watch, defineAsyncComponent, onMounted, onUnmounted } from 'vue';
+import { ref, watch, defineAsyncComponent, onMounted, onUnmounted } from 'vue';
 import { useRoute, useRouter, onBeforeRouteLeave } from 'vue-router';
 import { ElMessage } from 'element-plus';
 import { articleStore, createStore } from '@/store';
@@ -76,15 +77,18 @@ const prevContent = ref<string>('');
 const isPublish = ref<boolean>(false);
 
 onMounted(() => {
+  init();
   document.addEventListener('keydown', onKeyDown);
 });
 
 onUnmounted(() => {
+  draftVisible.value = false;
+  createStore.clearCreateInfo(true);
   document.removeEventListener('keydown', onKeyDown);
 });
 
 // 组件启用时，如果有文章id，则请求文章详情
-onActivated(async () => {
+const init = async () => {
   // 启用组建时，获取创建文章的分类列表
   createStore.getAddedClassifys();
   if (!route.query.id) return;
@@ -97,12 +101,7 @@ onActivated(async () => {
   prevContent.value = createStore.createInfo?.content || '';
   createStore.clearCreateDraftInfo();
   isPublish.value = false;
-});
-
-// 组件弃用时，关闭草稿列表弹窗
-onDeactivated(() => {
-  draftVisible.value = false;
-});
+};
 
 onBeforeRouteLeave(async (to, from, next) => {
   const { createInfo } = createStore;
@@ -176,7 +175,7 @@ const onClear = () => {
 // 弹窗显示、隐藏
 const showDraft = () => {
   draftVisible.value = true;
-  editType.value = false;
+  // editType.value = false;
 };
 
 // 复制成功回调
@@ -192,12 +191,6 @@ const onCopyCodeSuccess = (value?: string) => {
 const toPreview = (id: string) => {
   // 手动去除query articleId 参数
   router.push(`/draft?id=${id}`);
-};
-</script>
-
-<script lang="ts">
-export default {
-  name: 'Create',
 };
 </script>
 
