@@ -31,20 +31,20 @@
               <span class="tag" @click.stop="toTag(item.tag!)">标签: {{ item.tag }}</span>
             </div>
           </div>
-          <Image :url="item.coverImage || IMG1" :transition-img="IMG1" class="img" />
+          <Image :url="item.coverImage || IMG1" :transition-img="IMG1" class="img"/>
         </div>
       </el-carousel-item>
     </el-carousel>
-    <el-carousel v-else :interval="5000" trigger="click" direction="vertical" height="200px" class="carousel">
+    <el-carousel v-else :interval="5000" trigger="click" height="200px" indicator-position="none" class="carousel">
       <el-carousel-item v-for="item in 5" :key="item">
         <div class="carousel-item">
-          <Image :url="IMG1" :transition-img="IMG1" class="img" />
+          <Image :url="IMG1" :transition-img="IMG1" class="img"/>
         </div>
       </el-carousel-item>
     </el-carousel>
     <div
       v-for="(item, index) in mostLikeAndNewArticles"
-      :key="item.id"
+      :key="item?.id"
       :class="`hot ${checkOS() === 'mac' && 'mac-hot'}`"
       @click="toDetail(item.id)"
     >
@@ -55,29 +55,29 @@
               <div class="title title-text">{{ index ? '最热文章' : '最新文章' }}</div>
             </div>
             <div class="header">
-              <div class="title">{{ item.title }}</div>
+              <div class="title">{{ item?.title }}</div>
             </div>
             <div class="create-info">
-              <span class="author" @click.stop="toPersonal(item.authorId!)">{{ item.authorName }}</span>
-              <span class="date">{{ formatGapTime(item.createTime!) }}</span>
+              <span class="author" @click.stop="toPersonal(item.authorId!)">{{ item?.authorName }}</span>
+              <span class="date">{{ formatGapTime(item?.createTime!) }}</span>
             </div>
           </div>
           <div class="bottom hot-bottom">
-            <span class="classify" @click.stop="toClassify(item.classify!)">分类: {{ item.classify }}</span>
-            <span class="tag" @click.stop="toTag(item.tag!)">标签: {{ item.tag }}</span>
+            <span class="classify" @click.stop="toClassify(item?.classify!)">分类: {{ item?.classify }}</span>
+            <span class="tag" @click.stop="toTag(item.tag!)">标签: {{ item?.tag }}</span>
           </div>
         </div>
-        <Image :url="item.coverImage || IMG1" :transition-img="IMG1" class="img" />
+        <Image :url="item?.coverImage || IMG1" :transition-img="IMG1" class="img"/>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { useRouter } from 'vue-router';
-import { ArticleItem } from '@/typings/common';
-import { checkOS, formatGapTime } from '@/utils';
-import { IMG1 } from '@/constant';
+import {useRouter} from 'vue-router';
+import {ArticleItem} from '@/typings/common';
+import {checkOS, formatGapTime} from '@/utils';
+import {IMG1} from '@/constant';
 import Image from '@/components/Image/index.vue';
 
 const router = useRouter();
@@ -267,6 +267,7 @@ const toTag = (name: string) => {
 
     .header {
       justify-content: center;
+
       .title {
         margin: 5px 0 0 !important;
       }

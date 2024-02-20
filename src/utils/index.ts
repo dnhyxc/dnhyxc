@@ -503,7 +503,7 @@ export const getImageColor = (url: string): Promise<number[][]> => {
     img.crossOrigin = '';
     img.onload = () => {
       const colorthief = new ColorThief();
-      const bacolor = colorthief.getPalette(img, 2);
+      const bacolor = colorthief.getPalette(img, 3);
       resolve(bacolor);
     };
   });

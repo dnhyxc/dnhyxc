@@ -16,7 +16,7 @@
     <div class="card-wrap" @click.stop="toDetail(data)">
       <div class="card">
         <div class="card-top">
-          <i v-if="data.isTop" class="font iconfont icon-zhiding" />
+          <i v-if="data.isTop" class="font iconfont icon-zhiding"/>
           <div v-if="data?.isDelete" class="mask">
             <span class="mask-text">已下架</span>
           </div>
@@ -28,9 +28,9 @@
               </div>
             </slot>
           </div>
-          <Image :url="data.coverImage || IMG1" :transition-img="IMG1" class="img" />
+          <Image :url="data.coverImage || IMG1" :transition-img="IMG1" class="img"/>
           <div class="info">
-            <div class="desc" v-html="data.abstract" />
+            <div class="desc" v-html="data.abstract"/>
           </div>
         </div>
         <div
@@ -41,21 +41,21 @@
         >
           <slot>
             <div class="header">
-              <div class="title" v-html="data.title" />
+              <div class="title" v-html="data.title"/>
             </div>
             <div class="art-info">
               <div class="create-info">
-                <span class="author" @click.stop="toPersonal(data.authorId!)" v-html="data.authorName" />
+                <span class="author" @click.stop="toPersonal(data.authorId!)" v-html="data.authorName"/>
                 <span class="date">{{ data.createTime ? formatDate(data.createTime, 'YYYY/MM/DD') : '-' }}</span>
               </div>
               <div class="classifys">
                 <span class="classify" @click.stop="toClassify(data.classify!)">
                   <span class="label">分类: </span>
-                  <span v-html="data.classify" />
+                  <span v-html="data.classify"/>
                 </span>
                 <span class="tag" @click.stop="toTag(data.tag!)">
                   <span class="label">标签: </span>
-                  <span v-html="data.tag" />
+                  <span v-html="data.tag"/>
                 </span>
               </div>
               <div class="actions">
@@ -67,11 +67,11 @@
                     <span>{{ data.likeCount || '点赞' }}</span>
                   </div>
                   <div class="action comment" @click.stop="onComment(data)">
-                    <i class="font comment-icon iconfont icon-pinglun" />
+                    <i class="font comment-icon iconfont icon-pinglun"/>
                     <span>{{ data.commentCount || '评论' }}</span>
                   </div>
                   <div class="action read-count">
-                    <i class="font read-icon iconfont icon-yanjing" />
+                    <i class="font read-icon iconfont icon-yanjing"/>
                     <span class="text">{{ data.readCount || '阅读' }}</span>
                   </div>
                 </div>
@@ -85,12 +85,12 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
-import { formatDate, showMessage, ipcRenderers } from '@/utils';
-import { ArticleItem } from '@/typings/common';
-import { IMG1 } from '@/constant';
-import { loginStore } from '@/store';
+import {computed, ref} from 'vue';
+import {useRouter, useRoute} from 'vue-router';
+import {formatDate, showMessage, ipcRenderers} from '@/utils';
+import {ArticleItem} from '@/typings/common';
+import {IMG1} from '@/constant';
+import {loginStore} from '@/store';
 import Image from '@/components/Image/index.vue';
 import ContextMenu from '@/components/ContextMenu/index.vue';
 
@@ -105,8 +105,10 @@ interface IProps {
 }
 
 const props = withDefaults(defineProps<IProps>(), {
-  deleteArticle: () => {},
-  likeListArticle: () => {},
+  deleteArticle: () => {
+  },
+  likeListArticle: () => {
+  },
   withoutToDetail: false,
 });
 
@@ -116,16 +118,21 @@ const timer = ref<boolean>(false);
 const gradients = computed(() => {
   return props.data?.gradient?.length
     ? `linear-gradient(
-          to bottom,
+          -192deg,
           rgba(
-            ${props.data?.gradient?.[0]?.[0]}, 
-            ${props.data?.gradient?.[0]?.[1]}, 
-            ${props.data?.gradient?.[0]?.[2]}, 0.3
-          ) 0%, 
+            ${props.data?.gradient?.[2]?.[0]},
+            ${props.data?.gradient?.[2]?.[1]},
+            ${props.data?.gradient?.[2]?.[2]}, 0.2
+          ) 0%,
           rgba(
             ${props.data?.gradient?.[1]?.[0]},
             ${props.data?.gradient?.[1]?.[1]},
-            ${props.data?.gradient?.[1]?.[2]}, 0.5
+            ${props.data?.gradient?.[1]?.[2]}, 0.25
+          ) 50%,
+          rgba(
+            ${props.data?.gradient?.[0]?.[0]},
+            ${props.data?.gradient?.[0]?.[1]},
+            ${props.data?.gradient?.[0]?.[2]}, 0.3
           ) 100%
         )`
     : 'linear-gradient(to bottom, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%)';
@@ -184,11 +191,11 @@ const onOpenNewWindow = async (data: ArticleItem) => {
   if (data?.isDelete) {
     return showMessage();
   }
-  const { userInfo, token } = loginStore;
+  const {userInfo, token} = loginStore;
   ipcRenderers.sendNewWin({
     path: `article/${data.id}?from=${route.name as string}`,
     id: data.id, // articleId
-    userInfo: JSON.stringify({ userInfo, token }),
+    userInfo: JSON.stringify({userInfo, token}),
   });
 };
 
@@ -227,7 +234,7 @@ const toTag = (name: string) => {
   align-items: center;
   flex-wrap: wrap;
   border-radius: 5px;
-  // box-shadow: 0 0 5px 0 var(--card-shadow);
+  box-shadow: 0 0 3px 0 var(--card-shadow) inset;
 
   .card {
     position: relative;
@@ -246,6 +253,7 @@ const toTag = (name: string) => {
         .art-action {
           display: block;
         }
+
         .info {
           opacity: 1;
           transition: all 0.5s;
@@ -282,7 +290,7 @@ const toTag = (name: string) => {
           color: @font-danger;
           font-size: 14px;
           backdrop-filter: blur(5px);
-          padding: 0px 5px 2px;
+          padding: 0 5px 2px;
           border-radius: 5px;
           background-color: var(--card-btn-mark);
         }
@@ -357,7 +365,6 @@ const toTag = (name: string) => {
 
     .card-bottom {
       position: relative;
-      padding-top: 5px;
       background-blend-mode: multiply, multiply;
       border-bottom-left-radius: 5px;
       border-bottom-right-radius: 5px;
@@ -482,6 +489,7 @@ const toTag = (name: string) => {
           .comment,
           .read-count {
             cursor: pointer;
+
             &:hover {
               color: var(--theme-blue);
             }
