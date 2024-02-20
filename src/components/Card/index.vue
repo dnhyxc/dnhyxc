@@ -33,7 +33,12 @@
             <div class="desc" v-html="data.abstract" />
           </div>
         </div>
-        <div class="card-bottom">
+        <div
+          class="card-bottom"
+          :style="{
+            backgroundImage: gradients,
+          }"
+        >
           <slot>
             <div class="header">
               <div class="title" v-html="data.title" />
@@ -80,7 +85,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { formatDate, showMessage, ipcRenderers } from '@/utils';
 import { ArticleItem } from '@/typings/common';
@@ -106,6 +111,25 @@ const props = withDefaults(defineProps<IProps>(), {
 });
 
 const timer = ref<boolean>(false);
+
+// 拼接渐变色
+const gradients = computed(() => {
+  return props.data?.gradient?.length
+    ? `linear-gradient(
+          to bottom,
+          rgba(
+            ${props.data?.gradient?.[0]?.[0]}, 
+            ${props.data?.gradient?.[0]?.[1]}, 
+            ${props.data?.gradient?.[0]?.[2]}, 0.3
+          ) 0%, 
+          rgba(
+            ${props.data?.gradient?.[1]?.[0]},
+            ${props.data?.gradient?.[1]?.[1]},
+            ${props.data?.gradient?.[1]?.[2]}, 0.5
+          ) 100%
+        )`
+    : 'linear-gradient(to bottom, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%)';
+});
 
 // 点赞
 const onLike = async (data: ArticleItem) => {
@@ -203,9 +227,7 @@ const toTag = (name: string) => {
   align-items: center;
   flex-wrap: wrap;
   border-radius: 5px;
-  box-shadow: 0 0 5px 0 var(--card-shadow);
-  padding: 5px;
-  background-image: linear-gradient(to bottom, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
+  // box-shadow: 0 0 5px 0 var(--card-shadow);
 
   .card {
     position: relative;
@@ -339,6 +361,7 @@ const toTag = (name: string) => {
       background-blend-mode: multiply, multiply;
       border-bottom-left-radius: 5px;
       border-bottom-right-radius: 5px;
+      padding: 5px;
 
       .header {
         display: flex;

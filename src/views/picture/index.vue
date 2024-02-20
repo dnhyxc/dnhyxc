@@ -224,9 +224,9 @@ const onScrollTo = () => {
   flex-direction: column;
   justify-content: center;
   box-sizing: border-box;
-  height: calc(100% - 3px);
+  height: calc(100% - 4px);
   padding: 5px 0 11px 0;
-  margin: 3px 4px 0 5px;
+  margin: 3px 5px 0 5px;
   border-radius: 5px;
 
   .atlas-header-wrap {

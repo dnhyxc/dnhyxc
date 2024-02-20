@@ -178,11 +178,11 @@ const onScrollTo = (to?: number, isDelete: boolean = false) => {
 .barrage-wrap {
   display: flex;
   justify-content: center;
-  height: 100%;
   border-radius: 5px;
   padding-left: 5px;
   padding-right: 3px;
-  width: calc(100% - 9px);
+  width: calc(100% - 10px);
+  height: calc(100% - 1px);
 
   .barrage {
     flex: 1;

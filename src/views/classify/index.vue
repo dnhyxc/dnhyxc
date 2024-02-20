@@ -184,7 +184,7 @@ const likeListArticle = (id: string, data?: ArticleItem) => {
       height: 25px;
       line-height: 24px;
       padding-left: 2px;
-      padding-right: 3px;
+      padding-right: 5px;
 
       .left-line {
         display: inline-block;

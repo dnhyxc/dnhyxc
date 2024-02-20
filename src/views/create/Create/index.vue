@@ -154,7 +154,7 @@ import { useRouter } from 'vue-router';
 import type { FormInstance } from 'element-plus';
 import { ARTICLE_TAG } from '@/constant';
 import { createStore, uploadStore } from '@/store';
-import { checkImgUrlType } from '@/utils';
+import { checkImgUrlType, getImageColor } from '@/utils';
 import Upload from '@/components/Upload/index.vue';
 
 const router = useRouter();
@@ -189,12 +189,20 @@ const visible = computed({
 
 // 获取上传的封面图url
 const getUploadUrl = async (url: string) => {
+  // TODO
+  const bacolor = await getImageColor(
+    'https://pic2.zhimg.com/80/v2-fef7da16018ee2e60c5702ecfd5710a1_1440w.webp',
+    // 'https://pic1.zhimg.com/80/v2-6c9a37147c51b12a1b72f5f66d853d51_720w.webp?source=2c26e567',
+  );
+  createStore.createInfo.gradient = bacolor;
+
   if (url && checkImgUrlType(url) === 'URL' && props.articleId) {
     const oldUrl = createStore.oldCoverImage;
     await createStore.createArticle(
       {
         coverImage: url,
         articleId: createStore?.createInfo?.articleId,
+        gradient: bacolor,
       },
       false, // 是否需要提示
     );

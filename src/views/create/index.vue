@@ -199,13 +199,11 @@ const toPreview = (id: string) => {
 
 .edit-wrap {
   border-radius: 5px;
-  padding-left: 5px;
-  padding-right: 3px;
-  width: calc(100% - 9px);
+  .pageCommonStyles();
   height: 100%;
 
   .create-monaco-eritor {
-    height: calc(100% - 3px);
+    height: calc(100% - 4px);
     margin-top: 3px;
   }
 }

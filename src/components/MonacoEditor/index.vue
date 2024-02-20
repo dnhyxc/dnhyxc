@@ -393,8 +393,7 @@ const onDiffValue = () => {
     border-top-right-radius: 5px;
 
     .create-action {
-      height: 30px;
-      line-height: 30px;
+      margin-bottom: 3px;
       .ellipsisMore(1);
     }
 

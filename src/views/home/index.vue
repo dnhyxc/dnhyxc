@@ -6,26 +6,26 @@
 -->
 <template>
   <Loading :loading="articleStore.loading" class="home-wrap">
-    <template #default>
-      <div class="carousel-content">
-        <Carousel
-          :data="articleStore.recommendArticleList"
-          :most-like-and-new-articles="articleStore.mostLikeAndNewArticles"
-        />
-      </div>
-      <div class="article-type">
-        <div class="search-btns">
-          <div type="primary" :class="`${searchType === 1 && 'active'} type-btn`" @click="searchNewArticles">
-            推荐文章
-            <span v-if="searchType === 1">({{ articleStore.total }} 篇)</span>
-          </div>
-          <div type="primary" :class="`${searchType === 2 && 'active'} type-btn`" @click="searchHotArticles">
-            最热文章
-            <span v-if="searchType === 2">({{ articleStore.total }} 篇)</span>
-          </div>
+    <div class="carousel-content">
+      <Carousel
+        :data="articleStore.recommendArticleList"
+        :most-like-and-new-articles="articleStore.mostLikeAndNewArticles"
+      />
+    </div>
+    <div class="article-type">
+      <div class="search-btns">
+        <div type="primary" :class="`${searchType === 1 && 'active'} type-btn`" @click="searchNewArticles">
+          推荐文章
+          <span v-if="searchType === 1">({{ articleStore.total }} 篇)</span>
         </div>
-        <div class="recommend">{{ ATRICLE_TYPE[searchType] }}</div>
+        <div type="primary" :class="`${searchType === 2 && 'active'} type-btn`" @click="searchHotArticles">
+          最热文章
+          <span v-if="searchType === 2">({{ articleStore.total }} 篇)</span>
+        </div>
       </div>
+      <div class="recommend">{{ ATRICLE_TYPE[searchType] }}</div>
+    </div>
+    <div class="page-bottom">
       <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
         <div
           v-if="isMounted"
@@ -43,7 +43,7 @@
         <div v-if="noMore" class="no-more">没有更多了～～～</div>
         <Empty v-if="!articleStore.loading && !articleStore.articleList?.length" />
       </el-scrollbar>
-    </template>
+    </div>
   </Loading>
 </template>
 
@@ -158,13 +158,22 @@ const likeListArticle = async (id: string, data: ArticleItem) => {
   box-sizing: border-box;
   height: 100%;
 
+  .page-bottom {
+    overflow: auto;
+    border-radius: 5px;
+    box-shadow: 0 0 5px 0 var(--card-shadow);
+    width: calc(100% - 11px);
+    margin-left: 5px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+  }
+
   .carousel-content {
     position: relative;
     height: 220px;
     width: calc(100% - 10px);
     padding: 5px 0;
-    margin-left: 5px;
-    margin-bottom: 5px;
+    margin: 3px 0 5px 5px;
     box-shadow: 0 0 5px 0 var(--card-shadow);
     background-image: linear-gradient(to top, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
     border-radius: 5px;
@@ -205,7 +214,15 @@ const likeListArticle = async (id: string, data: ArticleItem) => {
   }
 
   :deep {
-    .scrollbar-wrapper();
+    .scrollbar-wrapper {
+      .scrollbar-wrapper();
+
+      .pullup-list-item {
+        &:nth-child(-n + 4) {
+          padding-top: 0;
+        }
+      }
+    }
   }
 
   .no-more {

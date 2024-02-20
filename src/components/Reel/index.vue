@@ -168,7 +168,7 @@ const onClick = (name: string) => {
     .card {
       box-sizing: border-box;
       display: inline-block;
-      width: calc((100vw - 78px) / 4);
+      width: calc((100vw - 79px) / 4);
       height: 100%;
       padding: 0 5px;
       border-radius: 5px;

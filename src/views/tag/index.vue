@@ -73,8 +73,8 @@ const onCheckTag = (tag: string) => {
   justify-content: flex-start;
   box-sizing: border-box;
   padding-left: 5px;
-  width: calc(100% - 4px);
-  height: calc(100% - 2px);
+  width: calc(100% - 5px);
+  height: calc(100% - 4px);
   border-radius: 5px;
 
   .cloud-content {

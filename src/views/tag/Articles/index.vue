@@ -180,10 +180,9 @@ const likeListArticle = async (id: string, data?: ArticleItem) => {
 .articles-wrap {
   display: flex;
   justify-content: flex-start;
-  height: 100%;
+  height: calc(100% - 1px);
   box-sizing: border-box;
-  padding-left: 5px;
-  padding-right: 3px;
+  padding: 4px 5px 0 5px;
 
   .left {
     display: flex;

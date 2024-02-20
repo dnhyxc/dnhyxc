@@ -98,6 +98,7 @@ export interface CreateArticleParams {
   articleId?: string;
   originalArticleId?: string;
   draftId?: string;
+  gradient?: number[][];
 }
 
 // 创建收藏集返回值
@@ -148,6 +149,7 @@ export interface ArticleItem extends AddCollectionRes {
   pushDate?: number;
   articleId?: number;
   isTop?: number;
+  gradient?: number[][];
 }
 
 // 文章列表返回值

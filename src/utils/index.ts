@@ -3,6 +3,7 @@ import { ElMessageBox, ElMessage } from 'element-plus';
 import type { ElMessageBoxOptions } from 'element-plus';
 import moment from 'moment';
 import SparkMD5 from 'spark-md5';
+import ColorThief from 'colorthief';
 import { MSG_CONFIG, CODE_CONTROL, EMOJI_TEXTS, EMOJI_URLS, CODE_LENGTH, CHARACTERS } from '@/constant';
 import { usePlugins } from './plugins';
 import { normalizeResult } from './result';
@@ -457,7 +458,7 @@ export const verifyPhone = (value: string) => {
 };
 
 // 识别图片主色的方法
-export const getImageColor = (img: HTMLImageElement) => {
+export const getImgMainColor = (img: HTMLImageElement) => {
   // 创建画布
   const canvas = document.createElement('canvas');
 
@@ -492,6 +493,20 @@ export const getImageColor = (img: HTMLImageElement) => {
   arr = arr.sort((a, b) => b.num - a.num);
 
   return arr;
+};
+
+// 获取图片主色调
+export const getImageColor = (url: string): Promise<number[][]> => {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.src = url;
+    img.crossOrigin = '';
+    img.onload = () => {
+      const colorthief = new ColorThief();
+      const bacolor = colorthief.getPalette(img, 2);
+      resolve(bacolor);
+    };
+  });
 };
 
 // 处理输入的换行符

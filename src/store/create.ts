@@ -42,6 +42,7 @@ export const useCreateStore = defineStore('create', {
       coverImage: '',
       abstract: '',
       articleId: '',
+      gradient: [],
     },
     oldCoverImage: '',
     pageNo: 0,

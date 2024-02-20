@@ -6,7 +6,7 @@
       placeholder="编辑内容"
       autofocus
       mode="edit"
-      :height="height || 'calc(100vh - 84px)'"
+      :height="height || 'calc(100vh - 86px)'"
       :disabled-menus="[]"
       :left-toolbar="toolMenu"
       :toolbar="toolbar"

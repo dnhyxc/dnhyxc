@@ -159,7 +159,7 @@ const onScrollTo = (height?: number) => {
   display: flex;
   justify-content: center;
   box-sizing: border-box;
-  padding-right: 4px;
+  padding-right: 5px;
 
   .content {
     position: relative;
@@ -169,7 +169,7 @@ const onScrollTo = (height?: number) => {
     box-sizing: border-box;
     margin-left: 5px;
     margin-right: 10px;
-    .pageHeight();
+    height: calc(100vh - 83px);
     border-radius: 5px;
     box-shadow: 0 0 8px 0 var(--shadow-mack);
     background-color: var(--pre-hover-bg);
