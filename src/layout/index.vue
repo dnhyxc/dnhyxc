@@ -15,13 +15,13 @@
               <LeftMenu />
             </el-aside>
             <div class="right">
-              <RouterView />
-              <!-- <RouterView v-if="isRouterAlive" v-slot="{ Component }">
-                定义缓存组件：注意include="Create"，Create 组件内部必须声明组件名称
-                <KeepAlive include="Create">
+              <RouterView v-if="isRouterAlive" v-slot="{ Component }">
+                <!-- 定义缓存组件：注意include="Create"，Create 组件内部必须声明组件名称 -->
+                <!-- <KeepAlive include="Create">
                   <component :is="Component" />
-                </KeepAlive>
-              </RouterView> -->
+                </KeepAlive> -->
+                <component :is="Component" />
+              </RouterView>
             </div>
           </div>
         </el-main>
@@ -112,9 +112,10 @@ provide('reload', reload);
     display: flex;
     justify-content: flex-start;
     box-sizing: border-box;
-    .pageHeight();
-    width: calc(100% - 10px);
-    padding-right: 10px;
+    height: 100%;
+    overflow: hidden;
+    padding-right: 20px;
+    padding-bottom: 25px;
     .right {
       flex: 1;
       border-radius: 5px;

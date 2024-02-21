@@ -179,10 +179,8 @@ const onScrollTo = (to?: number, isDelete: boolean = false) => {
   display: flex;
   justify-content: center;
   border-radius: 5px;
-  padding-left: 5px;
-  padding-right: 3px;
-  width: calc(100% - 10px);
-  height: calc(100% - 1px);
+  margin: 0 5px;
+  height: 100%;
 
   .barrage {
     flex: 1;

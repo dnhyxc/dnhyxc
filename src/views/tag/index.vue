@@ -72,9 +72,9 @@ const onCheckTag = (tag: string) => {
   display: flex;
   justify-content: flex-start;
   box-sizing: border-box;
-  padding-left: 5px;
-  width: calc(100% - 5px);
-  height: calc(100% - 4px);
+  margin: 0 5px;
+  height: 100%;
+  // height: calc(100% - 4px);
   border-radius: 5px;
 
   .cloud-content {
@@ -83,7 +83,7 @@ const onCheckTag = (tag: string) => {
 
     .word-cloud-wrap {
       width: 100%;
-      height: 100%;
+      height: calc(100% - 3px);
       box-sizing: border-box;
       margin-top: 3px;
       box-shadow: 0 0 8px 0 var(--shadow-mack);
@@ -100,7 +100,7 @@ const onCheckTag = (tag: string) => {
     padding: 8px 0 10px;
     margin-top: 3px;
     width: 220px;
-    height: 100%;
+    height: calc(100% - 3px);
     box-shadow: 0 0 8px 0 var(--shadow-mack);
     border-radius: 5px;
     background-color: var(--pre-hover-bg);

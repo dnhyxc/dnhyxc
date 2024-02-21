@@ -5,7 +5,8 @@
  * index.vue
 -->
 <template>
-  <Loading :loading="authorStore.loading" :class="`${checkOS() === 'mac' && 'mac-author-wrap'} author-wrap`">
+  <!-- <Loading :loading="authorStore.loading" :class="`${checkOS() === 'mac' && 'mac-author-wrap'} author-wrap`"> -->
+  <Loading :loading="authorStore.loading" class="author-wrap">
     <template #default>
       <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
         <div
@@ -133,7 +134,7 @@ import { ElMessage } from 'element-plus';
 import { HEAD_IMG, AUTHOR_TABS, IMG1 } from '@/constant';
 import { authorStore, articleStore, followStore } from '@/store';
 import { useDeleteArticle, useScroller } from '@/hooks';
-import { scrollTo, checkUrl, checkOS } from '@/utils';
+import { scrollTo, checkUrl } from '@/utils';
 import LineCard from '@/components/LineCard/index.vue';
 import Image from '@/components/Image/index.vue';
 import Loading from '@/components/Loading/index.vue';
@@ -280,8 +281,7 @@ const onScrollTo = (to?: number) => {
 
 .author-wrap {
   height: 100%;
-  padding-left: 4px;
-  padding-right: 4px;
+  margin: 0 4px;
 
   .cover {
     width: 100%;
@@ -531,9 +531,9 @@ const onScrollTo = (to?: number) => {
   }
 }
 
-.mac-author-wrap {
-  padding-left: 5px;
-  padding-right: 3px;
-  width: calc(100% - 8px);
-}
+// .mac-author-wrap {
+//   padding-left: 5px;
+//   padding-right: 3px;
+//   width: calc(100% - 8px);
+// }
 </style>

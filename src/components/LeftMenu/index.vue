@@ -155,7 +155,8 @@ const onQuit = () => {
   flex-direction: column;
   box-sizing: border-box;
   width: 60px;
-  .pageHeight();
+  height: 100%;
+  // .pageHeight();
   padding-left: 1px;
   border-radius: 5px;
   overflow: auto;

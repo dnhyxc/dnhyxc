@@ -45,30 +45,32 @@
           </div>
         </div>
       </div>
-      <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
-        <div
-          v-if="isMounted"
-          v-infinite-scroll="getCollectArticleList"
-          :infinite-scroll-delay="300"
-          :infinite-scroll-disabled="disabled"
-          :infinite-scroll-distance="2"
-          class="pullup-content"
-        >
-          <div v-for="i of collectStore.articleList" :key="i.id" class="pullup-list-item">
-            <Card :data="i" :like-list-article="likeListArticle" class="card">
-              <template #actions>
-                <div v-if="personalStore.userInfo?.userId === loginStore.userInfo?.userId" class="action art-action">
-                  <span class="move" @click.stop="onMoveTo(i)">转移</span>
-                  <span class="remove" @click.stop="onReomve(i)">移除</span>
-                </div>
-              </template>
-            </Card>
+      <div class="page-bottom">
+        <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
+          <div
+            v-if="isMounted"
+            v-infinite-scroll="getCollectArticleList"
+            :infinite-scroll-delay="300"
+            :infinite-scroll-disabled="disabled"
+            :infinite-scroll-distance="2"
+            class="pullup-content"
+          >
+            <div v-for="i of collectStore.articleList" :key="i.id" class="pullup-list-item">
+              <Card :data="i" :like-list-article="likeListArticle" class="card">
+                <template #actions>
+                  <div v-if="personalStore.userInfo?.userId === loginStore.userInfo?.userId" class="action art-action">
+                    <span class="move" @click.stop="onMoveTo(i)">转移</span>
+                    <span class="remove" @click.stop="onReomve(i)">移除</span>
+                  </div>
+                </template>
+              </Card>
+            </div>
+            <ToTopIcon v-if="scrollTop >= 500" :on-scroll-to="onScrollTo" class="to-top" />
           </div>
-          <ToTopIcon v-if="scrollTop >= 500" :on-scroll-to="onScrollTo" class="to-top" />
-        </div>
-        <div v-if="noMore" class="no-more">没有更多了～～～</div>
-        <Empty v-if="showEmpty" />
-      </el-scrollbar>
+          <div v-if="noMore" class="no-more">没有更多了～～～</div>
+          <Empty v-if="showEmpty" />
+        </el-scrollbar>
+      </div>
     </template>
   </Loading>
   <AddCollectModel
@@ -225,13 +227,12 @@ const onScrollTo = () => {
   .header {
     display: flex;
     justify-content: flex-start;
-    padding: 10px;
-    background-image: linear-gradient(225deg, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
-    box-shadow: 0 0 8px 0 var(--shadow-mack);
+    box-shadow: 0 0 5px 0 var(--card-shadow);
     border-radius: 5px;
     height: 120px;
-    margin-bottom: 10px;
-    margin-left: 5px;
+    padding: 10px;
+    margin: 3px 5px 10px;
+    background-image: linear-gradient(225deg, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
 
     .left {
       width: 120px;
@@ -386,10 +387,31 @@ const onScrollTo = () => {
     }
   }
 
+  .page-bottom {
+    flex: 1;
+    border-radius: 5px;
+    box-shadow: 0 0 5px 0 var(--card-shadow);
+    margin: 0 5px;
+    padding: 5px 0;
+    overflow: auto;
+
+    :deep {
+      .scrollbar-wrapper {
+        .scrollbar-wrapper();
+
+        .pullup-list-item {
+          &:nth-child(-n + 4) {
+            padding-top: 0;
+          }
+        }
+      }
+    }
+  }
+
   .no-more {
     text-align: center;
     color: var(--font-4);
-    padding-top: 12px;
+    padding: 10px 0 12px;
     .clickNoSelectText();
   }
 }

@@ -862,7 +862,8 @@ const onPreviewDragImg = () => {
   box-shadow: 0 0 8px 0 var(--shadow-mack);
   background-color: var(--pre-hover-bg);
   box-sizing: border-box;
-  .pageCommonStyles();
+  margin: 3px 5px 0;
+  height: calc(100% - 3px);
 
   .friends-menu {
     display: flex;

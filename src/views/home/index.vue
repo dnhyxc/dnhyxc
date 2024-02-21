@@ -36,30 +36,30 @@
           class="pullup-content"
         >
           <div v-for="i of articleStore.articleList" :key="i?.id" class="pullup-list-item">
-            <Card :data="i" :delete-article="deleteArticle" :like-list-article="likeListArticle"/>
+            <Card :data="i" :delete-article="deleteArticle" :like-list-article="likeListArticle" />
           </div>
-          <ToTopIcon v-if="scrollTop >= 500" :on-scroll-to="onScrollTo"/>
+          <ToTopIcon v-if="scrollTop >= 500" :on-scroll-to="onScrollTo" />
         </div>
         <div v-if="noMore" class="no-more">没有更多了～～～</div>
-        <Empty v-if="!articleStore.loading && !articleStore.articleList?.length"/>
+        <Empty v-if="!articleStore.loading && !articleStore.articleList?.length" />
       </el-scrollbar>
     </div>
   </Loading>
 </template>
 
 <script setup lang="ts">
-import {ipcRenderer} from 'electron';
-import {ref, computed, onMounted, onUnmounted, watch, inject, nextTick} from 'vue';
-import {useRoute} from 'vue-router';
-import {ATRICLE_TYPE} from '@/constant';
-import {scrollTo} from '@/utils';
-import {useScroller, useDeleteArticle} from '@/hooks';
-import {articleStore, commonStore} from '@/store';
+import { ipcRenderer } from 'electron';
+import { ref, computed, onMounted, onUnmounted, watch, inject, nextTick } from 'vue';
+import { useRoute } from 'vue-router';
+import { ATRICLE_TYPE } from '@/constant';
+import { scrollTo } from '@/utils';
+import { useScroller, useDeleteArticle } from '@/hooks';
+import { articleStore, commonStore } from '@/store';
 import Carousel from '@/components/Carousel/index.vue';
 import Card from '@/components/Card/index.vue';
 import ToTopIcon from '@/components/ToTopIcon/index.vue';
 import Empty from '@/components/Empty/index.vue';
-import {ArticleItem, WinRefreshParams} from '@/typings/common';
+import { ArticleItem, WinRefreshParams } from '@/typings/common';
 
 const reload = inject<Function>('reload');
 
@@ -67,15 +67,15 @@ const searchType = ref<number>(1); // 1：推荐，2：最新，3：最热
 const isMounted = ref<boolean>(false);
 
 const noMore = computed(() => {
-  const {articleList, total} = articleStore;
+  const { articleList, total } = articleStore;
   return articleList.length >= total && articleList.length;
 });
 const disabled = computed(() => articleStore.loading || noMore.value);
 
-const {scrollRef, scrollTop} = useScroller();
+const { scrollRef, scrollTop } = useScroller();
 const route = useRoute();
 
-const {deleteArticle} = useDeleteArticle({pageType: 'home'});
+const { deleteArticle } = useDeleteArticle({ pageType: 'home' });
 
 onMounted(() => {
   isMounted.value = true;
@@ -84,7 +84,7 @@ onMounted(() => {
   onFetchData();
   // 监听详情点赞状态，实时更改列表对应文章的点赞状态
   ipcRenderer.on('refresh', (_, params: WinRefreshParams) => {
-    const {pageType, isLike = true} = params;
+    const { pageType, isLike = true } = params;
     // 需要判断是否是属于当前活动页面，并且只是点击点赞而不是收藏或评论防止重复触发
     if (route.name === 'home' && pageType !== 'list' && isLike) {
       reload && reload();
@@ -144,7 +144,7 @@ const searchHotArticles = () => {
 
 // 文章点赞
 const likeListArticle = async (id: string, data: ArticleItem) => {
-  await articleStore.likeListArticle({id, pageType: 'home', data});
+  await articleStore.likeListArticle({ id, pageType: 'home', data });
 };
 </script>
 
@@ -206,10 +206,8 @@ const likeListArticle = async (id: string, data: ArticleItem) => {
     flex: 1;
     border-radius: 5px;
     box-shadow: 0 0 5px 0 var(--card-shadow);
-    width: calc(100% - 11px);
-    margin-left: 5px;
-    padding-top: 5px;
-    padding-bottom: 5px;
+    margin: 0 5px;
+    padding: 5px 0;
     overflow: auto;
     //background-image: linear-gradient(to top, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
 

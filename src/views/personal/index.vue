@@ -5,7 +5,8 @@
  * index.vue
 -->
 <template>
-  <Loading :loading="personalStore.loading" :class="`${checkOS() === 'mac' && 'mac-personal-wrap'} personal-wrap`">
+  <!-- <Loading :loading="personalStore.loading" :class="`${checkOS() === 'mac' && 'mac-personal-wrap'} personal-wrap`"> -->
+  <Loading :loading="personalStore.loading" class="personal-wrap">
     <template #default>
       <div class="header">
         <div class="left">
@@ -186,7 +187,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { ElMessage } from 'element-plus';
 import { useDeleteArticle, useScroller } from '@/hooks';
 import { articleStore, loginStore, personalStore, followStore, chatStore } from '@/store';
-import { formatDate, scrollTo, checkUrl, checkOS } from '@/utils';
+import { formatDate, scrollTo, checkUrl } from '@/utils';
 import { ArticleItem, CollectParams, FollowItem, WinRefreshParams } from '@/typings/common';
 import { HEAD_IMG, ICONLINKS, ABOUT_ME_TABS, ABOUT_TABS } from '@/constant';
 import AddCollectModel from '@/components/AddCollectModel/index.vue';
@@ -409,12 +410,8 @@ const onScrollTo = (to?: number) => {
 .personal-wrap {
   display: flex;
   flex-direction: column;
-  width: 100%;
   height: calc(100% - 2px);
-  padding-left: 4px;
-  padding-right: 3px;
-  margin-top: 2px;
-  width: calc(100% - 8px);
+  margin: 2px 4px 0;
 
   .header {
     display: flex;
@@ -719,11 +716,11 @@ const onScrollTo = (to?: number) => {
   }
 }
 
-.mac-personal-wrap {
-  padding-left: 5px;
-  padding-right: 3px;
-  width: calc(100% - 8px);
-}
+// .mac-personal-wrap {
+//   padding-left: 5px;
+//   padding-right: 3px;
+//   width: calc(100% - 8px);
+// }
 
 .introduce-tip {
   display: inline-block;

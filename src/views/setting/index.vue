@@ -64,14 +64,16 @@ const onClick = (menu: MenuListParams) => {
 @import '@/styles/index.less';
 
 .setting-wrap {
+  display: flex;
+  flex-direction: column;
   box-sizing: border-box;
   overflow: hidden;
   border-radius: 5px;
   background-color: var(--pre-hover-bg);
   margin-top: 2px;
   margin-left: 4px;
-  width: calc(100% - 8px);
-  height: calc(100vh - 82px);
+  margin-right: 4px;
+  height: calc(100% - 1px);
 
   .menu {
     display: flex;
@@ -121,7 +123,7 @@ const onClick = (menu: MenuListParams) => {
 
   .content {
     box-sizing: border-box;
-    height: calc(100vh - 117px);
+    height: 100%;
     border-left: 1px solid var(--card-border);
     border-right: 1px solid var(--card-border);
     border-bottom: 1px solid var(--card-border);

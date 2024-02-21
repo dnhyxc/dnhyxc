@@ -40,23 +40,25 @@
         </div>
       </div>
     </div>
-    <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
-      <div
-        v-if="isMounted"
-        v-infinite-scroll="getSearchArticleList"
-        :infinite-scroll-delay="300"
-        :infinite-scroll-disabled="disabled"
-        :infinite-scroll-distance="2"
-        class="pullup-content"
-      >
-        <div v-for="i of searchStore.articleList" :key="i.id" class="pullup-list-item">
-          <Card :data="i" :delete-article="deleteArticle" :like-list-article="likeListArticle" class="card" />
+    <div class="page-bottom">
+      <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
+        <div
+          v-if="isMounted"
+          v-infinite-scroll="getSearchArticleList"
+          :infinite-scroll-delay="300"
+          :infinite-scroll-disabled="disabled"
+          :infinite-scroll-distance="2"
+          class="pullup-content"
+        >
+          <div v-for="i of searchStore.articleList" :key="i.id" class="pullup-list-item">
+            <Card :data="i" :delete-article="deleteArticle" :like-list-article="likeListArticle" class="card" />
+          </div>
+          <ToTopIcon v-if="scrollTop >= 500" :on-scroll-to="onScrollTo" class="to-top" />
         </div>
-        <ToTopIcon v-if="scrollTop >= 500" :on-scroll-to="onScrollTo" class="to-top" />
-      </div>
-      <div v-if="noMore" class="no-more">没有更多了～～～</div>
-      <Empty v-if="showEmpty" />
-    </el-scrollbar>
+        <div v-if="noMore" class="no-more">没有更多了～～～</div>
+        <Empty v-if="showEmpty" />
+      </el-scrollbar>
+    </div>
   </Loading>
 </template>
 
@@ -329,10 +331,31 @@ const onScrollTo = () => {
     }
   }
 
+  .page-bottom {
+    flex: 1;
+    border-radius: 5px;
+    box-shadow: 0 0 5px 0 var(--card-shadow);
+    margin: 0 5px;
+    padding: 5px 0;
+    overflow: auto;
+
+    :deep {
+      .scrollbar-wrapper {
+        .scrollbar-wrapper();
+
+        .pullup-list-item {
+          &:nth-child(-n + 4) {
+            padding-top: 0;
+          }
+        }
+      }
+    }
+  }
+
   .no-more {
     text-align: center;
     color: var(--font-4);
-    margin-top: 3px;
+    padding: 10px 0 12px;
     .clickNoSelectText();
   }
 }

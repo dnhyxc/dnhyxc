@@ -5,7 +5,10 @@
  * index.vue
 -->
 <template>
-  <Loading :loading="false" :class="`${checkOS() === 'mac' && 'mac-draft-detail-wrap'} draft-detail-wrap`">
+  <Loading
+    :loading="createStore.loadDraft"
+    :class="`${checkOS() === 'mac' && 'mac-draft-detail-wrap'} draft-detail-wrap`"
+  >
     <div :class="`${commonStore?.tocTitles?.length === 0 && 'no-rm-content'} content`">
       <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
         <div ref="articleInfoRef" class="article-info">
@@ -132,7 +135,8 @@ const onScrollTo = (height?: number) => {
   display: flex;
   justify-content: center;
   box-sizing: border-box;
-  padding-right: 4px;
+  margin: 3px 5px 0;
+  height: calc(100% - 3px);
 
   .content {
     position: relative;
@@ -140,9 +144,7 @@ const onScrollTo = (height?: number) => {
     display: flex;
     justify-content: center;
     box-sizing: border-box;
-    margin-left: 5px;
     margin-right: 10px;
-    .pageHeight();
     border-radius: 5px;
     box-shadow: 0 0 8px 0 var(--shadow-mack);
     background-color: var(--pre-hover-bg);
@@ -268,11 +270,10 @@ const onScrollTo = (height?: number) => {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    width: 30%;
-    max-width: 260px;
+    width: 260px;
+    max-height: 100%;
     box-sizing: border-box;
     border-radius: 5px;
-    max-height: calc(100vh - 82px);
 
     .toc-list {
       box-sizing: border-box;

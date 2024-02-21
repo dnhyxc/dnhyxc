@@ -15,9 +15,9 @@
       :on-save-draft="onSaveDraft"
       :on-change-editor="onChangeEditor"
       :copy-code-success="onCopyCodeSuccess"
-      :height="checkOS() === 'mac' ? 'calc(100vh - 98px)' : null"
       show-vscode
       :show-dot="prevContent.trim() !== createStore.createInfo.content?.trim() ? 1 : 0"
+      class="create-editor"
     />
     <MonacoEditor
       v-if="editType"
@@ -33,7 +33,7 @@
       :show-dot="prevContent.trim() !== createStore.createInfo.content?.trim() ? 1 : 0"
       :prev-content="prevContent"
       :code="createStore.draftDetail.content"
-      class="create-monaco-eritor"
+      class="create-editor"
     />
     <CreateDrawer
       :key="JSON.stringify(createStore.classifys)"
@@ -52,7 +52,7 @@ import { ref, watch, defineAsyncComponent, onMounted, onUnmounted } from 'vue';
 import { useRoute, useRouter, onBeforeRouteLeave } from 'vue-router';
 import { ElMessage } from 'element-plus';
 import { articleStore, createStore } from '@/store';
-import { checkOS, Message } from '@/utils';
+import { Message } from '@/utils';
 import AsyncLoading from '@/components/AsyncLoading/index.vue';
 import CreateDrawer from './Create/index.vue';
 import DraftList from './DraftList/index.vue';
@@ -199,12 +199,14 @@ const toPreview = (id: string) => {
 
 .edit-wrap {
   border-radius: 5px;
-  .pageCommonStyles();
+  margin-left: 5px;
+  width: calc(100% - 10px);
   height: 100%;
 
-  .create-monaco-eritor {
-    height: calc(100% - 4px);
+  .create-editor {
+    height: calc(100% - 3px);
     margin-top: 3px;
+    width: 100%;
   }
 }
 </style>

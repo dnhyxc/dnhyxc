@@ -6,7 +6,7 @@
       placeholder="编辑内容"
       autofocus
       mode="edit"
-      :height="height || 'calc(100vh - 86px)'"
+      height="100%"
       :disabled-menus="[]"
       :left-toolbar="toolMenu"
       :toolbar="toolbar"
@@ -181,7 +181,6 @@ const onCopyCodeSuccess = (value: string) => {
 
 .container {
   position: relative;
-  margin-top: 3px;
 
   .save-info {
     position: absolute;
