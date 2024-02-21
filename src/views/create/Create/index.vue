@@ -189,7 +189,7 @@ const visible = computed({
 
 // 获取上传的封面图url
 const getUploadUrl = async (url: string) => {
-  const bacolor = await getImageColor('https://ts1.cn.mm.bing.net/th/id/R-C.620311cda07b9fb2abaa1319c79c93cf?rik=lPvFIPxtDJMGzQ&riu=http%3a%2f%2fwww.bjpowernode.com%2fueditor%2fphp%2fupload%2fimage%2f20190805%2f1564993792242589.png&ehk=m8QHVxsp9uGbh7O4aa7jznrQ7%2bcXDzIMap3QArMTo3Q%3d&risl=&pid=ImgRaw&r=0');
+  const bacolor = await getImageColor(url);
   createStore.createInfo.gradient = bacolor;
 
   if (url && checkImgUrlType(url) === 'URL' && props.articleId) {

@@ -57,6 +57,7 @@ const commomStyle = {
   '--header-text-color': 'linear-gradient(45deg, var(--font-1) 0%, var(--font-1) 100%)',
   '--font-weight': 'normal',
   '--search-border-color': '#fff',
+  '--card-shadow': 'rgba(255, 255, 255, 0.85)',
 };
 
 // 主题相关颜色
@@ -114,6 +115,7 @@ const removeStyle = {
   // 主题色
   // '--theme-blue': '#57a0ff',
   ...commomStyle,
+  '--card-shadow': 'rgba(129, 129, 129, 0.25)',
 };
 
 // 背景图片公共配置
@@ -468,6 +470,7 @@ const lateralFace = {
   '--theme-blue': '#00d625',
   '--el-color-primary': '#00d625',
   '--card-btn-mark': 'rgba(0, 0, 0, 0.45)',
+  '--card-shadow': 'rgba(255, 255, 255, 0.35)',
 };
 
 // 岛屿
@@ -544,6 +547,7 @@ const beauty = {
   '--card-btn-mark': 'rgba(0, 0, 0, 0.5)',
   '--markdown-function-color': '#fcf168',
   '--search-border-color': '#a86aa5',
+  '--card-shadow': 'rgba(255, 255, 255, 0.35)',
   // 主题色
   ...themeColors,
 };

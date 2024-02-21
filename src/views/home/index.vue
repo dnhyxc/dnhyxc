@@ -172,7 +172,7 @@ const likeListArticle = async (id: string, data: ArticleItem) => {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 10px 1px 8px;
+    padding: 0 10px 5px 8px;
     margin: 5px 0;
 
     .search-btns {
