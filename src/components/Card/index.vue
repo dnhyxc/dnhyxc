@@ -16,7 +16,7 @@
     <div class="card-wrap" @click.stop="toDetail(data)">
       <div class="card">
         <div class="card-top">
-          <i v-if="data.isTop" class="font iconfont icon-zhiding"/>
+          <i v-if="data.isTop" class="font iconfont icon-zhiding" />
           <div v-if="data?.isDelete" class="mask">
             <span class="mask-text">已下架</span>
           </div>
@@ -28,9 +28,9 @@
               </div>
             </slot>
           </div>
-          <Image :url="data.coverImage || IMG1" :transition-img="IMG1" class="img"/>
+          <Image :url="data.coverImage || IMG1" :transition-img="IMG1" class="img" />
           <div class="info">
-            <div class="desc" v-html="data.abstract"/>
+            <div class="desc" v-html="data.abstract" />
           </div>
         </div>
         <div
@@ -41,21 +41,21 @@
         >
           <slot>
             <div class="header">
-              <div class="title" v-html="data.title"/>
+              <div class="title" v-html="data.title" />
             </div>
             <div class="art-info">
               <div class="create-info">
-                <span class="author" @click.stop="toPersonal(data.authorId!)" v-html="data.authorName"/>
+                <span class="author" @click.stop="toPersonal(data.authorId!)" v-html="data.authorName" />
                 <span class="date">{{ data.createTime ? formatDate(data.createTime, 'YYYY/MM/DD') : '-' }}</span>
               </div>
               <div class="classifys">
                 <span class="classify" @click.stop="toClassify(data.classify!)">
                   <span class="label">分类: </span>
-                  <span v-html="data.classify"/>
+                  <span v-html="data.classify" />
                 </span>
                 <span class="tag" @click.stop="toTag(data.tag!)">
                   <span class="label">标签: </span>
-                  <span v-html="data.tag"/>
+                  <span v-html="data.tag" />
                 </span>
               </div>
               <div class="actions">
@@ -67,11 +67,11 @@
                     <span>{{ data.likeCount || '点赞' }}</span>
                   </div>
                   <div class="action comment" @click.stop="onComment(data)">
-                    <i class="font comment-icon iconfont icon-pinglun"/>
+                    <i class="font comment-icon iconfont icon-pinglun" />
                     <span>{{ data.commentCount || '评论' }}</span>
                   </div>
                   <div class="action read-count">
-                    <i class="font read-icon iconfont icon-yanjing"/>
+                    <i class="font read-icon iconfont icon-yanjing" />
                     <span class="text">{{ data.readCount || '阅读' }}</span>
                   </div>
                 </div>
@@ -85,12 +85,12 @@
 </template>
 
 <script setup lang="ts">
-import {computed, ref} from 'vue';
-import {useRouter, useRoute} from 'vue-router';
-import {formatDate, showMessage, ipcRenderers} from '@/utils';
-import {ArticleItem} from '@/typings/common';
-import {IMG1} from '@/constant';
-import {loginStore} from '@/store';
+import { computed, ref } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
+import { formatDate, showMessage, ipcRenderers } from '@/utils';
+import { ArticleItem } from '@/typings/common';
+import { IMG1 } from '@/constant';
+import { loginStore } from '@/store';
 import Image from '@/components/Image/index.vue';
 import ContextMenu from '@/components/ContextMenu/index.vue';
 
@@ -105,10 +105,8 @@ interface IProps {
 }
 
 const props = withDefaults(defineProps<IProps>(), {
-  deleteArticle: () => {
-  },
-  likeListArticle: () => {
-  },
+  deleteArticle: () => {},
+  likeListArticle: () => {},
   withoutToDetail: false,
 });
 
@@ -191,11 +189,11 @@ const onOpenNewWindow = async (data: ArticleItem) => {
   if (data?.isDelete) {
     return showMessage();
   }
-  const {userInfo, token} = loginStore;
+  const { userInfo, token } = loginStore;
   ipcRenderers.sendNewWin({
     path: `article/${data.id}?from=${route.name as string}`,
     id: data.id, // articleId
-    userInfo: JSON.stringify({userInfo, token}),
+    userInfo: JSON.stringify({ userInfo, token }),
   });
 };
 

@@ -31,14 +31,14 @@
               <span class="tag" @click.stop="toTag(item.tag!)">标签: {{ item.tag }}</span>
             </div>
           </div>
-          <Image :url="item.coverImage || IMG1" :transition-img="IMG1" class="img"/>
+          <Image :url="item.coverImage || IMG1" :transition-img="IMG1" class="img" />
         </div>
       </el-carousel-item>
     </el-carousel>
     <el-carousel v-else :interval="5000" trigger="click" height="200px" indicator-position="none" class="carousel">
       <el-carousel-item v-for="item in 5" :key="item">
         <div class="carousel-item">
-          <Image :url="IMG1" :transition-img="IMG1" class="img"/>
+          <Image :url="IMG1" :transition-img="IMG1" class="img" />
         </div>
       </el-carousel-item>
     </el-carousel>
@@ -67,17 +67,17 @@
             <span class="tag" @click.stop="toTag(item.tag!)">标签: {{ item?.tag }}</span>
           </div>
         </div>
-        <Image :url="item?.coverImage || IMG1" :transition-img="IMG1" class="img"/>
+        <Image :url="item?.coverImage || IMG1" :transition-img="IMG1" class="img" />
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import {useRouter} from 'vue-router';
-import {ArticleItem} from '@/typings/common';
-import {checkOS, formatGapTime} from '@/utils';
-import {IMG1} from '@/constant';
+import { useRouter } from 'vue-router';
+import { ArticleItem } from '@/typings/common';
+import { checkOS, formatGapTime } from '@/utils';
+import { IMG1 } from '@/constant';
 import Image from '@/components/Image/index.vue';
 
 const router = useRouter();
@@ -151,6 +151,7 @@ const toTag = (name: string) => {
       left: 0;
       display: flex;
       justify-content: space-between;
+      align-items: center;
       flex-direction: column;
       width: 100%;
       height: 100%;
@@ -162,6 +163,7 @@ const toTag = (name: string) => {
         position: relative;
         z-index: 88;
         box-sizing: border-box;
+        width: fit-content;
 
         .header {
           display: flex;
@@ -239,6 +241,7 @@ const toTag = (name: string) => {
         flex-direction: column;
         align-items: center;
         margin: 0 0 5px 0;
+        width: fit-content;
 
         .tag {
           margin-left: 0;

@@ -228,7 +228,7 @@ const likeListArticle = async (id: string, data: ArticleItem) => {
 
   .no-more {
     text-align: center;
-    padding-top: 12px;
+    padding: 10px 0 12px;
     color: var(--font-4);
   }
 }
