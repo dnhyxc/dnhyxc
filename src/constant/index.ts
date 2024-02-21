@@ -437,7 +437,7 @@ export const SEARCH_TYPE = [
 // 左侧菜单配置
 export const MENULIST = [
   {
-    name: '文章列表',
+    name: '墨客首页',
     key: 'home',
     path: '/home',
     icon: 'icon-home',

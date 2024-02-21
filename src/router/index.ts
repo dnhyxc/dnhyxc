@@ -74,7 +74,7 @@ export const routes: Array<RouteRecordRaw> = [
         path: '/home',
         name: 'home',
         meta: {
-          title: '文章列表',
+          title: '墨客首页',
           keepAlive: false,
         },
         component: () => import('@/views/home/index.vue'),

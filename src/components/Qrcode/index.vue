@@ -7,7 +7,7 @@
 <template>
   <div class="Qrcode">
     <div ref="qrcodeRef" />
-    <div>微信扫码分享</div>
+    <div class="info-text">微信扫码分享</div>
   </div>
 </template>
 
@@ -50,5 +50,6 @@ onMounted(() => {
   justify-content: center;
   flex-direction: column;
   align-items: center;
+  color: var(--font-3);
 }
 </style>

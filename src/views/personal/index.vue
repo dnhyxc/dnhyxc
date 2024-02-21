@@ -24,7 +24,7 @@
             <div class="username">{{ personalStore.userInfo?.username || '-' }}</div>
             <div class="job">{{ personalStore.userInfo?.job || '-' }}</div>
             <div class="motto">{{ personalStore.userInfo?.motto || '-' }}</div>
-            <el-tooltip v-if="personalStore.userInfo?.introduce?.length! > 50" placement="top" effect="light">
+            <el-tooltip v-if="personalStore.userInfo?.introduce?.length! > 50" placement="top" effect="light" popper-class="custom-dropdown-styles">
               <template #content>
                 <span class="introduce-tip">{{ personalStore.userInfo?.introduce }}</span>
               </template>

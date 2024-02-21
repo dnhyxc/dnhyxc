@@ -122,7 +122,7 @@
               <div class="themes-list">
                 <span class="theme-info" :style="{ color: fontColor }">主题</span>
                 <div v-for="theme in EPUB_THEMES" :key="theme.name" class="theme-item">
-                  <el-tooltip placement="top">
+                  <el-tooltip placement="top" popper-class="custom-dropdown-styles">
                     <template #content>
                       <span>{{ theme.name }}</span>
                     </template>
