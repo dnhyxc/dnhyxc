@@ -38,9 +38,9 @@
             @change="onSelectAll"
           />
           <el-button type="primary" link class="delete-btn select-all" @click="onSelectAll">全选</el-button>
-          <el-button type="danger" link :disabled="!selectedImageIds.length" class="delete-btn" @click="onDeleteAll"
-            >批量删除</el-button
-          >
+          <el-button type="danger" link :disabled="!selectedImageIds.length" class="delete-btn" @click="onDeleteAll">
+            批量删除
+          </el-button>
         </div>
       </div>
       <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
@@ -150,6 +150,7 @@ onMounted(() => {
 onUnmounted(() => {
   window.removeEventListener('resize', onResize);
   previousWidth = null;
+  pictureStore.clearAtlasInfo();
 });
 
 // 请求数据
