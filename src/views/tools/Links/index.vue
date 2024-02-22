@@ -83,7 +83,7 @@ const onSaveSort = () => {
 @import '@/styles/index.less';
 
 .container {
-  flex: 1;
+  height: 100%;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
@@ -116,13 +116,12 @@ const onSaveSort = () => {
 
   .tool-list {
     display: flex;
-    max-height: 100%;
     box-sizing: border-box;
-    height: calc(100vh - 270px);
+    height: calc(100vh - 290px);
   }
 
   .mac-tool-list {
-    height: calc(100vh - 285px);
+    height: calc(100vh - 305px);
   }
 
   .navigation-list {
@@ -132,7 +131,6 @@ const onSaveSort = () => {
     box-sizing: border-box;
     width: 100%;
     border-radius: 5px;
-    margin-bottom: 20px;
     .clickNoSelectText();
 
     .ghost {

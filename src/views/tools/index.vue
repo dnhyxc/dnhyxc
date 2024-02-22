@@ -19,7 +19,7 @@
       <Unknown v-if="unknownVisible" v-model:modal-visible="unknownVisible" />
       <div v-if="!visible" class="navs-wrap">
         <div class="tools">
-          <div>
+          <div class="tool-list-wrap">
             <div class="tool-title">资源处理</div>
             <div class="tool-list">
               <NavCard v-for="item in TOOL_LIST" :key="item.id" :data="item" :on-click="() => onClickNavIcon(item)" />
@@ -173,7 +173,8 @@ const onClickNavIcon = (item: ToolsItem) => {
   display: flex;
   flex-direction: column;
   height: 100%;
-  width: 100%;
+  height: calc(100% - 2px);
+  margin-top: 2px;
   border-radius: 5px;
   overflow: hidden;
   box-sizing: border-box;
@@ -188,27 +189,29 @@ const onClickNavIcon = (item: ToolsItem) => {
       box-sizing: border-box;
       height: 100%;
 
-      .tool-title {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        font-size: 16px;
-        font-weight: 700;
-        margin-bottom: 10px;
-        padding: 0 5px;
-        color: var(--font-1);
-      }
+      .tool-list-wrap {
+        .tool-title {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          font-size: 16px;
+          font-weight: 700;
+          margin-bottom: 10px;
+          padding: 0 5px;
+          color: var(--font-1);
+        }
 
-      .tool-list {
-        display: flex;
-        justify-content: flex-start;
-        flex-wrap: wrap;
-        box-sizing: border-box;
-        width: 100%;
-        height: auto;
-        border-radius: 5px;
-        .clickNoSelectText();
-        margin-bottom: 20px;
+        .tool-list {
+          display: flex;
+          justify-content: flex-start;
+          flex-wrap: wrap;
+          box-sizing: border-box;
+          width: 100%;
+          height: auto;
+          border-radius: 5px;
+          .clickNoSelectText();
+          margin-bottom: 20px;
+        }
       }
     }
   }
@@ -270,7 +273,7 @@ const onClickNavIcon = (item: ToolsItem) => {
 
 .board-wrap {
   margin-left: 5px;
-  width: calc(100% - 9px);
+  margin: 3px 5px 0;
   box-shadow: 0 0 8px 0 var(--shadow-mack);
   background-color: var(--pre-hover-bg);
 }

@@ -13,7 +13,7 @@
       <span class="close" @click="onClose">关闭</span>
     </div>
     <div class="content">
-      <iframe src="https://juejin.cn/" width="100%" height="100%" frameborder="0" />
+      <iframe src="https://chat18.aichatos.xyz/" width="100%" height="100%" frameborder="0" />
     </div>
   </div>
 </template>
@@ -79,6 +79,7 @@ const onClose = () => {
 
   .content {
     flex: 1;
+    background-color: @fff;
   }
 }
 </style>
