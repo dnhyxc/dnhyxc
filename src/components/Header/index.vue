@@ -10,13 +10,13 @@
       <div class="icon-wrap" @click="goHome">
         <i class="page-icon iconfont icon-haidao_" />
       </div>
-      <el-tooltip effect="light" content="后退" placement="bottom">
+      <el-tooltip effect="light" content="后退" placement="bottom" popper-class="custom-dropdown-styles">
         <i class="font iconfont icon-arrow-left-bold" @click="goBack" />
       </el-tooltip>
-      <el-tooltip effect="light" content="前进" placement="bottom">
+      <el-tooltip effect="light" content="前进" placement="bottom" popper-class="custom-dropdown-styles">
         <i class="font iconfont icon-arrow-right-bold" @click="goForward" />
       </el-tooltip>
-      <el-tooltip effect="light" content="刷新" placement="bottom">
+      <el-tooltip effect="light" content="刷新" placement="bottom"  popper-class="custom-dropdown-styles">
         <i class="font iconfont icon-reload" @click="onReload" />
       </el-tooltip>
       <div class="title">{{ route.meta.title }}</div>
@@ -43,10 +43,11 @@
           effect="light"
           content="高级搜索"
           placement="bottom"
+          popper-class="custom-dropdown-styles"
         >
           <i class="font iconfont icon-sousuo2 senior-search" @click="onClickSearch" />
         </el-tooltip>
-        <el-tooltip v-if="commonStore.showSearch" effect="light" content="高级搜索" placement="bottom">
+        <el-tooltip v-if="commonStore.showSearch" effect="light" content="高级搜索" placement="bottom" popper-class="custom-dropdown-styles">
           <i class="iconfont icon-qiehuan" @click="onCheckSearchType(2)" />
         </el-tooltip>
         <el-input
@@ -83,7 +84,7 @@
         <Messages ref="messageRef" />
         <template #reference>
           <div class="bell">
-            <el-tooltip effect="light" content="消息" placement="bottom">
+            <el-tooltip effect="light" content="消息" placement="bottom" popper-class="custom-dropdown-styles">
               <div class="msg">
                 <span
                   v-if="messageStore.msgCount && !messageStore.visible"
@@ -98,12 +99,12 @@
         </template>
       </el-popover>
       <div class="setting">
-        <el-tooltip effect="light" content="设置" placement="bottom">
+        <el-tooltip effect="light" content="设置" placement="bottom" popper-class="custom-dropdown-styles">
           <i class="font iconfont icon-shezhi" @click="toSetting" />
         </el-tooltip>
       </div>
       <div class="sticky">
-        <el-tooltip effect="light" content="置顶" placement="bottom">
+        <el-tooltip effect="light" content="置顶" placement="bottom" popper-class="custom-dropdown-styles">
           <i :class="`${stickyStatus && 'active'} font iconfont icon-pin1`" @click="onSticky" />
         </el-tooltip>
       </div>
@@ -113,6 +114,7 @@
             effect="light"
             :content="svg.title === '最大化' ? (toggle ? '还原' : svg.title) : svg.title"
             placement="bottom"
+            popper-class="custom-dropdown-styles"
           >
             <div
               :class="`icon-text iconfont ${

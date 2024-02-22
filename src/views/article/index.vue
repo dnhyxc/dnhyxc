@@ -16,7 +16,7 @@
         </div>
         <div class="right">
           <div class="sticky">
-            <el-tooltip effect="light" content="置顶" placement="bottom">
+            <el-tooltip effect="light" content="置顶" placement="bottom" popper-class="custom-dropdown-styles">
               <i :class="`${articleStore.stickyStatus && 'active'} font iconfont icon-pin1`" @click="onSticky" />
             </el-tooltip>
           </div>
@@ -26,6 +26,7 @@
                 effect="light"
                 :content="svg.title === '最大化' ? (toggle ? '还原' : svg.title) : svg.title"
                 placement="bottom"
+                popper-class="custom-dropdown-styles"
               >
                 <div
                   :class="`icon-text iconfont ${

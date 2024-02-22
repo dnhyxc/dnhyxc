@@ -42,7 +42,7 @@
           >
             <div class="classify">
               <el-input v-model="createStore.createInfo.classify" placeholder="请输入文章分类" />
-              <el-dropdown max-height="200px" trigger="click" @command="onClassifyCommand">
+              <el-dropdown max-height="200px" trigger="click" popper-class="custom-dropdown-styles" @command="onClassifyCommand">
                 <el-button type="primary" :disabled="!createStore.classifys?.length">
                   选择&nbsp;
                   <i class="iconfont icon-xiajiantou" />
@@ -70,7 +70,7 @@
           >
             <div class="classify">
               <el-input v-model="createStore.createInfo.tag" placeholder="请输入文章标签" />
-              <el-dropdown max-height="200px" trigger="click" @command="onTagCommand">
+              <el-dropdown max-height="200px" trigger="click" popper-class="custom-dropdown-styles" @command="onTagCommand">
                 <el-button type="primary">选择&nbsp;<i class="iconfont icon-xiajiantou" /></el-button>
                 <template #dropdown>
                   <el-dropdown-menu>
@@ -109,7 +109,7 @@
                 :get-upload-url="getUploadUrl"
               >
                 <template #preview>
-                  <img :src="uploadPath || createStore.createInfo?.coverImage!" class="cover-img" />
+                  <img :src="uploadPath || createStore.createInfo?.coverImage!" class="cover-img"  alt="文章封面"/>
                 </template>
               </Upload>
             </div>

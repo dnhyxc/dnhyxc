@@ -6,7 +6,7 @@
 -->
 <template>
   <div class="edit-wrap">
-    <MackdownEditor
+    <MarkdownEditor
       v-if="!editType"
       :on-publish="onPublish"
       :on-clear="onClear"
@@ -60,8 +60,8 @@ const MonacoEditor = defineAsyncComponent({
   loader: () => import('@/components/MonacoEditor/index.vue'),
   loadingComponent: AsyncLoading,
 });
-const MackdownEditor = defineAsyncComponent({
-  loader: () => import('@/components/MackdownEditor/index.vue'),
+const MarkdownEditor = defineAsyncComponent({
+  loader: () => import('@/components/MarkdownEditor/index.vue'),
   loadingComponent: AsyncLoading,
 });
 
@@ -90,7 +90,7 @@ onUnmounted(() => {
 // 组件启用时，如果有文章id，则请求文章详情
 const init = async () => {
   // 启用组建时，获取创建文章的分类列表
-  createStore.getAddedClassifys();
+  await createStore.getAddedClassifys();
   if (!route.query.id) return;
   await articleStore?.getArticleDetail({
     id: route.query.id as string,

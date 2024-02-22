@@ -205,7 +205,9 @@ ul {
 .login-popover {
   position: relative;
   background: var(--modal-bg-color) !important;
-  border: 1px solid var(--shadow-mack) !important;
+  color: var(--font-1) !important;
+  border: none !important;
+
   &::before {
     position: absolute;
     top: 0;
@@ -213,7 +215,6 @@ ul {
     content: '';
     width: 100%;
     height: 100%;
-    // background: var(--pop-before-bg-color);
     border-radius: 5px;
     backdrop-filter: blur(5px);
   }
@@ -289,6 +290,9 @@ ul {
 .header-search-popover {
   background: transparent !important;
   backdrop-filter: blur(5px);
+  color: var(--font-1);
+  box-shadow: 0 0 5px var(--card-shadow);
+  border: none !important;
 
   .el-dropdown-menu {
     background: var(--modal-bg-color) !important;
@@ -312,4 +316,6 @@ ul {
   width: 90px !important;
   min-width: auto !important;
   padding: 0 !important;
+  box-shadow: 0 0 5px var(--card-shadow) !important;
 }
+

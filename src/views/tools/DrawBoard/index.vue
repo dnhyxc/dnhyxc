@@ -62,7 +62,7 @@
         @mouseup="onMouseup"
       />
       <div class="color-group">
-        <el-tooltip placement="top">
+        <el-tooltip placement="top" popper-class="custom-dropdown-styles">
           <template #content>
             <span v-if="colorType" class="tip-text">切换为画笔颜色设置</span>
             <span v-else class="tip-text">切换为画布颜色设置</span>
@@ -70,7 +70,7 @@
           <div class="change" @click="onSetColorType" />
         </el-tooltip>
         <div v-for="color in BOARD_COLORS" :key="color">
-          <el-tooltip placement="left">
+          <el-tooltip placement="left" popper-class="custom-dropdown-styles">
             <template #content>
               <span v-if="colorType" class="tip-text">画布颜色</span>
               <span v-else class="tip-text">画笔颜色</span>
@@ -78,7 +78,7 @@
             <div class="paint-color" :style="{ backgroundColor: color }" @click="onColorChange(color, true)"></div>
           </el-tooltip>
         </div>
-        <el-tooltip placement="left">
+        <el-tooltip placement="left" popper-class="custom-dropdown-styles">
           <template #content>
             <span v-if="colorType" class="tip-text">画布颜色</span>
             <span v-else class="tip-text">画笔颜色</span>

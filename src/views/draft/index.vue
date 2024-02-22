@@ -16,7 +16,7 @@
             <div class="title">{{ createStore.draftDetail.title }}</div>
             <div class="user-info">
               <Image
-                :url="createStore.draftDetail?.headUrl || HEAD_IMG"
+                :url="loginStore.userInfo?.headUrl || HEAD_IMG"
                 :transition-img="HEAD_IMG"
                 :on-click="() => toPersonal(createStore.draftDetail?.authorId)"
                 class="herd-img"
@@ -73,7 +73,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { ElMessage } from 'element-plus';
 import { useScroller } from '@/hooks';
 import { scrollTo, checkOS, formatDate } from '@/utils';
-import { createStore, commonStore } from '@/store';
+import {createStore, commonStore, loginStore} from '@/store';
 import { HEAD_IMG } from '@/constant';
 import Toc from '@/components/Toc/index.vue';
 import ToTopIcon from '@/components/ToTopIcon/index.vue';

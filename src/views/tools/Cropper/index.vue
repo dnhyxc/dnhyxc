@@ -77,6 +77,7 @@
         effect="dark"
         content="需要优先点击截取按钮之后才能下载最新设置的图片"
         placement="top"
+        popper-class="custom-dropdown-styles"
       >
         <el-button type="primary" :disabled="!cropperUrl" class="btn" plain @click="onDownload">下载</el-button>
       </el-tooltip>

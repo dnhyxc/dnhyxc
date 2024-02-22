@@ -28,7 +28,7 @@
                 <i class="iconfont icon-shanchu" @click.stop="onDeleteCollect">&nbsp;删除</i>
               </span>
             </div>
-            <el-tooltip v-if="collectStore.collectInfo?.desc?.length! > 100" placement="bottom" effect="light">
+            <el-tooltip v-if="collectStore.collectInfo?.desc?.length! > 100" placement="bottom" effect="light" popper-class="custom-dropdown-styles">
               <template #content>
                 <span class="introduce-tip">{{ collectStore.collectInfo?.desc }}</span>
               </template>
