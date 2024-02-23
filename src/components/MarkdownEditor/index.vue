@@ -165,8 +165,6 @@ const onUploadImage = async (event: Event, insertImage: Function, files: File) =
   insertImage({
     url: res?.filePath,
     desc: files[0]?.name,
-    width: '100%',
-    height: 'auto',
   });
 };
 
