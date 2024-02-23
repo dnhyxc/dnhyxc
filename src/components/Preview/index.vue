@@ -105,6 +105,14 @@ const onCopyCodeSuccess = (value: string) => {
 
       .codeStyle();
 
+      pre::-webkit-scrollbar {
+        width: 6px !important;
+      }
+
+      pre::-webkit-scrollbar-thumb {
+        background-color: var(--scroll-color);
+      }
+
       code {
         background-color: var(--p-code-bg-color);
       }

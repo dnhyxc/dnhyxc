@@ -58,6 +58,7 @@ const commomStyle = {
   '--font-weight': 'normal',
   '--search-border-color': '#fff',
   '--card-shadow': 'rgba(255, 255, 255, 0.85)',
+  '--scroll-color': '#e4e6eb',
 };
 
 // 主题相关颜色
@@ -197,6 +198,8 @@ const imageStyles = {
   ...commomStyle,
   '--markdown-param-color': '#19dcc6',
   '--markdown-return-color': '#93e86a',
+  '--scroll-color': 'rgba(255, 255, 255, 0.25)',
+  // '--scroll-color': 'rgba(209, 209, 209, 0.15)',
 };
 
 // 炫彩背景公共配置
@@ -550,6 +553,7 @@ const beauty = {
   '--card-shadow': 'rgba(255, 255, 255, 0.35)',
   // 主题色
   ...themeColors,
+  '--scroll-color': 'rgba(209, 209, 209, 0.15)',
 };
 
 // 三体智子
@@ -661,6 +665,7 @@ const cloud = {
   // 头部字体颜色
   '--header-text-color': `${MENU_LG_DEFAULT_COLORS}`,
   '--font-weight': '700',
+  '--scroll-color': 'rgba(255, 255, 255, 0.69)',
 };
 
 const snow = {

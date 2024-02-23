@@ -8,7 +8,7 @@
   <div class="container">
     <div class="tool-title">
       前端编程导航
-      <div class="sort">
+      <div v-if="toolsStore.toolList?.length" class="sort">
         <span class="btn" @click="onSort">{{ enabled ? '关闭排序' : '开启排序' }}</span>
         <span v-show="enabled" class="btn" @click="onSaveSort">保存排序</span>
       </div>
