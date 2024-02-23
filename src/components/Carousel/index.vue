@@ -242,7 +242,7 @@ const toTag = (name: string) => {
             &:hover {
               color: var(--theme-blue);
               backdrop-filter: blur(10px);
-              background-color: @card-action-color;
+              background-color: var(--card-btn-mark);
             }
           }
         }
