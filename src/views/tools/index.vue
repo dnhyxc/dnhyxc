@@ -173,7 +173,7 @@ const onClickNavIcon = (item: ToolsItem) => {
   display: flex;
   flex-direction: column;
   height: 100%;
-  height: calc(100% - 2px);
+  height: calc(100% - 8px);
   margin-top: 2px;
   border-radius: 5px;
   overflow: hidden;
@@ -273,7 +273,7 @@ const onClickNavIcon = (item: ToolsItem) => {
 
 .board-wrap {
   margin-left: 5px;
-  margin: 3px 5px 0;
+  margin: 8px 5px 0;
   box-shadow: 0 0 8px 0 var(--shadow-mack);
   background-color: var(--pre-hover-bg);
 }
