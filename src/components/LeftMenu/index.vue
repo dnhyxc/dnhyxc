@@ -156,7 +156,6 @@ const onQuit = () => {
   box-sizing: border-box;
   width: 60px;
   height: 100%;
-  // .pageHeight();
   padding-left: 1px;
   border-radius: 5px;
   overflow: auto;

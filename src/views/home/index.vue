@@ -162,9 +162,8 @@ const likeListArticle = async (id: string, data: ArticleItem) => {
     position: relative;
     width: calc(100% - 10px);
     padding: 5px 0;
-    margin: 3px 0 5px 5px;
+    margin: 8px 0 5px 5px;
     box-shadow: 0 0 5px 0 var(--card-shadow);
-    //background-image: linear-gradient(to top, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
     border-radius: 5px;
   }
 

@@ -81,8 +81,8 @@ const onScrollTo = () => {
   box-shadow: 0 0 8px 0 var(--shadow-mack);
   background-color: var(--pre-hover-bg);
   box-sizing: border-box;
-  height: calc(100% - 3px);
-  margin: 3px 5px 0;
+  height: calc(100% - 8px);
+  margin: 8px 5px 0;
   padding: 10px 5px 10px 0;
 
   :deep {

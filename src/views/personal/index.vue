@@ -410,8 +410,8 @@ const onScrollTo = (to?: number) => {
 .personal-wrap {
   display: flex;
   flex-direction: column;
-  height: calc(100% - 2px);
-  margin: 2px 4px 0;
+  height: calc(100% - 6px);
+  margin: 6px 4px 0;
 
   .header {
     display: flex;

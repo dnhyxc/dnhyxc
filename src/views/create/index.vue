@@ -204,8 +204,8 @@ const toPreview = (id: string) => {
   height: 100%;
 
   .create-editor {
-    height: calc(100% - 3px);
-    margin-top: 3px;
+    height: calc(100% - 8px);
+    margin-top: 8px;
     width: 100%;
   }
 }

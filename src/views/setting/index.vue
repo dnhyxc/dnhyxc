@@ -70,10 +70,8 @@ const onClick = (menu: MenuListParams) => {
   overflow: hidden;
   border-radius: 5px;
   background-color: var(--pre-hover-bg);
-  margin-top: 2px;
-  margin-left: 4px;
-  margin-right: 4px;
-  height: calc(100% - 1px);
+  margin: 6px 4px 0;
+  height: calc(100% - 4px);
 
   .menu {
     display: flex;
@@ -123,7 +121,7 @@ const onClick = (menu: MenuListParams) => {
 
   .content {
     box-sizing: border-box;
-    height: 100%;
+    height: calc(100% - 34px);
     border-left: 1px solid var(--card-border);
     border-right: 1px solid var(--card-border);
     border-bottom: 1px solid var(--card-border);

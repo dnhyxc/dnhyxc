@@ -280,18 +280,18 @@ const onScrollTo = (to?: number) => {
 @import '@/styles/index.less';
 
 .author-wrap {
-  height: 100%;
   margin: 0 4px;
+  margin: 8px 4px 0;
+  height: calc(100% - 8px);
 
   .cover {
     width: 100%;
     height: auto;
-    background-image: linear-gradient(225deg, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
     border-radius: 5px;
     padding-bottom: 20px;
-    margin-top: 2px;
     border: 1px solid var(--card-border);
     box-sizing: border-box;
+    background-image: linear-gradient(225deg, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
 
     .img-wrap {
       width: 100%;

@@ -263,10 +263,10 @@ const onScrollTo = () => {
   .search-tag-list {
     display: flex;
     justify-content: center;
-    margin-top: 10px;
+    margin-top: 7px;
     margin-bottom: 20px;
-    width: calc(100% - 9px);
     padding-left: 5px;
+    width: calc(100% - 9px);
 
     .label {
       display: flex;

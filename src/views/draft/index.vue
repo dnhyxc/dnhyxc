@@ -135,8 +135,8 @@ const onScrollTo = (height?: number) => {
   display: flex;
   justify-content: center;
   box-sizing: border-box;
-  margin: 3px 5px 0;
-  height: calc(100% - 3px);
+  margin: 8px 5px 0;
+  height: calc(100% - 8px);
 
   .content {
     position: relative;

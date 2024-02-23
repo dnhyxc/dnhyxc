@@ -83,9 +83,9 @@ const onCheckTag = (tag: string) => {
 
     .word-cloud-wrap {
       width: 100%;
-      height: calc(100% - 3px);
+      height: calc(100% - 8px);
       box-sizing: border-box;
-      margin-top: 3px;
+      margin-top: 8px;
       box-shadow: 0 0 8px 0 var(--shadow-mack);
       border-radius: 5px;
       background-color: var(--pre-hover-bg);
@@ -98,9 +98,9 @@ const onCheckTag = (tag: string) => {
     box-sizing: border-box;
     margin-left: 10px;
     padding: 8px 0 10px;
-    margin-top: 3px;
+    margin-top: 8px;
     width: 220px;
-    height: calc(100% - 3px);
+    height: calc(100% - 8px);
     box-shadow: 0 0 8px 0 var(--shadow-mack);
     border-radius: 5px;
     background-color: var(--pre-hover-bg);

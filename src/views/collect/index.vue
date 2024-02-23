@@ -231,7 +231,7 @@ const onScrollTo = () => {
     border-radius: 5px;
     height: 120px;
     padding: 10px;
-    margin: 3px 5px 10px;
+    margin: 8px 5px 10px;
     background-image: linear-gradient(225deg, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
 
     .left {

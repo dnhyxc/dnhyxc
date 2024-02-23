@@ -197,7 +197,7 @@ const onClickNavIcon = (item: ToolsItem) => {
           font-size: 16px;
           font-weight: 700;
           margin-bottom: 10px;
-          padding: 0 5px;
+          padding: 2px 5px 0;
           color: var(--font-1);
         }
 

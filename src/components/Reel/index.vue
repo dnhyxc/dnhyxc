@@ -162,7 +162,7 @@ const onClick = (name: string) => {
     height: 150px;
     border-radius: 5px;
     white-space: nowrap;
-    padding: 5px 0 12px;
+    padding: 6px 0 12px;
     -webkit-user-drag: none;
 
     .card {

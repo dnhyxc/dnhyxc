@@ -332,7 +332,7 @@ const onScrollTo = () => {
   align-items: center;
   justify-content: space-between;
   height: 38px;
-  padding: 10px 15px 10px 12px;
+  padding: 10px 15px 7px 12px;
   -webkit-app-region: drag;
 
   .left {

@@ -117,11 +117,11 @@ const onSaveSort = () => {
   .tool-list {
     display: flex;
     box-sizing: border-box;
-    height: calc(100vh - 290px);
+    height: calc(100vh - 275px);
   }
 
   .mac-tool-list {
-    height: calc(100vh - 305px);
+    height: calc(100vh - 290px);
   }
 
   .navigation-list {
