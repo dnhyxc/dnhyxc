@@ -282,7 +282,7 @@ const onScrollTo = (to?: number) => {
 .author-wrap {
   margin: 0 4px;
   margin: 8px 4px 0;
-  height: calc(100% - 8px);
+  height: calc(100% - 6px);
 
   .cover {
     width: 100%;
@@ -439,7 +439,7 @@ const onScrollTo = (to?: number) => {
           font-weight: 700;
         }
         .el-tabs__content {
-          padding: 10px;
+          padding: 9px;
         }
 
         .el-tabs__header,
