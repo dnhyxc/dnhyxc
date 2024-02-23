@@ -87,7 +87,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
-import { formatDate, showMessage, ipcRenderers } from '@/utils';
+import { formatDate, showMessage, ipcRenderers, getGradient } from '@/utils';
 import { ArticleItem } from '@/typings/common';
 import { IMG1 } from '@/constant';
 import { loginStore } from '@/store';
@@ -114,26 +114,8 @@ const timer = ref<boolean>(false);
 
 // 拼接渐变色
 const gradients = computed(() => {
-  return props.data?.gradient?.length
-    ? `linear-gradient(
-          -192deg,
-          rgba(
-            ${props.data?.gradient?.[2]?.[0]},
-            ${props.data?.gradient?.[2]?.[1]},
-            ${props.data?.gradient?.[2]?.[2]}, 0.2
-          ) 0%,
-          rgba(
-            ${props.data?.gradient?.[1]?.[0]},
-            ${props.data?.gradient?.[1]?.[1]},
-            ${props.data?.gradient?.[1]?.[2]}, 0.25
-          ) 50%,
-          rgba(
-            ${props.data?.gradient?.[0]?.[0]},
-            ${props.data?.gradient?.[0]?.[1]},
-            ${props.data?.gradient?.[0]?.[2]}, 0.3
-          ) 100%
-        )`
-    : 'linear-gradient(to bottom, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%)';
+  const gradient = props.data?.gradient;
+  return getGradient(gradient);
 });
 
 // 点赞

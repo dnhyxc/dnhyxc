@@ -14,8 +14,8 @@
       indicator-position="none"
       class="carousel"
     >
-      <el-carousel-item v-for="item in data" :key="item" @click="toDetail(item.id)">
-        <div class="carousel-item">
+      <el-carousel-item v-for="(item, index) in data" :key="item" @click="toDetail(item.id)">
+        <div :class="`carousel-item-${index} carousel-item`">
           <div class="article-info">
             <div class="top">
               <div class="header">
@@ -48,7 +48,7 @@
       :class="`hot ${checkOS() === 'mac' && 'mac-hot'}`"
       @click="toDetail(item.id)"
     >
-      <div class="carousel-item">
+      <div :class="`${index === 0 ? 'new-article' : 'hot-article'} carousel-item`">
         <div class="article-info">
           <div class="top">
             <div class="header">
@@ -74,9 +74,10 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { ArticleItem } from '@/typings/common';
-import { checkOS, formatGapTime } from '@/utils';
+import { checkOS, formatGapTime, getGradient } from '@/utils';
 import { IMG1 } from '@/constant';
 import Image from '@/components/Image/index.vue';
 
@@ -87,7 +88,43 @@ interface IProps {
   mostLikeAndNewArticles: ArticleItem[];
 }
 
-defineProps<IProps>();
+const props = defineProps<IProps>();
+
+// 拼接渐变色
+const carousel0 = computed(() => {
+  const gradient = props.data?.[0]?.gradient;
+  return getGradient(gradient);
+});
+
+const carousel1 = computed(() => {
+  const gradient = props.data?.[1]?.gradient;
+  return getGradient(gradient);
+});
+
+const carousel2 = computed(() => {
+  const gradient = props.data?.[2]?.gradient;
+  return getGradient(gradient);
+});
+
+const carousel3 = computed(() => {
+  const gradient = props.data?.[3]?.gradient;
+  return getGradient(gradient);
+});
+
+const carousel4 = computed(() => {
+  const gradient = props.data?.[4]?.gradient;
+  return getGradient(gradient);
+});
+
+const newAricleLg = computed(() => {
+  const gradient = props.mostLikeAndNewArticles?.[0]?.gradient;
+  return getGradient(gradient);
+});
+
+const hotAricleLg = computed(() => {
+  const gradient = props.mostLikeAndNewArticles?.[1]?.gradient;
+  return getGradient(gradient);
+});
 
 // 去详情页
 const toDetail = (id: string) => {
@@ -113,14 +150,20 @@ const toTag = (name: string) => {
 <style scoped lang="less">
 @import '@/styles/index.less';
 
+.commonStyle {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  content: '';
+  width: 100%;
+  height: 100%;
+}
+
 .carousel-wrap {
   display: flex;
   justify-content: space-between;
-  // height: 220px;
-  // margin-bottom: 30px;
-  // padding: 0 0 10px 0;
   border-radius: 5px;
-  // padding-top: 5px;
   box-sizing: border-box;
 
   .carousel {
@@ -136,10 +179,6 @@ const toTag = (name: string) => {
     padding: 0 5px;
 
     &:hover {
-      .img {
-        filter: contrast(80%);
-      }
-
       .title-text {
         color: var(--active) !important;
       }
@@ -265,6 +304,47 @@ const toTag = (name: string) => {
     }
   }
 
+  .carousel-item-0 {
+    &:hover {
+      .image-wrap-style::before {
+        .commonStyle();
+        background-image: v-bind(carousel0);
+      }
+    }
+  }
+  .carousel-item-1 {
+    &:hover {
+      .image-wrap-style::before {
+        .commonStyle();
+        background-image: v-bind(carousel1);
+      }
+    }
+  }
+  .carousel-item-2 {
+    &:hover {
+      .image-wrap-style::before {
+        .commonStyle();
+        background-image: v-bind(carousel2);
+      }
+    }
+  }
+  .carousel-item-3 {
+    &:hover {
+      .image-wrap-style::before {
+        .commonStyle();
+        background-image: v-bind(carousel3);
+      }
+    }
+  }
+  .carousel-item-4 {
+    &:hover {
+      .image-wrap-style::before {
+        .commonStyle();
+        background-image: v-bind(carousel4);
+      }
+    }
+  }
+
   .hot {
     flex: 0.5;
 
@@ -281,6 +361,25 @@ const toTag = (name: string) => {
 
       .author {
         margin: 0 10px 0 0 !important;
+      }
+    }
+
+    &:hover {
+      .new-article {
+        .image-wrap-style {
+          &::before {
+            .commonStyle();
+            background-image: v-bind(newAricleLg);
+          }
+        }
+      }
+      .hot-article {
+        .image-wrap-style {
+          &::before {
+            .commonStyle();
+            background-image: v-bind(hotAricleLg);
+          }
+        }
       }
     }
   }

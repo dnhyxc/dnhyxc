@@ -189,7 +189,7 @@ const visible = computed({
 
 // 获取上传的封面图url
 const getUploadUrl = async (url: string) => {
-  const bacolor = await getImageColor(url);
+  const bacolor = await getImageColor('https://www4.bing.com//th?id=OHR.YearRabbit_ZH-CN2751166096_1920x1080.jpg&rf=LaDigue_1920x1080.jpg&pid=hp');
   createStore.createInfo.gradient = bacolor;
 
   if (url && checkImgUrlType(url) === 'URL' && props.articleId) {
