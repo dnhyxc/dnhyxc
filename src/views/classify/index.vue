@@ -8,7 +8,7 @@
   <Loading :loading="classifyStore.loading" :class="`${checkOS() === 'mac' && 'mac-classify-wrap'} classify-wrap`">
     <template #default>
       <Reel
-        v-if="classifyStore.articleList?.length"
+        v-if="classifyStore.classifys?.length"
         ref="reelRef"
         :on-check-classify="onCheckClassify"
         :classifys="classifyStore.classifys"
