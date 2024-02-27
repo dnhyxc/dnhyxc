@@ -154,7 +154,7 @@ const onClick = (name: string) => {
 @import '@/styles/index.less';
 
 .scroll {
-  width: v-bind(width);
+  width: calc(100vw - 95px);
   box-sizing: border-box;
   border-radius: 5px;
   -webkit-user-drag: none;
@@ -165,13 +165,13 @@ const onClick = (name: string) => {
     height: 150px;
     border-radius: 5px;
     white-space: nowrap;
-    padding: 6px 0 12px;
+    padding: 5px 0 12px;
     -webkit-user-drag: none;
 
     .card {
       box-sizing: border-box;
       display: inline-block;
-      width: calc((100vw - 79px) / 4);
+      width: calc((100vw - 90px) / 4);
       height: 100%;
       padding: 0 5px;
       border-radius: 5px;

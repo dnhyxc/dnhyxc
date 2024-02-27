@@ -24,7 +24,12 @@
             <div class="username">{{ personalStore.userInfo?.username || '-' }}</div>
             <div class="job">{{ personalStore.userInfo?.job || '-' }}</div>
             <div class="motto">{{ personalStore.userInfo?.motto || '-' }}</div>
-            <el-tooltip v-if="personalStore.userInfo?.introduce?.length! > 50" placement="top" effect="light" popper-class="custom-dropdown-styles">
+            <el-tooltip
+              v-if="personalStore.userInfo?.introduce?.length! > 50"
+              placement="top"
+              effect="light"
+              popper-class="custom-dropdown-styles"
+            >
               <template #content>
                 <span class="introduce-tip">{{ personalStore.userInfo?.introduce }}</span>
               </template>
@@ -54,118 +59,122 @@
           </div>
         </div>
       </div>
-      <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
-        <div
-          v-if="isMounted"
-          v-infinite-scroll="getMyArticleList"
-          :infinite-scroll-delay="300"
-          :infinite-scroll-disabled="disabled"
-          :infinite-scroll-distance="2"
-          class="pullup-content"
-        >
-          <div class="content">
-            <div v-if="personalStore.currentTabKey === '1'" class="collect-count-info">
-              <span class="add-collect" @click.stop="onAddCollect">
-                <i class="iconfont icon-add" />
-                新建收藏集
-              </span>
-              <span class="collect-count">
-                {{ !userId || userId === loginStore.userInfo?.userId ? '我' : '他' }}创建的
-                {{ personalStore.collectTotal }}
-              </span>
-              <span class="collect-count">
-                {{ !userId || userId === loginStore.userInfo?.userId ? '我' : '他' }}收藏的文章
-                {{ personalStore.collectedCount }}
-              </span>
-            </div>
-            <el-tabs v-model="personalStore.currentTabKey" type="border-card" class="el-tabs" @tab-change="onTabChange">
-              <el-tab-pane
-                v-for="tab in tabs"
-                :key="tab.value"
-                :label="tab.name"
-                :class="`${
-                  !personalStore.articleList?.length &&
-                  !followStore.followList?.length &&
-                  !followStore.followMeList?.length &&
-                  'tab-pane'
-                }`"
+      <div class="bottom-content">
+        <div v-if="personalStore.currentTabKey === '1'" class="collect-count-info">
+          <span class="add-collect" @click.stop="onAddCollect">新建收藏集</span>
+          <span class="collect-count">
+            {{ !userId || userId === loginStore.userInfo?.userId ? '我' : '他' }}创建的
+            {{ personalStore.collectTotal }}
+          </span>
+          <span class="collect-count">
+            {{ !userId || userId === loginStore.userInfo?.userId ? '我' : '他' }}收藏的文章
+            {{ personalStore.collectedCount }}
+          </span>
+        </div>
+        <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
+          <div
+            v-if="isMounted"
+            v-infinite-scroll="getMyArticleList"
+            :infinite-scroll-delay="300"
+            :infinite-scroll-disabled="disabled"
+            :infinite-scroll-distance="2"
+            class="pullup-content"
+          >
+            <div class="content">
+              <el-tabs
+                v-model="personalStore.currentTabKey"
+                type="border-card"
+                class="el-tabs"
+                @tab-change="onTabChange"
               >
-                <!-- 我的文章/点赞文章 -->
-                <div v-if="tab.value === '1' || tab.value === '5'" class="list-wrap">
-                  <LineCard
-                    v-for="data in personalStore.articleList"
-                    :key="data.id"
-                    :data="data"
-                    class="author-line-card"
-                    :delete-article="deleteArticle"
-                    :like-list-article="likeListArticle"
-                  />
-                </div>
-                <!-- 我的关注 -->
-                <div v-else-if="tab.value === '3'" class="list-wrap">
-                  <FollowCard
-                    v-for="data in followStore.followList"
-                    :key="data.id"
-                    :data="data"
-                    class="author-line-card"
-                    :on-follow="onFollow"
-                  />
-                </div>
-                <!-- 关注我的 -->
-                <div v-else-if="tab.value === '4'" class="list-wrap">
-                  <FollowCard
-                    v-for="data in followStore.followMeList"
-                    :key="data.id"
-                    :data="data"
-                    :on-follow="onFollow"
-                    :is-follow-me="true"
-                    class="author-line-card"
-                  />
-                </div>
-                <!-- 我的收藏 -->
-                <div v-else class="list-wrap">
-                  <LineCard
-                    v-for="data in personalStore.articleList"
-                    :key="data.id"
-                    :data="data"
-                    is-collect
-                    :no-menu="true"
-                    class="author-line-card collect-card"
-                    @click.stop="toDetail(data.id!)"
-                  >
-                    <template #title>
-                      <div class="collect-name">
-                        <span class="title">
-                          {{ data.name }}
-                          <i v-show="Number(data.status) === 2" class="iconfont icon-33" />
-                        </span>
-                        <span v-if="isShowCollectActions" class="actions">
-                          <i class="edit iconfont" @click.stop="onEditCollect(data as any)">编辑</i>
-                          <i class="del iconfont" @click.stop="deleteCollection(data.id)">删除</i>
-                        </span>
-                      </div>
-                    </template>
-                    <template #content>
-                      <div class="collect-content">
-                        <span class="collect-desc">{{ data.desc }}</span>
-                        <div class="collect-info">
-                          <span class="collect-date">
-                            {{ formatDate(data.createTime!, 'YYYY-MM-DD') }}更新 · {{ data.articleIds?.length }}
-                            篇文章
+                <el-tab-pane
+                  v-for="tab in tabs"
+                  :key="tab.value"
+                  :label="tab.name"
+                  :class="`${
+                    !personalStore.articleList?.length &&
+                    !followStore.followList?.length &&
+                    !followStore.followMeList?.length &&
+                    'tab-pane'
+                  }`"
+                >
+                  <!-- 我的文章/点赞文章 -->
+                  <div v-if="tab.value === '1' || tab.value === '5'" class="list-wrap">
+                    <LineCard
+                      v-for="data in personalStore.articleList"
+                      :key="data.id"
+                      :data="data"
+                      class="author-line-card"
+                      :delete-article="deleteArticle"
+                      :like-list-article="likeListArticle"
+                    />
+                  </div>
+                  <!-- 我的关注 -->
+                  <div v-else-if="tab.value === '3'" class="list-wrap">
+                    <FollowCard
+                      v-for="data in followStore.followList"
+                      :key="data.id"
+                      :data="data"
+                      class="author-line-card"
+                      :on-follow="onFollow"
+                    />
+                  </div>
+                  <!-- 关注我的 -->
+                  <div v-else-if="tab.value === '4'" class="list-wrap">
+                    <FollowCard
+                      v-for="data in followStore.followMeList"
+                      :key="data.id"
+                      :data="data"
+                      :on-follow="onFollow"
+                      :is-follow-me="true"
+                      class="author-line-card"
+                    />
+                  </div>
+                  <!-- 我的收藏 -->
+                  <div v-else class="list-wrap">
+                    <LineCard
+                      v-for="data in personalStore.articleList"
+                      :key="data.id"
+                      :data="data"
+                      is-collect
+                      :no-menu="true"
+                      class="author-line-card collect-card"
+                      @click.stop="toDetail(data.id!)"
+                    >
+                      <template #title>
+                        <div class="collect-name">
+                          <span class="title">
+                            {{ data.name }}
+                            <i v-show="Number(data.status) === 2" class="iconfont icon-33" />
+                          </span>
+                          <span v-if="isShowCollectActions" class="actions">
+                            <i class="edit iconfont" @click.stop="onEditCollect(data as any)">编辑</i>
+                            <i class="del iconfont" @click.stop="deleteCollection(data.id)">删除</i>
                           </span>
                         </div>
-                      </div>
-                    </template>
-                  </LineCard>
-                </div>
-                <Empty v-if="showEmpty" />
-              </el-tab-pane>
-            </el-tabs>
+                      </template>
+                      <template #content>
+                        <div class="collect-content">
+                          <span class="collect-desc">{{ data.desc }}</span>
+                          <div class="collect-info">
+                            <span class="collect-date">
+                              {{ formatDate(data.createTime!, 'YYYY-MM-DD') }}更新 · {{ data.articleIds?.length }}
+                              篇文章
+                            </span>
+                          </div>
+                        </div>
+                      </template>
+                    </LineCard>
+                  </div>
+                  <Empty v-if="showEmpty" class="empty-content" />
+                </el-tab-pane>
+              </el-tabs>
+            </div>
+            <ToTopIcon v-if="scrollTop >= 500" :on-scroll-to="onScrollTo" class="to-top" />
           </div>
-          <ToTopIcon v-if="scrollTop >= 500" :on-scroll-to="onScrollTo" class="to-top" />
-        </div>
-        <div v-if="noMore" class="no-more">没有更多了～～～</div>
-      </el-scrollbar>
+          <div v-if="noMore" class="no-more">没有更多了～～～</div>
+        </el-scrollbar>
+      </div>
     </template>
   </Loading>
   <AddCollectModel
@@ -410,7 +419,7 @@ const onScrollTo = (to?: number) => {
 .personal-wrap {
   display: flex;
   flex-direction: column;
-  height: calc(100% - 6px);
+  height: calc(100% - 4px);
   margin: 6px 4px 0;
 
   .header {
@@ -490,6 +499,7 @@ const onScrollTo = (to?: number) => {
           justify-content: center;
           align-items: center;
           width: 100%;
+
           .icon {
             display: block;
             width: auto;
@@ -500,6 +510,7 @@ const onScrollTo = (to?: number) => {
               margin-left: 0;
             }
           }
+
           .font {
             display: flex;
             justify-content: center;
@@ -533,178 +544,205 @@ const onScrollTo = (to?: number) => {
     }
   }
 
-  .content {
+  .bottom-content {
     position: relative;
+    border: 1px solid var(--card-border);
+    height: calc(100% - 163px);
     border-radius: 5px;
-    flex: 1;
-    .el-tabs {
-      border: 1px solid var(--card-border);
-      border-radius: 5px;
-      background-color: transparent;
+    padding-bottom: 10px;
+    box-sizing: border-box;
 
-      :deep {
-        .el-tabs__item.is-active {
-          background-color: transparent;
-          font-weight: 700;
-        }
-        .el-tabs__content {
-          padding: 10px;
-        }
-
-        .el-tabs__header,
-        .el-tabs__nav-wrap {
-          border-top-left-radius: 5px;
-          border-top-right-radius: 5px;
-          background-color: transparent;
-          background-image: linear-gradient(225deg, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
-        }
-        .el-tabs__header {
-          border-bottom: 1px solid var(--card-border);
-
-          .el-tabs__item {
-            color: var(--font-1);
-          }
-
-          .el-tabs__item.is-active {
-            border-left-color: var(--card-border);
-            border-right-color: var(--card-border);
-            color: var(--theme-blue);
-          }
-        }
-      }
-
-      .tab-pane {
-        min-height: 200px;
-      }
-
-      .list-wrap {
-        display: flex;
-        justify-content: space-between;
-        flex-wrap: wrap;
-
-        .author-line-card {
-          width: calc(50% - 5px);
-          padding: 10px 10px;
-          box-shadow: 0 0 5px var(--shadow-mack);
-          background-image: linear-gradient(225deg, var(--bg-lg-color2) 100%, var(--bg-lg-color1) 100%);
-          margin-bottom: 10px;
-          border-radius: 5px;
-          margin-right: 10px;
-
-          :deep {
-            .art-info {
-              flex: 1;
-            }
-          }
-
-          &:nth-child(even) {
-            margin-right: 0;
-            &:last-child {
-              margin-bottom: 0;
-            }
-          }
-
-          &:nth-child(odd) {
-            &:nth-last-child(2) {
-              margin-bottom: 0;
-            }
-            &:last-child {
-              margin-bottom: 0;
-            }
-          }
-
-          .img-wrap {
-            box-sizing: border-box;
-            display: flex;
-            width: 150px;
-
-            .img {
-              display: block;
-              width: 100%;
-              height: auto;
-              border-radius: 5px;
-              .imgStyle();
-            }
-          }
-        }
-
-        .collect-card {
-          display: flex;
-          flex-direction: column;
-
-          .collect-name {
-            display: flex;
-            justify-content: space-between;
-            width: 100%;
-
-            .title {
-              display: flex;
-              align-items: center;
-              flex: 1;
-              font-size: 16px;
-              font-weight: 700;
-              margin-right: 20px;
-              .ellipsisMore(1);
-
-              .icon-33 {
-                display: inline-block;
-                font-size: 15px;
-                margin-left: 3px;
-              }
-            }
-
-            .actions {
-              .edit {
-                margin-right: 10px;
-                color: var(--theme-blue);
-                font-size: 14px;
-              }
-
-              .del {
-                color: @font-danger;
-                font-size: 14px;
-              }
-            }
-          }
-
-          .collect-content {
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-
-            .collect-desc {
-              margin-bottom: 10px;
-              font-size: 14px;
-              .ellipsisMore(2);
-            }
-
-            .collect-info {
-              font-size: 14px;
-            }
-          }
-        }
-      }
-    }
     .collect-count-info {
       position: absolute;
-      top: 9px;
-      right: 22px;
-      z-index: 12;
+      top: 8px;
+      right: 15px;
+      z-index: 21;
 
       .add-collect {
         font-size: 14px;
         color: var(--theme-blue);
         cursor: pointer;
+        margin-right: 5px;
         .clickNoSelectText();
+
+        &:hover {
+          color: var(--active);
+        }
       }
 
       .collect-count {
         font-size: 14px;
-        background-image: linear-gradient(135deg, var(--head-lg-color1) 10%, var(--head-lg-color2) 100%);
+        //background-image: linear-gradient(135deg, var(--head-lg-color1) 10%, var(--head-lg-color2) 100%);
         padding: 2px 5px 3px;
         border-radius: 5px;
-        color: @font-2;
         margin-left: 10px;
+        color: var(--font-1);
+      }
+    }
+
+    .content {
+      position: relative;
+      border-radius: 5px;
+      flex: 1;
+      height: 100%;
+
+      .el-tabs {
+        border: none;
+        border-radius: 5px;
+        background-color: transparent;
+        height: 100%;
+
+        :deep {
+          .el-tabs__item.is-active {
+            background-color: transparent;
+            font-weight: 700;
+          }
+
+          .el-tabs__content {
+            padding: 10px;
+          }
+
+          .el-tabs__header,
+          .el-tabs__nav-wrap {
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+            background-color: transparent;
+            background-image: linear-gradient(225deg, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
+          }
+
+          .el-tabs__header {
+            border-bottom: 1px solid var(--card-border);
+            position: sticky;
+            top: 0;
+            backdrop-filter: blur(10px);
+            z-index: 20;
+
+            .el-tabs__item {
+              height: 43px;
+              color: var(--font-1);
+            }
+
+            .el-tabs__item.is-active {
+              border-left-color: var(--card-border);
+              border-right-color: var(--card-border);
+              color: var(--theme-blue);
+            }
+          }
+        }
+
+        .tab-pane {
+          min-height: 405px;
+        }
+
+        .list-wrap {
+          display: flex;
+          justify-content: space-between;
+          flex-wrap: wrap;
+
+          .author-line-card {
+            width: calc(50% - 5px);
+            padding: 10px 10px;
+            box-shadow: 0 0 5px var(--shadow-mack);
+            background-image: linear-gradient(225deg, var(--bg-lg-color2) 100%, var(--bg-lg-color1) 100%);
+            margin-bottom: 10px;
+            border-radius: 5px;
+            margin-right: 10px;
+
+            :deep {
+              .art-info {
+                flex: 1;
+              }
+            }
+
+            &:nth-child(even) {
+              margin-right: 0;
+
+              &:last-child {
+                margin-bottom: 0;
+              }
+            }
+
+            &:nth-child(odd) {
+              &:nth-last-child(2) {
+                margin-bottom: 0;
+              }
+
+              &:last-child {
+                margin-bottom: 0;
+              }
+            }
+
+            .img-wrap {
+              box-sizing: border-box;
+              display: flex;
+              width: 150px;
+
+              .img {
+                display: block;
+                width: 100%;
+                height: auto;
+                border-radius: 5px;
+                .imgStyle();
+              }
+            }
+          }
+
+          .collect-card {
+            display: flex;
+            flex-direction: column;
+
+            .collect-name {
+              display: flex;
+              justify-content: space-between;
+              width: 100%;
+
+              .title {
+                display: flex;
+                align-items: center;
+                flex: 1;
+                font-size: 16px;
+                font-weight: 700;
+                margin-right: 20px;
+                .ellipsisMore(1);
+
+                .icon-33 {
+                  display: inline-block;
+                  font-size: 15px;
+                  margin-left: 3px;
+                }
+              }
+
+              .actions {
+                .edit {
+                  margin-right: 10px;
+                  color: var(--theme-blue);
+                  font-size: 14px;
+                }
+
+                .del {
+                  color: @font-danger;
+                  font-size: 14px;
+                }
+              }
+            }
+
+            .collect-content {
+              display: flex;
+              flex-direction: column;
+              justify-content: space-between;
+
+              .collect-desc {
+                margin-bottom: 10px;
+                font-size: 14px;
+                .ellipsisMore(2);
+              }
+
+              .collect-info {
+                font-size: 14px;
+              }
+            }
+          }
+        }
       }
     }
   }
@@ -712,7 +750,7 @@ const onScrollTo = (to?: number) => {
   .no-more {
     text-align: center;
     color: var(--font-4);
-    margin: 15px 0 0;
+    margin: 4px 0 5px;
   }
 }
 
