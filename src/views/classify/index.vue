@@ -10,7 +10,6 @@
       <Reel
         v-if="classifyStore.articleList?.length"
         ref="reelRef"
-        :width="checkOS() === 'mac' ? 'calc(100vw - 82px)' : 'calc(100vw - 80px)'"
         :on-check-classify="onCheckClassify"
         :classifys="classifyStore.classifys"
         :current-classify="classifyStore.currentClassify || route.query?.classify as string || classifyStore.classifys[0]?.name"
@@ -167,11 +166,11 @@ const likeListArticle = (id: string, data?: ArticleItem) => {
 .classify-wrap {
   display: flex;
   flex-direction: column;
-  height: 100%;
-  width: 100%;
+  height: calc(100% - 8px) !important;
   border-radius: 5px;
-  overflow: hidden;
-  box-sizing: border-box;
+  margin: 8px 5px 0;
+  box-shadow: 0 0 5px var(--card-shadow);
+  padding-bottom: 7px;
 
   .content {
     height: calc(100% - 150px);
@@ -251,7 +250,7 @@ const likeListArticle = (id: string, data?: ArticleItem) => {
   }
 
   .no-more {
-    padding-top: 12px;
+    padding: 10px 0 12px;
     text-align: center;
     color: var(--font-4);
   }

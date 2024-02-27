@@ -280,18 +280,24 @@ const onScrollTo = (to?: number) => {
 @import '@/styles/index.less';
 
 .author-wrap {
-  margin: 0 4px;
   margin: 8px 4px 0;
-  height: calc(100% - 6px);
+  height: calc(100% - 9px);
+  border-radius: 5px;
+  border: 1px solid var(--card-border);
+
+  :deep {
+    .scrollbar-wrapper {
+      border-radius: 5px;
+    }
+  }
 
   .cover {
     width: 100%;
     height: auto;
-    border-radius: 5px;
     padding-bottom: 20px;
-    border: 1px solid var(--card-border);
+    border-bottom: 1px solid var(--card-border);
     box-sizing: border-box;
-    background-image: linear-gradient(225deg, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
+    background-image: linear-gradient(to right, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
 
     .img-wrap {
       width: 100%;
@@ -379,6 +385,7 @@ const onScrollTo = (to?: number) => {
           width: 110px;
           margin-top: 5px;
           cursor: pointer;
+
           .font {
             margin-right: 5px;
           }
@@ -429,8 +436,7 @@ const onScrollTo = (to?: number) => {
     border-radius: 5px;
 
     .el-tabs {
-      border: 1px solid var(--card-border);
-      border-radius: 5px;
+      border: none;
       background-color: transparent;
 
       :deep {
@@ -438,23 +444,32 @@ const onScrollTo = (to?: number) => {
           background-color: transparent;
           font-weight: 700;
         }
+
         .el-tabs__content {
           padding: 9px;
         }
 
         .el-tabs__header,
         .el-tabs__nav-wrap {
-          border-top-left-radius: 5px;
-          border-top-right-radius: 5px;
           background-color: transparent;
-          background-image: linear-gradient(225deg, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
         }
 
         .el-tabs__header {
+          border-top: 1px solid var(--card-border);
           border-bottom: 1px solid var(--card-border);
+          background-image: linear-gradient(to right, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
+          position: sticky;
+          top: -2px;
+          backdrop-filter: blur(10px);
+          z-index: 999;
 
           .el-tabs__item {
+            height: 43px;
             color: var(--font-1);
+
+            &:hover {
+              color: var(--active);
+            }
           }
 
           .el-tabs__item.is-active {
@@ -467,7 +482,7 @@ const onScrollTo = (to?: number) => {
 
       .tab-pane {
         position: relative;
-        min-height: 200px;
+        min-height: 294px;
       }
 
       .list-wrap {
@@ -494,6 +509,7 @@ const onScrollTo = (to?: number) => {
             &:nth-last-child(2) {
               margin-bottom: 0;
             }
+
             &:last-child {
               margin-bottom: 0;
             }
@@ -501,6 +517,7 @@ const onScrollTo = (to?: number) => {
 
           &:nth-child(even) {
             margin-right: 0;
+
             &:last-child {
               margin-bottom: 0;
             }
@@ -526,7 +543,7 @@ const onScrollTo = (to?: number) => {
     .no-more {
       text-align: center;
       color: var(--font-4);
-      margin: 15px 0 5px;
+      margin: 14px 0 6px;
     }
   }
 }
