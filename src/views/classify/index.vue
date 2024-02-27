@@ -14,6 +14,7 @@
         :on-check-classify="onCheckClassify"
         :classifys="classifyStore.classifys"
         :current-classify="classifyStore.currentClassify || route.query?.classify as string || classifyStore.classifys[0]?.name"
+        :reel-gradient="reelGradient"
       />
       <div :class="`content ${!classifyStore.articleList?.length && 'empty-content'}`">
         <div v-if="classifyStore.articleList?.length" class="line-wrap">
@@ -54,7 +55,7 @@
 import { ipcRenderer } from 'electron';
 import { ref, computed, onMounted, onUnmounted, watch, nextTick, inject } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { checkOS, scrollTo } from '@/utils';
+import { checkOS, getGradient, scrollTo } from '@/utils';
 import { useScroller, useDeleteArticle } from '@/hooks';
 import { classifyStore, commonStore, articleStore } from '@/store';
 import { ArticleItem, WinRefreshParams } from '@/typings/common';
@@ -81,6 +82,7 @@ const showEmpty = computed(() => !classifyStore.loading && !classifyStore.articl
 const lineRef = ref<any>(null);
 const dotRef = ref<any>(null);
 const scrollLeft = ref<string>('');
+const reelGradient = ref<string>('');
 
 onMounted(async () => {
   // 监听详情点赞状态，实时更改列表对应文章的点赞状态
@@ -140,9 +142,17 @@ watch(
   },
 );
 
+// 获取文章图片主色形成渐变色
+const getImageColor = (gradient?: number[][]) => {
+  reelGradient.value = getGradient(gradient, 225);
+};
+
 // 请求数据
 const onFetchData = async () => {
   await classifyStore.getClassifyList(route.query?.classify as string);
+  const firstArticle = classifyStore.articleList?.[0];
+  const gradient = firstArticle?.gradient;
+  getImageColor(gradient);
 };
 
 // 置顶

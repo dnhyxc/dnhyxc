@@ -35,6 +35,7 @@ import { checkOS } from '@/utils';
 interface IProps {
   classifys: Classifys[]; // 分类
   onCheckClassify: (name: string) => void;
+  reelGradient: string;
   width?: string;
   currentClassify?: string;
 }
@@ -45,6 +46,8 @@ const props = withDefaults(defineProps<IProps>(), {
   width: 'calc(100vw - 80px)',
   currentClassify: '',
 });
+
+console.log(props.reelGradient, ' reelGradient')
 
 const moveInfo = reactive<{ x: number; scrollWidth: number }>({ x: 0, scrollWidth: 0 });
 const scrollWrap = ref<any>(null);
@@ -223,7 +226,7 @@ const onClick = (name: string) => {
     .active {
       .content {
         .clickNoSelectText();
-        .bgLgColor();
+        background-image: v-bind(reelGradient);
       }
     }
   }

@@ -1281,24 +1281,24 @@ export const calculateLoadProgress = ({
 };
 
 // 拼接渐变色
-export const getGradient = (gradient?: number[][]) => {
+export const getGradient = (gradient?: number[][], deg: number = 192) => {
   return gradient?.length
     ? `linear-gradient(
-          -192deg,
+          ${deg}deg,
           rgba(
             ${gradient[2]?.[0]},
             ${gradient[2]?.[1]},
             ${gradient[2]?.[2]}, 0.2
           ) 0%,
           rgba(
-            ${gradient[1]?.[0]},
-            ${gradient[1]?.[1]},
-            ${gradient[1]?.[2]}, 0.25
-          ) 50%,
-          rgba(
             ${gradient[0]?.[0]},
             ${gradient[0]?.[1]},
-            ${gradient[0]?.[2]}, 0.3
+            ${gradient[0]?.[2]}, 0.25
+          ) 100%,
+          rgba(
+            ${gradient[1]?.[0]},
+            ${gradient[1]?.[1]},
+            ${gradient[1]?.[2]}, 0.3
           ) 100%
         )`
     : 'linear-gradient(to bottom, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%)';
