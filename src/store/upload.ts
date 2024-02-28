@@ -4,7 +4,7 @@ import { ElMessage } from 'element-plus';
 import * as Service from '@/server';
 import { normalizeResult, md5HashName, getUniqueFileName, compressImage } from '@/utils';
 import { useCheckUserId } from '@/hooks';
-import { pictureStore } from '.';
+import { loginStore, pictureStore } from '@/store';
 
 interface IProps {
   visible: boolean;
@@ -40,9 +40,15 @@ export const useUploadStore = defineStore('upload', {
       const findIndex = compressFile?.name?.lastIndexOf('.');
       const ext = compressFile.name.slice(findIndex + 1);
       // 修改文件名称，__ATLAS__ 用户区分是否是上传的图片集图片
-      const newFile = new File([compressFile], isAtlas ? `__ATLAS__${fileName}.${ext}` : `${fileName}.${ext}`, {
-        type: compressFile.type,
-      });
+      const newFile = new File(
+        [compressFile],
+        isAtlas
+          ? `__ATLAS__${fileName}_${loginStore.userInfo.userId}.${ext}`
+          : `${fileName}_${loginStore.userInfo.userId}.${ext}`,
+        {
+          type: compressFile.type,
+        },
+      );
       formData.append('file', newFile);
       const res = normalizeResult<{ filePath: string }>(await Service.uploadFile(formData));
       if (res.success) {

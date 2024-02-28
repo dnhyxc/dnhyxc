@@ -42,7 +42,12 @@
           >
             <div class="classify">
               <el-input v-model="createStore.createInfo.classify" placeholder="请输入文章分类" />
-              <el-dropdown max-height="200px" trigger="click" popper-class="custom-dropdown-styles" @command="onClassifyCommand">
+              <el-dropdown
+                max-height="200px"
+                trigger="click"
+                popper-class="custom-dropdown-styles"
+                @command="onClassifyCommand"
+              >
                 <el-button type="primary" :disabled="!createStore.classifys?.length">
                   选择&nbsp;
                   <i class="iconfont icon-xiajiantou" />
@@ -70,7 +75,12 @@
           >
             <div class="classify">
               <el-input v-model="createStore.createInfo.tag" placeholder="请输入文章标签" />
-              <el-dropdown max-height="200px" trigger="click" popper-class="custom-dropdown-styles" @command="onTagCommand">
+              <el-dropdown
+                max-height="200px"
+                trigger="click"
+                popper-class="custom-dropdown-styles"
+                @command="onTagCommand"
+              >
                 <el-button type="primary">选择&nbsp;<i class="iconfont icon-xiajiantou" /></el-button>
                 <template #dropdown>
                   <el-dropdown-menu>
@@ -109,7 +119,7 @@
                 :get-upload-url="getUploadUrl"
               >
                 <template #preview>
-                  <img :src="uploadPath || createStore.createInfo?.coverImage!" class="cover-img"  alt="文章封面"/>
+                  <img :src="uploadPath || createStore.createInfo?.coverImage!" class="cover-img" alt="文章封面" />
                 </template>
               </Upload>
             </div>
@@ -153,7 +163,7 @@ import { ref, computed, onDeactivated } from 'vue';
 import { useRouter } from 'vue-router';
 import type { FormInstance } from 'element-plus';
 import { ARTICLE_TAG } from '@/constant';
-import { createStore, uploadStore } from '@/store';
+import { createStore } from '@/store';
 import { checkImgUrlType, getImageColor } from '@/utils';
 import Upload from '@/components/Upload/index.vue';
 
@@ -193,20 +203,7 @@ const getUploadUrl = async (url: string) => {
   createStore.createInfo.gradient = bacolor;
   if (url && checkImgUrlType(url) === 'URL' && props.articleId) {
     const oldUrl = createStore.oldCoverImage;
-    await createStore.createArticle(
-      {
-        coverImage: url,
-        articleId: createStore?.createInfo?.articleId,
-        gradient: bacolor,
-      },
-      false, // 是否需要提示
-    );
-    // 如果文件不一致，则说明重新上传了新的图片，则需要删除老图片
-    if (url !== oldUrl) {
-      // 删除上传的老的封面图
-      oldUrl && (await uploadStore.removeFile(oldUrl));
-      createStore.oldCoverImage = url;
-    }
+    url !== oldUrl && (createStore.oldCoverImage = url);
   }
 };
 
@@ -253,6 +250,7 @@ const onCreate = () => {
         coverImage: uploadPath.value || createStore?.createInfo?.coverImage,
         articleId: createStore?.createInfo?.articleId,
         createTime: createStore?.createInfo?.createTime?.valueOf(),
+        oldCoverImage: createStore.oldCoverImage,
       });
       if (res) {
         createStore.clearCreateInfo(true);

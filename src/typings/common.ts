@@ -99,6 +99,7 @@ export interface CreateArticleParams {
   originalArticleId?: string;
   draftId?: string;
   gradient?: number[][];
+  oldCoverImage?: string;
 }
 
 // 创建收藏集返回值
