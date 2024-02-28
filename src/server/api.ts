@@ -4,6 +4,8 @@ export const UPLOAD = '/api/upload';
 export const REMOVE_FILE = '/api/removeFile';
 
 /* ==========用户信息相关========== */
+// 获取验证码
+export const VERIFY_CODE = '/api/verifyCode';
 // 登录
 export const LOGIN = '/api/login';
 // 用户注册

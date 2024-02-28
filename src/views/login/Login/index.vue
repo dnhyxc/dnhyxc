@@ -36,12 +36,12 @@
           placeholder="请输入验证码"
           @keyup.enter="onEnter"
         />
-        <canvas ref="canvasCtx" class="code-canvas" :width="width" :height="height" @click="onResetCode"></canvas>
+        <canvas ref="canvasCtx" class="code-canvas" :width="width" :height="height" @click="onResetCode" />
       </el-form-item>
       <el-form-item class="form-item action-list">
-        <el-button type="primary" size="large" class="action" @click="onLogin(formRef)">{{
-          isRegister ? '注册' : '登录'
-        }}</el-button>
+        <el-button type="primary" size="large" class="action" @click="onLogin(formRef)">
+          {{ isRegister ? '注册' : '登录' }}
+        </el-button>
       </el-form-item>
     </el-form>
     <div class="reset-wrap">
@@ -59,7 +59,7 @@ import { ref, reactive, nextTick, onMounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import type { FormInstance, FormRules } from 'element-plus';
 import { loginStore } from '@/store';
-import { verifyUsername, verifyPassword, verifyCode, drawCharater } from '@/utils';
+import { verifyUsername, verifyPassword, drawCharater } from '@/utils';
 
 const router = useRouter();
 
@@ -100,25 +100,9 @@ const validatePassword = (rule: any, value: any, callback: any) => {
   }
 };
 
-const validateCode = (rule: any, value: any, callback: any) => {
-  // 开发环境不进行校验
-  if (import.meta.env.DEV) return true;
-  const { msg, status } = verifyCode(value, charater.value);
-  if (value === '') {
-    callback(new Error('验证码不能为空'));
-  } else if (!status) {
-    // 校验错误之后重置验证码
-    onResetCode()
-    callback(new Error(msg));
-  } else {
-    callback();
-  }
-};
-
 const rules = reactive<FormRules>({
   username: [{ validator: validateUsername, trigger: 'blur', required: true }],
   password: [{ validator: validatePassword, trigger: 'blur', required: true }],
-  code: [{ validator: validateCode, trigger: 'blur', required: true }],
 });
 
 const loginForm = reactive<{
@@ -135,24 +119,37 @@ const loginForm = reactive<{
 
 const emit = defineEmits(['switchDom']);
 
-onMounted(() => {
+// 生成验证码
+const getCharaterValue = (element: HTMLCanvasElement) => {
+  charater.value = drawCharater({
+    canvasElement: element,
+    width,
+    height,
+    code: loginStore.verifyCode.code!,
+  });
+};
+
+// 重置验证码
+const onResetCode = async () => {
+  await loginStore.getVerifyCode();
+  if (canvasCtx.value) {
+    charater.value = '';
+    getCharaterValue(canvasCtx.value!);
+  }
+};
+
+onMounted(async () => {
+  await loginStore.getVerifyCode();
+  // 获取验证码
   nextTick(() => {
-    charater.value = drawCharater({
-      canvasElement: canvasCtx.value!,
-      width,
-      height,
-    });
+    getCharaterValue(canvasCtx.value!);
   });
 });
 
 watch(isRegister, (newVal: boolean) => {
   if (!newVal) {
     nextTick(() => {
-      charater.value = drawCharater({
-        canvasElement: canvasCtx.value!,
-        width,
-        height,
-      });
+      getCharaterValue(canvasCtx.value!);
     });
   }
 });
@@ -162,7 +159,7 @@ const onSubmit = (formEl: FormInstance, type: string) => {
   formEl.validate(async (valid) => {
     if (valid) {
       if (type === 'login') {
-        await loginStore.onLogin(loginForm, router);
+        await loginStore.onLogin(loginForm, router, onResetCode);
       } else {
         const res = await loginStore.onRegister(loginForm);
         if (res) {
@@ -191,7 +188,7 @@ const onEnter = () => {
   if (!formRef.value) return;
   formRef.value.validate(async (valid) => {
     if (valid) {
-      await loginStore.onLogin(loginForm, router);
+      await loginStore.onLogin(loginForm, router, onResetCode);
     } else {
       return false;
     }
@@ -206,18 +203,6 @@ const onBackHome = () => {
 // 点击忘记密码切换组件
 const onForgetPwd = () => {
   emit('switchDom', 'Reset');
-};
-
-// 重置验证码
-const onResetCode = () => {
-  if (canvasCtx.value) {
-    charater.value = '';
-    charater.value = drawCharater({
-      canvasElement: canvasCtx.value,
-      width,
-      height,
-    });
-  }
 };
 </script>
 
@@ -302,6 +287,14 @@ const onResetCode = () => {
         border-top-right-radius: 4px;
         border-bottom-right-radius: 4px;
         cursor: pointer;
+      }
+
+      .load-code-canvas {
+        width: 120px;
+        height: 40px;
+        background-color: var(--theme-blue);
+        border-top-right-radius: 4px;
+        border-bottom-right-radius: 4px;
       }
     }
   }

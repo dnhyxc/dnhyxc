@@ -4,7 +4,7 @@ import type { ElMessageBoxOptions } from 'element-plus';
 import moment from 'moment';
 import SparkMD5 from 'spark-md5';
 import ColorThief from 'colorthief';
-import { MSG_CONFIG, CODE_CONTROL, EMOJI_TEXTS, EMOJI_URLS, CODE_LENGTH, CHARACTERS } from '@/constant';
+import { MSG_CONFIG, CODE_CONTROL, EMOJI_TEXTS, EMOJI_URLS, CODE_LENGTH } from '@/constant';
 import { usePlugins } from './plugins';
 import { normalizeResult } from './result';
 import { decrypt, encrypt } from './crypto';
@@ -730,15 +730,17 @@ export const drawCharater = ({
   canvasElement,
   width,
   height,
+  code,
 }: {
   canvasElement: HTMLCanvasElement;
   width: number;
   height: number;
+  code: string;
 }) => {
-  let txt = '';
-  for (let i = 0; i < CODE_LENGTH; i++) {
-    txt += CHARACTERS[randomNum(0, CHARACTERS.length)];
-  }
+  // let txt = '';
+  // for (let i = 0; i < CODE_LENGTH; i++) {
+  //   txt += CHARACTERS[randomNum(0, CHARACTERS.length)];
+  // }
   const ctx = canvasElement?.getContext('2d') as CanvasRenderingContext2D;
   ctx.fillStyle = randomColor(180, 255);
   ctx.fillRect(0, 0, width, height);
@@ -750,7 +752,7 @@ export const drawCharater = ({
   // 随机生成字体大小(0.5 - 0.75)高的范围
   // ctx.font = randomNum((height * 2) / 4, (height * 3) / 4) + 'px sans-serif';
   ctx.fillStyle = randomColor(0, 255);
-  ctx.fillText(txt, width / 2, height / 2 + 3); // 绘制文本
+  ctx.fillText(code, width / 2, height / 2 + 3); // 绘制文本
   // 绘制干扰线
   for (let j = 0; j < CODE_LENGTH; j++) {
     ctx.strokeStyle = randomColor(30, 180);
@@ -767,7 +769,7 @@ export const drawCharater = ({
     ctx.fill();
   }
 
-  return txt;
+  return code;
 };
 
 // 防抖函数

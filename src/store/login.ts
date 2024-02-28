@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { Router } from 'vue-router';
 import { ElMessage } from 'element-plus';
-import { LoginParams, UserLoginParams, UserInfoParams, registerRes } from '@/typings/common';
+import { LoginParams, UserLoginParams, UserInfoParams, registerRes, VerifyCodeParams } from '@/typings/common';
 import { commonStore, messageStore } from '@/store';
 import * as Service from '@/server';
 import { useCheckUserId } from '@/hooks';
@@ -15,6 +15,8 @@ interface IProps {
   timer: ReturnType<typeof setTimeout> | null;
   logoutStatus: boolean; // 登出状态
   menus: string[];
+  verifyCode: Partial<VerifyCodeParams>;
+  loadCode: boolean;
 }
 
 export const useLoginStore = defineStore('login', {
@@ -36,6 +38,8 @@ export const useLoginStore = defineStore('login', {
     menus: [],
     timer: null,
     logoutStatus: false,
+    verifyCode: {},
+    loadCode: false,
   }),
 
   getters: {},
@@ -73,8 +77,19 @@ export const useLoginStore = defineStore('login', {
       }
     },
 
+    // 获取验证码
+    async getVerifyCode() {
+      if (this.loadCode) return;
+      this.loadCode = true;
+      const res = normalizeResult<VerifyCodeParams>(await Service.verifyCode({ id: this.verifyCode.id }));
+      this.loadCode = false;
+      if (res.success) {
+        this.verifyCode = res.data;
+      }
+    },
+
     // 登录
-    async onLogin(data: LoginParams, router?: Router) {
+    async onLogin(data: LoginParams, router?: Router, onResetCode?: Function) {
       try {
         // 密码加密传到后端
         const password = encrypt(data.password);
@@ -82,6 +97,8 @@ export const useLoginStore = defineStore('login', {
           await Service.login({
             username: data.username,
             password,
+            codeId: this.verifyCode.id,
+            code: data.code,
           }),
         );
         if (res.success) {
@@ -100,6 +117,7 @@ export const useLoginStore = defineStore('login', {
           // 登陆成功后返回到上一页面
           router?.push(commonStore.backPath);
         } else {
+          onResetCode?.();
           ElMessage({
             message: res.message,
             type: 'error',
