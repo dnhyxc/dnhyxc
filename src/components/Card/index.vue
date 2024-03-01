@@ -338,7 +338,7 @@ const toTag = (name: string) => {
         top: 0;
         left: 0;
         font-size: 35px;
-        z-index: 99;
+        z-index: 10;
         .textLg();
       }
     }

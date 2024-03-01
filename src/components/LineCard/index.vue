@@ -32,10 +32,22 @@
             <div class="tags">
               <div class="author" @click.stop="toPersonal(data.authorId!)" v-html="data.authorName" />
               <div class="right">
-                <el-tooltip class="box-item" effect="light" :content="`分类：${data.classify}`" placement="bottom" popper-class="custom-dropdown-styles">
+                <el-tooltip
+                  class="box-item"
+                  effect="light"
+                  :content="`分类：${data.classify}`"
+                  placement="bottom"
+                  popper-class="custom-dropdown-styles"
+                >
                   <div class="classify" @click.stop="toClassify(data.classify!)" v-html="data.classify" />
                 </el-tooltip>
-                <el-tooltip class="box-item" effect="light" :content="`标签：${data.tag}`" placement="bottom" popper-class="custom-dropdown-styles">
+                <el-tooltip
+                  class="box-item"
+                  effect="light"
+                  :content="`标签：${data.tag}`"
+                  placement="bottom"
+                  popper-class="custom-dropdown-styles"
+                >
                   <div class="tag" @click.stop="toTag(data.tag!)" v-html="data.tag" />
                 </el-tooltip>
               </div>
@@ -234,7 +246,7 @@ const onSelectMenu = (menu: { label: string; value: number }) => {
     top: -1px;
     left: -1px;
     font-size: 35px;
-    z-index: 99;
+    z-index: 10;
     .textLg();
   }
 
