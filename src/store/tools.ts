@@ -9,6 +9,7 @@ interface IProps {
   loading: boolean;
   toolList: ToolsItem[];
   total: number;
+  arrayBuffers: { buffer: ArrayBuffer; id: string }[];
 }
 
 export const useToolsStore = defineStore('tools', {
@@ -16,6 +17,7 @@ export const useToolsStore = defineStore('tools', {
     loading: false,
     toolList: [],
     total: 0,
+    arrayBuffers: [],
   }),
 
   actions: {
@@ -56,6 +58,17 @@ export const useToolsStore = defineStore('tools', {
       } catch (error) {
         return false;
       }
+    },
+
+    // 保存arrayBuffer
+    saveArrayBuffer(data: { buffer: ArrayBuffer; id: string }) {
+      // 由于在加载时就判断了是否保存过数据，如果保存了就不会重复保存，因此这里不需要考虑会加入重复的数据
+      this.arrayBuffers = [data, ...this.arrayBuffers];
+    },
+
+    // 清空arrayBuffer
+    clearArrayBuffer() {
+      this.arrayBuffers = [];
     },
   },
 });

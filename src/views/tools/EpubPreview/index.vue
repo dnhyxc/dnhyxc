@@ -156,7 +156,7 @@ import ePub from 'epubjs';
 import { useChildScroller } from '@/hooks';
 import { scrollTo, debounce, getTheme, calculateLoadProgress, Message, checkOS, getUniqueFileName } from '@/utils';
 import { EPUB_THEMES, BOOK_THEME, DOMAIN_URL } from '@/constant';
-import { uploadStore, bookStore, loginStore } from '@/store';
+import { uploadStore, bookStore, loginStore, toolsStore } from '@/store';
 import { AtlasItemParams, BookTocItem, BookTocList, BookRecord } from '@/typings/common';
 import BookList from '../BookList/index.vue';
 
@@ -377,33 +377,35 @@ const resetRendition = () => {
 
 // 渲染电子书
 const renderBook = (buffer: ArrayBuffer | string) => {
-  book = ePub(buffer);
-  // 获取目录
-  rendition = book.renderTo('preview', {
-    width: previewRef.value!.clientWidth,
-    height: previewRef.value!.clientHeight,
-    flow: 'scrolled', // 'paginated' 横向滚动阅读 | 'scrolled' 纵向滚动阅读
-    resizeOnOrientationChange: true, // 是否在窗口 resize 时调整内容尺寸
-    overflow: 'scroll', // 设置视图的 CSS overflow 属性
-    snap: true, // 是否支持翻页
-  });
-  // 渲染电子书
-  rendition?.display();
-  setFontSize('16px');
-  setLineHeight('25px');
-  book.ready
-    .then(() => {
-      tocList.value = book?.navigation?.toc || [];
-      defaultSelectedTocId.value = book?.navigation?.toc?.[0].id;
-      flattenItems(book?.navigation?.toc || []);
-      loading.value = false;
-    })
-    .then(() => {
-      getReadBookRecords();
+  nextTick(() => {
+    book = ePub(buffer);
+    // 获取目录
+    rendition = book.renderTo('preview', {
+      width: previewRef.value!.clientWidth,
+      height: previewRef.value!.clientHeight,
+      flow: 'scrolled', // 'paginated' 横向滚动阅读 | 'scrolled' 纵向滚动阅读
+      resizeOnOrientationChange: true, // 是否在窗口 resize 时调整内容尺寸
+      overflow: 'scroll', // 设置视图的 CSS overflow 属性
+      snap: true, // 是否支持翻页
     });
-  const theme = getTheme();
-  const findTheme = EPUB_THEMES.find((i) => i.key === BOOK_THEME[theme]) || EPUB_THEMES[0];
-  onThemeChange(findTheme!.style.body);
+    // 渲染电子书
+    rendition?.display();
+    setFontSize('16px');
+    setLineHeight('25px');
+    book.ready
+      .then(() => {
+        tocList.value = book?.navigation?.toc || [];
+        defaultSelectedTocId.value = book?.navigation?.toc?.[0].id;
+        flattenItems(book?.navigation?.toc || []);
+        loading.value = false;
+      })
+      .then(() => {
+        getReadBookRecords();
+      });
+    const theme = getTheme();
+    const findTheme = EPUB_THEMES.find((i) => i.key === BOOK_THEME[theme]) || EPUB_THEMES[0];
+    onThemeChange(findTheme!.style.body);
+  });
 };
 
 // 获取读书记录
@@ -454,8 +456,35 @@ const onAbort = () => {
   }
 };
 
+// 加载书籍数据
+const loadBookBuffer = async (id: string, url: string) => {
+  // 获取加载进度
+  const start = performance.now();
+  const arrayBuffer = await calculateLoadProgress({
+    url,
+    getProgress,
+    previousReader,
+    addPreviousReader,
+  }).catch(() => {
+    loading.value = false;
+  });
+  if (arrayBuffer) {
+    // 保存buffer
+    toolsStore.saveArrayBuffer({
+      buffer: arrayBuffer,
+      id,
+    });
+    const end = performance.now();
+    const duration = ((end - start) / 1000).toFixed(2);
+    loadTime.value = duration;
+    renderBook(arrayBuffer);
+  } else {
+    resetRendition();
+  }
+};
+
 // 阅读
-const readBook = (data: AtlasItemParams) => {
+const readBook = async (data: AtlasItemParams) => {
   if (loading.value) return;
   // 选择其它书籍时，保存上一次阅读书籍的位置
   createRecord(true);
@@ -466,22 +495,14 @@ const readBook = (data: AtlasItemParams) => {
   loadType.value = 'line';
   loading.value = true;
   bookName.value = fileName.replace('.epub', '');
-  // 获取加载进度
-  const start = performance.now();
-  calculateLoadProgress({ url, getProgress, previousReader, addPreviousReader })
-    .then((arrayBuffer) => {
-      if (arrayBuffer) {
-        const end = performance.now();
-        const duration = ((end - start) / 1000).toFixed(2);
-        loadTime.value = duration;
-        renderBook(arrayBuffer);
-      } else {
-        resetRendition();
-      }
-    })
-    .catch(() => {
-      loading.value = false;
-    });
+  // 如果从缓存中找到了该书籍的数据，则不从线上加载
+  const findOne = toolsStore.arrayBuffers.find((i) => i.id === id);
+  if (findOne) {
+    renderBook(findOne.buffer);
+  } else {
+    console.log(id, url, 'id, url');
+    loadBookBuffer(id, url);
+  }
   visible.value = false;
 };
 
