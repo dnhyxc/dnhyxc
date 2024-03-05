@@ -112,7 +112,7 @@ const onScrollTo = () => {
       top: -1px;
       left: -1px;
       font-size: 35px;
-      z-index: 99;
+      z-index: 10;
       .textLg();
     }
 
