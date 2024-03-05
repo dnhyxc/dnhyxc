@@ -469,15 +469,15 @@ const loadBookBuffer = async (id: string, url: string) => {
     loading.value = false;
   });
   if (arrayBuffer) {
+    const end = performance.now();
+    const duration = ((end - start) / 1000).toFixed(2);
+    loadTime.value = duration;
+    renderBook(arrayBuffer);
     // 保存buffer
     toolsStore.saveArrayBuffer({
       buffer: arrayBuffer,
       id,
     });
-    const end = performance.now();
-    const duration = ((end - start) / 1000).toFixed(2);
-    loadTime.value = duration;
-    renderBook(arrayBuffer);
   } else {
     resetRendition();
   }
@@ -500,7 +500,6 @@ const readBook = async (data: AtlasItemParams) => {
   if (findOne) {
     renderBook(findOne.buffer);
   } else {
-    console.log(id, url, 'id, url');
     loadBookBuffer(id, url);
   }
   visible.value = false;
