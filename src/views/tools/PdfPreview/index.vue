@@ -49,7 +49,6 @@
             <span class="progress">
               已加载 {{ progress }}% ({{ loadPdfSize.toFixed(2) }}MB / {{ pdfSize.toFixed(2) }}MB)
             </span>
-            <span v-if="progress >= 99" class="duration">，耗时 {{ loadTime }} 秒 </span>
           </div>
         </div>
       </template>
@@ -134,8 +133,6 @@ const visible = ref<boolean>(false);
 const loadType = ref<string>('upload');
 // 加载进度
 const progress = ref<number>(0);
-// 加载时间
-const loadTime = ref<string>('0');
 // 当前选择的书籍大小
 const pdfSize = ref<number>(0);
 // 当前加载书籍的大小
@@ -275,7 +272,6 @@ const resetRendition = () => {
   fileName.value = '';
   loading.value = false;
   progress.value = 0;
-  loadTime.value = '0';
   loadPdfSize.value = 0;
   pdfSize.value = 0;
 };
@@ -294,7 +290,6 @@ const onAbort = () => {
 // 加载书籍blob
 const loadBookBlob = async (id: string, url: string) => {
   // 获取加载进度
-  const start = performance.now();
   const blob = await calculateLoadProgress({
     url,
     getProgress,
@@ -305,9 +300,6 @@ const loadBookBlob = async (id: string, url: string) => {
     loading.value = false;
   });
   if (blob) {
-    const end = performance.now();
-    const duration = ((end - start) / 1000).toFixed(2);
-    loadTime.value = duration;
     const fileURL = URL.createObjectURL(blob);
     getReadBookRecords(fileURL);
     // 保存书籍blob

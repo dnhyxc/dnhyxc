@@ -51,7 +51,6 @@
             <span class="progress">
               已加载 {{ progress }}% ({{ loadBookSize.toFixed(2) }}MB / {{ bookSize.toFixed(2) }}MB)
             </span>
-            <span v-if="progress >= 99" class="duration">，耗时 {{ loadTime }} 秒</span>
           </div>
         </div>
       </template>
@@ -181,8 +180,6 @@ const visible = ref<boolean>(false);
 const loading = ref<boolean>(false);
 // 加载进度
 const progress = ref<number>(0);
-// 加载时间
-const loadTime = ref<string>('0');
 // 选择渠道
 const loadType = ref<string>('upload');
 // 选中的书名
@@ -375,7 +372,6 @@ const resetRendition = () => {
   lineHeight.value = 25;
   loading.value = false;
   progress.value = 0;
-  loadTime.value = '0';
   loadBookSize.value = 0;
   bookSize.value = 0;
 };
@@ -464,7 +460,6 @@ const onAbort = () => {
 // 加载书籍数据
 const loadBookBuffer = async (id: string, url: string) => {
   // 获取加载进度
-  const start = performance.now();
   const arrayBuffer = await calculateLoadProgress({
     url,
     getProgress,
@@ -474,9 +469,6 @@ const loadBookBuffer = async (id: string, url: string) => {
     loading.value = false;
   });
   if (arrayBuffer) {
-    const end = performance.now();
-    const duration = ((end - start) / 1000).toFixed(2);
-    loadTime.value = duration;
     renderBook(arrayBuffer);
     // 保存buffer
     bookStore.saveArrayBuffer({
