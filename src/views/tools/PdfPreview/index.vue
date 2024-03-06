@@ -68,7 +68,13 @@
         </div>
       </div>
     </Loading>
-    <BookList v-model:visible="visible" v-model:loadStatus="loading" :read-book="previewPdf" load-type="pdf" />
+    <BookList
+      v-model:visible="visible"
+      v-model:loadStatus="loading"
+      :read-book="previewPdf"
+      load-type="pdf"
+      :book-id="tagForm.bookId"
+    />
     <div class="add-tag-wrap">
       <el-dialog v-model="addTagVisible" title="保存书签" align-center draggable width="400px">
         <el-form ref="formRef" :model="tagForm" label-width="82px" class="form-wrap" @submit.native.prevent>

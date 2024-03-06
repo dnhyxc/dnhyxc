@@ -142,7 +142,12 @@
         </div>
       </div>
     </Loading>
-    <BookList v-model:visible="visible" v-model:loadStatus="loading" :read-book="readBook" />
+    <BookList
+      v-model:visible="visible"
+      v-model:loadStatus="loading"
+      :read-book="readBook"
+      :book-id="currentTocInfo.bookId"
+    />
   </div>
 </template>
 

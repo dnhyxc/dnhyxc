@@ -24,7 +24,7 @@
                 v-for="data in bookStore.bookList"
                 :key="data.id"
                 :data="data"
-                :class="`line-card ${loadStatus && 'disabled-line-card'}`"
+                :class="`line-card ${(loadStatus || data.id === bookId) && 'disabled-line-card'}`"
                 @click="() => onRead(data)"
               >
                 <div class="cover">
@@ -107,6 +107,7 @@ interface IProps {
   visible: boolean;
   loadStatus: boolean;
   readBook: (data: any) => void;
+  bookId: string;
   loadType?: string; // 需要加载的类型，epub、pdf
 }
 
@@ -182,6 +183,7 @@ const onGetBookList = () => {
 
 // 阅读
 const onRead = (data: AtlasItemParams) => {
+  if (props.bookId === data.id) return;
   props.readBook && props.readBook(data);
 };
 
