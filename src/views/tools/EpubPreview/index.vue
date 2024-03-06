@@ -42,10 +42,10 @@
       class="loading"
     >
       <template #abort>
-        <div v-if="loadType === 'line' && progress < 100" class="abort" @click="onAbort">停止加载</div>
+        <div v-if="loadType === 'line' && progress < 100 && !isSaved" class="abort" @click="onAbort">停止加载</div>
       </template>
       <template #loadInfo>
-        <div v-if="loadType === 'line' && progress < 100" class="load-info">
+        <div v-if="loadType === 'line' && progress < 100 && !isSaved" class="load-info">
           <el-progress :show-text="false" :stroke-width="12" :percentage="progress" class="progress-bar" />
           <div class="load-time">
             <span class="progress">
@@ -156,7 +156,7 @@ import ePub from 'epubjs';
 import { useChildScroller } from '@/hooks';
 import { scrollTo, debounce, getTheme, calculateLoadProgress, Message, checkOS, getUniqueFileName } from '@/utils';
 import { EPUB_THEMES, BOOK_THEME, DOMAIN_URL } from '@/constant';
-import { uploadStore, bookStore, loginStore, toolsStore } from '@/store';
+import { uploadStore, bookStore, loginStore } from '@/store';
 import { AtlasItemParams, BookTocItem, BookTocList, BookRecord } from '@/typings/common';
 import BookList from '../BookList/index.vue';
 
@@ -218,6 +218,11 @@ const emit = defineEmits<Emits>();
 
 const loadBookName = computed(() => {
   return bookName.value.length > 20 ? `${bookName.value.slice(0, 20)}...` : bookName.value;
+});
+
+// 判断是否保存过书籍
+const isSaved = computed(() => {
+  return bookStore.arrayBuffers.find((i) => i.id === currentTocInfo.bookId);
 });
 
 // 设置字体大小
@@ -474,7 +479,7 @@ const loadBookBuffer = async (id: string, url: string) => {
     loadTime.value = duration;
     renderBook(arrayBuffer);
     // 保存buffer
-    toolsStore.saveArrayBuffer({
+    bookStore.saveArrayBuffer({
       buffer: arrayBuffer,
       id,
     });
@@ -496,9 +501,8 @@ const readBook = async (data: AtlasItemParams) => {
   loading.value = true;
   bookName.value = fileName.replace('.epub', '');
   // 如果从缓存中找到了该书籍的数据，则不从线上加载
-  const findOne = toolsStore.arrayBuffers.find((i) => i.id === id);
-  if (findOne) {
-    renderBook(findOne.buffer);
+  if (isSaved.value) {
+    renderBook(isSaved.value?.buffer);
   } else {
     loadBookBuffer(id, url);
   }

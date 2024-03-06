@@ -40,10 +40,10 @@
       class="content"
     >
       <template #abort>
-        <div v-if="loadType === 'line' && progress < 100" class="abort" @click="onAbort">停止加载</div>
+        <div v-if="loadType === 'line' && progress < 100 && !isSaved" class="abort" @click="onAbort">停止加载</div>
       </template>
       <template #loadInfo>
-        <div v-if="loadType === 'line' && progress < 100" class="load-info">
+        <div v-if="loadType === 'line' && progress < 100 && !isSaved" class="load-info">
           <el-progress :show-text="false" :stroke-width="12" :percentage="progress" class="progress-bar" />
           <div class="load-time">
             <span class="progress">
@@ -102,7 +102,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue';
+import { ref, reactive, computed } from 'vue';
 import { onBeforeRouteLeave, useRouter } from 'vue-router';
 import { ElMessage } from 'element-plus';
 import type { UploadProps, FormInstance } from 'element-plus';
@@ -164,6 +164,11 @@ const rawFile = ref<File | null>(null);
 let timer: ReturnType<typeof setTimeout> | null = null;
 // 用于存储上一个 ReadableStreamDefaultReader 对象
 let previousReader: any = null;
+
+// 判断是否保存过书籍
+const isSaved = computed(() => {
+  return bookStore.blobs.find((i) => i.id === tagForm.bookId);
+});
 
 onBeforeRouteLeave(async (to, from, next) => {
   // 页面离开时时，保存上一次阅读的位置
@@ -286,6 +291,32 @@ const onAbort = () => {
   }
 };
 
+// 加载书籍blob
+const loadBookBlob = async (id: string, url: string) => {
+  // 获取加载进度
+  const start = performance.now();
+  const blob = await calculateLoadProgress({
+    url,
+    getProgress,
+    needFileType: 'blob',
+    previousReader,
+    addPreviousReader,
+  }).catch(() => {
+    loading.value = false;
+  });
+  if (blob) {
+    const end = performance.now();
+    const duration = ((end - start) / 1000).toFixed(2);
+    loadTime.value = duration;
+    const fileURL = URL.createObjectURL(blob);
+    getReadBookRecords(fileURL);
+    // 保存书籍blob
+    bookStore.saveBlob({ id, blob });
+  } else {
+    loading.value = false;
+  }
+};
+
 const loadPdf = () => {
   if (!activePdf.value || loading.value) return;
   resetRendition();
@@ -296,29 +327,13 @@ const loadPdf = () => {
   tagForm.bookId = id;
   pdfSize.value = size / 1024 / 1024;
   fileName.value = name;
-  // 获取加载进度
-  const start = performance.now();
-  calculateLoadProgress({
-    url,
-    getProgress,
-    needFileType: 'blob',
-    previousReader,
-    addPreviousReader,
-  })
-    .then((blob) => {
-      if (blob) {
-        const end = performance.now();
-        const duration = ((end - start) / 1000).toFixed(2);
-        loadTime.value = duration;
-        const fileURL = URL.createObjectURL(blob);
-        getReadBookRecords(fileURL);
-      } else {
-        loading.value = false;
-      }
-    })
-    .catch(() => {
-      loading.value = false;
-    });
+  // 如果从缓存中找到了该书籍的数据，则不从线上加载
+  if (isSaved.value) {
+    const fileURL = URL.createObjectURL(isSaved.value?.blob);
+    getReadBookRecords(fileURL);
+  } else {
+    loadBookBlob(id, url);
+  }
 };
 
 const previewPdf = async (data: AtlasItemParams) => {

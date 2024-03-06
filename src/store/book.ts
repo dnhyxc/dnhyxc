@@ -13,6 +13,8 @@ interface IProps {
   total: number;
   currentUploadId: string;
   bookRecordInfo: Partial<BookRecord | null>; // 赋值为可选属性
+  arrayBuffers: { buffer: ArrayBuffer; id: string }[];
+  blobs: { blob: Blob; id: string }[];
 }
 
 export const useBookStore = defineStore('book', {
@@ -24,6 +26,8 @@ export const useBookStore = defineStore('book', {
     pageSize: 30,
     bookRecordInfo: null,
     currentUploadId: '',
+    arrayBuffers: [],
+    blobs: [],
   }),
 
   actions: {
@@ -150,6 +154,28 @@ export const useBookStore = defineStore('book', {
         type: res.success ? 'success' : 'error',
         offset: 80,
       });
+    },
+
+    // 保存arrayBuffer
+    saveArrayBuffer(data: { buffer: ArrayBuffer; id: string }) {
+      // 由于在加载时就判断了是否保存过数据，如果保存了就不会重复保存，因此这里不需要考虑会加入重复的数据
+      this.arrayBuffers = [data, ...this.arrayBuffers];
+    },
+
+    // 清空书籍arrayBuffer
+    clearArrayBuffer() {
+      this.arrayBuffers = [];
+    },
+
+    // 保存书籍Blob
+    saveBlob(data: { blob: Blob; id: string }) {
+      // 由于在加载时就判断了是否保存过数据，如果保存了就不会重复保存，因此这里不需要考虑会加入重复的数据
+      this.blobs = [data, ...this.blobs];
+    },
+
+    // 清空书籍Blob
+    clearBlob() {
+      this.blobs = [];
     },
 
     // 清除数据
