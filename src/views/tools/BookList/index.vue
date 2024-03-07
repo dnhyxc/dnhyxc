@@ -24,7 +24,9 @@
                 v-for="data in bookStore.bookList"
                 :key="data.id"
                 :data="data"
-                :class="`line-card ${(loadStatus || data.id === bookId) && 'disabled-line-card'}`"
+                :class="`line-card ${(loadStatus || data.id === bookId) && 'disabled-line-card'} ${
+                  data.id === bookId && 'active-line-card'
+                }`"
                 @click="() => onRead(data)"
               >
                 <div class="cover">
@@ -383,6 +385,10 @@ const onScrollTo = (to?: number) => {
         &:hover {
           box-shadow: 0 0 5px var(--active);
         }
+      }
+
+      .active-line-card {
+        box-shadow: 0 0 5px var(--active);
       }
     }
   }

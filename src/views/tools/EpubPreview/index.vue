@@ -142,12 +142,7 @@
         </div>
       </div>
     </Loading>
-    <BookList
-      v-model:visible="visible"
-      v-model:loadStatus="loading"
-      :read-book="readBook"
-      :book-id="currentTocInfo.bookId"
-    />
+    <BookList v-model:visible="visible" v-model:loadStatus="loading" :read-book="readBook" :book-id="currentBookId" />
   </div>
 </template>
 
@@ -200,6 +195,8 @@ const currentTocInfo = reactive<{ tocId: string; tocName: string; tocHref: strin
   bookId: '',
   tocName: '',
 });
+// 当前阅读书籍id
+const currentBookId = ref<string>('');
 
 // ePub 实例
 let book: any = null;
@@ -342,16 +339,16 @@ const onUpload = (event: { file: File }) => {
       if (res) {
         await bookStore.addBook(res.filePath, event.file);
         currentTocInfo.bookId = bookStore.currentUploadId;
-        renderBook(buffer);
+        renderBook(buffer, bookStore.currentUploadId);
       } else {
-        renderBook(buffer);
+        renderBook(buffer, bookStore.currentUploadId);
       }
     } else {
       const { newFile } = await getUniqueFileName(event.file);
       const filePath = getFilePath(newFile.name);
       await bookStore.addBook(filePath, event.file);
       currentTocInfo.bookId = bookStore.currentUploadId;
-      renderBook(buffer);
+      renderBook(buffer, bookStore.currentUploadId);
     }
   };
   reader.readAsArrayBuffer(event.file);
@@ -382,7 +379,7 @@ const resetRendition = () => {
 };
 
 // 渲染电子书
-const renderBook = (buffer: ArrayBuffer | string) => {
+const renderBook = (buffer: ArrayBuffer | string, bookId: string) => {
   nextTick(() => {
     book = ePub(buffer);
     // 获取目录
@@ -404,6 +401,7 @@ const renderBook = (buffer: ArrayBuffer | string) => {
         defaultSelectedTocId.value = book?.navigation?.toc?.[0].id;
         flattenItems(book?.navigation?.toc || []);
         loading.value = false;
+        currentBookId.value = bookId;
       })
       .then(() => {
         getReadBookRecords();
@@ -466,7 +464,7 @@ const onAbort = () => {
 const loadBookBuffer = async (id: string, url: string) => {
   // 获取加载进度
   const arrayBuffer = await calculateLoadProgress({
-    url,
+    url: '/public/test.epub',
     getProgress,
     previousReader,
     addPreviousReader,
@@ -474,7 +472,7 @@ const loadBookBuffer = async (id: string, url: string) => {
     loading.value = false;
   });
   if (arrayBuffer) {
-    renderBook(arrayBuffer);
+    renderBook(arrayBuffer, id);
     // 保存buffer
     bookStore.saveArrayBuffer({
       buffer: arrayBuffer,
@@ -499,7 +497,7 @@ const readBook = async (data: AtlasItemParams) => {
   bookName.value = fileName.replace('.epub', '');
   // 如果从缓存中找到了该书籍的数据，则不从线上加载
   if (isSaved.value) {
-    renderBook(isSaved.value?.buffer);
+    renderBook(isSaved.value?.buffer, id);
   } else {
     loadBookBuffer(id, url);
   }

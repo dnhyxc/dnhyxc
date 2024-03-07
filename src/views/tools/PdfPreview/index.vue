@@ -73,7 +73,7 @@
       v-model:loadStatus="loading"
       :read-book="previewPdf"
       load-type="pdf"
-      :book-id="tagForm.bookId"
+      :book-id="currentBookId"
     />
     <div class="add-tag-wrap">
       <el-dialog v-model="addTagVisible" title="保存书签" align-center draggable width="400px">
@@ -163,6 +163,8 @@ const canClose = ref<boolean>(true);
 const canLoadPdf = ref<boolean>(true);
 const canUpload = ref<boolean>(true);
 const rawFile = ref<File | null>(null);
+// 当前阅读书籍id
+const currentBookId = ref<string>('');
 // 定时器
 let timer: ReturnType<typeof setTimeout> | null = null;
 // 用于存储上一个 ReadableStreamDefaultReader 对象
@@ -213,9 +215,10 @@ const onUploadFile = async () => {
     if (res) {
       await bookStore.addBook(res.filePath, rawFile.value);
       tagForm.bookId = bookStore.currentUploadId;
-      getReadBookRecords(fileURL);
+      getReadBookRecords(fileURL, bookStore.currentUploadId);
     } else {
       iframeUrl.value = fileURL;
+      currentBookId.value = bookStore.currentUploadId;
       clearLoading();
     }
   } else {
@@ -224,7 +227,7 @@ const onUploadFile = async () => {
     const filePath = getFilePath(newFile.name);
     await bookStore.addBook(filePath, rawFile.value);
     tagForm.bookId = bookStore.currentUploadId;
-    getReadBookRecords(fileURL);
+    getReadBookRecords(fileURL, bookStore.currentUploadId);
   }
 };
 
@@ -307,7 +310,7 @@ const loadBookBlob = async (id: string, url: string) => {
   });
   if (blob) {
     const fileURL = URL.createObjectURL(blob);
-    getReadBookRecords(fileURL);
+    getReadBookRecords(fileURL, id);
     // 保存书籍blob
     bookStore.saveBlob({ id, blob });
   } else {
@@ -328,7 +331,7 @@ const loadPdf = () => {
   // 如果从缓存中找到了该书籍的数据，则不从线上加载
   if (isSaved.value) {
     const fileURL = URL.createObjectURL(isSaved.value?.blob);
-    getReadBookRecords(fileURL);
+    getReadBookRecords(fileURL, id);
   } else {
     loadBookBlob(id, url);
   }
@@ -352,7 +355,7 @@ const previewPdf = async (data: AtlasItemParams) => {
 };
 
 // 获取读书记录
-const getReadBookRecords = async (fileURL: string) => {
+const getReadBookRecords = async (fileURL: string, curBookId: string) => {
   if (!tagForm.bookId || !location.pathname.includes('tools') || !fileURL) return;
   await bookStore.getReadBookRecords(tagForm.bookId);
   if (bookStore.bookRecordInfo) {
@@ -365,14 +368,17 @@ const getReadBookRecords = async (fileURL: string) => {
       const res = await Message(`第 ${tocId} 页 ${tocName || ''}`, '是否跳转到历史阅读目录？', 'info');
       if (res === 'confirm') {
         iframeUrl.value = `${fileURL}#page=${tocId}`;
+        currentBookId.value = curBookId;
         clearLoading();
       }
     } catch (error) {
       iframeUrl.value = fileURL;
+      currentBookId.value = curBookId;
       clearLoading();
     }
   } else {
     iframeUrl.value = fileURL;
+    currentBookId.value = curBookId;
     clearLoading();
   }
 };
