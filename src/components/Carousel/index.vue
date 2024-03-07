@@ -31,7 +31,7 @@
               <span class="tag" @click.stop="toTag(item.tag!)">标签: {{ item.tag }}</span>
             </div>
           </div>
-          <Image :url="item.coverImage || IMG1" :transition-img="IMG1" class="img" />
+          <Image :url="item.coverImage || IMG1" :transition-img="IMG1" class="img" position="center" />
         </div>
       </el-carousel-item>
     </el-carousel>
