@@ -93,7 +93,6 @@ export const useBookStore = defineStore('book', {
       fileName: string;
       coverImg: string;
       author: string;
-      translator: string;
       language: string;
     }) {
       const res = normalizeResult<{ count: number }>(await Service.updateBookInfo(params));
@@ -105,7 +104,6 @@ export const useBookStore = defineStore('book', {
               fileName: params.fileName,
               coverImg: params.coverImg,
               author: params.author,
-              translator: params.translator,
               language: params.language,
             };
           }

@@ -245,14 +245,11 @@ onUnmounted(() => {
 });
 
 onBeforeRouteLeave(async (to, from, next) => {
+  const { bookId, tocId, tocName, tocHref } = currentTocInfo;
+  // 是否是加载线上的资源
+  const isLoadLine = progress.value < 100 && loadType.value === 'line' && !isSaved.value;
   // 页面离开时时，保存上一次阅读书籍的位置
-  if (
-    !currentTocInfo.bookId ||
-    !currentTocInfo.tocId ||
-    !currentTocInfo.tocName ||
-    !currentTocInfo.tocHref ||
-    (progress.value < 100 && loadType.value !== 'upload')
-  ) {
+  if (!bookId || !tocId || !tocName || !tocHref || isLoadLine) {
     // 页面离开时停止加载资源
     onAbort();
     next();
@@ -261,10 +258,10 @@ onBeforeRouteLeave(async (to, from, next) => {
     // 页面离开时停止加载资源
     onAbort();
     await bookStore.createReadBookRecords({
-      bookId: currentTocInfo.bookId,
-      tocHref: currentTocInfo.tocHref,
-      tocId: currentTocInfo.tocId,
-      tocName: currentTocInfo.tocName?.trim(),
+      bookId,
+      tocHref,
+      tocId,
+      tocName: tocName?.trim(),
       position: scrollNode?.scrollTop || 0,
     });
     next();
@@ -290,19 +287,34 @@ const onKeydown = (event: KeyboardEvent) => {
   }
 };
 
+// 重置阅读属性设置
+const resetRendition = () => {
+  // 重新选择电子书时清空目录
+  tocList.value = [];
+  // 重新选择电子书时重置原来的电子书
+  rendition?.destroy();
+  book = null;
+  rendition = null;
+  bookName.value = '';
+  fontColor.value = 'var(--font-1)';
+  fontSize.value = 16;
+  lineHeight.value = 25;
+  loading.value = false;
+  progress.value = 0;
+  loadBookSize.value = 0;
+  bookSize.value = 0;
+};
+
+// 保存读书记录
 const createRecord = (top?: boolean) => {
-  if (
-    !currentTocInfo.bookId ||
-    !currentTocInfo.tocId ||
-    !currentTocInfo.tocName ||
-    !currentTocInfo.tocHref ||
-    (progress.value < 100 && loadType.value !== 'upload')
-  )
-    return;
+  const { bookId, tocId, tocName, tocHref } = currentTocInfo;
+  // 是否是加载线上的资源
+  const isLoadLine = progress.value < 100 && loadType.value === 'line' && !isSaved.value;
+  if (!bookId || !tocId || !tocName || !tocHref || isLoadLine) return;
   const params: BookRecord = {
-    bookId: currentTocInfo.bookId,
-    tocHref: currentTocInfo.tocHref,
-    tocId: currentTocInfo.tocId,
+    bookId,
+    tocHref,
+    tocId,
     tocName: currentTocInfo.tocName?.trim(),
   };
   if (top) {
@@ -358,24 +370,6 @@ const getFilePath = (fileName: string) => {
   const isDev = import.meta.env.DEV;
   const filePath = isDev ? `http://localhost:9112/files/${fileName}` : `http://${DOMAIN_URL}/files/${fileName}`;
   return filePath;
-};
-
-// 重置阅读属性设置
-const resetRendition = () => {
-  // 重新选择电子书时清空目录
-  tocList.value = [];
-  // 重新选择电子书时重置原来的电子书
-  rendition?.destroy();
-  book = null;
-  rendition = null;
-  bookName.value = '';
-  fontColor.value = 'var(--font-1)';
-  fontSize.value = 16;
-  lineHeight.value = 25;
-  loading.value = false;
-  progress.value = 0;
-  loadBookSize.value = 0;
-  bookSize.value = 0;
 };
 
 // 渲染电子书
@@ -464,7 +458,7 @@ const onAbort = () => {
 const loadBookBuffer = async (id: string, url: string) => {
   // 获取加载进度
   const arrayBuffer = await calculateLoadProgress({
-    url: '/public/test.epub',
+    url,
     getProgress,
     previousReader,
     addPreviousReader,
@@ -548,8 +542,8 @@ const onPrev = () => {
     currentTocInfo.tocHref = currentToc.href;
     currentTocInfo.tocId = currentToc.id;
     currentTocInfo.tocName = currentToc.label;
+    rendition?.display(currentToc.href);
   }
-  rendition?.prev();
   createRecord();
 };
 
@@ -562,8 +556,8 @@ const onNext = () => {
     currentTocInfo.tocHref = currentToc.href;
     currentTocInfo.tocId = currentToc.id;
     currentTocInfo.tocName = currentToc.label;
+    rendition?.display(currentToc.href);
   }
-  rendition?.next();
   createRecord();
 };
 

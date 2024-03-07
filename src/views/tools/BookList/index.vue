@@ -44,8 +44,8 @@
                   </div>
                   <div class="book-desc">
                     <div class="desc">作者：{{ data.author || '-' }}</div>
-                    <div class="desc">译者：{{ data.translator || '-' }}</div>
                     <div class="desc">语言：{{ data.language || '-' }}</div>
+                    <div class="desc">书籍大小：{{ `${(data.size / 1024 / 1024).toFixed(2)} MB` || '-' }}</div>
                     <div class="desc">添加时间：{{ formatDate(data.createTime, 'YYYY/MM/DD') }}</div>
                   </div>
                 </div>
@@ -73,9 +73,6 @@
               </el-form-item>
               <el-form-item prop="author" label="书籍作者" :title="bookForm.author" class="form-item">
                 <el-input v-model="bookForm.author" placeholder="请输入书籍作者" />
-              </el-form-item>
-              <el-form-item prop="translator" label="书籍译者" class="form-item">
-                <el-input v-model="bookForm.translator" placeholder="请输入书籍译者" />
               </el-form-item>
               <el-form-item prop="language" label="书籍语言" class="form-item">
                 <el-input v-model="bookForm.language" placeholder="请输入书籍语言" />
@@ -126,14 +123,12 @@ const bookForm = reactive<{
   coverImg: string;
   id: string;
   author: string;
-  translator: string;
   language: string;
 }>({
   id: '',
   fileName: '',
   coverImg: '',
   author: '',
-  translator: '',
   language: '',
 });
 
@@ -194,7 +189,6 @@ const resetForm = () => {
   bookForm.fileName = '';
   bookForm.coverImg = '';
   bookForm.author = '';
-  bookForm.translator = '';
   bookForm.language = '';
 };
 
@@ -204,7 +198,6 @@ const onEdit = (data: AtlasItemParams) => {
   bookForm.fileName = data.fileName;
   bookForm.coverImg = data.coverImg || '';
   bookForm.author = data.author || '';
-  bookForm.translator = data.translator || '';
   bookForm.language = data.language || '';
   editVisible.value = true;
 };
@@ -220,7 +213,6 @@ const onSubmit = async () => {
     fileName: bookForm.fileName,
     coverImg: bookForm.coverImg,
     author: bookForm.author,
-    translator: bookForm.translator,
     language: bookForm.language,
   });
   resetForm();

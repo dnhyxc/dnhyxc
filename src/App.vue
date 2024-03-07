@@ -116,7 +116,6 @@ watch(
 
 // 刷新当前页面
 const reload = () => {
-  console.log('222222222222222');
   isRouterAlive.value = false;
   nextTick(() => {
     isRouterAlive.value = true;

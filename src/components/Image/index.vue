@@ -29,6 +29,7 @@ interface IProps {
   onClick?: Function;
   transitionImg?: string;
   needColor?: boolean;
+  position?: string;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
@@ -37,6 +38,7 @@ const props = withDefaults(defineProps<IProps>(), {
   onClick: () => {},
   transitionImg: '',
   needColor: false,
+  position: 'top left',
 });
 
 onMounted(() => {
@@ -97,7 +99,7 @@ const onClickImg = () => {
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
     -webkit-user-drag: none;
-    .imgStyle();
+    .imgStyle(0.3s, v-bind(position));
   }
 }
 </style>

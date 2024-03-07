@@ -47,8 +47,6 @@ const props = withDefaults(defineProps<IProps>(), {
   currentClassify: '',
 });
 
-console.log(props.reelGradient, ' reelGradient')
-
 const moveInfo = reactive<{ x: number; scrollWidth: number }>({ x: 0, scrollWidth: 0 });
 const scrollWrap = ref<any>(null);
 const cardList = ref<HTMLDivElement | null>(null);

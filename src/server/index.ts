@@ -557,7 +557,6 @@ export const updateBookInfo = async (params: {
   fileName: string;
   coverImg: string;
   author: string;
-  translator: string;
   language: string;
 }) => {
   return await post(API.UPDATE_BOOK_INFO, copeParams(params));

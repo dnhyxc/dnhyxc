@@ -67,7 +67,7 @@
             <span class="tag" @click.stop="toTag(item.tag!)">标签: {{ item?.tag }}</span>
           </div>
         </div>
-        <Image :url="item?.coverImage || IMG1" :transition-img="IMG1" class="img" />
+        <Image :url="item?.coverImage || IMG1" :transition-img="IMG1" class="img" position="center" />
       </div>
     </div>
   </div>
@@ -295,11 +295,6 @@ const toTag = (name: string) => {
         height: 200px;
         filter: contrast(100%);
         transition: all 0.5s;
-
-        .image-item {
-          border-radius: 5px;
-          .imgStyle();
-        }
       }
     }
   }
