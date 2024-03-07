@@ -295,6 +295,10 @@ const toTag = (name: string) => {
         height: 200px;
         filter: contrast(100%);
         transition: all 0.5s;
+
+        .image-item {
+          border-radius: 5px;
+        }
       }
     }
   }
