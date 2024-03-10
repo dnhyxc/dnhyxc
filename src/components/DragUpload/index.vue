@@ -52,7 +52,7 @@ const beforeUpload: UploadProps['beforeUpload'] = (rawFile) => {
       return false;
     }
     if (Array.isArray(props.fileType) && !props.fileType.includes(rawFile.type)) {
-      ElMessage.error(`只允许上传 doc, docx 格式的文件`);
+      ElMessage.error('只允许上传 doc, docx 格式的文件');
       return false;
     }
     return true;
@@ -62,7 +62,7 @@ const beforeUpload: UploadProps['beforeUpload'] = (rawFile) => {
 
   if (props.fileType && Array.isArray(props.fileType)) {
     if (Array.isArray(props.fileType) && !WORD_TYPES.includes(rawFile.type)) {
-      ElMessage.error(`只允许上传 doc, docx 格式的文件`);
+      ElMessage.error('只允许上传 doc, docx 格式的文件');
       return false;
     }
     return true;
