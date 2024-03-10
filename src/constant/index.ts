@@ -29,7 +29,7 @@ import NO_DATA_SVG from '@/assets/svg/no_data.svg';
 import BOOK_SVG from '@/assets/svg/book.svg';
 import PDF_SVG from '@/assets/svg/pdf.svg';
 import TRANSCRIBE_SVG from '@/assets/svg/transcribe.svg';
-import WORD_SVG from '@/assets/svg/unknown.svg';
+import WORD_SVG from '@/assets/svg/word.svg';
 import HTTP from '@/assets/images/http.jpg';
 
 export {
