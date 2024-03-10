@@ -16,7 +16,7 @@
       <EpubPreview v-if="epubVisible" v-model:modal-visible="epubVisible" />
       <PdfPreview v-if="pdfVisible" v-model:modal-visible="pdfVisible" />
       <Transcribe v-if="transcribeVisible" v-model:modal-visible="transcribeVisible" />
-      <Unknown v-if="unknownVisible" v-model:modal-visible="unknownVisible" />
+      <WordPreview v-if="wordVisible" v-model:modal-visible="wordVisible" />
       <div v-if="!visible" class="navs-wrap">
         <div class="tools">
           <div class="tool-list-wrap">
@@ -49,7 +49,7 @@ import Links from './Links/index.vue';
 import EpubPreview from './EpubPreview/index.vue';
 import PdfPreview from './PdfPreview/index.vue';
 import Transcribe from './Transcribe/index.vue';
-import Unknown from './Unknown/index.vue';
+import WordPreview from './WordPreview/index.vue';
 
 // 图片压缩弹窗
 const compressVisible = ref<boolean>(false);
@@ -70,7 +70,7 @@ const pdfVisible = ref<boolean>(false);
 // 是否显示屏幕录制
 const transcribeVisible = ref<boolean>(false);
 // 是否显示百度翻译
-const unknownVisible = ref<boolean>(false);
+const wordVisible = ref<boolean>(false);
 
 onMounted(() => {
   // 获取工具列表
@@ -88,7 +88,7 @@ const visible = computed(() => {
     epubVisible.value ||
     pdfVisible.value ||
     transcribeVisible.value ||
-    unknownVisible.value
+    wordVisible.value
   );
 });
 
@@ -143,8 +143,8 @@ const showTranscribe = () => {
 };
 
 // 显示未知页
-const showUnknown = () => {
-  unknownVisible.value = true;
+const showWord = () => {
+  wordVisible.value = true;
 };
 
 // 策略模式实现点击每个nav card的效果
@@ -160,7 +160,7 @@ const onClickNavIcon = (item: ToolsItem) => {
     epub: showEpub,
     pdf: showPdf,
     transcribe: showTranscribe,
-    unknown: showUnknown,
+    word: showWord,
   };
   actions[item.key](item);
 };
@@ -172,7 +172,6 @@ const onClickNavIcon = (item: ToolsItem) => {
 .tools-wrap {
   display: flex;
   flex-direction: column;
-  height: 100%;
   height: calc(100% - 8px);
   margin-top: 2px;
   border-radius: 5px;
@@ -272,7 +271,6 @@ const onClickNavIcon = (item: ToolsItem) => {
 }
 
 .board-wrap {
-  margin-left: 5px;
   margin: 8px 5px 0;
   box-shadow: 0 0 8px 0 var(--shadow-mack);
   background-color: var(--pre-hover-bg);

@@ -15,7 +15,9 @@
       :before-upload="beforeUpload"
       :http-request="onUpload"
     >
-      <el-icon class="el-icon--upload"><upload-filled /></el-icon>
+      <el-icon class="el-icon--upload">
+        <upload-filled />
+      </el-icon>
       <div class="el-upload__text">
         拖拽或点击文件上传（仅支持 {{ uploadInfoText || 'png、jpg、jpeg、gif 格式的图片' }}）
       </div>
@@ -28,28 +30,45 @@
 import type { UploadProps } from 'element-plus';
 import { ElMessage } from 'element-plus';
 import { UploadFilled } from '@element-plus/icons-vue';
-import { FILE_TYPE, FILE_UPLOAD_MSG } from '@/constant';
+import { FILE_TYPE, FILE_UPLOAD_MSG, WORD_TYPES } from '@/constant';
 
 interface IProps {
   onUpload: (event: { file: File }) => void;
   uploadInfoText?: string;
   accept?: string;
   limitSize?: number;
-  fileType?: string;
+  fileType?: string | string[];
 }
 
 const props = defineProps<IProps>();
 
 // 上传校验
 const beforeUpload: UploadProps['beforeUpload'] = (rawFile) => {
-  if (props.fileType) {
-    if (!rawFile.type.includes(props.fileType)) {
+  console.log(rawFile, 'rawFile');
+  if (props.fileType && typeof props.fileType === 'string') {
+    if (!rawFile.type.includes(props.fileType as string)) {
       const type = props.fileType === 'epub' ? 'epub，epub+zip' : props.fileType;
       ElMessage.error(`只允许上传 ${type} 格式的文件`);
       return false;
     }
+    if (Array.isArray(props.fileType) && !props.fileType.includes(rawFile.type)) {
+      ElMessage.error(`只允许上传 doc, docx 格式的文件`);
+      return false;
+    }
     return true;
-  } else {
+  }
+
+  console.log(rawFile.type, 'rawFile.type');
+
+  if (props.fileType && Array.isArray(props.fileType)) {
+    if (Array.isArray(props.fileType) && !WORD_TYPES.includes(rawFile.type)) {
+      ElMessage.error(`只允许上传 doc, docx 格式的文件`);
+      return false;
+    }
+    return true;
+  }
+
+  if (!props.fileType) {
     if (!FILE_TYPE.includes(rawFile.type)) {
       ElMessage.error(FILE_UPLOAD_MSG);
       return false;
@@ -78,6 +97,7 @@ const onUpload = async (event: { file: File }) => {
       padding: 10px 20px 0 !important;
       height: 100%;
     }
+
     .el-upload-dragger {
       display: flex;
       justify-content: center;

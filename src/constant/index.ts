@@ -29,7 +29,7 @@ import NO_DATA_SVG from '@/assets/svg/no_data.svg';
 import BOOK_SVG from '@/assets/svg/book.svg';
 import PDF_SVG from '@/assets/svg/pdf.svg';
 import TRANSCRIBE_SVG from '@/assets/svg/transcribe.svg';
-import UNKNOWN from '@/assets/svg/unknown.svg';
+import WORD_SVG from '@/assets/svg/unknown.svg';
 import HTTP from '@/assets/images/http.jpg';
 
 export {
@@ -73,8 +73,8 @@ export const TOOL_LIST = [
   { toolName: '画板', key: 'board', id: 'board', toolUrl: BOARD_SVG },
   { toolName: '屏幕录制', key: 'transcribe', id: 'transcribe', toolUrl: TRANSCRIBE_SVG },
   { toolName: '览电子书', key: 'epub', id: 'epub', toolUrl: BOOK_SVG },
-  { toolName: 'PDF 预览', key: 'pdf', id: 'pdf', toolUrl: PDF_SVG },
-  { toolName: '求知', key: 'unknown', id: 'unknown', toolUrl: UNKNOWN },
+  { toolName: 'PDF预览', key: 'pdf', id: 'pdf', toolUrl: PDF_SVG },
+  { toolName: 'Word预览', key: 'word', id: 'word', toolUrl: WORD_SVG },
 ];
 
 // 常用图片截取比例
@@ -721,6 +721,12 @@ export const ABOUT_TABS = [
 export const FILE_TYPE = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif', 'image/webp', 'image/svg+xml'];
 // 上传文件提示
 export const FILE_UPLOAD_MSG = '请上传 png、jpg、jpeg、gif、webp、svg 格式的图片';
+
+// word 文件类型，doc,docx
+export const WORD_TYPES = [
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  'application/msword',
+];
 
 // 我的主页链接图标
 export const ICONLINKS = [
