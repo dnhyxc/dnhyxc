@@ -137,6 +137,8 @@ const beforeUpload: UploadProps['beforeUpload'] = async (file) => {
 };
 
 const onUpload = async ({ file }: { file: File }) => {
+  // 每次上传重置currentWordId
+  currentWordId.value = '';
   saveStatus.value = false;
   if (!file) return;
   docFile.value = file;
@@ -161,7 +163,6 @@ const onSaveWord = async () => {
   const res = await uploadStore.uploadOtherFile(docFile.value as File);
   if (res) {
     const status = await bookStore.addBook(res.filePath, docFile.value, 'word');
-    currentWordId.value = bookStore.currentUploadId;
     if (status.success) {
       saveStatus.value = true;
     } else {
