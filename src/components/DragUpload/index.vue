@@ -44,7 +44,6 @@ const props = defineProps<IProps>();
 
 // 上传校验
 const beforeUpload: UploadProps['beforeUpload'] = (rawFile) => {
-  console.log(rawFile, 'rawFile');
   if (props.fileType && typeof props.fileType === 'string') {
     if (!rawFile.type.includes(props.fileType as string)) {
       const type = props.fileType === 'epub' ? 'epub，epub+zip' : props.fileType;
@@ -57,8 +56,6 @@ const beforeUpload: UploadProps['beforeUpload'] = (rawFile) => {
     }
     return true;
   }
-
-  console.log(rawFile.type, 'rawFile.type');
 
   if (props.fileType && Array.isArray(props.fileType)) {
     if (Array.isArray(props.fileType) && !WORD_TYPES.includes(rawFile.type)) {

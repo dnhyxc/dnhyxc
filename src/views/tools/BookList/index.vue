@@ -107,7 +107,7 @@ interface IProps {
   loadStatus: boolean;
   readBook: (data: any) => void;
   bookId: string;
-  loadType?: string; // 需要加载的类型，epub、pdf
+  loadType?: 'epub' | 'pdf' | 'word'; // 需要加载的类型，epub、pdf
 }
 
 const props = defineProps<IProps>();

@@ -32,19 +32,19 @@ export const useBookStore = defineStore('book', {
 
   actions: {
     // 添加书籍
-    async addBook(url: string, file: Blob) {
+    async addBook(url: string, file: Blob, type?: string) {
       const res = normalizeResult<AtlasItemParams>(
         await Service.addBook({
           url,
           size: file.size,
           fileName: file.name,
-          type: file.type,
+          type: type || file.type,
         }),
       );
 
       if (res.success) {
         this.currentUploadId = res.data.id;
-        if (res.code === 201) return;
+        if (res.code === 201) return res;
         this.bookList = [res.data, ...this.bookList];
       } else {
         ElMessage({
@@ -53,6 +53,8 @@ export const useBookStore = defineStore('book', {
           offset: 80,
         });
       }
+
+      return res;
     },
 
     // 获取书籍列表
@@ -88,13 +90,7 @@ export const useBookStore = defineStore('book', {
     },
 
     // 更新书籍信息
-    async updateBookInfo(params: {
-      id: string;
-      fileName: string;
-      coverImg: string;
-      author: string;
-      language: string;
-    }) {
+    async updateBookInfo(params: { id: string; fileName: string; coverImg: string; author: string; language: string }) {
       const res = normalizeResult<{ count: number }>(await Service.updateBookInfo(params));
       if (res.success) {
         this.bookList = this.bookList.map((item) => {

@@ -15,7 +15,7 @@
             link
             :class="`book-btn ${checkOS() !== 'mac' && 'mac-book-btn'}`"
             @click="showBookList"
-            >在线 PDF 列表</el-button
+            >在线 PDF</el-button
           >
           <el-upload
             class="uploader"
@@ -26,7 +26,7 @@
             :http-request="onUpload"
           >
             <el-button :disabled="loading" type="primary" link class="book-btn upload-text">
-              {{ iframeUrl ? '重新选择 PDF 文件' : '选择 PDF 文件' }}
+              {{ iframeUrl ? '重新选择' : '选择文件' }}
             </el-button>
           </el-upload>
         </div>

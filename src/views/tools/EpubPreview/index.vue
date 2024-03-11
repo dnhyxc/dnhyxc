@@ -15,7 +15,7 @@
             link
             :class="`book-btn ${checkOS() !== 'mac' && 'mac-book-btn'}`"
             @click="showBookList"
-            >在线书籍列表</el-button
+            >在线书籍</el-button
           >
           <el-upload
             class="uploader"
@@ -26,7 +26,7 @@
             :http-request="onUpload"
           >
             <el-button :disabled="loading" type="primary" link class="book-btn upload-text">
-              {{ bookName ? '重新从本地选择' : '选择本地书籍' }}
+              {{ bookName ? '重新选择' : '选择书籍' }}
             </el-button>
           </el-upload>
         </div>
