@@ -34,11 +34,10 @@
             v-if="loginStore.userInfo.auth === 1 && loadType === 'upload' && docUrl"
             type="primary"
             link
-            :class="`upload-btn ${checkOS() !== 'mac' && 'mac-upload-btn'} ${saveStatus && 'disabled-btn'}`"
-            :disabled="saveStatus"
+            :class="`upload-btn ${checkOS() !== 'mac' && 'mac-upload-btn'}`"
             @click="onSaveWord"
           >
-            {{ saveStatus ? '已保存 Word' : '保存 Word' }}
+            {{ saveStatus ? '重新保存 Word' : '保存 Word' }}
           </el-button>
         </div>
         <span class="pdf-name">{{ docFile?.name }}</span>
@@ -295,10 +294,6 @@ const onClose = () => {
         .mac-book-btn,
         .mac-upload-btn {
           padding-top: 5px;
-        }
-
-        .disabled-btn {
-          color: var(--el-color-primary-light-5);
         }
 
         .uploader {
