@@ -29,6 +29,15 @@
               {{ iframeUrl ? '重新选择' : '选择文件' }}
             </el-button>
           </el-upload>
+          <el-button
+            v-if="loginStore.userInfo.auth === 1 && loadType === 'upload' && iframeUrl"
+            type="primary"
+            link
+            :class="`upload-btn ${checkOS() !== 'mac' && 'mac-upload-btn'}`"
+            @click="onSaveWord"
+          >
+            {{ !saveLoading ? (saveStatus ? '重新保存' : '保存书籍') : '正在保存' }}
+          </el-button>
         </div>
         <span class="pdf-name">{{ fileName }}</span>
       </div>
@@ -165,6 +174,11 @@ const canUpload = ref<boolean>(true);
 const rawFile = ref<File | null>(null);
 // 当前阅读书籍id
 const currentBookId = ref<string>('');
+// 保存状态
+const saveStatus = ref<boolean>(false);
+// 保存loading
+const saveLoading = ref<boolean>(false);
+
 // 定时器
 let timer: ReturnType<typeof setTimeout> | null = null;
 // 用于存储上一个 ReadableStreamDefaultReader 对象
@@ -208,26 +222,32 @@ const onUploadFile = async () => {
   resetRendition();
   loading.value = true;
   fileName.value = rawFile.value.name;
-  const { auth } = loginStore?.userInfo;
   const fileURL = URL.createObjectURL(rawFile.value);
-  if (auth === 1) {
-    const res = await uploadStore.uploadOtherFile(rawFile.value);
-    if (res) {
-      await bookStore.addBook(res.filePath, rawFile.value);
-      tagForm.bookId = bookStore.currentUploadId;
-      getReadBookRecords(fileURL, bookStore.currentUploadId);
-    } else {
-      iframeUrl.value = fileURL;
-      currentBookId.value = bookStore.currentUploadId;
-      clearLoading();
-    }
-  } else {
-    // 如果不是博主，则只保存选择的书籍，而不上传数据
-    const { newFile } = await getUniqueFileName(rawFile.value);
-    const filePath = getFilePath(newFile.name);
-    await bookStore.addBook(filePath, rawFile.value);
+  // getUniqueFileName 获取唯一文件信息
+  const { newFile } = await getUniqueFileName(rawFile.value);
+  const filePath = getFilePath(newFile.name);
+  // 根据url及userId查找书籍信息，获取书籍 ID，便于查找当前书籍的阅读记录
+  await bookStore.findBook(filePath);
+  if (bookStore.currentUploadId) {
     tagForm.bookId = bookStore.currentUploadId;
     getReadBookRecords(fileURL, bookStore.currentUploadId);
+  } else {
+    iframeUrl.value = fileURL;
+    clearLoading();
+  }
+};
+
+// 保存word
+const onSaveWord = async () => {
+  if (!rawFile.value) return;
+  saveLoading.value = true;
+  const res = await uploadStore.uploadOtherFile(rawFile.value);
+  if (res) {
+    await bookStore.addBook(res.filePath, rawFile.value);
+    saveStatus.value = true;
+    saveLoading.value = false;
+  } else {
+    saveLoading.value = false;
   }
 };
 
@@ -384,13 +404,15 @@ const getReadBookRecords = async (fileURL: string, curBookId: string) => {
 };
 
 const clearLoading = () => {
+  const size = pdfSize.value || rawFile.value?.size! / 1024 / 1024;
+  const time = size > 10 ? 10000 : 2000;
   if (timer) {
     clearTimeout(timer);
     timer = null;
   }
   timer = setTimeout(() => {
     loading.value = false;
-  }, 10000);
+  }, time);
 };
 
 const onCancel = () => {
@@ -506,7 +528,8 @@ const onClose = async () => {
           min-width: 86px;
         }
 
-        .book-btn {
+        .book-btn,
+        .upload-btn {
           color: var(--theme-blue);
           font-size: 16px;
           padding-top: 2px;
@@ -516,7 +539,12 @@ const onClose = async () => {
           }
         }
 
-        .mac-book-btn {
+        .upload-btn {
+          margin-left: 10px;
+        }
+
+        .mac-book-btn,
+        .mac-upload-btn {
           padding-top: 5px;
         }
 
