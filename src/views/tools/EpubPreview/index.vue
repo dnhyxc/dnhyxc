@@ -6,45 +6,22 @@
 -->
 <template>
   <div class="epub-wrap">
-    <div class="header">
-      <div class="left">
-        <div class="actions">
-          <span class="title">电子书预览</span>
-          <el-button
-            type="primary"
-            link
-            :class="`book-btn ${checkOS() !== 'mac' && 'mac-book-btn'}`"
-            @click="showBookList"
-            >在线书籍</el-button
-          >
-          <el-upload
-            class="uploader"
-            :disabled="loading"
-            accept=".epub,.epub.zip"
-            :show-file-list="false"
-            :before-upload="beforeUpload"
-            :http-request="onUpload"
-          >
-            <el-button :disabled="loading" type="primary" link class="book-btn upload-text">
-              {{ bookName ? '重新选择' : '选择书籍' }}
-            </el-button>
-          </el-upload>
-          <el-button
-            v-if="loginStore.userInfo.auth === 1 && loadType === 'upload' && bookBuffer"
-            type="primary"
-            link
-            :class="`upload-btn ${checkOS() !== 'mac' && 'mac-upload-btn'}`"
-            @click="onSaveWord"
-          >
-            {{ !saveLoading ? (saveStatus ? '重新保存' : '保存书籍') : '正在保存' }}
-          </el-button>
-        </div>
-        <span class="book-name">
-          {{ bookName }}
-        </span>
-      </div>
-      <span class="close" @click="onClose">关闭</span>
-    </div>
+    <PreviewHeader
+      title="电子书预览"
+      load-line-text="在线书籍"
+      accept=".epub,.epub.zip"
+      :file-name="bookName"
+      :save-loading="saveLoading"
+      :loading="loading"
+      :save-status="saveStatus"
+      :url="(bookBuffer as ArrayBuffer)"
+      :load-type="loadType"
+      :on-close="onClose"
+      :on-save="onSave"
+      :before-upload="beforeUpload"
+      :on-upload="onUpload"
+      :show-book-list="showBookList"
+    />
     <Loading
       :loading="loading"
       :load-text="`${loadBookName ? `正在快马加鞭的加载《${loadBookName}》` : '正在快马加鞭的加载'}`"
@@ -164,9 +141,10 @@ import ePub from 'epubjs';
 import { useChildScroller } from '@/hooks';
 import { scrollTo, debounce, getTheme, calculateLoadProgress, Message, checkOS, getUniqueFileName } from '@/utils';
 import { EPUB_THEMES, BOOK_THEME, DOMAIN_URL } from '@/constant';
-import { uploadStore, bookStore, loginStore } from '@/store';
+import { uploadStore, bookStore } from '@/store';
 import { AtlasItemParams, BookTocItem, BookTocList, BookRecord } from '@/typings/common';
 import BookList from '../BookList/index.vue';
+import PreviewHeader from '../PreviewHeader/index.vue';
 
 interface IProps {
   modalVisible: boolean;
@@ -354,25 +332,25 @@ const beforeUpload: UploadProps['beforeUpload'] = (rawFile) => {
 };
 
 // 自定义上传
-const onUpload = (event: { file: File }) => {
-  bookFile.value = event.file;
+const onUpload = ({ file }: { file: File }) => {
+  bookFile.value = file;
   // 选择其它书籍时，保存上一次阅读书籍的位置
   createRecord(true);
   resetRendition();
   loading.value = true;
-  bookName.value = event.file.name.replace(/\.epub$/, '');
+  bookName.value = file.name.replace(/\.epub$/, '');
   const reader = new FileReader();
   reader.onload = async (e: Event) => {
     const buffer = (e.target as FileReader).result as ArrayBuffer;
     // getUniqueFileName 获取唯一文件信息
-    const { newFile } = await getUniqueFileName(event.file);
+    const { newFile } = await getUniqueFileName(file);
     const filePath = getFilePath(newFile.name);
     // 根据url及userId查找书籍信息，获取书籍 ID，便于查找当前书籍的阅读记录
     await bookStore.findBook(filePath);
     currentTocInfo.bookId = bookStore.currentUploadId;
     renderBook(buffer, bookStore.currentUploadId);
   };
-  reader.readAsArrayBuffer(event.file);
+  reader.readAsArrayBuffer(file);
 };
 
 const getFilePath = (fileName: string) => {
@@ -381,8 +359,8 @@ const getFilePath = (fileName: string) => {
   return filePath;
 };
 
-// 保存word
-const onSaveWord = async () => {
+// 保存书籍
+const onSave = async () => {
   if (!bookFile.value) return;
   saveLoading.value = true;
   const res = await uploadStore.uploadOtherFile(bookFile.value);
@@ -637,90 +615,6 @@ const onScrollTo = () => {
   justify-content: space-between;
   height: 100%;
   background: v-bind(themeColor);
-
-  .header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-size: 18px;
-    height: 45px;
-    min-height: 45px;
-    padding: 0 10px;
-    border-bottom: 1px solid var(--card-border);
-    box-sizing: border-box;
-    color: var(--font-1);
-
-    .left {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: flex-start;
-
-      .actions {
-        display: flex;
-        align-items: center;
-        justify-content: flex-start;
-
-        .title {
-          color: var(--font-1);
-          min-width: 100px;
-        }
-
-        .book-btn,
-        .upload-btn {
-          color: var(--theme-blue);
-          font-size: 16px;
-          padding-top: 2px;
-
-          &:hover {
-            color: var(--el-color-primary-light-5);
-          }
-        }
-
-        .upload-btn {
-          margin-left: 10px;
-        }
-
-        .mac-book-btn,
-        .mac-upload-btn {
-          padding-top: 5px;
-        }
-
-        .uploader {
-          margin-left: 10px;
-          font-size: 14px;
-          padding-top: 2px;
-
-          .upload-text {
-            padding: 0;
-            margin-left: 0;
-            .icon-upload {
-              margin-right: 5px;
-              font-size: 18px;
-            }
-          }
-        }
-      }
-
-      .book-name {
-        font-size: 16px;
-        margin: 0 10px 0 13px;
-        padding-top: 1px;
-        color: var(--font-1);
-        .ellipsisMore(1);
-      }
-    }
-
-    .close {
-      color: var(--theme-blue);
-      font-size: 16px;
-      cursor: pointer;
-
-      &:hover {
-        color: @active;
-      }
-    }
-  }
 
   .loading {
     flex: 1;

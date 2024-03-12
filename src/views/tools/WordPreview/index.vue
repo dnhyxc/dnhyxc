@@ -1,49 +1,27 @@
 <!--
- * 百度翻译
+ * word 预览
  * @author: dnhyxc
  * @since: 2024-01-22
  * index.vue
 -->
 <template>
   <div class="translate-wrap">
-    <div class="header">
-      <div class="left">
-        <div class="actions">
-          <span class="title">Word 预览</span>
-          <el-button
-            type="primary"
-            link
-            :class="`book-btn ${checkOS() !== 'mac' && 'mac-book-btn'}`"
-            @click="showBookList"
-          >
-            在线 Word
-          </el-button>
-          <el-upload
-            class="uploader"
-            accept=".doc,.docx"
-            :disabled="loading"
-            :show-file-list="false"
-            :before-upload="beforeUpload"
-            :http-request="onUpload"
-          >
-            <el-button :disabled="loading" type="primary" link class="book-btn upload-text">
-              {{ docUrl ? '重新选择' : '选择文件' }}
-            </el-button>
-          </el-upload>
-          <el-button
-            v-if="loginStore.userInfo.auth === 1 && loadType === 'upload' && docUrl"
-            type="primary"
-            link
-            :class="`upload-btn ${checkOS() !== 'mac' && 'mac-upload-btn'}`"
-            @click="onSaveWord"
-          >
-            {{ saveStatus ? '重新保存' : '保存 Word' }}
-          </el-button>
-        </div>
-        <span class="pdf-name">{{ docFile?.name }}</span>
-      </div>
-      <span class="close" @click="onClose">关闭</span>
-    </div>
+    <PreviewHeader
+      title="Word 预览"
+      load-line-text="在线 Word"
+      accept=".doc,.docx"
+      :file-name="docFile?.name!"
+      :save-loading="saveLoading"
+      :loading="loading"
+      :save-status="saveStatus"
+      :url="docUrl"
+      :load-type="loadType"
+      :on-close="onClose"
+      :on-save="onSave"
+      :before-upload="beforeUpload"
+      :on-upload="onUpload"
+      :show-book-list="showBookList"
+    />
     <Loading
       :loading="loading"
       :load-text="`${docFile?.name ? `正在快马加鞭的加载《${docFile?.name}》` : '正在快马加鞭的加载'}`"
@@ -82,10 +60,11 @@ import { ElMessage } from 'element-plus';
 import type { UploadProps } from 'element-plus';
 import { renderAsync } from 'docx-preview';
 import { WORD_TYPES } from '@/constant';
-import { checkOS, calculateLoadProgress } from '@/utils';
-import { loginStore, uploadStore, bookStore } from '@/store';
+import { calculateLoadProgress } from '@/utils';
+import { uploadStore, bookStore } from '@/store';
 import { AtlasItemParams } from '@/typings/common';
 import BookList from '../BookList/index.vue';
+import PreviewHeader from '../PreviewHeader/index.vue';
 
 interface IProps {
   modalVisible: boolean;
@@ -116,6 +95,8 @@ const loadWordSize = ref<number>(0);
 const loadType = ref<string>('upload');
 // 保存状态
 const saveStatus = ref<boolean>(false);
+// 保存loading
+const saveLoading = ref<boolean>(false);
 
 // 用于存储上一个 ReadableStreamDefaultReader 对象
 let previousReader: any = null;
@@ -157,12 +138,16 @@ const showBookList = () => {
 };
 
 // 保存word
-const onSaveWord = async () => {
+const onSave = async () => {
   if (!docFile.value) return;
+  saveLoading.value = true;
   const res = await uploadStore.uploadOtherFile(docFile.value as File);
   if (res) {
     await bookStore.addBook(res.filePath, docFile.value, 'word');
     saveStatus.value = true;
+    saveLoading.value = false;
+  } else {
+    saveLoading.value = false;
   }
 };
 
@@ -243,90 +228,6 @@ const onClose = () => {
   flex-direction: column;
   justify-content: space-between;
   height: 100%;
-
-  .header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-size: 18px;
-    height: 45px;
-    padding: 0 10px;
-    border-bottom: 1px solid var(--card-border);
-    box-sizing: border-box;
-    color: var(--font-1);
-
-    .left {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: flex-start;
-
-      .actions {
-        display: flex;
-        align-items: center;
-        justify-content: flex-start;
-
-        .title {
-          color: var(--font-1);
-          min-width: 86px;
-        }
-
-        .book-btn,
-        .upload-btn {
-          color: var(--theme-blue);
-          font-size: 16px;
-          padding-top: 2px;
-          margin-left: 11px;
-
-          &:hover {
-            color: var(--el-color-primary-light-5);
-          }
-        }
-
-        .upload-btn {
-          margin-left: 10px;
-        }
-
-        .mac-book-btn,
-        .mac-upload-btn {
-          padding-top: 5px;
-        }
-
-        .uploader {
-          margin-left: 10px;
-          font-size: 14px;
-          padding-top: 2px;
-
-          .upload-text {
-            padding: 0;
-            margin-left: 0;
-            .icon-upload {
-              margin-right: 5px;
-              font-size: 18px;
-            }
-          }
-        }
-      }
-
-      .pdf-name {
-        font-size: 16px;
-        margin: 0 10px 0 13px;
-        color: var(--font-1);
-        padding-top: 1px;
-        .ellipsisMore(1);
-      }
-    }
-
-    .close {
-      color: var(--theme-blue);
-      font-size: 16px;
-      cursor: pointer;
-
-      &:hover {
-        color: @active;
-      }
-    }
-  }
 
   .wrap {
     display: flex;

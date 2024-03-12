@@ -6,45 +6,25 @@
 -->
 <template>
   <div class="pdf-preview-wrap">
-    <div class="header">
-      <div class="left">
-        <div class="actions">
-          <span class="title">PDF 预览</span>
-          <el-button
-            type="primary"
-            link
-            :class="`book-btn ${checkOS() !== 'mac' && 'mac-book-btn'}`"
-            @click="showBookList"
-            >在线 PDF</el-button
-          >
-          <el-upload
-            class="uploader"
-            accept=".pdf"
-            :disabled="loading"
-            :show-file-list="false"
-            :before-upload="beforeUpload"
-            :http-request="onUpload"
-          >
-            <el-button :disabled="loading" type="primary" link class="book-btn upload-text">
-              {{ iframeUrl ? '重新选择' : '选择文件' }}
-            </el-button>
-          </el-upload>
-          <el-button
-            v-if="loginStore.userInfo.auth === 1 && loadType === 'upload' && iframeUrl"
-            type="primary"
-            link
-            :class="`upload-btn ${checkOS() !== 'mac' && 'mac-upload-btn'}`"
-            @click="onSaveWord"
-          >
-            {{ !saveLoading ? (saveStatus ? '重新保存' : '保存书籍') : '正在保存' }}
-          </el-button>
-        </div>
-        <span class="pdf-name">{{ fileName }}</span>
-      </div>
-      <span class="close" @click="onClose">关闭</span>
-    </div>
+    <PreviewHeader
+      title="PDF 预览"
+      load-line-text="在线 PDF"
+      accept=".pdf"
+      :file-name="fileName"
+      :save-loading="saveLoading"
+      :loading="loading"
+      :save-status="saveStatus"
+      :url="iframeUrl"
+      :load-type="loadType"
+      :on-close="onClose"
+      :on-save="onSave"
+      :before-upload="beforeUpload"
+      :on-upload="onUpload"
+      :show-book-list="showBookList"
+    />
     <Loading
       :loading="loading"
+      f
       :load-text="`${fileName ? `正在快马加鞭的加载《${fileName}》` : '正在快马加鞭的加载'}`"
       class="content"
     >
@@ -120,11 +100,12 @@ import { ref, reactive, computed } from 'vue';
 import { onBeforeRouteLeave, useRouter } from 'vue-router';
 import { ElMessage } from 'element-plus';
 import type { UploadProps, FormInstance } from 'element-plus';
-import { loginStore, uploadStore, bookStore } from '@/store';
+import { uploadStore, bookStore } from '@/store';
 import { DOMAIN_URL } from '@/constant';
-import { calculateLoadProgress, Message, getUniqueFileName, checkOS } from '@/utils';
+import { calculateLoadProgress, Message, getUniqueFileName } from '@/utils';
 import { AtlasItemParams, BookRecord } from '@/typings/common';
 import BookList from '../BookList/index.vue';
+import PreviewHeader from '../PreviewHeader/index.vue';
 
 interface IProps {
   modalVisible: boolean;
@@ -237,8 +218,8 @@ const onUploadFile = async () => {
   }
 };
 
-// 保存word
-const onSaveWord = async () => {
+// 保存
+const onSave = async () => {
   if (!rawFile.value) return;
   saveLoading.value = true;
   const res = await uploadStore.uploadOtherFile(rawFile.value);
@@ -500,89 +481,6 @@ const onClose = async () => {
   flex-direction: column;
   justify-content: space-between;
   height: 100%;
-
-  .header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-size: 18px;
-    height: 45px;
-    padding: 0 10px;
-    border-bottom: 1px solid var(--card-border);
-    box-sizing: border-box;
-    color: var(--font-1);
-
-    .left {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: flex-start;
-
-      .actions {
-        display: flex;
-        align-items: center;
-        justify-content: flex-start;
-
-        .title {
-          color: var(--font-1);
-          min-width: 86px;
-        }
-
-        .book-btn,
-        .upload-btn {
-          color: var(--theme-blue);
-          font-size: 16px;
-          padding-top: 2px;
-
-          &:hover {
-            color: var(--el-color-primary-light-5);
-          }
-        }
-
-        .upload-btn {
-          margin-left: 10px;
-        }
-
-        .mac-book-btn,
-        .mac-upload-btn {
-          padding-top: 5px;
-        }
-
-        .uploader {
-          margin-left: 10px;
-          font-size: 14px;
-          padding-top: 2px;
-
-          .upload-text {
-            padding: 0;
-            margin-left: 0;
-            .icon-upload {
-              margin-right: 5px;
-              font-size: 18px;
-            }
-          }
-        }
-      }
-
-      .pdf-name {
-        font-size: 16px;
-        margin: 0 10px 0 13px;
-        color: var(--font-1);
-        padding-top: 1px;
-        .ellipsisMore(1);
-      }
-    }
-
-    .close {
-      color: var(--theme-blue);
-      font-size: 16px;
-      cursor: pointer;
-
-      &:hover {
-        color: @active;
-      }
-    }
-  }
 
   .content {
     display: flex;
