@@ -89,6 +89,14 @@ export const useBookStore = defineStore('book', {
       }
     },
 
+    // 查找书籍信息
+    async findBook(url: string) {
+      const res = normalizeResult<AtlasItemParams>(await Service.findBook({ url }));
+      if (res.success) {
+        this.currentUploadId = res.data?.id || '';
+      }
+    },
+
     // 更新书籍信息
     async updateBookInfo(params: { id: string; fileName: string; coverImg: string; author: string; language: string }) {
       const res = normalizeResult<{ count: number }>(await Service.updateBookInfo(params));

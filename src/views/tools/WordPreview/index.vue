@@ -37,7 +37,7 @@
             :class="`upload-btn ${checkOS() !== 'mac' && 'mac-upload-btn'}`"
             @click="onSaveWord"
           >
-            {{ saveStatus ? '重新保存 Word' : '保存 Word' }}
+            {{ saveStatus ? '重新保存' : '保存 Word' }}
           </el-button>
         </div>
         <span class="pdf-name">{{ docFile?.name }}</span>
@@ -161,12 +161,8 @@ const onSaveWord = async () => {
   if (!docFile.value) return;
   const res = await uploadStore.uploadOtherFile(docFile.value as File);
   if (res) {
-    const status = await bookStore.addBook(res.filePath, docFile.value, 'word');
-    if (status.success) {
-      saveStatus.value = true;
-    } else {
-      saveStatus.value = false;
-    }
+    await bookStore.addBook(res.filePath, docFile.value, 'word');
+    saveStatus.value = true;
   }
 };
 

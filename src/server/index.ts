@@ -572,6 +572,11 @@ export const deleteBook = async ({ id, url }: { id: string; url?: string }) => {
   return await post(API.DELETE_BOOK, copeParams({ id, url }));
 };
 
+// 查找书籍信息
+export const findBook = async (params: { url: string }) => {
+  return await post(API.FIND_BOOK, copeParams(params));
+};
+
 // 添加读书记录
 export const createReadBookRecords = async (params: BookRecord) => {
   return await post(API.CREATE_READ_BOOK_RECORDS, copeParams(params));

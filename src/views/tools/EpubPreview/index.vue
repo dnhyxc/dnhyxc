@@ -29,6 +29,15 @@
               {{ bookName ? '重新选择' : '选择书籍' }}
             </el-button>
           </el-upload>
+          <el-button
+            v-if="loginStore.userInfo.auth === 1 && loadType === 'upload' && bookBuffer"
+            type="primary"
+            link
+            :class="`upload-btn ${checkOS() !== 'mac' && 'mac-upload-btn'}`"
+            @click="onSaveWord"
+          >
+            {{ !saveLoading ? (saveStatus ? '重新保存' : '保存书籍') : '正在保存' }}
+          </el-button>
         </div>
         <span class="book-name">
           {{ bookName }}
@@ -195,8 +204,16 @@ const currentTocInfo = reactive<{ tocId: string; tocName: string; tocHref: strin
   bookId: '',
   tocName: '',
 });
-// 当前阅读书籍id
+// 当前阅读书籍id，用于控制当前书籍的禁用行为及选中样式
 const currentBookId = ref<string>('');
+// 书籍原始数据
+const bookFile = ref<File | null>(null);
+// 书籍资源
+const bookBuffer = ref<ArrayBuffer | null>(null);
+// 保存状态
+const saveStatus = ref<boolean>(false);
+// 保存loading
+const saveLoading = ref<boolean>(false);
 
 // ePub 实例
 let book: any = null;
@@ -303,6 +320,8 @@ const resetRendition = () => {
   progress.value = 0;
   loadBookSize.value = 0;
   bookSize.value = 0;
+  bookBuffer.value = null;
+  saveStatus.value = false;
 };
 
 // 保存读书记录
@@ -336,6 +355,7 @@ const beforeUpload: UploadProps['beforeUpload'] = (rawFile) => {
 
 // 自定义上传
 const onUpload = (event: { file: File }) => {
+  bookFile.value = event.file;
   // 选择其它书籍时，保存上一次阅读书籍的位置
   createRecord(true);
   resetRendition();
@@ -343,25 +363,14 @@ const onUpload = (event: { file: File }) => {
   bookName.value = event.file.name.replace(/\.epub$/, '');
   const reader = new FileReader();
   reader.onload = async (e: Event) => {
-    const buffer = (e.target as FileReader).result as string;
-    const { auth } = loginStore?.userInfo;
-    // 只有博主才能上传
-    if (auth === 1) {
-      const res = await uploadStore.uploadOtherFile(event.file);
-      if (res) {
-        await bookStore.addBook(res.filePath, event.file);
-        currentTocInfo.bookId = bookStore.currentUploadId;
-        renderBook(buffer, bookStore.currentUploadId);
-      } else {
-        renderBook(buffer, bookStore.currentUploadId);
-      }
-    } else {
-      const { newFile } = await getUniqueFileName(event.file);
-      const filePath = getFilePath(newFile.name);
-      await bookStore.addBook(filePath, event.file);
-      currentTocInfo.bookId = bookStore.currentUploadId;
-      renderBook(buffer, bookStore.currentUploadId);
-    }
+    const buffer = (e.target as FileReader).result as ArrayBuffer;
+    // getUniqueFileName 获取唯一文件信息
+    const { newFile } = await getUniqueFileName(event.file);
+    const filePath = getFilePath(newFile.name);
+    // 根据url及userId查找书籍信息，获取书籍 ID，便于查找当前书籍的阅读记录
+    await bookStore.findBook(filePath);
+    currentTocInfo.bookId = bookStore.currentUploadId;
+    renderBook(buffer, bookStore.currentUploadId);
   };
   reader.readAsArrayBuffer(event.file);
 };
@@ -372,8 +381,22 @@ const getFilePath = (fileName: string) => {
   return filePath;
 };
 
+// 保存word
+const onSaveWord = async () => {
+  if (!bookFile.value) return;
+  saveLoading.value = true;
+  const res = await uploadStore.uploadOtherFile(bookFile.value);
+  if (res) {
+    await bookStore.addBook(res.filePath, bookFile.value);
+    saveStatus.value = true;
+    saveLoading.value = false;
+  } else {
+    saveLoading.value = false;
+  }
+};
+
 // 渲染电子书
-const renderBook = (buffer: ArrayBuffer | string, bookId: string) => {
+const renderBook = (buffer: ArrayBuffer, bookId?: string) => {
   nextTick(() => {
     book = ePub(buffer);
     // 获取目录
@@ -395,9 +418,11 @@ const renderBook = (buffer: ArrayBuffer | string, bookId: string) => {
         defaultSelectedTocId.value = book?.navigation?.toc?.[0].id;
         flattenItems(book?.navigation?.toc || []);
         loading.value = false;
-        currentBookId.value = bookId;
+        currentBookId.value = bookId || '';
       })
       .then(() => {
+        // 保存当前书籍的 buffer
+        bookBuffer.value = buffer;
         getReadBookRecords();
       });
     const theme = getTheme();
@@ -641,7 +666,8 @@ const onScrollTo = () => {
           min-width: 100px;
         }
 
-        .book-btn {
+        .book-btn,
+        .upload-btn {
           color: var(--theme-blue);
           font-size: 16px;
           padding-top: 2px;
@@ -651,7 +677,12 @@ const onScrollTo = () => {
           }
         }
 
-        .mac-book-btn {
+        .upload-btn {
+          margin-left: 10px;
+        }
+
+        .mac-book-btn,
+        .mac-upload-btn {
           padding-top: 5px;
         }
 
