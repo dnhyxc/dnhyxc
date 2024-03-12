@@ -233,6 +233,46 @@ const onClose = () => {
     display: flex;
     flex: 1;
 
+    .abort {
+      font-size: 15px;
+      margin-top: 20px;
+      cursor: pointer;
+      color: var(--active);
+
+      &:hover {
+        color: @font-danger;
+      }
+    }
+
+    .load-info {
+      display: flex;
+      justify-content: space-between;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 10px;
+      color: var(--loading-text-color);
+
+      .progress-bar {
+        width: 230px;
+      }
+
+      .load-time {
+        font-size: 12px;
+        margin-top: 9px;
+      }
+
+      .abort {
+        font-size: 15px;
+        margin-top: 5px;
+        cursor: pointer;
+        color: var(--active);
+
+        &:hover {
+          color: @font-danger;
+        }
+      }
+    }
+
     .content {
       flex: 1;
       background: transparent;
