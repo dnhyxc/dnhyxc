@@ -931,6 +931,12 @@ export const CONTACT_MENU = (isTop: boolean, isDisturb: boolean) => [
   { label: '进入其主页', value: 5 },
 ];
 
+// 文章卡片右键菜单
+export const CARD_CONTEXT_MENU = [
+  { label: '独立窗口打开', value: 1 },
+  { label: '当前窗口打开', value: 2 },
+];
+
 // 聊天消息右键菜单
 export const CHAT_MENU = (save?: boolean) => {
   const menus = [

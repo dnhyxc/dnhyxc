@@ -5,14 +5,7 @@
  * index.vue
 -->
 <template>
-  <ContextMenu
-    class="block"
-    :menu="[
-      { label: '新窗口打开', value: 1 },
-      { label: '当前页打开', value: 2 },
-    ]"
-    @select="onSelectMenu"
-  >
+  <ContextMenu class="block" :menu="CARD_CONTEXT_MENU" @select="onSelectMenu">
     <div class="card-wrap" @click.stop="toDetail(data)">
       <div class="card">
         <div class="card-top">
@@ -89,7 +82,7 @@ import { computed, ref } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { formatDate, showMessage, ipcRenderers, getGradient } from '@/utils';
 import { ArticleItem } from '@/typings/common';
-import { IMG1 } from '@/constant';
+import { IMG1, CARD_CONTEXT_MENU } from '@/constant';
 import { loginStore } from '@/store';
 import Image from '@/components/Image/index.vue';
 import ContextMenu from '@/components/ContextMenu/index.vue';

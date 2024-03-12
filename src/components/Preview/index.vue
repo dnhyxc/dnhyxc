@@ -13,6 +13,7 @@
       default-show-toc
       @copy-code-success="onCopyCodeSuccess"
     ></v-md-preview>
+    <ImagePreview v-model:previewVisible="previewVisible" :select-image="{ url: imageUrl }" close-on-click-modal />
   </div>
 </template>
 
@@ -32,6 +33,10 @@ const props = withDefaults(defineProps<IProps>(), {
 });
 
 const previewRef = ref<any>(null);
+// 图片预览状态
+const previewVisible = ref<boolean>(false);
+// 预览图片 url
+const imageUrl = ref<string>('');
 
 // 存储预览组件中所有的标题
 onMounted(() => {
@@ -49,20 +54,22 @@ onMounted(() => {
         indent: hTags.indexOf(el.tagName),
       }));
     }
-    // 获取所有的链接，使用默认浏览器打开
-    const links: HTMLAnchorElement[] = previewRef.value.$el.querySelectorAll('a');
-    if (links?.length) {
-      Array.from(links).forEach((i) => {
-        i.addEventListener(
-          'click',
-          (e) => {
-            e.preventDefault();
-            shell.openExternal(i.href);
-          },
-          false,
-        );
-      });
-    }
+
+    // 预览图片
+    previewRef.value.$el.addEventListener('click', (e: Event) => {
+      const anchor = e.target as HTMLAnchorElement;
+      // 使用默认浏览器打开链接
+      if (anchor.tagName === 'A') {
+        e.preventDefault();
+        shell.openExternal(anchor.href);
+      }
+      const image = e.target as HTMLImageElement;
+      // 预览文章中的图片
+      if (image.tagName === 'IMG') {
+        imageUrl.value = image.src;
+        previewVisible.value = true;
+      }
+    });
   }
 });
 

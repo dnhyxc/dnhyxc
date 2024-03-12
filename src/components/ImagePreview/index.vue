@@ -6,15 +6,31 @@
 -->
 <template>
   <div class="prev-dialog-wrap">
-    <el-dialog v-model="visible" :close-on-click-modal="false" align-center width="88vw" @close="onClose">
+    <el-dialog
+      v-model="visible"
+      :close-on-click-modal="closeOnClickModal || false"
+      align-center
+      width="88vw"
+      @close="onClose"
+    >
       <template #header>
         <div class="actions">
           <span class="title">{{ title || '图片预览' }}</span>
           <div class="icon-list">
-            <el-tooltip effect="light" :content="isMaxed ? '不能再大了' : '放大'" placement="top" popper-class="custom-dropdown-styles">
+            <el-tooltip
+              effect="light"
+              :content="isMaxed ? '不能再大了' : '放大'"
+              placement="top"
+              popper-class="custom-dropdown-styles"
+            >
               <i class="font iconfont icon-fangda" @click="onScaleMax" />
             </el-tooltip>
-            <el-tooltip effect="light" :content="isMined ? '不能再小了' : '缩小'" placement="top" popper-class="custom-dropdown-styles">
+            <el-tooltip
+              effect="light"
+              :content="isMined ? '不能再小了' : '缩小'"
+              placement="top"
+              popper-class="custom-dropdown-styles"
+            >
               <i class="font iconfont icon-suoxiao" @click="onScaleMin" />
             </el-tooltip>
             <el-tooltip effect="light" content="旋转" placement="top" popper-class="custom-dropdown-styles">
@@ -26,10 +42,22 @@
             <el-tooltip effect="light" content="重置" placement="top" popper-class="custom-dropdown-styles">
               <i class="font iconfont icon-zhongzhi1" @click="onRefresh" />
             </el-tooltip>
-            <el-tooltip v-if="showPrevAndNext && prevImages.length > 1" effect="light" content="上一张" placement="top" popper-class="custom-dropdown-styles">
+            <el-tooltip
+              v-if="showPrevAndNext && prevImages.length > 1"
+              effect="light"
+              content="上一张"
+              placement="top"
+              popper-class="custom-dropdown-styles"
+            >
               <i class="font iconfont icon-arrow-left-bold" @click="onPrev" />
             </el-tooltip>
-            <el-tooltip v-if="showPrevAndNext && prevImages.length > 1" effect="light" content="下一张" placement="top" popper-class="custom-dropdown-styles">
+            <el-tooltip
+              v-if="showPrevAndNext && prevImages.length > 1"
+              effect="light"
+              content="下一张"
+              placement="top"
+              popper-class="custom-dropdown-styles"
+            >
               <i class="font iconfont icon-arrow-right-bold" @click="onNext" />
             </el-tooltip>
           </div>
@@ -62,6 +90,7 @@ interface IProps {
   showWaterModal?: Function;
   title?: string;
   prevImgs?: { id: string; url: string }[];
+  closeOnClickModal?: boolean;
 }
 
 const props = defineProps<IProps>();

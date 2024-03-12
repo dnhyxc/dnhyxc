@@ -6,15 +6,7 @@
 -->
 <template>
   <div class="timeline-card" @click.stop="toDetail(data)">
-    <ContextMenu
-      class="block"
-      :menu="[
-        { label: '新窗口打开', value: 1 },
-        { label: '当前页打开', value: 2 },
-      ]"
-      :no-menu="noMenu"
-      @select="onSelectMenu"
-    >
+    <ContextMenu class="block" :menu="CARD_CONTEXT_MENU" :no-menu="noMenu" @select="onSelectMenu">
       <i v-if="data.isTop && !isTimeLine" class="font iconfont icon-zhiding" />
       <div class="title">
         <slot name="title">
@@ -79,7 +71,7 @@
 <script setup lang="ts">
 import { inject, ref, onUnmounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
-import { IMG1 } from '@/constant';
+import { IMG1, CARD_CONTEXT_MENU } from '@/constant';
 import { showMessage, ipcRenderers } from '@/utils';
 import { loginStore } from '@/store';
 import { TimelineArticles, ArticleItem } from '@/typings/common';
