@@ -459,7 +459,7 @@ const onScrollTo = (to?: number) => {
           border-bottom: 1px solid var(--card-border);
           background-image: linear-gradient(to right, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
           position: sticky;
-          top: -2px;
+          top: -4px;
           backdrop-filter: blur(10px);
           z-index: 999;
 
