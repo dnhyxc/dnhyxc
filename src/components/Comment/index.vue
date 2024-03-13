@@ -6,7 +6,7 @@
 -->
 <template>
   <div ref="commentsRef" class="Comments">
-    <ImagePreview v-model:previewVisible="previewVisible" :select-image="{ url: filePath }" />
+    <ImagePreview v-model:previewVisible="previewVisible" :select-image="{ url: filePath }" close-on-click-modal />
     <div class="draftInputWrap">
       <DraftInput :get-comment-list="getCommentList" :focus="focus" :article-id="id" :on-hide-input="onHideInput" />
     </div>

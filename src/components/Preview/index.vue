@@ -55,13 +55,19 @@ onMounted(() => {
       }));
     }
 
-    // 预览图片
     previewRef.value.$el.addEventListener('click', (e: Event) => {
+      e.preventDefault();
       const anchor = e.target as HTMLAnchorElement;
-      // 使用默认浏览器打开链接
+      // 判断是否是 a 标签，使用默认浏览器打开链接
       if (anchor.tagName === 'A') {
-        e.preventDefault();
         shell.openExternal(anchor.href);
+        return;
+      }
+      // 判断是否 a 标签的子元素
+      if (anchor.closest('a')) {
+        const parentAnchor = anchor.parentNode as HTMLAnchorElement;
+        shell.openExternal(parentAnchor?.href);
+        return;
       }
       const image = e.target as HTMLImageElement;
       // 预览文章中的图片
