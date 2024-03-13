@@ -70,9 +70,9 @@ export const TOOL_LIST = [
   { toolName: '水印设置', key: 'watermark', id: 'watermark', toolUrl: MARK_SVG },
   { toolName: '画板', key: 'board', id: 'board', toolUrl: BOARD_SVG },
   { toolName: '屏幕录制', key: 'transcribe', id: 'transcribe', toolUrl: TRANSCRIBE_SVG },
-  { toolName: '览电子书', key: 'epub', id: 'epub', toolUrl: BOOK_SVG },
-  { toolName: 'PDF预览', key: 'pdf', id: 'pdf', toolUrl: PDF_SVG },
   { toolName: 'Word预览', key: 'word', id: 'word', toolUrl: WORD_SVG },
+  { toolName: 'PDF预览', key: 'pdf', id: 'pdf', toolUrl: PDF_SVG },
+  { toolName: '览电子书', key: 'epub', id: 'epub', toolUrl: BOOK_SVG },
 ];
 
 // 常用图片截取比例

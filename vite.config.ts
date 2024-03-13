@@ -7,7 +7,7 @@ import AutoImport from 'unplugin-auto-import/vite';
 import Components from 'unplugin-vue-components/vite';
 import ElementPlus from 'unplugin-element-plus/vite';
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers';
-import visualizer from 'rollup-plugin-visualizer';
+// import visualizer from 'rollup-plugin-visualizer';
 // import externalGlobals from 'rollup-plugin-external-globals';
 
 export default defineConfig({
@@ -26,12 +26,12 @@ export default defineConfig({
       resolvers: [ElementPlusResolver()],
     }),
     ElementPlus(),
-    visualizer({
-      filename: 'buildInfo.html',
-      open: true,
-      gzipSize: true,
-      brotliSize: true,
-    }),
+    // visualizer({
+    //   filename: 'buildInfo.html',
+    //   open: true,
+    //   gzipSize: true,
+    //   brotliSize: true,
+    // }),
   ],
   resolve: {
     // 设置别名
