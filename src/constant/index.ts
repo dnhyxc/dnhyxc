@@ -10,12 +10,12 @@ import IMG1 from '@/assets/images/1.jpg';
 import IMG3 from '@/assets/images/3.jpg';
 import IMG4 from '@/assets/images/4.jpg';
 import SEA from '@/assets/images/sea.jpg';
-import CYWL from '@/assets/images/cywl.jpg';
 import CLOUD from '@/assets/images/cloud.jpeg';
 import FRESH from '@/assets/images/fresh.jpeg';
 import SUN from '@/assets/images/sun.jpg';
 import SNOW from '@/assets/images/snow.jpg';
 import BEAUTY from '@/assets/images/beauty.jpg';
+import COVER from '@/assets/images/cover.jpg';
 import * as API from '@/server/api';
 import GITHUB_SVG from '@/assets/svg/github.svg';
 import COMPRESS_SVG from '@/assets/svg/compress.svg';
@@ -30,7 +30,6 @@ import BOOK_SVG from '@/assets/svg/book.svg';
 import PDF_SVG from '@/assets/svg/pdf.svg';
 import TRANSCRIBE_SVG from '@/assets/svg/transcribe.svg';
 import WORD_SVG from '@/assets/svg/word.svg';
-import HTTP from '@/assets/images/http.jpg';
 
 export {
   EMPTY,
@@ -49,7 +48,6 @@ export {
   SNOW,
   BEAUTY,
   IMG4,
-  CYWL,
   CLOUD,
   GITHUB_SVG,
   COMPRESS_SVG,
@@ -60,7 +58,7 @@ export {
   BOARD_SVG,
   NO_DATA_SVG,
   BOOK_SVG,
-  HTTP,
+  COVER,
 };
 
 // 工具列表

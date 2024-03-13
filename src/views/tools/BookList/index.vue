@@ -30,7 +30,7 @@
                 @click="() => onRead(data)"
               >
                 <div class="cover">
-                  <Image :url="data?.coverImg" :transition-img="BOOK_SVG" class="img" />
+                  <Image :url="data?.coverImg" :transition-img="COVER" class="img" />
                 </div>
                 <div class="book-info">
                   <div class="title">
@@ -95,7 +95,7 @@
 import { computed, ref, reactive, watch, nextTick, onUnmounted } from 'vue';
 import type { FormInstance } from 'element-plus';
 import { bookStore, loginStore } from '@/store';
-import { BOOK_SVG } from '@/constant';
+import { COVER } from '@/constant';
 import { scrollTo, Message, formatDate } from '@/utils';
 import { AtlasItemParams } from '@/typings/common';
 import Loading from '@/components/Loading/index.vue';

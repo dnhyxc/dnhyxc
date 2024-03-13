@@ -469,7 +469,7 @@ const lateralFace = {
   '--pre-hover-bg': 'rgba(0, 0, 0, 0.3)',
   // table 偶数项背景颜色
   '--table-even-bg': 'rgba(0, 0, 0, 0.3)',
-  '--login-bg-img': 'url(@/assets/images/face.jpg)',
+  '--login-bg-img': `url(${HEAD_IMG})`,
   '--theme-blue': '#00d625',
   '--el-color-primary': '#00d625',
   '--card-btn-mark': 'rgba(0, 0, 0, 0.45)',
@@ -491,7 +491,7 @@ const sea = {
   '--code-pre-bg': 'rgba(0, 0, 0, 0.3)',
   // 文章预览背景图片
   '--pre-hover-bg': 'rgba(0, 0, 0, 0.3)',
-  '--login-bg-img': 'url(@/assets/images/sea.jpg)',
+  '--login-bg-img': `url(${SEA})`,
   '--backdrop-filter': 'blur(1px)',
 };
 
@@ -501,7 +501,7 @@ const sun = {
   '--bg-image-url': `url(${SUN})`,
   '--h-color': '#a2ff00',
   '--backdrop-filter': 'blur(0)',
-  '--login-bg-img': 'url(@/assets/images/sun.jpg)',
+  '--login-bg-img': `url(${SUN})`,
   '--font-color': '#fff',
   // 头部字体颜色
   '--header-text-color': 'linear-gradient(45deg, #fff 0%, #fff 100%)',
@@ -517,7 +517,7 @@ const ShaoSiming = {
   '--h-color': '#a2ff00',
   // 头部字体颜色
   '--header-text-color': 'linear-gradient(45deg, #000 0%, #000 100%)',
-  '--login-bg-img': 'url(@/assets/images/1.jpg)',
+  '--login-bg-img': `url(${IMG1})`,
 };
 
 // 动漫
@@ -544,7 +544,7 @@ const beauty = {
   '--loading-color': 'rgba(0, 0, 0, 0.69)',
   '--loading-text-color': '#2aff00',
   '--bg-image-url': `url(${BEAUTY})`,
-  '--login-bg-img': 'url(@/assets/images/beauty.jpg)',
+  '--login-bg-img': `url(${BEAUTY})`,
   '--layer-2-2': 'rgb(255, 255, 255, 0.06)',
   '--card-border': 'rgba(182, 182, 182, 0.5)',
   '--card-btn-mark': 'rgba(0, 0, 0, 0.5)',
@@ -564,7 +564,7 @@ const locomotive = {
   // 头部字体颜色
   '--header-text-color': 'linear-gradient(45deg, #fff 0%, #fff 100%)',
   '--bg-image-url': `url(${IMG3})`,
-  '--login-bg-img': 'url(@/assets/images/3.jpg)',
+  '--login-bg-img': `url(${IMG3})`,
   '--loading-text-color': '#2aff00',
   '--card-btn-mark': 'rgba(0, 0, 0, 0.5)',
   // 主题色
@@ -579,14 +579,14 @@ const island = {
   '--h-color': '#a2ff00',
   // 头部字体颜色
   '--header-text-color': 'linear-gradient(45deg, #000 0%, #000 100%)',
-  '--login-bg-img': 'url(@/assets/images/4.jpg)',
+  '--login-bg-img': `url(${IMG4})`,
   '--card-btn-mark': 'rgba(255, 255, 255, 0.65)',
 };
 
 const fresh = {
   ...imageStyles,
   '--bg-image-url': `url(${FRESH})`,
-  '--login-bg-img': 'url(@/assets/images/fresh.jpg)',
+  '--login-bg-img': `url(${FRESH})`,
   '--backdrop-filter': 'blur(0px)',
   // 文章各种卡片渐变颜色
   '--bg-lg-color1': 'rgba(0, 0, 0, 0.25)',
@@ -615,7 +615,6 @@ const fresh = {
 // 云间
 const cloud = {
   ...imageStyles,
-  '--bg-image-url': `url(${CLOUD})`,
   '--backdrop-filter': 'blur(0px)',
   ...imgThemeColor,
   // 文章预览背景图片
@@ -654,7 +653,8 @@ const cloud = {
   '--p-code-bg-color': 'rgba(255, 255, 242, 0.5)',
   // loading 背景颜色
   '--loading-color': 'rgba(255, 255, 255, 0.5)',
-  '--login-bg-img': 'url(@/assets/images/cywl.jpg)',
+  '--bg-image-url': `url(${CLOUD})`,
+  '--login-bg-img': `url(${CLOUD})`,
   '--login-bg': 'rgba(255, 255, 255, 0.1)',
   // border 颜色
   '--border-color': '#ffffffa1',
@@ -672,7 +672,7 @@ const snow = {
   ...imageStyles,
   '--bg-image-url': `url(${SNOW})`,
   '--backdrop-filter': 'blur(1px)',
-  '--login-bg-img': 'url(@/assets/images/snow.jpg)',
+  '--login-bg-img': `url(${SNOW})`,
   // 文章各种卡片渐变颜色
   '--bg-lg-color1': 'rgba(0, 0, 0, 0.25)',
   '--bg-lg-color2': 'rgba(0, 0, 0, 0.15)',
