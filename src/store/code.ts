@@ -19,6 +19,7 @@ interface IProps {
   editCode: string;
   codeDetail: CodeItem;
   compileData: string;
+  compileLoading: boolean;
 }
 
 export const useCodeStore = defineStore('code', {
@@ -36,6 +37,7 @@ export const useCodeStore = defineStore('code', {
     editCode: '',
     codeDetail: {} as CodeItem,
     compileData: '',
+    compileLoading: false,
   }),
 
   actions: {
@@ -116,7 +118,9 @@ export const useCodeStore = defineStore('code', {
 
     // 编译C语言
     async compileCCode(code: string) {
+      this.compileLoading = true;
       const res = normalizeResult<string>(await Service.compileCCode(code));
+      this.compileLoading = false;
       if (res.success) {
         this.compileData = res.data;
       }

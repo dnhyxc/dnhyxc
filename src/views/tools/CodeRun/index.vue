@@ -60,7 +60,7 @@
           </template>
         </MonacoEditor>
       </div>
-      <div class="preview">
+      <Loading :loading="codeStore.compileLoading" class="preview" load-text="正在卖力执行中">
         <div v-drag class="line" />
         <MonacoEditor
           v-if="language !== 'html'"
@@ -95,7 +95,7 @@
           </div>
           <div ref="previewRef" class="iframe-wrap" />
         </div>
-      </div>
+      </Loading>
     </div>
     <el-dialog
       v-model="visible"
@@ -145,6 +145,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, nextTick, onUnmounted, computed, watch } from 'vue';
+import { ElMessage } from 'element-plus';
 import type { FormInstance } from 'element-plus';
 import { codeTemplate, htmlTemplate, JSONParse } from '@/utils';
 import { codeStore } from '@/store';
@@ -249,6 +250,22 @@ const createIframe = ({ code, display, id }: { code: string; display: string; id
 
 // 运行C语言
 const runCCode = async (code: string) => {
+  if (code.includes('scanf')) {
+    ElMessage({
+      message: '暂不支持 scanf',
+      type: 'warning',
+      offset: 80,
+    });
+    return;
+  }
+  if (!code.includes('int main')) {
+    ElMessage({
+      message: '请检查运行语言是否匹配',
+      type: 'warning',
+      offset: 80,
+    });
+    return;
+  }
   // 编译C语言
   await codeStore.compileCCode(code);
 
@@ -426,7 +443,6 @@ const onClear = (monacoData?: any) => {
       .code-edit {
         box-shadow: none;
         border-radius: 0;
-        border-top-left-radius: 5px;
         border-bottom-left-radius: 5px;
 
         :deep {
@@ -473,7 +489,6 @@ const onClear = (monacoData?: any) => {
       .code-result {
         box-shadow: none;
         border-radius: 0;
-        border-top-right-radius: 5px;
         border-bottom-right-radius: 5px;
 
         :deep {
