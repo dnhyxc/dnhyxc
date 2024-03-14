@@ -18,6 +18,7 @@ interface IProps {
   };
   editCode: string;
   codeDetail: CodeItem;
+  compileData: string;
 }
 
 export const useCodeStore = defineStore('code', {
@@ -34,6 +35,7 @@ export const useCodeStore = defineStore('code', {
     },
     editCode: '',
     codeDetail: {} as CodeItem,
+    compileData: '',
   }),
 
   actions: {
@@ -109,6 +111,14 @@ export const useCodeStore = defineStore('code', {
           type: 'error',
           offset: 80,
         });
+      }
+    },
+
+    // 编译C语言
+    async compileCCode(code: string) {
+      const res = normalizeResult<string>(await Service.compileCCode(code));
+      if (res.success) {
+        this.compileData = res.data;
       }
     },
 

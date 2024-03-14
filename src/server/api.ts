@@ -199,6 +199,9 @@ export const GET_CODE_LIST = '/api/getCodeList';
 // 获取代码示例
 export const GET_CODE_BY_ID = '/api/getCodeById';
 
+// 编译C语言
+export const COMPILE_C_CODE = '/api/compileCCode';
+
 // 获取聊天消息列表
 export const GET_CHAT_LIST = '/api/getChatList';
 

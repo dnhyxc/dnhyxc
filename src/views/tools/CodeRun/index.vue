@@ -84,6 +84,9 @@
               </el-button>
             </div>
           </template>
+          <template #resLanguage>
+            <span class="language-text result-text">{{ language }} 运行结果</span>
+          </template>
         </MonacoEditor>
         <div class="preview-content">
           <div class="toolbar">
@@ -244,22 +247,41 @@ const createIframe = ({ code, display, id }: { code: string; display: string; id
   frameDocument.close();
 };
 
+// 运行C语言
+const runCCode = async (code: string) => {
+  // 编译C语言
+  await codeStore.compileCCode(code);
+
+  codeResults.value = codeStore.compileData;
+};
+
+// 运行JS
+const runJSCode = (code: string) => {
+  createIframe({ code: codeTemplate(code) as string, display: 'none' });
+};
+
+// 运行HTML
+const runHTMLCode = (code: string) => {
+  createIframe({
+    code: htmlTemplate(code, { background: background.value, color: fontColor.value }),
+    display: 'block',
+    id: '__HTML_RESULT__',
+  });
+};
+
 // 运行代码
-const run = (monacoData?: any) => {
+const run = async (monacoData?: any) => {
   const { content: code } = monacoData?.data;
   prevCode.value = code;
   console.clear();
   // 首先清除原有的代码执行结果
   codeResults.value = '';
-  if (language.value === 'html') {
-    createIframe({
-      code: htmlTemplate(code, { background: background.value, color: fontColor.value }),
-      display: 'block',
-      id: '__HTML_RESULT__',
-    });
-  } else {
-    createIframe({ code: codeTemplate(code) as string, display: 'none' });
-  }
+  const actions = {
+    c: runCCode,
+    javascript: runJSCode,
+    html: runHTMLCode,
+  };
+  actions[language.value](code);
 };
 
 // 关闭
@@ -403,6 +425,9 @@ const onClear = (monacoData?: any) => {
 
       .code-edit {
         box-shadow: none;
+        border-radius: 0;
+        border-top-left-radius: 5px;
+        border-bottom-left-radius: 5px;
 
         :deep {
           .manaco-code-style();
@@ -412,10 +437,6 @@ const onClear = (monacoData?: any) => {
       .save-code {
         margin-left: 0;
         margin-right: 14px;
-      }
-
-      .action-list {
-        .ellipsisMore(1);
       }
     }
 
@@ -451,9 +472,18 @@ const onClear = (monacoData?: any) => {
 
       .code-result {
         box-shadow: none;
+        border-radius: 0;
+        border-top-right-radius: 5px;
+        border-bottom-right-radius: 5px;
 
         :deep {
           .manaco-code-style();
+        }
+
+        .language-text {
+          height: 40px;
+          line-height: 38px;
+          .ellipsisMore(1);
         }
       }
 
@@ -501,6 +531,10 @@ const onClear = (monacoData?: any) => {
         }
       }
     }
+  }
+
+  .action-list {
+    .ellipsisMore(1);
   }
 
   .dialog-content {

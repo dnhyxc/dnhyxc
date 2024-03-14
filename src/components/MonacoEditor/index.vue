@@ -61,8 +61,12 @@
         </div>
       </div>
       <div class="right">
-        <div v-if="!readonly" class="language-text">当前语言：{{ language }}</div>
-        <span v-else class="language-text result-text">{{ language }} 运行结果</span>
+        <slot v-if="!readonly" name="curLanguage">
+          <div class="language-text">当前语言：{{ language }}</div>
+        </slot>
+        <slot v-else name="resLanguage">
+          <span class="language-text result-text">{{ language }} 运行结果</span>
+        </slot>
       </div>
     </div>
     <div
@@ -393,7 +397,7 @@ const onDiffValue = () => {
     border-top-right-radius: 5px;
 
     .create-action {
-      margin-bottom: 3px;
+      margin-bottom: 2px;
       .ellipsisMore(1);
     }
 
@@ -507,8 +511,8 @@ const onDiffValue = () => {
       color: @font-5;
 
       .language-text {
-        height: 30px;
-        line-height: 30px;
+        height: 40px;
+        line-height: 38px;
         .ellipsisMore(1);
       }
 
