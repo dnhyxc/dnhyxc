@@ -5,26 +5,19 @@
  * index.vue
 -->
 <template>
-  <div class="compress-wrap">
+  <div :class="`compress-wrap ${hideHeader && 'hide-compress-wrap'}`">
     <div class="content">
-      <div class="header">
-        <div class="left">
-          <span>图片压缩</span>
-          <span class="left-action">
-            <el-switch
-              v-model="imgFrom"
-              size="small"
-              style="--el-switch-off-color: var(--theme-blue); --el-switch-on-color: var(--active)"
-              active-text="在线图片"
-              inactive-text="本地图片"
-            />
-          </span>
-        </div>
+      <div v-if="!hideHeader" class="header">
+        <div class="left">图片压缩</div>
         <span class="close" @click="onClose">关闭</span>
       </div>
-      <el-scrollbar ref="scrollRef" max-height="calc(100vh - 182px)" wrap-class="scrollbar-wrapper">
+      <el-scrollbar
+        ref="scrollRef"
+        :max-height="`${!hideHeader ? 'calc(100vh - 182px)' : 'calc(100vh - 100px)'}`"
+        wrap-class="scrollbar-wrapper"
+      >
         <DragUpload v-if="!imgFrom" class="compress-upload" :on-upload="onUpload" />
-        <OnlineImage v-else :on-use-online-url="onUseOnlineUrl" />
+        <OnlineImage v-else :on-use-online-url="onUseOnlineUrl" class="compress-online-image" />
         <div v-if="sourceUrl" class="image-container">
           <div class="contrast">
             <span class="title">
@@ -112,9 +105,19 @@
       </el-scrollbar>
     </div>
     <div class="footer">
-      <el-button type="primary" :disabled="!sourceUrl" @click="onCompress">压缩</el-button>
-      <el-button type="primary" :disabled="!compressFile" @click="onDownload">下载</el-button>
-      <el-button type="warning" :disabled="!base64Url" @click="onRefresh">重置</el-button>
+      <span class="left-action">
+        <el-switch
+          v-model="imgFrom"
+          style="--el-switch-off-color: var(--theme-blue); --el-switch-on-color: var(--active)"
+          active-text="在线图片"
+          inactive-text="本地图片"
+        />
+      </span>
+      <div class="actions">
+        <el-button type="primary" :disabled="!sourceUrl" @click="onCompress">压缩</el-button>
+        <el-button type="primary" :disabled="!compressFile" @click="onDownload">下载</el-button>
+        <el-button type="warning" :disabled="!base64Url" @click="onRefresh">重置</el-button>
+      </div>
     </div>
     <el-dialog v-model="previewVisible" draggable align-center title="图片预览" width="90%" @close="onClosePreview">
       <div class="preview-dialog">
@@ -144,8 +147,9 @@ import OnlineImage from '../OnlineImage/index.vue';
 import Contrast from '@/components/Contrast/index.vue';
 
 interface IProps {
-  modalVisible: boolean;
+  modalVisible?: boolean;
   title?: string;
+  hideHeader?: boolean;
 }
 
 interface Emits {
@@ -401,10 +405,6 @@ const onClosePreview = () => {
         font-size: 18px;
       }
 
-      .left-action {
-        margin-left: 10px;
-      }
-
       .close {
         color: var(--theme-blue);
         cursor: pointer;
@@ -416,6 +416,10 @@ const onClosePreview = () => {
     }
 
     .compress-upload {
+      padding: 0 10px;
+    }
+
+    .compress-online-image {
       padding: 0 10px;
     }
 
@@ -580,6 +584,9 @@ const onClosePreview = () => {
   }
 
   .footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     position: relative;
     text-align: right;
     z-index: 99;
@@ -614,5 +621,10 @@ const onClosePreview = () => {
       margin-bottom: 20px;
     }
   }
+}
+
+.hide-compress-wrap {
+  width: 100%;
+  height: auto;
 }
 </style>

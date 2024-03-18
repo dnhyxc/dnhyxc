@@ -5,7 +5,7 @@
  * index.vue
 -->
 <template>
-  <div class="container">
+  <div :class="`container ${hideHeader && 'hide-container'}`">
     <div ref="titleRef" class="title">
       <div class="left">
         <div class="tools">
@@ -50,7 +50,7 @@
           </div>
         </div>
       </div>
-      <span class="right" @click="onClose">关闭</span>
+      <span v-if="!hideHeader" class="right" @click="onClose">关闭</span>
     </div>
     <div ref="boardWrapRef" class="board-wrap">
       <canvas
@@ -98,7 +98,8 @@ import { onDownloadFile } from '@/utils';
 import { BOARD_ACTIONS, BOARD_COLORS } from '@/constant';
 
 interface IProps {
-  boardVisible: boolean;
+  boardVisible?: boolean;
+  hideHeader?: boolean;
 }
 
 interface Emits {
@@ -200,8 +201,8 @@ const initCanvasSize = () => {
   const pageMenu = document.querySelector('#__LEFT_MENU__') as HTMLDivElement;
   // 获取页面头部
   const pageHead = document.querySelector('#__HEADER__') as HTMLDivElement;
-  pageSizeInfo.top = pageHead.offsetHeight + titleRef.value?.offsetHeight!;
-  pageSizeInfo.left = pageMenu.offsetWidth;
+  pageSizeInfo.top = pageHead?.offsetHeight + titleRef.value?.offsetHeight! || 100;
+  pageSizeInfo.left = pageMenu?.offsetWidth || 0;
   const pageWidth = boardWrapRef.value?.offsetWidth!;
   const pageHeight = boardWrapRef.value?.offsetHeight!;
   canvas.value!.width = pageWidth!;
@@ -529,6 +530,10 @@ const onClickTools = (key: string) => {
       background-color: #d5efff;
     }
   }
+}
+
+.hide-container {
+  border-top: 1px solid var(--card-border);
 }
 
 .tools-content {

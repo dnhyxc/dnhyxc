@@ -277,6 +277,15 @@ export const routes: Array<RouteRecordRaw> = [
     component: () => import('@/views/article/index.vue'),
   },
   {
+    path: '/compile',
+    name: 'compile',
+    meta: {
+      title: '代码测试',
+      keepAlive: false,
+    },
+    component: () => import('@/views/compile/index.vue'),
+  },
+  {
     path: '/message',
     name: 'message',
     meta: {
@@ -310,7 +319,7 @@ router.beforeEach((to, from, next) => {
   // 切换路由时，隐藏页面头部搜索输入框，并清空搜索输入框内容
   commonStore.showSearch = false;
   // 判断是否是首屏加载，如果是则设置loading加载效果
-  if (to.path !== '/home' && !to.path.includes('/article')) {
+  if (to.path !== '/home' && !to.path.includes('/article') && !to.path.includes('/compile')) {
     commonStore.updatePageLoadStatus();
   }
   // 路由切换时，隐藏消息弹窗

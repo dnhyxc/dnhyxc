@@ -21,6 +21,7 @@
       :before-upload="beforeUpload"
       :on-upload="onUpload"
       :show-book-list="showBookList"
+      :hide-header="hideHeader"
     />
     <Loading
       :loading="loading"
@@ -52,7 +53,7 @@
       </div>
       <div v-else class="preview-wrap">
         <iframe :src="iframeUrl" frameborder="0" class="iframe" />
-        <div class="actions" @click="addTagVisible = true">
+        <div class="actions" @click="bookStore.pdfInfo.addTagVisible = true">
           <i class="iconfont icon-biaoqian" title="保存书签" />
         </div>
       </div>
@@ -65,7 +66,7 @@
       :book-id="currentBookId"
     />
     <div class="add-tag-wrap">
-      <el-dialog v-model="addTagVisible" title="保存书签" align-center draggable width="400px">
+      <el-dialog v-model="bookStore.pdfInfo.addTagVisible" title="保存书签" align-center draggable width="400px">
         <el-form ref="formRef" :model="tagForm" label-width="82px" class="form-wrap" @submit.native.prevent>
           <el-form-item prop="tocName" label="章节名称" class="form-item">
             <el-input v-model="tagForm.tocName" placeholder="请输入章节名称" />
@@ -96,30 +97,30 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed } from 'vue';
+import { ref, reactive, computed, watch } from 'vue';
 import { onBeforeRouteLeave, useRouter } from 'vue-router';
 import { ElMessage } from 'element-plus';
 import type { UploadProps, FormInstance } from 'element-plus';
 import { uploadStore, bookStore } from '@/store';
 import { DOMAIN_URL } from '@/constant';
-import { calculateLoadProgress, Message, getUniqueFileName } from '@/utils';
+import { calculateLoadProgress, Message, getUniqueFileName, ipcRenderers } from '@/utils';
 import { AtlasItemParams, BookRecord } from '@/typings/common';
 import BookList from '../BookList/index.vue';
 import PreviewHeader from '../PreviewHeader/index.vue';
 
 interface IProps {
-  modalVisible: boolean;
+  hideHeader?: boolean;
 }
 
 interface Emits {
   (e: 'update:modalVisible', visible: boolean): void;
 }
 
-const router = useRouter();
-
-defineProps<IProps>();
+const props = defineProps<IProps>();
 
 const emit = defineEmits<Emits>();
+
+const router = useRouter();
 
 const iframeUrl = ref<string>('');
 const fileName = ref<string>('');
@@ -133,7 +134,6 @@ const progress = ref<number>(0);
 const pdfSize = ref<number>(0);
 // 当前加载书籍的大小
 const loadPdfSize = ref<number>(0);
-const addTagVisible = ref<boolean>(false);
 const formRef = ref<FormInstance>();
 const tagForm = reactive<{
   tocId: string;
@@ -149,7 +149,6 @@ const tagForm = reactive<{
 const activePdf = ref<AtlasItemParams | null>(null);
 const toPath = ref<string>('');
 const canGo = ref<boolean>(false);
-const canClose = ref<boolean>(true);
 const canLoadPdf = ref<boolean>(true);
 const canUpload = ref<boolean>(true);
 const rawFile = ref<File | null>(null);
@@ -170,6 +169,13 @@ const isSaved = computed(() => {
   return bookStore.blobs.find((i) => i.id === tagForm.bookId);
 });
 
+watch([iframeUrl, loading], (newVal) => {
+  if (props.hideHeader) {
+    bookStore.pdfInfo.iframeUrl = newVal[0];
+    bookStore.pdfInfo.loading = newVal[1];
+  }
+});
+
 onBeforeRouteLeave(async (to, from, next) => {
   // 页面离开时时，保存上一次阅读的位置
   if (!tagForm.bookId || (loadType.value === 'line' && !iframeUrl.value && progress.value < 100)) {
@@ -181,7 +187,7 @@ onBeforeRouteLeave(async (to, from, next) => {
       try {
         const res = await Message('', '是否保存阅读记录后再离开？', 'info');
         if (res === 'confirm') {
-          addTagVisible.value = true;
+          bookStore.pdfInfo.addTagVisible = true;
           toPath.value = to.path;
           canGo.value ? next(true) : next(false);
         }
@@ -257,7 +263,7 @@ const onUpload = async ({ file }: { file: File }) => {
     try {
       const res = await Message('', '是否保存阅读记录后再重新选择？', 'info');
       if (res === 'confirm') {
-        addTagVisible.value = true;
+        bookStore.pdfInfo.addTagVisible = true;
         canUpload.value = false;
       }
     } catch (error) {
@@ -296,6 +302,8 @@ const onAbort = () => {
     previousReader.cancel();
   }
 };
+
+bookStore.pdfInfo.onAbort = onAbort;
 
 // 加载书籍blob
 const loadBookBlob = async (id: string, url: string) => {
@@ -346,7 +354,7 @@ const previewPdf = async (data: AtlasItemParams) => {
     try {
       const res = await Message('', '是否保存阅读记录后再离开？', 'info');
       if (res === 'confirm') {
-        addTagVisible.value = true;
+        bookStore.pdfInfo.addTagVisible = true;
         canLoadPdf.value = false;
       }
     } catch (error) {
@@ -357,7 +365,7 @@ const previewPdf = async (data: AtlasItemParams) => {
 
 // 获取读书记录
 const getReadBookRecords = async (fileURL: string, curBookId: string) => {
-  if (!tagForm.bookId || !location.pathname.includes('tools') || !fileURL) return;
+  if (!tagForm.bookId || !['/tools', '/compile'].includes(location.pathname) || !fileURL) return;
   await bookStore.getReadBookRecords(tagForm.bookId);
   if (bookStore.bookRecordInfo) {
     const { tocName, tocId, tocHref, bookId } = bookStore.bookRecordInfo;
@@ -397,18 +405,22 @@ const clearLoading = () => {
 };
 
 const onCancel = () => {
-  addTagVisible.value = false;
+  bookStore.pdfInfo.addTagVisible = false;
   if (toPath.value) {
     canGo.value = true;
     // 页面离开时停止加载资源
     onAbort();
     router.push(toPath.value);
   }
-  if (!canClose.value) {
+  if (!bookStore.pdfInfo.canClose) {
     // 页面关闭时停止加载资源
     onAbort();
-    emit('update:modalVisible', false);
-    canClose.value = true;
+    bookStore.pdfInfo.canClose = true;
+    if (props.hideHeader) {
+      ipcRenderers.sendNewWinOut('tools_pdf');
+    } else {
+      emit('update:modalVisible', false);
+    }
   }
   if (!canLoadPdf.value) {
     loadPdf();
@@ -430,18 +442,22 @@ const onSubmit = async () => {
     tocName: tagForm.tocName.trim(),
   };
   await bookStore.createReadBookRecords(params);
-  addTagVisible.value = false;
+  bookStore.pdfInfo.addTagVisible = false;
   if (toPath.value) {
     canGo.value = true;
     // 页面离开时停止加载资源
     onAbort();
     router.push(toPath.value);
   }
-  if (!canClose.value) {
+  if (!bookStore.pdfInfo.canClose) {
     // 页面关闭时停止加载资源
     onAbort();
-    emit('update:modalVisible', false);
-    canClose.value = true;
+    bookStore.pdfInfo.canClose = true;
+    if (props.hideHeader) {
+      ipcRenderers.sendNewWinOut('tools_pdf');
+    } else {
+      emit('update:modalVisible', false);
+    }
   }
   if (!canLoadPdf.value) {
     loadPdf();
@@ -456,20 +472,30 @@ const onClose = async () => {
     try {
       const res = await Message('', '是否保存阅读记录后再离开？', 'info');
       if (res === 'confirm') {
-        addTagVisible.value = true;
-        canClose.value = false;
+        bookStore.pdfInfo.addTagVisible = true;
+        bookStore.pdfInfo.canClose = false;
       }
     } catch (error) {
       // 页面关闭时停止加载资源
       onAbort();
-      emit('update:modalVisible', false);
+      if (props.hideHeader) {
+        ipcRenderers.sendNewWinOut('tools_pdf');
+      } else {
+        emit('update:modalVisible', false);
+      }
     }
   } else {
     // 页面关闭时停止加载资源
     onAbort();
-    emit('update:modalVisible', false);
+    if (props.hideHeader) {
+      ipcRenderers.sendNewWinOut('tools_pdf');
+    } else {
+      emit('update:modalVisible', false);
+    }
   }
 };
+
+bookStore.pdfInfo.onClose = onClose;
 </script>
 
 <style scoped lang="less">
@@ -480,6 +506,7 @@ const onClose = async () => {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  width: 100%;
   height: 100%;
 
   .content {

@@ -5,7 +5,7 @@
  * index.vue
 -->
 <template>
-  <div class="epub-wrap">
+  <div :class="`epub-wrap ${hideHeader && 'hide-epub-wrap'}`">
     <PreviewHeader
       title="电子书预览"
       load-line-text="在线书籍"
@@ -14,13 +14,14 @@
       :save-loading="saveLoading"
       :loading="loading"
       :save-status="saveStatus"
-      :url="(bookBuffer as ArrayBuffer)"
+      :url="bookBuffer"
       :load-type="loadType"
       :on-close="onClose"
       :on-save="onSave"
       :before-upload="beforeUpload"
       :on-upload="onUpload"
       :show-book-list="showBookList"
+      :hide-header="hideHeader"
     />
     <Loading
       :loading="loading"
@@ -147,7 +148,7 @@ import BookList from '../BookList/index.vue';
 import PreviewHeader from '../PreviewHeader/index.vue';
 
 interface IProps {
-  modalVisible: boolean;
+  hideHeader?: boolean;
 }
 
 interface Emits {
@@ -321,6 +322,8 @@ const createRecord = (top?: boolean) => {
   return bookStore.createReadBookRecords(params);
 };
 
+bookStore.epubInfo.createRecord = createRecord;
+
 // 上传校验
 const beforeUpload: UploadProps['beforeUpload'] = (rawFile) => {
   loadType.value = 'upload';
@@ -456,6 +459,8 @@ const onAbort = () => {
     previousReader.cancel();
   }
 };
+
+bookStore.epubInfo.onAbort = onAbort;
 
 // 加载书籍数据
 const loadBookBuffer = async (id: string, url: string) => {
@@ -603,6 +608,11 @@ const onScrollTo = () => {
   const bottom = scrollChildRef.value?.wrapRef?.firstElementChild?.firstElementChild?.offsetHeight;
   scrollTo(scrollChildRef, scrollChildTop.value > 0 ? 0 : bottom);
 };
+
+defineExpose({
+  createRecord,
+  onAbort,
+});
 </script>
 
 <style scoped lang="less">
@@ -613,6 +623,7 @@ const onScrollTo = () => {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  width: 100%;
   height: 100%;
   background: v-bind(themeColor);
 
@@ -855,6 +866,24 @@ const onScrollTo = () => {
 
   .slider {
     flex: 1;
+  }
+}
+
+.hide-epub-wrap {
+  .loading {
+    .content {
+      .preview-wrap,
+      .toc-list-wrap {
+        height: calc(100vh - 145px);
+      }
+      .toc-list-wrap {
+        :deep {
+          .scrollbar-wrapper {
+            height: calc(100vh - 185px);
+          }
+        }
+      }
+    }
   }
 }
 </style>

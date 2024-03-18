@@ -5,10 +5,10 @@
  * index.vue
 -->
 <template>
-  <div class="speech-wrap">
+  <div :class="`speech-wrap ${hideHeader && 'hide-speech-wrap'}`">
     <div class="content">
       <div class="inp-wrap">
-        <div class="label">
+        <div v-if="!hideHeader" class="label">
           <span class="left">输入文本转换</span>
           <span class="close" @click="onClose">关闭</span>
         </div>
@@ -31,7 +31,7 @@
         <el-scrollbar
           v-if="convertStore.convertList.length"
           ref="scrollRef"
-          max-height="calc(100vh - 380px)"
+          :max-height="`${!hideHeader ? 'calc(100vh - 383px)' : 'calc(100vh - 312px)'}`"
           wrap-class="scrollbar-wrapper"
         >
           <div class="list">
@@ -106,7 +106,8 @@ import { convertStore } from '@/store';
 import { ConvertParams } from '@/typings/common';
 
 interface IProps {
-  modalVisible: boolean;
+  modalVisible?: boolean;
+  hideHeader?: boolean;
 }
 
 interface Emits {
@@ -115,6 +116,7 @@ interface Emits {
 
 const props = withDefaults(defineProps<IProps>(), {
   modalVisible: false,
+  hideHeader: false,
 });
 
 const emit = defineEmits<Emits>();
@@ -131,7 +133,7 @@ const selectKeyword = ref<string>('');
 const speech = ref<SpeechPlayer | null>(null);
 
 onMounted(() => {
-  if (props.modalVisible) {
+  if (props.modalVisible || props.hideHeader) {
     convertStore.getConvertList();
   }
 });
@@ -424,6 +426,14 @@ const onClearAll = () => {
     .spend-btn {
       width: 80px;
     }
+  }
+}
+
+.hide-speech-wrap {
+  width: 100%;
+
+  .footer {
+    margin-bottom: 10px;
   }
 }
 </style>

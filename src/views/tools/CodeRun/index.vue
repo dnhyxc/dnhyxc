@@ -6,7 +6,7 @@
 -->
 <template>
   <div class="code-run-wrap">
-    <div class="header">
+    <div v-if="!hideHeader" class="header">
       <div class="title">
         <span class="title-text">代码测试</span>
         <span type="primary" link class="demo-list" @click="showDemoList">示例列表</span>
@@ -151,9 +151,15 @@ import { codeTemplate, htmlTemplate, JSONParse } from '@/utils';
 import { codeStore } from '@/store';
 import CodeList from './CodeList/index.vue';
 
+interface IProps {
+  hideHeader?: boolean;
+}
+
 interface Emits {
   (e: 'update:modalVisible', visible: boolean): void;
 }
+
+defineProps<IProps>();
 
 const emit = defineEmits<Emits>();
 // 代码运行结果预览容器
@@ -383,6 +389,7 @@ const onClear = (monacoData?: any) => {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
+  width: 100%;
   height: 100%;
   box-shadow: 0 0 8px 0 var(--shadow-mack);
   background-color: var(--pre-hover-bg);

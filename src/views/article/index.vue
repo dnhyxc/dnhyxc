@@ -257,8 +257,8 @@ const onScrollTo = (height?: number) => {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      height: 35px;
-      padding: 12px 16px 12px 16px;
+      height: 55px;
+      padding: 0 16px 0 16px;
       -webkit-app-region: drag;
       .left {
         display: flex;

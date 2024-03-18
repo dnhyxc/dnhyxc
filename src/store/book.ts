@@ -15,6 +15,15 @@ interface IProps {
   bookRecordInfo: Partial<BookRecord | null>; // 赋值为可选属性
   arrayBuffers: { buffer: ArrayBuffer; id: string }[];
   blobs: { blob: Blob; id: string }[];
+  epubInfo: { [key: string]: (...args: any[]) => any };
+  pdfInfo: Partial<{
+    iframeUrl: string;
+    loading: boolean;
+    addTagVisible: boolean;
+    canClose: boolean;
+    onAbort: () => void;
+    onClose: () => void;
+  }>;
 }
 
 export const useBookStore = defineStore('book', {
@@ -28,6 +37,11 @@ export const useBookStore = defineStore('book', {
     currentUploadId: '',
     arrayBuffers: [],
     blobs: [],
+    epubInfo: {},
+    pdfInfo: {
+      canClose: true,
+      addTagVisible: false,
+    },
   }),
 
   actions: {

@@ -5,22 +5,13 @@
  * index.vue
 -->
 <template>
-  <div class="container">
-    <div class="title">
+  <div :class="`container ${hideHeader && 'hide-container'}`">
+    <div v-if="!hideHeader" class="title">
       <div class="left">
         <span>图片剪裁</span>
         <span class="title-info">
           （当前采用<span v-if="option.fixed" class="type">固定裁剪</span>
           <span v-else class="type">自定义裁剪</span>比例进行裁剪）
-        </span>
-        <span class="left-action">
-          <el-switch
-            v-model="imgFrom"
-            style="--el-switch-off-color: var(--theme-blue); --el-switch-on-color: var(--active)"
-            size="small"
-            active-text="在线图片"
-            inactive-text="本地图片"
-          />
         </span>
       </div>
       <span class="close" @click="onClose">关闭</span>
@@ -56,33 +47,41 @@
       <OnlineImage v-if="!cropperUrl && !sourceUrl && imgFrom" :on-use-online-url="onUseOnlineUrl" />
     </div>
     <div class="footer">
-      <el-button type="primary" class="btn roportion" @click="onCropFixed">
-        {{ option.fixed ? '自定义比例' : '固定比例' }}
-      </el-button>
-      <el-button type="primary" class="btn" plain :disabled="!sourceUrl" @click="onScaleMax">放大</el-button>
-      <el-button type="primary" class="btn" plain :disabled="!sourceUrl" @click="onScaleMin">缩小</el-button>
-      <el-button type="primary" class="btn" plain :disabled="!sourceUrl" @click="onRotate">旋转</el-button>
-      <el-dropdown>
-        <el-button type="primary" class="btn" :disabled="!sourceUrl || !option.fixed" plain>比例</el-button>
-        <template #dropdown>
-          <el-dropdown-menu>
-            <el-dropdown-item v-for="item in IMG_ROPORTIONS" :key="item.key" @click="onRoportion(item.value)">
-              <span class="dropdown-item">{{ item.key }}</span>
-            </el-dropdown-item>
-          </el-dropdown-menu>
-        </template>
-      </el-dropdown>
-      <el-tooltip
-        class="box-item"
-        effect="dark"
-        content="需要优先点击截取按钮之后才能下载最新设置的图片"
-        placement="top"
-        popper-class="custom-dropdown-styles"
-      >
-        <el-button type="primary" :disabled="!cropperUrl" class="btn" plain @click="onDownload">下载</el-button>
-      </el-tooltip>
-      <el-button type="warning" :disabled="!sourceUrl" class="btn" @click="onRefresh">重置</el-button>
-      <el-button type="success" :disabled="!sourceUrl" class="btn" @click="onFinish">截取</el-button>
+      <el-switch
+        v-model="imgFrom"
+        style="--el-switch-off-color: var(--theme-blue); --el-switch-on-color: var(--active)"
+        active-text="在线图片"
+        inactive-text="本地图片"
+      />
+      <div>
+        <el-button type="primary" class="btn roportion" @click="onCropFixed">
+          {{ option.fixed ? '自定义比例' : '固定比例' }}
+        </el-button>
+        <el-button type="primary" class="btn" plain :disabled="!sourceUrl" @click="onScaleMax">放大</el-button>
+        <el-button type="primary" class="btn" plain :disabled="!sourceUrl" @click="onScaleMin">缩小</el-button>
+        <el-button type="primary" class="btn" plain :disabled="!sourceUrl" @click="onRotate">旋转</el-button>
+        <el-dropdown>
+          <el-button type="primary" class="btn" :disabled="!sourceUrl || !option.fixed" plain>比例</el-button>
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item v-for="item in IMG_ROPORTIONS" :key="item.key" @click="onRoportion(item.value)">
+                <span class="dropdown-item">{{ item.key }}</span>
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
+        <el-tooltip
+          class="box-item"
+          effect="dark"
+          content="需要优先点击截取按钮之后才能下载最新设置的图片"
+          placement="top"
+          popper-class="custom-dropdown-styles"
+        >
+          <el-button type="primary" :disabled="!cropperUrl" class="btn" plain @click="onDownload">下载</el-button>
+        </el-tooltip>
+        <el-button type="warning" :disabled="!sourceUrl" class="btn" @click="onRefresh">重置</el-button>
+        <el-button type="success" :disabled="!sourceUrl" class="btn" @click="onFinish">截取</el-button>
+      </div>
     </div>
   </div>
 </template>
@@ -94,6 +93,12 @@ import { getImgInfo, onDownloadFile, checkOS } from '@/utils';
 import { IMG_ROPORTIONS } from '@/constant';
 import OnlineImage from '../OnlineImage/index.vue';
 import 'vue-cropper/dist/index.css';
+
+interface IProps {
+  hideHeader?: boolean;
+}
+
+defineProps<IProps>();
 
 const emit = defineEmits(['update:modalVisible']);
 
@@ -255,6 +260,7 @@ const onClose = () => {
 
 .container {
   position: relative;
+  width: 100%;
   height: 100%;
   padding: 0 0 10px;
 
@@ -308,16 +314,14 @@ const onClose = () => {
     justify-content: space-between;
     flex-direction: column;
     border-bottom: 1px solid var(--card-border);
-    // background-color: var(--pre-hover-bg);
     overflow: auto;
-    height: calc(100% - 88px);
+    height: calc(100% - 83px);
     box-sizing: border-box;
 
     .drag-upload {
-      height: calc(100vh - 182px);
-      display: block;
       padding: 0;
       border-radius: 0;
+      box-sizing: border-box;
 
       &:hover {
         border: 1px dashed var(--theme-blue);
@@ -343,23 +347,40 @@ const onClose = () => {
 
   .footer {
     position: absolute;
-    bottom: 0;
-    right: 10px;
+    bottom: 7px;
+    right: 0;
     display: flex;
     flex-wrap: wrap;
-    justify-content: flex-end;
-    margin-top: 20px;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0 8px;
     text-align: right;
 
     .btn {
       margin-left: 0;
-      margin-bottom: 10px;
       margin-left: 10px;
     }
 
     .roportion {
       width: 88px;
     }
+  }
+}
+
+.hide-container {
+  box-sizing: border-box;
+  padding: 0 2px;
+
+  .content {
+    height: calc(100% - 50px);
+    border-top: 1px solid var(--card-border);
+  }
+
+  .footer {
+    bottom: 10px;
+    padding: 0 10px;
   }
 }
 

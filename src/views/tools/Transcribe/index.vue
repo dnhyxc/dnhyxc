@@ -6,7 +6,7 @@
 -->
 <template>
   <div class="transcribe-wrap">
-    <div class="header">
+    <div v-if="!hideHeader" class="header">
       <div class="left">
         <span class="title">屏幕录制</span>
       </div>
@@ -73,14 +73,14 @@ import { onMounted, onUnmounted, ref, reactive, nextTick } from 'vue';
 import { onDownloadFile, formatDuration } from '@/utils';
 
 interface IProps {
-  modalVisible: boolean;
+  hideHeader?: boolean;
 }
 
 interface Emits {
   (e: 'update:modalVisible', visible: boolean): void;
 }
 
-defineProps<IProps>();
+const props = defineProps<IProps>();
 
 const emit = defineEmits<Emits>();
 
@@ -109,7 +109,7 @@ const videoSize = ref<string>('');
 let timer: ReturnType<typeof setTimeout> | null = null;
 
 onMounted(() => {
-  ipcRenderer.send('load-transcribe');
+  ipcRenderer.send('load-transcribe', props.hideHeader ? 'tools_transcribe' : '');
   ipcRenderer.on('share-screen-sources', getSources);
 });
 
@@ -266,6 +266,7 @@ const onClose = () => {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  width: 100%;
   height: 100%;
 
   .header {
@@ -276,7 +277,6 @@ const onClose = () => {
     height: 45px;
     min-height: 45px;
     padding: 0 10px;
-    border-bottom: 1px solid var(--card-border);
     box-sizing: border-box;
     color: var(--font-1);
 
@@ -302,6 +302,8 @@ const onClose = () => {
     flex: 1;
     overflow: hidden;
     border-radius: 0;
+    box-sizing: border-box;
+    border-top: 1px solid var(--card-border);
 
     .empty {
       display: flex;

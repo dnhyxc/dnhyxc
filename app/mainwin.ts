@@ -194,16 +194,20 @@ ipcMain.on('new-win', (event, pathname, id, info, prevId) => {
     const winId = globalChildWins.newWins.get(id);
     globalChildWins['independentWindow-' + winId]?.show();
   } else {
-    // 创建之前先判断是否超过三个子窗口，如果超过三个，则删除最早创建的那个子窗口
-    const childWinKeys = globalChildWins.newWins.keys();
-    const keys = Array.from(childWinKeys);
+    // 过滤掉 tools_codeRun 代码测试窗口，让子窗口超过3个时 tools_codeRun 始终不被新窗口顶关闭
+    const filterKeys = new Map(
+      [...globalChildWins.newWins.entries()].filter(([key, value]) => key !== 'tools_codeRun'),
+    );
     // 如果子窗口超过3个，则删除最早创建的那个子窗口
-    if (keys?.length > 2) {
-      const winId = globalChildWins.newWins.get(keys?.[0]);
+    if (globalChildWins.newWins.size > 2) {
+      // 获取第一项的key
+      const key = filterKeys.keys()?.next()?.value;
+      // 获取第一项的value
+      const winId = globalChildWins.newWins.get(key);
       globalChildWins['independentWindow-' + winId]?.close();
       globalChildWins['independentWindow-' + winId] = null;
       delete globalChildWins['independentWindow-' + winId];
-      globalChildWins.newWins.delete(keys?.[0]);
+      globalChildWins.newWins.delete(key);
     }
     // 如果没有超过三个子窗口，则创建子窗口
     app
@@ -245,8 +249,13 @@ ipcMain.on('clear-cache', (event, status) => {
 });
 
 // 监听开启屏幕录制
-ipcMain.on('load-transcribe', () => {
+ipcMain.on('load-transcribe', (event, id) => {
+  const winId = globalChildWins.newWins.get(id);
   desktopCapturer.getSources({ types: ['window', 'screen'] }).then((sources) => {
-    globalInfo.win?.webContents?.send('share-screen-sources', sources);
+    if (winId) {
+      globalChildWins['independentWindow-' + winId]?.webContents?.send('share-screen-sources', sources);
+    } else {
+      globalInfo.win?.webContents?.send('share-screen-sources', sources);
+    }
   });
 });

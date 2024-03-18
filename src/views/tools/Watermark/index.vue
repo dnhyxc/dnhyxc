@@ -5,31 +5,22 @@
  * index.vue
 -->
 <template>
-  <div class="watermark-wrap">
-    <div class="title">
+  <div :class="`watermark-wrap ${hideHeader && 'hide-watermark-wrap'}`">
+    <div v-if="!hideHeader" class="title">
       <div class="left">
         <span class="left-text">图片加水印</span>
-        <span class="left-action">
-          <el-switch
-            v-model="imgFrom"
-            style="--el-switch-off-color: var(--theme-blue); --el-switch-on-color: var(--active)"
-            size="small"
-            active-text="在线图片"
-            inactive-text="本地图片"
-          />
-        </span>
       </div>
       <span class="close" @click="onClose">关闭</span>
     </div>
     <div :class="`${checkOS() !== 'mac' && 'content-win'} content`">
       <div class="img-wrap">
         <div class="prev">
-          <DragUpload v-if="!base64Url && !imgFrom" class="drag-upload" :on-upload="onUpload">
+          <DragUpload v-if="!base64Url && imgFrom === '本地图片'" class="drag-upload" :on-upload="onUpload">
             <template #info>
               <div class="drag-info">图片上传之后，拖动图片中的文字，可更改水印位置</div>
             </template>
           </DragUpload>
-          <OnlineImage v-if="!base64Url && imgFrom" :on-use-online-url="onUseOnlineUrl" />
+          <OnlineImage v-if="!base64Url && imgFrom === '在线图片'" :on-use-online-url="onUseOnlineUrl" />
           <div class="upload-img-wrap">
             <span
               v-if="base64Url && markType === 'line'"
@@ -45,6 +36,13 @@
       </div>
       <div class="action-list">
         <div class="setting">
+          <div class="mark-inp">
+            <span class="label">图片来源：</span>
+            <el-radio-group v-model="imgFrom" class="radio-list">
+              <el-radio-button label="本地图片" value="本地图片" />
+              <el-radio-button label="在线图片" value="在线图片" />
+            </el-radio-group>
+          </div>
           <div class="mark-inp">
             <span class="label">水印文字：</span>
             <el-input v-model="markText" maxlength="20" placeholder="请输入水印文字" />
@@ -107,9 +105,15 @@ import { computed, ref, watch, nextTick } from 'vue';
 import { convas2ImgAddWatermark, onDownloadFile, checkOS, createWaterMark, processWaterMark } from '@/utils';
 import OnlineImage from '../OnlineImage/index.vue';
 
+interface IProps {
+  hideHeader?: boolean;
+}
+
 interface Emits {
   (e: 'update:modalVisible', visible: boolean): void;
 }
+
+defineProps<IProps>();
 
 const emit = defineEmits<Emits>();
 
@@ -134,13 +138,14 @@ const markInitTop = ref<string>('0');
 const markInitLeft = ref<string>('0');
 const previewVisible = ref<boolean>(false);
 // 图片来源
-const imgFrom = ref<boolean>(false);
+const imgFrom = ref<string>('本地图片');
 // 在线图片地址
 const onlineUrl = ref<string>('');
 
 const markFontSize = computed(() => `${markSize.value}px`);
 
 watch(imgFrom, (newVal, oldVal) => {
+  console.log('imgFrom', newVal, imgFrom.value);
   if (newVal !== oldVal) {
     onReset();
   }
@@ -299,12 +304,6 @@ const onClose = () => {
     border-bottom: 1px solid var(--card-border);
     color: var(--font-1);
 
-    .left-action {
-      margin-left: 10px;
-      color: var(--theme-blue);
-      cursor: pointer;
-    }
-
     .close {
       color: var(--theme-blue);
       cursor: pointer;
@@ -321,7 +320,6 @@ const onClose = () => {
 
     .img-wrap {
       flex: 1;
-      // background-color: var(--pre-hover-bg);
 
       .prev {
         display: flex;
@@ -400,7 +398,6 @@ const onClose = () => {
       flex-direction: column;
       width: 220px;
       height: calc(100% - 20px);
-      // background-color: var(--pre-hover-bg);
       border-left: 1px solid var(--card-border);
       padding: 10px;
 
@@ -439,6 +436,22 @@ const onClose = () => {
             }
           }
         }
+
+        .radio-list {
+          display: flex;
+          justify-content: space-between;
+
+          :deep {
+            .el-radio-button {
+              flex: 1;
+              display: flex;
+
+              .el-radio-button__inner {
+                flex: 1;
+              }
+            }
+          }
+        }
       }
 
       .action-btns {
@@ -466,6 +479,28 @@ const onClose = () => {
 
         .drag-upload {
           height: calc(100vh - 128px);
+        }
+      }
+    }
+  }
+}
+
+.hide-watermark-wrap {
+  width: 100%;
+
+  .content {
+    height: 100%;
+    width: 100%;
+    border-top: 1px solid var(--card-border);
+    padding: 0 0 2px 1px;
+
+    .img-wrap {
+      .prev {
+        height: 100%;
+        box-sizing: border-box;
+
+        .drag-upload {
+          height: 100%;
         }
       }
     }

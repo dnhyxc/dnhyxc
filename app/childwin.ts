@@ -7,7 +7,7 @@
 import path from 'path';
 import { BrowserWindow, ipcMain } from 'electron';
 import { getIconPath } from './tray';
-import { DOMAIN_URL, globalInfo, globalChildWins } from './constant';
+import { DOMAIN_URL, globalInfo, globalChildWins, TOOLS_KEYS } from './constant';
 
 let newWin: BrowserWindow | null = null;
 
@@ -28,7 +28,7 @@ export const createChildWin = (pathname: string, id: string) => {
     webPreferences: {
       contextIsolation: false,
       nodeIntegration: true,
-      partition: String(+new Date()), // 防止加载线上项目地址缓存在磁盘中
+      // partition: String(+new Date()), // 防止加载线上项目地址缓存在磁盘中
     },
     icon: path.join(__dirname, getIconPath()),
   });
@@ -85,22 +85,23 @@ const newWinMin = (win: BrowserWindow) => {
   win?.webContents.send('newWin-max', false);
 };
 
-// 监听文章下架消息，实时关闭窗口
-ipcMain.on('remove', (event, id: string) => {
-  const winId = globalChildWins.newWins.get(id);
+// 关闭窗口并删除wins中的id
+const closeAndDelWin = (id: string, _winId?: string) => {
+  const winId = _winId || globalChildWins.newWins.get(id);
   globalChildWins['independentWindow-' + winId]?.close();
   globalChildWins['independentWindow-' + winId] = null;
   delete globalChildWins['independentWindow-' + winId];
   globalChildWins.newWins.delete(id);
+};
+
+// 监听文章下架消息，实时关闭窗口
+ipcMain.on('remove', (event, id: string) => {
+  closeAndDelWin(id);
 });
 
 // 监听子窗口关闭
 ipcMain.on('new-win-out', (event, id: string) => {
-  const winId = globalChildWins.newWins.get(id);
-  globalChildWins['independentWindow-' + winId]?.close();
-  globalChildWins['independentWindow-' + winId] = null;
-  delete globalChildWins['independentWindow-' + winId];
-  globalChildWins.newWins.delete(id);
+  closeAndDelWin(id);
 });
 
 // 监听子窗口最大/最小化
@@ -162,11 +163,16 @@ ipcMain.on('restore', (event, info) => {
       globalChildWins['independentWindow-' + value]?.webContents.send('restore', info, key);
     } else {
       globalInfo.userInfo = '';
-      globalChildWins['independentWindow-' + value]?.webContents.send(
-        'restore',
-        JSON.stringify({ userInfo: {}, token: '' }),
-        key,
-      );
+      if (TOOLS_KEYS.includes(key)) {
+        // 如果退出登录则关闭所有工具子窗口
+        closeAndDelWin(key, value);
+      } else {
+        globalChildWins['independentWindow-' + value]?.webContents.send(
+          'restore',
+          JSON.stringify({ userInfo: {}, token: '' }),
+          key,
+        );
+      }
     }
   });
 });

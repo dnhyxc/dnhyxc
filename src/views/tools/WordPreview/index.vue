@@ -5,12 +5,12 @@
  * index.vue
 -->
 <template>
-  <div class="translate-wrap">
+  <div :class="`translate-wrap ${hideHeader && 'hide-translate-wrap'}`">
     <PreviewHeader
       title="Word 预览"
       load-line-text="在线 Word"
       accept=".doc,.docx"
-      :file-name="docFile?.name!"
+      :file-name="docFile?.name || ''"
       :save-loading="saveLoading"
       :loading="loading"
       :save-status="saveStatus"
@@ -21,6 +21,7 @@
       :before-upload="beforeUpload"
       :on-upload="onUpload"
       :show-book-list="showBookList"
+      :hide-header="hideHeader"
     />
     <Loading
       :loading="loading"
@@ -67,7 +68,7 @@ import BookList from '../BookList/index.vue';
 import PreviewHeader from '../PreviewHeader/index.vue';
 
 interface IProps {
-  modalVisible: boolean;
+  hideHeader?: boolean;
 }
 
 interface Emits {
@@ -227,6 +228,7 @@ const onClose = () => {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  width: 100%;
   height: 100%;
 
   .wrap {
@@ -322,6 +324,19 @@ const onClose = () => {
               background-color: var(--upload-hover-bg-color);
             }
           }
+        }
+      }
+    }
+  }
+}
+
+.hide-translate-wrap {
+  .wrap {
+    .content {
+      :deep {
+        .docx-wrapper {
+          height: calc(100vh - 110px);
+          box-sizing: border-box;
         }
       }
     }

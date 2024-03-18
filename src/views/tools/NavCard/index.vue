@@ -35,7 +35,7 @@ defineProps<IProps>();
 .nav-card-wrap {
   border-radius: 5px;
   box-sizing: border-box;
-  width: 10%;
+  width: 100%;
   padding: 5px;
 
   .navigation-item {

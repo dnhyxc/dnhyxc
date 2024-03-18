@@ -22,7 +22,15 @@
           <div class="tool-list-wrap">
             <div class="tool-title">资源处理</div>
             <div class="tool-list">
-              <NavCard v-for="item in TOOL_LIST" :key="item.id" :data="item" :on-click="() => onClickNavIcon(item)" />
+              <ContextMenu
+                v-for="item in TOOL_LIST"
+                :key="item.id"
+                class="block"
+                :menu="CARD_CONTEXT_MENU"
+                @select="(e) => onSelectMenu(e, item)"
+              >
+                <NavCard :data="item" :on-click="() => onClickNavIcon(item)" />
+              </ContextMenu>
             </div>
           </div>
           <Links :on-click-nav-icon="onClickNavIcon" />
@@ -35,9 +43,11 @@
 <script setup lang="ts">
 import { shell } from 'electron';
 import { onMounted, ref, computed } from 'vue';
-import { TOOL_LIST } from '@/constant';
-import { toolsStore } from '@/store';
+import { TOOL_LIST, CARD_CONTEXT_MENU } from '@/constant';
+import { toolsStore, loginStore } from '@/store';
 import { ToolsItem } from '@/typings/common';
+import { ipcRenderers } from '@/utils';
+import ContextMenu from '@/components/ContextMenu/index.vue';
 import Compress from './Compress/index.vue';
 import Cropper from './Cropper/index.vue';
 import TextToSpeech from './TextToSpeech/index.vue';
@@ -91,6 +101,20 @@ const visible = computed(() => {
     wordVisible.value
   );
 });
+
+// 选中菜单
+const onSelectMenu = (menu: { label: string; value: number }, item: ToolsItem) => {
+  if (menu.value === 1) {
+    const { userInfo, token } = loginStore;
+    ipcRenderers.sendNewWin({
+      path: `compile?from=tools_${item.id}`,
+      id: `tools_${item.id}`,
+      userInfo: JSON.stringify({ userInfo, token }),
+    });
+  } else {
+    onClickNavIcon(item);
+  }
+};
 
 // 显示图片压缩
 const showCompress = (item: ToolsItem) => {
@@ -189,6 +213,11 @@ const onClickNavIcon = (item: ToolsItem) => {
       height: 100%;
 
       .tool-list-wrap {
+        .block {
+          border-radius: 5px;
+          box-sizing: border-box;
+          width: 10%;
+        }
         .tool-title {
           display: flex;
           justify-content: space-between;

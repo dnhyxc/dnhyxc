@@ -5,10 +5,10 @@
  * index.vue
 -->
 <template>
-  <div class="header">
+  <div :class="`header ${hideHeader && 'hide-header'}`">
     <div class="left">
       <div class="actions">
-        <span class="title">{{ title }}</span>
+        <span v-if="!hideHeader" class="title">{{ title }}</span>
         <div class="btns">
           <el-button type="primary" link class="book-btn" @click="showBookList">
             {{ loadLineText }}
@@ -44,7 +44,7 @@
         </div>
       </div>
     </div>
-    <span class="close" @click="onClose">关闭</span>
+    <span v-if="!hideHeader" class="close" @click="onClose">关闭</span>
   </div>
 </template>
 
@@ -59,13 +59,14 @@ interface IProps {
   saveLoading: boolean;
   saveStatus: boolean;
   loading: boolean;
-  url: string | ArrayBuffer;
+  url: any;
   loadType: string;
   onClose: () => void;
   onSave: () => void;
   beforeUpload: Function;
   onUpload: ({ file }: { file: File }) => Promise<void> | void;
   showBookList: () => void;
+  hideHeader?: boolean;
 }
 
 defineProps<IProps>();
@@ -159,5 +160,10 @@ defineProps<IProps>();
       color: @active;
     }
   }
+}
+
+.hide-header {
+  border-top: 1px solid var(--card-border);
+  border-bottom: none;
 }
 </style>

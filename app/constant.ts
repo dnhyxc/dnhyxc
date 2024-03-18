@@ -60,3 +60,17 @@ export const CATCHS = [
   'serviceworkers',
   'cachestorage',
 ];
+
+// 工具子窗口
+export const TOOLS_KEYS = [
+  'tools_compress',
+  'tools_cropper',
+  'tools_codeRun',
+  'tools_textToSpeech',
+  'tools_watermark',
+  'tools_board',
+  'tools_transcribe',
+  'tools_word',
+  'tools_pdf',
+  'tools_epub',
+];

@@ -52,7 +52,7 @@ import { checkOS } from '@/utils';
 import { computed } from 'vue';
 
 const showType = computed(() => {
-  return location.pathname.includes('/article');
+  return location.pathname.includes('/article') || location.pathname.includes('/compile');
 });
 </script>
 
