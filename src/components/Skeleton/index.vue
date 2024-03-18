@@ -17,7 +17,7 @@
     </div>
     <div v-if="showType" class="content-wrap">
       <div :class="`${checkOS() === 'mac' && 'mac-content'} content`" />
-      <div :class="`${checkOS() === 'mac' && 'mac-right'} right`">
+      <div v-if="!isCompile" :class="`${checkOS() === 'mac' && 'mac-right'} right`">
         <div class="action-list" />
         <div class="toc-list" />
         <div class="another-list" />
@@ -53,6 +53,10 @@ import { computed } from 'vue';
 
 const showType = computed(() => {
   return location.pathname.includes('/article') || location.pathname.includes('/compile');
+});
+
+const isCompile = computed(() => {
+  return location.pathname.includes('/compile');
 });
 </script>
 
@@ -179,7 +183,7 @@ const showType = computed(() => {
       display: flex;
       flex-direction: column;
       flex: 1;
-      padding-right: 22px;
+      padding-right: 20px;
       padding-bottom: 20px;
 
       .carousel {
@@ -230,15 +234,14 @@ const showType = computed(() => {
       display: flex;
       justify-content: center;
       box-sizing: border-box;
-      margin-right: 10px;
-      height: calc(100vh - 89px);
+      height: calc(100vh - 75px);
       border-radius: 5px;
       box-shadow: 0 0 8px 0 var(--shadow-mack);
       .bgMoveColor(135deg);
     }
 
     .mac-content {
-      height: calc(100vh - 108px);
+      height: calc(100vh - 94px);
     }
 
     .right {
@@ -247,9 +250,10 @@ const showType = computed(() => {
       justify-content: flex-start;
       max-width: 260px;
       width: 30%;
+      margin-left: 10px;
       box-sizing: border-box;
       border-radius: 5px;
-      max-height: calc(100vh - 89px);
+      max-height: calc(100vh - 75px);
 
       .action-list {
         height: 50px;
@@ -282,7 +286,7 @@ const showType = computed(() => {
     }
 
     .mac-right {
-      max-height: calc(100vh - 108px);
+      max-height: calc(100vh - 94px);
     }
   }
 }
