@@ -341,7 +341,7 @@ const onClose = () => {
     }
 
     .drag-upload-mac {
-      height: calc(100vh - 192px);
+      height: calc(100vh - 145px);
     }
   }
 

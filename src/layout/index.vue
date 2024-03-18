@@ -123,9 +123,7 @@ provide('reload', reload);
   }
   .mac-content {
     height: calc(100vh - 70px);
-    // height: calc(100vh - 63px);
     width: 100%;
-    padding-right: 22px;
     padding-bottom: 25px;
   }
 }

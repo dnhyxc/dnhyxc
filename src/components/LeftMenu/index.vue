@@ -239,7 +239,7 @@ const onQuit = () => {
   padding-top: 15px;
   width: 62px;
   box-sizing: border-box;
-  height: calc(100vh - 95px);
+  height: calc(100vh - 101px);
 
   .icon-wrap {
     .page-icon {

@@ -31,7 +31,15 @@
         <el-scrollbar
           v-if="convertStore.convertList.length"
           ref="scrollRef"
-          :max-height="`${!hideHeader ? 'calc(100vh - 383px)' : 'calc(100vh - 312px)'}`"
+          :max-height="`${
+            !hideHeader
+              ? checkOS() === 'mac'
+                ? 'calc(100vh - 410px)'
+                : 'calc(100vh - 383px)'
+              : checkOS() === 'mac'
+              ? 'calc(100vh - 350px)'
+              : 'calc(100vh - 312px)'
+          }`"
           wrap-class="scrollbar-wrapper"
         >
           <div class="list">
@@ -101,7 +109,7 @@
 <script setup lang="ts">
 import { onUnmounted, ref, watch, onMounted } from 'vue';
 import { ElMessage } from 'element-plus';
-import { SpeechPlayer } from '@/utils';
+import { SpeechPlayer, checkOS } from '@/utils';
 import { convertStore } from '@/store';
 import { ConvertParams } from '@/typings/common';
 

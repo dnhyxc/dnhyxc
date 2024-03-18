@@ -38,7 +38,7 @@
           </div>
         </div>
       </div>
-      <div class="content-wrap">
+      <div :class="`${checkOS() === 'mac' && 'mac-content-wrap'} content-wrap`">
         <Compress v-if="route.query?.from === 'tools_compress' && userId" hide-header />
         <Cropper v-if="route.query?.from === 'tools_cropper' && userId" hide-header />
         <CodeRun v-if="route.query?.from === 'tools_codeRun' && userId" hide-header />
@@ -364,6 +364,10 @@ const onClick = async (item: { title: string; svg: string }) => {
       .mac-right {
         max-height: calc(100vh - 93px);
       }
+    }
+
+    .mac-content-wrap{
+      height: calc(100% - 95px);
     }
   }
 

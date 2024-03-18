@@ -231,7 +231,7 @@ const onClick = (name: string) => {
 
   .mac-card-list {
     .card {
-      width: calc((100vw - 82px) / 4);
+      width: calc((100vw - 92px) / 4);
     }
   }
 }

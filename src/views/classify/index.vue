@@ -267,6 +267,6 @@ const likeListArticle = (id: string, data?: ArticleItem) => {
 }
 
 .mac-classify-wrap {
-  width: calc(100% - 2px);
+  // width: calc(100% - 2px);
 }
 </style>
