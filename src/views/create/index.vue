@@ -34,7 +34,11 @@
       :prev-content="prevContent"
       :code="createStore.draftDetail.content"
       class="create-editor"
-    />
+    >
+      <template #leftAction>
+        <span class="action iconfont icon-debug-alt" title="代码测试工具" @click="onShowCodeRun" />
+      </template>
+    </MonacoEditor>
     <CreateDrawer
       :key="JSON.stringify(createStore.classifys)"
       v-model="visible"
@@ -51,8 +55,8 @@
 import { ref, watch, defineAsyncComponent, onMounted, onUnmounted } from 'vue';
 import { useRoute, useRouter, onBeforeRouteLeave } from 'vue-router';
 import { ElMessage } from 'element-plus';
-import { articleStore, createStore } from '@/store';
-import { Message } from '@/utils';
+import { articleStore, createStore, loginStore } from '@/store';
+import { Message, ipcRenderers } from '@/utils';
 import AsyncLoading from '@/components/AsyncLoading/index.vue';
 import CreateDrawer from './Create/index.vue';
 import DraftList from './DraftList/index.vue';
@@ -192,6 +196,16 @@ const toPreview = (id: string) => {
   // 手动去除query articleId 参数
   router.push(`/draft?id=${id}`);
 };
+
+// 开启代码调试
+const onShowCodeRun = () => {
+  const { userInfo, token } = loginStore;
+  ipcRenderers.sendNewWin({
+    path: 'compile?from=tools_codeRun',
+    id: 'tools_codeRun',
+    userInfo: JSON.stringify({ userInfo, token }),
+  });
+};
 </script>
 
 <style lang="less" scoped>
@@ -207,6 +221,17 @@ const toPreview = (id: string) => {
     height: calc(100% - 8px);
     margin-top: 8px;
     width: 100%;
+
+    .icon-debug-alt {
+      color: var(--theme-blue);
+      margin-top: -2px;
+      margin-right: 14px;
+      cursor: pointer;
+
+      &:hover {
+        color: var(--active);
+      }
+    }
   }
 }
 </style>

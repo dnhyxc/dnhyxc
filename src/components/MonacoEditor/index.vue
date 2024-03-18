@@ -33,6 +33,7 @@
               </el-dropdown-menu>
             </template>
           </el-dropdown>
+          <slot name="leftAction"></slot>
           <span class="action iconfont icon-tishi" title="快捷键说明" @click="onShowInfo" />
           <span v-if="!isCodeEdit" class="action iconfont icon-bianjiqi" title="切换编辑器" @click="onChangeEditor" />
         </div>

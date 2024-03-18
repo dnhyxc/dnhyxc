@@ -1,5 +1,3 @@
-import { ElMessage } from 'element-plus';
-
 export const JSONStringify = (option: string) => {
   return JSON.stringify(
     option,
@@ -74,11 +72,7 @@ export const codeTemplate = (value: string) => {
         try {
           ${code}
         } catch(e) {
-          ${ElMessage({
-            message: '请检查运行语言是否匹配或代码是否有误',
-            type: 'warning',
-            offset: 80,
-          })};
+          throw new Error(e)
         }
       </script>
     </body>

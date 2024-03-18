@@ -9,7 +9,6 @@
     <div v-if="!hideHeader" class="header">
       <div class="title">
         <span class="title-text">代码测试</span>
-        <span type="primary" link class="demo-list" @click="showDemoList">示例列表</span>
       </div>
       <span class="close" @click="onClose">关闭</span>
     </div>
@@ -26,6 +25,9 @@
         >
           <template #save="monacoData">
             <div class="action-list">
+              <el-button type="primary" link class="save-code" title="示例列表" @click="showDemoList">
+                示例列表
+              </el-button>
               <el-button
                 :disabled="!codeContent"
                 type="primary"
@@ -209,7 +211,7 @@ const fontColor = computed(() => {
 // 解决切换主题预览背景不跟随改变的问题
 watch(background, (newVal, oldVal) => {
   if (newVal !== oldVal) {
-    run({ data: { content: '' } });
+    run({ data: { content: '' } }, false);
   }
 });
 
@@ -255,8 +257,8 @@ const createIframe = ({ code, display, id }: { code: string; display: string; id
 };
 
 // 运行C语言
-const runCCode = async (code: string) => {
-  if (code.includes('scanf') || (code.includes('gets(') && code.includes('<string.h>'))) {
+const runCCode = async (code: string, verifiy?: boolean) => {
+  if (verifiy && (code.includes('scanf') || (code.includes('gets(') && code.includes('<string.h>')))) {
     ElMessage({
       message: '暂不支持 scanf、gets 等输入方法',
       type: 'warning',
@@ -264,7 +266,7 @@ const runCCode = async (code: string) => {
     });
     return;
   }
-  if (!code.includes('int main')) {
+  if (verifiy && !code.includes('int main')) {
     ElMessage({
       message: '请检查运行语言是否匹配',
       type: 'warning',
@@ -279,8 +281,8 @@ const runCCode = async (code: string) => {
 };
 
 // 运行JS
-const runJSCode = (code: string) => {
-  createIframe({ code: codeTemplate(code) as string, display: 'none' });
+const runJSCode = (code: string, verifiy?: boolean) => {
+  createIframe({ code: codeTemplate(code), display: 'none' });
 };
 
 // 运行HTML
@@ -293,7 +295,7 @@ const runHTMLCode = (code: string) => {
 };
 
 // 运行代码
-const run = async (monacoData?: any) => {
+const run = async (monacoData?: any, verifiy = true) => {
   const { content: code } = monacoData?.data;
   prevCode.value = code;
   console.clear();
@@ -304,7 +306,7 @@ const run = async (monacoData?: any) => {
     javascript: runJSCode,
     html: runHTMLCode,
   };
-  actions[language.value](code);
+  actions[language.value](code, verifiy);
 };
 
 // 关闭

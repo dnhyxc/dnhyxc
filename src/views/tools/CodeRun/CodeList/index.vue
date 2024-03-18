@@ -105,6 +105,7 @@ const onScrollTo = (to?: number) => {
 const onEdit = (id: string) => {
   codeStore.clearCodeId();
   codeStore.getCodeById(id);
+  emit('update:modelValue', false);
 };
 
 // 删除
