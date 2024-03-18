@@ -116,10 +116,10 @@ export const useCodeStore = defineStore('code', {
       }
     },
 
-    // 编译C语言
-    async compileCCode(code: string) {
+    // 编译C语言, options: gcc 编译选项，如 -lm（链接数学库）、-std=<standard>：指定符合的 C 或 C++ 标准，例如 -std=c11
+    async compileCCode(code: string, options?: string) {
       this.compileLoading = true;
-      const res = normalizeResult<string>(await Service.compileCCode(code));
+      const res = normalizeResult<string>(await Service.compileCCode({ code, options }));
       this.compileLoading = false;
       if (res.success) {
         this.compileData = res.data;

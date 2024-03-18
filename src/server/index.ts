@@ -442,8 +442,8 @@ export const getCodeById = async (id: string) => {
 };
 
 // 编译C语言
-export const compileCCode = async (code: string) => {
-  return await post(API.COMPILE_C_CODE, copeParams({ code }));
+export const compileCCode = async (params: { code: string; options?: string }) => {
+  return await post(API.COMPILE_C_CODE, copeParams(params));
 };
 
 // 获取聊天消息列表

@@ -12,9 +12,9 @@
       accept=".pdf"
       :file-name="fileName"
       :save-loading="saveLoading"
-      :loading="loading"
+      :loading="bookStore.pdfInfo.loading"
       :save-status="saveStatus"
-      :url="iframeUrl"
+      :url="bookStore.pdfInfo.iframeUrl"
       :load-type="loadType"
       :on-close="onClose"
       :on-save="onSave"
@@ -24,7 +24,7 @@
       :hide-header="hideHeader"
     />
     <Loading
-      :loading="loading"
+      :loading="bookStore.pdfInfo.loading"
       f
       :load-text="`${fileName ? `正在快马加鞭的加载《${fileName}》` : '正在快马加鞭的加载'}`"
       class="content"
@@ -42,7 +42,7 @@
           </div>
         </div>
       </template>
-      <div v-if="!iframeUrl" class="preview-wrap">
+      <div v-if="!bookStore.pdfInfo.iframeUrl" class="preview-wrap">
         <DragUpload
           class="drag-upload"
           :on-upload="onUpload"
@@ -52,7 +52,7 @@
         />
       </div>
       <div v-else class="preview-wrap">
-        <iframe :src="iframeUrl" frameborder="0" class="iframe" />
+        <iframe :src="bookStore.pdfInfo.iframeUrl" frameborder="0" class="iframe" />
         <div class="actions" @click="bookStore.pdfInfo.addTagVisible = true">
           <i class="iconfont icon-biaoqian" title="保存书签" />
         </div>
@@ -60,7 +60,7 @@
     </Loading>
     <BookList
       v-model:visible="visible"
-      v-model:loadStatus="loading"
+      v-model:loadStatus="bookStore.pdfInfo.loading"
       :read-book="previewPdf"
       load-type="pdf"
       :book-id="currentBookId"
@@ -97,7 +97,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, watch } from 'vue';
+import { ref, reactive, computed, onUnmounted } from 'vue';
 import { onBeforeRouteLeave, useRouter } from 'vue-router';
 import { ElMessage } from 'element-plus';
 import type { UploadProps, FormInstance } from 'element-plus';
@@ -122,9 +122,7 @@ const emit = defineEmits<Emits>();
 
 const router = useRouter();
 
-const iframeUrl = ref<string>('');
 const fileName = ref<string>('');
-const loading = ref<boolean>(false);
 const visible = ref<boolean>(false);
 // 选择渠道
 const loadType = ref<string>('upload');
@@ -169,21 +167,24 @@ const isSaved = computed(() => {
   return bookStore.blobs.find((i) => i.id === tagForm.bookId);
 });
 
-watch([iframeUrl, loading], (newVal) => {
-  if (props.hideHeader) {
-    bookStore.pdfInfo.iframeUrl = newVal[0];
-    bookStore.pdfInfo.loading = newVal[1];
-  }
+// 组件卸载时，清空，防止在独立窗口打开时一直缓存了这些属性
+onUnmounted(() => {
+  bookStore.pdfInfo = {
+    canClose: true,
+    addTagVisible: false,
+    loading: false,
+    iframeUrl: '',
+  };
 });
 
 onBeforeRouteLeave(async (to, from, next) => {
   // 页面离开时时，保存上一次阅读的位置
-  if (!tagForm.bookId || (loadType.value === 'line' && !iframeUrl.value && progress.value < 100)) {
+  if (!tagForm.bookId || (loadType.value === 'line' && !bookStore.pdfInfo.iframeUrl && progress.value < 100)) {
     // 页面离开时停止加载资源
     onAbort();
     next();
   } else {
-    if (!canGo.value && !loading.value) {
+    if (!canGo.value && !bookStore.pdfInfo.loading) {
       try {
         const res = await Message('', '是否保存阅读记录后再离开？', 'info');
         if (res === 'confirm') {
@@ -207,7 +208,7 @@ onBeforeRouteLeave(async (to, from, next) => {
 const onUploadFile = async () => {
   if (!rawFile.value) return;
   resetRendition();
-  loading.value = true;
+  bookStore.pdfInfo.loading = true;
   fileName.value = rawFile.value.name;
   const fileURL = URL.createObjectURL(rawFile.value);
   // getUniqueFileName 获取唯一文件信息
@@ -219,7 +220,7 @@ const onUploadFile = async () => {
     tagForm.bookId = bookStore.currentUploadId;
     getReadBookRecords(fileURL, bookStore.currentUploadId);
   } else {
-    iframeUrl.value = fileURL;
+    bookStore.pdfInfo.iframeUrl = fileURL;
     clearLoading();
   }
 };
@@ -257,7 +258,7 @@ const beforeUpload: UploadProps['beforeUpload'] = async (file) => {
 // 自定义上传
 const onUpload = async ({ file }: { file: File }) => {
   rawFile.value = file;
-  if (!iframeUrl.value || !tagForm.bookId) {
+  if (!bookStore.pdfInfo.iframeUrl || !tagForm.bookId) {
     onUploadFile();
   } else {
     try {
@@ -286,7 +287,7 @@ const getProgress = (num: number) => {
 // 重置阅读属性设置
 const resetRendition = () => {
   fileName.value = '';
-  loading.value = false;
+  bookStore.pdfInfo.loading = false;
   progress.value = 0;
   loadPdfSize.value = 0;
   pdfSize.value = 0;
@@ -315,7 +316,7 @@ const loadBookBlob = async (id: string, url: string) => {
     previousReader,
     addPreviousReader,
   }).catch(() => {
-    loading.value = false;
+    bookStore.pdfInfo.loading = false;
   });
   if (blob) {
     const fileURL = URL.createObjectURL(blob);
@@ -323,15 +324,15 @@ const loadBookBlob = async (id: string, url: string) => {
     // 保存书籍blob
     bookStore.saveBlob({ id, blob });
   } else {
-    loading.value = false;
+    bookStore.pdfInfo.loading = false;
   }
 };
 
 const loadPdf = () => {
-  if (!activePdf.value || loading.value) return;
+  if (!activePdf.value || bookStore.pdfInfo.loading) return;
   resetRendition();
   visible.value = false;
-  loading.value = true;
+  bookStore.pdfInfo.loading = true;
   loadType.value = 'line';
   const { url, size, fileName: name, id } = activePdf.value;
   tagForm.bookId = id;
@@ -348,7 +349,7 @@ const loadPdf = () => {
 
 const previewPdf = async (data: AtlasItemParams) => {
   activePdf.value = data;
-  if (!iframeUrl.value) {
+  if (!bookStore.pdfInfo.iframeUrl) {
     loadPdf();
   } else {
     try {
@@ -376,17 +377,17 @@ const getReadBookRecords = async (fileURL: string, curBookId: string) => {
     try {
       const res = await Message(`第 ${tocId} 页 ${tocName || ''}`, '是否跳转到历史阅读目录？', 'info');
       if (res === 'confirm') {
-        iframeUrl.value = `${fileURL}#page=${tocId}`;
+        bookStore.pdfInfo.iframeUrl = `${fileURL}#page=${tocId}`;
         currentBookId.value = curBookId;
         clearLoading();
       }
     } catch (error) {
-      iframeUrl.value = fileURL;
+      bookStore.pdfInfo.iframeUrl = fileURL;
       currentBookId.value = curBookId;
       clearLoading();
     }
   } else {
-    iframeUrl.value = fileURL;
+    bookStore.pdfInfo.iframeUrl = fileURL;
     currentBookId.value = curBookId;
     clearLoading();
   }
@@ -400,7 +401,7 @@ const clearLoading = () => {
     timer = null;
   }
   timer = setTimeout(() => {
-    loading.value = false;
+    bookStore.pdfInfo.loading = false;
   }, time);
 };
 
@@ -468,7 +469,10 @@ const onSubmit = async () => {
 };
 
 const onClose = async () => {
-  if (iframeUrl.value && !loading.value) {
+  // 关闭时重置canUpload及canLoadPdf属性，防止关闭时再次触发onUploadFile方法
+  canUpload.value = true;
+  canLoadPdf.value = true;
+  if (bookStore.pdfInfo.iframeUrl && !bookStore.pdfInfo.loading) {
     try {
       const res = await Message('', '是否保存阅读记录后再离开？', 'info');
       if (res === 'confirm') {

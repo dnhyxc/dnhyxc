@@ -256,9 +256,9 @@ const createIframe = ({ code, display, id }: { code: string; display: string; id
 
 // 运行C语言
 const runCCode = async (code: string) => {
-  if (code.includes('scanf')) {
+  if (code.includes('scanf') || (code.includes('gets(') && code.includes('<string.h>'))) {
     ElMessage({
-      message: '暂不支持 scanf',
+      message: '暂不支持 scanf、gets 等输入方法',
       type: 'warning',
       offset: 80,
     });

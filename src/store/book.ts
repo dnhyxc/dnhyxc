@@ -16,14 +16,14 @@ interface IProps {
   arrayBuffers: { buffer: ArrayBuffer; id: string }[];
   blobs: { blob: Blob; id: string }[];
   epubInfo: { [key: string]: (...args: any[]) => any };
-  pdfInfo: Partial<{
+  pdfInfo: {
     iframeUrl: string;
     loading: boolean;
     addTagVisible: boolean;
     canClose: boolean;
-    onAbort: () => void;
-    onClose: () => void;
-  }>;
+    onAbort?: () => void;
+    onClose?: () => void;
+  };
 }
 
 export const useBookStore = defineStore('book', {
@@ -41,6 +41,8 @@ export const useBookStore = defineStore('book', {
     pdfInfo: {
       canClose: true,
       addTagVisible: false,
+      loading: false,
+      iframeUrl: '',
     },
   }),
 
