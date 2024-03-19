@@ -121,7 +121,7 @@
               },
             ]"
           >
-            <el-input v-model="codeStore.codeInfo.title" maxlength="20" placeholder="请输入示例名称" />
+            <el-input v-model="codeStore.codeInfo.title" maxlength="50" show-word-limit placeholder="请输入示例名称" />
           </el-form-item>
           <el-form-item prop="abstract" label="示例描述">
             <el-input
@@ -591,7 +591,7 @@ const onClear = (monacoData?: any) => {
         }
       }
 
-      .el-textarea .el-input__count {
+      .el-input__count {
         background: none;
       }
 

@@ -66,6 +66,13 @@ interface Toolbar {
     action?: (editor?: any) => void;
     menus?: ToolbarItem[];
   };
+  debug?: {
+    title?: string;
+    text?: string;
+    icon?: string;
+    action?: (editor?: any) => void;
+    menus?: ToolbarItem[];
+  };
 }
 
 interface IProps {
@@ -77,6 +84,7 @@ interface IProps {
   onSaveDraft?: () => void;
   onChangeEditor?: () => void;
   copyCodeSuccess?: (value?: string) => void;
+  onShowCodeRun?: () => void;
   showVscode?: boolean;
   showDot?: number;
 }
@@ -90,13 +98,14 @@ const props = withDefaults(defineProps<IProps>(), {
   onSaveDraft: () => {},
   onChangeEditor: () => {},
   copyCodeSuccess: () => {},
+  onShowCodeRun: () => {},
   showDot: 0,
 });
 
 // tool menu
 const toolMenu = computed(() => {
   const menu =
-    'undo redo | h bold italic | quote code | strikethrough hr | emoji link image | ul ol table | clear draft save create';
+    'undo redo | h bold italic | quote code | strikethrough hr | emoji link image | ul ol table | clear draft save create debug';
   if (props.showVscode) {
     return `${menu} | monaco`;
   }
@@ -154,6 +163,13 @@ const toolbar = reactive<Toolbar>({
     title: '切换编辑器',
     action(editor) {
       props?.onChangeEditor?.();
+    },
+  },
+  debug: {
+    text: '测',
+    title: '代码测试工具',
+    action(editor) {
+      props?.onShowCodeRun?.();
     },
   },
 });
@@ -270,6 +286,7 @@ const onCopyCodeSuccess = (value: string) => {
 
     .v-md-editor__toolbar-item {
       color: var(--font-4);
+      padding: 0 5px;
 
       &:hover {
         background-color: var(--bg-lg-color1);
@@ -316,7 +333,8 @@ const onCopyCodeSuccess = (value: string) => {
     .v-md-editor__toolbar-item-create,
     .v-md-editor__toolbar-item-save,
     .v-md-editor__toolbar-item-draft,
-    .v-md-editor__toolbar-item-monaco {
+    .v-md-editor__toolbar-item-monaco,
+    .v-md-editor__toolbar-item-debug {
       color: var(--theme-blue);
       font-size: 14px;
       line-height: 30px;
@@ -339,7 +357,7 @@ const onCopyCodeSuccess = (value: string) => {
 
     .v-md-editor__toolbar-item-monaco {
       font-size: 16px;
-      margin-top: -2px;
+      // margin-top: -2px;
     }
   }
 }

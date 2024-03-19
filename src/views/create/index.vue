@@ -8,6 +8,7 @@
   <div class="edit-wrap">
     <MarkdownEditor
       v-if="!editType"
+      show-vscode
       :on-publish="onPublish"
       :on-clear="onClear"
       :on-show-draft="showDraft"
@@ -15,7 +16,7 @@
       :on-save-draft="onSaveDraft"
       :on-change-editor="onChangeEditor"
       :copy-code-success="onCopyCodeSuccess"
-      show-vscode
+      :on-show-code-run="onShowCodeRun"
       :show-dot="prevContent.trim() !== createStore.createInfo.content?.trim() ? 1 : 0"
       class="create-editor"
     />

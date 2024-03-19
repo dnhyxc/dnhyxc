@@ -131,7 +131,7 @@ export const useLoginStore = defineStore('login', {
           // 登陆成功后返回到上一页面
           router?.push(commonStore.backPath);
         } else {
-          onResetCode?.();
+          res.code === 406 && onResetCode?.();
           ElMessage({
             message: res.message,
             type: 'error',

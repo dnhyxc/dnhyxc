@@ -43,11 +43,9 @@
               </div>
               <div class="classifys">
                 <span class="classify" @click.stop="toClassify(data.classify!)">
-                  <span class="label">分类: </span>
                   <span v-html="data.classify" />
                 </span>
                 <span class="tag" @click.stop="toTag(data.tag!)">
-                  <span class="label">标签: </span>
                   <span v-html="data.tag" />
                 </span>
               </div>
@@ -363,19 +361,19 @@ const toTag = (name: string) => {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          margin: 8px 0;
+          margin: 12px 0 9px;
 
           .author,
           .date {
             max-width: 50%;
-            font-size: 13px;
+            font-size: 14px;
             color: var(--font-2);
             .ellipsisMore(1);
           }
 
           .author {
             margin-right: 5px;
-            font-size: 14px;
+            font-size: 15px;
 
             &:hover {
               color: var(--theme-blue);
@@ -389,12 +387,12 @@ const toTag = (name: string) => {
           justify-content: space-between;
           width: 100%;
           margin-top: 5px;
-          margin-bottom: 5px;
+          margin-bottom: 6px;
 
           .classify,
           .tag {
             max-width: 100%;
-            font-size: 13px;
+            font-size: 14px;
             border-radius: 5px;
             color: var(--font-2);
             .ellipsisMore(1);

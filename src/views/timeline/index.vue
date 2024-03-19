@@ -15,7 +15,7 @@
       <div v-if="timelineStore.timelineList?.length > 0" class="no-more">没有更多了～～～</div>
       <Empty v-if="showEmpty" />
     </el-scrollbar>
-    <ToTopIcon v-if="scrollTop >= 500" class="to-top" :on-scroll-to="onScrollTo" />
+    <ToTopIcon v-if="scrollTop >= 500" :on-scroll-to="onScrollTo" />
   </Loading>
 </template>
 
@@ -279,11 +279,6 @@ const onScrollTo = () => {
         }
       }
     }
-  }
-
-  .to-top {
-    right: 40px;
-    bottom: 40px;
   }
 
   .no-more {
