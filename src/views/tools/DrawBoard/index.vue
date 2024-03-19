@@ -94,7 +94,7 @@
 
 <script setup lang="ts">
 import { onMounted, ref, nextTick, reactive, onUnmounted } from 'vue';
-import { onDownloadFile } from '@/utils';
+import { onDownloadFile, checkOS } from '@/utils';
 import { BOARD_ACTIONS, BOARD_COLORS } from '@/constant';
 
 interface IProps {
@@ -201,7 +201,7 @@ const initCanvasSize = () => {
   const pageMenu = document.querySelector('#__LEFT_MENU__') as HTMLDivElement;
   // 获取页面头部
   const pageHead = document.querySelector('#__HEADER__') as HTMLDivElement;
-  pageSizeInfo.top = pageHead?.offsetHeight + titleRef.value?.offsetHeight! || 100;
+  pageSizeInfo.top = pageHead?.offsetHeight + titleRef.value?.offsetHeight! || checkOS() === 'mac' ? 140 : 100;
   pageSizeInfo.left = pageMenu?.offsetWidth || 0;
   const pageWidth = boardWrapRef.value?.offsetWidth!;
   const pageHeight = boardWrapRef.value?.offsetHeight!;

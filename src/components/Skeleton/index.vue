@@ -241,7 +241,7 @@ const isCompile = computed(() => {
     }
 
     .mac-content {
-      height: calc(100vh - 94px);
+      height: calc(100vh - 98px);
     }
 
     .right {
@@ -286,14 +286,14 @@ const isCompile = computed(() => {
     }
 
     .mac-right {
-      max-height: calc(100vh - 94px);
+      max-height: calc(100vh - 98px);
     }
   }
 }
 
 .mac-skeleton-wrap {
   .header {
-    padding: 30px 27px 0 10px;
+    padding: 30px 20px 0 15px;
     margin-bottom: 20px;
   }
 

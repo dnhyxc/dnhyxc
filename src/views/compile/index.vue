@@ -342,7 +342,7 @@ const onClick = async (item: { title: string; svg: string }) => {
       }
 
       .mac-content {
-        height: calc(100vh - 93px);
+        height: calc(100vh - 98px);
       }
 
       .right {

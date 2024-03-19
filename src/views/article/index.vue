@@ -413,7 +413,7 @@ const onScrollTo = (height?: number) => {
       }
 
       .mac-content {
-        height: calc(100vh - 93px);
+        height: calc(100vh - 113px);
       }
 
       .right {
@@ -438,7 +438,7 @@ const onScrollTo = (height?: number) => {
       }
 
       .mac-right {
-        max-height: calc(100vh - 93px);
+        max-height: calc(100vh - 113px);
       }
     }
   }
