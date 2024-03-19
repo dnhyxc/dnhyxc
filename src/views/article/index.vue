@@ -372,7 +372,7 @@ const onScrollTo = (height?: number) => {
       display: flex;
       justify-content: center;
       box-sizing: border-box;
-      padding: 0 18px;
+      padding: 0 20px 0 18px;
       height: 100%;
 
       .content {
@@ -382,7 +382,7 @@ const onScrollTo = (height?: number) => {
         justify-content: center;
         box-sizing: border-box;
         margin-right: 10px;
-        height: calc(100vh - 76px);
+        height: calc(100vh - 74px);
         border-radius: 5px;
         box-shadow: 0 0 8px 0 var(--shadow-mack);
         background-color: var(--pre-hover-bg);
@@ -419,7 +419,7 @@ const onScrollTo = (height?: number) => {
         width: 30%;
         box-sizing: border-box;
         border-radius: 5px;
-        max-height: calc(100vh - 76px);
+        max-height: calc(100vh - 74px);
 
         .toc-list {
           box-sizing: border-box;

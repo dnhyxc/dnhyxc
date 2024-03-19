@@ -62,7 +62,7 @@
           </template>
         </MonacoEditor>
       </div>
-      <Loading :loading="codeStore.compileLoading" class="preview" load-text="正在卖力执行中">
+      <div class="preview">
         <div v-drag class="line" />
         <MonacoEditor
           v-if="language !== 'html'"
@@ -75,14 +75,14 @@
           <template #save="monacoData">
             <div class="action-list">
               <el-button
-                :disabled="!codeResults"
+                :disabled="!codeResults || codeStore.compileLoading"
                 type="warning"
                 link
                 class="save-code"
                 title="重置"
                 @click="onClear(monacoData)"
               >
-                清空
+                {{ codeStore.compileLoading ? '正在运行中...' : codeResults ? '清空' : '' }}
               </el-button>
             </div>
           </template>
@@ -92,12 +92,14 @@
         </MonacoEditor>
         <div class="preview-content">
           <div class="toolbar">
-            <el-button type="warning" link class="clear-code" title="清空" @click="onClear">清空</el-button>
+            <el-button type="warning" link class="clear-code" title="清空" @click="onClear">
+              {{ htmlClear ? '清空' : '' }}
+            </el-button>
             <span class="run-title">{{ language }} 运行结果</span>
           </div>
           <div ref="previewRef" class="iframe-wrap" />
         </div>
-      </Loading>
+      </div>
     </div>
     <el-dialog
       v-model="visible"
@@ -181,6 +183,8 @@ const formRef = ref<FormInstance>();
 const codeContent = ref<string>('');
 // 上次运行的代码
 const prevCode = ref<string>('');
+// 控制html清空按钮的显示状态
+const htmlClear = ref<boolean>(false);
 
 onMounted(() => {
   bindEvents();
@@ -296,9 +300,10 @@ const runHTMLCode = (code: string) => {
 
 // 运行代码
 const run = async (monacoData?: any, verifiy = true) => {
+  htmlClear.value = true;
   const { content: code } = monacoData?.data;
   prevCode.value = code;
-  console.clear();
+  // console.clear();
   // 首先清除原有的代码执行结果
   codeResults.value = '';
   const actions = {
@@ -356,6 +361,11 @@ const onReset = (monacoData: any) => {
   const { editor } = monacoData.data;
   editor?.getModel()?.setValue('');
   codeStore.clearCodeId();
+  if (iframeNode.value) {
+    iframeNode.value.contentWindow!.document.body.innerHTML = '';
+  }
+  codeResults.value = '';
+  htmlClear.value = false;
 };
 
 // 清空html运行结果
@@ -366,6 +376,8 @@ const onClear = (monacoData?: any) => {
   if (iframeNode.value) {
     iframeNode.value.contentWindow!.document.body.innerHTML = '';
   }
+  codeResults.value = '';
+  htmlClear.value = false;
 };
 </script>
 
