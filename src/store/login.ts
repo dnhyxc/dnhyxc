@@ -5,7 +5,16 @@ import { LoginParams, UserLoginParams, UserInfoParams, registerRes, VerifyCodePa
 import { commonStore, messageStore } from '@/store';
 import * as Service from '@/server';
 import { useCheckUserId } from '@/hooks';
-import { normalizeResult, Message, encrypt, locSetItem, locGetItem, locRemoveItem, ipcRenderers } from '@/utils';
+import {
+  normalizeResult,
+  Message,
+  encrypt,
+  decrypt,
+  locSetItem,
+  locGetItem,
+  locRemoveItem,
+  ipcRenderers,
+} from '@/utils';
 import { createWebSocket, closeSocket } from '@/socket';
 import { UPDATE_INFO_API_PATH } from '@/constant';
 
@@ -84,7 +93,11 @@ export const useLoginStore = defineStore('login', {
       const res = normalizeResult<VerifyCodeParams>(await Service.verifyCode({ id: this.verifyCode.id }));
       this.loadCode = false;
       if (res.success) {
-        this.verifyCode = res.data;
+        const code = decrypt(res.data.code);
+        this.verifyCode = {
+          ...res.data,
+          code,
+        };
       }
     },
 
@@ -93,12 +106,13 @@ export const useLoginStore = defineStore('login', {
       try {
         // 密码加密传到后端
         const password = encrypt(data.password);
+        const code = encrypt(data.code!);
         const res = normalizeResult<UserLoginParams>(
           await Service.login({
             username: data.username,
             password,
             codeId: this.verifyCode.id,
-            code: data.code,
+            code,
           }),
         );
         if (res.success) {
