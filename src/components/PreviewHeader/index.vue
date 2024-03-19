@@ -49,8 +49,14 @@
       :url="articleStore?.articleDetail?.coverImage"
       :transition-img="HEAD_IMG"
       class="image"
+      :on-click="onPreview"
     />
     <p class="desc">{{ articleStore?.articleDetail?.abstract }}</p>
+    <ImagePreview
+      v-model:previewVisible="previewVisible"
+      :select-image="{ url: articleStore?.articleDetail?.coverImage }"
+      close-on-click-modal
+    />
   </div>
 </template>
 
@@ -65,6 +71,8 @@ import Image from '@/components/Image/index.vue';
 const router = useRouter();
 const route = useRoute();
 const followTimer = ref<boolean>(false);
+// 图片预览状态
+const previewVisible = ref<boolean>(false);
 
 onMounted(() => {
   if (articleStore.articleDetail?.authorId && !route.path.includes('/article')) {
@@ -94,6 +102,11 @@ const onFollow = async (authorId: string) => {
   followTimer.value = true;
   await followStore.manageFollow(authorId, route.params.id as string);
   followTimer.value = false;
+};
+
+// 预览封面图
+const onPreview = () => {
+  previewVisible.value = true;
 };
 </script>
 

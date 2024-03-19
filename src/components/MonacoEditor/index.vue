@@ -399,6 +399,8 @@ const onDiffValue = () => {
 
     .create-action {
       margin-bottom: 2px;
+      height: 40px;
+      line-height: 40px;
       .ellipsisMore(1);
     }
 
@@ -458,10 +460,10 @@ const onDiffValue = () => {
         &::before {
           position: absolute;
           right: -6px;
-          top: -3px;
+          top: -2px;
           content: '';
           width: 8px;
-          height: 7px;
+          height: 8px;
           background: @font-danger;
           border-radius: 8px;
           opacity: v-bind(showDot);

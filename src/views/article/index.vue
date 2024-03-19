@@ -289,6 +289,7 @@ const onScrollTo = (height?: number) => {
           font-size: 18px;
           font-weight: 700;
           color: var(--font-color);
+          .headerTextLg();
         }
       }
 
@@ -308,6 +309,8 @@ const onScrollTo = (height?: number) => {
             margin-left: 15px;
             margin-top: 2px;
             color: var(--font-color);
+            font-weight: var(--font-weight);
+            .headerTextLg();
           }
           .active {
             color: var(--theme-blue);
@@ -324,6 +327,8 @@ const onScrollTo = (height?: number) => {
           -webkit-app-region: no-drag;
           cursor: pointer;
           color: var(--font-color);
+          font-weight: var(--font-weight);
+          .headerTextLg();
 
           .icon-text {
             margin-left: 15px;

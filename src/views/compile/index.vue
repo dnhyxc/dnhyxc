@@ -219,6 +219,7 @@ const onClick = async (item: { title: string; svg: string }) => {
           font-size: 18px;
           font-weight: 700;
           color: var(--font-color);
+          .headerTextLg();
         }
       }
 
@@ -238,6 +239,8 @@ const onClick = async (item: { title: string; svg: string }) => {
             margin-left: 15px;
             margin-top: 2px;
             color: var(--font-color);
+            font-weight: var(--font-weight);
+            .headerTextLg();
           }
           .active {
             color: var(--theme-blue);
@@ -254,6 +257,8 @@ const onClick = async (item: { title: string; svg: string }) => {
           -webkit-app-region: no-drag;
           cursor: pointer;
           color: var(--font-color);
+          font-weight: var(--font-weight);
+          .headerTextLg();
 
           .icon-text {
             margin-left: 15px;
@@ -366,7 +371,7 @@ const onClick = async (item: { title: string; svg: string }) => {
       }
     }
 
-    .mac-content-wrap{
+    .mac-content-wrap {
       height: calc(100% - 95px);
     }
   }

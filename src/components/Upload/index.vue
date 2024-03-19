@@ -14,6 +14,7 @@
       :show-file-list="false"
       :before-upload="beforeUpload"
       :http-request="onUpload"
+      :accept="accept"
     >
       <slot>
         <el-icon class="uploader-icon"><Plus /></el-icon>
@@ -87,6 +88,7 @@ interface IProps {
   isAtlas?: boolean; // 是否是图片集上传
   multiple?: boolean; // 是否支持多文件上传
   quality?: number; // 图片压缩比，如果传 0 表示不需要压缩
+  accept?: string; // 限制类型
 }
 
 const props = withDefaults(defineProps<IProps>(), {
@@ -100,6 +102,7 @@ const props = withDefaults(defineProps<IProps>(), {
   isAtlas: false,
   multiple: false,
   quality: 0.5,
+  accept: '*',
 });
 
 const emit = defineEmits(['update:filePath']);

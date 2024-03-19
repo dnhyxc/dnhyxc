@@ -327,10 +327,10 @@ const onCopyCodeSuccess = (value: string) => {
       &::before {
         position: absolute;
         right: 0px;
-        top: 1px;
+        top: 3px;
         content: '';
-        width: 7px;
-        height: 7px;
+        width: 8px;
+        height: 8px;
         background: @font-danger;
         border-radius: 8px;
         opacity: v-bind(showDot);

@@ -716,7 +716,22 @@ export const ABOUT_TABS = [
 ];
 
 // 允许上传的文件类型
-export const FILE_TYPE = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif', 'image/webp', 'image/svg+xml'];
+export const FILE_TYPE = [
+  'image/jpeg',
+  'image/png',
+  'image/jpg',
+  'image/gif',
+  'image/webp',
+  'image/svg+xml',
+  'image/svg',
+];
+
+// 允许选择的图片类型
+export const IMG_ACCEPT = FILE_TYPE.map((type) => {
+  const parts = type.split('/');
+  return `.${parts[1]}`;
+}).join(', ');
+
 // 上传文件提示
 export const FILE_UPLOAD_MSG = '请上传 png、jpg、jpeg、gif、webp、svg 格式的图片';
 

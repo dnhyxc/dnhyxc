@@ -117,6 +117,7 @@
                 v-model:file-path="createStore.createInfo.coverImage"
                 :delete="!articleId"
                 :get-upload-url="getUploadUrl"
+                :accept="IMG_ACCEPT"
               >
                 <template #preview>
                   <img :src="uploadPath || createStore.createInfo?.coverImage!" class="cover-img" alt="文章封面" />
@@ -162,7 +163,7 @@
 import { ref, computed, onDeactivated } from 'vue';
 import { useRouter } from 'vue-router';
 import type { FormInstance } from 'element-plus';
-import { ARTICLE_TAG } from '@/constant';
+import { ARTICLE_TAG, IMG_ACCEPT } from '@/constant';
 import { createStore } from '@/store';
 import { checkImgUrlType, getImageColor } from '@/utils';
 import Upload from '@/components/Upload/index.vue';
