@@ -595,6 +595,10 @@ const onClear = (monacoData?: any) => {
         background: none;
       }
 
+      .el-input__count-inner {
+        background: none;
+      }
+
       .el-textarea__inner {
         color: var(--font-1);
         background-color: var(--input-bg-color);
