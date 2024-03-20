@@ -33,12 +33,29 @@
                 :disabled="!codeContent"
                 type="primary"
                 link
-                class="save-code"
+                :class="`${language === 'javascript' ? 'js-run-code' : 'save-code'}`"
                 title="发布文章"
                 @click="run(monacoData)"
               >
-                运行
+                {{
+                  language === 'javascript'
+                    ? runMode === 1
+                      ? '类控制台模式'
+                      : runMode === 2
+                      ? '手动运行模式'
+                      : '运行模式'
+                    : '运行'
+                }}
               </el-button>
+              <el-dropdown v-if="language === 'javascript'" class="dropdown" popper-class="custom-dropdown-styles">
+                <i class="iconfont icon-mulu" />
+                <template #dropdown>
+                  <el-dropdown-menu>
+                    <el-dropdown-item @click="onChangeMode(1)">类控制台模式</el-dropdown-item>
+                    <el-dropdown-item @click="onChangeMode(2)">手动运行模式</el-dropdown-item>
+                  </el-dropdown-menu>
+                </template>
+              </el-dropdown>
               <el-button
                 :disabled="!codeContent"
                 type="primary"
@@ -189,6 +206,8 @@ const prevCode = ref<string>('');
 const htmlClear = ref<boolean>(false);
 // 缓存编辑器内容
 const codeCache = ref<string>('');
+// js 运行模式
+const runMode = ref<number>(0);
 
 onMounted(() => {
   bindEvents();
@@ -245,6 +264,12 @@ const bindEvents = () => {
   });
 };
 
+// js 语言切换运行模式
+const onChangeMode = (mode: number) => {
+  console.log(mode, 'mode');
+  runMode.value = mode;
+};
+
 // 合并运行结果
 const setCodeResults = (info: { type: string; data: string }) => {
   codeResults.value += `${info.data}\n\n`;
@@ -290,10 +315,11 @@ const runCCode = async (code: string, verifiy?: boolean) => {
 
 // 按下回车运行 JS
 const onEnter = async (value: string) => {
+  console.log(value, 'value', codeCache.value === value.trim());
   if (codeCache.value !== value.trim() && !value.endsWith('\nconsole') && !value.endsWith('console')) {
     await codeStore.compileJSCode(value);
     codeResults.value = codeStore.compileData;
-    codeCache.value = value;
+    codeCache.value = value.trim();
   }
 };
 
@@ -484,9 +510,26 @@ const onClear = (monacoData?: any) => {
         }
       }
 
+      .dropdown {
+        height: 100%;
+        line-height: 42px;
+        display: inline-block;
+        color: var(--theme-blue);
+        cursor: pointer;
+      }
+
       .save-code {
         margin-left: 0;
         margin-right: 14px;
+      }
+
+      .js-run-code {
+        margin-left: 0;
+        margin-right: 0;
+      }
+
+      .icon-mulu {
+        margin-right: 15px;
       }
     }
 
