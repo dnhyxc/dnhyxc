@@ -126,6 +126,16 @@ export const useCodeStore = defineStore('code', {
       }
     },
 
+    // 编译JS
+    async compileJSCode(code: string) {
+      this.compileLoading = true;
+      const res = normalizeResult<string>(await Service.compileJSCode(code));
+      this.compileLoading = false;
+      if (res.success) {
+        this.compileData = res.data ? `${res.data}` : '';
+      }
+    },
+
     // 清除数据
     clearCodeInfo() {
       this.pageNo = 0;

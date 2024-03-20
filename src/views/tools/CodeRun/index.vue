@@ -21,6 +21,7 @@
           :language="codeStore.codeDetail.language"
           :get-code-content="getCodeContent"
           :code="codeStore.codeDetail.content || ''"
+          :on-enter="onEnter"
           class="code-edit"
         >
           <template #save="monacoData">
@@ -67,6 +68,7 @@
         <MonacoEditor
           v-if="language !== 'html'"
           v-model:theme="theme"
+          language="javascript"
           :code="codeResults"
           :is-code-edit="true"
           readonly
@@ -185,6 +187,8 @@ const codeContent = ref<string>('');
 const prevCode = ref<string>('');
 // 控制html清空按钮的显示状态
 const htmlClear = ref<boolean>(false);
+// 缓存编辑器内容
+const codeCache = ref<string>('');
 
 onMounted(() => {
   bindEvents();
@@ -284,8 +288,17 @@ const runCCode = async (code: string, verifiy?: boolean) => {
   codeResults.value = codeStore.compileData;
 };
 
+// 按下回车运行 JS
+const onEnter = async (value: string) => {
+  if (codeCache.value !== value.trim() && !value.endsWith('\nconsole') && !value.endsWith('console')) {
+    await codeStore.compileJSCode(value);
+    codeResults.value = codeStore.compileData;
+    codeCache.value = value;
+  }
+};
+
 // 运行JS
-const runJSCode = (code: string, verifiy?: boolean) => {
+const runJSCode = async (code: string) => {
   createIframe({ code: codeTemplate(code), display: 'none' });
 };
 

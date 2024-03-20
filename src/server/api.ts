@@ -202,6 +202,9 @@ export const GET_CODE_BY_ID = '/api/getCodeById';
 // 编译C语言
 export const COMPILE_C_CODE = '/api/compileCCode';
 
+// 编译JS
+export const COMPILE_JS_CODE = '/api/compileJSCode';
+
 // 获取聊天消息列表
 export const GET_CHAT_LIST = '/api/getChatList';
 

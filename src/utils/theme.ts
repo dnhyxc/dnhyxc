@@ -40,7 +40,7 @@ const imgThemeColor = {
 const commomStyle = {
   // 主题色
   '--theme-blue': '#089220',
-  '--el-color-primary-dark-2': '#1eca00',
+  '--el-color-primary-dark-2': '#57a0ff',
   '--el-color-primary': '#089220',
   '--el-color-primary-light-3': '#40a700',
   '--el-color-primary-light-5': '#70c870',
@@ -113,8 +113,6 @@ const removeStyle = {
   '--login-bg': 'rgba(225, 225, 225, 0.1)',
   '--placeholder-color': '#a8abb2',
   '--loading-text-color': '#089220',
-  // 主题色
-  // '--theme-blue': '#57a0ff',
   ...commomStyle,
   '--card-shadow': 'rgba(129, 129, 129, 0.25)',
 };
@@ -199,7 +197,7 @@ const imageStyles = {
   '--markdown-param-color': '#19dcc6',
   '--markdown-return-color': '#93e86a',
   '--scroll-color': 'rgba(255, 255, 255, 0.25)',
-  // '--scroll-color': 'rgba(209, 209, 209, 0.15)',
+  '--el-color-primary-dark-2': '#00dcff',
 };
 
 // 炫彩背景公共配置
@@ -661,7 +659,6 @@ const cloud = {
   '--placeholder-color': '#aeaeae',
   // markdown return color
   '--markdown-return-color': '#6e00ff',
-  '--el-color-primary-dark-2': '#268900',
   // 头部字体颜色
   '--header-text-color': `${MENU_LG_DEFAULT_COLORS}`,
   '--font-weight': '700',

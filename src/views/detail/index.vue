@@ -190,7 +190,7 @@ const onScrollTo = (height?: number) => {
         display: flex;
         justify-content: flex-start;
         padding: 5px 20px 15px;
-        color: var(--el-color-primary-dark-2);
+        color: var(--theme-blue);
         margin-bottom: 30px;
 
         .classify {

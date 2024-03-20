@@ -132,6 +132,7 @@ interface IProps {
   theme?: string;
   getLanguage?: (language: string) => void;
   getCodeContent?: (code: string) => void;
+  onEnter?: (code: string) => void;
   saveText?: string;
   language?: string;
   showDot?: number;
@@ -154,6 +155,8 @@ const visible = ref<boolean>(false);
 const showDiff = ref<boolean>(false);
 
 let editor: monaco.editor.IStandaloneCodeEditor | null = null;
+
+let timer: ReturnType<typeof setTimeout> | null = null;
 
 const theme = computed({
   get() {
@@ -269,6 +272,21 @@ const initEditor = () => {
         createStore.createInfo.content = editor?.getValue();
       }
       props?.getCodeContent?.(editor?.getValue() as string);
+    });
+
+    // 监听编辑器回车事件
+    editor?.onKeyDown((e) => {
+      if (e.keyCode === monaco.KeyCode.Enter) {
+        const position = editor?.getPosition();
+        const maxColumn = editor?.getModel()?.getLineMaxColumn(position!.lineNumber);
+        const target = e.target as HTMLInputElement;
+        if (position!.column === maxColumn && e.keyCode === monaco.KeyCode.Enter) {
+          timer && clearTimeout(timer);
+          timer = setTimeout(() => {
+            props?.onEnter?.(target.value);
+          }, 500);
+        }
+      }
     });
   });
 };

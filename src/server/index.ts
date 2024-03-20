@@ -446,6 +446,11 @@ export const compileCCode = async (params: { code: string; options?: string }) =
   return await post(API.COMPILE_C_CODE, copeParams(params));
 };
 
+// 编译JS
+export const compileJSCode = async (code: string) => {
+  return await post(API.COMPILE_JS_CODE, copeParams({ code }));
+};
+
 // 获取聊天消息列表
 export const getChatList = async (params: { pageNo: number; pageSize: number; chatId: string }) => {
   return await post(API.GET_CHAT_LIST, copeParams(params));
