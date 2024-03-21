@@ -207,7 +207,7 @@ const htmlClear = ref<boolean>(false);
 // 缓存编辑器内容
 const codeCache = ref<string>('');
 // js 运行模式
-const runMode = ref<number>(0);
+const runMode = ref<number>(1);
 
 onMounted(() => {
   bindEvents();
@@ -315,7 +315,9 @@ const runCCode = async (code: string, verifiy?: boolean) => {
 
 // 按下回车运行 JS
 const onEnter = async (value: string) => {
-  console.log(value, 'value', codeCache.value === value.trim());
+  console.log(value, 'value');
+  if (runMode.value === 2) return;
+
   if (codeCache.value !== value.trim() && !value.endsWith('\nconsole') && !value.endsWith('console')) {
     await codeStore.compileJSCode(value);
     codeResults.value = codeStore.compileData;
@@ -325,6 +327,7 @@ const onEnter = async (value: string) => {
 
 // 运行JS
 const runJSCode = async (code: string) => {
+  if (runMode.value === 1) return;
   createIframe({ code: codeTemplate(code), display: 'none' });
 };
 

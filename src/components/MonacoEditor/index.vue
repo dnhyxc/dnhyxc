@@ -283,7 +283,7 @@ const initEditor = () => {
         if (position!.column === maxColumn && e.keyCode === monaco.KeyCode.Enter) {
           timer && clearTimeout(timer);
           timer = setTimeout(() => {
-            props?.onEnter?.(target.value);
+            props?.onEnter?.(editor?.getValue() || target.value);
           }, 500);
         }
       }
