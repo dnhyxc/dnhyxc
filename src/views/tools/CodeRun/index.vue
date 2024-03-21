@@ -29,12 +29,19 @@
               <el-button type="primary" link class="save-code" title="示例列表" @click="showDemoList">
                 示例列表
               </el-button>
+              <el-tooltip :offset="0" placement="top" popper-class="custom-dropdown-styles">
+                <template #content>
+                  <span class="info-text">手动运行模式：</span>可以点击<span class="info-text"> 手动运行模式 </span>按钮运行或
+                  <span class="info-text">ctrl + s </span>或 <span class="info-text">command + s </span>运行<br />
+                  <span class="info-text">类控制台模式：</span>在输入内容末尾处回车之后触发运行, 类似浏览器控制台的运行模式
+                </template>
+                <i class="iconfont icon-info-circle-color info" />
+              </el-tooltip>
               <el-button
-                :disabled="!codeContent"
+                :disabled="!codeContent || runMode === 1"
                 type="primary"
                 link
                 :class="`${language === 'javascript' ? 'js-run-code' : 'save-code'}`"
-                title="发布文章"
                 @click="run(monacoData)"
               >
                 {{
@@ -266,7 +273,6 @@ const bindEvents = () => {
 
 // js 语言切换运行模式
 const onChangeMode = (mode: number) => {
-  console.log(mode, 'mode');
   runMode.value = mode;
 };
 
@@ -315,9 +321,7 @@ const runCCode = async (code: string, verifiy?: boolean) => {
 
 // 按下回车运行 JS
 const onEnter = async (value: string) => {
-  console.log(value, 'value');
-  if (runMode.value === 2) return;
-
+  if (runMode.value === 2 || !value.trim()) return;
   if (codeCache.value !== value.trim() && !value.endsWith('\nconsole') && !value.endsWith('console')) {
     await codeStore.compileJSCode(value);
     codeResults.value = codeStore.compileData;
@@ -515,7 +519,7 @@ const onClear = (monacoData?: any) => {
 
       .dropdown {
         height: 100%;
-        line-height: 42px;
+        line-height: 40px;
         display: inline-block;
         color: var(--theme-blue);
         cursor: pointer;
@@ -524,6 +528,12 @@ const onClear = (monacoData?: any) => {
       .save-code {
         margin-left: 0;
         margin-right: 14px;
+      }
+
+      .info {
+        margin-left: 1px;
+        color: var(--active);
+        cursor: pointer;
       }
 
       .js-run-code {
@@ -630,6 +640,8 @@ const onClear = (monacoData?: any) => {
 
   .action-list {
     .ellipsisMore(1);
+    display: flex;
+    align-items: center;
   }
 
   .dialog-content {

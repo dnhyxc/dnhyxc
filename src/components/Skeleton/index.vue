@@ -115,7 +115,7 @@ const isCompile = computed(() => {
   }
 
   .article-header {
-    padding: 0 20px 0 15px;
+    padding: 38px 20px 0 15px !important;
     height: 50px;
 
     .title {
@@ -293,7 +293,7 @@ const isCompile = computed(() => {
 
 .mac-skeleton-wrap {
   .header {
-    padding: 30px 20px 0 15px;
+    padding: 30px 27px 0 12px;
     margin-bottom: 20px;
   }
 
