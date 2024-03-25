@@ -127,7 +127,6 @@ const onScrollTo = () => {
   :deep {
     .scrollbar-wrapper {
       box-sizing: border-box;
-      height: 100%;
     }
 
     .el-scrollbar__view {
