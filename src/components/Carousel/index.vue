@@ -203,6 +203,7 @@ const toTag = (name: string) => {
         z-index: 88;
         box-sizing: border-box;
         width: fit-content;
+        mix-blend-mode: difference;
 
         .header {
           display: flex;
@@ -253,6 +254,7 @@ const toTag = (name: string) => {
         z-index: 88;
         box-sizing: border-box;
         text-align: right;
+        mix-blend-mode: difference;
 
         .classify,
         .tag {
