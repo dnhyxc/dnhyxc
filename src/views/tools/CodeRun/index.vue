@@ -16,7 +16,8 @@
       <div class="code-edit-wrap">
         <MonacoEditor
           v-model:theme="theme"
-          :is-code-edit="true"
+          toggle-language-lneed-clear-content
+          is-code-edit
           :get-language="getLanguage"
           :language="codeStore.codeDetail.language"
           :get-code-content="getCodeContent"
@@ -29,16 +30,23 @@
               <el-button type="primary" link class="save-code" title="示例列表" @click="showDemoList">
                 示例列表
               </el-button>
-              <el-tooltip :offset="0" placement="top" popper-class="custom-dropdown-styles">
+              <el-tooltip
+                v-if="language === 'javascript'"
+                :offset="0"
+                placement="top"
+                popper-class="custom-dropdown-styles"
+              >
                 <template #content>
-                  <span class="info-text">手动运行模式：</span>可以点击<span class="info-text"> 手动运行模式 </span>按钮运行或
-                  <span class="info-text">ctrl + s </span>或 <span class="info-text">command + s </span>运行<br />
-                  <span class="info-text">类控制台模式：</span>在输入内容末尾处回车之后触发运行, 类似浏览器控制台的运行模式
+                  <span class="info-text">手动运行模式：</span>可以点击<span class="info-text"> 手动运行模式 </span
+                  >按钮运行或 <span class="info-text">ctrl + s </span>或
+                  <span class="info-text">command + s </span>运行<br />
+                  <span class="info-text">类控制台模式：</span>在输入内容末尾处回车之后触发运行,
+                  类似浏览器控制台的运行模式
                 </template>
                 <i class="iconfont icon-info-circle-color info" />
               </el-tooltip>
               <el-button
-                :disabled="!codeContent || runMode === 1"
+                :disabled="!codeContent || (runMode === 1 && language === 'javascript')"
                 type="primary"
                 link
                 :class="`${language === 'javascript' ? 'js-run-code' : 'save-code'}`"
@@ -162,10 +170,10 @@
           </el-form-item>
         </el-form>
         <div class="actions">
+          <el-button @click="onCancel">取消</el-button>
           <el-button type="primary" @click="onSaveDemo">
             {{ codeStore.currentCodeId && codeContent ? '更新' : '保存' }}
           </el-button>
-          <el-button @click="onCancel">取消</el-button>
         </div>
       </div>
     </el-dialog>
@@ -376,6 +384,11 @@ const getCodeContent = (code: string) => {
 // 获取当前编辑语言
 const getLanguage = (value: string) => {
   language.value = value;
+  if (iframeNode.value) {
+    iframeNode.value.contentWindow!.document.body.innerHTML = '';
+  }
+  codeResults.value = '';
+  htmlClear.value = false;
 };
 
 // 显示保存代码弹窗

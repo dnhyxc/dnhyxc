@@ -17,7 +17,7 @@
                   v-for="item in languages"
                   :key="item"
                   class="dropdown-text"
-                  @click="onChangeLanguage(item)"
+                  @click="onChangeLanguage(item, true)"
                 >
                   {{ item }}
                 </el-dropdown-item>
@@ -115,7 +115,7 @@ import parserYaml from 'prettier/parser-yaml';
 import parserPostcss from 'prettier/parser-postcss';
 import { MONACO_EDITOR_LANGUAGES, CODE_RUN_LANGUAGES, VS_CODE_SHORTCUT_KEYS } from '@/constant';
 import { checkOS } from '@/utils';
-import { createStore } from '@/store';
+import { createStore, codeStore } from '@/store';
 import DiffMonacoEditor from '@/components/MonacoDiffEditor/index.vue';
 
 interface IProps {
@@ -209,7 +209,7 @@ watchEffect(() => {
   }
   // 切换语言
   if (props.language && editor) {
-    onChangeLanguage(props.language);
+    onChangeLanguage(props.language, false);
   }
 });
 
@@ -326,7 +326,10 @@ const setTheme = (type: string) => {
 };
 
 // 切换语言
-const onChangeLanguage = (value: string) => {
+const onChangeLanguage = (value: string, needClearContent?: boolean) => {
+  if (needClearContent) {
+    codeStore.clearCodeId();
+  }
   language.value = value;
   monaco.editor.setModelLanguage(editor?.getModel()!, value);
   props?.getLanguage?.(value);
