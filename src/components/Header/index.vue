@@ -625,7 +625,7 @@ const onScrollTo = () => {
 }
 
 .mac-header-wrap {
-  padding: 28px 22px 10px 10px;
+  padding: 28px 22px 0 10px;
 
   .left {
     padding-left: 45px;
