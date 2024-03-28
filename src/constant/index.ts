@@ -140,10 +140,10 @@ export const BOARD_COLORS = [
 ];
 
 // 线上域名
-export const DOMAIN_URL = '43.143.27.249';
+export const DOMAIN_URL = '101.43.50.15';
 
 // web端域名
-export const WEB_DOMAIN_URL = 'http://43.143.27.249:9216';
+export const WEB_DOMAIN_URL = 'http://101.43.50.15:9216';
 
 // 表情资源路径域名
 export const EMOJI_HOST = `http://${location.hostname === DOMAIN_URL ? DOMAIN_URL : '127.0.0.1:9112'}/image/`;

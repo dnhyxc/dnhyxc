@@ -38,18 +38,18 @@
 
 #### 首页介绍
 
-![首页.png](http://43.143.27.249/image/032a4d6d14c016b0d017ba6ab6ec2565.png)
+![首页.png](http://101.43.50.15/image/032a4d6d14c016b0d017ba6ab6ec2565.png)
 
 #### 标签云
 
-![标签云.png](http://43.143.27.249/image/7cb42cd1208a4b0c94f83a12afb5c9f8.png)
+![标签云.png](http://101.43.50.15/image/7cb42cd1208a4b0c94f83a12afb5c9f8.png)
 
 ### 应用下载
 
 #### windows 版本
 
-[windows 版](http://43.143.27.249:9216/image/dnhyxc.zip)
+[windows 版](http://101.43.50.15:9216/image/dnhyxc.zip)
 
 #### macOS 版本
 
-[macOS 版](http://43.143.27.249:9216/image/dnhyxc-mac.zip)
+[macOS 版](http://101.43.50.15:9216/image/dnhyxc-mac.zip)

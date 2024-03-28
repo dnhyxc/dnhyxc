@@ -36,7 +36,7 @@ onMounted(() => {
       render(emoji) {
         const img = document.createElement('img');
         img.className = 'emoji';
-        img.src = 'http://43.143.27.249/image/24b6f805c6687e5694cbee718.gif';
+        img.src = 'http://101.43.50.15/image/24b6f805c6687e5694cbee718.gif';
         return img;
       },
     },
