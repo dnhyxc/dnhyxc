@@ -24,6 +24,7 @@
         <el-input
           v-model="loginForm.phone"
           size="large"
+          max-length="11"
           placeholder="请输入手机号码（号码会被加密，无需担心泄露）"
           @keyup.enter="onEnter"
         />
