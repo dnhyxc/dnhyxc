@@ -8,7 +8,7 @@
   <Loading :loading="articleStore.loading" class="detail-wrap">
     <div class="container">
       <div :class="`${checkOS() === 'mac' && 'mac-header-wrap'} header-wrap`" @dblclick="onDblclick">
-        <div class="left">
+        <div :class="`left ${checkOS() === 'mac' && 'mac-left'}`">
           <div class="icon-wrap">
             <i class="page-icon iconfont icon-haidao_" />
           </div>
@@ -17,9 +17,15 @@
         <div class="right">
           <div class="sticky">
             <el-tooltip effect="light" content="置顶" placement="bottom" popper-class="custom-dropdown-styles">
-              <i :class="`${articleStore.stickyStatus && 'active'} font iconfont icon-pin1`" @click="onSticky" />
+              <i
+                :class="`${articleStore.stickyStatus && 'active'} font iconfont ${
+                  checkOS() === 'mac' ? 'icon-pin-full' : 'icon-pin1'
+                }`"
+                @click="onSticky"
+              />
             </el-tooltip>
           </div>
+          <span v-if="checkOS() === 'mac'" class="mac-tool-title">文章详情</span>
           <div v-if="checkOS() !== 'mac'" class="page-actions">
             <div v-for="svg in ACTION_SVGS" :key="svg.title" class="icon" @click="onClick(svg)">
               <el-tooltip
@@ -363,12 +369,65 @@ const onScrollTo = (height?: number) => {
       }
     }
     .mac-header-wrap {
-      padding: 30px 15px 10px 16px;
+      display: flex;
+      justify-content: start;
+      align-items: flex-start;
+      height: 35px;
+      padding: 5px 5px 0 51px;
+      box-sizing: border-box;
       .left {
         .icon-wrap {
           .page-icon {
             cursor: default;
           }
+        }
+      }
+      .mac-left {
+        display: none;
+      }
+      .right {
+        position: relative;
+        height: 32px;
+        margin-left: 18px;
+
+        .sticky {
+          position: absolute;
+          top: 3px;
+          left: 0;
+          width: 12px;
+          height: 12px;
+          border-radius: 12px;
+          background-color: @yellow-1;
+
+          &:hover {
+            .font {
+              display: inline-block;
+            }
+          }
+
+          .font {
+            font-size: 10px;
+            margin: auto;
+            display: none;
+
+            &:hover {
+              color: var(--active);
+            }
+          }
+
+          .active {
+            display: inline-block;
+          }
+        }
+
+        .mac-tool-title {
+          font-size: 16px;
+          font-weight: 700;
+          height: 35px;
+          line-height: 22px;
+          margin-left: 19px;
+          color: var(--font-color);
+          .headerTextLg();
         }
       }
     }
@@ -377,7 +436,8 @@ const onScrollTo = (height?: number) => {
       display: flex;
       justify-content: center;
       box-sizing: border-box;
-      padding: 0 20px 0 18px;
+      padding: 0 8px;
+      // padding: 0 20px;
       height: 100%;
 
       .content {
@@ -389,7 +449,7 @@ const onScrollTo = (height?: number) => {
         margin-right: 10px;
         height: calc(100vh - 74px);
         border-radius: 5px;
-        box-shadow: 0 0 8px 0 var(--shadow-mack);
+        box-shadow: 0 0 5px 0 var(--shadow-mack) inset;
         background-color: var(--pre-hover-bg);
 
         :deep {
@@ -406,14 +466,20 @@ const onScrollTo = (height?: number) => {
         .preview-content {
           :deep {
             .vuepress-markdown-body {
-              max-width: calc(100vw - 308px);
+              max-width: calc(100vw - 283px);
+
+              pre {
+                max-width: calc(100vw - 371px);
+              }
             }
           }
         }
       }
 
       .mac-content {
-        height: calc(100vh - 113px);
+        height: calc(100vh - 43px);
+        margin-right: 6px;
+        // height: calc(100vh - 115px);
       }
 
       .right {
@@ -425,6 +491,16 @@ const onScrollTo = (height?: number) => {
         box-sizing: border-box;
         border-radius: 5px;
         max-height: calc(100vh - 74px);
+
+        :deep {
+          .toc-wrap,
+          .action {
+            box-shadow: 0 0 5px 0 var(--shadow-mack) inset;
+          }
+          .multibar-wrap {
+            margin-bottom: 7px;
+          }
+        }
 
         .toc-list {
           box-sizing: border-box;
@@ -438,7 +514,7 @@ const onScrollTo = (height?: number) => {
       }
 
       .mac-right {
-        max-height: calc(100vh - 113px);
+        max-height: calc(100vh - 43px);
       }
     }
   }

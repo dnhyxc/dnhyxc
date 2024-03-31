@@ -246,12 +246,12 @@ const onScrollTo = (height?: number) => {
   padding-right: 0;
 
   .content {
-    height: calc(100vh - 108px);
+    // height: calc(100vh - 108px);
   }
 
   .right {
     // margin-right: 3px;
-    max-height: calc(100vh - 108px);
+    // max-height: calc(100vh - 98px);
   }
 }
 </style>

@@ -37,7 +37,7 @@
                 ? 'calc(100vh - 410px)'
                 : 'calc(100vh - 383px)'
               : checkOS() === 'mac'
-              ? 'calc(100vh - 350px)'
+              ? 'calc(100vh - 273px)'
               : 'calc(100vh - 312px)'
           }`"
           wrap-class="scrollbar-wrapper"

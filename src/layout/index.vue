@@ -122,7 +122,6 @@ provide('reload', reload);
     }
   }
   .mac-content {
-    height: calc(100vh - 70px);
     width: 100%;
     padding-bottom: 25px;
   }

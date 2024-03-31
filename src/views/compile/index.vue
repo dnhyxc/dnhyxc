@@ -8,18 +8,24 @@
   <div class="compile-wrap">
     <div class="container">
       <div :class="`${checkOS() === 'mac' && 'mac-header-wrap'} header-wrap`" @dblclick="onDblclick">
-        <div class="left">
+        <div :class="`left ${checkOS() === 'mac' && 'mac-left'}`">
           <div class="icon-wrap">
             <i class="page-icon iconfont icon-haidao_" />
           </div>
-          <div class="title">{{ route.meta.title }}</div>
+          <div class="title">{{ title }}</div>
         </div>
         <div class="right">
           <div class="sticky">
             <el-tooltip effect="light" content="置顶" placement="bottom" popper-class="custom-dropdown-styles">
-              <i :class="`${articleStore.stickyStatus && 'active'} font iconfont icon-pin1`" @click="onSticky" />
+              <i
+                :class="`${articleStore.stickyStatus && 'active'} font iconfont ${
+                  checkOS() === 'mac' ? 'icon-pin-full' : 'icon-pin1'
+                }`"
+                @click="onSticky"
+              />
             </el-tooltip>
           </div>
+          <span v-if="checkOS() === 'mac'" class="mac-tool-title">{{ title }}</span>
           <div v-if="checkOS() !== 'mac'" class="page-actions">
             <div v-for="svg in ACTION_SVGS" :key="svg.title" class="icon" @click="onClick(svg)">
               <el-tooltip
@@ -56,11 +62,11 @@
 
 <script setup lang="ts">
 import { ipcRenderer } from 'electron';
-import { onMounted, nextTick, ref } from 'vue';
+import { onMounted, nextTick, ref, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { articleStore, bookStore, commonStore } from '@/store';
 import { checkOS, locSetItem, ipcRenderers, Message } from '@/utils';
-import { ACTION_SVGS } from '@/constant';
+import { ACTION_SVGS, TOOL_LIST } from '@/constant';
 import Compress from '@/views/tools/Compress/index.vue';
 import Cropper from '@/views/tools/Cropper/index.vue';
 import TextToSpeech from '@/views/tools/TextToSpeech/index.vue';
@@ -77,6 +83,10 @@ const route = useRoute();
 // 窗口大小控制状态
 const toggle = ref<boolean>(false);
 const userId = ref<string>('');
+
+const title = computed(() => {
+  return TOOL_LIST.find((i) => route.query?.from!.includes(i.id))?.toolName;
+});
 
 onMounted(async () => {
   nextTick(() => {
@@ -246,6 +256,17 @@ const onClick = async (item: { title: string; svg: string }) => {
             color: var(--theme-blue);
           }
         }
+
+        .mac-tool-title {
+          font-size: 16px;
+          font-weight: 700;
+          height: 35px;
+          line-height: 30px;
+          margin-left: 19px;
+          color: var(--font-color);
+          .headerTextLg();
+        }
+
         .page-actions {
           display: flex;
           justify-content: flex-start;
@@ -293,11 +314,48 @@ const onClick = async (item: { title: string; svg: string }) => {
       }
     }
     .mac-header-wrap {
-      padding: 30px 15px 10px 16px;
-      .left {
-        .icon-wrap {
-          .page-icon {
-            cursor: default;
+      position: relative;
+      display: flex;
+      justify-content: start;
+      align-items: flex-start;
+      height: 35px;
+      padding: 0 5px 0 68px;
+      box-sizing: border-box;
+
+      .mac-left {
+        display: none;
+      }
+
+      .right {
+        position: relative;
+
+        .sticky {
+          position: absolute;
+          top: 8px;
+          left: 0;
+          width: 12px;
+          height: 12px;
+          border-radius: 12px;
+          background-color: @yellow-1;
+
+          &:hover {
+            .font {
+              display: inline-block;
+            }
+          }
+
+          .font {
+            font-size: 10px;
+            margin: auto;
+            display: none;
+
+            &:hover {
+              color: var(--active);
+            }
+          }
+
+          .active {
+            display: inline-block;
           }
         }
       }
@@ -372,7 +430,14 @@ const onClick = async (item: { title: string; svg: string }) => {
     }
 
     .mac-content-wrap {
-      height: calc(100% - 95px);
+      height: calc(100% - 34px);
+      // height: calc(100% - 95px);
+
+      :deep {
+        .drag-upload-mac {
+          height: calc(100vh - 86px);
+        }
+      }
     }
   }
 

@@ -201,7 +201,7 @@ const initCanvasSize = () => {
   const pageMenu = document.querySelector('#__LEFT_MENU__') as HTMLDivElement;
   // 获取页面头部
   const pageHead = document.querySelector('#__HEADER__') as HTMLDivElement;
-  pageSizeInfo.top = pageHead?.offsetHeight + titleRef.value?.offsetHeight! || checkOS() === 'mac' ? 140 : 100;
+  pageSizeInfo.top = pageHead?.offsetHeight + titleRef.value?.offsetHeight! || checkOS() === 'mac' ? 80 : 100;
   pageSizeInfo.left = pageMenu?.offsetWidth || 0;
   const pageWidth = boardWrapRef.value?.offsetWidth!;
   const pageHeight = boardWrapRef.value?.offsetHeight!;
@@ -534,6 +534,7 @@ const onClickTools = (key: string) => {
 
 .hide-container {
   border-top: 1px solid var(--card-border);
+  border-radius: 0;
 }
 
 .tools-content {

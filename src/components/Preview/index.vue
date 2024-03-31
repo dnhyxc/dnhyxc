@@ -118,6 +118,13 @@ const onCopyCodeSuccess = (value: string) => {
 
       .codeStyle();
 
+      p {
+        img {
+          display: block;
+          margin: auto;
+        }
+      }
+
       pre::-webkit-scrollbar {
         width: 6px !important;
       }
