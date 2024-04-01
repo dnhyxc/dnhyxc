@@ -17,7 +17,9 @@
       :accept="accept"
     >
       <slot>
-        <el-icon class="uploader-icon"><Plus /></el-icon>
+        <el-icon class="uploader-icon">
+          <Plus />
+        </el-icon>
       </slot>
     </el-upload>
     <div v-if="filePath && preview" class="preview">
@@ -71,7 +73,7 @@ import { ElMessage } from 'element-plus';
 import { Plus } from '@element-plus/icons-vue';
 import type { UploadProps } from 'element-plus';
 import { VueCropper } from 'vue-cropper';
-import { createStore, uploadStore, pictureStore } from '@/store';
+import { uploadStore, pictureStore } from '@/store';
 import { FILE_TYPE, FILE_UPLOAD_MSG } from '@/constant';
 import { getImgInfo, url2Base64, ipcRenderers } from '@/utils';
 
@@ -185,7 +187,7 @@ const onUpload = async (event: { file: Blob }) => {
       // 更新父组件传递过来的filePath
       emit('update:filePath', res.filePath);
       if (props.isAtlas) {
-        pictureStore.addAtlasImages(res.filePath, res.compressFile);
+        await pictureStore.addAtlasImages(res.filePath, res.compressFile);
       }
     }
     return;
@@ -285,10 +287,6 @@ const onFinish = () => {
     const res = await uploadStore.uploadFile(file, false, props.quality);
     if (res) {
       props.getUploadUrl?.(res.filePath);
-      // 保存老封面图
-      if (props.delete) {
-        createStore.oldCoverImage = createStore.createInfo?.coverImage as string;
-      }
       // 更新父组件传递过来的filePath
       emit('update:filePath', res.filePath);
       // 文件上传完毕之后，清除存储的文件信息
@@ -352,12 +350,14 @@ const onDelImage = () => {
     justify-content: flex-start;
     height: 100%;
     box-sizing: border-box;
+
     :deep {
       .el-upload {
         width: 100%;
         height: 100%;
       }
     }
+
     .uploader-icon {
       font-size: 20px;
       width: 100%;
@@ -396,6 +396,7 @@ const onDelImage = () => {
       color: var(--fff);
       display: none;
       z-index: 99;
+
       .view {
         font-size: 22px;
         cursor: pointer;
@@ -421,6 +422,7 @@ const onDelImage = () => {
       .mack {
         display: flex;
       }
+
       .cover-img {
         object-position: bottom right;
       }
@@ -443,6 +445,7 @@ const onDelImage = () => {
     .el-dialog__header {
       padding: 15px 15px 11px 20px;
     }
+
     .el-dialog__body {
       padding: 0 20px 20px 20px;
     }

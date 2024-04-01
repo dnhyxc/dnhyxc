@@ -113,6 +113,7 @@
           </el-form-item>
           <el-form-item prop="cover" label="封面" class="form-item-cover">
             <div class="cover-wrap">
+              {{ articleId }}
               <Upload
                 v-model:file-path="createStore.createInfo.coverImage"
                 :delete="!articleId"
@@ -200,10 +201,10 @@ const visible = computed({
 
 // 获取上传的封面图url
 const getUploadUrl = async (url: string) => {
-  const bacolor = await getImageColor(url);
-  createStore.createInfo.gradient = bacolor;
+  createStore.createInfo.gradient = await getImageColor(url);
   if (url && checkImgUrlType(url) === 'URL' && props.articleId) {
     const oldUrl = createStore.oldCoverImage;
+    console.log(url, 'url');
     url !== oldUrl && (createStore.oldCoverImage = url);
   }
 };
@@ -251,7 +252,7 @@ const onCreate = () => {
         coverImage: uploadPath.value || createStore?.createInfo?.coverImage,
         articleId: createStore?.createInfo?.articleId,
         createTime: createStore?.createInfo?.createTime?.valueOf(),
-        oldCoverImage: createStore.oldCoverImage,
+        oldCoverImage: createStore?.createInfo?.articleId ? createStore.oldCoverImage : '',
       });
       if (res) {
         createStore.clearCreateInfo(true);
@@ -294,6 +295,7 @@ const onSaveDraft = () => {
       position: relative;
     }
   }
+
   .content {
     :deep {
       .el-drawer {
@@ -372,6 +374,7 @@ const onSaveDraft = () => {
           border-top-right-radius: 0;
           border-bottom-right-radius: 0;
         }
+
         .el-button {
           border-top-left-radius: 0;
           border-bottom-left-radius: 0;

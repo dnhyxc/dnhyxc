@@ -15,9 +15,9 @@
         <div class="actions" />
       </div>
     </div>
-    <div v-if="showType" class="content-wrap">
-      <div :class="`${checkOS() === 'mac' && 'mac-content'} content`" />
-      <div v-if="!isCompile" :class="`${checkOS() === 'mac' && 'mac-right'} right`">
+    <div v-if="showType" :class="`${checkOS() === 'mac' && 'mac-content-wrap'} content-wrap`">
+      <div class="content" />
+      <div v-if="!isCompile" class="right">
         <div class="action-list" />
         <div class="toc-list" />
         <div class="another-list" />
@@ -104,6 +104,7 @@ const isCompile = computed(() => {
     .header-action {
       display: flex;
       align-items: center;
+
       .actions {
         height: 25px;
         width: 200px;
@@ -115,8 +116,9 @@ const isCompile = computed(() => {
   }
 
   .article-header {
-    padding: 38px 20px 0 15px !important;
-    height: 50px;
+    //padding: 38px 20px 0 15px !important;
+    padding: 0 20px 0 16px !important;
+    height: 55px;
 
     .title {
       .page-icon {
@@ -234,14 +236,11 @@ const isCompile = computed(() => {
       display: flex;
       justify-content: center;
       box-sizing: border-box;
-      height: calc(100vh - 75px);
+      height: calc(100vh - 79px);
+      //height: calc(100vh - 75px);
       border-radius: 5px;
       box-shadow: 0 0 8px 0 var(--shadow-mack);
       .bgMoveColor(135deg);
-    }
-
-    .mac-content {
-      height: calc(100vh - 98px);
     }
 
     .right {
@@ -253,7 +252,8 @@ const isCompile = computed(() => {
       margin-left: 10px;
       box-sizing: border-box;
       border-radius: 5px;
-      max-height: calc(100vh - 75px);
+      max-height: calc(100vh - 79px);
+      //max-height: calc(100vh - 75px);
 
       .action-list {
         height: 50px;
@@ -284,10 +284,6 @@ const isCompile = computed(() => {
         margin-bottom: 0;
       }
     }
-
-    .mac-right {
-      max-height: calc(100vh - 98px);
-    }
   }
 }
 
@@ -300,6 +296,16 @@ const isCompile = computed(() => {
   .content {
     .right {
       padding-right: 22px;
+    }
+  }
+
+  .content-wrap {
+    .content {
+      height: calc(100vh - 98px);
+    }
+
+    .right {
+      max-height: calc(100vh - 98px);
     }
   }
 }

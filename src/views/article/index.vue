@@ -44,8 +44,8 @@
           </div>
         </div>
       </div>
-      <div class="content-wrap">
-        <div :class="`${checkOS() === 'mac' && 'mac-content'} content`">
+      <div :class="`${checkOS() === 'mac' && 'mac-content-wrap'} content-wrap`">
+        <div class="content">
           <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
             <div ref="articleInfoRef" class="articleInfo">
               <PageHeader v-if="articleStore.articleDetail.authorId" />
@@ -65,7 +65,7 @@
           </el-scrollbar>
           <ToTopIcon v-if="scrollTop >= 500" :on-scroll-to="onScrollTo" />
         </div>
-        <div :class="`${checkOS() === 'mac' && 'mac-right'} right`">
+        <div class="right">
           <Multibar
             v-if="getStoreUserInfo()?.userInfo?.userId"
             :id="(route.params.id as string)"
@@ -103,6 +103,7 @@ import Toc from '@/components/Toc/index.vue';
 import ToTopIcon from '@/components/ToTopIcon/index.vue';
 import AnotherArticle from '@/components/AnotherArticle/index.vue';
 import Loading from '@/components/Loading/index.vue';
+
 const Preview = defineAsyncComponent(() => import('@/components/Preview/index.vue'));
 const Comment = defineAsyncComponent(() => import('@/components/Comment/index.vue'));
 
@@ -266,6 +267,7 @@ const onScrollTo = (height?: number) => {
       height: 55px;
       padding: 0 16px 0 16px;
       -webkit-app-region: drag;
+
       .left {
         display: flex;
         align-items: center;
@@ -309,6 +311,7 @@ const onScrollTo = (height?: number) => {
           align-items: center;
           justify-content: center;
           -webkit-app-region: no-drag;
+
           .font {
             font-size: 16px;
             cursor: pointer;
@@ -318,10 +321,12 @@ const onScrollTo = (height?: number) => {
             font-weight: var(--font-weight);
             .headerTextLg();
           }
+
           .active {
             color: var(--theme-blue);
           }
         }
+
         .page-actions {
           display: flex;
           justify-content: flex-start;
@@ -368,6 +373,7 @@ const onScrollTo = (height?: number) => {
         }
       }
     }
+
     .mac-header-wrap {
       display: flex;
       justify-content: start;
@@ -375,6 +381,7 @@ const onScrollTo = (height?: number) => {
       height: 35px;
       padding: 5px 5px 0 51px;
       box-sizing: border-box;
+
       .left {
         .icon-wrap {
           .page-icon {
@@ -382,9 +389,11 @@ const onScrollTo = (height?: number) => {
           }
         }
       }
+
       .mac-left {
         display: none;
       }
+
       .right {
         position: relative;
         height: 32px;
@@ -436,9 +445,8 @@ const onScrollTo = (height?: number) => {
       display: flex;
       justify-content: center;
       box-sizing: border-box;
-      padding: 0 8px;
-      // padding: 0 20px;
       height: 100%;
+      padding: 0 16px;
 
       .content {
         position: relative;
@@ -447,9 +455,9 @@ const onScrollTo = (height?: number) => {
         justify-content: center;
         box-sizing: border-box;
         margin-right: 10px;
-        height: calc(100vh - 74px);
+        height: calc(100vh - 72px);
         border-radius: 5px;
-        box-shadow: 0 0 5px 0 var(--shadow-mack) inset;
+        box-shadow: 0 0 5px 0 var(--shadow-mack);
         background-color: var(--pre-hover-bg);
 
         :deep {
@@ -457,12 +465,14 @@ const onScrollTo = (height?: number) => {
             border-radius: 5px;
             width: 100%;
           }
+
           .scrollbar-wrapper {
             box-sizing: border-box;
             height: 100%;
             border-radius: 5px;
           }
         }
+
         .preview-content {
           :deep {
             .vuepress-markdown-body {
@@ -476,12 +486,6 @@ const onScrollTo = (height?: number) => {
         }
       }
 
-      .mac-content {
-        height: calc(100vh - 43px);
-        margin-right: 6px;
-        // height: calc(100vh - 115px);
-      }
-
       .right {
         display: flex;
         flex-direction: column;
@@ -491,16 +495,6 @@ const onScrollTo = (height?: number) => {
         box-sizing: border-box;
         border-radius: 5px;
         max-height: calc(100vh - 74px);
-
-        :deep {
-          .toc-wrap,
-          .action {
-            box-shadow: 0 0 5px 0 var(--shadow-mack) inset;
-          }
-          .multibar-wrap {
-            margin-bottom: 7px;
-          }
-        }
 
         .toc-list {
           box-sizing: border-box;
@@ -512,9 +506,30 @@ const onScrollTo = (height?: number) => {
           margin-bottom: 0;
         }
       }
+    }
 
-      .mac-right {
+    .mac-content-wrap {
+      padding: 0 8px;
+
+      .content {
+        height: calc(100vh - 43px);
+        margin-right: 6px;
+        box-shadow: 0 0 5px 0 var(--shadow-mack) inset;
+      }
+
+      .right {
         max-height: calc(100vh - 43px);
+
+        :deep {
+          .toc-wrap,
+          .action {
+            box-shadow: 0 0 5px 0 var(--shadow-mack) inset;
+          }
+
+          .multibar-wrap {
+            margin-bottom: 7px;
+          }
+        }
       }
     }
   }

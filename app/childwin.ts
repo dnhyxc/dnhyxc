@@ -4,6 +4,7 @@
  * @since: 2023-06-21
  * index.vue
  */
+// @ts-ignore
 import path from 'path';
 import { BrowserWindow, ipcMain } from 'electron';
 import { getIconPath } from './tray';

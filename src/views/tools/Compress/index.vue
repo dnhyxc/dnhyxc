@@ -13,7 +13,7 @@
       </div>
       <el-scrollbar
         ref="scrollRef"
-        :max-height="`${!hideHeader ? 'calc(100vh - 192px)' : 'calc(100vh - 85px)'}`"
+        :max-height="`${!hideHeader ? 'calc(100vh - 192px)' : 'calc(100vh - 106px)'}`"
         wrap-class="scrollbar-wrapper"
       >
         <DragUpload v-if="!imgFrom" class="compress-upload" :on-upload="onUpload" />

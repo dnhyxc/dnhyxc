@@ -35,7 +35,9 @@
           <span>{{ formatDate(articleStore?.articleDetail?.createTime!, 'YYYY年MM月DD日 HH:mm') }}</span>
           <span class="read-count">阅读 {{ articleStore?.articleDetail?.readCount }}</span>
           <span
-            v-if="loginStore?.userInfo?.userId === articleStore?.articleDetail?.authorId"
+            v-if="
+              loginStore?.userInfo?.userId === articleStore?.articleDetail?.authorId && !route.path.includes('/article')
+            "
             class="edit-btn"
             @click.stop="onEditArticle"
           >
@@ -167,6 +169,7 @@ const onPreview = () => {
         color: var(--theme-blue);
         cursor: pointer;
         .clickNoSelectText();
+
         &:hover {
           color: @font-warning;
         }
