@@ -298,12 +298,8 @@ const isCompile = computed(() => {
   }
 
   .content {
-    .left-menu {
-      padding-bottom: 26px;
-    }
     .right {
       padding-right: 22px;
-      padding-bottom: 21px;
     }
   }
 }

@@ -10,7 +10,7 @@
       <el-container>
         <el-main class="el-main">
           <Header />
-          <div :class="`${checkOS() === 'mac' && 'mac-content'} content`">
+          <div class="content">
             <el-aside class="aside-wrap" :width="`${checkOS() === 'mac' ? '62px' : '60px'}`">
               <LeftMenu />
             </el-aside>
@@ -120,10 +120,6 @@ provide('reload', reload);
       flex: 1;
       border-radius: 5px;
     }
-  }
-  .mac-content {
-    width: 100%;
-    padding-bottom: 25px;
   }
 }
 </style>
