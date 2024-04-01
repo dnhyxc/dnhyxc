@@ -316,8 +316,6 @@ const router = createRouter({
 // 全局守卫：登录拦截 本地没有存token,请重新登录
 router.beforeEach((to, from, next) => {
   const commonStore = useCommonStore();
-  // 切换路由时，隐藏页面头部搜索输入框，并清空搜索输入框内容
-  commonStore.showSearch = false;
   // 判断是否是首屏加载，如果是则设置loading加载效果
   if (to.path !== '/home' && !to.path.includes('/article') && !to.path.includes('/compile')) {
     commonStore.updatePageLoadStatus();

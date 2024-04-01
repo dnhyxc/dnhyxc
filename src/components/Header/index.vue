@@ -16,7 +16,7 @@
       <el-tooltip effect="light" content="前进" placement="bottom" popper-class="custom-dropdown-styles">
         <i class="font iconfont icon-arrow-right-bold" @click="goForward" />
       </el-tooltip>
-      <el-tooltip effect="light" content="刷新" placement="bottom"  popper-class="custom-dropdown-styles">
+      <el-tooltip effect="light" content="刷新" placement="bottom" popper-class="custom-dropdown-styles">
         <i class="font iconfont icon-reload" @click="onReload" />
       </el-tooltip>
       <div class="title">{{ route.meta.title }}</div>
@@ -31,11 +31,11 @@
           trigger="hover"
         >
           <template #reference>
-            <i class="font iconfont icon-sousuo2 search-icon" @click="onClickSearch" />
+            <i id="__SEARCH_ICON__" class="font iconfont icon-sousuo2 search-icon" @click="onClickSearch" />
           </template>
           <div class="search-list">
-            <div class="search-item" @click="onCheckSearchType(1)">普通搜索</div>
-            <div class="search-item" @click="onCheckSearchType(2)">高级搜索</div>
+            <div id="__SEARCH_ITEM1__" class="search-item" @click="onCheckSearchType(1)">普通搜索</div>
+            <div id="__SEARCH_ITEM2__" class="search-item" @click="onCheckSearchType(2)">高级搜索</div>
           </div>
         </el-popover>
         <el-tooltip
@@ -47,7 +47,13 @@
         >
           <i class="font iconfont icon-sousuo2 senior-search" @click="onClickSearch" />
         </el-tooltip>
-        <el-tooltip v-if="commonStore.showSearch" effect="light" content="高级搜索" placement="bottom" popper-class="custom-dropdown-styles">
+        <el-tooltip
+          v-if="commonStore.showSearch"
+          effect="light"
+          content="高级搜索"
+          placement="bottom"
+          popper-class="custom-dropdown-styles"
+        >
           <i class="iconfont icon-qiehuan" @click="onCheckSearchType(2)" />
         </el-tooltip>
         <el-input
@@ -186,7 +192,18 @@ onMounted(() => {
   ipcRenderer.on('mainWin-max', (_, status) => {
     toggle.value = status;
   });
+  window.addEventListener('click', onClickPage, true);
 });
+
+const onClickPage = (e: Event) => {
+  const ICON_IDS = ['__SEARCH_ICON__', '__SEARCH_ITEM1__', '__SEARCH_ITEM2__'];
+  const clickedElement = e.target as HTMLElement;
+  // 判断点击的元素是否为 search-wrap 或者其后代元素
+  const isSearchWrap = clickedElement.classList.contains('search-inp') || clickedElement.closest('.search-inp');
+  if (!isSearchWrap && !ICON_IDS.includes(clickedElement.id)) {
+    commonStore.showSearch = false;
+  }
+};
 
 // 清除副作用
 onUnmounted(() => {
@@ -194,6 +211,7 @@ onUnmounted(() => {
     clearTimeout(timerRef.value);
   }
   messageStore.visible = false;
+  window.removeEventListener('click', onClickPage, true);
 });
 
 // 监听页面搜索关键词，如果articleStore.keyword为空，则清除输入框内容
