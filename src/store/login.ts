@@ -152,8 +152,8 @@ export const useLoginStore = defineStore('login', {
       // 重置成功后直接登录
       if (res.success) {
         // 先退出登录，防止自己踢自己
-        this.onQuit();
-        await this.onLogin(params, router);
+        // this.onQuit();
+        // await this.onLogin(params, router);
         ElMessage({
           message: res.message,
           type: 'success',

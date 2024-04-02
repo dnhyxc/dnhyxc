@@ -15,7 +15,7 @@
           class="action"
           @click="onResetPwd(formData.data as FormData<FormInstance>)"
         >
-          重置并登录
+          确定重置
         </el-button>
         <el-button class="action" size="large" @click="toLogin()">返回登录</el-button>
       </template>
@@ -40,10 +40,11 @@ const onResetPwd = (Form: FormData<FormInstance>) => {
   if (!Form.formRef) return;
   Form.formRef.validate(async (valid: any) => {
     if (valid) {
-      loginStore.onResetPwd(
+      const res = await loginStore.onResetPwd(
         { username: Form.resetForm.username, phone: Form.resetForm.phone, password: Form.resetForm.confirmPwd! },
         router,
       );
+      res && toLogin();
     } else {
       return false;
     }
@@ -53,10 +54,11 @@ const onResetPwd = (Form: FormData<FormInstance>) => {
 const onEnter = (formRef: Ref<FormInstance>, resetForm: ResetFormParams) => {
   formRef.value.validate(async (valid: any) => {
     if (valid) {
-      loginStore.onResetPwd(
+      const res = await loginStore.onResetPwd(
         { username: resetForm.username, phone: resetForm.phone, password: resetForm.confirmPwd! },
         router,
       );
+      res && toLogin();
     } else {
       return false;
     }

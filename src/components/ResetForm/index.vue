@@ -14,6 +14,7 @@
       <el-input
         v-model.trim="resetForm.phone"
         size="large"
+        maxlength="11"
         placeholder="请输入手机号码（号码会被加密，无需担心泄露）"
         @keyup.enter="onEnter"
       />
