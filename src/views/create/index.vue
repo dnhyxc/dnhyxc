@@ -5,7 +5,7 @@
  * index.vue
 -->
 <template>
-  <div class="edit-wrap">
+  <Loading :loading="articleStore.loading" class="edit-wrap">
     <MarkdownEditor
       v-if="!editType"
       show-vscode
@@ -49,7 +49,7 @@
       :article-id="(route?.query?.id as string)"
     />
     <DraftList v-model:draft-visible="draftVisible" />
-  </div>
+  </Loading>
 </template>
 
 <script setup lang="ts">
@@ -58,6 +58,7 @@ import { useRoute, useRouter, onBeforeRouteLeave } from 'vue-router';
 import { ElMessage } from 'element-plus';
 import { articleStore, createStore, loginStore } from '@/store';
 import { Message, ipcRenderers } from '@/utils';
+import Loading from '@/components/Loading/index.vue';
 import AsyncLoading from '@/components/AsyncLoading/index.vue';
 import CreateDrawer from './Create/index.vue';
 import DraftList from './DraftList/index.vue';
@@ -102,6 +103,7 @@ const init = async () => {
     isEdit: true,
     router,
     toHome: !!route.query?.toHome,
+    toggleLoadStatus: true,
   });
   prevContent.value = createStore.createInfo?.content || '';
   createStore.clearCreateDraftInfo();

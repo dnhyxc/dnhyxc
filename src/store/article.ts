@@ -102,11 +102,13 @@ export const useArticleStore = defineStore('article', {
       isEdit,
       router,
       toHome,
+      toggleLoadStatus,
     }: {
       id: string;
       isEdit?: true;
       router?: Router;
       toHome?: boolean;
+      toggleLoadStatus?: boolean;
     }) {
       if (!id) {
         ElMessage.error('哦豁！文章不翼而飞了！');
@@ -114,6 +116,7 @@ export const useArticleStore = defineStore('article', {
       }
       this.loading = true;
       const res = normalizeResult<ArticleItem>(await Service.getArticleDetail(id, isEdit));
+      if (toggleLoadStatus) this.loading = false;
       if (res.success) {
         this.detailArtLikeCount = res.data?.likeCount!;
         this.articleDetail = res.data;
