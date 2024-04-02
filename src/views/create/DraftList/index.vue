@@ -208,6 +208,7 @@ const onScrollTo = (to?: number) => {
     color: var(--font-1);
 
     .left {
+      flex: 1;
       font-weight: 700;
       .ellipsisMore(1);
     }
