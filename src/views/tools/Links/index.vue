@@ -66,16 +66,17 @@ const onSort = () => {
 };
 
 // 保存排序
-const onSaveSort = () => {
+const onSaveSort = async () => {
   const params = toolsStore.toolList.map((i, index) => {
     return {
       sort: index + 1,
       id: i.id,
     };
   });
-  toolsStore.createToolSort({
+  await toolsStore.createToolSort({
     sortInfo: params,
   });
+  enabled.value = false;
 };
 </script>
 
@@ -121,7 +122,14 @@ const onSaveSort = () => {
   }
 
   .mac-tool-list {
+    width: 100%;
     height: calc(100vh - 335px);
+
+    :deep {
+      .el-scrollbar {
+        width: 100%;
+      }
+    }
   }
 
   .navigation-list {
