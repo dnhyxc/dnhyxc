@@ -113,7 +113,6 @@
           </el-form-item>
           <el-form-item prop="cover" label="封面" class="form-item-cover">
             <div class="cover-wrap">
-              {{ articleId }}
               <Upload
                 v-model:file-path="createStore.createInfo.coverImage"
                 :delete="!articleId"
