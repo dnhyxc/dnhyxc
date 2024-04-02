@@ -326,7 +326,7 @@ const toTag = (name: string) => {
 
       .icon-zhiding {
         position: absolute;
-        top: 0;
+        top: -2px;
         left: 0;
         font-size: 35px;
         z-index: 10;

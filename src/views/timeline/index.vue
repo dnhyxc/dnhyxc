@@ -109,7 +109,7 @@ const onScrollTo = () => {
 
     .icon-zhiding {
       position: absolute;
-      top: -1px;
+      top: -2px;
       left: -1px;
       font-size: 35px;
       z-index: 10;
