@@ -145,7 +145,6 @@ const onlineUrl = ref<string>('');
 const markFontSize = computed(() => `${markSize.value}px`);
 
 watch(imgFrom, (newVal, oldVal) => {
-  console.log('imgFrom', newVal, imgFrom.value);
   if (newVal !== oldVal) {
     onReset();
   }

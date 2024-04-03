@@ -4,7 +4,7 @@
  * @since: 2023-06-21
  * index.vue
  */
-import { Tray, BrowserWindow } from 'electron';
+import {Tray, BrowserWindow} from 'electron';
 
 export const DOMAIN_URL = 'http://101.43.50.15';
 
@@ -19,6 +19,7 @@ export const globalInfo: {
     width: number;
     height: number;
   };
+  store: any
 } = {
   tray: null,
   win: null,
@@ -31,6 +32,7 @@ export const globalInfo: {
     width: 0,
     height: 0,
   },
+  store: null
 };
 
 export const clearGlobalInfo = () => {

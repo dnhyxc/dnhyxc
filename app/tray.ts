@@ -4,13 +4,14 @@
  * @since: 2023-06-21
  * index.vue
  */
+// @ts-ignore
 import path from 'path';
 import { Menu, app } from 'electron';
 import { globalInfo, isDev, isMac, clearGlobalInfo } from './constant';
 
 export const createContextMenu = () => {
   // 托盘菜单
-  const contextMenu = Menu.buildFromTemplate([
+  return Menu.buildFromTemplate([
     {
       label: '显示墨客',
       click: () => {
@@ -25,8 +26,6 @@ export const createContextMenu = () => {
       },
     },
   ]);
-
-  return contextMenu;
 };
 
 export const getIconPath = () => {

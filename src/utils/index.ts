@@ -1,23 +1,24 @@
-import { ipcRenderer } from 'electron';
-import { ElMessageBox, ElMessage } from 'element-plus';
-import type { ElMessageBoxOptions } from 'element-plus';
+import {ipcRenderer} from 'electron';
+import {ElMessageBox, ElMessage} from 'element-plus';
+import type {ElMessageBoxOptions} from 'element-plus';
 import moment from 'moment';
 import SparkMD5 from 'spark-md5';
 import ColorThief from 'colorthief';
-import { MSG_CONFIG, CODE_CONTROL, EMOJI_TEXTS, EMOJI_URLS, CODE_LENGTH } from '@/constant';
-import { usePlugins } from './plugins';
-import { normalizeResult } from './result';
-import { decrypt, encrypt } from './crypto';
+import {MSG_CONFIG, CODE_CONTROL, EMOJI_TEXTS, EMOJI_URLS, CODE_LENGTH} from '@/constant';
+import {usePlugins} from './plugins';
+import {normalizeResult} from './result';
+import {decrypt, encrypt} from './crypto';
 import request from './request';
-import { shareQQ, shareQZon, shareSinaWeiBo } from './share';
-import { mountDirectives } from './directive';
+import {shareQQ, shareQZon, shareSinaWeiBo} from './share';
+import {mountDirectives} from './directive';
 import EventBus from './eventBus';
-import { locSetItem, locGetItem, locRemoveItem, ssnGetItem, ssnSetItem, ssnRemoveItem } from './storage';
+import {locSetItem, locGetItem, locRemoveItem, ssnGetItem, ssnSetItem, ssnRemoveItem} from './storage';
 import * as ipcRenderers from './ipcRenderer';
-import { modifyTheme } from './theme';
-import { eStore, setTheme, getTheme, removeTheme, getMsgStatus } from './store';
-import { compressImage } from './compress';
-export { Verify, checkNumber, checkMin, checkMax, verifyEmpty, verifyLength, verfiySpecialCharacters } from './verify';
+import {modifyTheme} from './theme';
+import {eStore, setTheme, getTheme, removeTheme, getMsgStatus} from './store';
+import {compressImage} from './compress';
+
+export {Verify, checkNumber, checkMin, checkMax, verifyEmpty, verifyLength, verfiySpecialCharacters} from './verify';
 export * from './speak';
 export * from './codeTemplate';
 
@@ -213,13 +214,13 @@ export const scrollTo = (ref: any, position: number, time = 20) => {
 
 // 处理键盘快捷键输入
 export const setShortcutKey = (e: KeyboardEvent, addHotkey: Function) => {
-  const { altKey, ctrlKey, shiftKey, key, code } = e;
+  const {altKey, ctrlKey, shiftKey, key, code} = e;
   if (!CODE_CONTROL.includes(key)) {
     let controlKey = '';
     [
-      { key: shiftKey, text: 'Shift' },
-      { key: ctrlKey, text: 'Ctrl' },
-      { key: altKey, text: 'Alt' },
+      {key: shiftKey, text: 'Shift'},
+      {key: ctrlKey, text: 'Ctrl'},
+      {key: altKey, text: 'Alt'},
     ].forEach((curKey) => {
       if (curKey.key) {
         if (controlKey) controlKey += ' + ';
@@ -233,7 +234,7 @@ export const setShortcutKey = (e: KeyboardEvent, addHotkey: Function) => {
 
     addHotkey({
       text: controlKey,
-      controlKey: { altKey, ctrlKey, shiftKey, key, code },
+      controlKey: {altKey, ctrlKey, shiftKey, key, code},
     });
   }
 };
@@ -561,12 +562,12 @@ export const replacePictures = (content: string) => {
 
 // 向光标所在位置插入内容
 export const insertContent = ({
-  keyword,
-  node,
-  username,
-  url,
-  emoji,
-}: {
+                                keyword,
+                                node,
+                                username,
+                                url,
+                                emoji,
+                              }: {
   keyword: string; // textarea输入内容
   node?: HTMLTextAreaElement; // textarea输入框元素
   username?: string; // 用户名称
@@ -597,11 +598,11 @@ export const insertContent = ({
  * @param {水印文字} watermarkText
  */
 export const addWatermark = async ({
-  url,
-  width,
-  height,
-  markText = 'dnhyxc',
-}: {
+                                     url,
+                                     width,
+                                     height,
+                                     markText = 'dnhyxc',
+                                   }: {
   url: string;
   markText: string;
   width?: number;
@@ -727,11 +728,11 @@ const randomNum = (min: number, max: number) => {
 
 // canvas 绘制验证码
 export const drawCharater = ({
-  canvasElement,
-  width,
-  height,
-  code,
-}: {
+                               canvasElement,
+                               width,
+                               height,
+                               code,
+                             }: {
   canvasElement: HTMLCanvasElement;
   width: number;
   height: number;
@@ -790,13 +791,17 @@ export const debounce = (fn: Function, delay = 1000, immediate = false) => {
   };
 };
 
-export const onDownloadFile = async ({ url, type = 'png' }: { url: string; type?: string }) => {
+export const onDownloadFile = async ({url, type = 'png', fileName = 'file.png'}: {
+  url: string;
+  type?: string,
+  fileName?: string
+}) => {
   if (url.includes('data:image') || type === 'blob') {
-    ipcRenderers.sendDownload(url as string);
+    ipcRenderers.sendDownload(url as string, fileName);
   } else {
     const base64url = await url2Base64(url, type);
     if (base64url) {
-      ipcRenderers.sendDownload(base64url as string);
+      ipcRenderers.sendDownload(base64url as string, fileName);
     }
   }
   // 设置一次性监听，防止重复触发
@@ -829,21 +834,21 @@ export const onDownloadFile = async ({ url, type = 'png' }: { url: string; type?
  * @return {canvas} HTMLCanvasElement
  */
 export const convas2ImgAddWatermark = async ({
-  imgUrl,
-  width,
-  height,
-  type = 'png',
-  top,
-  left,
-  size,
-  color,
-  text,
-  markTextWidth,
-  markTextHeight,
-  spacing = 100,
-  markType = 'line',
-  markOffsetTop,
-}: {
+                                               imgUrl,
+                                               width,
+                                               height,
+                                               type = 'png',
+                                               top,
+                                               left,
+                                               size,
+                                               color,
+                                               text,
+                                               markTextWidth,
+                                               markTextHeight,
+                                               spacing = 100,
+                                               markType = 'line',
+                                               markOffsetTop,
+                                             }: {
   imgUrl: string;
   top: number;
   left: number;
@@ -1001,12 +1006,12 @@ export const diffType = (value: string | number | string | boolean | Function | 
 
 // 设置盲水印
 export const createWaterMark = ({
-  url,
-  text,
-  fontSize,
-  fontFamily,
-  spacing,
-}: {
+                                  url,
+                                  text,
+                                  fontSize,
+                                  fontFamily,
+                                  spacing,
+                                }: {
   url: string;
   text: string;
   fontSize: string;
@@ -1014,7 +1019,7 @@ export const createWaterMark = ({
   spacing: number; // 水印上下间距
 }): Promise<string> => {
   const canvas = document.createElement('canvas');
-  const ctx = canvas.getContext('2d', { willReadFrequently: true })!;
+  const ctx = canvas.getContext('2d', {willReadFrequently: true})!;
   const img = new Image();
   img.crossOrigin = '';
   let textData, originalData;
@@ -1051,7 +1056,7 @@ export const createWaterMark = ({
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
       originalData = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height);
       // 调用盲水印算法
-      mergeData({ ctx, textData, color: 'R', originalData });
+      mergeData({ctx, textData, color: 'R', originalData});
       const url = canvas.toDataURL('image/png');
       resolve(url);
     };
@@ -1059,11 +1064,11 @@ export const createWaterMark = ({
 
   // 盲水印加密算法
   function mergeData({
-    ctx,
-    textData,
-    color,
-    originalData,
-  }: {
+                       ctx,
+                       textData,
+                       color,
+                       originalData,
+                     }: {
     ctx: CanvasRenderingContext2D;
     textData: any;
     color: string;
@@ -1115,7 +1120,7 @@ export const createWaterMark = ({
 // 解密盲水印
 export const processWaterMark = (url: string): Promise<string> => {
   const canvas = document.createElement('canvas');
-  const ctx = canvas.getContext('2d', { willReadFrequently: true })!;
+  const ctx = canvas.getContext('2d', {willReadFrequently: true})!;
   const img = new Image();
   let originalData = null;
   img.src = url;
@@ -1163,7 +1168,7 @@ export const processWaterMark = (url: string): Promise<string> => {
 // 在线图片转为File
 export const onlineImgToFile = async (url: string): Promise<File> => {
   const blob = await fetch(url).then((response) => response.blob());
-  const file = new File([blob], 'image.jpg', { type: 'image/jpeg' });
+  const file = new File([blob], 'image.jpg', {type: 'image/jpeg'});
   return file;
 };
 
@@ -1205,12 +1210,12 @@ export const checkWithLink = (content: string, check?: boolean) => {
 
 // 计算资源加载的进度
 export const calculateLoadProgress = ({
-  url,
-  getProgress,
-  needFileType = 'arrayBuffer',
-  previousReader,
-  addPreviousReader,
-}: {
+                                        url,
+                                        getProgress,
+                                        needFileType = 'arrayBuffer',
+                                        previousReader,
+                                        addPreviousReader,
+                                      }: {
   url: string;
   getProgress: (progress: number) => void;
   previousReader: any;
@@ -1237,7 +1242,7 @@ export const calculateLoadProgress = ({
       addPreviousReader && addPreviousReader(reader);
       const chunks = [] as Uint8Array[];
       const readChunk = (): any => {
-        return reader!.read().then(({ done, value }) => {
+        return reader!.read().then(({done, value}) => {
           if (done) {
             return chunks;
           }
@@ -1252,7 +1257,7 @@ export const calculateLoadProgress = ({
     })
     .then((_chunks) => {
       if (needFileType === 'blob') {
-        const blob = new Blob(_chunks, { type: 'application/pdf' });
+        const blob = new Blob(_chunks, {type: 'application/pdf'});
         if (blob?.size < totalBytes) {
           return new Promise((resolve) => {
             resolve(null);

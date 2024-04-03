@@ -4,21 +4,17 @@
  * @since: 2023-06-21
  * index.vue
  */
+// @ts-ignore
 import path from 'path';
-import { app, BrowserWindow, ipcMain, dialog, desktopCapturer } from 'electron';
-import Store from 'electron-store';
-import { getIconPath } from './tray';
-import { DOMAIN_URL, globalInfo, isDev, isMac, globalChildWins, CATCHS } from './constant';
-import { createChildWin } from './childwin';
-
+import {app, BrowserWindow, ipcMain, dialog, desktopCapturer} from 'electron';
+import {getIconPath} from './tray';
+import {DOMAIN_URL, globalInfo, isDev, isMac, globalChildWins, CATCHS} from './constant';
+import {createChildWin} from './childwin';
 // 控制是否退出
 let willQuitApp = false;
 
 // 屏蔽警告
 process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = 'true';
-
-// 注册electron-store
-Store.initRenderer();
 
 export const createWindow = () => {
   globalInfo.win = new BrowserWindow({
@@ -151,7 +147,7 @@ ipcMain.on('win-show', (_, status) => {
 
 // 监听渲染进程发起的打开文件夹指令，properties: ['openDirectory']：用户执行只能选择文件夹
 ipcMain.on('openDialog', (event) => {
-  dialog.showOpenDialog({ properties: ['openDirectory'] }).then((result) => {
+  dialog.showOpenDialog({properties: ['openDirectory']}).then((result) => {
     if (result.filePaths.length > 0) {
       event.sender.send('selectedItem', result.filePaths);
     }
@@ -163,17 +159,27 @@ ipcMain.on('get-app-path', (event) => {
   event.sender.send('got-app-path', app.getAppPath());
 });
 
-// 监听渲染进程发出的download事件
-ipcMain.on('download', (event, url) => {
-  globalInfo.win?.webContents.downloadURL(url); // 触发 will-download 事件
-  globalInfo.win?.webContents.session.on('will-download', (event, item, webContents) => {
-    item.once('done', (event, state) => {
-      if (state === 'completed') {
-        globalInfo.win?.webContents.send('download-file', true);
-      } else {
-        globalInfo.win?.webContents.send('download-file', false);
-      }
-    });
+ipcMain.on('download', (event, {url, fileName}) => {
+  const fileStorePath = globalInfo.store?.get('FILE_STORE_PATH') || app.getAppPath();
+  dialog.showSaveDialog(globalInfo.win, {
+    defaultPath: `${fileStorePath}/${fileName}` // 设置默认的文件路径
+  }).then(result => {
+    if (!result.canceled) {
+      const filePath = result.filePath
+
+      globalInfo.win?.webContents.downloadURL(url); // 触发 will-download 事件
+      globalInfo.win?.webContents.session.on('will-download', (event, item, webContents) => {
+        item.setSavePath(filePath); // 设置选择的文件路径
+
+        item.once('done', (event, state) => {
+          if (state === 'completed') {
+            globalInfo.win?.webContents.send('download-file', true);
+          } else {
+            globalInfo.win?.webContents.send('download-file', false);
+          }
+        });
+      });
+    }
   });
 });
 
@@ -196,6 +202,7 @@ ipcMain.on('new-win', (event, pathname, id, info, prevId) => {
   } else {
     // 过滤掉 tools_codeRun 代码测试窗口，让子窗口超过3个时 tools_codeRun 始终不被新窗口顶关闭
     const filterKeys = new Map(
+      // @ts-ignore
       [...globalChildWins.newWins.entries()].filter(([key, value]) => key !== 'tools_codeRun'),
     );
     // 如果子窗口超过3个，则删除最早创建的那个子窗口
@@ -227,7 +234,7 @@ ipcMain.on('new-win', (event, pathname, id, info, prevId) => {
 // 监听开机自启设置
 ipcMain.on('open-at-login', (event, status) => {
   // 开机自启
-  app.setLoginItemSettings({ openAtLogin: status !== 1 });
+  app.setLoginItemSettings({openAtLogin: status !== 1});
 });
 
 // 设置消息提醒设置
@@ -251,7 +258,7 @@ ipcMain.on('clear-cache', (event, status) => {
 // 监听开启屏幕录制
 ipcMain.on('load-transcribe', (event, id) => {
   const winId = globalChildWins.newWins.get(id);
-  desktopCapturer.getSources({ types: ['window', 'screen'] }).then((sources) => {
+  desktopCapturer.getSources({types: ['window', 'screen']}).then((sources) => {
     if (winId) {
       globalChildWins['independentWindow-' + winId]?.webContents?.send('share-screen-sources', sources);
     } else {

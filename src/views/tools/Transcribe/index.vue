@@ -249,7 +249,7 @@ const onRestore = () => {
 };
 
 const onDownload = () => {
-  onDownloadFile({url: blobUrl.value, type: 'blob'});
+  onDownloadFile({url: blobUrl.value, type: 'blob', fileName: 'download.webm'});
 };
 
 // 关闭屏幕录制页面

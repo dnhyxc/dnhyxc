@@ -4,14 +4,21 @@
  * @since: 2023-06-21
  * index.vue
  */
+// @ts-ignore
 import path from 'path';
-import { app, ipcMain, Tray } from 'electron';
+import {app, ipcMain, Tray} from 'electron';
+// @ts-ignore
 import Store from 'electron-store';
-import { registerShortcut, unRegisterShortcut } from './shortcut';
-import { createContextMenu, getIconPath } from './tray';
-import { createMessageWin, showMessage, checkTrayLeave, messageWinStatus } from './message';
-import { createWindow } from './mainwin';
-import { globalInfo, isMac, DOMAIN_URL } from './constant';
+import {registerShortcut, unRegisterShortcut} from './shortcut';
+import {createContextMenu, getIconPath} from './tray';
+import {createMessageWin, showMessage, checkTrayLeave, messageWinStatus} from './message';
+import {createWindow} from './mainwin';
+import {globalInfo, isMac, DOMAIN_URL} from './constant';
+
+// 注册electron-store
+Store.initRenderer();
+
+globalInfo.store = new Store();
 
 // 屏蔽警告
 process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = 'true';

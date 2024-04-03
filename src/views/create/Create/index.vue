@@ -203,7 +203,6 @@ const getUploadUrl = async (url: string) => {
   createStore.createInfo.gradient = await getImageColor(url);
   if (url && checkImgUrlType(url) === 'URL' && props.articleId) {
     const oldUrl = createStore.oldCoverImage;
-    console.log(url, 'url');
     url !== oldUrl && (createStore.oldCoverImage = url);
   }
 };

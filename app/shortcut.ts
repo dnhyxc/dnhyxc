@@ -4,20 +4,20 @@
  * @since: 2023-06-21
  * index.vue
  */
-import { globalShortcut, App, BrowserWindow } from 'electron';
-import Store from 'electron-store';
-import { isDev, isMac, globalInfo, clearGlobalInfo } from './constant';
+import {globalShortcut, App, BrowserWindow} from 'electron';
+import {isDev, isMac, globalInfo, clearGlobalInfo} from './constant';
 
 export const registerShortcut = (app: App) => {
-  const store = new Store();
 
   // 生产模式禁止使用Shift+Ctrl+I唤起控制台
   if (!isDev) {
-    globalShortcut.register('Shift+Ctrl+I', () => {});
+    globalShortcut.register('Shift+Ctrl+I', () => {
+    });
     globalShortcut.register('Shift+Ctrl+D+N+H', () => {
       globalInfo.win?.webContents.openDevTools();
     });
-    globalShortcut.register('CommandOrControl+R', () => {});
+    globalShortcut.register('CommandOrControl+R', () => {
+    });
   }
 
   if (isDev && isMac) {
@@ -38,7 +38,7 @@ export const registerShortcut = (app: App) => {
   // });
 
   // 快捷键 Alt+Shift+Q 显示隐藏
-  globalShortcut.register((store.get('OPEN_SHORTCUT') as string) || 'Shift+Alt+Q', () => {
+  globalShortcut.register((globalInfo.store?.get('OPEN_SHORTCUT') as string) || 'Shift+Alt+Q', () => {
     // 判断窗口是否失去焦点，如果失去了焦点，则不触发hide，直接显示窗口
     if (!globalInfo.win?.isFocused()) {
       globalInfo.win?.show();
@@ -51,7 +51,7 @@ export const registerShortcut = (app: App) => {
   });
 
   // 全屏/还原
-  globalShortcut.register((store.get('FULL_SHORTCUT') as string) || 'Shift+Alt+R', () => {
+  globalShortcut.register((globalInfo.store?.get('FULL_SHORTCUT') as string) || 'Shift+Alt+R', () => {
     if (globalInfo.win?.isMaximized()) {
       globalInfo.win.restore();
     } else {
@@ -60,12 +60,12 @@ export const registerShortcut = (app: App) => {
   });
 
   // 最小化
-  globalShortcut.register((store.get('MINIMIZE_SHORTCUT') as string) || 'Shift+Alt+R', () => {
+  globalShortcut.register((globalInfo.store?.get('MINIMIZE_SHORTCUT') as string) || 'Shift+Alt+R', () => {
     globalInfo.win?.minimize();
   });
 
   // 退出
-  globalShortcut.register((store.get('OUT_SHORTCUT') as string) || 'Shift+Alt+T', () => {
+  globalShortcut.register((globalInfo.store?.get('OUT_SHORTCUT') as string) || 'Shift+Alt+T', () => {
     if (!isMac) {
       clearGlobalInfo();
       app?.quit();
