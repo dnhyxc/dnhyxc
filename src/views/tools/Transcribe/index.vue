@@ -32,7 +32,7 @@
           link
           :type="transcribeStatus ? 'warning' : blobUrl ? 'info' : 'primary'"
           class="start-btn"
-          @click="onTrancribe"
+          @click="onTranscribe"
         >
           <span class="text" :title="activeSource.name">
             {{
@@ -68,9 +68,9 @@
 </template>
 
 <script setup lang="ts">
-import {ipcRenderer, DesktopCapturerSource} from 'electron';
-import {onMounted, onUnmounted, ref, reactive, nextTick} from 'vue';
-import {onDownloadFile, formatDuration} from '@/utils';
+import {DesktopCapturerSource, ipcRenderer} from 'electron';
+import {nextTick, onMounted, onUnmounted, reactive, ref} from 'vue';
+import {formatDuration, onDownloadFile} from '@/utils';
 
 interface IProps {
   hideHeader?: boolean;
@@ -173,8 +173,7 @@ const createMedia = async (id: string, source?: DesktopCapturerSource) => {
       type: 'video/webm',
     });
     videoSize.value = `${(completeBlob.size / 1024 / 1024).toFixed(2)} M`;
-    const url = URL.createObjectURL(completeBlob);
-    blobUrl.value = url;
+    blobUrl.value = URL.createObjectURL(completeBlob);
     // 停止录制中的视频预览播放
     videoPreviewRef.value?.pause();
     nextTick(() => {
@@ -195,27 +194,26 @@ const transcribeWithAudio = async (stream: MediaStream): Promise<MediaStream> =>
     const systemSoundDestination = audioCtx.createMediaStreamDestination();
     micSoundSource.connect(systemSoundDestination);
     // 合并音频流与视频流
-    const combinedSource = new MediaStream([
+    return new MediaStream([
       ...stream.getVideoTracks(),
       ...systemSoundDestination.stream.getAudioTracks(),
     ]);
-    return combinedSource;
   }
   return stream;
 };
 
 // 开始录制
-const onTrancribe = () => {
+const onTranscribe = () => {
   loading.value = true;
   if (!transcribeStatus.value) {
     createMedia(activeSource.id);
   } else {
-    onStopTrancribe();
+    onStopTranscribe();
   }
 };
 
 // 停止录制
-const onStopTrancribe = () => {
+const onStopTranscribe = () => {
   loading.value = false;
   disabled.value = true;
   mediaRecorder.value?.stop();
