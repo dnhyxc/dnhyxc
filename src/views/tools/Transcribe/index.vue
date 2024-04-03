@@ -13,7 +13,7 @@
       <span class="close" @click="onClose">关闭</span>
     </div>
     <Loading :loading="loading" load-text="正在准备中，请稍等..." class="content">
-      <Empty v-if="!screenStream && !blobUrl" text="暂无录制" />
+      <Empty v-if="!screenStream && !blobUrl" text="暂无录制"/>
       <div class="video-preview">
         <video v-if="!blobUrl" ref="videoPreviewRef" :srcObject="screenStream" autoplay muted></video>
         <video v-if="blobUrl" ref="videoRef" :src="blobUrl" autoplay controls></video>
@@ -22,8 +22,8 @@
     <div class="footer">
       <div class="left">
         <el-radio-group v-model="needAudio" :disabled="transcribeStatus || disabled">
-          <el-radio label="仅录制屏幕" />
-          <el-radio label="录制声音及屏幕" />
+          <el-radio label="仅录制屏幕"/>
+          <el-radio label="录制声音及屏幕"/>
         </el-radio-group>
       </div>
       <div class="right">
@@ -39,8 +39,8 @@
               transcribeStatus
                 ? `停止录制 ${formatDuration(elapsedTime)}`
                 : blobUrl
-                ? `录制完毕 ${formatDuration(elapsedTime)}`
-                : '开始录制'
+                  ? `录制完毕 ${formatDuration(elapsedTime)}`
+                  : '开始录制'
             }}
             -
             {{ activeSource.name }}
@@ -68,9 +68,9 @@
 </template>
 
 <script setup lang="ts">
-import { ipcRenderer, DesktopCapturerSource } from 'electron';
-import { onMounted, onUnmounted, ref, reactive, nextTick } from 'vue';
-import { onDownloadFile, formatDuration } from '@/utils';
+import {ipcRenderer, DesktopCapturerSource} from 'electron';
+import {onMounted, onUnmounted, ref, reactive, nextTick} from 'vue';
+import {onDownloadFile, formatDuration} from '@/utils';
 
 interface IProps {
   hideHeader?: boolean;
@@ -144,7 +144,7 @@ const createMedia = async (id: string, source?: DesktopCapturerSource) => {
 
   screenStream.value = combinedSource;
 
-  mediaRecorder.value = new MediaRecorder(combinedSource, { mimeType: 'video/webm' });
+  mediaRecorder.value = new MediaRecorder(combinedSource, {mimeType: 'video/webm'});
 
   // 监听录制流
   mediaRecorder.value.addEventListener('dataavailable', (event) => {
@@ -249,7 +249,7 @@ const onRestore = () => {
 };
 
 const onDownload = () => {
-  onDownloadFile({ url: blobUrl.value, type: 'blob' });
+  onDownloadFile({url: blobUrl.value, type: 'blob'});
 };
 
 // 关闭屏幕录制页面
@@ -312,6 +312,7 @@ const onClose = () => {
       height: 100%;
       width: 100%;
       box-sizing: border-box;
+
       .empty-text {
         color: var(--font-3);
         font-size: 50px;
@@ -346,13 +347,16 @@ const onClose = () => {
         .el-radio {
           margin-right: 18px;
         }
+
         .el-radio__label {
           margin-top: -3px;
         }
+
         .el-radio__input {
           margin-top: -2px;
         }
       }
+
       .toggle {
         height: 32px;
       }
