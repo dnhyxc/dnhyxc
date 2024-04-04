@@ -54,7 +54,7 @@ export const createChildWin = (pathname: string, id: string) => {
     delete globalChildWins['independentWindow-' + winId];
   });
 
-  globalChildWins['independentWindow-' + winId]?.on('close', (event) => {
+  globalChildWins['independentWindow-' + winId]?.on('close', () => {
     globalChildWins.newWins.delete(id);
     globalChildWins['independentWindow-' + winId] = null;
     delete globalChildWins['independentWindow-' + winId];
@@ -175,5 +175,12 @@ ipcMain.on('restore', (event, info) => {
         );
       }
     }
+  });
+});
+
+// 监听主题变化
+ipcMain.on('set-theme', (event, theme) => {
+  globalChildWins.newWins.forEach((value, key) => {
+    globalChildWins['independentWindow-' + value]?.webContents.send('set-theme', theme);
   });
 });

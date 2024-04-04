@@ -124,12 +124,6 @@ const onSaveSort = async () => {
   .mac-tool-list {
     width: 100%;
     height: calc(100vh - 335px);
-
-    :deep {
-      .el-scrollbar {
-        width: 100%;
-      }
-    }
   }
 
   .navigation-list {
@@ -191,6 +185,12 @@ const onSaveSort = async () => {
           }
         }
       }
+    }
+  }
+
+  :deep {
+    .el-scrollbar {
+      width: 100%;
     }
   }
 }
