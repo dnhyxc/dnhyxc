@@ -13,7 +13,7 @@
       <span class="close" @click="onClose">关闭</span>
     </div>
     <Loading :loading="loading" load-text="正在准备中，请稍等..." class="content">
-      <Empty v-if="!screenStream && !blobUrl" text="暂无录制"/>
+      <Empty v-if="!screenStream && !blobUrl" text="暂无录制" />
       <div class="video-preview">
         <video v-if="!blobUrl" ref="videoPreviewRef" :srcObject="screenStream" autoplay muted></video>
         <video v-if="blobUrl" ref="videoRef" :src="blobUrl" autoplay controls></video>
@@ -22,8 +22,8 @@
     <div class="footer">
       <div class="left">
         <el-radio-group v-model="needAudio" :disabled="transcribeStatus || disabled">
-          <el-radio label="仅录制屏幕"/>
-          <el-radio label="录制声音及屏幕"/>
+          <el-radio label="仅录制屏幕" />
+          <el-radio label="录制声音及屏幕" />
         </el-radio-group>
       </div>
       <div class="right">
@@ -32,6 +32,7 @@
           link
           :type="transcribeStatus ? 'warning' : blobUrl ? 'info' : 'primary'"
           class="start-btn"
+          :disabled="!!blobUrl"
           @click="onTranscribe"
         >
           <span class="text" :title="activeSource.name">
@@ -39,8 +40,8 @@
               transcribeStatus
                 ? `停止录制 ${formatDuration(elapsedTime)}`
                 : blobUrl
-                  ? `录制完毕 ${formatDuration(elapsedTime)}`
-                  : '开始录制'
+                ? `录制完毕 ${formatDuration(elapsedTime)}`
+                : '开始录制'
             }}
             -
             {{ activeSource.name }}
@@ -68,9 +69,9 @@
 </template>
 
 <script setup lang="ts">
-import {DesktopCapturerSource, ipcRenderer} from 'electron';
-import {nextTick, onMounted, onUnmounted, reactive, ref} from 'vue';
-import {formatDuration, onDownloadFile} from '@/utils';
+import { DesktopCapturerSource, ipcRenderer } from 'electron';
+import { nextTick, onMounted, onUnmounted, reactive, ref } from 'vue';
+import { formatDuration, onDownloadFile } from '@/utils';
 
 interface IProps {
   hideHeader?: boolean;
@@ -144,7 +145,7 @@ const createMedia = async (id: string, source?: DesktopCapturerSource) => {
 
   screenStream.value = combinedSource;
 
-  mediaRecorder.value = new MediaRecorder(combinedSource, {mimeType: 'video/webm'});
+  mediaRecorder.value = new MediaRecorder(combinedSource, { mimeType: 'video/webm' });
 
   // 监听录制流
   mediaRecorder.value.addEventListener('dataavailable', (event) => {
@@ -194,10 +195,7 @@ const transcribeWithAudio = async (stream: MediaStream): Promise<MediaStream> =>
     const systemSoundDestination = audioCtx.createMediaStreamDestination();
     micSoundSource.connect(systemSoundDestination);
     // 合并音频流与视频流
-    return new MediaStream([
-      ...stream.getVideoTracks(),
-      ...systemSoundDestination.stream.getAudioTracks(),
-    ]);
+    return new MediaStream([...stream.getVideoTracks(), ...systemSoundDestination.stream.getAudioTracks()]);
   }
   return stream;
 };
@@ -247,7 +245,7 @@ const onRestore = () => {
 };
 
 const onDownload = () => {
-  onDownloadFile({url: blobUrl.value, type: 'blob', fileName: 'download.webm'});
+  onDownloadFile({ url: blobUrl.value, type: 'blob', fileName: 'download.webm' });
 };
 
 // 关闭屏幕录制页面

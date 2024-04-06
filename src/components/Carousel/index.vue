@@ -15,24 +15,26 @@
       class="carousel"
     >
       <el-carousel-item v-for="(item, index) in data" :key="item" @click="toDetail(item.id)">
-        <div :class="`carousel-item-${index} carousel-item`">
-          <div class="article-info">
-            <div class="top">
-              <div class="header">
-                <div class="title">{{ item.title }}</div>
+        <ContextMenu class="block" :menu="CARD_CONTEXT_MENU" @select="(e) => onSelectMenu(e, item)">
+          <div :class="`carousel-item-${index} carousel-item`">
+            <div class="article-info">
+              <div class="top">
+                <div class="header">
+                  <div class="title">{{ item.title }}</div>
+                </div>
+                <div class="create-info">
+                  <span class="author" @click.stop="toPersonal(item.authorId!)">{{ item.authorName }}</span>
+                  <span class="date">{{ formatGapTime(item.createTime!) }}</span>
+                </div>
               </div>
-              <div class="create-info">
-                <span class="author" @click.stop="toPersonal(item.authorId!)">{{ item.authorName }}</span>
-                <span class="date">{{ formatGapTime(item.createTime!) }}</span>
+              <div class="bottom">
+                <span class="classify" @click.stop="toClassify(item.classify!)">分类: {{ item.classify }}</span>
+                <span class="tag" @click.stop="toTag(item.tag!)">标签: {{ item.tag }}</span>
               </div>
             </div>
-            <div class="bottom">
-              <span class="classify" @click.stop="toClassify(item.classify!)">分类: {{ item.classify }}</span>
-              <span class="tag" @click.stop="toTag(item.tag!)">标签: {{ item.tag }}</span>
-            </div>
+            <Image :url="item.coverImage || IMG1" :transition-img="IMG1" class="img" position="center" />
           </div>
-          <Image :url="item.coverImage || IMG1" :transition-img="IMG1" class="img" position="center" />
-        </div>
+        </ContextMenu>
       </el-carousel-item>
     </el-carousel>
     <el-carousel v-else :interval="5000" trigger="click" height="200px" indicator-position="none" class="carousel">
@@ -48,40 +50,45 @@
       :class="`hot ${checkOS() === 'mac' && 'mac-hot'}`"
       @click="toDetail(item.id)"
     >
-      <div :class="`${index === 0 ? 'new-article' : 'hot-article'} carousel-item`">
-        <div class="article-info">
-          <div class="top">
-            <div class="header">
-              <div class="title title-text">{{ index ? '最热文章' : '最新文章' }}</div>
+      <ContextMenu class="block" :menu="CARD_CONTEXT_MENU" @select="(e) => onSelectMenu(e, item)">
+        <div :class="`${index === 0 ? 'new-article' : 'hot-article'} carousel-item`">
+          <div class="article-info">
+            <div class="top">
+              <div class="header">
+                <div class="title title-text">{{ index ? '最热文章' : '最新文章' }}</div>
+              </div>
+              <div class="header">
+                <div class="title">{{ item?.title }}</div>
+              </div>
+              <div class="create-info">
+                <span class="author" @click.stop="toPersonal(item.authorId!)">{{ item?.authorName }}</span>
+                <span class="date">{{ formatGapTime(item?.createTime!) }}</span>
+              </div>
             </div>
-            <div class="header">
-              <div class="title">{{ item?.title }}</div>
-            </div>
-            <div class="create-info">
-              <span class="author" @click.stop="toPersonal(item.authorId!)">{{ item?.authorName }}</span>
-              <span class="date">{{ formatGapTime(item?.createTime!) }}</span>
+            <div class="bottom hot-bottom">
+              <span class="classify" @click.stop="toClassify(item?.classify!)">分类: {{ item?.classify }}</span>
+              <span class="tag" @click.stop="toTag(item.tag!)">标签: {{ item?.tag }}</span>
             </div>
           </div>
-          <div class="bottom hot-bottom">
-            <span class="classify" @click.stop="toClassify(item?.classify!)">分类: {{ item?.classify }}</span>
-            <span class="tag" @click.stop="toTag(item.tag!)">标签: {{ item?.tag }}</span>
-          </div>
+          <Image :url="item?.coverImage || IMG1" :transition-img="IMG1" class="img" position="center" />
         </div>
-        <Image :url="item?.coverImage || IMG1" :transition-img="IMG1" class="img" position="center" />
-      </div>
+      </ContextMenu>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { ArticleItem } from '@/typings/common';
-import { checkOS, formatGapTime, getGradient } from '@/utils';
-import { IMG1 } from '@/constant';
+import { checkOS, formatGapTime, getGradient, ipcRenderers } from '@/utils';
+import { CARD_CONTEXT_MENU, IMG1 } from '@/constant';
 import Image from '@/components/Image/index.vue';
+import ContextMenu from '@/components/ContextMenu/index.vue';
+import { loginStore } from '@/store';
 
 const router = useRouter();
+const route = useRoute();
 
 interface IProps {
   data: ArticleItem[];
@@ -116,15 +123,32 @@ const carousel4 = computed(() => {
   return getGradient(gradient);
 });
 
-const newAricleLg = computed(() => {
+const newArticleLg = computed(() => {
   const gradient = props.mostLikeAndNewArticles?.[0]?.gradient;
   return getGradient(gradient);
 });
 
-const hotAricleLg = computed(() => {
+const hotArticleLg = computed(() => {
   const gradient = props.mostLikeAndNewArticles?.[1]?.gradient;
   return getGradient(gradient);
 });
+
+const onSelectMenu = (menu: { label: string; value: number }, item: ArticleItem) => {
+  if (menu.value === 1) {
+    onOpenNewWindow(item);
+  } else {
+    toDetail(item.id);
+  }
+};
+
+const onOpenNewWindow = async (data: ArticleItem) => {
+  const { userInfo, token } = loginStore;
+  ipcRenderers.sendNewWin({
+    path: `article/${data.id}?from=${route.name as string}`,
+    id: data.id, // articleId
+    userInfo: JSON.stringify({ userInfo, token }),
+  });
+};
 
 // 去详情页
 const toDetail = (id: string) => {
@@ -313,6 +337,7 @@ const toTag = (name: string) => {
       }
     }
   }
+
   .carousel-item-1 {
     &:hover {
       .image-wrap-style::before {
@@ -321,6 +346,7 @@ const toTag = (name: string) => {
       }
     }
   }
+
   .carousel-item-2 {
     &:hover {
       .image-wrap-style::before {
@@ -329,6 +355,7 @@ const toTag = (name: string) => {
       }
     }
   }
+
   .carousel-item-3 {
     &:hover {
       .image-wrap-style::before {
@@ -337,6 +364,7 @@ const toTag = (name: string) => {
       }
     }
   }
+
   .carousel-item-4 {
     &:hover {
       .image-wrap-style::before {
@@ -370,15 +398,16 @@ const toTag = (name: string) => {
         .image-wrap-style {
           &::before {
             .commonStyle();
-            background-image: v-bind(newAricleLg);
+            background-image: v-bind(newArticleLg);
           }
         }
       }
+
       .hot-article {
         .image-wrap-style {
           &::before {
             .commonStyle();
-            background-image: v-bind(hotAricleLg);
+            background-image: v-bind(hotArticleLg);
           }
         }
       }
