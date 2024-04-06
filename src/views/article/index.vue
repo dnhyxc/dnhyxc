@@ -93,7 +93,7 @@ import { onMounted, onUnmounted, nextTick, ref, inject, watchEffect, defineAsync
 import { useRoute, useRouter } from 'vue-router';
 import { useScroller } from '@/hooks';
 import { articleStore, commonStore } from '@/store';
-import { scrollTo, checkOS, locSetItem, locRemoveItem, getStoreUserInfo, ipcRenderers } from '@/utils';
+import { scrollTo, checkOS, locSetItem, locRemoveItem, getStoreUserInfo, ipcRenderers, modifyTheme } from '@/utils';
 import { ACTION_SVGS } from '@/constant';
 import { createWebSocket } from '@/socket';
 import { WinRefreshParams } from '@/typings/common';
@@ -124,6 +124,11 @@ const toggle = ref<boolean>(false);
 const { scrollRef, scrollTop } = useScroller();
 
 onMounted(async () => {
+  // 监听更换主题
+  ipcRenderer.on('set-theme', (_, theme) => {
+    modifyTheme(theme);
+  });
+
   // 登录或者退出时刷新页面
   ipcRenderer.on('restore', (_, data, id) => {
     const info = data && JSON.parse(data);
@@ -138,7 +143,7 @@ onMounted(async () => {
     reload && reload();
   });
 
-  nextTick(() => {
+  await nextTick(() => {
     commonStore.detailScrollRef = scrollRef.value;
     // 判断页面是否加载完成
     commonStore.updatePageLoadStatus();
@@ -165,7 +170,7 @@ onMounted(async () => {
   });
 
   // 登录或者退出时刷新页面
-  ipcRenderer.invoke('userInfo', route.params.id);
+  await ipcRenderer.invoke('userInfo', route.params.id);
 
   // 接受主进程传送的用户信息
   ipcRenderer.once('userInfo', (_, data) => {
@@ -446,7 +451,7 @@ const onScrollTo = (height?: number) => {
       justify-content: center;
       box-sizing: border-box;
       height: 100%;
-      padding: 0 16px;
+      padding: 0 18px;
 
       .content {
         position: relative;
@@ -494,7 +499,7 @@ const onScrollTo = (height?: number) => {
         width: 30%;
         box-sizing: border-box;
         border-radius: 5px;
-        max-height: calc(100vh - 74px);
+        max-height: calc(100vh - 72px);
 
         .toc-list {
           box-sizing: border-box;

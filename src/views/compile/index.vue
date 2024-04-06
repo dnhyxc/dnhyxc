@@ -65,7 +65,7 @@ import { ipcRenderer } from 'electron';
 import { onMounted, nextTick, ref, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { articleStore, bookStore, commonStore } from '@/store';
-import { checkOS, locSetItem, ipcRenderers, Message } from '@/utils';
+import { checkOS, locSetItem, ipcRenderers, Message, modifyTheme } from '@/utils';
 import { ACTION_SVGS, TOOL_LIST } from '@/constant';
 import Compress from '@/views/tools/Compress/index.vue';
 import Cropper from '@/views/tools/Cropper/index.vue';
@@ -88,10 +88,15 @@ const title = computed(() => {
   return TOOL_LIST.find((i) => route.query?.from!.includes(i.id))?.toolName;
 });
 
-onMounted(async () => {
+onMounted(() => {
   nextTick(() => {
     // 判断页面是否加载完成
     commonStore.updatePageLoadStatus();
+  });
+
+  // 监听更换主题
+  ipcRenderer.on('set-theme', (_, theme) => {
+    modifyTheme(theme);
   });
 
   // 渲染进程监听窗口是否最大化
@@ -200,6 +205,7 @@ const onClick = async (item: { title: string; svg: string }) => {
       height: 55px;
       padding: 0 16px 0 16px;
       -webkit-app-region: drag;
+
       .left {
         display: flex;
         align-items: center;
@@ -243,6 +249,7 @@ const onClick = async (item: { title: string; svg: string }) => {
           align-items: center;
           justify-content: center;
           -webkit-app-region: no-drag;
+
           .font {
             font-size: 16px;
             cursor: pointer;
@@ -252,6 +259,7 @@ const onClick = async (item: { title: string; svg: string }) => {
             font-weight: var(--font-weight);
             .headerTextLg();
           }
+
           .active {
             color: var(--theme-blue);
           }
@@ -313,6 +321,7 @@ const onClick = async (item: { title: string; svg: string }) => {
         }
       }
     }
+
     .mac-header-wrap {
       position: relative;
       display: flex;
@@ -384,12 +393,14 @@ const onClick = async (item: { title: string; svg: string }) => {
             border-radius: 5px;
             width: 100%;
           }
+
           .scrollbar-wrapper {
             box-sizing: border-box;
             height: 100%;
             border-radius: 5px;
           }
         }
+
         .preview-content {
           :deep {
             .vuepress-markdown-body {
@@ -445,6 +456,7 @@ const onClick = async (item: { title: string; svg: string }) => {
     .el-color-picker {
       flex: 1;
     }
+
     .el-color-picker__trigger {
       width: 100%;
       border: 1px solid var(--card-border);

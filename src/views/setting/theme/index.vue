@@ -41,7 +41,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import { modifyTheme, setTheme, removeTheme, getTheme } from '@/utils';
+import { modifyTheme, setTheme, removeTheme, getTheme, ipcRenderers } from '@/utils';
 import { THEME_TYPES, IMG_THEME_TYPES } from '@/constant';
 
 const currentTheme = ref<string>(getTheme());
@@ -50,6 +50,7 @@ const currentTheme = ref<string>(getTheme());
 const changeTheme = (key: string) => {
   currentTheme.value = key;
   modifyTheme(key);
+  ipcRenderers.setChildWinTheme(key);
   // key为freshGreen时，说明选择的是默认主题，此时把存储在store中的主题设置清除
   if (key === 'freshGreen') {
     removeTheme();
@@ -122,17 +123,17 @@ const changeTheme = (key: string) => {
           background-color: #f9fff9;
           color: @font-1;
         }
-        
+
         .emeraldGreen {
           background-color: #ceeaba;
           color: @font-1;
         }
-        
+
         .electrum {
           background-color: #f5f5dc;
           color: @font-1;
         }
-        
+
         .skygray {
           background-color: #d8e0e6;
           color: @font-1;

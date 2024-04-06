@@ -7,16 +7,16 @@
 <template>
   <Loading :loading="toolsStore.loading" :class="`tools-wrap ${visible && 'board-wrap'}`">
     <template #default>
-      <Cropper v-if="cropperVisible" v-model:modal-visible="cropperVisible"/>
-      <DrawBoard v-if="boardVisible" v-model:board-visible="boardVisible"/>
-      <TextToSpeech v-if="convertVisible" v-model:modal-visible="convertVisible"/>
-      <Watermark v-if="watermarkVisible" v-model:modal-visible="watermarkVisible"/>
-      <Compress v-if="compressVisible" v-model:modal-visible="compressVisible"/>
-      <CodeRun v-if="codeRunVisible" v-model:modal-visible="codeRunVisible"/>
-      <EpubPreview v-if="epubVisible" v-model:modal-visible="epubVisible"/>
-      <PdfPreview v-if="pdfVisible" v-model:modal-visible="pdfVisible"/>
-      <Transcribe v-if="transcribeVisible" v-model:modal-visible="transcribeVisible"/>
-      <WordPreview v-if="wordVisible" v-model:modal-visible="wordVisible"/>
+      <Cropper v-if="cropperVisible" v-model:modal-visible="cropperVisible" />
+      <DrawBoard v-if="boardVisible" v-model:board-visible="boardVisible" />
+      <TextToSpeech v-if="convertVisible" v-model:modal-visible="convertVisible" />
+      <Watermark v-if="watermarkVisible" v-model:modal-visible="watermarkVisible" />
+      <Compress v-if="compressVisible" v-model:modal-visible="compressVisible" />
+      <CodeRun v-if="codeRunVisible" v-model:modal-visible="codeRunVisible" />
+      <EpubPreview v-if="epubVisible" v-model:modal-visible="epubVisible" />
+      <PdfPreview v-if="pdfVisible" v-model:modal-visible="pdfVisible" />
+      <Transcribe v-if="transcribeVisible" v-model:modal-visible="transcribeVisible" />
+      <WordPreview v-if="wordVisible" v-model:modal-visible="wordVisible" />
       <div v-if="!visible" class="navs-wrap">
         <div class="tools">
           <div class="tool-list-wrap">
@@ -29,11 +29,11 @@
                 :menu="CARD_CONTEXT_MENU"
                 @select="(e) => onSelectMenu(e, item)"
               >
-                <NavCard :data="item" :on-click="() => onClickNavIcon(item)"/>
+                <NavCard :data="item" :on-click="() => onClickNavIcon(item)" />
               </ContextMenu>
             </div>
           </div>
-          <Links :on-click-nav-icon="onClickNavIcon"/>
+          <Links :on-click-nav-icon="onClickNavIcon" />
         </div>
       </div>
     </template>
@@ -41,14 +41,14 @@
 </template>
 
 <script setup lang="ts">
-import {shell} from 'electron';
-import {onMounted, ref, computed} from 'vue';
-import {TOOL_LIST, CARD_CONTEXT_MENU} from '@/constant';
-import {toolsStore, loginStore} from '@/store';
-import {ToolsItem} from '@/typings/common';
-import {ipcRenderers} from '@/utils';
+import { shell } from 'electron';
+import { onMounted, ref, computed } from 'vue';
+import { TOOL_LIST, CARD_CONTEXT_MENU } from '@/constant';
+import { toolsStore, loginStore } from '@/store';
+import { ToolsItem } from '@/typings/common';
+import { ipcRenderers } from '@/utils';
 import ContextMenu from '@/components/ContextMenu/index.vue';
-import Loading from '@/components/Loading/index.vue'
+import Loading from '@/components/Loading/index.vue';
 import Compress from './Compress/index.vue';
 import Cropper from './Cropper/index.vue';
 import TextToSpeech from './TextToSpeech/index.vue';
@@ -106,11 +106,11 @@ const visible = computed(() => {
 // 选中菜单
 const onSelectMenu = (menu: { label: string; value: number }, item: ToolsItem) => {
   if (menu.value === 1) {
-    const {userInfo, token} = loginStore;
+    const { userInfo, token } = loginStore;
     ipcRenderers.sendNewWin({
       path: `compile?from=tools_${item.id}`,
       id: `tools_${item.id}`,
-      userInfo: JSON.stringify({userInfo, token}),
+      userInfo: JSON.stringify({ userInfo, token }),
     });
   } else {
     onClickNavIcon(item);
@@ -133,7 +133,9 @@ const onTextToSpeech = () => {
 };
 
 // 添加水印
-const onAddWatermark = () => watermarkVisible.value = true;
+const onAddWatermark = () => {
+  watermarkVisible.value = true;
+};
 
 // 浏览器打开链接
 const openWithBrowser = (item: ToolsItem) => {
