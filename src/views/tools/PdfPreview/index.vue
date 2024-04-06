@@ -34,7 +34,7 @@
       </template>
       <template #loadInfo>
         <div v-if="loadType === 'line' && progress < 100 && !isSaved" class="load-info">
-          <el-progress :show-text="false" :stroke-width="12" :percentage="progress" class="progress-bar" />
+          <el-progress :show-text="false" :stroke-width="12" :percentage="progress" class="progress-bar"/>
           <div class="load-time">
             <span class="progress">
               已加载 {{ progress }}% ({{ loadPdfSize.toFixed(2) }}MB / {{ pdfSize.toFixed(2) }}MB)
@@ -52,9 +52,9 @@
         />
       </div>
       <div v-else class="preview-wrap">
-        <iframe :src="bookStore.pdfInfo.iframeUrl" frameborder="0" class="iframe" />
+        <iframe :src="bookStore.pdfInfo.iframeUrl" frameborder="0" class="iframe"/>
         <div class="actions" @click="bookStore.pdfInfo.addTagVisible = true">
-          <i class="iconfont icon-biaoqian" title="保存书签" />
+          <i class="iconfont icon-biaoqian" title="保存书签"/>
         </div>
       </div>
     </Loading>
@@ -69,7 +69,7 @@
       <el-dialog v-model="bookStore.pdfInfo.addTagVisible" title="保存书签" align-center draggable width="400px">
         <el-form ref="formRef" :model="tagForm" label-width="82px" class="form-wrap" @submit.native.prevent>
           <el-form-item prop="tocName" label="章节名称" class="form-item">
-            <el-input v-model="tagForm.tocName" placeholder="请输入章节名称" />
+            <el-input v-model="tagForm.tocName" placeholder="请输入章节名称"/>
           </el-form-item>
           <el-form-item
             prop="tocId"
@@ -82,7 +82,7 @@
               },
             ]"
           >
-            <el-input v-model="tagForm.tocId" placeholder="请输入章节页码" />
+            <el-input v-model="tagForm.tocId" placeholder="请输入章节页码"/>
           </el-form-item>
         </el-form>
         <template #footer>
@@ -97,14 +97,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onUnmounted } from 'vue';
-import { onBeforeRouteLeave, useRouter } from 'vue-router';
-import { ElMessage } from 'element-plus';
-import type { UploadProps, FormInstance } from 'element-plus';
-import { uploadStore, bookStore } from '@/store';
-import { DOMAIN_URL } from '@/constant';
-import { calculateLoadProgress, Message, getUniqueFileName, ipcRenderers } from '@/utils';
-import { AtlasItemParams, BookRecord } from '@/typings/common';
+import {ref, reactive, computed, onUnmounted} from 'vue';
+import {onBeforeRouteLeave, useRouter} from 'vue-router';
+import {ElMessage} from 'element-plus';
+import type {UploadProps, FormInstance} from 'element-plus';
+import {uploadStore, bookStore} from '@/store';
+import {DOMAIN_URL} from '@/constant';
+import {calculateLoadProgress, Message, getUniqueFileName, ipcRenderers} from '@/utils';
+import {AtlasItemParams, BookRecord} from '@/typings/common';
 import BookList from '../BookList/index.vue';
 import PreviewHeader from '../PreviewHeader/index.vue';
 
@@ -212,7 +212,7 @@ const onUploadFile = async () => {
   fileName.value = rawFile.value.name;
   const fileURL = URL.createObjectURL(rawFile.value);
   // getUniqueFileName 获取唯一文件信息
-  const { newFile } = await getUniqueFileName(rawFile.value);
+  const {newFile} = await getUniqueFileName(rawFile.value);
   const filePath = getFilePath(newFile.name);
   // 根据url及userId查找书籍信息，获取书籍 ID，便于查找当前书籍的阅读记录
   await bookStore.findBook(filePath);
@@ -229,13 +229,12 @@ const onUploadFile = async () => {
 const onSave = async () => {
   if (!rawFile.value) return;
   saveLoading.value = true;
-  const res = await uploadStore.uploadOtherFile(rawFile.value);
+  const res = await uploadStore.uploadOtherFile(rawFile.value).finally(() => {
+    saveLoading.value = false;
+  });
   if (res) {
     await bookStore.addBook(res.filePath, rawFile.value);
     saveStatus.value = true;
-    saveLoading.value = false;
-  } else {
-    saveLoading.value = false;
   }
 };
 
@@ -256,7 +255,7 @@ const beforeUpload: UploadProps['beforeUpload'] = async (file) => {
 };
 
 // 自定义上传
-const onUpload = async ({ file }: { file: File }) => {
+const onUpload = async ({file}: { file: File }) => {
   rawFile.value = file;
   if (!bookStore.pdfInfo.iframeUrl || !tagForm.bookId) {
     onUploadFile();
@@ -322,7 +321,7 @@ const loadBookBlob = async (id: string, url: string) => {
     const fileURL = URL.createObjectURL(blob);
     getReadBookRecords(fileURL, id);
     // 保存书籍blob
-    bookStore.saveBlob({ id, blob });
+    bookStore.saveBlob({id, blob});
   } else {
     bookStore.pdfInfo.loading = false;
   }
@@ -334,7 +333,7 @@ const loadPdf = () => {
   visible.value = false;
   bookStore.pdfInfo.loading = true;
   loadType.value = 'line';
-  const { url, size, fileName: name, id } = activePdf.value;
+  const {url, size, fileName: name, id} = activePdf.value;
   tagForm.bookId = id;
   pdfSize.value = size / 1024 / 1024;
   fileName.value = name;
@@ -369,7 +368,7 @@ const getReadBookRecords = async (fileURL: string, curBookId: string) => {
   if (!tagForm.bookId || !['/tools', '/compile'].includes(location.pathname) || !fileURL) return;
   await bookStore.getReadBookRecords(tagForm.bookId);
   if (bookStore.bookRecordInfo) {
-    const { tocName, tocId, tocHref, bookId } = bookStore.bookRecordInfo;
+    const {tocName, tocId, tocHref, bookId} = bookStore.bookRecordInfo;
     tagForm.tocHref = tocHref!;
     tagForm.tocId = tocId!;
     tagForm.tocName = tocName!;
@@ -644,6 +643,7 @@ bookStore.pdfInfo.onClose = onClose;
       .el-form-item__label {
         color: var(--font-3);
       }
+
       .el-dialog__body {
         padding: 20px 20px 0 20px !important;
       }

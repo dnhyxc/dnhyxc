@@ -49,7 +49,7 @@
 </template>
 
 <script setup lang="ts">
-import { loginStore } from '@/store';
+import {loginStore} from '@/store';
 
 interface IProps {
   title: string;
@@ -64,7 +64,7 @@ interface IProps {
   onClose: () => void;
   onSave: () => void;
   beforeUpload: Function;
-  onUpload: ({ file }: { file: File }) => Promise<void> | void;
+  onUpload: ({file}: { file: File }) => Promise<void> | void;
   showBookList: () => void;
   hideHeader?: boolean;
 }
@@ -129,6 +129,7 @@ defineProps<IProps>();
           .upload-text {
             padding: 0;
             margin-left: 0;
+
             .icon-upload {
               margin-right: 5px;
               font-size: 18px;

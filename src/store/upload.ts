@@ -1,10 +1,10 @@
 /* eslint-disable indent */
-import { defineStore } from 'pinia';
-import { ElMessage } from 'element-plus';
+import {defineStore} from 'pinia';
+import {ElMessage} from 'element-plus';
 import * as Service from '@/server';
-import { normalizeResult, md5HashName, getUniqueFileName, compressImage } from '@/utils';
-import { useCheckUserId } from '@/hooks';
-import { loginStore, pictureStore } from '@/store';
+import {normalizeResult, md5HashName, getUniqueFileName, compressImage} from '@/utils';
+import {useCheckUserId} from '@/hooks';
+import {loginStore, pictureStore} from '@/store';
 
 interface IProps {
   visible: boolean;
@@ -20,14 +20,14 @@ export const useUploadStore = defineStore('upload', {
     // 文件上传
     async uploadFile(file: File, isAtlas?: boolean, quality = 0.5) {
       // 上传前先压缩图片
-      const { file: compressFile } =
+      const {file: compressFile} =
         quality !== 1
           ? await compressImage({
-              file,
-              quality, // 压缩比例
-              mimeType: file.type,
-            })
-          : { file };
+            file,
+            quality, // 压缩比例
+            mimeType: file.type,
+          })
+          : {file};
       // 检验是否有userId，如果没有禁止发送请求
       if (!useCheckUserId()) return;
       const formData = new FormData();
@@ -74,7 +74,7 @@ export const useUploadStore = defineStore('upload', {
       }
       const formData = new FormData();
       // 根据文件资源生成 MD5 hash
-      const { fileName, newFile } = await getUniqueFileName(file);
+      const {fileName, newFile} = await getUniqueFileName(file);
       formData.append('file', newFile);
       const res = normalizeResult<{ filePath: string }>(await Service.uploadFile(formData));
       if (res.success) {
