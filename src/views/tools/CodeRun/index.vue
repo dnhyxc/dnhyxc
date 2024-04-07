@@ -21,7 +21,7 @@
           :get-language="getLanguage"
           :language="codeStore.codeDetail.language"
           :get-code-content="getCodeContent"
-          :code="codeStore.codeDetail.content || ''"
+          :code="prevCode || codeStore.codeDetail.content || ''"
           :on-enter="onEnter"
           class="code-edit"
         >
