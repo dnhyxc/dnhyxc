@@ -7,8 +7,10 @@
 <template>
   <div id="__LEFT_MENU__" :class="`${checkOS() === 'mac' && 'mac-left-menu-wrap'} left-menu-wrap`">
     <el-scrollbar ref="scrollRef">
-      <div v-for="menu in menuList" :key="menu.key" class="menu-list" @click="(e: Event) => onSelectMenu(e, menu as MenuListParams)">
-        <el-tooltip class="box-item" effect="light" :content="menu.name" placement="right" popper-class="custom-dropdown-styles">
+      <div v-for="menu in menuList" :key="menu.key" class="menu-list"
+           @click="(e: Event) => onSelectMenu(e, menu as MenuListParams)">
+        <el-tooltip class="box-item" effect="light" :content="menu.name" placement="right"
+                    popper-class="custom-dropdown-styles">
           <i
             :class="`${
               ((activeMenu.path === menu.path && route.path.includes(menu.path)) || route.path === menu.path) &&
@@ -50,11 +52,11 @@
             <div class="username">{{ loginStore.userInfo?.username }}</div>
           </div>
           <div class="drop-item" @click="toPersonal">
-            <i class="iconfont icon-gerenzhongxin" />
+            <i class="iconfont icon-gerenzhongxin"/>
             <span class="dropdown-text">我的主页</span>
           </div>
           <div class="drop-item" @click="onQuit">
-            <i class="iconfont icon-tuichu1" />
+            <i class="iconfont icon-tuichu1"/>
             <span class="dropdown-text">退出登录</span>
           </div>
         </div>
@@ -67,13 +69,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watchEffect, inject, onUnmounted } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
-import { MENULIST, HEAD_IMG } from '@/constant';
-import { MenuListParams } from '@/typings/common';
-import { loginStore } from '@/store';
-import { checkOS } from '@/utils';
-import { authRoutes } from '@/router';
+import {ref, computed, watchEffect, inject, onUnmounted} from 'vue';
+import {useRouter, useRoute} from 'vue-router';
+import {MENULIST, HEAD_IMG} from '@/constant';
+import {MenuListParams} from '@/typings/common';
+import {loginStore} from '@/store';
+import {checkOS} from '@/utils';
+import {authRoutes} from '@/router';
 
 const reload = inject<Function>('reload');
 
@@ -92,7 +94,7 @@ onUnmounted(() => {
 
 // 计算菜单
 const menuList = computed(() => {
-  const { token, menus } = loginStore;
+  const {token, menus} = loginStore;
   const list = token ? MENULIST : MENULIST.filter((i) => i.show && !i.authorWiew);
   // 判断是否是博主，否则无法访问图片集
   const removeMenu = authRoutes.filter((i) => menus.some((j) => j !== i.name));
@@ -178,6 +180,7 @@ const onQuit = () => {
       cursor: pointer;
       transition: all 0.3s;
       .menuLg();
+
       &:hover {
         transform: scale(1.15);
       }
@@ -284,6 +287,7 @@ const onQuit = () => {
     align-items: center;
     width: 100%;
     margin-bottom: 5px;
+
     .username {
       font-size: 18px;
       font-weight: 700;

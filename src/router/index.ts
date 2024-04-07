@@ -1,4 +1,4 @@
-import { defineAsyncComponent } from 'vue';
+import {defineAsyncComponent} from 'vue';
 import {
   createRouter,
   RouteRecordRaw,
@@ -6,11 +6,11 @@ import {
   RouteLocationNormalized,
   NavigationGuardNext,
 } from 'vue-router';
-import { ElMessage } from 'element-plus';
-import { loginStore } from '@/store';
-import { useCommonStore } from '@/store/common';
-import { locGetItem } from '@/utils';
-import { WITH_AUTH_ROUTES } from '@/constant';
+import {ElMessage} from 'element-plus';
+import {loginStore} from '@/store';
+import {useCommonStore} from '@/store/common';
+import {locGetItem} from '@/utils';
+import {WITH_AUTH_ROUTES} from '@/constant';
 import eventBus from '@/utils/eventBus';
 import AsyncLoading from '@/components/AsyncLoading/index.vue';
 
@@ -27,36 +27,18 @@ export const authRoutes = [
     name: 'tools',
     meta: {
       title: '实用工具',
-      keepAlive: true,
       auth: true,
     },
     component: importComponent('tools'),
-    beforeEnter: async (to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) => {
-      const menus = (await loginStore.getUserMenuRoles()) as string[];
-      if (menus?.includes(to.name as string)) {
-        next();
-      } else {
-        next('/404');
-      }
-    },
   },
   {
     path: '/picture',
     name: 'picture',
     meta: {
       title: '图片合集',
-      keepAlive: true,
       auth: true,
     },
     component: () => import('@/views/picture/index.vue'),
-    beforeEnter: async (to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) => {
-      const menus = (await loginStore.getUserMenuRoles()) as string[];
-      if (menus?.includes(to.name as string)) {
-        next();
-      } else {
-        next('/404');
-      }
-    },
   },
 ];
 
@@ -75,7 +57,6 @@ export const routes: Array<RouteRecordRaw> = [
         name: 'home',
         meta: {
           title: '墨客首页',
-          keepAlive: false,
         },
         component: () => import('@/views/home/index.vue'),
       },
@@ -84,7 +65,6 @@ export const routes: Array<RouteRecordRaw> = [
         name: 'classify',
         meta: {
           title: '文章分类',
-          keepAlive: false,
         },
         component: () => import('@/views/classify/index.vue'),
       },
@@ -93,7 +73,6 @@ export const routes: Array<RouteRecordRaw> = [
         name: 'tag',
         meta: {
           title: '文章标签',
-          keepAlive: false,
         },
         component: () => import('@/views/tag/index.vue'),
       },
@@ -102,7 +81,6 @@ export const routes: Array<RouteRecordRaw> = [
         name: 'tagList',
         meta: {
           title: '标签列表',
-          keepAlive: false,
         },
         // @ts-ignore
         component: () => import('@/views/tag/articles/index.vue'),
@@ -112,8 +90,6 @@ export const routes: Array<RouteRecordRaw> = [
         name: 'timeline',
         meta: {
           title: '时间轴线',
-          keepAlive: false,
-          auth: true,
         },
         component: () => import('@/views/timeline/index.vue'),
       },
@@ -122,8 +98,6 @@ export const routes: Array<RouteRecordRaw> = [
         name: 'create',
         meta: {
           title: '发布文章',
-          keepAlive: true,
-          auth: true,
         },
         component: () => import('@/views/create/index.vue'),
       },
@@ -132,8 +106,6 @@ export const routes: Array<RouteRecordRaw> = [
         name: 'interact',
         meta: {
           title: '留言一角',
-          keepAlive: true,
-          auth: true,
         },
         component: () => import('@/views/interact/index.vue'),
       },
@@ -143,7 +115,6 @@ export const routes: Array<RouteRecordRaw> = [
         name: 'author',
         meta: {
           title: '关于博主',
-          keepAlive: false,
         },
         component: () => import('@/views/author/index.vue'),
       },
@@ -152,8 +123,6 @@ export const routes: Array<RouteRecordRaw> = [
         name: 'personal',
         meta: {
           title: '我的主页',
-          keepAlive: false,
-          auth: true,
         },
         component: () => import('@/views/personal/index.vue'),
       },
@@ -162,8 +131,6 @@ export const routes: Array<RouteRecordRaw> = [
         name: 'collect',
         meta: {
           title: '收藏信息',
-          keepAlive: false,
-          auth: true,
         },
         component: () => import('@/views/collect/index.vue'),
       },
@@ -172,8 +139,6 @@ export const routes: Array<RouteRecordRaw> = [
         name: 'search',
         meta: {
           title: '高级搜索',
-          keepAlive: false,
-          auth: true,
         },
         component: () => import('@/views/search'),
       },
@@ -182,8 +147,6 @@ export const routes: Array<RouteRecordRaw> = [
         name: 'setting',
         meta: {
           title: '账号设置',
-          keepAlive: false,
-          auth: true,
         },
         component: () => import('@/views/setting/index.vue'),
         children: [
@@ -192,8 +155,6 @@ export const routes: Array<RouteRecordRaw> = [
             name: 'profile',
             meta: {
               title: '个人资料',
-              keepAlive: false,
-              auth: true,
             },
             component: () => import('@/views/setting/profile/index.vue'),
           },
@@ -202,8 +163,6 @@ export const routes: Array<RouteRecordRaw> = [
             name: 'account',
             meta: {
               title: '账号设置',
-              keepAlive: false,
-              auth: true,
             },
             component: () => import('@/views/setting/account/index.vue'),
           },
@@ -212,8 +171,6 @@ export const routes: Array<RouteRecordRaw> = [
             name: 'theme',
             meta: {
               title: '主题设置',
-              keepAlive: false,
-              auth: true,
             },
             component: () => import('@/views/setting/theme/index.vue'),
           },
@@ -222,19 +179,17 @@ export const routes: Array<RouteRecordRaw> = [
             name: 'system',
             meta: {
               title: '系统设置',
-              keepAlive: false,
             },
             component: () => import('@/views/setting/system/index.vue'),
           },
         ],
-        redirect: { name: 'profile' },
+        redirect: {name: 'profile'},
       },
       {
         path: '/detail/:id',
         name: 'detail',
         meta: {
           title: '文章详情',
-          keepAlive: false,
         },
         component: () => import('@/views/detail/index.vue'),
       },
@@ -243,7 +198,6 @@ export const routes: Array<RouteRecordRaw> = [
         name: 'draft',
         meta: {
           title: '草稿预览',
-          keepAlive: false,
         },
         component: () => import('@/views/draft/index.vue'),
       },
@@ -256,14 +210,13 @@ export const routes: Array<RouteRecordRaw> = [
         component: () => import('@/views/chat/index.vue'),
       },
     ],
-    redirect: { name: 'home' },
+    redirect: {name: 'home'},
   },
   {
     path: '/login',
     name: 'login',
     meta: {
       title: '登录',
-      keepAlive: false,
     },
     component: () => import('@/views/login/index.vue'),
   },
@@ -272,7 +225,6 @@ export const routes: Array<RouteRecordRaw> = [
     name: 'article',
     meta: {
       title: '文章详情',
-      keepAlive: false,
     },
     component: () => import('@/views/article/index.vue'),
   },
@@ -281,7 +233,6 @@ export const routes: Array<RouteRecordRaw> = [
     name: 'compile',
     meta: {
       title: '代码测试',
-      keepAlive: false,
     },
     component: () => import('@/views/compile/index.vue'),
   },
@@ -290,7 +241,6 @@ export const routes: Array<RouteRecordRaw> = [
     name: 'message',
     meta: {
       title: '消息提示',
-      keepAlive: false,
     },
     component: () => import('@/views/message/index.vue'),
   },
@@ -307,14 +257,23 @@ const router = createRouter({
     if (savePosition) {
       return savePosition;
     } else {
-      return { top: 0 };
+      return {top: 0};
     }
   },
   routes,
 });
 
 // 全局守卫：登录拦截 本地没有存token,请重新登录
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
+  if (to.meta.auth) {
+    // 获取用户权限信息
+    const menus = (await loginStore.getUserMenuRoles()) as string[];
+    if (menus?.includes(to.name as string)) {
+      next();
+    } else {
+      next('/404');
+    }
+  }
   const commonStore = useCommonStore();
   // 判断是否是首屏加载，如果是则设置loading加载效果
   if (to.path !== '/home' && !to.path.includes('/article') && !to.path.includes('/compile')) {
