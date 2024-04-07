@@ -53,7 +53,7 @@ export const useBookStore = defineStore('book', {
         await Service.addBook({
           url,
           size: file.size,
-          fileName: file.name,
+          fileName: (file as File).name,
           type: type || file.type,
         }),
       );
@@ -95,7 +95,7 @@ export const useBookStore = defineStore('book', {
       const res = normalizeResult<{ url: string }>(await Service.deleteBook({ id, url }));
       if (res.success) {
         this.clearBookInfo();
-        this.getBookList(searchBookType);
+        await this.getBookList(searchBookType);
       } else {
         ElMessage({
           message: res.message,
