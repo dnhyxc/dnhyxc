@@ -268,9 +268,7 @@ router.beforeEach(async (to, from, next) => {
   if (to.meta.auth) {
     // 获取用户权限信息
     const menus = (await loginStore.getUserMenuRoles()) as string[];
-    if (menus?.includes(to.name as string)) {
-      next();
-    } else {
+    if (!menus?.includes(to.name as string)) {
       next('/404');
     }
   }

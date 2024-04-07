@@ -12,22 +12,23 @@
     </div>
     <div ref="sliderRef" class="slider-wrap">
       <div ref="beforeImgRef" class="before-img">
-        <img :src="beforeImg" alt="" />
+        <img :src="beforeImg" alt=""/>
       </div>
-      <img :src="afterImg" alt="" />
-      <span ref="handlerRef" class="handler" @mousedown="onMousedown"></span>
+      <img :src="afterImg" alt=""/>
+      <span v-if="showDrag" ref="handlerRef" class="handler" @mousedown="onMousedown"/>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import { nextTick } from 'process';
+import {ref} from 'vue';
+import {nextTick} from 'process';
 
 interface IProps {
   imgHeight?: string;
   beforeImg: string;
   afterImg: string;
+  showDrag: boolean;
 }
 
 defineProps<IProps>();

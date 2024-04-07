@@ -16,8 +16,8 @@
         :max-height="`${!hideHeader ? 'calc(100vh - 192px)' : 'calc(100vh - 106px)'}`"
         wrap-class="scrollbar-wrapper"
       >
-        <DragUpload v-if="!imgFrom" class="compress-upload" :on-upload="onUpload" />
-        <OnlineImage v-else :on-use-online-url="onUseOnlineUrl" class="compress-online-image" />
+        <DragUpload v-if="!imgFrom" class="compress-upload" :on-upload="onUpload"/>
+        <OnlineImage v-else :on-use-online-url="onUseOnlineUrl" class="compress-online-image"/>
         <div v-if="sourceUrl" class="image-container">
           <div class="contrast">
             <span class="title">
@@ -31,13 +31,13 @@
               <span class="info">
                 压缩前：{{ selectFile?.size ? (selectFile?.size! / 1024).toFixed(2) : '-' }} KB
               </span>
-              <img :src="sourceUrl" alt="" class="compress-image" @click="onPreview" />
+              <img :src="sourceUrl" alt="" class="compress-image" @click="onPreview"/>
             </div>
             <div v-if="base64Url" ref="imageRef" class="after">
               <span class="info">
                 压缩后：{{ compressFile?.size ? (compressFile?.size! / 1024).toFixed(2) : '-' }} KB
               </span>
-              <img :src="base64Url" alt="" class="compress-image" @click="onPreview" />
+              <img :src="base64Url" alt="" class="compress-image" @click="onPreview"/>
             </div>
           </div>
           <div v-if="base64Url" class="compress-info">
@@ -45,18 +45,18 @@
             <span class="size-info">
               压缩后文件大小相差：{{
                 selectFile?.size && compressFile?.size
-                  ? (selectFile.size / 1024 - compressFile.size / 1024).toFixed(2)
+                  ? (selectFile?.size / 1024 - compressFile?.size / 1024).toFixed(2)
                   : '-'
               }}
               KB
             </span>
-            <span class="size-info">宽度相差：{{ sourceFileInfo.width - (compresWidth as number) }}</span>
+            <span class="size-info">宽度相差：{{ sourceFileInfo.width - (compressWidth as number) }}</span>
             <span class="size-info"> 高度相差：{{ sourceFileInfo.height - (compressHeight as number) }} </span>
             <div class="compress-size">
               <div class="size-item">
                 <span class="comp-width">原始宽度：{{ sourceFileInfo.width }}</span>
                 <span class="comp-height">原始高度：{{ sourceFileInfo.height }}</span>
-                <span class="comp-width comp-info">压缩宽度：{{ compresWidth }}</span>
+                <span class="comp-width comp-info">压缩宽度：{{ compressWidth }}</span>
                 <span class="comp-height">
                   压缩高度：{{
                     Number(compressHeight) > Number(sourceFileInfo.height) ? sourceFileInfo.height : compressHeight
@@ -66,7 +66,7 @@
             </div>
           </div>
         </div>
-        <div v-if="!base64Url" class="slider-wrap">
+        <div class="slider-wrap">
           <span class="title">压缩品质</span>
           <span class="center">压缩等级越小，文件越小，品质越高，文件越大</span>
           <div class="slider-info">
@@ -74,17 +74,17 @@
             <span class="right">品质最高(文件越大)</span>
           </div>
           <div class="slide-line">
-            <el-slider v-model="sliderValue" :marks="marks" />
+            <el-slider v-model="sliderValue" :marks="marks"/>
           </div>
         </div>
         <div class="image-size">
-          <span v-if="!base64Url" class="title">图片尺寸</span>
-          <span v-if="!base64Url" class="center">
+          <span class="title">图片尺寸</span>
+          <span class="center">
             尺寸越小，压缩后体积越小
             <span class="enter-size-info">（宽高只需输入其中一项，另一项将按比例计算）</span>
           </span>
           <div class="inp-wrap">
-            <el-form v-if="!base64Url" ref="formRef" :rules="rules" :model="imgSize" class="form-wrap">
+            <el-form ref="formRef" :rules="rules" :model="imgSize" class="form-wrap">
               <el-form-item prop="imgWidth" label="图片宽度" class="form-item form-item-width">
                 <el-input
                   v-model="imgSize.imgWidth"
@@ -122,7 +122,9 @@
     <el-dialog v-model="previewVisible" draggable align-center title="图片预览" width="90%" @close="onClosePreview">
       <div class="preview-dialog">
         <el-scrollbar class="scroll-wrap" max-height="75vh">
-          <Contrast :before-img="previewUrls?.[0]" :after-img="previewUrls?.[1] || previewUrls?.[0]" />
+          <Contrast :before-img="previewUrls?.[0] as string"
+                    :after-img="previewUrls?.[1] as string || previewUrls?.[0] as string"
+                    :show-drag="!!previewUrls?.[1]"/>
         </el-scrollbar>
       </div>
     </el-dialog>
@@ -130,9 +132,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, reactive, onUnmounted, watch } from 'vue';
-import type { CSSProperties } from 'vue';
-import type { FormInstance, FormRules } from 'element-plus';
+import {computed, ref, reactive, onUnmounted, watch} from 'vue';
+import type {CSSProperties} from 'vue';
+import type {FormInstance, FormRules} from 'element-plus';
 import {
   compressImage,
   getImgInfo,
@@ -199,7 +201,7 @@ const sourceUrl = ref<string>('');
 const base64Url = ref<string>('');
 // 压缩后的文件
 const compressFile = ref<File | null>(null);
-const sourceFileInfo = reactive<{ width: number; height: number }>({ width: 0, height: 0 });
+const sourceFileInfo = reactive<{ width: number; height: number }>({width: 0, height: 0});
 // 校验规则实例
 const verifys = ref<{ addRule: Function; end: Function; check: Function }>();
 // 图片比例
@@ -207,7 +209,7 @@ const scale = computed(() => {
   return sourceFileInfo.width / sourceFileInfo.height;
 });
 // 压缩宽度
-const compresWidth = computed(() => {
+const compressWidth = computed(() => {
   if (imgSize.imgWidth) {
     return imgSize.imgWidth > sourceFileInfo.width ? sourceFileInfo.width : imgSize.imgWidth;
   } else {
@@ -256,8 +258,8 @@ const validateSize = (rule: any, value: any, callback: any) => {
 };
 
 const rules = reactive<FormRules>({
-  imgWidth: [{ validator: validateSize }],
-  imgHeight: [{ validator: validateSize }],
+  imgWidth: [{validator: validateSize}],
+  imgHeight: [{validator: validateSize}],
 });
 
 // 自定义上传
@@ -308,7 +310,7 @@ const onCompress = async () => {
   if (!formRef.value || !selectFile.value) return;
   formRef.value.validate(async (valid) => {
     if (valid) {
-      const { file, base64Url: url } = await compressImage({
+      const {file, base64Url: url} = await compressImage({
         file: selectFile.value!,
         quality: sliderValue.value / 100,
         maxWidth: imgSize.imgWidth!,
@@ -343,9 +345,9 @@ const onRefresh = () => {
 // 下载
 const onDownload = () => {
   if (!compressFile.value) return;
-  const blob = new Blob([compressFile.value], { type: compressFile.value?.type });
+  const blob = new Blob([compressFile.value], {type: compressFile.value?.type});
   const url = window.URL.createObjectURL(blob);
-  onDownloadFile({ url, type: 'blob' });
+  onDownloadFile({url, type: 'blob'});
 };
 
 // 关闭图片压缩
@@ -570,6 +572,7 @@ const onClosePreview = () => {
 
       .compress-size {
         color: var(--font-1);
+
         .size-item {
           .comp-info {
             margin-left: 20px;
