@@ -37,7 +37,7 @@ const imgThemeColor = {
 };
 
 // 公共需要去除的样式及图片背景公共样式
-const commomStyle = {
+const commonStyle = {
   // 主题色
   '--theme-blue': '#089220',
   '--el-color-primary-dark-2': '#57a0ff',
@@ -113,7 +113,7 @@ const removeStyle = {
   '--login-bg': 'rgba(225, 225, 225, 0.1)',
   '--placeholder-color': '#a8abb2',
   '--loading-text-color': '#089220',
-  ...commomStyle,
+  ...commonStyle,
   '--card-shadow': 'rgba(129, 129, 129, 0.25)',
 };
 
@@ -193,7 +193,7 @@ const imageStyles = {
   '--placeholder-color': '#d6d6d6',
   '--loading-text-color': '#089220',
   // 主题色
-  ...commomStyle,
+  ...commonStyle,
   '--markdown-param-color': '#19dcc6',
   '--markdown-return-color': '#93e86a',
   '--scroll-color': 'rgba(255, 255, 255, 0.25)',
