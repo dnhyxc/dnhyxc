@@ -7,22 +7,23 @@
 <template>
   <div id="EMOJI" class="emoji-wrap">
     <div v-show="visible">
-      <span
-        v-for="(value, key, index) in emojiList"
+      <div
+        v-for="value in EMOJI_NAME"
         id="EMOJI_ITEM"
-        :key="index"
+        :key="value"
         class="emoji-item"
-        @click="addEmoji(key)"
+        @click="addEmoji(value)"
       >
-        <img id="EMOJI_IMG" class="emoji" :src="value" :title="key" width="24px" height="24px" />
-      </span>
+        <!--        <img id="EMOJI_IMG" class="emoji" :src="value" :title="key" width="24px" height="24px"/>-->
+        <img :src="EMOJI_HOST + EMOJI_MAP[value]" class="emoji" alt=""/>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
-import { EMOJI_TEXTS, EMOJI_URLS } from '@/constant';
+import {computed} from 'vue';
+import {EMOJI_HOST, EMOJI_MAP, EMOJI_NAME} from '@/constant';
 
 interface IProps {
   showEmoji: boolean;
@@ -42,15 +43,6 @@ const visible = computed({
   set(visible: boolean) {
     emit('update:showEmoji', visible);
   },
-});
-
-// 处理表情数据
-const emojiList = computed(() => {
-  const result = {};
-  EMOJI_TEXTS.forEach((i, index) => {
-    result[`[${i}]`] = EMOJI_URLS[index + 1];
-  });
-  return result;
 });
 
 // 添加表情

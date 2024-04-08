@@ -1400,8 +1400,8 @@ const onPreviewDragImg = () => {
           bottom: 36px;
           left: 0;
           margin-top: 20px;
-          width: 210px;
-          padding: 10px 10px 5px;
+          width: 600px;
+          padding: 10px 5px 5px 10px;
           background-color: transparent;
           border-radius: 5px;
           border: 1px solid var(--shadow-mack);

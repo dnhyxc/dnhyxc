@@ -4,7 +4,14 @@ import type {ElMessageBoxOptions} from 'element-plus';
 import moment from 'moment';
 import SparkMD5 from 'spark-md5';
 import ColorThief from 'colorthief';
-import {MSG_CONFIG, CODE_CONTROL, EMOJI_TEXTS, EMOJI_URLS, CODE_LENGTH} from '@/constant';
+import {
+  MSG_CONFIG,
+  CODE_CONTROL,
+  CODE_LENGTH,
+  EMOJI_MAP,
+  EMOJI_NAME,
+  EMOJI_HOST
+} from '@/constant';
 import {usePlugins} from './plugins';
 import {normalizeResult} from './result';
 import {decrypt, encrypt} from './crypto';
@@ -518,12 +525,12 @@ export const replaceCommentContent = (content: string) => {
 
 // 表情包转换
 export const replaceEmojis = (content: string) => {
-  content = content.replace(/\[[^[^\]]+\]/g, (word) => {
-    const index = EMOJI_TEXTS.indexOf(word.replace('[', '').replace(']', ''));
+  content = content.replace(/\[[^[^\]]+]/g, (word) => {
+    const index = EMOJI_NAME.indexOf(word);
     if (index > -1) {
       return `<img style="vertical-align: middle;width: 32px;height: 32px" src="${
-        EMOJI_URLS[index + 1]
-      }" title="${word}"/>`;
+        EMOJI_HOST + EMOJI_MAP[word]
+      }" alt="" title="${word}"/>`;
     } else {
       return word;
     }
@@ -551,6 +558,7 @@ export const replacePictures = (content: string) => {
           user-select: none;"
           src="${arr[1]}"
           title="${arr[0]}"
+          alt=""
         />
       `;
     } else {
@@ -576,18 +584,16 @@ export const insertContent = ({
 }) => {
   const content = emoji || `<${username},${url}>`;
   if (keyword.substring(0, node?.selectionStart)) {
-    const res = `${keyword.substring(0, node?.selectionStart)}${content}${keyword.substring(
+    return `${keyword.substring(0, node?.selectionStart)}${content}${keyword.substring(
       node?.selectionEnd!,
       node?.textLength,
     )}`;
-    return res;
   } else {
     // selectionStart 为0时，默认向最后面插入
-    const res = `${keyword.substring(node?.selectionEnd!, node?.textLength)}${content}${keyword.substring(
+    return `${keyword.substring(node?.selectionEnd!, node?.textLength)}${content}${keyword.substring(
       0,
       node?.selectionStart,
     )}`;
-    return res;
   }
 };
 
