@@ -8,9 +8,6 @@ import {globalShortcut, App, BrowserWindow} from 'electron';
 import {isDev, isMac, globalInfo, clearGlobalInfo} from './constant';
 
 export const registerShortcut = (app: App) => {
-
-  if (isMac) return;
-
   // 生产模式禁止使用Shift+Ctrl+I唤起控制台
   if (!isDev) {
     globalShortcut.register('Shift+Ctrl+I', () => {
@@ -38,6 +35,8 @@ export const registerShortcut = (app: App) => {
   // globalShortcut.register('Alt+CommandOrControl+I', () => {
   //   console.log('alt + ctrl + I');
   // });
+
+  if (isMac) return;
 
   // 快捷键 Alt+Shift+Q 显示隐藏
   globalShortcut.register((globalInfo.store?.get('OPEN_SHORTCUT') as string) || 'Shift+Alt+Q', () => {
