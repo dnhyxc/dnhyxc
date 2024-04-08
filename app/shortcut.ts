@@ -12,11 +12,12 @@ export const registerShortcut = (app: App) => {
   if (!isDev) {
     globalShortcut.register('Shift+Ctrl+I', () => {
     });
+    globalShortcut.register('CommandOrControl+Option+I', () => {
+    });
     globalShortcut.register('Shift+Ctrl+D+N+H', () => {
       globalInfo.win?.webContents.openDevTools();
     });
-    globalShortcut.register('CommandOrControl+R', () => {
-    });
+    // globalShortcut.register('CommandOrControl+R', () => null);
   }
 
   if (isDev && isMac) {
