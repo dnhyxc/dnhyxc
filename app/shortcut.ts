@@ -9,6 +9,8 @@ import {isDev, isMac, globalInfo, clearGlobalInfo} from './constant';
 
 export const registerShortcut = (app: App) => {
 
+  if (isMac) return;
+
   // 生产模式禁止使用Shift+Ctrl+I唤起控制台
   if (!isDev) {
     globalShortcut.register('Shift+Ctrl+I', () => {
