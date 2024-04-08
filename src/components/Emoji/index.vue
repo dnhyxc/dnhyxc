@@ -14,7 +14,6 @@
         class="emoji-item"
         @click="addEmoji(value)"
       >
-        <!--        <img id="EMOJI_IMG" class="emoji" :src="value" :title="key" width="24px" height="24px"/>-->
         <img :src="EMOJI_HOST + EMOJI_MAP[value]" class="emoji" alt=""/>
       </div>
     </div>
