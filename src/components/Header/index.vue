@@ -19,7 +19,7 @@
       <el-tooltip effect="light" content="刷新" placement="bottom" popper-class="custom-dropdown-styles">
         <i class="font iconfont icon-reload" @click="onReload" />
       </el-tooltip>
-      <div class="title">{{ route.meta.title }}</div>
+      <div class="title">{{ route.meta.info || route.meta.title }}</div>
     </div>
     <div class="right">
       <div class="search-wrap">
