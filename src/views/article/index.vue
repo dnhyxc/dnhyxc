@@ -438,7 +438,7 @@ const onScrollTo = (height?: number) => {
           font-size: 16px;
           font-weight: 700;
           height: 35px;
-          line-height: 22px;
+          line-height: 25px;
           margin-left: 19px;
           color: var(--font-color);
           .headerTextLg();

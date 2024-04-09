@@ -269,7 +269,7 @@ const onClick = async (item: { title: string; svg: string }) => {
           font-size: 16px;
           font-weight: 700;
           height: 35px;
-          line-height: 30px;
+          line-height: 32px;
           margin-left: 19px;
           color: var(--font-color);
           .headerTextLg();
