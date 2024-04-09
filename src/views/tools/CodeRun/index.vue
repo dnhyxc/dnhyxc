@@ -177,7 +177,7 @@
         </div>
       </div>
     </el-dialog>
-    <CodeList v-model:model-value="demoVisible"/>
+    <CodeList v-model:model-value="demoVisible" v-model:prev-code="prevCode" :on-change-mode="onChangeMode"/>
   </div>
 </template>
 
@@ -420,11 +420,13 @@ const onReset = (monacoData: any) => {
   const {editor} = monacoData.data;
   editor?.getModel()?.setValue('');
   codeStore.clearCodeId();
+  prevCode.value = ''
   if (iframeNode.value) {
     iframeNode.value.contentWindow!.document.body.innerHTML = '';
   }
   codeResults.value = '';
   htmlClear.value = false;
+  onChangeMode(1)
 };
 
 // 清空html运行结果
@@ -437,6 +439,8 @@ const onClear = (monacoData?: any) => {
   }
   codeResults.value = '';
   htmlClear.value = false;
+  prevCode.value = ''
+  onChangeMode(1)
 };
 </script>
 

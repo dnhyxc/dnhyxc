@@ -34,10 +34,10 @@
                 <span class="date">{{ formatDate(item.createTime) }}</span>
               </div>
             </div>
-            <ToTopIcon v-if="scrollTop >= 100" :on-scroll-to="onScrollTo" />
+            <ToTopIcon v-if="scrollTop >= 100" :on-scroll-to="onScrollTo"/>
           </div>
           <div v-if="noMore" class="no-more">没有更多了～～～</div>
-          <Empty v-if="showEmpty" />
+          <Empty v-if="showEmpty"/>
         </el-scrollbar>
       </Loading>
     </el-drawer>
@@ -45,18 +45,19 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, onMounted, onUnmounted } from 'vue';
-import { codeStore } from '@/store';
-import { formatDate, scrollTo, Message } from '@/utils';
-import { nextTick } from 'process';
+import {computed, ref, onMounted, onUnmounted} from 'vue';
+import {codeStore} from '@/store';
+import {formatDate, scrollTo, Message} from '@/utils';
+import {nextTick} from 'process';
 
 interface IProps {
   modelValue: boolean;
+  onChangeMode: (value: number) => void
 }
 
 const props = defineProps<IProps>();
 
-const emit = defineEmits(['update:modelValue']);
+const emit = defineEmits(['update:modelValue', 'update:prevCode']);
 const scrollRef = ref<any>(null);
 const scrollTop = ref<number>(0);
 
@@ -70,7 +71,7 @@ const visible = computed({
 });
 
 const noMore = computed(() => {
-  const { codeList, total } = codeStore;
+  const {codeList, total} = codeStore;
   return codeList.length >= total && codeList.length;
 });
 const disabled = computed(() => codeStore.loading || noMore.value);
@@ -102,10 +103,14 @@ const onScrollTo = (to?: number) => {
 };
 
 // 编辑
-const onEdit = (id: string) => {
+const onEdit = async (id: string) => {
   codeStore.clearCodeId();
-  codeStore.getCodeById(id);
+  await codeStore.getCodeById(id);
+  emit('update:prevCode', '')
   emit('update:modelValue', false);
+  if (codeStore.codeDetail.language === 'javascript') {
+    props?.onChangeMode?.(2)
+  }
 };
 
 // 删除
