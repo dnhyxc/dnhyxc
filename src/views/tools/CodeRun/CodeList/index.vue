@@ -18,12 +18,17 @@
             :infinite-scroll-disabled="disabled"
             :infinite-scroll-distance="2"
           >
-            <div v-for="item in codeStore.codeList" :key="item.id" class="code-item">
+            <div
+              v-for="item in codeStore.codeList"
+              :key="item.id"
+              :class="`code-item ${item.id === currentId && 'active-code-item'}`"
+              @click="onEdit(item.id)"
+            >
               <div class="header">
                 <span class="title" :title="item.title">
                   {{ item.title }}
                 </span>
-                <div class="actions">
+                <div v-if="currentId !== item.id" class="actions">
                   <el-button type="primary" link @click="onEdit(item.id)">编辑</el-button>
                   <el-button type="danger" link @click="onDelete(item.id)">删除</el-button>
                 </div>
@@ -34,10 +39,10 @@
                 <span class="date">{{ formatDate(item.createTime) }}</span>
               </div>
             </div>
-            <ToTopIcon v-if="scrollTop >= 100" :on-scroll-to="onScrollTo"/>
+            <ToTopIcon v-if="scrollTop >= 100" :on-scroll-to="onScrollTo" />
           </div>
           <div v-if="noMore" class="no-more">没有更多了～～～</div>
-          <Empty v-if="showEmpty"/>
+          <Empty v-if="showEmpty" />
         </el-scrollbar>
       </Loading>
     </el-drawer>
@@ -45,14 +50,14 @@
 </template>
 
 <script setup lang="ts">
-import {computed, ref, onMounted, onUnmounted} from 'vue';
-import {codeStore} from '@/store';
-import {formatDate, scrollTo, Message} from '@/utils';
-import {nextTick} from 'process';
+import { computed, ref, onMounted, onUnmounted } from 'vue';
+import { codeStore } from '@/store';
+import { formatDate, scrollTo, Message } from '@/utils';
+import { nextTick } from 'process';
 
 interface IProps {
   modelValue: boolean;
-  onChangeMode: (value: number) => void
+  onChangeMode: (value: number) => void;
 }
 
 const props = defineProps<IProps>();
@@ -60,6 +65,7 @@ const props = defineProps<IProps>();
 const emit = defineEmits(['update:modelValue', 'update:prevCode']);
 const scrollRef = ref<any>(null);
 const scrollTop = ref<number>(0);
+const currentId = ref<string>('');
 
 const visible = computed({
   get() {
@@ -71,7 +77,7 @@ const visible = computed({
 });
 
 const noMore = computed(() => {
-  const {codeList, total} = codeStore;
+  const { codeList, total } = codeStore;
   return codeList.length >= total && codeList.length;
 });
 const disabled = computed(() => codeStore.loading || noMore.value);
@@ -104,12 +110,13 @@ const onScrollTo = (to?: number) => {
 
 // 编辑
 const onEdit = async (id: string) => {
+  currentId.value = id;
   codeStore.clearCodeId();
   await codeStore.getCodeById(id);
-  emit('update:prevCode', '')
+  emit('update:prevCode', '');
   emit('update:modelValue', false);
   if (codeStore.codeDetail.language === 'javascript') {
-    props?.onChangeMode?.(2)
+    props?.onChangeMode?.(2);
   }
 };
 
@@ -139,6 +146,10 @@ const onDelete = (id: string) => {
 
       &:first-child {
         margin-top: 5px;
+      }
+
+      &:hover {
+        box-shadow: 0 0 5px var(--el-color-primary-light-5);
       }
 
       .header {
@@ -174,6 +185,10 @@ const onDelete = (id: string) => {
           font-size: 13px;
         }
       }
+    }
+
+    .active-code-item {
+      box-shadow: 0 0 5px var(--active);
     }
 
     .no-more {
