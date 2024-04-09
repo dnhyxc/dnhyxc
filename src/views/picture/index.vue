@@ -236,7 +236,7 @@ const onScrollTo = () => {
     align-items: center;
     width: calc(100% - 42px);
     height: 45px;
-    margin: 4px auto 10px;
+    margin: 5px auto 10px;
     padding: 0 10px;
     box-shadow: 0 0 8px 0 var(--shadow-mack);
     border-radius: 5px;
