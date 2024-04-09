@@ -290,6 +290,11 @@ const isCompile = computed(() => {
 .mac-skeleton-wrap {
   .header {
     padding: 30px 27px 0 12px;
+    margin-bottom: 15px;
+  }
+
+  .article-header {
+    height: 40px;
     margin-bottom: 0;
 
     .title {
@@ -300,17 +305,13 @@ const isCompile = computed(() => {
       .page-name {
         margin-top: -2px;
         margin-left: 51px;
-        height: 22px;
+        height: 18px;
       }
     }
 
     .header-action {
       display: none;
     }
-  }
-
-  .article-header {
-    height: 45px;
   }
 
   .content {
