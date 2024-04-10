@@ -25,7 +25,7 @@ import {commonStore} from '@/store';
 interface IProps {
   markdown: string;
   copyCodeSuccess?: (value?: string) => void;
-  onScroll?: () => void;
+  onScroll?: Function | null | undefined;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
