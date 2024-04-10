@@ -6,11 +6,11 @@
  */
 // @ts-ignore
 import path from 'path';
-import {app, BrowserWindow, ipcMain, dialog, desktopCapturer} from 'electron';
-import {getIconPath} from './tray';
-import {DOMAIN_URL, globalInfo, isDev, isMac, globalChildWins, CATCHS} from './constant';
-import {createChildWin} from './childwin';
-import {createMessageWin} from './message';
+import { app, BrowserWindow, ipcMain, dialog, desktopCapturer } from 'electron';
+import { getIconPath } from './tray';
+import { DOMAIN_URL, globalInfo, isDev, isMac, globalChildWins, CATCHS } from './constant';
+import { createChildWin } from './childwin';
+import { createMessageWin } from './message';
 
 // 控制是否退出
 let willQuitApp = false;
@@ -101,13 +101,13 @@ export const createWindow = () => {
     globalInfo.win?.setAlwaysOnTop(false);
   });
 
-  // 监听是否加载完成，等加载完成再显示窗口
-  globalInfo.win?.on('ready-to-show', () => {
-    globalInfo.openWin?.close();
-    globalInfo.openWin = null;
-    // globalInfo.win?.show();
-    createMessageWin();
-  });
+  // // 监听是否加载完成，等加载完成再显示窗口
+  // globalInfo.win?.on('ready-to-show', () => {
+  //   globalInfo.openWin?.close();
+  //   globalInfo.openWin = null;
+  //   // globalInfo.win?.show();
+  //   createMessageWin();
+  // });
 };
 
 // 窗口最小化
@@ -152,7 +152,7 @@ ipcMain.on('win-show', (_, status) => {
 
 // 监听渲染进程发起的打开文件夹指令，properties: ['openDirectory']：用户执行只能选择文件夹
 ipcMain.on('openDialog', (event) => {
-  dialog.showOpenDialog({properties: ['openDirectory']}).then((result) => {
+  dialog.showOpenDialog({ properties: ['openDirectory'] }).then((result) => {
     if (result.filePaths.length > 0) {
       event.sender.send('selectedItem', result.filePaths);
     }
@@ -164,28 +164,30 @@ ipcMain.on('get-app-path', (event) => {
   event.sender.send('got-app-path', app.getAppPath());
 });
 
-ipcMain.on('download', (event, {url, fileName}) => {
+ipcMain.on('download', (event, { url, fileName }) => {
   const fileStorePath = globalInfo.store?.get('FILE_STORE_PATH') || app.getAppPath();
-  dialog.showSaveDialog(globalInfo.win, {
-    defaultPath: `${fileStorePath}/${fileName}` // 设置默认的文件路径
-  }).then(result => {
-    if (!result.canceled) {
-      const filePath = result.filePath
+  dialog
+    .showSaveDialog(globalInfo.win, {
+      defaultPath: `${fileStorePath}/${fileName}`, // 设置默认的文件路径
+    })
+    .then((result) => {
+      if (!result.canceled) {
+        const filePath = result.filePath;
 
-      globalInfo.win?.webContents.downloadURL(url); // 触发 will-download 事件
-      globalInfo.win?.webContents.session.on('will-download', (event, item, webContents) => {
-        item.setSavePath(filePath); // 设置选择的文件路径
+        globalInfo.win?.webContents.downloadURL(url); // 触发 will-download 事件
+        globalInfo.win?.webContents.session.on('will-download', (event, item, webContents) => {
+          item.setSavePath(filePath); // 设置选择的文件路径
 
-        item.once('done', (event, state) => {
-          if (state === 'completed') {
-            globalInfo.win?.webContents.send('download-file', true);
-          } else {
-            globalInfo.win?.webContents.send('download-file', false);
-          }
+          item.once('done', (event, state) => {
+            if (state === 'completed') {
+              globalInfo.win?.webContents.send('download-file', true);
+            } else {
+              globalInfo.win?.webContents.send('download-file', false);
+            }
+          });
         });
-      });
-    }
-  });
+      }
+    });
 });
 
 // 监听主窗口推送新建窗口的消息，pathname：路由路径、id：文章id、info：用户信息、prevId：详情点击上下篇时传入的上一篇的文章id
@@ -239,7 +241,7 @@ ipcMain.on('new-win', (event, pathname, id, info, prevId) => {
 // 监听开机自启设置
 ipcMain.on('open-at-login', (event, status) => {
   // 开机自启
-  app.setLoginItemSettings({openAtLogin: status !== 1});
+  app.setLoginItemSettings({ openAtLogin: status !== 1 });
 });
 
 // 设置消息提醒设置
@@ -263,7 +265,7 @@ ipcMain.on('clear-cache', (event, status) => {
 // 监听开启屏幕录制
 ipcMain.on('load-transcribe', (event, id) => {
   const winId = globalChildWins.newWins.get(id);
-  desktopCapturer.getSources({types: ['window', 'screen']}).then((sources) => {
+  desktopCapturer.getSources({ types: ['window', 'screen'] }).then((sources) => {
     if (winId) {
       globalChildWins['independentWindow-' + winId]?.webContents?.send('share-screen-sources', sources);
     } else {

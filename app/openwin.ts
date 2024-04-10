@@ -6,10 +6,11 @@
  */
 // @ts-ignore
 import path from 'path';
-import {app, BrowserWindow, ipcMain, dialog, desktopCapturer} from 'electron';
-import {getIconPath} from './tray';
-import {DOMAIN_URL, globalInfo, isDev, isMac, globalChildWins, CATCHS} from './constant';
-import {createChildWin} from './childwin';
+import { app, BrowserWindow, ipcMain, dialog, desktopCapturer } from 'electron';
+import { getIconPath } from './tray';
+import { DOMAIN_URL, globalInfo, isDev, isMac, globalChildWins, CATCHS } from './constant';
+import { createChildWin } from './childwin';
+import { createMessageWin } from './message';
 // 控制是否退出
 let willQuitApp = false;
 
@@ -35,9 +36,17 @@ export const createOpenWindow = () => {
   });
 
   // 当页面的 DOM 已经完全加载并且 window 对象可以使用时触发
-  globalInfo.openWin?.webContents.once('dom-ready', () => {
-    // 显示窗口
+  // globalInfo.openWin?.webContents.once('dom-ready', () => {
+  //   console.log('dom-ready');
+  //   // 显示窗口
+  //   globalInfo.openWin?.show();
+  // });
+
+  // 监听是否加载完成，等加载完成再显示窗口
+  globalInfo.openWin?.on('ready-to-show', () => {
+    console.log('ready-to-show');
     globalInfo.openWin?.show();
+    globalInfo.openWin?.setAlwaysOnTop(true); // 将窗口设置为总是在顶部
   });
 
   // 程序启动前，先清空之前的缓存信息
@@ -101,11 +110,14 @@ export const createOpenWindow = () => {
 
 // 窗口最小化
 ipcMain.on('window-min', () => {
+  console.log('window-min');
   globalInfo.openWin?.minimize();
 });
 
 // 窗口最大化
 ipcMain.on('window-max', () => {
+  console.log('window-max');
+
   if (globalInfo.openWin?.isMaximized()) {
     globalInfo.openWin.restore();
   } else {
@@ -113,15 +125,9 @@ ipcMain.on('window-max', () => {
   }
 });
 
-// 关闭窗口
-ipcMain.on('window-close', () => {
-  globalInfo.openWin?.hide();
-  globalInfo.userInfo = '';
-});
-
 // 退出程序
 ipcMain.on('window-out', () => {
-  console.log('------')
+  console.log('window-out------');
   if (!isMac) {
     app.quit();
   }

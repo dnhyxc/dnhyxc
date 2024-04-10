@@ -9,7 +9,7 @@
     <div class="header">
       <div class="left">
         <div class="icon-wrap">
-          <i class="page-icon iconfont icon-haidao_"/>
+          <i class="page-icon iconfont icon-haidao_" />
         </div>
         <div class="title">登录</div>
       </div>
@@ -23,33 +23,24 @@
           >
             <div
               :class="`icon-text iconfont ${
-                    svg.title === '最大化' ? (toggle ? 'icon-3zuidahua-3' : 'icon-3zuidahua-1') : svg.icon
-                  }`"
+                svg.title === '最大化' ? (toggle ? 'icon-3zuidahua-3' : 'icon-3zuidahua-1') : svg.icon
+              }`"
             />
           </el-tooltip>
         </div>
       </div>
     </div>
-    <div class="content" @click="onLogin">
-      登录
-    </div>
+    <div class="content" @click="onLogin">登录</div>
   </div>
 </template>
 
 <script setup lang="ts">
-import {ipcRenderer} from 'electron';
-import {onMounted, nextTick, ref} from 'vue';
-import {useRoute, useRouter} from 'vue-router';
-import {commonStore} from '@/store';
-import {ipcRenderers, checkOS} from '@/utils';
-import {ACTION_SVGS} from '@/constant';
-import {sendWindowOut} from "@/utils/ipcRenderer";
+import { ipcRenderer } from 'electron';
+import { onMounted, nextTick, ref } from 'vue';
+import { commonStore } from '@/store';
+import { ipcRenderers, checkOS } from '@/utils';
+import { ACTION_SVGS } from '@/constant';
 
-const route = useRoute();
-const router = useRouter();
-
-// 评论输入框焦点控制变量
-const focus = ref<boolean>(false);
 // 窗口大小控制状态
 const toggle = ref<boolean>(false);
 
@@ -85,7 +76,7 @@ const onClick = (item: { title: string; svg: string }) => {
 
 const onLogin = () => {
   ipcRenderers.sendOpenMainWin();
-}
+};
 </script>
 
 <style scoped lang="less">
@@ -96,8 +87,8 @@ const onLogin = () => {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  width: 500px;
-  height: 320px;
+  width: 100%;
+  height: 100%;
   box-sizing: border-box;
 
   .header {
@@ -145,7 +136,14 @@ const onLogin = () => {
       display: flex;
       align-items: center;
       justify-content: flex-end;
+      color: var(--font-1);
 
+      .icon {
+        position: relative;
+        margin-left: 20px;
+        -webkit-app-region: no-drag;
+        z-index: 99;
+      }
     }
   }
 }
@@ -156,5 +154,9 @@ const onLogin = () => {
       display: none;
     }
   }
+}
+
+.content {
+  color: var(--font-1);
 }
 </style>

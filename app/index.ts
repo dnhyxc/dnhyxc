@@ -6,15 +6,15 @@
  */
 // @ts-ignore
 import path from 'path';
-import {app, ipcMain, Tray} from 'electron';
+import { app, ipcMain, Tray } from 'electron';
 // @ts-ignore
 import Store from 'electron-store';
-import {registerShortcut, unRegisterShortcut} from './shortcut';
-import {createContextMenu, getIconPath} from './tray';
-import {createMessageWin, showMessage, checkTrayLeave, messageWinStatus} from './message';
-import {createWindow} from './mainwin';
-import {createOpenWindow} from './openwin';
-import {globalInfo, isMac, DOMAIN_URL} from './constant';
+import { registerShortcut, unRegisterShortcut } from './shortcut';
+import { createContextMenu, getIconPath } from './tray';
+import { createMessageWin, showMessage, checkTrayLeave, messageWinStatus } from './message';
+import { createWindow } from './mainwin';
+import { createOpenWindow } from './openwin';
+import { globalInfo, isMac, DOMAIN_URL } from './constant';
 
 // 注册electron-store
 Store.initRenderer();
@@ -98,8 +98,12 @@ app
     });
 
     ipcMain.on('open-main-win', () => {
+      globalInfo.openWin?.close();
+      globalInfo.openWin = null;
       createWindow();
-    })
+      // globalInfo.win?.show();
+      createMessageWin();
+    });
   });
 
 // 退出
