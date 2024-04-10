@@ -1,11 +1,11 @@
-import { defineStore } from 'pinia';
-import { Router } from 'vue-router';
-import { ElMessage } from 'element-plus';
-import { BarrageItem, InteractListRes } from '@/typings/common';
+import {defineStore} from 'pinia';
+import {Router} from 'vue-router';
+import {ElMessage} from 'element-plus';
+import {BarrageItem, InteractListRes} from '@/typings/common';
 import * as Service from '@/server';
-import { normalizeResult, Message } from '@/utils';
-import { loginStore } from '@/store';
-import { useCheckUserId } from '@/hooks';
+import {normalizeResult, Message} from '@/utils';
+import {loginStore} from '@/store';
+import {useCheckUserId} from '@/hooks';
 
 interface IProps {
   barrageList: BarrageItem[]; // 弹幕列表
@@ -33,7 +33,7 @@ export const useInteractStore = defineStore('interact', {
     async createInteract(comment: string) {
       // 检验是否有userId，如果没有禁止发送请求
       if (!useCheckUserId()) return;
-      const { username = '', headUrl = '' } = loginStore.userInfo;
+      const {username = '', headUrl = ''} = loginStore.userInfo;
       const res = normalizeResult<BarrageItem[]>(
         await Service.createInteract({
           comment,
@@ -83,6 +83,12 @@ export const useInteractStore = defineStore('interact', {
         this.interactList = reset ? res.data.list : [...this.interactList, ...res.data.list];
         this.total = res.data.total;
         onScroll?.(2, isDelete);
+      } else {
+        ElMessage({
+          message: res.message,
+          type: 'error',
+          offset: 80,
+        });
       }
     },
 

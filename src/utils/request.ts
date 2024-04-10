@@ -144,12 +144,12 @@ export default function request(_url: string, options?: any): FetchResult {
           if (err.response.status === 409) {
             EventBus.emit('quit');
             setRedirectPath(`${pathname}${search}`);
-            ElMessage({
-              message: data.message,
-              type: 'warning',
-              offset: 80,
-              duration: 2000,
-            });
+            // ElMessage({
+            //   message: data.message,
+            //   type: 'warning',
+            //   offset: 80,
+            //   duration: 2000,
+            // });
             return {
               err: new Error(data.message || '系统异常'),
               code: err.response.status,

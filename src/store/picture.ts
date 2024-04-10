@@ -46,7 +46,7 @@ export const usePictureStore = defineStore('picture', {
         await Service.addAtlasImages({
           url,
           size: file.size,
-          fileName: file.name,
+          fileName: (file as File).name,
           type: file.type,
         }),
       );

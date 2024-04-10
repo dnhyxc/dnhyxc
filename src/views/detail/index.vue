@@ -12,8 +12,9 @@
           <PageHeader v-if="articleStore.articleDetail?.authorId"/>
           <Preview
             v-if="articleStore.articleDetail.content"
-            :mackdown="articleStore.articleDetail.content"
+            :markdown="articleStore.articleDetail.content"
             :copy-code-success="onCopyCodeSuccess"
+            :on-scroll="route.query?.scrollTo ? onScroll : null"
           />
           <div v-if="articleStore.articleDetail.content" class="classifys">
             <div class="classify">
@@ -95,10 +96,6 @@ onMounted(async () => {
     commonStore.detailScrollRef = scrollRef.value;
   });
   await articleStore.getArticleDetail({id: route.params.id as string, router});
-  // 在详情获取成功后，如果路由路径中携带了scrollTo参数，则说明是从列表中点击评论进来的，需要跳转到评论
-  if (route.query?.scrollTo) {
-    onScrollTo(articleInfoRef.value?.offsetHeight);
-  }
 
   // 监听主进程发布的刷新页面的消息
   ipcRenderer.on('refresh', (_, params: WinRefreshParams) => {
@@ -109,6 +106,11 @@ onMounted(async () => {
     }
   });
 });
+
+// 在详情获取成功后，如果路由路径中携带了scrollTo参数，则说明是从列表中点击评论进来的，需要跳转到评论
+const onScroll = () => {
+  onScrollTo(articleInfoRef.value?.offsetHeight);
+}
 
 // 组件卸载前，清楚store中的详情信息
 onUnmounted(() => {
