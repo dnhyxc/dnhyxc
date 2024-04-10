@@ -30,13 +30,13 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, nextTick, watchEffect, onUnmounted } from 'vue';
-import { scrollTo } from '@/utils';
-import { useChildScroller } from '@/hooks';
-import { commonStore } from '@/store';
-import { TocTitlesParams } from '@/typings/common';
+import {onMounted, ref, nextTick, watchEffect, onUnmounted} from 'vue';
+import {scrollTo} from '@/utils';
+import {useChildScroller} from '@/hooks';
+import {commonStore} from '@/store';
+import {TocTitlesParams} from '@/typings/common';
 
-const { scrollChildRef, scrollChildTop } = useChildScroller();
+const {scrollChildRef, scrollChildTop} = useChildScroller();
 
 const checkTocTitle = ref<string>('');
 
@@ -61,12 +61,14 @@ onUnmounted(() => {
 const onDetailScroll = (e: any) => {
   const scale = e.target.scrollTop / commonStore.detailScrollRef?.wrapRef?.scrollHeight;
   const el = scrollChildRef.value?.wrapRef as HTMLDivElement;
-  el.scrollTop = (scale * scrollChildRef.value?.wrapRef?.scrollHeight) as number;
+  if (el) {
+    el.scrollTop = (scale * scrollChildRef.value?.wrapRef?.scrollHeight) as number;
+  }
 };
 
 // 选中某标题
 const handleAnchorClick = (anchor: TocTitlesParams, index: number) => {
-  const { lineIndex, title } = anchor;
+  const {lineIndex, title} = anchor;
   checkTocTitle.value = title + index;
   nextTick(() => {
     const heading = (commonStore.previewRef as any).$el?.querySelector(`[data-v-md-line="${lineIndex}"]`);

@@ -9,27 +9,29 @@
     <v-md-preview
       id="__MD_PREVIEW__"
       ref="previewRef"
-      :text="mackdown"
+      :text="markdown"
       default-show-toc
       @copy-code-success="onCopyCodeSuccess"
-    ></v-md-preview>
-    <ImagePreview v-model:previewVisible="previewVisible" :select-image="{ url: imageUrl }" close-on-click-modal />
+    />
+    <ImagePreview v-model:previewVisible="previewVisible" :select-image="{ url: imageUrl }" close-on-click-modal/>
   </div>
 </template>
 
 <script setup lang="ts">
-import { shell } from 'electron';
-import { ref, onMounted, onUnmounted } from 'vue';
-import { commonStore } from '@/store';
+import {shell} from 'electron';
+import {ref, onMounted, onUnmounted} from 'vue';
+import {commonStore} from '@/store';
 
 interface IProps {
-  mackdown: string;
+  markdown: string;
   copyCodeSuccess?: (value?: string) => void;
+  onScroll?: () => void;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
-  mackdown: '',
-  copyCodeSuccess: () => {},
+  markdown: '',
+  copyCodeSuccess: () => {
+  }
 });
 
 const previewRef = ref<any>(null);
@@ -37,6 +39,8 @@ const previewRef = ref<any>(null);
 const previewVisible = ref<boolean>(false);
 // 预览图片 url
 const imageUrl = ref<string>('');
+const imgCount = ref<number>(0);
+const imgTotal = ref<number>(0);
 
 // 存储预览组件中所有的标题
 onMounted(() => {
@@ -44,6 +48,20 @@ onMounted(() => {
     // 给store中的previewRef赋值
     commonStore.previewRef = previewRef.value;
     const anchors: HTMLHeadingElement[] = previewRef.value.$el.querySelectorAll('h1,h2,h3,h4,h5,h6');
+
+    if (props?.onScroll) {
+      const images: HTMLImageElement[] = previewRef.value.$el.querySelectorAll('img');
+      imgTotal.value = images.length;
+
+      if (images.length) {
+        images?.forEach(image => {
+          image.addEventListener('load', onImageLoaded);
+        });
+      } else {
+        props?.onScroll?.();
+      }
+    }
+
     const titles = Array.from(anchors).filter((title) => !!title.innerText.trim());
     if (titles.length) {
       const hTags = Array.from(new Set(titles.map((title) => title.tagName))).sort();
@@ -84,6 +102,13 @@ onUnmounted(() => {
   previewRef.value = null;
   commonStore.tocTitles = [];
 });
+
+const onImageLoaded = () => {
+  imgCount.value++
+  if (imgCount.value === imgTotal.value) {
+    props?.onScroll?.()
+  }
+}
 
 // 复制成功回调
 const onCopyCodeSuccess = (value: string) => {
