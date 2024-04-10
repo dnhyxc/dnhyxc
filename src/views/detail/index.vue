@@ -14,7 +14,7 @@
             v-if="articleStore.articleDetail.content"
             :markdown="articleStore.articleDetail.content"
             :copy-code-success="onCopyCodeSuccess"
-            :on-scroll="route.query?.scrollTo ? onScroll : null"
+            :on-scroll="route.query?.scrollTo ? onScroll : undefined"
           />
           <div v-if="articleStore.articleDetail.content" class="classifys">
             <div class="classify">
