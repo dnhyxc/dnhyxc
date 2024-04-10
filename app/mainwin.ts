@@ -10,6 +10,8 @@ import {app, BrowserWindow, ipcMain, dialog, desktopCapturer} from 'electron';
 import {getIconPath} from './tray';
 import {DOMAIN_URL, globalInfo, isDev, isMac, globalChildWins, CATCHS} from './constant';
 import {createChildWin} from './childwin';
+import {createMessageWin} from './message';
+
 // 控制是否退出
 let willQuitApp = false;
 
@@ -100,9 +102,12 @@ export const createWindow = () => {
   });
 
   // 监听是否加载完成，等加载完成再显示窗口
-  // globalInfo.win?.on('ready-to-show', () => {
-  //   globalInfo.win?.show();
-  // });
+  globalInfo.win?.on('ready-to-show', () => {
+    globalInfo.openWin?.close();
+    globalInfo.openWin = null;
+    // globalInfo.win?.show();
+    createMessageWin();
+  });
 };
 
 // 窗口最小化

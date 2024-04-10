@@ -1,10 +1,10 @@
-import { defineAsyncComponent } from 'vue';
-import { createRouter, RouteRecordRaw, createWebHistory } from 'vue-router';
-import { ElMessage } from 'element-plus';
-import { loginStore } from '@/store';
-import { useCommonStore } from '@/store/common';
-import { locGetItem } from '@/utils';
-import { WITH_AUTH_ROUTES } from '@/constant';
+import {defineAsyncComponent} from 'vue';
+import {createRouter, RouteRecordRaw, createWebHistory} from 'vue-router';
+import {ElMessage} from 'element-plus';
+import {loginStore} from '@/store';
+import {useCommonStore} from '@/store/common';
+import {locGetItem} from '@/utils';
+import {WITH_AUTH_ROUTES} from '@/constant';
 import eventBus from '@/utils/eventBus';
 import AsyncLoading from '@/components/AsyncLoading/index.vue';
 
@@ -178,7 +178,7 @@ export const routes: Array<RouteRecordRaw> = [
             component: () => import('@/views/setting/system/index.vue'),
           },
         ],
-        redirect: { name: 'profile' },
+        redirect: {name: 'profile'},
       },
       {
         path: '/detail/:id',
@@ -205,7 +205,7 @@ export const routes: Array<RouteRecordRaw> = [
         component: () => import('@/views/chat/index.vue'),
       },
     ],
-    redirect: { name: 'home' },
+    redirect: {name: 'home'},
   },
   {
     path: '/login',
@@ -240,6 +240,14 @@ export const routes: Array<RouteRecordRaw> = [
     component: () => import('@/views/message/index.vue'),
   },
   {
+    path: '/open',
+    name: 'open',
+    meta: {
+      title: '登录',
+    },
+    component: () => import('@/views/open/index.vue'),
+  },
+  {
     path: '/:pathMatch(.*)*',
     component: () => import('@/views/404/index.vue'),
   },
@@ -252,7 +260,7 @@ const router = createRouter({
     if (savePosition) {
       return savePosition;
     } else {
-      return { top: 0 };
+      return {top: 0};
     }
   },
   routes,

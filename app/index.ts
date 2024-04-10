@@ -13,6 +13,7 @@ import {registerShortcut, unRegisterShortcut} from './shortcut';
 import {createContextMenu, getIconPath} from './tray';
 import {createMessageWin, showMessage, checkTrayLeave, messageWinStatus} from './message';
 import {createWindow} from './mainwin';
+import {createOpenWindow} from './openwin';
 import {globalInfo, isMac, DOMAIN_URL} from './constant';
 
 // 注册electron-store
@@ -49,7 +50,8 @@ app
   .whenReady()
   .then(() => {
     // 创建主窗口
-    createWindow();
+    // createWindow();
+    createOpenWindow();
   })
   .then(() => registerShortcut(app))
   .then(() => {
@@ -64,7 +66,7 @@ app
         globalInfo.win?.show();
       });
       // 创建消息窗口
-      createMessageWin();
+      // createMessageWin();
       // 监听鼠标是否进入托盘
       globalInfo.tray?.on('mouse-move', () => {
         // 判断是否开启了消息提醒
@@ -94,6 +96,10 @@ app
       // 重新注册快捷键
       registerShortcut(app);
     });
+
+    ipcMain.on('open-main-win', () => {
+      createWindow();
+    })
   });
 
 // 退出
@@ -105,12 +111,20 @@ app.on('window-all-closed', () => {
 
 // 当窗口开始活动时触发
 app.on('activate', () => {
-  if (globalInfo.win === null) {
+  if (globalInfo.win === null && globalInfo.openWin === null) {
     createWindow();
   }
+  if (globalInfo.openWin === null && globalInfo.win === null) {
+    // createWindow();
+    createOpenWindow();
+  }
   // 点击拓展坞显示应用窗口
-  if (globalInfo.win && isMac) {
+  if (globalInfo.win && globalInfo.openWin === null && isMac) {
     globalInfo.win?.show();
+  }
+  // 点击拓展坞显示应用窗口
+  if (globalInfo.openWin && globalInfo.win === null && isMac) {
+    globalInfo.openWin?.show();
   }
 });
 

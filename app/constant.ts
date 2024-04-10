@@ -15,6 +15,7 @@ export const globalInfo: {
   msgStatus: boolean | null;
   userInfo: string;
   messageWin: BrowserWindow | null;
+  openWin: BrowserWindow | null;
   size: {
     width: number;
     height: number;
@@ -24,6 +25,7 @@ export const globalInfo: {
   tray: null,
   win: null,
   messageWin: null,
+  openWin: null,
   // 消息提示控制器
   msgStatus: true,
   // 保存用户信息
@@ -38,6 +40,7 @@ export const globalInfo: {
 export const clearGlobalInfo = () => {
   globalInfo.win = null;
   globalInfo.messageWin = null;
+  globalInfo.openWin = null;
   globalInfo.tray = null;
   globalInfo.msgStatus = true;
   globalInfo.userInfo = '';
