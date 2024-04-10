@@ -37,7 +37,7 @@
       class="create-editor"
     >
       <template #leftAction>
-        <span class="action iconfont icon-debug-alt" title="代码测试工具" @click="onShowCodeRun" />
+        <span class="action iconfont icon-debug-alt" title="代码测试工具" @click="onShowCodeRun"/>
       </template>
     </MonacoEditor>
     <CreateDrawer
@@ -48,20 +48,21 @@
       v-model:prevContent="prevContent"
       :article-id="(route?.query?.id as string)"
     />
-    <DraftList v-model:draft-visible="draftVisible" />
+    <DraftList v-model:draft-visible="draftVisible"/>
   </Loading>
 </template>
 
 <script setup lang="ts">
-import { ref, watch, defineAsyncComponent, onMounted, onUnmounted } from 'vue';
-import { useRoute, useRouter, onBeforeRouteLeave } from 'vue-router';
-import { ElMessage } from 'element-plus';
-import { articleStore, createStore, loginStore } from '@/store';
-import { Message, ipcRenderers } from '@/utils';
+import {ref, watch, defineAsyncComponent, onMounted, onUnmounted} from 'vue';
+import {useRoute, useRouter, onBeforeRouteLeave} from 'vue-router';
+import {ElMessage} from 'element-plus';
+import {articleStore, createStore, loginStore} from '@/store';
+import {Message, ipcRenderers} from '@/utils';
 import Loading from '@/components/Loading/index.vue';
 import AsyncLoading from '@/components/AsyncLoading/index.vue';
 import CreateDrawer from './Create/index.vue';
 import DraftList from './DraftList/index.vue';
+
 const MonacoEditor = defineAsyncComponent({
   loader: () => import('@/components/MonacoEditor/index.vue'),
   loadingComponent: AsyncLoading,
@@ -111,8 +112,8 @@ const init = async () => {
 };
 
 onBeforeRouteLeave(async (to, from, next) => {
-  const { createInfo } = createStore;
-  if (!createInfo.content?.trim() || isPublish.value || prevContent.value.trim() === createInfo.content?.trim()) {
+  const {createInfo} = createStore;
+  if (!createInfo.content?.trim() || isPublish.value || prevContent.value.trim() === createInfo.content?.trim() || !loginStore.token) {
     next();
   } else {
     try {
@@ -139,7 +140,7 @@ watch(
 );
 
 const onSave = async () => {
-  const { createInfo, articleDraft } = createStore;
+  const {createInfo, articleDraft} = createStore;
   if (!createInfo.content?.trim() || prevContent.value.trim() === createInfo.content?.trim()) return;
   // 调用接口保存草稿
   await articleDraft();
@@ -202,11 +203,11 @@ const toPreview = (id: string) => {
 
 // 开启代码调试
 const onShowCodeRun = () => {
-  const { userInfo, token } = loginStore;
+  const {userInfo, token} = loginStore;
   ipcRenderers.sendNewWin({
     path: 'compile?from=tools_codeRun',
     id: 'tools_codeRun',
-    userInfo: JSON.stringify({ userInfo, token }),
+    userInfo: JSON.stringify({userInfo, token}),
   });
 };
 </script>
