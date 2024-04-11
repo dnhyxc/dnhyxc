@@ -1,4 +1,4 @@
-import { post, put } from '@/utils/request';
+import {post, put} from '@/utils/request';
 import {
   LoginParams,
   CreateArticleParams,
@@ -14,15 +14,15 @@ import {
   ChatItem,
   BookRecord,
 } from '@/typings/common';
-import { loginStore } from '@/store';
-import { getStoreUserInfo } from '@/utils';
+import {loginStore} from '@/store';
+import {getStoreUserInfo} from '@/utils';
 import * as API from './api';
 
 // 处理请求参数，为请求自动加上userId
 const copeParams = (params?: any) => {
   const userInfo = loginStore?.userInfo;
-  const { userInfo: storeUserInfo } = getStoreUserInfo();
-  return params?.userId ? params : { ...params, userId: userInfo?.userId || storeUserInfo?.userId };
+  const {userInfo: storeUserInfo} = getStoreUserInfo();
+  return params?.userId ? params : {...params, userId: userInfo?.userId || storeUserInfo?.userId};
 };
 
 // 自定义文件上传路径
@@ -32,7 +32,7 @@ export const uploadFile = async (params?: any) => {
 
 // 删除文件
 export const removeFile = async (url: string) => {
-  return await post(API.REMOVE_FILE, copeParams({ url }));
+  return await post(API.REMOVE_FILE, copeParams({url}));
 };
 
 // 获取验证码
@@ -85,7 +85,7 @@ export const getArticleList = async (params: GetArticleListParams) => {
 
 // 获取文章详情
 export const getArticleDetail = async (id: string, isEdit?: boolean) => {
-  return await post(API.ARTICLE_DETAIL, { id, isEdit });
+  return await post(API.ARTICLE_DETAIL, {id, isEdit});
 };
 
 // 获取相似的文章
@@ -105,7 +105,7 @@ export const deleteArticle = async (params: DeleteArticleParams) => {
 
 // 获取评论
 export const getCommentList = async (id: string) => {
-  return await post(API.GET_COMMENT_LIST, copeParams({ id }));
+  return await post(API.GET_COMMENT_LIST, copeParams({id}));
 };
 
 // 发布评论
@@ -130,7 +130,7 @@ export const likeArticle = async (params: { id: string; authorId?: string | null
 
 // 校验文章点赞点赞状态
 export const checkArticleLikeStatus = async (id: string) => {
-  return await post(API.CHECK_ARTICLE_LIKE_STATUS, copeParams({ id }));
+  return await post(API.CHECK_ARTICLE_LIKE_STATUS, copeParams({id}));
 };
 
 // 新建收藏集
@@ -155,17 +155,17 @@ export const collectArticles = async (params: { ids: string[]; articleId: string
 
 // 获取文章收藏状态
 export const checkCollectionStatus = async (articleId: string) => {
-  return await post(API.CHECK_COLLECTION_STATUS, copeParams({ articleId }));
+  return await post(API.CHECK_COLLECTION_STATUS, copeParams({articleId}));
 };
 
 // 取消收藏
 export const cancelCollected = async (articleId: string) => {
-  return await post(API.CANCEL_COLLECTED, copeParams({ articleId }));
+  return await post(API.CANCEL_COLLECTED, copeParams({articleId}));
 };
 
 // 获取文章分类、标签列表
 export const getTagList = async (type: string) => {
-  return await post(API.GET_TAG_LIST, { type });
+  return await post(API.GET_TAG_LIST, {type});
 };
 
 // 获取文章分类列表
@@ -245,7 +245,7 @@ export const getCollectArticles = async (params: { pageNo: number; pageSize: num
 
 // 获取收藏集详情
 export const getCollectInfo = async (id: string) => {
-  return await post(API.GET_COLLECT_INFO, { id });
+  return await post(API.GET_COLLECT_INFO, {id});
 };
 
 // 取消收藏收藏集中的文章(移除收藏集中的文章)
@@ -305,7 +305,7 @@ export const getNoReadMsgCount = async () => {
 
 // 删除消息
 export const deleteMessage = async (id: string) => {
-  return await post(API.DELETE_MESSAGE, copeParams({ id }));
+  return await post(API.DELETE_MESSAGE, copeParams({id}));
 };
 
 // 删除全部消息
@@ -330,12 +330,12 @@ export const getInteractList = async (params: { pageNo: number; pageSize: number
 
 // 移除留言
 export const removeInteracts = async (ids: string | string[]) => {
-  return await post(API.REMOVE_INTERACTS, copeParams({ ids }));
+  return await post(API.REMOVE_INTERACTS, copeParams({ids}));
 };
 
 // 关注/取消关注用户
 export const manageFollow = async (authorId: string) => {
-  return await post(API.MANAGE_FOLLOW, copeParams({ authorId }));
+  return await post(API.MANAGE_FOLLOW, copeParams({authorId}));
 };
 
 // 获取关注用户列表
@@ -345,7 +345,7 @@ export const getFollowList = async (params: { pageNo: number; pageSize: number; 
 
 // 查询是否关注该用户
 export const findFollowed = async (authorId: string, userId?: string, token?: string) => {
-  return await post(API.FIND_FOLLOWED, copeParams({ authorId, userId, token }));
+  return await post(API.FIND_FOLLOWED, copeParams({authorId, userId, token}));
 };
 
 // 查询关注我的用户
@@ -355,7 +355,7 @@ export const getFollowMeList = async (params: { pageNo: number; pageSize: number
 
 // 获取工具列表
 export const getToolList = async (type: string) => {
-  return await post(API.GET_TOOL_LIST, copeParams({ type }));
+  return await post(API.GET_TOOL_LIST, copeParams({type}));
 };
 
 // 创建工具排序
@@ -376,13 +376,13 @@ export const addAtlasImages = async (params: AtlasImgInfo) => {
 };
 
 // 获取图片集列表
-export const getAtlasList = async ({ pageNo, pageSize }: { pageNo: number; pageSize: number }) => {
-  return await post(API.GET_ATLAS_LIST, copeParams({ pageNo, pageSize }));
+export const getAtlasList = async ({pageNo, pageSize}: { pageNo: number; pageSize: number }) => {
+  return await post(API.GET_ATLAS_LIST, copeParams({pageNo, pageSize}));
 };
 
 // 删除图片集列表
-export const deleteAtlasImages = async ({ id, url }: { id: string | string[]; url?: string | string[] }) => {
-  return await post(API.DELETE_ATLAS_IMAGES, copeParams({ id, url }));
+export const deleteAtlasImages = async ({id, url}: { id: string | string[]; url?: string | string[] }) => {
+  return await post(API.DELETE_ATLAS_IMAGES, copeParams({id, url}));
 };
 
 // 更新图片信息
@@ -391,8 +391,8 @@ export const updateFileInfo = async (params: { id: string; fileName: string }) =
 };
 
 // 获取用户菜单权限
-export const getUserMenuRoles = async () => {
-  return await post(API.GET_USER_MENU_ROLES, copeParams({}));
+export const getUserMenuRoles = async (userId?: string) => {
+  return await post(API.GET_USER_MENU_ROLES, copeParams({userId}));
 };
 
 // 添加转换列表
@@ -438,7 +438,7 @@ export const getCodeList = async (params: { pageNo: number; pageSize: number }) 
 
 // 获取代码示例
 export const getCodeById = async (id: string) => {
-  return await post(API.GET_CODE_BY_ID, copeParams({ id }));
+  return await post(API.GET_CODE_BY_ID, copeParams({id}));
 };
 
 // 编译C语言
@@ -448,7 +448,7 @@ export const compileCCode = async (params: { code: string; options?: string }) =
 
 // 编译JS
 export const compileJSCode = async (code: string) => {
-  return await post(API.COMPILE_JS_CODE, copeParams({ code }));
+  return await post(API.COMPILE_JS_CODE, copeParams({code}));
 };
 
 // 获取聊天消息列表
@@ -458,22 +458,22 @@ export const getChatList = async (params: { pageNo: number; pageSize: number; ch
 
 // 合并消息
 export const mergeChats = async (chatId: string) => {
-  return await post(API.MERGE_CHATS, copeParams({ chatId }));
+  return await post(API.MERGE_CHATS, copeParams({chatId}));
 };
 
 // 获取缓存消息
 export const getCacheChats = async (chatId: string) => {
-  return await post(API.GET_CACHE_CHATS, copeParams({ chatId }));
+  return await post(API.GET_CACHE_CHATS, copeParams({chatId}));
 };
 
 // 删除消息
 export const deleteChats = async (delIds: string[]) => {
-  return await post(API.DELETE_CHATS, copeParams({ delIds }));
+  return await post(API.DELETE_CHATS, copeParams({delIds}));
 };
 
 // 删除联系人，清空消息
 export const deleteChatMesaage = async (chatId: string) => {
-  return await post(API.DELETE_CHAT_MESAAGE, copeParams({ chatId }));
+  return await post(API.DELETE_CHAT_MESAAGE, copeParams({chatId}));
 };
 
 // 获取联系人
@@ -498,17 +498,17 @@ export const uppdateContact = async (params: {
 
 // 删除联系人
 export const deleteContacts = async (contactIds: string[]) => {
-  return await post(API.DELETE_CONTACTS, copeParams({ contactIds }));
+  return await post(API.DELETE_CONTACTS, copeParams({contactIds}));
 };
 
 // 获取未读消息数量
 export const getUnReadChat = async (chatId: string) => {
-  return await post(API.GET_UNREAD_CHAT, copeParams({ chatId }));
+  return await post(API.GET_UNREAD_CHAT, copeParams({chatId}));
 };
 
 // 消息免打扰
 export const onNotDisturb = async (contactId: string) => {
-  return await post(API.ON_NOT_DISTURB, copeParams({ contactId }));
+  return await post(API.ON_NOT_DISTURB, copeParams({contactId}));
 };
 
 // 更新最新消息
@@ -518,12 +518,12 @@ export const updateNewChat = async (params: ChatItem) => {
 
 // 删除最新消息
 export const deleteNewChat = async (chatId: string) => {
-  return await post(API.DELETE_NEW_CHAT, copeParams({ chatId }));
+  return await post(API.DELETE_NEW_CHAT, copeParams({chatId}));
 };
 
 // 删除缓存消息
 export const deleteCatchChat = async (id: string) => {
-  return await post(API.DELETE_CATCH_CHAT, copeParams({ id }));
+  return await post(API.DELETE_CATCH_CHAT, copeParams({id}));
 };
 
 // 搜索联系人
@@ -553,7 +553,7 @@ export const mergeContacts = async () => {
 
 // 删除缓存联系人
 export const deleteCatchContacts = async (contactId: string) => {
-  return await post(API.DELETE_CATCH_CONTACTS, copeParams({ contactId }));
+  return await post(API.DELETE_CATCH_CONTACTS, copeParams({contactId}));
 };
 
 // 添加书籍
@@ -578,8 +578,8 @@ export const getBookList = async (params: { pageNo: number; pageSize: number; bo
 };
 
 // 删除书籍
-export const deleteBook = async ({ id, url }: { id: string; url?: string }) => {
-  return await post(API.DELETE_BOOK, copeParams({ id, url }));
+export const deleteBook = async ({id, url}: { id: string; url?: string }) => {
+  return await post(API.DELETE_BOOK, copeParams({id, url}));
 };
 
 // 查找书籍信息

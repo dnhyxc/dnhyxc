@@ -180,6 +180,7 @@ export const setChildWinTheme = (theme: string) => {
 };
 
 // 开启主窗口
-export const sendOpenMainWin = () => {
-  ipcRenderer.send('open-main-win');
+export const sendOpenMainWin = (params?: { userInfo: string }) => {
+  console.log(params?.userInfo, 'userInfo')
+  ipcRenderer.send('open-main-win', params?.userInfo);
 }

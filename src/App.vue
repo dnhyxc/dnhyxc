@@ -31,6 +31,7 @@ onBeforeMount(async () => {
 });
 
 watchEffect(async () => {
+  console.log(loginStore?.userInfo, 'loginStore?.userInfo')
   if (loginStore?.userInfo.userId) {
     // 每次刷新重新加载未读消息列表
     await messageStore.getNoReadMsgCount();
@@ -53,6 +54,15 @@ onMounted(async () => {
   EventBus.on('quit', () => {
     loginStore.onQuit();
     router.push('/login');
+  });
+  // 监听主进程发送的打开消息弹窗的消息
+  ipcRenderer.on('login-user-info', async (e, userInfo) => {
+    console.log(JSON.parse(userInfo), '-------userInfo')
+    if (userInfo) {
+      await loginStore.setLoginInfo(JSON.parse(userInfo))
+
+      // location.reload();
+    }
   });
   // 获取路由权限
   if (!AUTHOR_ROUTES.includes(location.pathname.replace('/', ''))) {

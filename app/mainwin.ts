@@ -6,11 +6,11 @@
  */
 // @ts-ignore
 import path from 'path';
-import { app, BrowserWindow, ipcMain, dialog, desktopCapturer } from 'electron';
-import { getIconPath } from './tray';
-import { DOMAIN_URL, globalInfo, isDev, isMac, globalChildWins, CATCHS } from './constant';
-import { createChildWin } from './childwin';
-import { createMessageWin } from './message';
+import {app, BrowserWindow, ipcMain, dialog, desktopCapturer} from 'electron';
+import {getIconPath} from './tray';
+import {DOMAIN_URL, globalInfo, isDev, isMac, globalChildWins, CATCHS} from './constant';
+import {createChildWin} from './childwin';
+import {createMessageWin} from './message';
 
 // 控制是否退出
 let willQuitApp = false;
@@ -101,14 +101,29 @@ export const createWindow = () => {
     globalInfo.win?.setAlwaysOnTop(false);
   });
 
+  globalInfo.win?.webContents.once('dom-ready', () => {
+    // console.log(globalInfo.userInfo, 'globalInfo.userInfo---dom-ready')
+    setTimeout(() => {
+      globalInfo.win?.webContents.send('login-user-info', globalInfo.userInfo);
+    }, 2000)
+  });
+
   // // 监听是否加载完成，等加载完成再显示窗口
   // globalInfo.win?.on('ready-to-show', () => {
-  //   globalInfo.openWin?.close();
-  //   globalInfo.openWin = null;
-  //   // globalInfo.win?.show();
-  //   createMessageWin();
+  //   // globalInfo.openWin?.close();
+  //   // globalInfo.openWin = null;
+  //   // // globalInfo.win?.show();
+  //   // createMessageWin();
+  //   console.log(globalInfo.userInfo, 'globalInfo.userInfo')
+  //   globalInfo.win?.webContents.send('login-user-info', globalInfo.userInfo);
   // });
 };
+
+// 窗口最小化
+ipcMain.on('login-user-info', () => {
+  console.log('login-user-info', 'login-user-info')
+  globalInfo.win?.webContents.send('login-user-info', globalInfo.userInfo);
+});
 
 // 窗口最小化
 ipcMain.on('window-min', () => {
@@ -152,7 +167,7 @@ ipcMain.on('win-show', (_, status) => {
 
 // 监听渲染进程发起的打开文件夹指令，properties: ['openDirectory']：用户执行只能选择文件夹
 ipcMain.on('openDialog', (event) => {
-  dialog.showOpenDialog({ properties: ['openDirectory'] }).then((result) => {
+  dialog.showOpenDialog({properties: ['openDirectory']}).then((result) => {
     if (result.filePaths.length > 0) {
       event.sender.send('selectedItem', result.filePaths);
     }
@@ -164,7 +179,7 @@ ipcMain.on('get-app-path', (event) => {
   event.sender.send('got-app-path', app.getAppPath());
 });
 
-ipcMain.on('download', (event, { url, fileName }) => {
+ipcMain.on('download', (event, {url, fileName}) => {
   const fileStorePath = globalInfo.store?.get('FILE_STORE_PATH') || app.getAppPath();
   dialog
     .showSaveDialog(globalInfo.win, {
@@ -241,7 +256,7 @@ ipcMain.on('new-win', (event, pathname, id, info, prevId) => {
 // 监听开机自启设置
 ipcMain.on('open-at-login', (event, status) => {
   // 开机自启
-  app.setLoginItemSettings({ openAtLogin: status !== 1 });
+  app.setLoginItemSettings({openAtLogin: status !== 1});
 });
 
 // 设置消息提醒设置
@@ -265,7 +280,7 @@ ipcMain.on('clear-cache', (event, status) => {
 // 监听开启屏幕录制
 ipcMain.on('load-transcribe', (event, id) => {
   const winId = globalChildWins.newWins.get(id);
-  desktopCapturer.getSources({ types: ['window', 'screen'] }).then((sources) => {
+  desktopCapturer.getSources({types: ['window', 'screen']}).then((sources) => {
     if (winId) {
       globalChildWins['independentWindow-' + winId]?.webContents?.send('share-screen-sources', sources);
     } else {

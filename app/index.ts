@@ -6,15 +6,15 @@
  */
 // @ts-ignore
 import path from 'path';
-import { app, ipcMain, Tray } from 'electron';
+import {app, ipcMain, Tray} from 'electron';
 // @ts-ignore
 import Store from 'electron-store';
-import { registerShortcut, unRegisterShortcut } from './shortcut';
-import { createContextMenu, getIconPath } from './tray';
-import { createMessageWin, showMessage, checkTrayLeave, messageWinStatus } from './message';
-import { createWindow } from './mainwin';
-import { createOpenWindow } from './openwin';
-import { globalInfo, isMac, DOMAIN_URL } from './constant';
+import {registerShortcut, unRegisterShortcut} from './shortcut';
+import {createContextMenu, getIconPath} from './tray';
+import {createMessageWin, showMessage, checkTrayLeave, messageWinStatus} from './message';
+import {createWindow} from './mainwin';
+import {createOpenWindow} from './openwin';
+import {globalInfo, isMac, DOMAIN_URL} from './constant';
 
 // 注册electron-store
 Store.initRenderer();
@@ -97,10 +97,12 @@ app
       registerShortcut(app);
     });
 
-    ipcMain.on('open-main-win', () => {
+    ipcMain.on('open-main-win', (event, useInfo) => {
       globalInfo.openWin?.close();
       globalInfo.openWin = null;
+      globalInfo.userInfo = useInfo
       createWindow();
+      // event.sender.send('got-app-path', app.getAppPath());
       // globalInfo.win?.show();
       createMessageWin();
     });

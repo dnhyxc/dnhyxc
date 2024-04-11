@@ -7,12 +7,6 @@
 <template>
   <div :class="`${checkOS() === 'mac' && 'mac-open-wrap'} open-wrap`">
     <div class="header">
-      <div class="left">
-        <div class="icon-wrap">
-          <i class="page-icon iconfont icon-haidao_" />
-        </div>
-        <div class="title">登录</div>
-      </div>
       <div class="right">
         <div v-for="svg in ACTION_SVGS" :key="svg.title" class="icon" @click="onClick(svg)">
           <el-tooltip
@@ -30,19 +24,51 @@
         </div>
       </div>
     </div>
-    <div class="content" @click="onLogin">登录</div>
+    <div class="content">
+      <component :is="currentDom.dom" @switch-dom="switchDom"></component>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ipcRenderer } from 'electron';
-import { onMounted, nextTick, ref } from 'vue';
-import { commonStore } from '@/store';
-import { ipcRenderers, checkOS } from '@/utils';
-import { ACTION_SVGS } from '@/constant';
+import {ipcRenderer} from 'electron';
+import {onMounted, nextTick, ref, reactive, markRaw} from 'vue';
+import {commonStore} from '@/store';
+import {ipcRenderers, checkOS} from '@/utils';
+import {ACTION_SVGS} from '@/constant';
+import Login from "@/views/open/Login/index.vue";
+import Reset from "@/views/open/Reset/index.vue";
 
 // 窗口大小控制状态
 const toggle = ref<boolean>(false);
+
+type domType = {
+  name: string;
+  dom: any;
+};
+
+type Dom = Pick<domType, 'dom'>;
+
+const domList = reactive<domType[]>([
+  {
+    name: 'Login',
+    dom: markRaw(Login),
+  },
+  {
+    name: 'Reset',
+    dom: markRaw(Reset),
+  },
+]);
+
+// 当前显示组件
+const currentDom = reactive<Dom>({
+  dom: domList[0].dom,
+});
+
+// 切换组件
+const switchDom = (type: string) => {
+  currentDom.dom = type === 'Login' ? domList[0].dom : domList[1].dom;
+};
 
 onMounted(() => {
   nextTick(() => {
@@ -95,7 +121,7 @@ const onLogin = () => {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    height: 55px;
+    height: 40px;
     padding: 15px 16px 0 16px;
     -webkit-app-region: drag;
 
@@ -145,6 +171,13 @@ const onLogin = () => {
         z-index: 99;
       }
     }
+  }
+
+  .content {
+    flex: 1;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
   }
 }
 
