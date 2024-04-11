@@ -161,7 +161,7 @@ ipcMain.on('get-app-path', (event) => {
 
 ipcMain.on('download', (event, {url, fileName}) => {
   const fileStorePath = globalInfo.store?.get('FILE_STORE_PATH') || app.getAppPath();
-  dialog.showSaveDialog(globalInfo.win, {
+  dialog.showSaveDialog(globalInfo.win!, {
     defaultPath: `${fileStorePath}/${fileName}` // 设置默认的文件路径
   }).then(result => {
     if (!result.canceled) {
@@ -169,7 +169,7 @@ ipcMain.on('download', (event, {url, fileName}) => {
 
       globalInfo.win?.webContents.downloadURL(url); // 触发 will-download 事件
       globalInfo.win?.webContents.session.on('will-download', (event, item, webContents) => {
-        item.setSavePath(filePath); // 设置选择的文件路径
+        item.setSavePath(filePath!); // 设置选择的文件路径
 
         item.once('done', (event, state) => {
           if (state === 'completed') {
