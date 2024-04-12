@@ -87,7 +87,6 @@ export default defineConfig({
           'v-md-editor': ['@kangc/v-md-editor'],
           'echarts-wordcloud': ['echarts-wordcloud'],
           'monaco-editor': ['monaco-editor'],
-          'vue-masonry': ['vue-masonry'],
           'vue-cropper': ['vue-cropper'],
           'vue3-danmaku': ['vue3-danmaku'],
           'docx-preview': ['docx-preview'],
