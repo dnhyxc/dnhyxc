@@ -7,9 +7,11 @@
 <template>
   <div id="__LEFT_MENU__" :class="`${checkOS() === 'mac' && 'mac-left-menu-wrap'} left-menu-wrap`">
     <el-scrollbar ref="scrollRef">
-      <div v-for="menu in menuList" :key="menu.key" class="menu-list"
+      <div
+v-for="menu in menuList" :key="menu.key" class="menu-list"
            @click="(e: Event) => onSelectMenu(e, menu as MenuListParams)">
-        <el-tooltip class="box-item" effect="light" :content="menu.name" placement="right"
+        <el-tooltip
+class="box-item" effect="light" :content="menu.name" placement="right"
                     popper-class="custom-dropdown-styles">
           <i
             :class="`${
