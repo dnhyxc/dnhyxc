@@ -28,9 +28,9 @@
 
 <script setup lang="ts">
 import type { UploadProps } from 'element-plus';
-import { ElMessage } from 'element-plus';
 import { UploadFilled } from '@element-plus/icons-vue';
 import { FILE_TYPE, FILE_UPLOAD_MSG, WORD_TYPES } from '@/constant';
+import { message } from '@/utils';
 
 interface IProps {
   onUpload: (event: { file: File }) => void;
@@ -47,11 +47,17 @@ const beforeUpload: UploadProps['beforeUpload'] = (rawFile) => {
   if (props.fileType && typeof props.fileType === 'string') {
     if (!rawFile.type.includes(props.fileType as string)) {
       const type = props.fileType === 'epub' ? 'epub，epub+zip' : props.fileType;
-      ElMessage.error(`只允许上传 ${type} 格式的文件`);
+      message({
+        title: `只允许上传 ${ type } 格式的文件`,
+        type: 'error',
+      });
       return false;
     }
     if (Array.isArray(props.fileType) && !props.fileType.includes(rawFile.type)) {
-      ElMessage.error('只允许上传 doc, docx 格式的文件');
+      message({
+        title: '只允许上传 doc, docx 格式的文件',
+        type: 'error',
+      });
       return false;
     }
     return true;
@@ -59,7 +65,10 @@ const beforeUpload: UploadProps['beforeUpload'] = (rawFile) => {
 
   if (props.fileType && Array.isArray(props.fileType)) {
     if (Array.isArray(props.fileType) && !WORD_TYPES.includes(rawFile.type)) {
-      ElMessage.error('只允许上传 doc, docx 格式的文件');
+      message({
+        title: '只允许上传 doc, docx 格式的文件',
+        type: 'error',
+      });
       return false;
     }
     return true;
@@ -67,10 +76,16 @@ const beforeUpload: UploadProps['beforeUpload'] = (rawFile) => {
 
   if (!props.fileType) {
     if (!FILE_TYPE.includes(rawFile.type)) {
-      ElMessage.error(FILE_UPLOAD_MSG);
+      message({
+        title: FILE_UPLOAD_MSG,
+        type: 'error',
+      });
       return false;
     } else if (rawFile.size / 1024 / 1024 > 20) {
-      ElMessage.error('图片不能超过20M');
+      message({
+        title: '图片不能超过20M',
+        type: 'error',
+      });
       return false;
     }
     return true;

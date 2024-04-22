@@ -9,7 +9,7 @@
     <div class="content">
       <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
         <div ref="articleInfoRef" class="article-info">
-          <PageHeader v-if="articleStore.articleDetail?.authorId"/>
+          <PageHeader v-if="articleStore.articleDetail?.authorId" />
           <Preview
             v-if="articleStore.articleDetail.content"
             :markdown="articleStore.articleDetail.content"
@@ -39,7 +39,7 @@
           @update-focus="updateFocus"
         />
       </el-scrollbar>
-      <ToTopIcon v-if="scrollTop >= 500" :on-scroll-to="onScrollTo"/>
+      <ToTopIcon v-if="scrollTop >= 500" :on-scroll-to="onScrollTo" />
     </div>
     <div class="right">
       <Multibar
@@ -47,7 +47,7 @@
         :scroll-height="articleInfoRef?.offsetHeight"
         :on-scroll-to="() => onScrollTo(articleInfoRef?.offsetHeight)"
       />
-      <Toc class="toc-list"/>
+      <Toc class="toc-list" />
       <AnotherArticle
         v-if="articleStore.articleDetail.content"
         :id="(route.params.id as string)"
@@ -60,14 +60,13 @@
 </template>
 
 <script setup lang="ts">
-import {ipcRenderer} from 'electron';
-import {onMounted, onUnmounted, nextTick, ref, inject, defineAsyncComponent} from 'vue';
-import {useRoute, useRouter} from 'vue-router';
-import {ElMessage} from 'element-plus';
-import {useScroller} from '@/hooks';
-import {scrollTo, checkOS} from '@/utils';
-import {articleStore, commonStore} from '@/store';
-import {WinRefreshParams} from '@/typings/common';
+import { ipcRenderer } from 'electron';
+import { onMounted, onUnmounted, nextTick, ref, inject, defineAsyncComponent } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import { useScroller } from '@/hooks';
+import { scrollTo, checkOS, message } from '@/utils';
+import { articleStore, commonStore } from '@/store';
+import { WinRefreshParams } from '@/typings/common';
 import PageHeader from '@/components/PreviewHeader/index.vue';
 import Multibar from '@/components/Multibar/index.vue';
 import Toc from '@/components/Toc/index.vue';
@@ -110,7 +109,7 @@ onMounted(async () => {
 // 在详情获取成功后，如果路由路径中携带了scrollTo参数，则说明是从列表中点击评论进来的，需要跳转到评论
 const onScroll = () => {
   onScrollTo(articleInfoRef.value?.offsetHeight);
-}
+};
 
 // 组件卸载前，清楚store中的详情信息
 onUnmounted(() => {
@@ -126,22 +125,21 @@ const updateFocus = (value: boolean) => {
 
 // 复制成功回调
 const onCopyCodeSuccess = (value?: string) => {
-  ElMessage({
-    message: '复制成功',
+  message({
+    title: '复制成功！',
     type: 'success',
-    offset: 80,
   });
 };
 
 // 去分类页
 const toClassify = (classify: string) => {
-  router.push(`/classify?classify=${classify}`);
+  router.push(`/classify?classify=${ classify }`);
 };
 
 // 去标签
 const toTag = (tag: string) => {
   if (route.path !== '/tag/list') {
-    router.push(`/tag/list?tag=${tag}`);
+    router.push(`/tag/list?tag=${ tag }`);
   }
 };
 

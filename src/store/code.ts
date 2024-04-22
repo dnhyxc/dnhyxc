@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia';
-import { ElMessage } from 'element-plus';
 import * as Service from '@/server';
-import { normalizeResult } from '@/utils';
+import { message, normalizeResult } from '@/utils';
 import { useCheckUserId } from '@/hooks';
 import { CodeItem, CodeList } from '@/typings/common';
 
@@ -49,7 +48,7 @@ export const useCodeStore = defineStore('code', {
       this.pageNo = this.pageNo + 1;
       this.loading = true;
       const res = normalizeResult<CodeList>(
-        await Service.getCodeList({ pageNo: this.pageNo, pageSize: this.pageSize }),
+        await Service.getCodeList({pageNo: this.pageNo, pageSize: this.pageSize}),
       );
       this.loading = false;
       if (res.success) {
@@ -59,7 +58,7 @@ export const useCodeStore = defineStore('code', {
     },
 
     // 添加图片
-    async saveCode({ content, language }: { content: string; language: string }) {
+    async saveCode({content, language}: { content: string; language: string }) {
       const res = normalizeResult<CodeItem>(
         await Service[this.currentCodeId ? 'updateCode' : 'addCode']({
           id: this.currentCodeId,
@@ -74,25 +73,22 @@ export const useCodeStore = defineStore('code', {
         this.codeList = [res.data, ...this.codeList];
         !this.currentCodeId && (this.currentCodeId = res.data.id);
       }
-
-      ElMessage({
-        message: res.message,
+      message({
+        title: res.message,
         type: res.success ? 'success' : 'error',
-        offset: 80,
       });
     },
 
     // 删除代码示例
     async deleteCode(id: string) {
-      const res = normalizeResult<{ id: string }>(await Service.deleteCode({ id }));
+      const res = normalizeResult<{ id: string }>(await Service.deleteCode({id}));
       if (res.success) {
         this.clearCodeInfo();
         this.getCodeList();
       } else {
-        ElMessage({
-          message: res.message,
+        message({
+          title: res.message,
           type: 'error',
-          offset: 80,
         });
       }
     },
@@ -108,10 +104,9 @@ export const useCodeStore = defineStore('code', {
           abstract: res.data.abstract,
         };
       } else {
-        ElMessage({
-          message: res.message,
+        message({
+          title: res.message,
           type: 'error',
-          offset: 80,
         });
       }
     },
@@ -119,7 +114,7 @@ export const useCodeStore = defineStore('code', {
     // 编译C语言, options: gcc 编译选项，如 -lm（链接数学库）、-std=<standard>：指定符合的 C 或 C++ 标准，例如 -std=c11
     async compileCCode(code: string, options?: string) {
       this.compileLoading = true;
-      const res = normalizeResult<string>(await Service.compileCCode({ code, options }));
+      const res = normalizeResult<string>(await Service.compileCCode({code, options}));
       this.compileLoading = false;
       if (res.success) {
         this.compileData = res.data;
@@ -132,7 +127,7 @@ export const useCodeStore = defineStore('code', {
       const res = normalizeResult<string>(await Service.compileJSCode(code));
       this.compileLoading = false;
       if (res.success) {
-        this.compileData = res.data ? `${res.data}` : '';
+        this.compileData = res.data ? `${ res.data }` : '';
       }
     },
 

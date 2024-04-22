@@ -137,10 +137,18 @@
 import { onMounted, onUnmounted, ref, watch, nextTick, computed, reactive } from 'vue';
 import { onBeforeRouteLeave } from 'vue-router';
 import type { UploadProps } from 'element-plus';
-import { ElMessage } from 'element-plus';
 import ePub from 'epubjs';
 import { useChildScroller } from '@/hooks';
-import { scrollTo, debounce, getTheme, calculateLoadProgress, Message, checkOS, getUniqueFileName } from '@/utils';
+import {
+  scrollTo,
+  debounce,
+  getTheme,
+  calculateLoadProgress,
+  Message,
+  checkOS,
+  getUniqueFileName,
+  message
+} from '@/utils';
 import { EPUB_THEMES, BOOK_THEME, DOMAIN_URL } from '@/constant';
 import { uploadStore, bookStore } from '@/store';
 import { AtlasItemParams, BookTocItem, BookTocList, BookRecord } from '@/typings/common';
@@ -205,14 +213,14 @@ let timer: ReturnType<typeof setTimeout> | null = null;
 // 用于存储上一个 ReadableStreamDefaultReader 对象
 let previousReader: any = null;
 
-const { scrollChildRef, scrollChildTop } = useChildScroller();
+const {scrollChildRef, scrollChildTop} = useChildScroller();
 
 defineProps<IProps>();
 
 const emit = defineEmits<Emits>();
 
 const loadBookName = computed(() => {
-  return bookName.value.length > 20 ? `${bookName.value.slice(0, 20)}...` : bookName.value;
+  return bookName.value.length > 20 ? `${ bookName.value.slice(0, 20) }...` : bookName.value;
 });
 
 // 判断是否保存过书籍
@@ -222,12 +230,12 @@ const isSaved = computed(() => {
 
 // 设置字体大小
 watch(fontSize, () => {
-  setFontSize(`${fontSize.value}px`);
+  setFontSize(`${ fontSize.value }px`);
 });
 
 // 设置行间距
 watch(lineHeight, () => {
-  setLineHeight(`${lineHeight.value}px`);
+  setLineHeight(`${ lineHeight.value }px`);
 });
 
 onMounted(() => {
@@ -241,7 +249,7 @@ onUnmounted(() => {
 });
 
 onBeforeRouteLeave(async (to, from, next) => {
-  const { bookId, tocId, tocName, tocHref } = currentTocInfo;
+  const {bookId, tocId, tocName, tocHref} = currentTocInfo;
   // 是否是加载线上的资源
   const isLoadLine = progress.value < 100 && loadType.value === 'line' && !isSaved.value;
   // 页面离开时时，保存上一次阅读书籍的位置
@@ -305,7 +313,7 @@ const resetRendition = () => {
 
 // 保存读书记录
 const createRecord = (top?: boolean) => {
-  const { bookId, tocId, tocName, tocHref } = currentTocInfo;
+  const {bookId, tocId, tocName, tocHref} = currentTocInfo;
   // 是否是加载线上的资源
   const isLoadLine = progress.value < 100 && loadType.value === 'line' && !isSaved.value;
   if (!bookId || !tocId || !tocName || !tocHref || isLoadLine) return;
@@ -328,14 +336,17 @@ bookStore.epubInfo.createRecord = createRecord;
 const beforeUpload: UploadProps['beforeUpload'] = (rawFile) => {
   loadType.value = 'upload';
   if (!rawFile.type.includes('epub')) {
-    ElMessage.error('只允许上传 epub 格式的文件');
+    message({
+      title: '只允许上传 epub 格式的文件！',
+      type: 'error',
+    });
     return false;
   }
   return true;
 };
 
 // 自定义上传
-const onUpload = ({ file }: { file: File }) => {
+const onUpload = ({file}: { file: File }) => {
   bookFile.value = file;
   // 选择其它书籍时，保存上一次阅读书籍的位置
   createRecord(true);
@@ -346,7 +357,7 @@ const onUpload = ({ file }: { file: File }) => {
   reader.onload = async (e: Event) => {
     const buffer = (e.target as FileReader).result as ArrayBuffer;
     // getUniqueFileName 获取唯一文件信息
-    const { newFile } = await getUniqueFileName(file);
+    const {newFile} = await getUniqueFileName(file);
     const filePath = getFilePath(newFile.name);
     // 根据url及userId查找书籍信息，获取书籍 ID，便于查找当前书籍的阅读记录
     await bookStore.findBook(filePath);
@@ -358,7 +369,7 @@ const onUpload = ({ file }: { file: File }) => {
 
 const getFilePath = (fileName: string) => {
   const isDev = import.meta.env.DEV;
-  const filePath = isDev ? `http://localhost:9112/files/${fileName}` : `http://${DOMAIN_URL}/files/${fileName}`;
+  const filePath = isDev ? `http://localhost:9112/files/${ fileName }` : `http://${ DOMAIN_URL }/files/${ fileName }`;
   return filePath;
 };
 
@@ -417,12 +428,12 @@ const getReadBookRecords = async () => {
   if (!currentTocInfo.bookId) return;
   await bookStore.getReadBookRecords(currentTocInfo.bookId);
   if (bookStore.bookRecordInfo) {
-    const { tocName, tocId, tocHref, position, bookId } = bookStore.bookRecordInfo;
+    const {tocName, tocId, tocHref, position, bookId} = bookStore.bookRecordInfo;
     currentTocInfo.tocHref = tocHref!;
     currentTocInfo.tocId = tocId!;
     currentTocInfo.tocName = tocName!;
     currentTocInfo.bookId = bookId!;
-    const res = await Message(`${tocName}`, '是否跳转到历史阅读目录？', 'info');
+    const res = await Message(`${ tocName }`, '是否跳转到历史阅读目录？', 'info');
     if (res === 'confirm') {
       onJumpTo(tocHref!);
       setActiveToc(tocId!);
@@ -491,7 +502,7 @@ const readBook = async (data: AtlasItemParams) => {
   // 选择其它书籍时，保存上一次阅读书籍的位置
   createRecord(true);
   resetRendition();
-  const { url, size, fileName, id } = data;
+  const {url, size, fileName, id} = data;
   currentTocInfo.bookId = id;
   bookSize.value = size / 1024 / 1024;
   loadType.value = 'line';
@@ -529,7 +540,7 @@ const setLineHeight = (height: string) => {
 
 // 设置主题
 const onThemeChange = (body: { background: string; color: string }) => {
-  const { background, color } = body;
+  const {background, color} = body;
   themeColor.value = background;
   fontColor.value = color;
   rendition?.themes.override('color', color);
@@ -571,7 +582,7 @@ const onNext = () => {
 
 // 选择菜单
 const onSelected = (node: BookTocItem) => {
-  const { id, href, label } = node;
+  const {id, href, label} = node;
   setActiveToc(id);
   currentTocInfo.tocHref = href;
   currentTocInfo.tocId = id;
@@ -586,7 +597,7 @@ const setActiveToc = (id: string) => {
   tocs.forEach((toc) => {
     (toc as HTMLElement)?.classList?.remove('active');
   });
-  const active = document.querySelector(`#${id}`) as HTMLElement;
+  const active = document.querySelector(`#${ id }`) as HTMLElement;
   defaultSelectedTocId.value = id;
   active?.classList?.add('active');
 };
@@ -858,6 +869,7 @@ defineExpose({
 
 .font-list {
   padding: 0 20px 0 10px;
+
   .font-info {
     font-size: 16px;
     margin-right: 10px;
@@ -876,6 +888,7 @@ defineExpose({
       .toc-list-wrap {
         height: calc(100vh - 145px);
       }
+
       .toc-list-wrap {
         :deep {
           .scrollbar-wrapper {

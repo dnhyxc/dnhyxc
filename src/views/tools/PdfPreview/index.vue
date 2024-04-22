@@ -34,7 +34,7 @@
       </template>
       <template #loadInfo>
         <div v-if="loadType === 'line' && progress < 100 && !isSaved" class="load-info">
-          <el-progress :show-text="false" :stroke-width="12" :percentage="progress" class="progress-bar"/>
+          <el-progress :show-text="false" :stroke-width="12" :percentage="progress" class="progress-bar" />
           <div class="load-time">
             <span class="progress">
               已加载 {{ progress }}% ({{ loadPdfSize.toFixed(2) }}MB / {{ pdfSize.toFixed(2) }}MB)
@@ -52,9 +52,9 @@
         />
       </div>
       <div v-else class="preview-wrap">
-        <iframe :src="bookStore.pdfInfo.iframeUrl" frameborder="0" class="iframe"/>
+        <iframe :src="bookStore.pdfInfo.iframeUrl" frameborder="0" class="iframe" />
         <div class="actions" @click="bookStore.pdfInfo.addTagVisible = true">
-          <i class="iconfont icon-biaoqian" title="保存书签"/>
+          <i class="iconfont icon-biaoqian" title="保存书签" />
         </div>
       </div>
     </Loading>
@@ -69,7 +69,7 @@
       <el-dialog v-model="bookStore.pdfInfo.addTagVisible" title="保存书签" align-center draggable width="400px">
         <el-form ref="formRef" :model="tagForm" label-width="82px" class="form-wrap" @submit.native.prevent>
           <el-form-item prop="tocName" label="章节名称" class="form-item">
-            <el-input v-model="tagForm.tocName" placeholder="请输入章节名称"/>
+            <el-input v-model="tagForm.tocName" placeholder="请输入章节名称" />
           </el-form-item>
           <el-form-item
             prop="tocId"
@@ -82,7 +82,7 @@
               },
             ]"
           >
-            <el-input v-model="tagForm.tocId" placeholder="请输入章节页码"/>
+            <el-input v-model="tagForm.tocId" placeholder="请输入章节页码" />
           </el-form-item>
         </el-form>
         <template #footer>
@@ -97,14 +97,13 @@
 </template>
 
 <script setup lang="ts">
-import {ref, reactive, computed, onUnmounted} from 'vue';
-import {onBeforeRouteLeave, useRouter} from 'vue-router';
-import {ElMessage} from 'element-plus';
-import type {UploadProps, FormInstance} from 'element-plus';
-import {uploadStore, bookStore} from '@/store';
-import {DOMAIN_URL} from '@/constant';
-import {calculateLoadProgress, Message, getUniqueFileName, ipcRenderers} from '@/utils';
-import {AtlasItemParams, BookRecord} from '@/typings/common';
+import { ref, reactive, computed, onUnmounted } from 'vue';
+import { onBeforeRouteLeave, useRouter } from 'vue-router';
+import type { UploadProps, FormInstance } from 'element-plus';
+import { uploadStore, bookStore } from '@/store';
+import { DOMAIN_URL } from '@/constant';
+import { calculateLoadProgress, Message, getUniqueFileName, ipcRenderers, message } from '@/utils';
+import { AtlasItemParams, BookRecord } from '@/typings/common';
 import BookList from '../BookList/index.vue';
 import PreviewHeader from '../PreviewHeader/index.vue';
 
@@ -240,7 +239,7 @@ const onSave = async () => {
 
 const getFilePath = (fileName: string) => {
   const isDev = import.meta.env.DEV;
-  const filePath = isDev ? `http://localhost:9112/files/${fileName}` : `http://${DOMAIN_URL}/files/${fileName}`;
+  const filePath = isDev ? `http://localhost:9112/files/${ fileName }` : `http://${ DOMAIN_URL }/files/${ fileName }`;
   return filePath;
 };
 
@@ -248,7 +247,10 @@ const getFilePath = (fileName: string) => {
 const beforeUpload: UploadProps['beforeUpload'] = async (file) => {
   loadType.value = 'upload';
   if (file.type !== 'application/pdf') {
-    ElMessage.error('只允许上传 epub 格式的文件');
+    message({
+      title: '只允许上传 epub 格式的文件！',
+      type: 'error',
+    });
     return false;
   }
   return true;
@@ -374,9 +376,9 @@ const getReadBookRecords = async (fileURL: string, curBookId: string) => {
     tagForm.tocName = tocName!;
     tagForm.bookId = bookId!;
     try {
-      const res = await Message(`第 ${tocId} 页 ${tocName || ''}`, '是否跳转到历史阅读目录？', 'info');
+      const res = await Message(`第 ${ tocId } 页 ${ tocName || '' }`, '是否跳转到历史阅读目录？', 'info');
       if (res === 'confirm') {
-        bookStore.pdfInfo.iframeUrl = `${fileURL}#page=${tocId}`;
+        bookStore.pdfInfo.iframeUrl = `${ fileURL }#page=${ tocId }`;
         currentBookId.value = curBookId;
         clearLoading();
       }
@@ -432,7 +434,10 @@ const onCancel = () => {
 
 const onSubmit = async () => {
   if (!tagForm.bookId || !tagForm.tocId) {
-    ElMessage.error('请填写页码');
+    message({
+      title: '请填写页码！',
+      type: 'error',
+    });
     return;
   }
   const params: BookRecord = {

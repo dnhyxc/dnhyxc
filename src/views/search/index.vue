@@ -66,25 +66,24 @@
 import { ipcRenderer } from 'electron';
 import { ref, computed, onMounted, onUnmounted, watch, inject } from 'vue';
 import { useRoute } from 'vue-router';
-import { ElMessage } from 'element-plus';
 import { searchStore, articleStore } from '@/store';
 import { SEARCH_TYPE } from '@/constant';
 import { useScroller, useDeleteArticle } from '@/hooks';
-import { checkOS, scrollTo } from '@/utils';
+import { checkOS, message, scrollTo } from '@/utils';
 import { ArticleItem, WinRefreshParams } from '@/typings/common';
 import Empty from '@/components/Empty/index.vue';
 
 const reload = inject<Function>('reload');
 
 const route = useRoute();
-const { scrollRef, scrollTop } = useScroller();
-const { deleteArticle } = useDeleteArticle({ pageType: 'search' });
+const {scrollRef, scrollTop} = useScroller();
+const {deleteArticle} = useDeleteArticle({pageType: 'search'});
 
 const showMore = ref<boolean>(false);
 const isMounted = ref<boolean>(false);
 
 const noMore = computed(() => {
-  const { articleList, total } = searchStore;
+  const {articleList, total} = searchStore;
   return articleList.length >= total && articleList.length;
 });
 const disabled = computed(() => searchStore.loading || noMore.value);
@@ -101,7 +100,7 @@ const conditions = computed(() => {
 onMounted(() => {
   // 监听详情点赞状态，实时更改列表对应文章的点赞状态
   ipcRenderer.on('refresh', (_, params: WinRefreshParams) => {
-    const { pageType, isLike = true } = params;
+    const {pageType, isLike = true} = params;
     // 需要判断是否是属于当前活动页面，并且只是点击点赞而不是收藏或评论防止重复触发
     if (route.name === 'search' && pageType !== 'list' && isLike) {
       reload && reload();
@@ -134,10 +133,10 @@ const onEnter = (e: Event) => {
   if (keyword) {
     getSearchArticleList();
   } else {
-    ElMessage({
-      message: '请先输入搜索关键字',
+    message({
+      title: '请先输入搜索关键字',
+      message: '没有输入搜索关键字，无法搜索！',
       type: 'warning',
-      offset: 80,
     });
   }
 };
@@ -148,10 +147,10 @@ const onSearch = () => {
   if (searchStore.keyword) {
     getSearchArticleList();
   } else {
-    ElMessage({
-      message: '请先输入搜索关键字',
+    message({
+      title: '请先输入搜索关键字',
+      message: '没有输入搜索关键字，无法搜索！',
       type: 'warning',
-      offset: 80,
     });
   }
 };
@@ -192,7 +191,7 @@ const onSelectChange = (value: string) => {
 
 // 文章点赞
 const likeListArticle = async (id: string, data?: ArticleItem) => {
-  await articleStore.likeListArticle({ id, pageType: 'search', data });
+  await articleStore.likeListArticle({id, pageType: 'search', data});
 };
 
 // 置顶

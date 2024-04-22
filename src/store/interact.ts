@@ -1,11 +1,10 @@
-import {defineStore} from 'pinia';
-import {Router} from 'vue-router';
-import {ElMessage} from 'element-plus';
-import {BarrageItem, InteractListRes} from '@/typings/common';
+import { defineStore } from 'pinia';
+import { Router } from 'vue-router';
+import { BarrageItem, InteractListRes } from '@/typings/common';
 import * as Service from '@/server';
-import {normalizeResult, Message} from '@/utils';
-import {loginStore} from '@/store';
-import {useCheckUserId} from '@/hooks';
+import { normalizeResult, Message, message } from '@/utils';
+import { loginStore } from '@/store';
+import { useCheckUserId } from '@/hooks';
 
 interface IProps {
   barrageList: BarrageItem[]; // 弹幕列表
@@ -42,10 +41,9 @@ export const useInteractStore = defineStore('interact', {
         }),
       );
       if (!res.success) {
-        ElMessage({
-          message: res.message,
+        message({
+          title: res.message,
           type: 'error',
-          offset: 80,
         });
       }
     },
@@ -60,10 +58,9 @@ export const useInteractStore = defineStore('interact', {
       if (res.success) {
         this.barrageList = res.data;
       } else {
-        ElMessage({
-          message: res.message,
+        message({
+          title: res.message,
           type: 'error',
-          offset: 80,
         });
       }
     },
@@ -84,10 +81,9 @@ export const useInteractStore = defineStore('interact', {
         this.total = res.data.total;
         onScroll?.(2, isDelete);
       } else {
-        ElMessage({
-          message: res.message,
+        message({
+          title: res.message,
           type: 'error',
-          offset: 80,
         });
       }
     },
@@ -106,16 +102,14 @@ export const useInteractStore = defineStore('interact', {
           this.barrageList = id.length ? this.barrageList.filter((i) => i.id !== id) : [];
           this.clearInteractList(false);
           this.getInteractList(true, onScrollTo, true);
-          ElMessage({
-            message: res.message,
+          message({
+            title: res.message,
             type: 'success',
-            offset: 80,
           });
         } else {
-          ElMessage({
-            message: res.message,
+          message({
+            title: res.message,
             type: 'error',
-            offset: 80,
           });
         }
       });

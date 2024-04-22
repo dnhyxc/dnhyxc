@@ -1,9 +1,8 @@
 import { defineStore } from 'pinia';
-import { ElMessage } from 'element-plus';
 import { CollectListRes, AddCollectionRes, CollectParams, ArticleItem, ArticleListResult } from '@/typings/common';
 import { articleStore, personalStore, loginStore } from '@/store';
 import * as Service from '@/server';
-import { normalizeResult, Message, getStoreUserInfo, ipcRenderers } from '@/utils';
+import { normalizeResult, Message, getStoreUserInfo, ipcRenderers, message } from '@/utils';
 import { useCheckUserId } from '@/hooks';
 import { PAGESIZE } from '@/constant';
 import { sendMessage } from '@/socket';
@@ -29,7 +28,7 @@ export const useCollectStore = defineStore('collect', {
     loading: null,
     checkedCollectIds: [],
     collectStatus: false,
-    collectInfo: { id: '' },
+    collectInfo: {id: ''},
     articleList: [],
   }),
 
@@ -39,13 +38,12 @@ export const useCollectStore = defineStore('collect', {
       // 检验是否有userId，如果没有禁止发送请求
       if (!useCheckUserId()) return;
       const res = normalizeResult<AddCollectionRes>(
-        await Service.createCollection({ ...params, status: Number(params.status) }),
+        await Service.createCollection({...params, status: Number(params.status)}),
       );
       if (res.success) {
-        ElMessage({
-          message: res.message,
+        message({
+          title: res.message,
           type: 'success',
-          offset: 80,
         });
         this.checkedCollectIds = [res.data.id];
         // 创建成功后，静态向我的主页中的我的收藏列表中曾加
@@ -53,10 +51,9 @@ export const useCollectStore = defineStore('collect', {
         personalStore.total = personalStore.total + 1;
         personalStore.collectTotal += 1;
       } else {
-        ElMessage({
-          message: res.message,
+        message({
+          title: res.message,
           type: 'error',
-          offset: 80,
         });
       }
     },
@@ -89,16 +86,14 @@ export const useCollectStore = defineStore('collect', {
           ...params,
           status: Number(params?.status), // 将状态改为数值类型，用户界面判断是否展示锁的标识
         } as AddCollectionRes;
-        ElMessage({
-          message: res.message,
+        message({
+          title: res.message,
           type: 'success',
-          offset: 80,
         });
       } else {
-        ElMessage({
-          message: res.message,
+        message({
+          title: res.message,
           type: 'error',
-          offset: 80,
         });
       }
     },
@@ -121,10 +116,9 @@ export const useCollectStore = defineStore('collect', {
         this.collectList = [...this.collectList, ...res.data.list];
         this.total = res.data.total;
       } else {
-        ElMessage({
-          message: res.message,
+        message({
+          title: res.message,
           type: 'error',
-          offset: 80,
         });
       }
     },
@@ -134,7 +128,7 @@ export const useCollectStore = defineStore('collect', {
       if (!useCheckUserId()) return;
 
       // 判断是article还是detail、分别推送刷新消息给主进程
-      const { pathname } = window.location;
+      const {pathname} = window.location;
 
       const res = normalizeResult<string>(
         await Service.collectArticles({
@@ -155,11 +149,11 @@ export const useCollectStore = defineStore('collect', {
           this.removeCollectArticle(articleId, this.collectInfo.id, true);
         }
 
-        const { userInfo } = getStoreUserInfo();
+        const {userInfo} = getStoreUserInfo();
         // 收藏别人文章成功之后推送消息
-        const { username, userId } = loginStore.userInfo;
+        const {username, userId} = loginStore.userInfo;
 
-        const { authorId } = articleStore?.articleDetail;
+        const {authorId} = articleStore?.articleDetail;
 
         if (userInfo?.userId !== authorId && authorId !== userId) {
           sendMessage(
@@ -178,18 +172,16 @@ export const useCollectStore = defineStore('collect', {
           );
         }
 
-        ipcRenderers.sendRefresh({ articleId, pathname, isLike: false });
+        ipcRenderers.sendRefresh({articleId, pathname, isLike: false});
 
-        ElMessage({
-          message: res.message,
+        message({
+          title: res.message,
           type: 'success',
-          offset: 80,
         });
       } else {
-        ElMessage({
-          message: res.message,
+        message({
+          title: res.message,
           type: 'error',
-          offset: 80,
         });
       }
     },
@@ -212,11 +204,11 @@ export const useCollectStore = defineStore('collect', {
         }
         this.collectStatus = false;
 
-        const { userInfo } = getStoreUserInfo();
+        const {userInfo} = getStoreUserInfo();
 
-        const { username, userId } = loginStore.userInfo;
+        const {username, userId} = loginStore.userInfo;
 
-        const { authorId } = articleStore?.articleDetail;
+        const {authorId} = articleStore?.articleDetail;
 
         if (userId !== authorId && authorId !== userInfo?.userId) {
           sendMessage(
@@ -235,14 +227,13 @@ export const useCollectStore = defineStore('collect', {
           );
         }
 
-        const { pathname } = window.location;
+        const {pathname} = window.location;
         // 判断是article还是detail、分别推送刷新消息给主进程
-        ipcRenderers.sendRefresh({ articleId, pathname, isLike: false });
+        ipcRenderers.sendRefresh({articleId, pathname, isLike: false});
 
-        ElMessage({
-          message: res.message,
+        message({
+          title: res.message,
           type: 'success',
-          offset: 80,
         });
       }
     },
@@ -257,10 +248,9 @@ export const useCollectStore = defineStore('collect', {
         // 查询完收藏集信息之后，初始化获取收藏的文章列表
         this.getCollectArticles();
       } else {
-        ElMessage({
-          message: res.message,
+        message({
+          title: res.message,
           type: 'error',
-          offset: 80,
         });
       }
     },
@@ -283,10 +273,9 @@ export const useCollectStore = defineStore('collect', {
         this.articleList = [...this.articleList, ...res.data.list];
         this.total = res.data.total;
       } else {
-        ElMessage({
-          message: res.message,
+        message({
+          title: res.message,
           type: 'error',
-          offset: 80,
         });
       }
     },
@@ -310,10 +299,9 @@ export const useCollectStore = defineStore('collect', {
         // 重新获取收藏集中的文章
         this.getCollectArticles();
       } else {
-        ElMessage({
-          message: res.message,
+        message({
+          title: res.message,
           type: 'error',
-          offset: 80,
         });
       }
     },
@@ -335,18 +323,16 @@ export const useCollectStore = defineStore('collect', {
           }),
         );
         if (res.success) {
-          ElMessage({
-            message: res.message,
+          message({
+            title: res.message,
             type: 'success',
-            offset: 80,
           });
           // 删除成功后，重新回到我的主页
           toPersonal && toPersonal();
         } else {
-          ElMessage({
-            message: res.message,
+          message({
+            title: res.message,
             type: 'error',
-            offset: 80,
           });
         }
       });

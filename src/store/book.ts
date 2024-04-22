@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia';
-import { ElMessage } from 'element-plus';
 import * as Service from '@/server';
-import { normalizeResult } from '@/utils';
+import { message, normalizeResult } from '@/utils';
 import { useCheckUserId } from '@/hooks';
 import { AtlasList, AtlasItemParams, BookRecord } from '@/typings/common';
 
@@ -63,10 +62,9 @@ export const useBookStore = defineStore('book', {
         if (res.code === 201) return res;
         this.bookList = [res.data, ...this.bookList];
       } else {
-        ElMessage({
-          message: res.message,
+        message({
+          title: res.message,
           type: 'error',
-          offset: 80,
         });
       }
 
@@ -81,7 +79,7 @@ export const useBookStore = defineStore('book', {
       this.pageNo = this.pageNo + 1;
       this.loading = true;
       const res = normalizeResult<AtlasList>(
-        await Service.getBookList({ pageNo: this.pageNo, pageSize: this.pageSize, bookType: searchBookType }),
+        await Service.getBookList({pageNo: this.pageNo, pageSize: this.pageSize, bookType: searchBookType}),
       );
       this.loading = false;
       if (res.success) {
@@ -91,23 +89,22 @@ export const useBookStore = defineStore('book', {
     },
 
     // 删除书籍列表
-    async deleteBook({ id, url, searchBookType = 'epub' }: { id: string; url?: string; searchBookType?: string }) {
-      const res = normalizeResult<{ url: string }>(await Service.deleteBook({ id, url }));
+    async deleteBook({id, url, searchBookType = 'epub'}: { id: string; url?: string; searchBookType?: string }) {
+      const res = normalizeResult<{ url: string }>(await Service.deleteBook({id, url}));
       if (res.success) {
         this.clearBookInfo();
         await this.getBookList(searchBookType);
       } else {
-        ElMessage({
-          message: res.message,
+        message({
+          title: res.message,
           type: 'error',
-          offset: 80,
         });
       }
     },
 
     // 查找书籍信息
     async findBook(url: string) {
-      const res = normalizeResult<AtlasItemParams>(await Service.findBook({ url }));
+      const res = normalizeResult<AtlasItemParams>(await Service.findBook({url}));
       if (res.success) {
         this.currentUploadId = res.data?.id || '';
       }
@@ -130,10 +127,9 @@ export const useBookStore = defineStore('book', {
           return item;
         });
       }
-      ElMessage({
-        message: res.message,
+      message({
+        title: res.message,
         type: res.success ? 'success' : 'error',
-        offset: 80,
       });
     },
 
@@ -141,36 +137,33 @@ export const useBookStore = defineStore('book', {
     async createReadBookRecords(params: BookRecord) {
       const res = normalizeResult<BookRecord>(await Service.createReadBookRecords(params));
       if (!res.success) {
-        ElMessage({
-          message: res.message,
+        message({
+          title: res.message,
           type: 'error',
-          offset: 80,
         });
       }
     },
 
     // 获取读书记录
     async getReadBookRecords(bookId: string) {
-      const res = normalizeResult<BookRecord>(await Service.getReadBookRecords({ bookId }));
+      const res = normalizeResult<BookRecord>(await Service.getReadBookRecords({bookId}));
       if (res.success) {
         this.bookRecordInfo = res.data;
         return res.data;
       } else {
-        ElMessage({
-          message: res.message,
+        message({
+          title: res.message,
           type: res.success ? 'success' : 'error',
-          offset: 80,
         });
       }
     },
 
     // 删除读书记录
     async deleteReadBookRecords(bookId: string) {
-      const res = normalizeResult<{ count: number }>(await Service.deleteReadBookRecords({ bookId }));
-      ElMessage({
-        message: res.message,
+      const res = normalizeResult<{ count: number }>(await Service.deleteReadBookRecords({bookId}));
+      message({
+        title: res.message,
         type: res.success ? 'success' : 'error',
-        offset: 80,
       });
     },
 

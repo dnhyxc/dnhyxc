@@ -37,7 +37,7 @@
       class="create-editor"
     >
       <template #leftAction>
-        <span class="action iconfont icon-debug-alt" title="代码测试工具" @click="onShowCodeRun"/>
+        <span class="action iconfont icon-debug-alt" title="代码测试工具" @click="onShowCodeRun" />
       </template>
     </MonacoEditor>
     <CreateDrawer
@@ -48,16 +48,15 @@
       v-model:prevContent="prevContent"
       :article-id="(route?.query?.id as string)"
     />
-    <DraftList v-model:draft-visible="draftVisible"/>
+    <DraftList v-model:draft-visible="draftVisible" />
   </Loading>
 </template>
 
 <script setup lang="ts">
-import {ref, watch, defineAsyncComponent, onMounted, onUnmounted} from 'vue';
-import {useRoute, useRouter, onBeforeRouteLeave} from 'vue-router';
-import {ElMessage} from 'element-plus';
-import {articleStore, createStore, loginStore} from '@/store';
-import {Message, ipcRenderers} from '@/utils';
+import { ref, watch, defineAsyncComponent, onMounted, onUnmounted } from 'vue';
+import { useRoute, useRouter, onBeforeRouteLeave } from 'vue-router';
+import { articleStore, createStore, loginStore } from '@/store';
+import { Message, ipcRenderers, message } from '@/utils';
 import Loading from '@/components/Loading/index.vue';
 import AsyncLoading from '@/components/AsyncLoading/index.vue';
 import CreateDrawer from './Create/index.vue';
@@ -188,17 +187,16 @@ const showDraft = () => {
 
 // 复制成功回调
 const onCopyCodeSuccess = (value?: string) => {
-  ElMessage({
-    message: '复制成功',
+  message({
+    title: '复制成功！',
     type: 'success',
-    offset: 80,
   });
 };
 
 // 预览
 const toPreview = (id: string) => {
   // 手动去除query articleId 参数
-  router.push(`/draft?id=${id}`);
+  router.push(`/draft?id=${ id }`);
 };
 
 // 开启代码调试

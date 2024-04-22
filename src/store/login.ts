@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia';
 import { Router } from 'vue-router';
-import { ElMessage } from 'element-plus';
 import { LoginParams, UserLoginParams, UserInfoParams, registerRes, VerifyCodeParams } from '@/typings/common';
 import { commonStore, messageStore } from '@/store';
 import * as Service from '@/server';
@@ -13,7 +12,7 @@ import {
   locSetItem,
   locGetItem,
   locRemoveItem,
-  ipcRenderers,
+  ipcRenderers, message,
 } from '@/utils';
 import { createWebSocket, closeSocket } from '@/socket';
 import { UPDATE_INFO_API_PATH } from '@/constant';
@@ -68,16 +67,14 @@ export const useLoginStore = defineStore('login', {
           }),
         );
         if (res.success) {
-          ElMessage({
-            message: res.message,
+          message({
+            title: res.message,
             type: 'success',
-            offset: 80,
           });
         } else {
-          ElMessage({
-            message: res.message,
+          message({
+            title: res.message,
             type: 'error',
-            offset: 80,
           });
         }
         return res.success;
@@ -90,7 +87,7 @@ export const useLoginStore = defineStore('login', {
     async getVerifyCode() {
       if (this.loadCode) return;
       this.loadCode = true;
-      const res = normalizeResult<VerifyCodeParams>(await Service.verifyCode({ id: this.verifyCode.id }));
+      const res = normalizeResult<VerifyCodeParams>(await Service.verifyCode({id: this.verifyCode.id}));
       this.loadCode = false;
       if (res.success) {
         const code = decrypt(res.data.code);
@@ -116,13 +113,13 @@ export const useLoginStore = defineStore('login', {
           }),
         );
         if (res.success) {
-          const { token, ...userInfo } = res.data;
+          const {token, ...userInfo} = res.data;
           this.token = token;
           this.userInfo = userInfo as UserInfoParams;
           locSetItem('token', token!);
           locSetItem('userInfo', JSON.stringify(userInfo));
           // 登陆成功之后创建websocket
-          ipcRenderers.restore(JSON.stringify({ userInfo: this.userInfo, token: this.token }));
+          ipcRenderers.restore(JSON.stringify({userInfo: this.userInfo, token: this.token}));
           // article 页面不立即创建，因为 article 页面加载之后自动会创建
           if (!window.location.pathname.includes('/article')) {
             createWebSocket();
@@ -132,10 +129,9 @@ export const useLoginStore = defineStore('login', {
           router?.push(commonStore.backPath);
         } else {
           res.code === 406 && onResetCode?.();
-          ElMessage({
-            message: res.message,
+          message({
+            title: res.message,
             type: 'error',
-            offset: 80,
           });
         }
         return res;
@@ -147,23 +143,21 @@ export const useLoginStore = defineStore('login', {
     // 重置密码
     async onResetPwd(params: LoginParams, router?: Router) {
       const res = normalizeResult<UserInfoParams>(
-        await Service.resetPassword({ ...params, phone: encrypt(params.phone!), password: encrypt(params.password) }),
+        await Service.resetPassword({...params, phone: encrypt(params.phone!), password: encrypt(params.password)}),
       );
       // 重置成功后直接登录
       if (res.success) {
         // 先退出登录，防止自己踢自己
         // this.onQuit();
         // await this.onLogin(params, router);
-        ElMessage({
-          message: res.message,
+        message({
+          title: res.message,
           type: 'success',
-          offset: 80,
         });
       } else {
-        ElMessage({
-          message: res.message,
+        message({
+          title: res.message,
           type: 'error',
-          offset: 80,
         });
       }
       return res.success;
@@ -175,17 +169,15 @@ export const useLoginStore = defineStore('login', {
         const res = normalizeResult<string>(await Service.logout());
         if (res.success) {
           this.onQuit();
-          ElMessage({
-            message: res.message,
+          message({
+            title: res.message,
             type: 'success',
-            offset: 80,
           });
           router?.push('/home');
         } else {
-          ElMessage({
-            message: res.message,
+          message({
+            title: res.message,
             type: 'error',
-            offset: 80,
           });
         }
       });
@@ -205,7 +197,7 @@ export const useLoginStore = defineStore('login', {
     // 修改用户信息
     async updateUserInfo(params: UserInfoParams, pageType: number, router?: Router) {
       if (!useCheckUserId(false)) return;
-      const { username } = this.userInfo;
+      const {username} = this.userInfo;
       const res = normalizeResult<registerRes>(await Service.updateUserInfo(params, UPDATE_INFO_API_PATH[pageType]));
       if (res.success) {
         this.userInfo = {
@@ -224,10 +216,10 @@ export const useLoginStore = defineStore('login', {
         if ((params.username && params.username !== username) || params.password) {
           // 清空所有用户信息
           this.onQuit();
-          ElMessage({
-            message: `${params.password ? '密码已重置' : '用户名称已修改'}，请重新登录`,
+          message({
+            title: '重置成功！',
+            message: `${ params.password ? '密码已重置' : '用户名称已修改' }，请重新登录`,
             type: 'success',
-            offset: 80,
           });
           this.timer = setTimeout(() => {
             if (this.timer) {
@@ -237,17 +229,15 @@ export const useLoginStore = defineStore('login', {
             router?.replace('/login');
           }, 100);
         } else {
-          ElMessage({
-            message: res.message,
+          message({
+            title: res.message,
             type: 'success',
-            offset: 80,
           });
         }
       } else {
-        ElMessage({
-          message: res.message,
+        message({
+          title: res.message,
           type: 'warning',
-          offset: 80,
         });
       }
     },

@@ -77,7 +77,7 @@
 <script setup lang="ts">
 import { inject, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { formatDate, showMessage, ipcRenderers } from '@/utils';
+import { formatDate, message, ipcRenderers } from '@/utils';
 import { loginStore } from '@/store';
 import { IMG1 } from '@/constant';
 import { ArticleItem, TimelineArticles, TimelineResult } from '@/typings/common';
@@ -100,15 +100,23 @@ const isLike = ref<boolean>(false);
 // 编辑
 const toEdit = async (data: ArticleItem | TimelineArticles) => {
   if ((data as ArticleItem)?.isDelete) {
-    return showMessage();
+    message({
+      title: '文章已下架，无法操作',
+      type: 'warning'
+    });
+    return;
   }
-  router.push(`/create?id=${data.id}`);
+  router.push(`/create?id=${ data.id }`);
 };
 
 // 删除
 const onReomve = async (data: ArticleItem | TimelineArticles) => {
   if ((data as ArticleItem)?.isDelete) {
-    return showMessage();
+    message({
+      title: '文章已下架，无法操作',
+      type: 'warning'
+    });
+    return;
   }
   props?.deleteTimeLineArticle?.(data as ArticleItem);
 };
@@ -123,7 +131,7 @@ const likeListArticle = async (data: ArticleItem | TimelineArticles) => {
 
 // 去作者主页
 const toPersonal = (id: string) => {
-  router.push(`/personal?authorId=${id}`);
+  router.push(`/personal?authorId=${ id }`);
   let timer: ReturnType<typeof setTimeout> | null = null;
   if (route.path === '/personal') {
     if (timer) {
@@ -139,42 +147,54 @@ const toPersonal = (id: string) => {
 
 // 去分类页
 const toClassify = (classify: string) => {
-  router.push(`/classify?classify=${classify}`);
+  router.push(`/classify?classify=${ classify }`);
 };
 
 // 去标签
 const toTag = (tag: string) => {
   if (route.path !== '/tag/list') {
-    router.push(`/tag/list?tag=${tag}`);
+    router.push(`/tag/list?tag=${ tag }`);
   }
 };
 
 // 前往详情/编辑
 const toDetail = (data: ArticleItem | TimelineArticles) => {
   if ((data as ArticleItem)?.isDelete) {
-    return showMessage();
+    message({
+      title: '文章已下架，无法操作',
+      type: 'warning'
+    });
+    return;
   }
-  router.push(`/detail/${data?.id}`);
+  router.push(`/detail/${ data?.id }`);
 };
 
 // 评论
 const onComment = (data: ArticleItem | TimelineArticles) => {
   if ((data as ArticleItem)?.isDelete) {
-    return showMessage();
+    message({
+      title: '文章已下架，无法操作',
+      type: 'warning'
+    });
+    return;
   }
-  router.push(`/detail/${data?.id}?scrollTo=1`);
+  router.push(`/detail/${ data?.id }?scrollTo=1`);
 };
 
 // 新窗口打开
 const onOpenNewWindow = (data: ArticleItem) => {
   if ((data as ArticleItem)?.isDelete) {
-    return showMessage();
+    message({
+      title: '文章已下架，无法操作',
+      type: 'warning'
+    });
+    return;
   }
-  const { userInfo, token } = loginStore;
+  const {userInfo, token} = loginStore;
   ipcRenderers.sendNewWin({
-    path: `article/${data.id}?from=${route.name as string}`,
+    path: `article/${ data.id }?from=${ route.name as string }`,
     id: data.id,
-    userInfo: JSON.stringify({ userInfo, token }),
+    userInfo: JSON.stringify({userInfo, token}),
   });
 };
 
@@ -197,6 +217,7 @@ const onSelectMenu = (menu: { label: string; value: number }, data: TimelineArti
       padding-bottom: 0;
     }
   }
+
   .timeline-card {
     position: relative;
     display: flex;
@@ -252,6 +273,7 @@ const onSelectMenu = (menu: { label: string; value: number }, data: TimelineArti
         .edit,
         .del {
           font-weight: normal;
+
           &:hover {
             color: var(--active-color);
           }
@@ -267,6 +289,7 @@ const onSelectMenu = (menu: { label: string; value: number }, data: TimelineArti
           font-size: 16px;
           .ellipsisMore(1);
           cursor: pointer;
+
           &:hover {
             color: var(--theme-blue);
           }
@@ -353,6 +376,7 @@ const onSelectMenu = (menu: { label: string; value: number }, data: TimelineArti
         .comment,
         .read-count {
           cursor: pointer;
+
           &:hover {
             color: var(--theme-blue);
           }

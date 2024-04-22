@@ -1,10 +1,9 @@
 /* eslint-disable indent */
-import {defineStore} from 'pinia';
-import {ElMessage} from 'element-plus';
+import { defineStore } from 'pinia';
 import * as Service from '@/server';
-import {normalizeResult, md5HashName, getUniqueFileName, compressImage} from '@/utils';
-import {useCheckUserId} from '@/hooks';
-import {loginStore, pictureStore} from '@/store';
+import { normalizeResult, md5HashName, getUniqueFileName, compressImage, message } from '@/utils';
+import { useCheckUserId } from '@/hooks';
+import { loginStore, pictureStore } from '@/store';
 
 interface IProps {
   visible: boolean;
@@ -43,8 +42,8 @@ export const useUploadStore = defineStore('upload', {
       const newFile = new File(
         [compressFile],
         isAtlas
-          ? `__ATLAS__${fileName}_${loginStore.userInfo.userId}.${ext}`
-          : `${fileName}_${loginStore.userInfo.userId}.${ext}`,
+          ? `__ATLAS__${ fileName }_${ loginStore.userInfo.userId }.${ ext }`
+          : `${ fileName }_${ loginStore.userInfo.userId }.${ ext }`,
         {
           type: compressFile.type,
         },
@@ -65,10 +64,9 @@ export const useUploadStore = defineStore('upload', {
       // 检验是否有userId，如果没有禁止发送请求
       if (!useCheckUserId()) return;
       if (file.size / 1024 / 1024 > 100) {
-        ElMessage({
-          message: '文件大小超过 100 M，无法上传！',
+        message({
+          title: '文件大小超过 100 M，无法上传！',
           type: 'warning',
-          offset: 80,
         });
         return false;
       }

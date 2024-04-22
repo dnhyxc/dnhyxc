@@ -1,7 +1,6 @@
 import { useRouter } from 'vue-router';
 import { toRaw, onMounted, onUnmounted, ref, computed, watchEffect, nextTick } from 'vue';
 import type { Ref } from 'vue';
-import { ElMessage } from 'element-plus';
 import {
   loginStore,
   articleStore,
@@ -14,7 +13,7 @@ import {
 } from '@/store';
 import { AUTHOR_ROUTES } from '@/constant';
 import { CommentParams, useDeleteArticleParams, DeleteArticleParams } from '@/typings/common';
-import { Message, getStoreUserInfo } from '@/utils';
+import { Message, getStoreUserInfo, message } from '@/utils';
 
 const router = useRouter();
 
@@ -46,7 +45,7 @@ export const useChildScroller = () => {
     scrollChildTop.value = e.target.scrollTop;
   };
 
-  return { scrollChildRef, scrollChildTop };
+  return {scrollChildRef, scrollChildTop};
 };
 
 // 监听滚动条事件hooks
@@ -69,21 +68,19 @@ export const useScroller = () => {
     scrollTop.value = e.target.scrollTop;
   };
 
-  return { scrollRef, scrollTop };
+  return {scrollRef, scrollTop};
 };
 
 // 判断是否存在userId的hooks
 export const useCheckUserId = (needMsg: boolean = true) => {
   // 获取存储在localstorage中的登录信息
-  const { userInfo: storeUserInfo } = getStoreUserInfo();
-  const { userInfo } = loginStore;
+  const {userInfo: storeUserInfo} = getStoreUserInfo();
+  const {userInfo} = loginStore;
   if (!userInfo?.userId && !storeUserInfo?.userId) {
-    needMsg &&
-      ElMessage({
-        message: '请先登录后再操作哦！',
-        type: 'warning',
-        offset: 80,
-      });
+    needMsg && message({
+      title: '请先登录后再操作哦！',
+      type: 'warning',
+    });
     return false;
   }
   return true;
@@ -169,13 +166,13 @@ export const useDeleteArticle = ({
     });
   };
 
-  return { deleteArticle };
+  return {deleteArticle};
 };
 
 // 判断页面是否有权限
 export const useGetRouteAuthInfo = () => {
   const router = useRouter();
-  const { menus } = loginStore;
+  const {menus} = loginStore;
   const name = location.pathname.slice(1); // picture
   // 判断是否具备该菜单权限
   const noAuthMenus = AUTHOR_ROUTES.filter((i) => !menus?.some((j) => j === i));

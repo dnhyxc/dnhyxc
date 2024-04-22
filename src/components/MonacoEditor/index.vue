@@ -100,7 +100,6 @@
 <script setup lang="ts">
 import { ref, onMounted, nextTick, onDeactivated, computed, watchEffect, watch } from 'vue';
 import * as monaco from 'monaco-editor';
-import { ElMessage } from 'element-plus';
 import jsonWorker from 'monaco-editor/esm/vs/language/json/json.worker?worker';
 import cssWorker from 'monaco-editor/esm/vs/language/css/css.worker?worker';
 import htmlWorker from 'monaco-editor/esm/vs/language/html/html.worker?worker';
@@ -114,7 +113,7 @@ import parserHtml from 'prettier/parser-html';
 import parserYaml from 'prettier/parser-yaml';
 import parserPostcss from 'prettier/parser-postcss';
 import { MONACO_EDITOR_LANGUAGES, CODE_RUN_LANGUAGES, VS_CODE_SHORTCUT_KEYS } from '@/constant';
-import { checkOS } from '@/utils';
+import { checkOS, message } from '@/utils';
 import { createStore, codeStore } from '@/store';
 import DiffMonacoEditor from '@/components/MonacoDiffEditor/index.vue';
 
@@ -355,10 +354,10 @@ const onClear = () => {
 // 保存
 const onPublish = () => {
   if (!createStore?.createInfo?.content?.trim()) {
-    ElMessage({
-      message: '嘿！一个字都没写休想发布',
+    message({
+      title: '嘿！一个字都没写休想发布',
+      message: '请先编写文章内容后再尝试发布！',
       type: 'warning',
-      offset: 80,
     });
     return;
   }
@@ -368,10 +367,10 @@ const onPublish = () => {
 // 保存草稿
 const onSaveDraft = () => {
   if (!createStore?.createInfo?.content?.trim()) {
-    ElMessage({
-      message: '嘿！一个字都没写休想发布',
+    message({
+      title: '嘿！一个字都没写休想发布',
+      message: '请先编写文章内容后再尝试发布！',
       type: 'warning',
-      offset: 80,
     });
     return;
   }
@@ -469,9 +468,11 @@ const onDiffValue = () => {
       .un-save {
         font-size: 12px;
         color: @font-danger;
+
         &:hover {
           color: @font-danger;
         }
+
         cursor: default;
       }
 

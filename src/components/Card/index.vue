@@ -1,74 +1,56 @@
 <!--
- * Card组件
+ * Card
  * @author: dnhyxc
- * @since: 2023-02-04
+ * @since: 2024-04-19
  * index.vue
 -->
 <template>
   <ContextMenu class="block" :menu="CARD_CONTEXT_MENU" @select="onSelectMenu">
     <div class="card-wrap" @click.stop="toDetail(data)">
-      <div class="card">
-        <div class="card-top">
-          <i v-if="data.isTop" class="font iconfont icon-zhiding" />
-          <div v-if="data?.isDelete" class="mask">
-            <span class="mask-text">已下架</span>
+      <div class="top">
+        <div class="mark">
+          <div class="action">
+            <span @click.stop="toEdit(data)">编辑</span>
+            <span @click.stop="onReomve(data)">删除</span>
           </div>
-          <div class="art-action">
-            <slot name="actions">
-              <div v-if="loginStore?.userInfo?.userId === data.authorId">
-                <span class="edit" @click.stop="toEdit(data)">编辑</span>
-                <span class="del" @click.stop="onReomve(data)">下架</span>
-              </div>
-            </slot>
-          </div>
-          <Image :url="data.coverImage || IMG1" :transition-img="IMG1" class="img" />
-          <div class="info">
-            <div class="desc" v-html="data.abstract" />
+          <div>
+            <div class="desc" :title="data.abstract">
+              {{ data.abstract }}
+            </div>
+            <div class="tags">
+              <span @click.stop="toClassify(data.classify!)">{{ data.classify }}</span>
+              <span @click.stop="toTag(data.tag!)">{{ data.tag }}</span>
+            </div>
           </div>
         </div>
-        <div
-          class="card-bottom"
-          :style="{
+        <Image :url="IMG1" radius="10px 10px 0 0" class-name="card-img" />
+      </div>
+      <div
+        class="bottom" :style="{
             backgroundImage: gradients,
-          }"
-        >
-          <slot>
-            <div class="header">
-              <div class="title" v-html="data.title" />
+          }">
+        <div class="title">{{ data.title }}</div>
+        <div class="author">
+          <span @click.stop="toPersonal(data.authorId!)" v-html="data.authorName" />
+          <span>{{ data.createTime ? formatDate(data.createTime, 'YYYY/MM/DD') : '-' }}</span>
+        </div>
+        <div class="actions">
+          <div class="action-icons">
+            <div class="action like" @click.stop="onLike(data)">
+              <i
+                :class="`font like-icon iconfont ${data.isLike ? 'icon-24gf-thumbsUp2' : 'icon-24gl-thumbsUp2'}`"
+              />
+              <span>{{ data.likeCount || '点赞' }}</span>
             </div>
-            <div class="art-info">
-              <div class="create-info">
-                <span class="author" @click.stop="toPersonal(data.authorId!)" v-html="data.authorName" />
-                <span class="date">{{ data.createTime ? formatDate(data.createTime, 'YYYY/MM/DD') : '-' }}</span>
-              </div>
-              <div class="classifys">
-                <span class="classify" @click.stop="toClassify(data.classify!)">
-                  <span v-html="data.classify" />
-                </span>
-                <span class="tag" @click.stop="toTag(data.tag!)">
-                  <span v-html="data.tag" />
-                </span>
-              </div>
-              <div class="actions">
-                <div class="action-icons">
-                  <div class="action like" @click.stop="onLike(data)">
-                    <i
-                      :class="`font like-icon iconfont ${data.isLike ? 'icon-24gf-thumbsUp2' : 'icon-24gl-thumbsUp2'}`"
-                    />
-                    <span>{{ data.likeCount || '点赞' }}</span>
-                  </div>
-                  <div class="action comment" @click.stop="onComment(data)">
-                    <i class="font comment-icon iconfont icon-pinglun" />
-                    <span>{{ data.commentCount || '评论' }}</span>
-                  </div>
-                  <div class="action read-count">
-                    <i class="font read-icon iconfont icon-yanjing" />
-                    <span class="text">{{ data.readCount || '阅读' }}</span>
-                  </div>
-                </div>
-              </div>
+            <div class="action comment" @click.stop="onComment(data)">
+              <i class="font comment-icon iconfont icon-pinglun" />
+              <span>{{ data.commentCount || '评论' }}</span>
             </div>
-          </slot>
+            <div class="action read-count">
+              <i class="font read-icon iconfont icon-yanjing" />
+              <span class="text">{{ data.readCount || '阅读' }}</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -77,29 +59,32 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
-import { formatDate, showMessage, ipcRenderers, getGradient } from '@/utils';
-import { ArticleItem } from '@/typings/common';
-import { IMG1, CARD_CONTEXT_MENU } from '@/constant';
+import { useRoute, useRouter } from 'vue-router';
 import { loginStore } from '@/store';
+import { formatDate, message, ipcRenderers, getGradient } from '@/utils';
 import Image from '@/components/Image/index.vue';
+import { CARD_CONTEXT_MENU, IMG1 } from '@/constant';
 import ContextMenu from '@/components/ContextMenu/index.vue';
+import { ArticleItem } from '@/typings/common';
 
 const router = useRouter();
 const route = useRoute();
 
 interface IProps {
   data: ArticleItem;
-  deleteArticle?: Function;
-  likeListArticle?: Function;
+  radius?: string;
+  deleteArticle?: Function | null;
+  likeListArticle?: Function | null;
   withoutToDetail?: boolean;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
-  deleteArticle: () => {},
-  likeListArticle: () => {},
-  withoutToDetail: false,
+  radius: '5px',
+  width: '',
+  deleteArticle: null,
+  likeListArticle: null
 });
+
 
 const timer = ref<boolean>(false);
 
@@ -114,7 +99,11 @@ const onLike = async (data: ArticleItem) => {
   if (timer.value) return;
   timer.value = true;
   if (data?.isDelete) {
-    return showMessage();
+    message({
+      title: '文章已下架，无法操作',
+      type: 'warning'
+    });
+    return;
   }
   await props.likeListArticle?.(data.id, data);
   timer.value = false;
@@ -123,32 +112,48 @@ const onLike = async (data: ArticleItem) => {
 // 评论
 const onComment = (data: ArticleItem) => {
   if (data?.isDelete) {
-    return showMessage();
+    message({
+      title: '文章已下架，无法操作',
+      type: 'warning'
+    });
+    return;
   }
-  router.push(`/detail/${data.id}?scrollTo=1&from=${route.name as string}`);
+  router.push(`/detail/${ data.id }?scrollTo=1&from=${ route.name as string }`);
 };
 
 // 编辑
 const toEdit = async (data: ArticleItem) => {
   if (data?.isDelete) {
-    return showMessage();
+    message({
+      title: '文章已下架，无法操作',
+      type: 'warning'
+    });
+    return;
   }
-  router.push(`/create?id=${data.id}`);
+  router.push(`/create?id=${ data.id }`);
 };
 
 // 下架
 const onReomve = async (data: ArticleItem) => {
   if (data?.isDelete) {
-    return showMessage();
+    message({
+      title: '文章已下架，无法操作',
+      type: 'warning'
+    });
+    return;
   }
-  props.deleteArticle(data.id);
+  props.deleteArticle?.(data.id);
 };
 
 // 选中菜单
 const onSelectMenu = (menu: { label: string; value: number }) => {
   if (props.withoutToDetail) return;
   if (props.data?.isDelete) {
-    return showMessage();
+    message({
+      title: '文章已下架，无法操作',
+      type: 'warning'
+    });
+    return;
   }
   if (menu.value === 1) {
     onOpenNewWindow(props.data);
@@ -157,314 +162,245 @@ const onSelectMenu = (menu: { label: string; value: number }) => {
   }
 };
 
-// 新窗口打开
-const onOpenNewWindow = async (data: ArticleItem) => {
-  if (data?.isDelete) {
-    return showMessage();
-  }
-  const { userInfo, token } = loginStore;
-  ipcRenderers.sendNewWin({
-    path: `article/${data.id}?from=${route.name as string}`,
-    id: data.id, // articleId
-    userInfo: JSON.stringify({ userInfo, token }),
-  });
-};
-
 // 当前页打开
 const toDetail = async (data: ArticleItem) => {
   if (data?.isDelete) {
-    return showMessage();
+    message({
+      title: '文章已下架，无法操作',
+      type: 'warning'
+    });
+    return;
   }
-  router.push(`/detail/${data.id}?from=${route.name as string}`);
+  router.push(`/detail/${ data.id }?from=${ route.name as string }`);
+};
+
+// 新窗口打开
+const onOpenNewWindow = async (data: ArticleItem) => {
+  if (data?.isDelete) {
+    message({
+      title: '文章已下架，无法操作',
+      type: 'warning'
+    });
+    return;
+  }
+  const {userInfo, token} = loginStore;
+  ipcRenderers.sendNewWin({
+    path: `article/${ data.id }?from=${ route.name as string }`,
+    id: data.id, // articleId
+    userInfo: JSON.stringify({userInfo, token}),
+  });
 };
 
 // 去我的主页
 const toPersonal = (id: string) => {
-  router.push(`/personal?authorId=${id}`);
+  router.push(`/personal?authorId=${ id }`);
 };
 
-// 去分类
-const toClassify = (name: string) => {
-  router.push(`/classify?classify=${name}`);
+const toClassify = (classify: string) => {
+  router.push(`/classify?classify=${ classify }`);
 };
 
-// 去标签列表
-const toTag = (name: string) => {
-  router.push(`/tag/list?tag=${name}`);
+const toTag = (tag: string) => {
+  router.push(`/tag/list?tag=${ tag }`);
 };
 </script>
 
 <style scoped lang="less">
 @import '@/styles/index.less';
 
-.card-wrap {
-  box-sizing: border-box;
-  position: relative;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  border-radius: 5px;
-  box-shadow: 0 0 3px 0 var(--card-shadow) inset;
+.textStyle {
+  mix-blend-mode: difference; /* 使用差值混合模式 */
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5); /* 水平偏移、垂直偏移、模糊半径和阴影颜色 */
+  .ellipsis();
+  color: var(--el-color-primary);
+  cursor: pointer;
+  font-size: 14px;
 
-  .card {
+  &:hover {
+    color: var(--hover-text-color);
+  }
+
+  &:first-child {
+    margin-right: 5px;
+  }
+}
+
+.card-wrap {
+  width: 100%;
+  height: auto;
+  box-shadow: 0 0 1px #ccc inset;
+  box-sizing: border-box;
+  border-radius: v-bind(radius);
+  transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.3);
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5); /* 水平偏移、垂直偏移、模糊半径和阴影颜色 */
+
+  &:hover {
+    .top {
+      .mark {
+        top: 0;
+        transition: all 0.3s ease;
+      }
+    }
+  }
+
+  .top {
     position: relative;
-    width: 100%;
-    border-radius: 5px;
-    cursor: pointer;
     overflow: hidden;
 
-    &:hover {
-      .img {
-        transform: scale(1.5);
-        transition: scale 0.6s ease-in-out;
-      }
-
-      .card-top {
-        .art-action {
-          display: block;
-        }
-
-        .info {
-          opacity: 1;
-          transition: all 0.5s;
-          background-color: @shade-3;
-        }
-      }
-    }
-
-    .card-top {
-      position: relative;
+    .mark {
+      position: absolute;
+      top: -100%;
+      left: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
       width: 100%;
-      overflow: hidden;
+      height: 100%;
+      padding: 5px;
+      box-sizing: border-box;
+      border-radius: 10px 10px 0 0;
+      backdrop-filter: blur(3px);
+      transition: all 0.3s ease;
+      color: @fff;
 
-      .art-action {
-        position: absolute;
-        top: 5px;
-        right: 7px;
-        z-index: 29;
-        display: none;
+      .action {
+        display: flex;
+        justify-content: flex-end;
 
-        .edit {
-          display: inline-block;
-          margin-right: 10px;
-          color: var(--theme-blue);
-          font-size: 14px;
-          backdrop-filter: blur(5px);
-          padding: 0 5px 2px;
-          border-radius: 5px;
-          background-color: var(--card-btn-mark);
-        }
+        span {
+          .textStyle;
 
-        .del {
-          display: inline-block;
-          color: @font-danger;
-          font-size: 14px;
-          backdrop-filter: blur(5px);
-          padding: 0 5px 2px;
-          border-radius: 5px;
-          background-color: var(--card-btn-mark);
-        }
+          &:last-child {
+            color: @font-danger;
 
-        .edit,
-        .del {
-          &:hover {
-            color: var(--active-color);
+            &:hover {
+              color: @font-warning;
+            }
           }
         }
       }
 
-      .img {
-        display: block;
-        position: relative;
-        width: 100%;
-        border-top-left-radius: 5px;
-        border-top-right-radius: 5px;
-        .imgStyle();
+      .desc {
+        .ellipsisMore(2);
+        font-size: 13px;
+        mix-blend-mode: difference; /* 使用差值混合模式 */
+        text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5); /* 水平偏移、垂直偏移、模糊半径和阴影颜色 */
+        margin-bottom: 5px;
       }
 
-      .mask {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        color: @font-warning;
-        z-index: 9;
-
-        .mask-text {
-          display: table-cell;
-          vertical-align: middle;
-          font-size: 16px;
-          backdrop-filter: blur(10px);
-          padding: 0 5px 2px 5px;
-        }
-      }
-
-      .info {
+      .tags {
         display: flex;
-        align-items: center;
-        box-sizing: border-box;
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        max-height: 42%;
-        overflow: hidden;
-        transition: all 0.5s;
-        opacity: 0;
+        justify-content: flex-end;
 
-        .desc {
-          display: table-cell;
-          vertical-align: middle;
-          .ellipsisMore(3);
-          font-size: 13px;
-          padding: 5px;
-          line-height: 18px;
-          color: @fff;
+        span {
+          .textStyle;
         }
       }
+    }
+  }
 
-      .icon-zhiding {
-        position: absolute;
-        top: -2px;
-        left: 0;
-        font-size: 35px;
-        z-index: 10;
-        .textLg();
+  .bottom {
+    padding: 5px;
+    box-sizing: border-box;
+    color: var(--font-1);
+
+    .title {
+      font-size: 15px;
+      font-weight: 700;
+      .ellipsisMore(1);
+    }
+
+    .author {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 5px 0;
+
+      span {
+        flex: 1;
+        font-size: 14px;
+        .ellipsisMore(1);
+
+        &:first-child {
+          color: var(--primary);
+          cursor: pointer;
+
+          &:hover {
+            color: var(--active);
+          }
+        }
+
+        &:last-child {
+          text-align: right;
+          font-size: 13px;
+        }
       }
     }
 
-    .card-bottom {
-      position: relative;
-      background-blend-mode: multiply, multiply;
-      border-bottom-left-radius: 5px;
-      border-bottom-right-radius: 5px;
-      padding: 5px;
+    .actions {
+      display: flex;
+      justify-content: flex-start;
 
-      .header {
+      .eye {
+        height: 16px;
+        line-height: 21px;
+        margin-left: 15px;
+      }
+    }
+
+    .actions {
+      display: flex;
+      justify-content: flex-start;
+      font-size: 13px;
+      margin-top: 8px;
+      color: var(--font-2);
+
+      .action-icons {
         display: flex;
         align-items: center;
+        justify-content: space-between;
+        width: 100%;
+      }
 
-        .title {
-          width: 100%;
+      .action {
+        display: flex;
+        align-items: center;
+        margin-right: 15px;
+
+        .font {
+          font-size: 15px;
+          margin-right: 5px;
+        }
+
+        .like-icon {
+          margin-bottom: 2px;
+        }
+
+        .icon-24gf-thumbsUp2 {
+          color: var(--theme-blue);
+        }
+
+        .comment-icon {
           font-size: 16px;
-          .ellipsisMore(1);
-          color: var(--font-2);
+        }
+
+        .read-icon {
+          font-size: 18px;
+        }
+
+        &:last-child {
+          margin-right: 0;
         }
       }
 
-      .art-info {
-        display: flex;
-        flex-direction: column;
+      .like,
+      .comment,
+      .read-count {
+        cursor: pointer;
 
-        .create-info {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin: 12px 0 9px;
-
-          .author,
-          .date {
-            max-width: 50%;
-            font-size: 14px;
-            color: var(--font-2);
-            .ellipsisMore(1);
-          }
-
-          .author {
-            margin-right: 5px;
-            font-size: 15px;
-
-            &:hover {
-              color: var(--theme-blue);
-            }
-          }
-        }
-
-        .classifys {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          width: 100%;
-          margin-top: 5px;
-          margin-bottom: 6px;
-
-          .classify,
-          .tag {
-            max-width: 100%;
-            font-size: 14px;
-            border-radius: 5px;
-            color: var(--font-2);
-            .ellipsisMore(1);
-
-            &:hover {
-              color: var(--theme-blue);
-            }
-
-            .label {
-              color: var(--font-5);
-            }
-          }
-
-          .classify {
-            margin-right: 6px;
-          }
-        }
-
-        .actions {
-          display: flex;
-          justify-content: space-between;
-          font-size: 13px;
-          margin-top: 8px;
-          color: var(--font-2);
-
-          .action-icons {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            width: 100%;
-          }
-
-          .action {
-            display: flex;
-            align-items: center;
-            margin-right: 15px;
-
-            .font {
-              font-size: 15px;
-              margin-right: 5px;
-            }
-
-            .like-icon {
-              margin-bottom: 2px;
-            }
-
-            .icon-24gf-thumbsUp2 {
-              color: var(--theme-blue);
-            }
-
-            .comment-icon {
-              font-size: 16px;
-            }
-
-            .read-icon {
-              font-size: 18px;
-            }
-
-            &:last-child {
-              margin-right: 0;
-            }
-          }
-
-          .like,
-          .comment,
-          .read-count {
-            cursor: pointer;
-
-            &:hover {
-              color: var(--theme-blue);
-            }
-          }
+        &:hover {
+          color: var(--theme-blue);
         }
       }
     }

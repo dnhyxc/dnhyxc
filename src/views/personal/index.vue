@@ -193,10 +193,9 @@
 import { shell, ipcRenderer } from 'electron';
 import { ref, computed, onMounted, onUnmounted, watchEffect, inject } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { ElMessage } from 'element-plus';
 import { useDeleteArticle, useScroller } from '@/hooks';
 import { articleStore, loginStore, personalStore, followStore, chatStore } from '@/store';
-import { formatDate, scrollTo, checkUrl } from '@/utils';
+import { formatDate, scrollTo, checkUrl, message } from '@/utils';
 import { ArticleItem, CollectParams, FollowItem, WinRefreshParams } from '@/typings/common';
 import { HEAD_IMG, ICONLINKS, ABOUT_ME_TABS, ABOUT_TABS } from '@/constant';
 import AddCollectModel from '@/components/AddCollectModel/index.vue';
@@ -206,10 +205,10 @@ const reload = inject<Function>('reload');
 
 const route = useRoute();
 const router = useRouter();
-const { scrollRef, scrollTop } = useScroller();
-const { deleteArticle } = useDeleteArticle({ pageType: 'personal', accessUserId: loginStore.userInfo?.userId });
+const {scrollRef, scrollTop} = useScroller();
+const {deleteArticle} = useDeleteArticle({pageType: 'personal', accessUserId: loginStore.userInfo?.userId});
 
-const { authorId: userId } = route.query;
+const {authorId: userId} = route.query;
 
 const isMounted = ref<boolean>(false);
 // 收藏集弹窗显隐状态
@@ -226,8 +225,8 @@ const currentCollectValues = ref<CollectParams>({
 const previewVisible = ref<boolean>(false);
 
 const noMore = computed(() => {
-  const { articleList, total, currentTabKey } = personalStore;
-  const { followList, total: followTotal, followMeList } = followStore;
+  const {articleList, total, currentTabKey} = personalStore;
+  const {followList, total: followTotal, followMeList} = followStore;
   if (currentTabKey === '2') {
     return followList?.length && followList?.length >= followTotal;
   } else if (currentTabKey === '3') {
@@ -237,8 +236,8 @@ const noMore = computed(() => {
 });
 const disabled = computed(() => personalStore.loading || noMore.value);
 const showEmpty = computed(() => {
-  const { articleList, currentTabKey, loading } = personalStore;
-  const { followList, followMeList } = followStore;
+  const {articleList, currentTabKey, loading} = personalStore;
+  const {followList, followMeList} = followStore;
   if (loading !== null && !loading && currentTabKey === '2' && !followList.length) {
     return true;
   } else if (loading !== null && !loading && currentTabKey !== '2' && currentTabKey === '3' && !followMeList.length) {
@@ -274,7 +273,7 @@ const iconLinks = computed(() => {
 onMounted(async () => {
   // 监听详情点赞状态，实时更改列表对应文章的点赞状态
   ipcRenderer.on('refresh', (_, params: WinRefreshParams) => {
-    const { pageType, isLike = true } = params;
+    const {pageType, isLike = true} = params;
     // 需要判断是否是属于当前活动页面，并且只是点击点赞而不是收藏或评论防止重复触发
     if (route.name === 'personal' && pageType !== 'list' && isLike) {
       reload && reload();
@@ -342,7 +341,7 @@ const onTabChange = (value: string) => {
 
 // 文章点赞
 const likeListArticle = async (id: string, data?: ArticleItem) => {
-  await articleStore.likeListArticle({ id, pageType: 'personal', data });
+  await articleStore.likeListArticle({id, pageType: 'personal', data});
   // 取消点赞文章重新刷新列表之后，自动滚动到之前查看页面的位置
   if (personalStore.currentTabKey === '4') {
     onScrollTo(scrollTop.value);
@@ -356,7 +355,7 @@ const onFollow = (id: string, data?: FollowItem) => {
 
 // 新增收藏集
 const onAddCollect = () => {
-  currentCollectValues.value = { name: '', desc: '', status: '1' };
+  currentCollectValues.value = {name: '', desc: '', status: '1'};
   buildVisible.value = true;
 };
 
@@ -374,7 +373,7 @@ const deleteCollection = (id: string) => {
 
 // 前往收藏集详情
 const toDetail = (id: string) => {
-  router.push(`/collect/${id}?authorId=${userId || loginStore.userInfo?.userId}`);
+  router.push(`/collect/${ id }?authorId=${ userId || loginStore.userInfo?.userId }`);
 };
 
 // 去修改资料
@@ -388,10 +387,10 @@ const onClickLink = (href: string, name: string) => {
     // 使用浏览器打开链接
     shell.openExternal(href);
   } else {
-    ElMessage({
-      message: `${name} 链接无法使用`,
-      type: 'warning',
-      offset: 80,
+    message({
+      title: '链接无效',
+      message: `${ name } 链接无法使用`,
+      type: 'success',
     });
   }
 };
@@ -404,7 +403,7 @@ const onPreview = () => {
 // 去聊天页面
 const toChat = async () => {
   await chatStore.addContacts(personalStore.userInfo?.userId!);
-  router.push(`/chat?userId=${personalStore.userInfo?.userId}&username=${personalStore.userInfo?.username}`);
+  router.push(`/chat?userId=${ personalStore.userInfo?.userId }&username=${ personalStore.userInfo?.username }`);
 };
 
 // 置顶

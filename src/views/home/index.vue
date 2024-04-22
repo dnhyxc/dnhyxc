@@ -57,6 +57,7 @@ import { useScroller, useDeleteArticle } from '@/hooks';
 import { articleStore, commonStore } from '@/store';
 import Carousel from '@/components/Carousel/index.vue';
 import Card from '@/components/Card/index.vue';
+// import Card from '@/components/Card/index.vue';
 import ToTopIcon from '@/components/ToTopIcon/index.vue';
 import Empty from '@/components/Empty/index.vue';
 import { ArticleItem, WinRefreshParams } from '@/typings/common';
@@ -67,15 +68,15 @@ const searchType = ref<number>(1); // 1：推荐，2：最新，3：最热
 const isMounted = ref<boolean>(false);
 
 const noMore = computed(() => {
-  const { articleList, total } = articleStore;
+  const {articleList, total} = articleStore;
   return articleList.length >= total && articleList.length;
 });
 const disabled = computed(() => articleStore.loading || noMore.value);
 
-const { scrollRef, scrollTop } = useScroller();
+const {scrollRef, scrollTop} = useScroller();
 const route = useRoute();
 
-const { deleteArticle } = useDeleteArticle({ pageType: 'home' });
+const {deleteArticle} = useDeleteArticle({pageType: 'home'});
 
 onMounted(() => {
   isMounted.value = true;
@@ -84,7 +85,7 @@ onMounted(() => {
   onFetchData();
   // 监听详情点赞状态，实时更改列表对应文章的点赞状态
   ipcRenderer.on('refresh', (_, params: WinRefreshParams) => {
-    const { pageType, isLike = true } = params;
+    const {pageType, isLike = true} = params;
     // 需要判断是否是属于当前活动页面，并且只是点击点赞而不是收藏或评论防止重复触发
     if (route.name === 'home' && pageType !== 'list' && isLike) {
       reload && reload();
@@ -144,7 +145,7 @@ const searchHotArticles = () => {
 
 // 文章点赞
 const likeListArticle = async (id: string, data: ArticleItem) => {
-  await articleStore.likeListArticle({ id, pageType: 'home', data });
+  await articleStore.likeListArticle({id, pageType: 'home', data});
 };
 </script>
 

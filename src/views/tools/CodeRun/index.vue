@@ -39,11 +39,11 @@
                 <template #content>
                   <span class="info-text">手动运行模式：</span>可以点击<span class="info-text"> 手动运行模式 </span
                 >按钮运行或 <span class="info-text">ctrl + s </span>或
-                  <span class="info-text">command + s </span>运行<br/>
+                  <span class="info-text">command + s </span>运行<br />
                   <span class="info-text">类控制台模式：</span>在输入内容末尾处回车之后触发运行,
                   类似浏览器控制台的运行模式
                 </template>
-                <i class="iconfont icon-info-circle-color info"/>
+                <i class="iconfont icon-info-circle-color info" />
               </el-tooltip>
               <el-button
                 :disabled="!codeContent || (runMode === 1 && language === 'javascript')"
@@ -63,7 +63,7 @@
                 }}
               </el-button>
               <el-dropdown v-if="language === 'javascript'" class="dropdown" popper-class="custom-dropdown-styles">
-                <i class="iconfont icon-mulu"/>
+                <i class="iconfont icon-mulu" />
                 <template #dropdown>
                   <el-dropdown-menu>
                     <el-dropdown-item @click="onChangeMode(1)">类控制台模式</el-dropdown-item>
@@ -96,7 +96,7 @@
         </MonacoEditor>
       </div>
       <div class="preview">
-        <div v-drag class="line"/>
+        <div v-drag class="line" />
         <MonacoEditor
           v-if="language !== 'html'"
           v-model:theme="theme"
@@ -131,7 +131,7 @@
             </el-button>
             <span class="run-title">{{ language }} 运行结果</span>
           </div>
-          <div ref="previewRef" class="iframe-wrap"/>
+          <div ref="previewRef" class="iframe-wrap" />
         </div>
       </div>
     </div>
@@ -155,7 +155,7 @@
               },
             ]"
           >
-            <el-input v-model="codeStore.codeInfo.title" maxlength="50" show-word-limit placeholder="请输入示例名称"/>
+            <el-input v-model="codeStore.codeInfo.title" maxlength="50" show-word-limit placeholder="请输入示例名称" />
           </el-form-item>
           <el-form-item prop="abstract" label="示例描述">
             <el-input
@@ -177,16 +177,15 @@
         </div>
       </div>
     </el-dialog>
-    <CodeList v-model:model-value="demoVisible" v-model:prev-code="prevCode" :on-change-mode="onChangeMode"/>
+    <CodeList v-model:model-value="demoVisible" v-model:prev-code="prevCode" :on-change-mode="onChangeMode" />
   </div>
 </template>
 
 <script setup lang="ts">
-import {ref, onMounted, nextTick, onUnmounted, computed, watch} from 'vue';
-import {ElMessage} from 'element-plus';
-import type {FormInstance} from 'element-plus';
-import {codeTemplate, htmlTemplate, JSONParse} from '@/utils';
-import {codeStore} from '@/store';
+import { ref, onMounted, nextTick, onUnmounted, computed, watch } from 'vue';
+import type { FormInstance } from 'element-plus';
+import { codeTemplate, htmlTemplate, JSONParse, message } from '@/utils';
+import { codeStore } from '@/store';
 import CodeList from './CodeList/index.vue';
 
 interface IProps {
@@ -286,7 +285,7 @@ const onChangeMode = (mode: number) => {
 
 // 合并运行结果
 const setCodeResults = (info: { type: string; data: string }) => {
-  codeResults.value += `${info.data}\n\n`;
+  codeResults.value += `${ info.data }\n\n`;
 };
 
 const createIframe = ({code, display, id}: { code: string; display: string; id?: string }) => {
@@ -306,18 +305,16 @@ const createIframe = ({code, display, id}: { code: string; display: string; id?:
 // 运行C语言
 const runCCode = async (code: string, verifiy?: boolean) => {
   if (verifiy && (code.includes('scanf') || (code.includes('gets(') && code.includes('<string.h>')))) {
-    ElMessage({
-      message: '暂不支持 scanf、gets 等输入方法',
+    message({
+      title: '暂不支持 scanf、gets 等输入方法！',
       type: 'warning',
-      offset: 80,
     });
     return;
   }
   if (verifiy && !code.includes('int main')) {
-    ElMessage({
-      message: '请检查运行语言是否匹配',
+    message({
+      title: '请检查运行语言是否匹配',
       type: 'warning',
-      offset: 80,
     });
     return;
   }
@@ -420,13 +417,13 @@ const onReset = (monacoData: any) => {
   const {editor} = monacoData.data;
   editor?.getModel()?.setValue('');
   codeStore.clearCodeId();
-  prevCode.value = ''
+  prevCode.value = '';
   if (iframeNode.value) {
     iframeNode.value.contentWindow!.document.body.innerHTML = '';
   }
   codeResults.value = '';
   htmlClear.value = false;
-  onChangeMode(1)
+  onChangeMode(1);
 };
 
 // 清空html运行结果
@@ -439,8 +436,8 @@ const onClear = (monacoData?: any) => {
   }
   codeResults.value = '';
   htmlClear.value = false;
-  prevCode.value = ''
-  onChangeMode(1)
+  prevCode.value = '';
+  onChangeMode(1);
 };
 </script>
 

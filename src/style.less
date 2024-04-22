@@ -95,7 +95,8 @@
   --placeholder-color: @placeholder-color;
   // upload hover 背景颜色
   --upload-hover-bg-color: @upload-hover-bg-color;
-
+  --primary: @primary;
+  --hover-text-color: @hover-text-color;
   // element 主题色
   --el-color-primary: @theme-blue;
   --el-color-primary-dark-2: @primary-dark-2;
@@ -326,3 +327,18 @@ ul {
   box-shadow: 0 0 5px var(--card-shadow) !important;
 }
 
+.el-notification {
+  background-color: var(--modal-bg-color);
+  border: 1px solid var(--card-shadow);
+  backdrop-filter: blur(3px);
+
+  .el-notification__title,
+  .el-notification__content,
+  .el-notification__closeBtn {
+    color: var(--font-1);
+  }
+}
+
+.el-notification.right {
+  right: 25px;
+}

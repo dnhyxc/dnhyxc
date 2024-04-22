@@ -51,7 +51,7 @@
               <PageHeader v-if="articleStore.articleDetail.authorId" />
               <Preview
                 v-if="articleStore.articleDetail.content"
-                :mackdown="articleStore.articleDetail.content"
+                :markdown="articleStore.articleDetail.content"
                 class="preview-content"
               />
             </div>
@@ -121,7 +121,7 @@ const toggle = ref<boolean>(false);
 // 指定控制状态
 
 // scrollRef：el-scrollbar ref，scrollTop：滚动距离
-const { scrollRef, scrollTop } = useScroller();
+const {scrollRef, scrollTop} = useScroller();
 
 onMounted(async () => {
   // 监听更换主题
@@ -149,7 +149,7 @@ onMounted(async () => {
     commonStore.updatePageLoadStatus();
   });
 
-  await articleStore.getArticleDetail({ id: route.params.id as string, router });
+  await articleStore.getArticleDetail({id: route.params.id as string, router});
   // 在详情获取成功后，如果路由路径中携带了scrollTo参数，则说明是从列表中点击评论进来的，需要跳转到评论
   if (route.query?.scrollTo) {
     onScrollTo(articleInfoRef.value?.offsetHeight);
@@ -162,7 +162,7 @@ onMounted(async () => {
 
   // 监听主进程发布的刷新页面的消息
   ipcRenderer.on('refresh', (_, params: WinRefreshParams) => {
-    const { id, pageType, isTop } = params;
+    const {id, pageType, isTop} = params;
     articleStore.stickyStatus = isTop;
     if (pageType !== 'article' && id === route.params.id) {
       reload && reload();
@@ -184,7 +184,7 @@ onMounted(async () => {
   });
 
   watchEffect(() => {
-    const { userInfo } = getStoreUserInfo();
+    const {userInfo} = getStoreUserInfo();
     if (userInfo?.userId) {
       createWebSocket();
     }
@@ -193,7 +193,7 @@ onMounted(async () => {
 
 // 组件卸载前，清楚store中的详情信息
 onUnmounted(() => {
-  articleStore.articleDetail = { id: '' };
+  articleStore.articleDetail = {id: ''};
   articleStore.commentList = [];
   articleStore.anotherArticleList = [];
 });
@@ -205,21 +205,21 @@ const updateFocus = (value: boolean) => {
 
 // 置顶
 const onSticky = () => {
-  const { id } = route.params;
+  const {id} = route.params;
   articleStore.stickyStatus = !articleStore.stickyStatus;
   ipcRenderers.sendNewWinSticky(articleStore.stickyStatus, id as string);
 };
 
 // 双击放大窗口
 const onDblclick = () => {
-  const { id } = route.params;
+  const {id} = route.params;
   toggle.value = !toggle.value;
   ipcRenderers.sendNewWinMax(id as string);
 };
 
 // 点击右侧窗口控制按钮
 const onClick = (item: { title: string; svg: string }) => {
-  const { id } = route.params;
+  const {id} = route.params;
 
   if (item.title === '最大化') {
     toggle.value = !toggle.value;

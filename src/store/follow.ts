@@ -1,8 +1,7 @@
 import { defineStore } from 'pinia';
-import { ElMessage } from 'element-plus';
 import { FollowList, FollowItem } from '@/typings/common';
 import * as Service from '@/server';
-import { normalizeResult, getStoreUserInfo } from '@/utils';
+import { normalizeResult, getStoreUserInfo, message } from '@/utils';
 import { useCheckUserId } from '@/hooks';
 import { sendMessage } from '@/socket';
 import { loginStore, personalStore } from '@/store';
@@ -36,15 +35,14 @@ export const useFollowStore = defineStore('follow', {
       // 检验是否有userId，如果没有禁止发送请求
       if (!useCheckUserId()) return;
       const res = normalizeResult<{ isFollowed: boolean; userId: string }>(await Service.manageFollow(authorId));
-      ElMessage({
-        message: res.message,
+      message({
+        title: res.message,
         type: res.success ? 'success' : 'error',
-        offset: 80,
       });
       if (res.success) {
         this.isFollowed = res.data.isFollowed;
-        const { userInfo } = getStoreUserInfo();
-        const { userId, username } = loginStore.userInfo;
+        const {userInfo} = getStoreUserInfo();
+        const {userId, username} = loginStore.userInfo;
         if (authorId !== userId && authorId !== userInfo?.userId) {
           // 推送 ws 消息
           sendMessage(
@@ -81,7 +79,7 @@ export const useFollowStore = defineStore('follow', {
 
     // 分页获取关注用户列表
     async getFollowList(userId?: string, pageNo?: number, pageSize?: number) {
-      const { userInfo, token } = getStoreUserInfo();
+      const {userInfo, token} = getStoreUserInfo();
       if (!loginStore.token && !token) return;
       if (this.followList.length !== 0 && this.followList.length >= this.total) return;
       this.pageNo = this.pageNo + 1;
@@ -98,17 +96,16 @@ export const useFollowStore = defineStore('follow', {
         this.followList = [...this.followList, ...res.data.list];
         this.total = res.data.total;
       } else {
-        ElMessage({
-          message: res.message,
+        message({
+          title: res.message,
           type: 'error',
-          offset: 80,
         });
       }
     },
 
     // 分页获取关注我的用户列表
     async getFollowMeList(userId?: string, pageNo?: number, pageSize?: number) {
-      const { userInfo, token } = getStoreUserInfo();
+      const {userInfo, token} = getStoreUserInfo();
       if (!loginStore.token && !token) return;
       if (this.followMeList.length !== 0 && this.followMeList.length >= this.total) return;
       this.pageNo = this.pageNo + 1;
@@ -125,10 +122,9 @@ export const useFollowStore = defineStore('follow', {
         this.followMeList = [...this.followMeList, ...res.data.list];
         this.followMeTotal = res.data.total;
       } else {
-        ElMessage({
-          message: res.message,
+        message({
+          title: res.message,
           type: 'error',
-          offset: 80,
         });
       }
     },

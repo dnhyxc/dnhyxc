@@ -1,6 +1,5 @@
-import { ElMessage } from 'element-plus';
 import { defineStore } from 'pinia';
-import { normalizeResult, getStoreUserInfo, ipcRenderers, getMsgStatus } from '@/utils';
+import { normalizeResult, getStoreUserInfo, ipcRenderers, getMsgStatus, message } from '@/utils';
 import * as Service from '@/server';
 import { PAGESIZE } from '@/constant';
 import { loginStore } from '@/store';
@@ -51,15 +50,14 @@ export const useMessageStore = defineStore('message', {
       );
       this.loading = false;
       if (res.success) {
-        const { total, list } = res.data;
+        const {total, list} = res.data;
         this.msgList = [...this.msgList, ...list];
         this.total = total;
         this.setReadStatus();
       } else {
-        ElMessage({
-          message: res.message,
+        message({
+          title: res.message,
           type: 'error',
-          offset: 80,
         });
       }
     },
@@ -72,7 +70,7 @@ export const useMessageStore = defineStore('message', {
       const residueNoReadMsgs = this.msgCount - (ids?.length || msgIds?.length);
       // 判断是否还有未读消息，如果有调用接口设置消息已读
       if (this.msgCount > 0) {
-        normalizeResult<number>(await Service.setReadStatus({ msgIds: ids || msgIds }));
+        normalizeResult<number>(await Service.setReadStatus({msgIds: ids || msgIds}));
         this.msgList.forEach((i) => {
           if (allIds.includes(i.id)) {
             i.isReaded = true;
@@ -124,16 +122,14 @@ export const useMessageStore = defineStore('message', {
         this.clearMessageInfo();
         this.pageSize = total;
         this.getMessageList();
-        ElMessage({
-          message: res.message,
+        message({
+          title: res.message,
           type: 'success',
-          offset: 80,
         });
       } else {
-        ElMessage({
-          message: res.message,
+        message({
+          title: res.message,
           type: 'error',
-          offset: 80,
         });
       }
     },
@@ -156,10 +152,9 @@ export const useMessageStore = defineStore('message', {
           }),
         );
       } else {
-        ElMessage({
-          message: res.message,
+        message({
+          title: res.message,
           type: 'error',
-          offset: 80,
         });
       }
     },
@@ -174,9 +169,9 @@ export const useMessageStore = defineStore('message', {
 
     // 计算消息数量
     setMsgCount(data: ArticleItem) {
-      const { pathname } = window.location;
+      const {pathname} = window.location;
 
-      const { userInfo } = getStoreUserInfo();
+      const {userInfo} = getStoreUserInfo();
 
       // 判断是否别人发给我的消息
       if (

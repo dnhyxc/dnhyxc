@@ -24,7 +24,7 @@ import { ipcRenderer } from 'electron';
 import { onMounted, computed, inject } from 'vue';
 import { useRoute } from 'vue-router';
 import { useScroller } from '@/hooks';
-import { scrollTo, showMessage } from '@/utils';
+import { message, scrollTo } from '@/utils';
 import { timelineStore, articleStore } from '@/store';
 import ToTopIcon from '@/components/ToTopIcon/index.vue';
 import Loading from '@/components/Loading/index.vue';
@@ -35,7 +35,7 @@ const reload = inject<Function>('reload');
 
 const route = useRoute();
 // scrollRef：el-scrollbar ref，scrollTop：滚动距离
-const { scrollRef, scrollTop } = useScroller();
+const {scrollRef, scrollTop} = useScroller();
 
 const showEmpty = computed(
   () => timelineStore.loading !== null && !timelineStore.loading && !timelineStore.timelineList?.length,
@@ -44,7 +44,7 @@ const showEmpty = computed(
 onMounted(async () => {
   // 监听详情点赞状态，实时更改列表对应文章的点赞状态
   ipcRenderer.on('refresh', (_, params: WinRefreshParams) => {
-    const { pageType, isLike = true } = params;
+    const {pageType, isLike = true} = params;
     // 需要判断是否是属于当前活动页面，并且只是点击点赞而不是收藏或评论防止重复触发
     if (route.name === 'timeline' && pageType !== 'list' && isLike) {
       reload && reload();
@@ -57,14 +57,18 @@ onMounted(async () => {
 // 删除
 const deleteTimeLineArticle = async (data: ArticleItem | TimelineArticles) => {
   if ((data as ArticleItem)?.isDelete) {
-    return showMessage();
+    message({
+      title: '文章已下架，无法操作',
+      type: 'warning'
+    });
+    return;
   }
   await timelineStore.deleteTimelineArticle(data.id!);
 };
 
 // 文章点赞
 const likeListArticle = async (id: string, data: ArticleItem | TimelineArticles) => {
-  await articleStore.likeListArticle({ id, isTimeLine: true, data } as ArticleItem);
+  await articleStore.likeListArticle({id, isTimeLine: true, data} as ArticleItem);
 };
 
 // 置顶
@@ -150,6 +154,7 @@ const onScrollTo = () => {
         .edit,
         .del {
           font-weight: normal;
+
           &:hover {
             color: var(--active-color);
           }
@@ -165,6 +170,7 @@ const onScrollTo = () => {
           font-size: 16px;
           .ellipsisMore(1);
           cursor: pointer;
+
           &:hover {
             color: @sub-2-blue;
           }
@@ -251,6 +257,7 @@ const onScrollTo = () => {
         .comment,
         .read-count {
           cursor: pointer;
+
           &:hover {
             color: @sub-2-blue;
           }

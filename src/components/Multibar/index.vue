@@ -15,7 +15,7 @@
       <span v-if="articleStore?.detailArtLikeCount > 0" class="count">
         {{
           articleStore?.detailArtLikeCount > 999
-            ? `${String(articleStore?.detailArtLikeCount).slice(0, 3)}+`
+            ? `${ String(articleStore?.detailArtLikeCount).slice(0, 3) }+`
             : articleStore?.detailArtLikeCount
         }}
       </span>
@@ -23,7 +23,7 @@
     <div class="action comment-wrap" @click="toComment">
       <i class="comment-font iconfont icon-pinglun1" />
       <span v-if="commentCount > 0" class="count">
-        {{ commentCount > 999 ? `${String(commentCount).slice(0, 3)}+` : commentCount }}
+        {{ commentCount > 999 ? `${ String(commentCount).slice(0, 3) }+` : commentCount }}
       </span>
     </div>
     <div class="action collect-wrap" @click="onCollect">
@@ -31,7 +31,7 @@
       <span v-if="articleStore?.articleDetail?.collectCount! > 0" class="count">
         {{
           articleStore?.articleDetail?.collectCount! > 999
-            ? `${String(articleStore?.articleDetail?.collectCount).slice(0, 3)}+`
+            ? `${ String(articleStore?.articleDetail?.collectCount).slice(0, 3) }+`
             : articleStore?.articleDetail?.collectCount
         }}
       </span>
@@ -86,9 +86,8 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { ElMessage } from 'element-plus';
 import { HEAD_IMG } from '@/constant';
-import { shareQQ, shareSinaWeiBo, getStoreUserInfo } from '@/utils';
+import { shareQQ, shareSinaWeiBo, getStoreUserInfo, message } from '@/utils';
 import { articleStore, collectStore, loginStore } from '@/store';
 import { useCommentCount } from '@/hooks';
 import Qrcode from '@/components/Qrcode/index.vue';
@@ -123,7 +122,7 @@ onMounted(() => {
 const likeArticle = async () => {
   if (timer.value) return;
   timer.value = true;
-  await articleStore?.likeArticle({ id: props.id });
+  await articleStore?.likeArticle({id: props.id});
   timer.value = false;
 };
 
@@ -135,13 +134,14 @@ const toComment = () => {
 // 收藏
 const onCollect = () => {
   // 获取存储在硬盘store中的登录信息
-  const { userInfo } = getStoreUserInfo();
+  const {userInfo} = getStoreUserInfo();
   if (!loginStore?.userInfo?.userId && !userInfo?.userId) {
-    return ElMessage({
+    message({
+      title: '无权操作！',
       message: '请先登录后再操作哦！',
-      type: 'warning',
-      offset: 80,
+      type: 'success',
     });
+    return;
   }
   // 如果当前文章收藏状态为true，则取消收藏，否则就唤起收藏弹窗
   if (collectStore?.collectStatus) {
@@ -159,6 +159,7 @@ const onCollect = () => {
   display: flex;
   justify-content: space-between;
   margin-bottom: 10px;
+
   .action {
     position: relative;
     flex: 1;
