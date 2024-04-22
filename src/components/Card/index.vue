@@ -6,9 +6,10 @@
 -->
 <template>
   <ContextMenu class="block" :menu="CARD_CONTEXT_MENU" @select="onSelectMenu">
-    <div class="card-wrap" @click.stop="toDetail(data)">
+    <div class="card-wrap" @click.stop="toDetail(data)" @mouseenter.stop="onMouseEnter"
+         @mouseleave.stop="onMouseLeave">
       <div class="top">
-        <div class="mark">
+        <div ref="markRef" class="mark">
           <div class="action">
             <span @click.stop="toEdit(data)">编辑</span>
             <span @click.stop="onReomve(data)">删除</span>
@@ -87,6 +88,29 @@ const props = withDefaults(defineProps<IProps>(), {
 
 
 const timer = ref<boolean>(false);
+const markRef = ref<HTMLDivElement | null>(null);
+
+const onMouseEnter = (e: MouseEvent) => {
+  const target = e.target as HTMLDivElement;
+  const rect = target.getBoundingClientRect();
+  const theta = Math.atan2(rect.height, rect.width);
+  const x = e.offsetX - rect.width / 2;
+  const y = rect.height / 2 - e.offsetY;
+  const angle = Math.atan2(y, x);
+  if (angle >= theta && angle < Math.PI - theta) {
+    markRef.value?.classList.add('mark-top');
+  } else if (angle < theta && angle >= -theta) {
+    markRef.value?.classList.add('mark-right');
+  } else if (angle >= Math.PI - theta || angle < -Math.PI + theta) {
+    markRef.value?.classList.add('mark-left');
+  } else {
+    markRef.value?.classList.add('mark-bottom');
+  }
+};
+
+const onMouseLeave = () => {
+  markRef.value?.classList?.remove('mark-top', 'mark-right', 'mark-bottom', 'mark-left');
+};
 
 // 拼接渐变色
 const gradients = computed(() => {
@@ -238,9 +262,24 @@ const toTag = (tag: string) => {
   &:hover {
     .top {
       .mark {
-        top: 0;
         transition: all 0.3s ease;
       }
+
+      //.mark-top {
+      //  top: 0;
+      //}
+      //
+      //.mark-right {
+      //  right: 0;
+      //}
+      //
+      //.mark-left {
+      //  left: 0;
+      //}
+      //
+      //.mark-bottom {
+      //  bottom: 0;
+      //}
     }
   }
 
@@ -250,8 +289,7 @@ const toTag = (tag: string) => {
 
     .mark {
       position: absolute;
-      top: -100%;
-      left: 0;
+      top: 0;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -297,6 +335,27 @@ const toTag = (tag: string) => {
           .textStyle;
         }
       }
+    }
+
+    .mark-top {
+
+      transform: translate(0, 0);
+      transform-origin: top;
+    }
+
+    .mark-right {
+      transform: translate(0, 0);
+      transform-origin: right;
+    }
+
+    .mark-left {
+      transform: translateX(0);
+      transform-origin: left;
+    }
+
+    .mark-bottom {
+      transform: translateY(0);
+      transform-origin: bottom;
     }
   }
 
