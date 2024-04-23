@@ -6,10 +6,11 @@
 -->
 <template>
   <ContextMenu class="block" :menu="CARD_CONTEXT_MENU" @select="onSelectMenu">
-    <div class="card-wrap" @click.stop="toDetail(data)" @mouseenter.stop="onMouseEnter"
-         @mouseleave.stop="onMouseLeave">
-      <div class="top">
-        <div ref="markRef" class="mark">
+    <div
+      class="card-wrap" @click.stop="toDetail(data)" @mouseenter.stop="onMouseEnter"
+      @mouseleave.stop="onMouseLeave">
+      <div ref="topRef" class="top">
+        <div v-for="i in ['markTop', 'markRight','markBottom','markLeft']" :key="i" :class="`${i} mark`">
           <div class="action">
             <span @click.stop="toEdit(data)">编辑</span>
             <span @click.stop="onReomve(data)">删除</span>
@@ -24,7 +25,7 @@
             </div>
           </div>
         </div>
-        <Image :url="IMG1" radius="10px 10px 0 0" class-name="card-img" />
+        <Image :url="data.coverImage || IMG1" :transition-img="IMG1" class="card-img" />
       </div>
       <div
         class="bottom" :style="{
@@ -86,9 +87,8 @@ const props = withDefaults(defineProps<IProps>(), {
   likeListArticle: null
 });
 
-
 const timer = ref<boolean>(false);
-const markRef = ref<HTMLDivElement | null>(null);
+const topRef = ref<HTMLDivElement | null>(null);
 
 const onMouseEnter = (e: MouseEvent) => {
   const target = e.target as HTMLDivElement;
@@ -97,19 +97,24 @@ const onMouseEnter = (e: MouseEvent) => {
   const x = e.offsetX - rect.width / 2;
   const y = rect.height / 2 - e.offsetY;
   const angle = Math.atan2(y, x);
+  const marks = topRef.value?.children;
   if (angle >= theta && angle < Math.PI - theta) {
-    markRef.value?.classList.add('mark-top');
+    marks?.[0]?.classList.add('from-top');
   } else if (angle < theta && angle >= -theta) {
-    markRef.value?.classList.add('mark-right');
+    marks?.[1]?.classList.add('from-right');
   } else if (angle >= Math.PI - theta || angle < -Math.PI + theta) {
-    markRef.value?.classList.add('mark-left');
+    marks?.[3]?.classList.add('from-left');
   } else {
-    markRef.value?.classList.add('mark-bottom');
+    marks?.[2]?.classList.add('from-bottom');
   }
 };
 
 const onMouseLeave = () => {
-  markRef.value?.classList?.remove('mark-top', 'mark-right', 'mark-bottom', 'mark-left');
+  const marks = topRef.value?.children;
+  marks?.[0]?.classList?.remove('from-top');
+  marks?.[1]?.classList?.remove('from-right');
+  marks?.[3]?.classList?.remove('from-left');
+  marks?.[2]?.classList?.remove('from-bottom');
 };
 
 // 拼接渐变色
@@ -259,37 +264,12 @@ const toTag = (tag: string) => {
   background: rgba(255, 255, 255, 0.3);
   text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5); /* 水平偏移、垂直偏移、模糊半径和阴影颜色 */
 
-  &:hover {
-    .top {
-      .mark {
-        transition: all 0.3s ease;
-      }
-
-      //.mark-top {
-      //  top: 0;
-      //}
-      //
-      //.mark-right {
-      //  right: 0;
-      //}
-      //
-      //.mark-left {
-      //  left: 0;
-      //}
-      //
-      //.mark-bottom {
-      //  bottom: 0;
-      //}
-    }
-  }
-
   .top {
     position: relative;
     overflow: hidden;
 
     .mark {
       position: absolute;
-      top: 0;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -299,7 +279,6 @@ const toTag = (tag: string) => {
       box-sizing: border-box;
       border-radius: 10px 10px 0 0;
       backdrop-filter: blur(3px);
-      transition: all 0.3s ease;
       color: @fff;
 
       .action {
@@ -337,25 +316,48 @@ const toTag = (tag: string) => {
       }
     }
 
-    .mark-top {
-
-      transform: translate(0, 0);
-      transform-origin: top;
+    .markTop {
+      top: -100%;
+      left: 0;
+      transition: all 0.3s ease;
     }
 
-    .mark-right {
-      transform: translate(0, 0);
-      transform-origin: right;
+    .markRight {
+      top: 0;
+      right: -100%;
+      transition: all 0.3s ease;
     }
 
-    .mark-left {
-      transform: translateX(0);
-      transform-origin: left;
+    .markLeft {
+      top: 0;
+      left: -100%;
+      transition: all 0.3s ease;
     }
 
-    .mark-bottom {
-      transform: translateY(0);
-      transform-origin: bottom;
+    .markBottom {
+      left: 0;
+      bottom: -100%;
+      transition: all 0.3s ease;
+    }
+
+    .from-top {
+      top: 0;
+      transition: all 0.3s ease;
+    }
+
+    .from-right {
+      right: 0;
+      transition: all 0.3s ease;
+    }
+
+    .from-left {
+      left: 0;
+      transition: all 0.3s ease;
+    }
+
+    .from-bottom {
+      bottom: 0;
+      transition: all 0.3s ease;
     }
   }
 

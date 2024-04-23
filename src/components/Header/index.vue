@@ -352,6 +352,7 @@ const onScrollTo = () => {
   height: 38px;
   padding: 10px 15px 7px 12px;
   -webkit-app-region: drag;
+  .clickNoSelectText();
 
   .left {
     display: flex;
@@ -381,6 +382,7 @@ const onScrollTo = () => {
         transition: all 0.3s;
         font-weight: 500;
         .menuLg();
+
         &:hover {
           transform: scale(1.15);
         }
@@ -474,6 +476,7 @@ const onScrollTo = () => {
             border-radius: 30px;
             box-shadow: 0 0 0 1px var(--search-border-color) inset;
           }
+
           .el-input__inner {
             color: var(--font-color);
 
@@ -608,6 +611,7 @@ const onScrollTo = () => {
       align-items: flex-start;
       padding-left: 20px;
     }
+
     .radio-close {
       padding: 0;
       margin-left: 0;
@@ -651,6 +655,7 @@ const onScrollTo = () => {
     .icon-wrap {
       top: 30px;
       left: 11px;
+
       .page-icon {
         font-size: 40px;
       }
