@@ -343,6 +343,7 @@ const onScrollTo = () => {
   justify-content: space-between;
   height: 60px;
   padding: 15px 15px 7px 0;
+  box-sizing: border-box;
   -webkit-app-region: drag;
   .clickNoSelectText();
 
@@ -352,7 +353,6 @@ const onScrollTo = () => {
     justify-content: flex-start;
     color: var(--font-1);
     font-weight: var(--font-weight);
-    margin-top: 8px;
 
     .font {
       cursor: pointer;
@@ -387,7 +387,6 @@ const onScrollTo = () => {
     align-items: center;
     color: var(--font-1);
     font-weight: var(--font-weight);
-    margin-top: 8px;
 
     .search-wrap {
       display: flex;
@@ -616,6 +615,7 @@ const onScrollTo = () => {
   padding: 0 22px 0 0;
 
   .left {
+    margin-top: 8px;
 
     .icon-wrap {
       top: 30px;
@@ -625,6 +625,10 @@ const onScrollTo = () => {
         font-size: 40px;
       }
     }
+  }
+
+  .right {
+    margin-top: 8px;
   }
 }
 

@@ -7,62 +7,67 @@
 <template>
   <el-aside
     class="aside-wrap"
-    :width="`${checkOS() === 'mac' ? (toggleMenu ? '180px' : '62px') : (toggleMenu ? '180px' : '60px')}`">
+    :width="`${checkOS() === 'mac' ? (toggleMenu ? '200px' : '62px') : toggleMenu ? '200px' : '60px'}`"
+  >
     <div
       id="__LEFT_MENU__"
-      :class="`${checkOS() === 'mac' && 'mac-left-menu-wrap'} left-menu-wrap ${toggleMenu&&'menu-list-large'}`">
+      :class="`${checkOS() === 'mac' && 'mac-left-menu-wrap'} left-menu-wrap ${toggleMenu && 'menu-list-large'}`"
+    >
       <div class="icon-wrap" @click="goHome">
         <i class="page-icon iconfont icon-haidao_" />
       </div>
-      <el-scrollbar ref="scrollRef">
-        <div
-          v-for="menu in menuList"
-          v-show="!toggleMenu" :key="menu.key" class="menu-list"
-          @click.stop="(e: Event) => onSelectMenu(e, menu as MenuListParams)">
-          <el-tooltip
-            class="box-item" effect="light" :content="menu.name" placement="right"
-            popper-class="custom-dropdown-styles">
-            <i
-              :class="`${
-              ((activeMenu.path === menu.path && route.path.includes(menu.path)) || route.path === menu.path) &&
-              'active'
-            } ${menu.key} font iconfont ${menu.icon}`"
-            />
-          </el-tooltip>
-        </div>
-        <div
-          v-for="menu in menuList"
-          v-show="toggleMenu" :key="menu.key" class="menu-list"
-          @click.stop="(e: Event) => onSelectMenu(e, menu as MenuListParams)">
+      <div class="menu-wrap">
+        <el-scrollbar ref="scrollRef">
           <div
-            :class="`${((activeMenu.path === menu.path && route.path.includes(menu.path)) || route.path === menu.path) &&
-              'active'} menu-item`">
-            <i :class="`${menu.key} font iconfont ${menu.icon}`" />
-            <span :class="`menu-name ${menu.key}-menu`">{{ menu.name }}</span>
+            v-for="menu in menuList"
+            v-show="!toggleMenu"
+            :key="menu.key"
+            class="menu-list"
+            @click.stop="(e: Event) => onSelectMenu(e, menu as MenuListParams)"
+          >
+            <el-tooltip
+              class="box-item"
+              effect="light"
+              :content="menu.name"
+              placement="right"
+              popper-class="custom-dropdown-styles"
+            >
+              <i
+                :class="`${
+                  ((activeMenu.path === menu.path && route.path.includes(menu.path)) || route.path === menu.path) &&
+                  'active'
+                } ${menu.key} font iconfont ${menu.icon}`"
+              />
+            </el-tooltip>
           </div>
-        </div>
-      </el-scrollbar>
-      <div class="setting">
-        <el-popover
-          v-if="loginStore?.userInfo?.userId"
-          placement="top-start"
-          popper-class="login-popover"
-          :width="180"
-          :show-arrow="false"
-          trigger="hover"
-        >
-          <template #reference>
-            <el-avatar
-              shape="square"
-              :size="checkOS() === 'mac' ? 40 : 38"
-              fit="cover"
-              :src="loginStore.userInfo?.headUrl || HEAD_IMG"
-              class="avatar"
-              @click.stop="toPersonal"
-            />
-          </template>
-          <div class="drop-user-info-list">
-            <div class="user-info">
+          <div
+            v-for="menu in menuList"
+            v-show="toggleMenu"
+            :key="menu.key"
+            class="menu-list"
+            @click.stop="(e: Event) => onSelectMenu(e, menu as MenuListParams)"
+          >
+            <div
+              :class="`${
+                ((activeMenu.path === menu.path && route.path.includes(menu.path)) || route.path === menu.path) &&
+                'active'
+              } menu-item`"
+            >
+              <i :class="`${menu.key} font iconfont ${menu.icon}`" />
+              <span :class="`menu-name ${menu.key}-menu`">{{ menu._name }}</span>
+            </div>
+          </div>
+        </el-scrollbar>
+        <div class="setting">
+          <el-popover
+            v-if="loginStore?.userInfo?.userId"
+            placement="top-start"
+            popper-class="login-popover"
+            :width="180"
+            :show-arrow="false"
+            trigger="hover"
+          >
+            <template #reference>
               <el-avatar
                 shape="square"
                 :size="checkOS() === 'mac' ? 40 : 38"
@@ -71,25 +76,36 @@
                 class="avatar"
                 @click.stop="toPersonal"
               />
-              <div class="username">{{ loginStore.userInfo?.username }}</div>
+            </template>
+            <div class="drop-user-info-list">
+              <div class="user-info">
+                <el-avatar
+                  shape="square"
+                  :size="checkOS() === 'mac' ? 40 : 38"
+                  fit="cover"
+                  :src="loginStore.userInfo?.headUrl || HEAD_IMG"
+                  class="avatar"
+                  @click.stop="toPersonal"
+                />
+                <div class="username">{{ loginStore.userInfo?.username }}</div>
+              </div>
+              <div class="drop-item" @click="toPersonal">
+                <i class="iconfont icon-gerenzhongxin" />
+                <span class="dropdown-text">我的主页</span>
+              </div>
+              <div class="drop-item" @click="onQuit">
+                <i class="iconfont icon-tuichu1" />
+                <span class="dropdown-text">退出登录</span>
+              </div>
             </div>
-            <div class="drop-item" @click="toPersonal">
-              <i class="iconfont icon-gerenzhongxin" />
-              <span class="dropdown-text">我的主页</span>
-            </div>
-            <div class="drop-item" @click="onQuit">
-              <i class="iconfont icon-tuichu1" />
-              <span class="dropdown-text">退出登录</span>
-            </div>
+          </el-popover>
+          <div v-else class="login-btn" @click.stop="onLogin">
+            <div class="login">登录</div>
           </div>
-        </el-popover>
-        <div v-else class="login-btn" @click.stop="onLogin">
-          <div class="login">登录</div>
         </div>
       </div>
     </div>
   </el-aside>
-
 </template>
 
 <script setup lang="ts">
@@ -108,7 +124,7 @@ const route = useRoute();
 
 let timer: ReturnType<typeof setTimeout> | null = null;
 const activeMenu = ref<MenuListParams>(MENULIST[0]);
-const toggleMenu = ref<boolean>(false);
+const toggleMenu = ref<boolean>(true);
 
 onUnmounted(() => {
   if (timer) {
@@ -119,7 +135,7 @@ onUnmounted(() => {
 
 // 计算菜单
 const menuList = computed(() => {
-  const {token, menus} = loginStore;
+  const { token, menus } = loginStore;
   const list = token ? MENULIST : MENULIST.filter((i) => i.show && !i.authorWiew);
   // 判断是否是博主，否则无法访问图片集
   const removeMenu = authRoutes.filter((i) => menus.some((j) => j !== i.name));
@@ -185,17 +201,17 @@ const onQuit = () => {
   justify-content: space-between;
   flex-direction: column;
   box-sizing: border-box;
-  width: v-bind("`${toggleMenu ? '180px' : '60px'}`");
+  width: v-bind("`${toggleMenu ? '200px' : '60px'}`");
   height: 100%;
   border-radius: 5px;
   overflow: auto;
-  padding: 30px 0 5px;
+  padding: 22px 0 5px;
 
   .icon-wrap {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 2px;
+    margin-bottom: 20px;
 
     .page-icon {
       display: inline-block;
@@ -239,9 +255,10 @@ const onQuit = () => {
     }
 
     .active {
-      .font, .menu-name {
+      .font,
+      .menu-name {
         color: var(--active-color);
-        .textLgActive()
+        .textLgActive();
       }
     }
 
@@ -292,7 +309,8 @@ const onQuit = () => {
 }
 
 .mac-left-menu-wrap {
-  width: v-bind("`${toggleMenu ? '180px' : '62px'}`");
+  width: v-bind("`${toggleMenu ? '200px' : '62px'}`");
+  padding: 30px 0 5px;
 
   .icon-wrap {
     .page-icon {
@@ -327,19 +345,27 @@ const onQuit = () => {
 }
 
 .menu-list-large {
+  display: flex;
+  justify-content: flex-start;
   padding: 30px 20px 5px 15px;
 
   .icon-wrap {
     justify-content: flex-start;
   }
 
+  .menu-wrap {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    box-shadow: 0 0 5px 0 var(--card-shadow);
+  }
+
   .menu-list {
     justify-content: flex-start;
     height: 45px;
 
-
     .font {
-      font-size: 20px;
+      font-size: 22px;
     }
 
     .menu-item {
@@ -353,7 +379,8 @@ const onQuit = () => {
       &:hover {
         background: #ccc;
 
-        .font, .menu-name {
+        .font,
+        .menu-name {
           color: var(--primary);
         }
       }
@@ -367,24 +394,23 @@ const onQuit = () => {
         .menuLg();
       }
 
-      .tag-menu {
-        margin-left: 12px;
-      }
-
-      .create-menu {
-        margin-left: 7px;
-      }
-
-      .author-menu {
-        margin-left: 12px;
-      }
+      //.tag-menu {
+      //  margin-left: 12px;
+      //}
+      //
+      //.create-menu {
+      //  margin-left: 7px;
+      //}
+      //
+      //.author-menu {
+      //  margin-left: 12px;
+      //}
     }
-
 
     .active {
       .menu-name {
         color: var(--active-color);
-        .textLgActive()
+        .textLgActive();
       }
     }
   }
