@@ -31,13 +31,13 @@
 </template>
 
 <script setup lang="ts">
-import {ipcRenderer} from 'electron';
-import {onMounted, nextTick, ref, reactive, markRaw} from 'vue';
-import {commonStore} from '@/store';
-import {ipcRenderers, checkOS} from '@/utils';
-import {ACTION_SVGS} from '@/constant';
-import Login from "@/views/open/Login/index.vue";
-import Reset from "@/views/open/Reset/index.vue";
+import { ipcRenderer } from 'electron';
+import { onMounted, nextTick, ref, reactive, markRaw } from 'vue';
+import { commonStore } from '@/store';
+import { ipcRenderers, checkOS } from '@/utils';
+import { ACTION_SVGS } from '@/constant';
+import Login from '@/views/open/Login/index.vue';
+import Reset from '@/views/open/Reset/index.vue';
 
 // 窗口大小控制状态
 const toggle = ref<boolean>(false);
@@ -98,10 +98,6 @@ const onClick = (item: { title: string; svg: string }) => {
   if (item.title === '关闭') {
     ipcRenderers.sendWindowOut();
   }
-};
-
-const onLogin = () => {
-  ipcRenderers.sendOpenMainWin();
 };
 </script>
 

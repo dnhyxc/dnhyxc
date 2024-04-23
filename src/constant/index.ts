@@ -63,16 +63,16 @@ export {
 
 // 工具列表
 export const TOOL_LIST = [
-  {toolName: '图片压缩', key: 'compress', id: 'compress', toolUrl: COMPRESS_SVG},
-  {toolName: '图片裁剪', key: 'cropper', id: 'cropper', toolUrl: CROP_SVG},
-  {toolName: '代码测试', key: 'codeRun', id: 'codeRun', toolUrl: CODE_SVG},
-  {toolName: '语音播报', key: 'textToSpeech', id: 'textToSpeech', toolUrl: YUYIN_SVG},
-  {toolName: '水印设置', key: 'watermark', id: 'watermark', toolUrl: MARK_SVG},
-  {toolName: '画板', key: 'board', id: 'board', toolUrl: BOARD_SVG},
-  {toolName: '屏幕录制', key: 'transcribe', id: 'transcribe', toolUrl: TRANSCRIBE_SVG},
-  {toolName: 'Word预览', key: 'word', id: 'word', toolUrl: WORD_SVG},
-  {toolName: 'PDF预览', key: 'pdf', id: 'pdf', toolUrl: PDF_SVG},
-  {toolName: '览电子书', key: 'epub', id: 'epub', toolUrl: BOOK_SVG},
+  { toolName: '图片压缩', key: 'compress', id: 'compress', toolUrl: COMPRESS_SVG },
+  { toolName: '图片裁剪', key: 'cropper', id: 'cropper', toolUrl: CROP_SVG },
+  { toolName: '代码测试', key: 'codeRun', id: 'codeRun', toolUrl: CODE_SVG },
+  { toolName: '语音播报', key: 'textToSpeech', id: 'textToSpeech', toolUrl: YUYIN_SVG },
+  { toolName: '水印设置', key: 'watermark', id: 'watermark', toolUrl: MARK_SVG },
+  { toolName: '画板', key: 'board', id: 'board', toolUrl: BOARD_SVG },
+  { toolName: '屏幕录制', key: 'transcribe', id: 'transcribe', toolUrl: TRANSCRIBE_SVG },
+  { toolName: 'Word预览', key: 'word', id: 'word', toolUrl: WORD_SVG },
+  { toolName: 'PDF预览', key: 'pdf', id: 'pdf', toolUrl: PDF_SVG },
+  { toolName: '览电子书', key: 'epub', id: 'epub', toolUrl: BOOK_SVG },
 ];
 
 // 常用图片截取比例
@@ -290,8 +290,8 @@ export const EMOJI_MAP = {
   '[麦克风]': 'emoji_138@2x.png',
   '[麻将]': 'emoji_139@2x.png',
   '[鼓掌]': 'emoji_140@2x.png',
-  '[龇牙]': 'emoji_141@2x.png'
-}
+  '[龇牙]': 'emoji_141@2x.png',
+};
 export const EMOJI_NAME = [
   '[龇牙]',
   '[调皮]',
@@ -430,8 +430,8 @@ export const EMOJI_NAME = [
   '[瓢虫]',
   '[猫咪]',
   '[熊猫]',
-  '[青蛙]'
-]
+  '[青蛙]',
+];
 
 // 主题类型
 export const THEME_TYPES = [
@@ -755,7 +755,7 @@ export const MSG_CONFIG = (type = 'warning') => ({
   draggable: true,
   showClose: false,
   customClass: 'MSG_CONFIG',
-  customStyle: {width: 'auto', padding: '20px 20px 40px', minWidth: '300px'},
+  customStyle: { width: 'auto', padding: '20px 20px 40px', minWidth: '300px' },
 });
 
 // 首页展示的文章类型
@@ -988,10 +988,10 @@ export const ICONLINKS = [
 
 // 账号设置类别
 export const SETTING_TYPE = [
-  {label: '个人掘金', type: 'juejin', placeholder: '请填写个人掘金网址'},
-  {label: '个人知乎', type: 'zhihu', placeholder: '请填写个人知乎网址'},
-  {label: '个人github', type: 'github', placeholder: '请填写个人github网址'},
-  {label: '其它网址', type: 'blog', placeholder: '请填写其它网址'},
+  { label: '个人掘金', type: 'juejin', placeholder: '请填写个人掘金网址' },
+  { label: '个人知乎', type: 'zhihu', placeholder: '请填写个人知乎网址' },
+  { label: '个人github', type: 'github', placeholder: '请填写个人github网址' },
+  { label: '其它网址', type: 'blog', placeholder: '请填写其它网址' },
 ];
 
 // 原始快捷键默认值
@@ -1154,28 +1154,28 @@ export const MATCH_LINK_REG = /<dnhyxc,(https?:\/\/[^><]+)>/;
 
 // 联系人右键菜单
 export const CONTACT_MENU = (isTop: boolean, isDisturb: boolean) => [
-  {label: isTop ? '取消置顶' : '消息置顶', value: 1},
-  {label: isDisturb ? '开启消息提醒' : '消息免打扰', value: 2},
-  {label: '不显示聊天', value: 3},
-  {label: '删除聊天', value: 4},
-  {label: '进入其主页', value: 5},
+  { label: isTop ? '取消置顶' : '消息置顶', value: 1 },
+  { label: isDisturb ? '开启消息提醒' : '消息免打扰', value: 2 },
+  { label: '不显示聊天', value: 3 },
+  { label: '删除聊天', value: 4 },
+  { label: '进入其主页', value: 5 },
 ];
 
 // 文章卡片右键菜单
 export const CARD_CONTEXT_MENU = [
-  {label: '独立窗口打开', value: 1},
-  {label: '当前窗口打开', value: 2},
+  { label: '独立窗口打开', value: 1 },
+  { label: '当前窗口打开', value: 2 },
 ];
 
 // 聊天消息右键菜单
 export const CHAT_MENU = (save?: boolean) => {
   const menus = [
-    {label: '删除', value: 1},
-    {label: '复制', value: 2},
-    {label: '回复', value: 4},
+    { label: '删除', value: 1 },
+    { label: '复制', value: 2 },
+    { label: '回复', value: 4 },
   ];
   if (save) {
-    menus.push({label: '另存为', value: 3});
+    menus.push({ label: '另存为', value: 3 });
   }
   return menus;
 };
