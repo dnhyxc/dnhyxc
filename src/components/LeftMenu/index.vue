@@ -5,15 +5,20 @@
  * index.vue
 -->
 <template>
-  <el-aside class="aside-wrap" :width="`${checkOS() === 'mac' ? '62px' : '60px'}`">
-    <div id="__LEFT_MENU__" :class="`${checkOS() === 'mac' && 'mac-left-menu-wrap'} left-menu-wrap`">
+  <el-aside
+    class="aside-wrap"
+    :width="`${checkOS() === 'mac' ? (toggleMenu ? '180px' : '62px') : (toggleMenu ? '180px' : '60px')}`">
+    <div
+      id="__LEFT_MENU__"
+      :class="`${checkOS() === 'mac' && 'mac-left-menu-wrap'} left-menu-wrap ${toggleMenu&&'menu-list-large'}`">
       <div class="icon-wrap" @click="goHome">
         <i class="page-icon iconfont icon-haidao_" />
       </div>
       <el-scrollbar ref="scrollRef">
         <div
-          v-for="menu in menuList" :key="menu.key" class="menu-list"
-          @click="(e: Event) => onSelectMenu(e, menu as MenuListParams)">
+          v-for="menu in menuList"
+          v-show="!toggleMenu" :key="menu.key" class="menu-list"
+          @click.stop="(e: Event) => onSelectMenu(e, menu as MenuListParams)">
           <el-tooltip
             class="box-item" effect="light" :content="menu.name" placement="right"
             popper-class="custom-dropdown-styles">
@@ -24,6 +29,17 @@
             } ${menu.key} font iconfont ${menu.icon}`"
             />
           </el-tooltip>
+        </div>
+        <div
+          v-for="menu in menuList"
+          v-show="toggleMenu" :key="menu.key" class="menu-list"
+          @click.stop="(e: Event) => onSelectMenu(e, menu as MenuListParams)">
+          <div
+            :class="`${((activeMenu.path === menu.path && route.path.includes(menu.path)) || route.path === menu.path) &&
+              'active'} menu-item`">
+            <i :class="`${menu.key} font iconfont ${menu.icon}`" />
+            <span :class="`menu-name ${menu.key}-menu`">{{ menu.name }}</span>
+          </div>
         </div>
       </el-scrollbar>
       <div class="setting">
@@ -90,8 +106,9 @@ const reload = inject<Function>('reload');
 const router = useRouter();
 const route = useRoute();
 
-const activeMenu = ref<MenuListParams>(MENULIST[0]);
 let timer: ReturnType<typeof setTimeout> | null = null;
+const activeMenu = ref<MenuListParams>(MENULIST[0]);
+const toggleMenu = ref<boolean>(false);
 
 onUnmounted(() => {
   if (timer) {
@@ -124,7 +141,6 @@ watchEffect(() => {
 
 // 选中菜单
 const onSelectMenu = (e: Event, menu: MenuListParams) => {
-  e.stopPropagation();
   activeMenu.value = menu;
   if (route.path === menu.path) return;
   router.push(menu.path);
@@ -169,7 +185,7 @@ const onQuit = () => {
   justify-content: space-between;
   flex-direction: column;
   box-sizing: border-box;
-  width: 60px;
+  width: v-bind("`${toggleMenu ? '180px' : '60px'}`");
   height: 100%;
   border-radius: 5px;
   overflow: auto;
@@ -223,8 +239,10 @@ const onQuit = () => {
     }
 
     .active {
-      color: var(--active-color);
-      .textLgActive();
+      .font, .menu-name {
+        color: var(--active-color);
+        .textLgActive()
+      }
     }
 
     .icon-outline-designtools {
@@ -274,7 +292,7 @@ const onQuit = () => {
 }
 
 .mac-left-menu-wrap {
-  width: 62px;
+  width: v-bind("`${toggleMenu ? '180px' : '62px'}`");
 
   .icon-wrap {
     .page-icon {
@@ -305,6 +323,74 @@ const onQuit = () => {
     .icon-outline-designtools {
       font-size: 30px;
     }
+  }
+}
+
+.menu-list-large {
+  padding: 30px 20px 5px 15px;
+
+  .icon-wrap {
+    justify-content: flex-start;
+  }
+
+  .menu-list {
+    justify-content: flex-start;
+    height: 45px;
+
+
+    .font {
+      font-size: 20px;
+    }
+
+    .menu-item {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      padding: 0 5px;
+      border-radius: 5px;
+
+      &:hover {
+        background: #ccc;
+
+        .font, .menu-name {
+          color: var(--primary);
+        }
+      }
+
+      .icon-fankuitianxie {
+        margin-left: -2px;
+      }
+
+      .menu-name {
+        margin-left: 10px;
+        .menuLg();
+      }
+
+      .tag-menu {
+        margin-left: 12px;
+      }
+
+      .create-menu {
+        margin-left: 7px;
+      }
+
+      .author-menu {
+        margin-left: 12px;
+      }
+    }
+
+
+    .active {
+      .menu-name {
+        color: var(--active-color);
+        .textLgActive()
+      }
+    }
+  }
+
+  .setting {
+    justify-content: flex-start;
   }
 }
 

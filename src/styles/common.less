@@ -47,6 +47,15 @@
   }
 }
 
+.textClearLg() {
+  @supports (-webkit-background-clip: text) or (background-clip: text) {
+    background-image: var(--primary);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+}
+
 // 全局 el-scrollbar 样式
 .scrollbar-wrapper(@mr:12px) {
   box-sizing: border-box;

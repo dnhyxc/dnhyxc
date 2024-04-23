@@ -342,7 +342,7 @@ const onScrollTo = () => {
   align-items: center;
   justify-content: space-between;
   height: 60px;
-  padding: 10px 15px 7px 0px;
+  padding: 15px 15px 7px 0;
   -webkit-app-region: drag;
   .clickNoSelectText();
 
@@ -352,6 +352,7 @@ const onScrollTo = () => {
     justify-content: flex-start;
     color: var(--font-1);
     font-weight: var(--font-weight);
+    margin-top: 8px;
 
     .font {
       cursor: pointer;
@@ -386,6 +387,7 @@ const onScrollTo = () => {
     align-items: center;
     color: var(--font-1);
     font-weight: var(--font-weight);
+    margin-top: 8px;
 
     .search-wrap {
       display: flex;
