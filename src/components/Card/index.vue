@@ -12,8 +12,8 @@
       <div ref="topRef" class="top">
         <div v-for="i in ['markTop', 'markRight','markBottom','markLeft']" :key="i" :class="`${i} mark`">
           <div class="action">
-            <span @click.stop="toEdit(data)">编辑</span>
-            <span @click.stop="onReomve(data)">删除</span>
+            <span v-if="loginStore?.userInfo?.userId === data.authorId" @click.stop="toEdit(data)">编辑</span>
+            <span v-if="loginStore?.userInfo?.userId === data.authorId" @click.stop="onReomve(data)">删除</span>
           </div>
           <div>
             <div class="desc" :title="data.abstract">
@@ -262,7 +262,8 @@ const toTag = (tag: string) => {
   border-radius: v-bind(radius);
   transition: all 0.3s ease;
   background: rgba(255, 255, 255, 0.3);
-  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5); /* 水平偏移、垂直偏移、模糊半径和阴影颜色 */
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
+  .clickNoSelectText();
 
   .top {
     position: relative;

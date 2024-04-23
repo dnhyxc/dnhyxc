@@ -99,6 +99,7 @@ export const message = (
     onClose?: () => void;
   }) => {
   ElNotification({
+    dangerouslyUseHTMLString: true,
     title,
     message,
     type,

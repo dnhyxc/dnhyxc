@@ -123,7 +123,7 @@ const onSaveSort = async () => {
 
   .mac-tool-list {
     width: 100%;
-    height: calc(100vh - 335px);
+    height: calc(100vh - 300px);
   }
 
   .navigation-list {

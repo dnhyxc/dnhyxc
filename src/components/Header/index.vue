@@ -7,9 +7,6 @@
 <template>
   <div id="__HEADER__" :class="`${checkOS() === 'mac' && 'mac-header-wrap'} header-wrap`">
     <div class="left">
-      <div class="icon-wrap" @click="goHome">
-        <i class="page-icon iconfont icon-haidao_" />
-      </div>
       <el-tooltip effect="light" content="后退" placement="bottom" popper-class="custom-dropdown-styles">
         <i class="font iconfont icon-arrow-left-bold" @click="goBack" />
       </el-tooltip>
@@ -239,11 +236,6 @@ const onReload = () => {
   location.reload();
 };
 
-// 返回首页
-const goHome = () => {
-  router.push('/home');
-};
-
 // 点击右侧窗口控制按钮
 const onClick = (item: { title: string; svg: string }) => {
   if (item.title === '最大化') {
@@ -349,8 +341,8 @@ const onScrollTo = () => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 38px;
-  padding: 10px 15px 7px 12px;
+  height: 60px;
+  padding: 10px 15px 7px 0px;
   -webkit-app-region: drag;
   .clickNoSelectText();
 
@@ -358,36 +350,8 @@ const onScrollTo = () => {
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    padding-left: 41px;
     color: var(--font-1);
     font-weight: var(--font-weight);
-
-    .icon-wrap {
-      position: absolute;
-      top: 15px;
-      left: 13px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      .page-icon {
-        display: inline-block;
-        min-height: 40px;
-        line-height: 40px;
-        font-size: 35px;
-        margin-bottom: 2px;
-        color: var(--theme-blue);
-        cursor: pointer;
-        -webkit-app-region: no-drag;
-        transition: all 0.3s;
-        font-weight: 500;
-        .menuLg();
-
-        &:hover {
-          transform: scale(1.15);
-        }
-      }
-    }
 
     .font {
       cursor: pointer;
@@ -647,10 +611,9 @@ const onScrollTo = () => {
 }
 
 .mac-header-wrap {
-  padding: 28px 22px 0 10px;
+  padding: 0 22px 0 0;
 
   .left {
-    padding-left: 45px;
 
     .icon-wrap {
       top: 30px;

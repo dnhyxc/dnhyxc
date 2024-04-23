@@ -280,9 +280,10 @@ const onScrollTo = (to?: number) => {
 
 .author-wrap {
   margin: 8px 4px 0;
-  height: calc(100% - 9px);
+  height: calc(100% - 8px);
   border-radius: 5px;
-  border: 1px solid var(--card-border);
+  // border: 1px solid var(--card-border);
+  box-shadow: 0 0 8px 0 var(--shadow-mack);
 
   :deep {
     .scrollbar-wrapper {

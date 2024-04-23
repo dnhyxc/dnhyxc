@@ -179,6 +179,7 @@ const likeListArticle = async (id: string, data: ArticleItem) => {
       display: flex;
       align-items: center;
       justify-content: flex-start;
+      .clickNoSelectText();
 
       .type-btn {
         padding: 0;

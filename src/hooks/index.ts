@@ -78,7 +78,8 @@ export const useCheckUserId = (needMsg: boolean = true) => {
   const {userInfo} = loginStore;
   if (!userInfo?.userId && !storeUserInfo?.userId) {
     needMsg && message({
-      title: '请先登录后再操作哦！',
+      title: '暂无权限！',
+      message: '请先登录后再操作哦！',
       type: 'warning',
     });
     return false;
@@ -102,15 +103,16 @@ export const useCommentCount = computed(() => {
 });
 
 // 删除文章hooks
-export const useDeleteArticle = ({
-  pageType, // 用于区分个分页列表数据
-  classify, // 文章分类
-  tagName, // 标签页选中的标签
-  authorId, // 我的主页作者id
-  accessUserId, // 我的主页登录人id
-  router, // 路由
-  scrollbar, // 滚动容器
-}: useDeleteArticleParams) => {
+export const useDeleteArticle = (
+  {
+    pageType, // 用于区分个分页列表数据
+    classify, // 文章分类
+    tagName, // 标签页选中的标签
+    authorId, // 我的主页作者id
+    accessUserId, // 我的主页登录人id
+    router, // 路由
+    scrollbar, // 滚动容器
+  }: useDeleteArticleParams) => {
   const deleteArticle = (articleId: string) => {
     Message('', '确定下架该文章吗？').then(async () => {
       const params: DeleteArticleParams = {

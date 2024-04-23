@@ -189,6 +189,7 @@ const toTag = (name: string) => {
   justify-content: space-between;
   border-radius: 5px;
   box-sizing: border-box;
+  .clickNoSelectText();
 
   .carousel {
     flex: 1;

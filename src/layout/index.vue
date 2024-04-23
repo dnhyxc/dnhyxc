@@ -9,11 +9,9 @@
     <div class="el-container-wrap">
       <el-container>
         <el-main class="el-main">
-          <Header />
+          <LeftMenu />
           <div class="content">
-            <el-aside class="aside-wrap" :width="`${checkOS() === 'mac' ? '62px' : '60px'}`">
-              <LeftMenu />
-            </el-aside>
+            <Header />
             <div class="right">
               <RouterView v-if="isRouterAlive" v-slot="{ Component }">
                 <!-- 定义缓存组件：注意include="Create"，Create 组件内部必须声明组件名称 -->
@@ -34,7 +32,6 @@
 import { ref, nextTick, provide } from 'vue';
 import { loginStore, commonStore } from '@/store';
 import { useListeningNetwork } from '@/hooks';
-import { checkOS } from '@/utils';
 import Header from '@/components/Header/index.vue';
 import LeftMenu from '@/components/LeftMenu/index.vue';
 import ExitReminder from '@/components/ExitReminder/index.vue';
@@ -101,23 +98,27 @@ provide('reload', reload);
 
   .el-main {
     display: flex;
-    flex-direction: column;
+    // flex-direction: column;
+    justify-content: space-between;
     box-sizing: border-box;
     height: 100%;
     width: 100%;
-    padding: 0;
+    padding: 0 20px 20px 5px;
   }
 
   .content {
+    flex: 1;
     display: flex;
     justify-content: flex-start;
+    flex-direction: column;
     box-sizing: border-box;
     height: 100%;
     overflow: hidden;
-    padding-right: 20px;
-    padding-bottom: 25px;
+    padding-bottom: 5px;
+
     .right {
       flex: 1;
+      height: calc(100vh - 85px);
       border-radius: 5px;
     }
   }

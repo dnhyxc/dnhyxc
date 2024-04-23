@@ -418,7 +418,7 @@ const onScrollTo = (to?: number) => {
 .personal-wrap {
   display: flex;
   flex-direction: column;
-  height: calc(100% - 4px);
+  height: calc(100% - 3px);
   margin: 6px 4px 0;
 
   .header {
@@ -428,7 +428,8 @@ const onScrollTo = (to?: number) => {
     background-image: linear-gradient(225deg, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
     border-radius: 5px;
     margin-bottom: 10px;
-    border: 1px solid var(--card-border);
+    // border: 1px solid var(--card-border);
+    box-shadow: 0 0 8px 0 var(--shadow-mack);
     box-sizing: border-box;
 
     .left {
@@ -545,7 +546,8 @@ const onScrollTo = (to?: number) => {
 
   .bottom-content {
     position: relative;
-    border: 1px solid var(--card-border);
+    // border: 1px solid var(--card-border);
+    box-shadow: 0 0 8px 0 var(--shadow-mack);
     height: calc(100% - 163px);
     border-radius: 5px;
     padding-bottom: 10px;

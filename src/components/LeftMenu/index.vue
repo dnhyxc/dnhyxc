@@ -5,44 +5,37 @@
  * index.vue
 -->
 <template>
-  <div id="__LEFT_MENU__" :class="`${checkOS() === 'mac' && 'mac-left-menu-wrap'} left-menu-wrap`">
-    <el-scrollbar ref="scrollRef">
-      <div
-v-for="menu in menuList" :key="menu.key" class="menu-list"
-           @click="(e: Event) => onSelectMenu(e, menu as MenuListParams)">
-        <el-tooltip
-class="box-item" effect="light" :content="menu.name" placement="right"
-                    popper-class="custom-dropdown-styles">
-          <i
-            :class="`${
+  <el-aside class="aside-wrap" :width="`${checkOS() === 'mac' ? '62px' : '60px'}`">
+    <div id="__LEFT_MENU__" :class="`${checkOS() === 'mac' && 'mac-left-menu-wrap'} left-menu-wrap`">
+      <div class="icon-wrap" @click="goHome">
+        <i class="page-icon iconfont icon-haidao_" />
+      </div>
+      <el-scrollbar ref="scrollRef">
+        <div
+          v-for="menu in menuList" :key="menu.key" class="menu-list"
+          @click="(e: Event) => onSelectMenu(e, menu as MenuListParams)">
+          <el-tooltip
+            class="box-item" effect="light" :content="menu.name" placement="right"
+            popper-class="custom-dropdown-styles">
+            <i
+              :class="`${
               ((activeMenu.path === menu.path && route.path.includes(menu.path)) || route.path === menu.path) &&
               'active'
             } ${menu.key} font iconfont ${menu.icon}`"
-          />
-        </el-tooltip>
-      </div>
-    </el-scrollbar>
-    <div class="setting">
-      <el-popover
-        v-if="loginStore?.userInfo?.userId"
-        placement="top-start"
-        popper-class="login-popover"
-        :width="180"
-        :show-arrow="false"
-        trigger="hover"
-      >
-        <template #reference>
-          <el-avatar
-            shape="square"
-            :size="checkOS() === 'mac' ? 40 : 38"
-            fit="cover"
-            :src="loginStore.userInfo?.headUrl || HEAD_IMG"
-            class="avatar"
-            @click.stop="toPersonal"
-          />
-        </template>
-        <div class="drop-user-info-list">
-          <div class="user-info">
+            />
+          </el-tooltip>
+        </div>
+      </el-scrollbar>
+      <div class="setting">
+        <el-popover
+          v-if="loginStore?.userInfo?.userId"
+          placement="top-start"
+          popper-class="login-popover"
+          :width="180"
+          :show-arrow="false"
+          trigger="hover"
+        >
+          <template #reference>
             <el-avatar
               shape="square"
               :size="checkOS() === 'mac' ? 40 : 38"
@@ -51,33 +44,46 @@ class="box-item" effect="light" :content="menu.name" placement="right"
               class="avatar"
               @click.stop="toPersonal"
             />
-            <div class="username">{{ loginStore.userInfo?.username }}</div>
+          </template>
+          <div class="drop-user-info-list">
+            <div class="user-info">
+              <el-avatar
+                shape="square"
+                :size="checkOS() === 'mac' ? 40 : 38"
+                fit="cover"
+                :src="loginStore.userInfo?.headUrl || HEAD_IMG"
+                class="avatar"
+                @click.stop="toPersonal"
+              />
+              <div class="username">{{ loginStore.userInfo?.username }}</div>
+            </div>
+            <div class="drop-item" @click="toPersonal">
+              <i class="iconfont icon-gerenzhongxin" />
+              <span class="dropdown-text">我的主页</span>
+            </div>
+            <div class="drop-item" @click="onQuit">
+              <i class="iconfont icon-tuichu1" />
+              <span class="dropdown-text">退出登录</span>
+            </div>
           </div>
-          <div class="drop-item" @click="toPersonal">
-            <i class="iconfont icon-gerenzhongxin"/>
-            <span class="dropdown-text">我的主页</span>
-          </div>
-          <div class="drop-item" @click="onQuit">
-            <i class="iconfont icon-tuichu1"/>
-            <span class="dropdown-text">退出登录</span>
-          </div>
+        </el-popover>
+        <div v-else class="login-btn" @click.stop="onLogin">
+          <div class="login">登录</div>
         </div>
-      </el-popover>
-      <div v-else class="login-btn" @click.stop="onLogin">
-        <div class="login">登录</div>
       </div>
     </div>
-  </div>
+  </el-aside>
+
 </template>
 
 <script setup lang="ts">
-import {ref, computed, watchEffect, inject, onUnmounted} from 'vue';
-import {useRouter, useRoute} from 'vue-router';
-import {MENULIST, HEAD_IMG} from '@/constant';
-import {MenuListParams} from '@/typings/common';
-import {loginStore} from '@/store';
-import {checkOS} from '@/utils';
-import {authRoutes} from '@/router';
+import { ref, computed, watchEffect, inject, onUnmounted } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
+import { MENULIST, HEAD_IMG } from '@/constant';
+import { MenuListParams } from '@/typings/common';
+import { loginStore } from '@/store';
+import { checkOS } from '@/utils';
+import { authRoutes } from '@/router';
 
 const reload = inject<Function>('reload');
 
@@ -124,6 +130,11 @@ const onSelectMenu = (e: Event, menu: MenuListParams) => {
   router.push(menu.path);
 };
 
+// 返回首页
+const goHome = () => {
+  router.push('/home');
+};
+
 // 去我的主页
 const toPersonal = () => {
   router.push('/personal');
@@ -160,10 +171,33 @@ const onQuit = () => {
   box-sizing: border-box;
   width: 60px;
   height: 100%;
-  padding-left: 1px;
   border-radius: 5px;
   overflow: auto;
-  padding-top: 15px;
+  padding: 30px 0 5px;
+
+  .icon-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 2px;
+
+    .page-icon {
+      display: inline-block;
+      min-height: 40px;
+      line-height: 40px;
+      font-size: 38px;
+      color: var(--theme-blue);
+      cursor: pointer;
+      -webkit-app-region: no-drag;
+      transition: all 0.3s;
+      font-weight: 500;
+      .menuLg();
+
+      &:hover {
+        transform: scale(1.15);
+      }
+    }
+  }
 
   .menu-list {
     box-sizing: border-box;
@@ -215,7 +249,6 @@ const onQuit = () => {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-top: 20px;
     z-index: 99;
 
     .login-btn {
