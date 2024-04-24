@@ -6,11 +6,9 @@
 -->
 <template>
   <ContextMenu class="block" :menu="CARD_CONTEXT_MENU" @select="onSelectMenu">
-    <div
-      class="card-wrap" @click.stop="toDetail(data)" @mouseenter.stop="onMouseEnter"
-      @mouseleave.stop="onMouseLeave">
+    <div class="card-wrap" @click.stop="toDetail(data)" @mouseenter.stop="onMouseEnter" @mouseleave.stop="onMouseLeave">
       <div ref="topRef" class="top">
-        <div v-for="i in ['markTop', 'markRight','markBottom','markLeft']" :key="i" :class="`${i} mark`">
+        <div v-for="i in ['markTop', 'markRight', 'markBottom', 'markLeft']" :key="i" :class="`${i} mark`">
           <div class="action">
             <span v-if="loginStore?.userInfo?.userId === data.authorId" @click.stop="toEdit(data)">编辑</span>
             <span v-if="loginStore?.userInfo?.userId === data.authorId" @click.stop="onReomve(data)">删除</span>
@@ -26,9 +24,11 @@
         <Image :url="data.coverImage || IMG1" :transition-img="IMG1" class="card-img" radius="5px 5px 0 0" />
       </div>
       <div
-        class="bottom" :style="{
-            backgroundImage: gradients,
-          }">
+        class="bottom"
+        :style="{
+          backgroundImage: gradients,
+        }"
+      >
         <div class="title" v-html="data.title" />
         <div class="author">
           <span @click.stop="toPersonal(data.authorId!)" v-html="data.authorName" />
@@ -37,9 +37,7 @@
         <div class="actions">
           <div class="action-icons">
             <div class="action like" @click.stop="onLike(data)">
-              <i
-                :class="`font like-icon iconfont ${data.isLike ? 'icon-24gf-thumbsUp2' : 'icon-24gl-thumbsUp2'}`"
-              />
+              <i :class="`font like-icon iconfont ${data.isLike ? 'icon-24gf-thumbsUp2' : 'icon-24gl-thumbsUp2'}`" />
               <span>{{ data.likeCount || '点赞' }}</span>
             </div>
             <div class="action comment" @click.stop="onComment(data)">
@@ -82,7 +80,7 @@ const props = withDefaults(defineProps<IProps>(), {
   radius: '5px',
   width: '',
   deleteArticle: null,
-  likeListArticle: null
+  likeListArticle: null,
 });
 
 const timer = ref<boolean>(false);
@@ -128,7 +126,7 @@ const onLike = async (data: ArticleItem) => {
   if (data?.isDelete) {
     message({
       title: '文章已下架，无法操作',
-      type: 'warning'
+      type: 'warning',
     });
     return;
   }
@@ -141,11 +139,11 @@ const onComment = (data: ArticleItem) => {
   if (data?.isDelete) {
     message({
       title: '文章已下架，无法操作',
-      type: 'warning'
+      type: 'warning',
     });
     return;
   }
-  router.push(`/detail/${ data.id }?scrollTo=1&from=${ route.name as string }`);
+  router.push(`/detail/${data.id}?scrollTo=1&from=${route.name as string}`);
 };
 
 // 编辑
@@ -153,11 +151,11 @@ const toEdit = async (data: ArticleItem) => {
   if (data?.isDelete) {
     message({
       title: '文章已下架，无法操作',
-      type: 'warning'
+      type: 'warning',
     });
     return;
   }
-  router.push(`/create?id=${ data.id }`);
+  router.push(`/create?id=${data.id}`);
 };
 
 // 下架
@@ -165,7 +163,7 @@ const onReomve = async (data: ArticleItem) => {
   if (data?.isDelete) {
     message({
       title: '文章已下架，无法操作',
-      type: 'warning'
+      type: 'warning',
     });
     return;
   }
@@ -178,7 +176,7 @@ const onSelectMenu = (menu: { label: string; value: number }) => {
   if (props.data?.isDelete) {
     message({
       title: '文章已下架，无法操作',
-      type: 'warning'
+      type: 'warning',
     });
     return;
   }
@@ -194,11 +192,11 @@ const toDetail = async (data: ArticleItem) => {
   if (data?.isDelete) {
     message({
       title: '文章已下架，无法操作',
-      type: 'warning'
+      type: 'warning',
     });
     return;
   }
-  router.push(`/detail/${ data.id }?from=${ route.name as string }`);
+  router.push(`/detail/${data.id}?from=${route.name as string}`);
 };
 
 // 新窗口打开
@@ -206,29 +204,29 @@ const onOpenNewWindow = async (data: ArticleItem) => {
   if (data?.isDelete) {
     message({
       title: '文章已下架，无法操作',
-      type: 'warning'
+      type: 'warning',
     });
     return;
   }
-  const {userInfo, token} = loginStore;
+  const { userInfo, token } = loginStore;
   ipcRenderers.sendNewWin({
-    path: `article/${ data.id }?from=${ route.name as string }`,
+    path: `article/${data.id}?from=${route.name as string}`,
     id: data.id, // articleId
-    userInfo: JSON.stringify({userInfo, token}),
+    userInfo: JSON.stringify({ userInfo, token }),
   });
 };
 
 // 去我的主页
 const toPersonal = (id: string) => {
-  router.push(`/personal?authorId=${ id }`);
+  router.push(`/personal?authorId=${id}`);
 };
 
 const toClassify = (classify: string) => {
-  router.push(`/classify?classify=${ classify }`);
+  router.push(`/classify?classify=${classify}`);
 };
 
 const toTag = (tag: string) => {
-  router.push(`/tag/list?tag=${ tag }`);
+  router.push(`/tag/list?tag=${tag}`);
 };
 </script>
 
@@ -276,7 +274,7 @@ const toTag = (tag: string) => {
       height: 100%;
       padding: 5px;
       box-sizing: border-box;
-      border-radius: 10px 10px 0 0;
+      border-radius: 5px 5px 0 0;
       backdrop-filter: blur(3px);
       color: @fff;
 

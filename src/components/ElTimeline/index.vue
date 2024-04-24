@@ -102,11 +102,11 @@ const toEdit = async (data: ArticleItem | TimelineArticles) => {
   if ((data as ArticleItem)?.isDelete) {
     message({
       title: '文章已下架，无法操作',
-      type: 'warning'
+      type: 'warning',
     });
     return;
   }
-  router.push(`/create?id=${ data.id }`);
+  router.push(`/create?id=${data.id}`);
 };
 
 // 删除
@@ -114,7 +114,7 @@ const onReomve = async (data: ArticleItem | TimelineArticles) => {
   if ((data as ArticleItem)?.isDelete) {
     message({
       title: '文章已下架，无法操作',
-      type: 'warning'
+      type: 'warning',
     });
     return;
   }
@@ -131,7 +131,7 @@ const likeListArticle = async (data: ArticleItem | TimelineArticles) => {
 
 // 去作者主页
 const toPersonal = (id: string) => {
-  router.push(`/personal?authorId=${ id }`);
+  router.push(`/personal?authorId=${id}`);
   let timer: ReturnType<typeof setTimeout> | null = null;
   if (route.path === '/personal') {
     if (timer) {
@@ -147,13 +147,13 @@ const toPersonal = (id: string) => {
 
 // 去分类页
 const toClassify = (classify: string) => {
-  router.push(`/classify?classify=${ classify }`);
+  router.push(`/classify?classify=${classify}`);
 };
 
 // 去标签
 const toTag = (tag: string) => {
   if (route.path !== '/tag/list') {
-    router.push(`/tag/list?tag=${ tag }`);
+    router.push(`/tag/list?tag=${tag}`);
   }
 };
 
@@ -162,11 +162,11 @@ const toDetail = (data: ArticleItem | TimelineArticles) => {
   if ((data as ArticleItem)?.isDelete) {
     message({
       title: '文章已下架，无法操作',
-      type: 'warning'
+      type: 'warning',
     });
     return;
   }
-  router.push(`/detail/${ data?.id }`);
+  router.push(`/detail/${data?.id}`);
 };
 
 // 评论
@@ -174,11 +174,11 @@ const onComment = (data: ArticleItem | TimelineArticles) => {
   if ((data as ArticleItem)?.isDelete) {
     message({
       title: '文章已下架，无法操作',
-      type: 'warning'
+      type: 'warning',
     });
     return;
   }
-  router.push(`/detail/${ data?.id }?scrollTo=1`);
+  router.push(`/detail/${data?.id}?scrollTo=1`);
 };
 
 // 新窗口打开
@@ -186,15 +186,15 @@ const onOpenNewWindow = (data: ArticleItem) => {
   if ((data as ArticleItem)?.isDelete) {
     message({
       title: '文章已下架，无法操作',
-      type: 'warning'
+      type: 'warning',
     });
     return;
   }
-  const {userInfo, token} = loginStore;
+  const { userInfo, token } = loginStore;
   ipcRenderers.sendNewWin({
-    path: `article/${ data.id }?from=${ route.name as string }`,
+    path: `article/${data.id}?from=${route.name as string}`,
     id: data.id,
-    userInfo: JSON.stringify({userInfo, token}),
+    userInfo: JSON.stringify({ userInfo, token }),
   });
 };
 
@@ -222,7 +222,7 @@ const onSelectMenu = (menu: { label: string; value: number }, data: TimelineArti
     position: relative;
     display: flex;
     justify-content: space-between;
-    box-shadow: 0 0 8px 0 var(--shadow-mack);
+    box-shadow: 0 0 5px 0 var(--card-shadow);
     background-color: var(--pre-hover-bg);
     padding: 15px;
     box-sizing: border-box;

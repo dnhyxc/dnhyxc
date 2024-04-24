@@ -92,20 +92,13 @@ interface IProps {
 const props = withDefaults(defineProps<IProps>(), {
   articleId: '',
   height: '100%',
-  onPublish: () => {
-  },
-  onClear: () => {
-  },
-  onShowDraft: () => {
-  },
-  onSaveDraft: () => {
-  },
-  onChangeEditor: () => {
-  },
-  copyCodeSuccess: () => {
-  },
-  onShowCodeRun: () => {
-  },
+  onPublish: () => {},
+  onClear: () => {},
+  onShowDraft: () => {},
+  onSaveDraft: () => {},
+  onChangeEditor: () => {},
+  copyCodeSuccess: () => {},
+  onShowCodeRun: () => {},
   showDot: 0,
 });
 
@@ -114,7 +107,7 @@ const toolMenu = computed(() => {
   const menu =
     'undo redo | h bold italic | quote code | strikethrough hr | emoji link image | ul ol table | clear draft save create debug';
   if (props.showVscode) {
-    return `${ menu } | monaco`;
+    return `${menu} | monaco`;
   }
   return menu;
 });
@@ -314,7 +307,7 @@ const onCopyCodeSuccess = (value: string) => {
 
     .v-md-editor {
       border-radius: 5px;
-      box-shadow: 0 0 8px 0 var(--shadow-mack);
+      box-shadow: 0 0 5px 0 var(--card-shadow);
     }
 
     .v-md-textarea-editor pre,

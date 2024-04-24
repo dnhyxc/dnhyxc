@@ -27,7 +27,7 @@ import { checkOS } from '@/utils';
 import { MenuListParams } from '@/typings/common';
 
 const menuList = computed(() => {
-  const {token} = loginStore;
+  const { token } = loginStore;
   const res = token ? SETTING_MENU : SETTING_MENU.filter((i) => i.show);
   return res;
 });
@@ -72,7 +72,7 @@ const onClick = (menu: MenuListParams) => {
   background-color: var(--pre-hover-bg);
   margin: 8px 4px 0;
   height: calc(100% - 6px);
-  box-shadow: 0 0 8px 0 var(--shadow-mack);
+  box-shadow: 0 0 5px 0 var(--card-shadow);
 
   .menu {
     display: flex;

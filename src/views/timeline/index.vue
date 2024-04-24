@@ -35,7 +35,7 @@ const reload = inject<Function>('reload');
 
 const route = useRoute();
 // scrollRef：el-scrollbar ref，scrollTop：滚动距离
-const {scrollRef, scrollTop} = useScroller();
+const { scrollRef, scrollTop } = useScroller();
 
 const showEmpty = computed(
   () => timelineStore.loading !== null && !timelineStore.loading && !timelineStore.timelineList?.length,
@@ -44,7 +44,7 @@ const showEmpty = computed(
 onMounted(async () => {
   // 监听详情点赞状态，实时更改列表对应文章的点赞状态
   ipcRenderer.on('refresh', (_, params: WinRefreshParams) => {
-    const {pageType, isLike = true} = params;
+    const { pageType, isLike = true } = params;
     // 需要判断是否是属于当前活动页面，并且只是点击点赞而不是收藏或评论防止重复触发
     if (route.name === 'timeline' && pageType !== 'list' && isLike) {
       reload && reload();
@@ -59,7 +59,7 @@ const deleteTimeLineArticle = async (data: ArticleItem | TimelineArticles) => {
   if ((data as ArticleItem)?.isDelete) {
     message({
       title: '文章已下架，无法操作',
-      type: 'warning'
+      type: 'warning',
     });
     return;
   }
@@ -68,7 +68,7 @@ const deleteTimeLineArticle = async (data: ArticleItem | TimelineArticles) => {
 
 // 文章点赞
 const likeListArticle = async (id: string, data: ArticleItem | TimelineArticles) => {
-  await articleStore.likeListArticle({id, isTimeLine: true, data} as ArticleItem);
+  await articleStore.likeListArticle({ id, isTimeLine: true, data } as ArticleItem);
 };
 
 // 置顶
@@ -82,7 +82,7 @@ const onScrollTo = () => {
 
 .timeline-wrap {
   border-radius: 5px;
-  box-shadow: 0 0 8px 0 var(--shadow-mack);
+  box-shadow: 0 0 5px 0 var(--card-shadow);
   background-color: var(--pre-hover-bg);
   box-sizing: border-box;
   height: calc(100% - 8px);
@@ -99,7 +99,7 @@ const onScrollTo = () => {
     position: relative;
     display: flex;
     justify-content: space-between;
-    box-shadow: 0 0 8px 0 var(--shadow-mack);
+    box-shadow: 0 0 5px 0 var(--card-shadow);
     background-color: var(--pre-hover-bg);
     padding: 15px;
     box-sizing: border-box;

@@ -15,7 +15,7 @@
       <span v-if="articleStore?.detailArtLikeCount > 0" class="count">
         {{
           articleStore?.detailArtLikeCount > 999
-            ? `${ String(articleStore?.detailArtLikeCount).slice(0, 3) }+`
+            ? `${String(articleStore?.detailArtLikeCount).slice(0, 3)}+`
             : articleStore?.detailArtLikeCount
         }}
       </span>
@@ -23,7 +23,7 @@
     <div class="action comment-wrap" @click="toComment">
       <i class="comment-font iconfont icon-pinglun1" />
       <span v-if="commentCount > 0" class="count">
-        {{ commentCount > 999 ? `${ String(commentCount).slice(0, 3) }+` : commentCount }}
+        {{ commentCount > 999 ? `${String(commentCount).slice(0, 3)}+` : commentCount }}
       </span>
     </div>
     <div class="action collect-wrap" @click="onCollect">
@@ -31,7 +31,7 @@
       <span v-if="articleStore?.articleDetail?.collectCount! > 0" class="count">
         {{
           articleStore?.articleDetail?.collectCount! > 999
-            ? `${ String(articleStore?.articleDetail?.collectCount).slice(0, 3) }+`
+            ? `${String(articleStore?.articleDetail?.collectCount).slice(0, 3)}+`
             : articleStore?.articleDetail?.collectCount
         }}
       </span>
@@ -122,7 +122,7 @@ onMounted(() => {
 const likeArticle = async () => {
   if (timer.value) return;
   timer.value = true;
-  await articleStore?.likeArticle({id: props.id});
+  await articleStore?.likeArticle({ id: props.id });
   timer.value = false;
 };
 
@@ -134,7 +134,7 @@ const toComment = () => {
 // 收藏
 const onCollect = () => {
   // 获取存储在硬盘store中的登录信息
-  const {userInfo} = getStoreUserInfo();
+  const { userInfo } = getStoreUserInfo();
   if (!loginStore?.userInfo?.userId && !userInfo?.userId) {
     message({
       title: '无权操作！',
@@ -169,7 +169,7 @@ const onCollect = () => {
     height: 50px;
     border-radius: 5px;
     margin-right: 10px;
-    box-shadow: 0 0 8px 0 var(--shadow-mack);
+    box-shadow: 0 0 5px 0 var(--card-shadow);
     color: var(--font-3);
     cursor: pointer;
     background-color: var(--pre-hover-bg);

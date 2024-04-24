@@ -20,14 +20,14 @@
             <div class="classify">
               <span class="label">分类：</span>
               <span class="tag_item" @click.stop="toClassify(articleStore.articleDetail.classify!)">{{
-                  articleStore.articleDetail.classify
-                }}</span>
+                articleStore.articleDetail.classify
+              }}</span>
             </div>
             <div class="classify tag">
               <span class="label">标签：</span>
               <span class="tag_item" @click.stop="toTag(articleStore.articleDetail.tag!)">{{
-                  articleStore.articleDetail.tag
-                }}</span>
+                articleStore.articleDetail.tag
+              }}</span>
             </div>
           </div>
         </div>
@@ -88,17 +88,17 @@ const articleInfoRef = ref<HTMLDivElement | null>(null);
 const focus = ref<boolean>(false);
 
 // scrollRef：el-scrollbar ref，scrollTop：滚动距离
-const {scrollRef, scrollTop} = useScroller();
+const { scrollRef, scrollTop } = useScroller();
 
 onMounted(async () => {
   nextTick(() => {
     commonStore.detailScrollRef = scrollRef.value;
   });
-  await articleStore.getArticleDetail({id: route.params.id as string, router});
+  await articleStore.getArticleDetail({ id: route.params.id as string, router });
 
   // 监听主进程发布的刷新页面的消息
   ipcRenderer.on('refresh', (_, params: WinRefreshParams) => {
-    const {id, pageType} = params;
+    const { id, pageType } = params;
     // 需要判断是否是属于当前活动页面，并且pageType不等于detail，防止重复触发
     if (pageType !== 'detail' && id === route.params.id) {
       reload && reload();
@@ -113,7 +113,7 @@ const onScroll = () => {
 
 // 组件卸载前，清楚store中的详情信息
 onUnmounted(() => {
-  articleStore.articleDetail = {id: ''};
+  articleStore.articleDetail = { id: '' };
   articleStore.commentList = [];
   articleStore.anotherArticleList = [];
 });
@@ -133,13 +133,13 @@ const onCopyCodeSuccess = (value?: string) => {
 
 // 去分类页
 const toClassify = (classify: string) => {
-  router.push(`/classify?classify=${ classify }`);
+  router.push(`/classify?classify=${classify}`);
 };
 
 // 去标签
 const toTag = (tag: string) => {
   if (route.path !== '/tag/list') {
-    router.push(`/tag/list?tag=${ tag }`);
+    router.push(`/tag/list?tag=${tag}`);
   }
 };
 
@@ -171,7 +171,7 @@ const onScrollTo = (height?: number) => {
     box-sizing: border-box;
     margin-right: 10px;
     border-radius: 5px;
-    box-shadow: 0 0 8px 0 var(--shadow-mack);
+    box-shadow: 0 0 5px 0 var(--card-shadow);
     background-color: var(--pre-hover-bg);
 
     :deep {

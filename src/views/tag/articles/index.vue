@@ -190,7 +190,7 @@ const likeListArticle = async (id: string, data?: ArticleItem) => {
     box-sizing: border-box;
     width: 220px;
     height: 100%;
-    box-shadow: 0 0 8px 0 var(--shadow-mack);
+    box-shadow: 0 0 5px 0 var(--card-shadow);
     background-color: var(--pre-hover-bg);
     border-radius: 5px;
     padding: 5px;
@@ -294,7 +294,7 @@ const likeListArticle = async (id: string, data?: ArticleItem) => {
   .right {
     flex: 1;
     margin-left: 10px;
-    box-shadow: 0 0 8px 0 var(--shadow-mack);
+    box-shadow: 0 0 5px 0 var(--card-shadow);
     background-color: var(--pre-hover-bg);
     border-radius: 5px;
     padding: 5px 5px;

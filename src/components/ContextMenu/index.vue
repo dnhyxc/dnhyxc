@@ -86,7 +86,7 @@ const onSizeChange = (size: { width: number; height: number }) => {
   background: var(--modal-bg-color);
   border-radius: 5px;
   text-align: center;
-  box-shadow: 0 0 8px 0 var(--shadow-mack);
+  box-shadow: 0 0 5px 0 var(--card-shadow);
   z-index: 999;
   .clickNoSelectText();
 

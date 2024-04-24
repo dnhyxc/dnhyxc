@@ -386,7 +386,7 @@ const onClick = async (item: { title: string; svg: string }) => {
         margin-right: 10px;
         height: calc(100vh - 76px);
         border-radius: 5px;
-        box-shadow: 0 0 8px 0 var(--shadow-mack);
+        box-shadow: 0 0 5px 0 var(--card-shadow);
         background-color: var(--pre-hover-bg);
 
         :deep {

@@ -7,13 +7,13 @@
 <template>
   <el-aside
     class="aside-wrap"
-    :width="`${checkOS() === 'mac' ? (toggleMenu ? '200px' : '62px') : toggleMenu ? '200px' : '60px'}`"
+    :width="`${checkOS() === 'mac' ? (toggleMenu ? '200px' : '62px') : toggleMenu ? '220px' : '60px'}`"
   >
     <div
       id="__LEFT_MENU__"
       :class="`${checkOS() === 'mac' && 'mac-left-menu-wrap'} left-menu-wrap ${toggleMenu && 'menu-list-large'}`"
     >
-      <div class="icon-wrap" @click="goHome">
+      <div :class="`icon-wrap ${checkOS() === 'mac' && 'mac-icon-wrap'}`" @click="goHome">
         <i class="page-icon iconfont icon-haidao_" />
         <span class="title-name">墨客</span>
       </div>
@@ -33,9 +33,9 @@
           >
             <i
               :class="`${
-                  ((activeMenu.path === menu.path && route.path.includes(menu.path)) || route.path === menu.path) &&
-                  'active'
-                } ${menu.key} font iconfont ${menu.fillIcon}`"
+                ((activeMenu.path === menu.path && route.path.includes(menu.path)) || route.path === menu.path) &&
+                'active'
+              } ${menu.key} font iconfont ${menu.fillIcon}`"
             />
           </el-tooltip>
         </div>
@@ -145,7 +145,6 @@
             <span>未来不是时光锁期</span>
           </div>
           <div class="links">
-
             <span v-for="icon in ICONLINKS" :key="icon.name" class="link-icon">
               <i :class="`${icon.className} icon iconfont ${icon.name}`" />
             </span>
@@ -183,7 +182,7 @@ onUnmounted(() => {
 
 // 计算菜单
 const menuList = computed(() => {
-  const {token, menus} = loginStore;
+  const { token, menus } = loginStore;
   const list = token ? MENULIST : MENULIST.filter((i) => i.show && !i.authorWiew);
   // 判断是否是博主，否则无法访问图片集
   const removeMenu = authRoutes.filter((i) => menus.some((j) => j !== i.name));
@@ -257,7 +256,7 @@ const onQuit = () => {
     justify-content: space-between;
     flex-direction: column;
     box-sizing: border-box;
-    width: v-bind("`${toggleMenu ? '200px' : '60px'}`");
+    width: v-bind("`${toggleMenu ? '220px' : '60px'}`");
     height: 100%;
     border-radius: 5px;
     overflow: auto;
@@ -356,7 +355,7 @@ const onQuit = () => {
   }
 
   .mac-left-menu-wrap {
-    width: v-bind("`${toggleMenu ? '200px' : '62px'}`");
+    width: v-bind("`${toggleMenu ? '220px' : '62px'}`");
     padding: 22px 0 5px;
 
     .icon-wrap {
@@ -380,7 +379,8 @@ const onQuit = () => {
         font-size: 29px;
       }
 
-      .icon-biaoqianku, .icon-b-chat,
+      .icon-biaoqianku,
+      .icon-b-chat,
       .icon-outline-designtools {
         font-size: 30px;
       }
@@ -396,9 +396,9 @@ const onQuit = () => {
 
     .icon-wrap {
       justify-content: flex-start;
-      align-items: flex-end;
-      padding-top: 20px;
-      margin-bottom: 0;
+      align-items: flex-start;
+      padding-top: 15px;
+      margin-bottom: 5px;
       padding-left: 4px;
 
       .page-icon {
@@ -406,14 +406,24 @@ const onQuit = () => {
         margin-left: -3px;
       }
 
-
       .title-name {
         display: inline-block;
         font-weight: 500;
         font-size: 22px;
         margin-left: 5px;
-        margin-bottom: 3px;
+        margin-top: 3px;
         .menuLg();
+      }
+    }
+
+    .mac-icon-wrap {
+      align-items: flex-end;
+      padding-top: 20px;
+      margin-bottom: 0;
+
+      .title-name {
+        margin-top: 3px;
+        margin-bottom: 5px;
       }
     }
 
@@ -440,7 +450,7 @@ const onQuit = () => {
           display: flex;
           align-items: center;
           cursor: pointer;
-          padding: 0 10px;
+          padding: 3px 10px;
           border-radius: 5px;
 
           &:hover {
@@ -609,5 +619,4 @@ const onQuit = () => {
     margin-bottom: 8px;
   }
 }
-
 </style>

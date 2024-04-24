@@ -859,7 +859,7 @@ const onPreviewDragImg = () => {
   display: flex;
   justify-content: space-between;
   border-radius: 5px;
-  box-shadow: 0 0 8px 0 var(--shadow-mack);
+  box-shadow: 0 0 5px 0 var(--card-shadow);
   background-color: var(--pre-hover-bg);
   box-sizing: border-box;
   margin: 8px 5px 0;

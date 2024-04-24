@@ -47,26 +47,26 @@
                   <div class="github">
                     github：
                     <span class="link" @click.stop="onJump(authorStore.userInfo?.github!, 'github')">{{
-                        authorStore.userInfo?.github
-                      }}</span>
+                      authorStore.userInfo?.github
+                    }}</span>
                   </div>
                   <div class="juejin">
                     掘金：
                     <span class="link" @click.stop="onJump(authorStore.userInfo?.juejin!, '掘金')">{{
-                        authorStore.userInfo?.juejin
-                      }}</span>
+                      authorStore.userInfo?.juejin
+                    }}</span>
                   </div>
                   <div class="zhihu">
                     知乎：
                     <span class="link" @click.stop="onJump(authorStore.userInfo?.zhihu!, '知乎')">{{
-                        authorStore.userInfo?.zhihu
-                      }}</span>
+                      authorStore.userInfo?.zhihu
+                    }}</span>
                   </div>
                   <div class="blog">
                     博客：
                     <span class="link" @click.stop="onJump(authorStore.userInfo?.blog!, '博客')">{{
-                        authorStore.userInfo?.blog
-                      }}</span>
+                      authorStore.userInfo?.blog
+                    }}</span>
                   </div>
                 </div>
                 <div class="view-more" @click="onShowMore">
@@ -143,14 +143,14 @@ import { ArticleItem, FollowItem, WinRefreshParams, TimelineArticles } from '@/t
 const reload = inject<Function>('reload');
 
 const route = useRoute();
-const {scrollRef, scrollTop} = useScroller();
+const { scrollRef, scrollTop } = useScroller();
 
 const viewMore = ref<boolean>(false);
 const isMounted = ref<boolean>(false);
 const previewVisible = ref<boolean>(false);
 const noMore = computed(() => {
-  const {followList, total: followTotal} = followStore;
-  const {articleList, total, timelineList, currentTabKey} = authorStore;
+  const { followList, total: followTotal } = followStore;
+  const { articleList, total, timelineList, currentTabKey } = authorStore;
   if (currentTabKey === '3') {
     return timelineList?.length;
   } else if (currentTabKey === '2') {
@@ -161,8 +161,8 @@ const noMore = computed(() => {
 });
 const disabled = computed(() => authorStore.loading || noMore.value);
 const showEmpty = computed(() => {
-  const {followList} = followStore;
-  const {timelineList, articleList, currentTabKey, loading} = authorStore;
+  const { followList } = followStore;
+  const { timelineList, articleList, currentTabKey, loading } = authorStore;
   if (loading !== null && !loading && currentTabKey === '3' && !timelineList.length) {
     return true;
   } else if (loading !== null && !loading && currentTabKey === '2' && !followList.length) {
@@ -174,12 +174,12 @@ const showEmpty = computed(() => {
   }
 });
 
-const {deleteArticle} = useDeleteArticle({pageType: 'author'});
+const { deleteArticle } = useDeleteArticle({ pageType: 'author' });
 
 onMounted(async () => {
   // 监听详情点赞状态，实时更改列表对应文章的点赞状态
   ipcRenderer.on('refresh', (_, params: WinRefreshParams) => {
-    const {pageType, isLike = true} = params;
+    const { pageType, isLike = true } = params;
     // 需要判断是否是属于当前活动页面，并且只是点击点赞而不是收藏或评论防止重复触发
     if (route.name === 'author' && pageType !== 'list' && isLike) {
       reload && reload();
@@ -233,7 +233,7 @@ const onTabChange = (name: string) => {
 
 // 文章点赞
 const likeListArticle = async (id: string, data?: ArticleItem) => {
-  await articleStore.likeListArticle({id, pageType: 'author', data});
+  await articleStore.likeListArticle({ id, pageType: 'author', data });
   // 取消点赞文章重新刷新列表之后，自动滚动到之前查看页面的位置
   if (authorStore.currentTabKey === '1') {
     onScrollTo(scrollTop.value);
@@ -263,8 +263,8 @@ const onJump = (url: string, name: string) => {
   } else {
     message({
       title: '链接无效',
-      message: `${ name } 链接无法使用`,
-      type: 'warning'
+      message: `${name} 链接无法使用`,
+      type: 'warning',
     });
   }
 };
@@ -283,7 +283,7 @@ const onScrollTo = (to?: number) => {
   height: calc(100% - 8px);
   border-radius: 5px;
   // border: 1px solid var(--card-border);
-  box-shadow: 0 0 8px 0 var(--shadow-mack);
+  box-shadow: 0 0 5px 0 var(--card-shadow);
 
   :deep {
     .scrollbar-wrapper {

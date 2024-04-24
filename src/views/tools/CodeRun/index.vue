@@ -38,7 +38,7 @@
               >
                 <template #content>
                   <span class="info-text">手动运行模式：</span>可以点击<span class="info-text"> 手动运行模式 </span
-                >按钮运行或 <span class="info-text">ctrl + s </span>或
+                  >按钮运行或 <span class="info-text">ctrl + s </span>或
                   <span class="info-text">command + s </span>运行<br />
                   <span class="info-text">类控制台模式：</span>在输入内容末尾处回车之后触发运行,
                   类似浏览器控制台的运行模式
@@ -57,8 +57,8 @@
                     ? runMode === 1
                       ? '类控制台模式'
                       : runMode === 2
-                        ? '手动运行模式'
-                        : '运行模式'
+                      ? '手动运行模式'
+                      : '运行模式'
                     : '运行'
                 }}
               </el-button>
@@ -237,7 +237,7 @@ onUnmounted(() => {
 // 监听快捷键操作
 const onKeydown = (event: KeyboardEvent) => {
   if ((event.ctrlKey || event.metaKey) && event.key === 's' && codeContent.value) {
-    run({data: {content: codeContent.value}});
+    run({ data: { content: codeContent.value } });
   }
 };
 
@@ -252,7 +252,7 @@ const fontColor = computed(() => {
 // 解决切换主题预览背景不跟随改变的问题
 watch(background, (newVal, oldVal) => {
   if (newVal !== oldVal) {
-    run({data: {content: ''}}, false);
+    run({ data: { content: '' } }, false);
   }
 });
 
@@ -260,10 +260,10 @@ const bindEvents = () => {
   nextTick(() => {
     window.addEventListener('message', (e) => {
       if (e.data.from === 'codeRunner') {
-        const {data, type} = e.data;
+        const { data, type } = e.data;
         const parseData = JSONParse(data);
         // 运行结果信息
-        const runInfo = {type, data: ''};
+        const runInfo = { type, data: '' };
         let code = parseData
           .map((item: any) => (typeof item === 'object' ? JSON.stringify(item) : item))
           .join('\n')
@@ -285,10 +285,10 @@ const onChangeMode = (mode: number) => {
 
 // 合并运行结果
 const setCodeResults = (info: { type: string; data: string }) => {
-  codeResults.value += `${ info.data }\n\n`;
+  codeResults.value += `${info.data}\n\n`;
 };
 
-const createIframe = ({code, display, id}: { code: string; display: string; id?: string }) => {
+const createIframe = ({ code, display, id }: { code: string; display: string; id?: string }) => {
   iframeNode.value && previewRef.value?.removeChild(iframeNode.value);
   const iframe = document.createElement('iframe');
   iframeNode.value = iframe;
@@ -337,13 +337,13 @@ const onEnter = async (value: string) => {
 // 运行JS
 const runJSCode = async (code: string) => {
   if (runMode.value === 1) return;
-  createIframe({code: codeTemplate(code), display: 'none'});
+  createIframe({ code: codeTemplate(code), display: 'none' });
 };
 
 // 运行HTML
 const runHTMLCode = (code: string) => {
   createIframe({
-    code: htmlTemplate(code, {background: background.value, color: fontColor.value}),
+    code: htmlTemplate(code, { background: background.value, color: fontColor.value }),
     display: 'block',
     id: '__HTML_RESULT__',
   });
@@ -352,7 +352,7 @@ const runHTMLCode = (code: string) => {
 // 运行代码
 const run = async (monacoData?: any, verifiy = true) => {
   htmlClear.value = true;
-  const {content: code} = monacoData?.data;
+  const { content: code } = monacoData?.data;
   prevCode.value = code;
   // console.clear();
   // 首先清除原有的代码执行结果
@@ -395,7 +395,7 @@ const showCodeForm = () => {
 
 // 保存示例
 const onSaveDemo = async () => {
-  await codeStore.saveCode({content: codeContent.value as string, language: language.value});
+  await codeStore.saveCode({ content: codeContent.value as string, language: language.value });
   visible.value = false;
 };
 
@@ -414,7 +414,7 @@ const showDemoList = () => {
 
 // 重置
 const onReset = (monacoData: any) => {
-  const {editor} = monacoData.data;
+  const { editor } = monacoData.data;
   editor?.getModel()?.setValue('');
   codeStore.clearCodeId();
   prevCode.value = '';
@@ -465,7 +465,7 @@ const onClear = (monacoData?: any) => {
   justify-content: flex-start;
   width: 100%;
   height: 100%;
-  box-shadow: 0 0 8px 0 var(--shadow-mack);
+  box-shadow: 0 0 5px 0 var(--card-shadow);
   background-color: var(--pre-hover-bg);
 
   .header {

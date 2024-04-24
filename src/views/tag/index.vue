@@ -86,7 +86,7 @@ const onCheckTag = (tag: string) => {
       height: calc(100% - 8px);
       box-sizing: border-box;
       margin-top: 8px;
-      box-shadow: 0 0 8px 0 var(--shadow-mack);
+      box-shadow: 0 0 5px 0 var(--card-shadow);
       border-radius: 5px;
       background-color: var(--pre-hover-bg);
     }
@@ -101,7 +101,7 @@ const onCheckTag = (tag: string) => {
     margin-top: 8px;
     width: 220px;
     height: calc(100% - 8px);
-    box-shadow: 0 0 8px 0 var(--shadow-mack);
+    box-shadow: 0 0 5px 0 var(--card-shadow);
     border-radius: 5px;
     background-color: var(--pre-hover-bg);
 
