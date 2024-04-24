@@ -436,7 +436,7 @@ const onQuit = () => {
           display: flex;
           align-items: center;
           cursor: pointer;
-          padding: 0 5px;
+          padding: 0 10px;
           border-radius: 5px;
 
           &:hover {
@@ -477,7 +477,7 @@ const onQuit = () => {
         justify-content: space-between;
         height: 220px;
         margin-top: 20px;
-        padding: 0 5px 5px;
+        padding: 0 10px 10px;
         .menuLg;
 
         .username {

@@ -413,7 +413,7 @@ const onDiffValue = () => {
     padding: 0 10px;
     box-sizing: border-box;
     background-color: @fff;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--card-border);
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
 
