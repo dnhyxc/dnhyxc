@@ -87,32 +87,58 @@
         </div>
       </div>
       <div v-show="toggleMenu" class="menu-wrap">
-        <div
-          v-for="menu in menuList"
-          :key="menu.key"
-          class="menu-list"
-          @click.stop="(e: Event) => onSelectMenu(e, menu as MenuListParams)"
-        >
+        <div>
           <div
-            :class="`${
+            v-for="menu in menuList"
+            :key="menu.key"
+            class="menu-list"
+            @click.stop="(e: Event) => onSelectMenu(e, menu as MenuListParams)"
+          >
+            <div
+              :class="`${
                 ((activeMenu.path === menu.path && route.path.includes(menu.path)) || route.path === menu.path) &&
                 'active'
               } menu-item`"
-          >
-            <i :class="`${menu.key} font iconfont ${menu.fillIcon}`" />
-            <span :class="`menu-name ${menu.key}-menu`">{{ menu._name }}</span>
+            >
+              <i :class="`${menu.key} font iconfont ${menu.fillIcon}`" />
+              <span :class="`menu-name ${menu.key}-menu`">{{ menu._name }}</span>
+            </div>
           </div>
         </div>
         <div class="user-info">
           <div class="toggle"><i class="icon iconfont icon-caidanshouqi" @click="onToggleMenu" /></div>
-          <el-avatar
-            shape="square"
-            :size="checkOS() === 'mac' ? 40 : 38"
-            fit="cover"
-            :src="loginStore.userInfo?.headUrl || HEAD_IMG"
-            class="avatar"
-            @click.stop="toPersonal"
-          />
+          <el-popover
+            v-if="loginStore?.userInfo?.userId"
+            placement="bottom-start"
+            popper-class="login-popover"
+            :width="180"
+            :show-arrow="false"
+            trigger="hover"
+          >
+            <template #reference>
+              <el-avatar
+                shape="square"
+                :size="checkOS() === 'mac' ? 40 : 38"
+                fit="cover"
+                :src="loginStore.userInfo?.headUrl || HEAD_IMG"
+                class="avatar"
+                @click.stop="toPersonal"
+              />
+            </template>
+            <div class="drop-user-info-list">
+              <div class="drop-item" @click="toPersonal">
+                <i class="iconfont icon-gerenzhongxin" />
+                <span class="dropdown-text">我的主页</span>
+              </div>
+              <div class="drop-item out" @click="onQuit">
+                <i class="iconfont icon-tuichu1" />
+                <span class="dropdown-text">退出登录</span>
+              </div>
+            </div>
+          </el-popover>
+          <div v-else class="login-btn" @click.stop="onLogin">
+            <div class="login">登录</div>
+          </div>
           <div class="username">dnhyxc</div>
           <div class="motto">
             <span>答案交给时光寻觅</span>
@@ -136,7 +162,7 @@ import { useRouter, useRoute } from 'vue-router';
 import { MENULIST, HEAD_IMG, ICONLINKS } from '@/constant';
 import { MenuListParams } from '@/typings/common';
 import { loginStore } from '@/store';
-import { checkOS } from '@/utils';
+import { checkOS, setMenuType, getMenuType } from '@/utils';
 import { authRoutes } from '@/router';
 
 const reload = inject<Function>('reload');
@@ -146,7 +172,7 @@ const route = useRoute();
 
 let timer: ReturnType<typeof setTimeout> | null = null;
 const activeMenu = ref<MenuListParams>(MENULIST[0]);
-const toggleMenu = ref<boolean>(false);
+const toggleMenu = ref<boolean>(getMenuType());
 
 onUnmounted(() => {
   if (timer) {
@@ -179,6 +205,7 @@ watchEffect(() => {
 
 const onToggleMenu = () => {
   toggleMenu.value = !toggleMenu.value;
+  setMenuType(toggleMenu.value);
 };
 
 // 选中菜单
@@ -318,21 +345,6 @@ const onQuit = () => {
       justify-content: center;
       z-index: 99;
 
-      .login-btn {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        width: 38px;
-        height: 38px;
-        border-radius: 5px;
-        .clickNoSelectText();
-        .bgLgColor();
-        font-size: 14px;
-        cursor: pointer;
-        color: var(--active);
-        box-shadow: 0 0 2px var(--shadow-color) inset;
-      }
-
       .avatar {
         cursor: pointer;
         .clickNoSelectText();
@@ -408,11 +420,12 @@ const onQuit = () => {
       height: 100%;
       box-shadow: 0 0 5px 0 var(--card-shadow);
       border-radius: 5px;
+      overflow: hidden;
 
       .menu-list {
         flex: 1;
         justify-content: flex-start;
-        max-height: 35px;
+        max-height: 45px;
 
         .font {
           font-size: 22px;
@@ -526,6 +539,21 @@ const onQuit = () => {
       }
     }
   }
+
+  .login-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 5px;
+    .clickNoSelectText();
+    .bgLgColor();
+    font-size: 14px;
+    cursor: pointer;
+    color: var(--active);
+    box-shadow: 0 0 2px var(--shadow-color) inset;
+  }
 }
 
 .drop-user-info-list {
@@ -571,6 +599,10 @@ const onQuit = () => {
     .dropdown-text {
       margin-left: 5px;
     }
+  }
+
+  .out {
+    margin-bottom: 8px;
   }
 }
 

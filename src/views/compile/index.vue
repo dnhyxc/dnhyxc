@@ -205,6 +205,7 @@ const onClick = async (item: { title: string; svg: string }) => {
       height: 55px;
       padding: 0 16px 0 16px;
       -webkit-app-region: drag;
+      .clickNoSelectText;
 
       .left {
         display: flex;

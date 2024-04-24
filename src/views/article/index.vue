@@ -5,9 +5,9 @@
  * index.vue
 -->
 <template>
-  <Loading :loading="articleStore.loading" class="detail-wrap">
+  <Loading :loading="articleStore.loading" :class="`detail-wrap ${checkOS() === 'mac' && 'mac-detail-wrap'}`">
     <div class="container">
-      <div :class="`${checkOS() === 'mac' && 'mac-header-wrap'} header-wrap`" @dblclick="onDblclick">
+      <div class="header-wrap" @dblclick="onDblclick">
         <div :class="`left ${checkOS() === 'mac' && 'mac-left'}`">
           <div class="icon-wrap">
             <i class="page-icon iconfont icon-haidao_" />
@@ -44,7 +44,7 @@
           </div>
         </div>
       </div>
-      <div :class="`${checkOS() === 'mac' && 'mac-content-wrap'} content-wrap`">
+      <div class="content-wrap">
         <div class="content">
           <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
             <div ref="articleInfoRef" class="articleInfo">
@@ -379,24 +379,97 @@ const onScrollTo = (height?: number) => {
       }
     }
 
-    .mac-header-wrap {
+    .content-wrap {
+      display: flex;
+      justify-content: center;
+      box-sizing: border-box;
+      height: 100%;
+      padding: 0 18px;
+
+      .content {
+        position: relative;
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        box-sizing: border-box;
+        margin-right: 10px;
+        height: calc(100vh - 72px);
+        border-radius: 5px;
+        box-shadow: 0 0 5px 0 var(--shadow-mack);
+        background-color: var(--pre-hover-bg);
+
+        :deep {
+          .el-scrollbar {
+            border-radius: 5px;
+            width: 100%;
+          }
+
+          .scrollbar-wrapper {
+            box-sizing: border-box;
+            height: 100%;
+            border-radius: 5px;
+          }
+        }
+
+        .preview-content {
+          :deep {
+            .vuepress-markdown-body {
+              max-width: calc(100vw - 260px);
+
+              pre {
+                max-width: calc(100vw - 350px);
+              }
+            }
+          }
+        }
+      }
+
+      .right {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        max-width: 260px;
+        width: 30%;
+        box-sizing: border-box;
+        border-radius: 5px;
+        max-height: calc(100vh - 72px);
+
+        .toc-list {
+          box-sizing: border-box;
+          flex: 1;
+          background-color: var(--pre-hover-bg);
+        }
+
+        & > :last-child {
+          margin-bottom: 0;
+        }
+      }
+    }
+  }
+}
+
+.mac-detail-wrap {
+  --header-height: 35px;
+
+  .container {
+    .header-wrap {
       display: flex;
       justify-content: start;
       align-items: flex-start;
       height: 35px;
       padding: 5px 5px 0 51px;
       box-sizing: border-box;
+      border-bottom: 1px solid var(--card-border);
+      .clickNoSelectText;
 
       .left {
+        display: none;
+
         .icon-wrap {
           .page-icon {
             cursor: default;
           }
         }
-      }
-
-      .mac-left {
-        display: none;
       }
 
       .right {
@@ -437,7 +510,7 @@ const onScrollTo = (height?: number) => {
         .mac-tool-title {
           font-size: 16px;
           font-weight: 700;
-          height: 35px;
+          height: var(--header-height);
           line-height: 25px;
           margin-left: 19px;
           color: var(--font-color);
@@ -447,93 +520,46 @@ const onScrollTo = (height?: number) => {
     }
 
     .content-wrap {
-      display: flex;
-      justify-content: center;
-      box-sizing: border-box;
-      height: 100%;
-      padding: 0 18px;
+      padding: 0;
 
       .content {
-        position: relative;
-        flex: 1;
-        display: flex;
-        justify-content: center;
-        box-sizing: border-box;
-        margin-right: 10px;
-        height: calc(100vh - 72px);
-        border-radius: 5px;
-        box-shadow: 0 0 5px 0 var(--shadow-mack);
+        height: calc(100vh - var(--header-height));
+        margin-right: 0;
+        border-radius: 0;
+        box-shadow: none;
+        border-right: 1px solid var(--card-border);
+      }
+
+      .right {
+        max-height: calc(100vh - var(--header-height));
         background-color: var(--pre-hover-bg);
+        border-radius: 0;
 
-        :deep {
-          .el-scrollbar {
-            border-radius: 5px;
-            width: 100%;
-          }
+        .action-list {
 
-          .scrollbar-wrapper {
-            box-sizing: border-box;
-            height: 100%;
-            border-radius: 5px;
-          }
-        }
-
-        .preview-content {
           :deep {
-            .vuepress-markdown-body {
-              max-width: calc(100vw - 283px);
+            .action {
+              box-shadow: none;
+              background-color: transparent;
+            }
 
-              pre {
-                max-width: calc(100vw - 371px);
-              }
+
+            .like-wrap {
+              border-top-left-radius: 0;
+              border-bottom-left-radius: 0;
+            }
+
+            .share-wrap {
+              border-top-right-radius: 0;
+              border-bottom-right-radius: 0;
             }
           }
         }
-      }
-
-      .right {
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-start;
-        max-width: 260px;
-        width: 30%;
-        box-sizing: border-box;
-        border-radius: 5px;
-        max-height: calc(100vh - 72px);
 
         .toc-list {
-          box-sizing: border-box;
-          flex: 1;
-          background-color: var(--pre-hover-bg);
-        }
-
-        & > :last-child {
-          margin-bottom: 0;
-        }
-      }
-    }
-
-    .mac-content-wrap {
-      padding: 0 8px;
-
-      .content {
-        height: calc(100vh - 43px);
-        margin-right: 6px;
-        box-shadow: 0 0 5px 0 var(--shadow-mack) inset;
-      }
-
-      .right {
-        max-height: calc(100vh - 43px);
-
-        :deep {
-          .toc-wrap,
-          .action {
-            box-shadow: 0 0 5px 0 var(--shadow-mack) inset;
-          }
-
-          .multibar-wrap {
-            margin-bottom: 7px;
-          }
+          border-radius: 0;
+          box-shadow: none;
+          background-color: transparent;
         }
       }
     }

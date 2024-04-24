@@ -16,10 +16,10 @@
             <span v-if="loginStore?.userInfo?.userId === data.authorId" @click.stop="onReomve(data)">删除</span>
           </div>
           <div>
-            <div class="desc" v-html="data.abstract" :title="data.abstract" />
+            <div class="desc" :title="data.abstract" v-html="data.abstract" />
             <div class="tags">
-              <span v-html="data.classify" @click.stop="toClassify(data.classify!)" />
-              <span v-html="data.tag" @click.stop="toTag(data.tag!)" />
+              <span @click.stop="toClassify(data.classify!)" v-html="data.classify" />
+              <span @click.stop="toTag(data.tag!)" v-html="data.tag" />
             </div>
           </div>
         </div>

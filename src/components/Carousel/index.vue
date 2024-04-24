@@ -9,6 +9,7 @@
     <el-carousel
       v-if="data?.length > 0"
       :interval="5000"
+      motion-blur
       trigger="click"
       height="200px"
       indicator-position="none"
@@ -37,7 +38,8 @@
         </ContextMenu>
       </el-carousel-item>
     </el-carousel>
-    <el-carousel v-else :interval="5000" trigger="click" height="200px" indicator-position="none" class="carousel">
+    <el-carousel v-else motion-blur :interval="5000" trigger="click" height="200px" indicator-position="none"
+                 class="carousel">
       <el-carousel-item v-for="item in 5" :key="item">
         <div class="carousel-item">
           <Image :url="IMG1" :transition-img="IMG1" class="img" />
