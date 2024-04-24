@@ -289,6 +289,7 @@ const onQuit = () => {
 
       .title-name {
         display: none;
+        letter-spacing: 5px;
       }
     }
 
@@ -312,6 +313,7 @@ const onQuit = () => {
 
         &:hover {
           transform: scale(1.15);
+          color: var(--hover-text-color);
         }
       }
 
@@ -396,6 +398,7 @@ const onQuit = () => {
       align-items: flex-end;
       padding-top: 20px;
       margin-bottom: 0;
+      padding-left: 4px;
 
       .page-icon {
         margin-bottom: 9px;
@@ -406,9 +409,9 @@ const onQuit = () => {
       .title-name {
         display: inline-block;
         font-weight: 500;
-        font-size: 21px;
+        font-size: 22px;
         margin-left: 5px;
-        margin-bottom: 5px;
+        margin-bottom: 3px;
         .menuLg();
       }
     }

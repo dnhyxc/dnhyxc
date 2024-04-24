@@ -23,7 +23,7 @@
             </div>
           </div>
         </div>
-        <Image :url="data.coverImage || IMG1" :transition-img="IMG1" class="card-img" />
+        <Image :url="data.coverImage || IMG1" :transition-img="IMG1" class="card-img" radius="5px 5px 0 0" />
       </div>
       <div
         class="bottom" :style="{
@@ -307,7 +307,7 @@ const toTag = (tag: string) => {
 
       .tags {
         display: flex;
-        justify-content: flex-end;
+        justify-content: flex-start;
 
         span {
           .textStyle;
