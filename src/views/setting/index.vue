@@ -70,8 +70,8 @@ const onClick = (menu: MenuListParams) => {
   overflow: hidden;
   border-radius: 5px;
   background-color: var(--pre-hover-bg);
-  margin: 6px 4px 0;
-  height: calc(100% - 4px);
+  margin: 8px 4px 0;
+  height: calc(100% - 6px);
   box-shadow: 0 0 8px 0 var(--shadow-mack);
 
   .menu {
@@ -123,16 +123,13 @@ const onClick = (menu: MenuListParams) => {
   .content {
     box-sizing: border-box;
     height: calc(100% - 34px);
-    //border-left: 1px solid var(--card-border);
-    //border-right: 1px solid var(--card-border);
-    //border-bottom: 1px solid var(--card-border);
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
   }
 }
 
 .mac-setting-wrap {
-  height: calc(100vh - 91px);
+  height: calc(100vh - 93px);
 
   .content {
     height: calc(100vh - 125px);

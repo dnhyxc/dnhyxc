@@ -358,7 +358,7 @@ const onScrollTo = () => {
       cursor: pointer;
       -webkit-app-region: no-drag;
       color: var(--font-color);
-      .headerTextLg();
+      .menuLg();
       height: 30px;
       width: 30px;
       line-height: 30px;
@@ -378,7 +378,7 @@ const onScrollTo = () => {
       font-size: 18px;
       color: var(--font-color);
       font-weight: 700;
-      .headerTextLg();
+      .menuLg();
     }
   }
 
@@ -401,7 +401,7 @@ const onScrollTo = () => {
         cursor: pointer;
         -webkit-app-region: no-drag;
         color: var(--font-color);
-        .headerTextLg();
+        .menuLg();
 
         &:hover {
           color: var(--active-color);
@@ -414,7 +414,7 @@ const onScrollTo = () => {
 
       .icon-qiehuan {
         color: var(--font-color);
-        .headerTextLg();
+        .menuLg();
         font-size: 20px;
         cursor: pointer;
 
@@ -480,7 +480,7 @@ const onScrollTo = () => {
         font-size: 17px;
         cursor: pointer;
         color: var(--font-color);
-        .headerTextLg();
+        .menuLg();
 
         &:hover {
           color: var(--active-color);
@@ -502,7 +502,7 @@ const onScrollTo = () => {
         margin-left: 15px;
         margin-top: 1px;
         color: var(--font-color);
-        .headerTextLg();
+        .menuLg();
       }
 
       &:hover {
@@ -529,7 +529,7 @@ const onScrollTo = () => {
         cursor: pointer;
         margin-left: 15px;
         color: var(--font-color);
-        .headerTextLg();
+        .menuLg();
       }
 
       &:hover {
@@ -552,7 +552,7 @@ const onScrollTo = () => {
       color: var(--font-color);
       height: 30px;
       line-height: 30px;
-      .headerTextLg();
+      .menuLg();
 
       .icon-text {
         margin-left: 15px;
@@ -644,7 +644,7 @@ const onScrollTo = () => {
 
   .title-text {
     color: var(--font-color);
-    .headerTextLg();
+    .menuLg();
   }
 
   .del-action {

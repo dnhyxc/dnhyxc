@@ -580,12 +580,12 @@ export const replacePictures = (content: string) => {
 
 // 向光标所在位置插入内容
 export const insertContent = ({
-                                keyword,
-                                node,
-                                username,
-                                url,
-                                emoji,
-                              }: {
+  keyword,
+  node,
+  username,
+  url,
+  emoji,
+}: {
   keyword: string; // textarea输入内容
   node?: HTMLTextAreaElement; // textarea输入框元素
   username?: string; // 用户名称
@@ -614,11 +614,11 @@ export const insertContent = ({
  * @param {水印文字} watermarkText
  */
 export const addWatermark = async ({
-                                     url,
-                                     width,
-                                     height,
-                                     markText = 'dnhyxc',
-                                   }: {
+  url,
+  width,
+  height,
+  markText = 'dnhyxc',
+}: {
   url: string;
   markText: string;
   width?: number;
@@ -744,11 +744,11 @@ const randomNum = (min: number, max: number) => {
 
 // canvas 绘制验证码
 export const drawCharater = ({
-                               canvasElement,
-                               width,
-                               height,
-                               code,
-                             }: {
+  canvasElement,
+  width,
+  height,
+  code,
+}: {
   canvasElement: HTMLCanvasElement;
   width: number;
   height: number;
@@ -1023,12 +1023,12 @@ export const diffType = (value: string | number | string | boolean | Function | 
 
 // 设置盲水印
 export const createWaterMark = ({
-                                  url,
-                                  text,
-                                  fontSize,
-                                  fontFamily,
-                                  spacing,
-                                }: {
+  url,
+  text,
+  fontSize,
+  fontFamily,
+  spacing,
+}: {
   url: string;
   text: string;
   fontSize: string;
@@ -1081,11 +1081,11 @@ export const createWaterMark = ({
 
   // 盲水印加密算法
   function mergeData({
-                       ctx,
-                       textData,
-                       color,
-                       originalData,
-                     }: {
+    ctx,
+    textData,
+    color,
+    originalData,
+  }: {
     ctx: CanvasRenderingContext2D;
     textData: any;
     color: string;
@@ -1227,12 +1227,12 @@ export const checkWithLink = (content: string, check?: boolean) => {
 
 // 计算资源加载的进度
 export const calculateLoadProgress = ({
-                                        url,
-                                        getProgress,
-                                        needFileType = 'arrayBuffer',
-                                        previousReader,
-                                        addPreviousReader,
-                                      }: {
+  url,
+  getProgress,
+  needFileType = 'arrayBuffer',
+  previousReader,
+  addPreviousReader,
+}: {
   url: string;
   getProgress: (progress: number) => void;
   previousReader: any;

@@ -440,11 +440,11 @@ const onQuit = () => {
           border-radius: 5px;
 
           &:hover {
-            background: #ccc;
+            background: var(--green-1);
 
             .font,
             .menu-name {
-              color: var(--primary);
+              color: var(--hover-text-color);
             }
           }
 
@@ -478,7 +478,7 @@ const onQuit = () => {
         height: 220px;
         margin-top: 20px;
         padding: 0 5px 5px;
-        .textLg;
+        .menuLg;
 
         .username {
           font-size: 20px;
@@ -509,10 +509,10 @@ const onQuit = () => {
 
             .icon {
               font-size: 22px;
-              .textLg;
+              .menuLg;
 
               &:hover {
-                color: var(--primary);
+                color: var(--hover-text-color);
               }
             }
           }
@@ -528,7 +528,7 @@ const onQuit = () => {
 
   .toggle {
     margin-bottom: 10px;
-    .textLg;
+    .menuLg;
 
     .icon {
       font-size: 20px;
