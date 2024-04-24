@@ -50,8 +50,8 @@ const commonStyle = {
   '--markdown-return-color': '#37c26b',
   '--markdown-strong-color': '#ff9900',
   '--markdown-function-color': '#ff7f28',
-  '--lg-colors': `${MENU_LG_DEFAULT_COLORS}`,
-  '--lg-active-colors': `${MENU_LG_ACTIVE_DEFAULT_COLORS}`,
+  '--lg-colors': `${ MENU_LG_DEFAULT_COLORS }`,
+  '--lg-active-colors': `${ MENU_LG_ACTIVE_DEFAULT_COLORS }`,
   '--card-btn-mark': 'rgba(255, 255, 255, 0.5)',
   // 头部字体颜色
   '--header-text-color': 'linear-gradient(45deg, var(--font-1) 0%, var(--font-1) 100%)',
@@ -115,6 +115,7 @@ const removeStyle = {
   '--loading-text-color': '#089220',
   ...commonStyle,
   '--card-shadow': 'rgba(129, 129, 129, 0.25)',
+  '--icon-bg-color': 'rgba(0, 0, 0, 0.1)'
 };
 
 // 背景图片公共配置
@@ -133,6 +134,7 @@ const imageStyles = {
   '--timeline-lg-color2': 'rgba(0, 0, 0, 0.3)',
   // 各组件阴影颜色
   '--shadow-color': 'rgba(245, 250, 248, 0.2)',
+  '--icon-bg-color': 'rgba(245, 250, 247, 0.2)',
   // 字体颜色
   '--font-1': '#fff',
   '--font-2': '#f2f2f2',
@@ -246,8 +248,6 @@ const freshGreen = {
   // 时间轴背景颜色
   '--timeline-lg-color1': '#fffeff',
   '--timeline-lg-color2': '#d7fffe',
-  // 各组件阴影颜色
-  '--shadow-color': '#b8eaff',
   // 字体颜色
   ...fontStyle,
   // loading 背景颜色
@@ -349,6 +349,7 @@ const black = {
   // editor 代码块颜色
   '--code-pre-bg': '#282828',
   '--pop-menu-color': '#333',
+  '--icon-bg-color': 'rgba(245, 250, 247, 0.2)',
 };
 
 // 亮青色
@@ -455,7 +456,7 @@ const lateralFace = {
   ...imageStyles,
   '--card-border': 'rgba(245, 250, 248, 0.2)',
   // 字体颜色
-  '--bg-image-url': `url(${HEAD_IMG})`,
+  '--bg-image-url': `url(${ HEAD_IMG })`,
   // 图片背景兼容字体颜色
   '--font-color': '#fff',
   // 头部字体颜色
@@ -467,7 +468,7 @@ const lateralFace = {
   '--pre-hover-bg': 'rgba(0, 0, 0, 0.3)',
   // table 偶数项背景颜色
   '--table-even-bg': 'rgba(0, 0, 0, 0.3)',
-  '--login-bg-img': `url(${HEAD_IMG})`,
+  '--login-bg-img': `url(${ HEAD_IMG })`,
   '--theme-blue': '#00d625',
   '--el-color-primary': '#00d625',
   '--card-btn-mark': 'rgba(0, 0, 0, 0.45)',
@@ -479,7 +480,7 @@ const sea = {
   ...imageStyles,
   '--card-border': 'rgba(245, 250, 248, 0.2)',
   // 字体颜色
-  '--bg-image-url': `url(${SEA})`,
+  '--bg-image-url': `url(${ SEA })`,
   // 图片背景兼容字体颜色
   '--font-color': '#fff',
   // 头部字体颜色
@@ -489,17 +490,17 @@ const sea = {
   '--code-pre-bg': 'rgba(0, 0, 0, 0.3)',
   // 文章预览背景图片
   '--pre-hover-bg': 'rgba(0, 0, 0, 0.3)',
-  '--login-bg-img': `url(${SEA})`,
+  '--login-bg-img': `url(${ SEA })`,
   '--backdrop-filter': 'blur(1px)',
 };
 
 // 日出
 const sun = {
   ...imageStyles,
-  '--bg-image-url': `url(${SUN})`,
+  '--bg-image-url': `url(${ SUN })`,
   '--h-color': '#a2ff00',
   '--backdrop-filter': 'blur(0)',
-  '--login-bg-img': `url(${SUN})`,
+  '--login-bg-img': `url(${ SUN })`,
   '--font-color': '#fff',
   // 头部字体颜色
   '--header-text-color': 'linear-gradient(45deg, #fff 0%, #fff 100%)',
@@ -511,11 +512,11 @@ const sun = {
 // 少司命
 const ShaoSiming = {
   ...imageStyles,
-  '--bg-image-url': `url(${IMG1})`,
+  '--bg-image-url': `url(${ IMG1 })`,
   '--h-color': '#a2ff00',
   // 头部字体颜色
   '--header-text-color': 'linear-gradient(45deg, #000 0%, #000 100%)',
-  '--login-bg-img': `url(${IMG1})`,
+  '--login-bg-img': `url(${ IMG1 })`,
 };
 
 // 动漫
@@ -527,7 +528,7 @@ const beauty = {
   // 图片背景兼容字体颜色
   '--font-color': '#fff',
   // 头部字体颜色
-  '--header-text-color': `${MENU_LG_DEFAULT_COLORS}`,
+  '--header-text-color': `${ MENU_LG_DEFAULT_COLORS }`,
   '--font-weight': '700',
   '--h-color': '#61dc00',
   '--shade-3': 'rgba(255, 255, 255, 0.1)',
@@ -541,8 +542,8 @@ const beauty = {
   // loading 背景颜色
   '--loading-color': 'rgba(0, 0, 0, 0.69)',
   '--loading-text-color': '#2aff00',
-  '--bg-image-url': `url(${BEAUTY})`,
-  '--login-bg-img': `url(${BEAUTY})`,
+  '--bg-image-url': `url(${ BEAUTY })`,
+  '--login-bg-img': `url(${ BEAUTY })`,
   '--layer-2-2': 'rgb(255, 255, 255, 0.06)',
   '--card-border': 'rgba(182, 182, 182, 0.5)',
   '--card-btn-mark': 'rgba(0, 0, 0, 0.5)',
@@ -552,6 +553,7 @@ const beauty = {
   // 主题色
   ...themeColors,
   '--scroll-color': 'rgba(209, 209, 209, 0.15)',
+  '--icon-bg-color': 'rgba(245, 250, 247, 0.15)',
 };
 
 // 三体智子
@@ -561,8 +563,8 @@ const locomotive = {
   '--font-color': '#fff',
   // 头部字体颜色
   '--header-text-color': 'linear-gradient(45deg, #fff 0%, #fff 100%)',
-  '--bg-image-url': `url(${IMG3})`,
-  '--login-bg-img': `url(${IMG3})`,
+  '--bg-image-url': `url(${ IMG3 })`,
+  '--login-bg-img': `url(${ IMG3 })`,
   '--loading-text-color': '#2aff00',
   '--card-btn-mark': 'rgba(0, 0, 0, 0.5)',
   // 主题色
@@ -572,19 +574,19 @@ const locomotive = {
 // 海岛
 const island = {
   ...imageStyles,
-  '--bg-image-url': `url(${IMG4})`,
+  '--bg-image-url': `url(${ IMG4 })`,
   '--backdrop-filter': 'blur(3px)',
   '--h-color': '#a2ff00',
   // 头部字体颜色
   '--header-text-color': 'linear-gradient(45deg, #000 0%, #000 100%)',
-  '--login-bg-img': `url(${IMG4})`,
+  '--login-bg-img': `url(${ IMG4 })`,
   '--card-btn-mark': 'rgba(255, 255, 255, 0.65)',
 };
 
 const fresh = {
   ...imageStyles,
-  '--bg-image-url': `url(${FRESH})`,
-  '--login-bg-img': `url(${FRESH})`,
+  '--bg-image-url': `url(${ FRESH })`,
+  '--login-bg-img': `url(${ FRESH })`,
   '--backdrop-filter': 'blur(0px)',
   // 文章各种卡片渐变颜色
   '--bg-lg-color1': 'rgba(0, 0, 0, 0.25)',
@@ -596,13 +598,13 @@ const fresh = {
   '--h-color': '#61dc00',
   '--font-color': '#fff',
   // 头部字体颜色
-  '--header-text-color': `${MENU_LG_COLORS}`,
+  '--header-text-color': `${ MENU_LG_COLORS }`,
   '--font-weight': '700',
   '--loading-color': 'rgba(102, 151, 9, 0.2)',
   '--loading-text-color': '#2aff00',
   // 菜单字体渐变
-  '--lg-colors': `${MENU_LG_COLORS}`,
-  '--lg-active-colors': `${MENU_ACTIVE_LG_COLORS}`,
+  '--lg-colors': `${ MENU_LG_COLORS }`,
+  '--lg-active-colors': `${ MENU_ACTIVE_LG_COLORS }`,
   '--card-btn-mark': 'rgba(0, 0, 0, 0.5)',
   '--markdown-return-color': '#fbff00',
   '--search-border-color': '#fabd00',
@@ -651,8 +653,8 @@ const cloud = {
   '--p-code-bg-color': 'rgba(255, 255, 242, 0.5)',
   // loading 背景颜色
   '--loading-color': 'rgba(255, 255, 255, 0.5)',
-  '--bg-image-url': `url(${CLOUD})`,
-  '--login-bg-img': `url(${CLOUD})`,
+  '--bg-image-url': `url(${ CLOUD })`,
+  '--login-bg-img': `url(${ CLOUD })`,
   '--login-bg': 'rgba(255, 255, 255, 0.1)',
   // border 颜色
   '--border-color': '#ffffffa1',
@@ -660,16 +662,16 @@ const cloud = {
   // markdown return color
   '--markdown-return-color': '#6e00ff',
   // 头部字体颜色
-  '--header-text-color': `${MENU_LG_DEFAULT_COLORS}`,
+  '--header-text-color': `${ MENU_LG_DEFAULT_COLORS }`,
   '--font-weight': '700',
   '--scroll-color': 'rgba(255, 255, 255, 0.69)',
 };
 
 const snow = {
   ...imageStyles,
-  '--bg-image-url': `url(${SNOW})`,
+  '--bg-image-url': `url(${ SNOW })`,
   '--backdrop-filter': 'blur(1px)',
-  '--login-bg-img': `url(${SNOW})`,
+  '--login-bg-img': `url(${ SNOW })`,
   // 文章各种卡片渐变颜色
   '--bg-lg-color1': 'rgba(0, 0, 0, 0.25)',
   '--bg-lg-color2': 'rgba(0, 0, 0, 0.15)',

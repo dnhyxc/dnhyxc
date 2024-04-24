@@ -16,12 +16,10 @@
             <span v-if="loginStore?.userInfo?.userId === data.authorId" @click.stop="onReomve(data)">删除</span>
           </div>
           <div>
-            <div class="desc" :title="data.abstract">
-              {{ data.abstract }}
-            </div>
+            <div class="desc" v-html="data.abstract" :title="data.abstract" />
             <div class="tags">
-              <span @click.stop="toClassify(data.classify!)">{{ data.classify }}</span>
-              <span @click.stop="toTag(data.tag!)">{{ data.tag }}</span>
+              <span v-html="data.classify" @click.stop="toClassify(data.classify!)" />
+              <span v-html="data.tag" @click.stop="toTag(data.tag!)" />
             </div>
           </div>
         </div>
@@ -31,7 +29,7 @@
         class="bottom" :style="{
             backgroundImage: gradients,
           }">
-        <div class="title">{{ data.title }}</div>
+        <div class="title" v-html="data.title" />
         <div class="author">
           <span @click.stop="toPersonal(data.authorId!)" v-html="data.authorName" />
           <span>{{ data.createTime ? formatDate(data.createTime, 'YYYY/MM/DD') : '-' }}</span>

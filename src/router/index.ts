@@ -50,7 +50,7 @@ export const routes: Array<RouteRecordRaw> = [
         name: 'home',
         meta: {
           title: '墨客首页',
-          info: '欢迎来到墨客',
+          info: 'WELCOME TO 墨客',
         },
         component: () => import('@/views/home/index.vue'),
       },
