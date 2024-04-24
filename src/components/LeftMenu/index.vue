@@ -263,6 +263,7 @@ const onQuit = () => {
     overflow: auto;
     padding: 22px 0 5px;
     transition: all 0.2s ease;
+    .clickNoSelectText;
 
     .icon-wrap {
       display: flex;
