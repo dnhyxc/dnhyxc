@@ -235,7 +235,7 @@ const toTag = (tag: string) => {
 
 .textStyle {
   mix-blend-mode: difference; /* 使用差值混合模式 */
-  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5); /* 水平偏移、垂直偏移、模糊半径和阴影颜色 */
+  text-shadow: @text-shadow; /* 水平偏移、垂直偏移、模糊半径和阴影颜色 */
   .ellipsis();
   color: var(--el-color-primary);
   cursor: pointer;
@@ -258,7 +258,7 @@ const toTag = (tag: string) => {
   border-radius: v-bind(radius);
   transition: all 0.3s ease;
   background: rgba(255, 255, 255, 0.3);
-  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
+  text-shadow: @text-shadow;
   .clickNoSelectText();
 
   .top {
@@ -299,7 +299,7 @@ const toTag = (tag: string) => {
         .ellipsisMore(2);
         font-size: 13px;
         mix-blend-mode: difference; /* 使用差值混合模式 */
-        text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5); /* 水平偏移、垂直偏移、模糊半径和阴影颜色 */
+        text-shadow: @text-shadow; /* 水平偏移、垂直偏移、模糊半径和阴影颜色 */
         margin-bottom: 5px;
       }
 

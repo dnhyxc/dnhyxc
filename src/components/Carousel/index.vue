@@ -39,8 +39,8 @@
       </el-carousel-item>
     </el-carousel>
     <el-carousel
-v-else motion-blur :interval="5000" trigger="click" height="200px" indicator-position="none"
-                 class="carousel">
+      v-else motion-blur :interval="5000" trigger="click" height="200px" indicator-position="none"
+      class="carousel">
       <el-carousel-item v-for="item in 5" :key="item">
         <div class="carousel-item">
           <Image :url="IMG1" :transition-img="IMG1" class="img" />
@@ -247,7 +247,7 @@ const toTag = (name: string) => {
             margin: 5px 0 0 5px;
             border-radius: 5px;
             color: @fff;
-            text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
+            text-shadow: @text-shadow;
             .ellipsisMore(1);
           }
         }
@@ -261,7 +261,7 @@ const toTag = (name: string) => {
             color: @fff;
             padding: 0 5px 2px 5px;
             border-radius: 5px;
-            text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
+            text-shadow: @text-shadow;
           }
 
           .author {
@@ -294,7 +294,7 @@ const toTag = (name: string) => {
           margin: 0 5px 5px 0;
           border-radius: 5px;
           cursor: pointer;
-          text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
+          text-shadow: @text-shadow;
 
           &:hover {
             color: var(--hover-text-color);
