@@ -180,6 +180,7 @@ const likeListArticle = (id: string, data?: ArticleItem) => {
   margin: 8px 5px 0;
   box-shadow: 0 0 5px var(--card-shadow);
   height: calc(100% - 8px) !important;
+  overflow: hidden;
 
   .content {
     // height: calc(100% - 200px);
