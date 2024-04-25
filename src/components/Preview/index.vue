@@ -117,6 +117,7 @@ const onCopyCodeSuccess = (value: string) => {
 
 .preview-wrap {
   width: 100%;
+  box-sizing: border-box;
 
   :deep {
     .v-md-pre-wrapper {
@@ -159,7 +160,8 @@ const onCopyCodeSuccess = (value: string) => {
       }
 
       pre {
-        max-width: calc(100vw - 450px);
+        //max-width: calc(100vw - var(--pre-width));
+        //border: 1px solid red;
       }
 
       table {

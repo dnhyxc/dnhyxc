@@ -5,7 +5,7 @@
  * index.vue
 -->
 <template>
-  <div :class="`${checkOS() === 'mac' && 'mac-skeleton-wrap'} skeleton-wrap`">
+  <div :class="`${checkOS() === 'mac' && 'mac-skeleton-wrap'} ${showType && 'article-skeleton-wrap'} skeleton-wrap`">
     <div :class="`${showType && 'article-header'} header`">
       <div class="title">
         <div class="page-icon" />
@@ -69,6 +69,8 @@ const isCompile = computed(() => {
   height: 100vh;
   box-sizing: border-box;
   background-color: var(--background);
+
+  --article-header-height: 79px;
 
   .header {
     display: flex;
@@ -232,11 +234,11 @@ const isCompile = computed(() => {
 
     .content {
       position: relative;
-      flex: 1;
       display: flex;
       justify-content: center;
       box-sizing: border-box;
-      height: calc(100vh - 79px);
+      width: 75%;
+      height: calc(100vh - var(--article-header-height));
       //height: calc(100vh - 75px);
       border-radius: 5px;
       box-shadow: 0 0 5px 0 var(--card-shadow);
@@ -248,11 +250,11 @@ const isCompile = computed(() => {
       flex-direction: column;
       justify-content: flex-start;
       max-width: 260px;
-      width: 30%;
+      width: 25%;
       margin-left: 10px;
       box-sizing: border-box;
       border-radius: 5px;
-      max-height: calc(100vh - 79px);
+      max-height: calc(100vh - var(--article-header-height));
       //max-height: calc(100vh - 75px);
 
       .action-list {
@@ -288,6 +290,8 @@ const isCompile = computed(() => {
 }
 
 .mac-skeleton-wrap {
+  --article-header-height: 36px;
+
   .header {
     padding: 30px 27px 0 12px;
     margin-bottom: 15px;
@@ -314,21 +318,48 @@ const isCompile = computed(() => {
     }
   }
 
-  .content {
-    .right {
-      padding-right: 22px;
-    }
-  }
-
   .content-wrap {
     margin-top: 0;
+    padding: 0;
 
     .content {
-      height: calc(100vh - 98px);
+      height: calc(100vh - var(--article-header-height));
+      border-radius: 0;
+      box-shadow: none;
+      border-right: 1px solid var(--border-color);
     }
 
     .right {
-      max-height: calc(100vh - 98px);
+      max-height: calc(100vh - var(--article-header-height));
+      border-radius: 0;
+      margin-left: 0;
+
+      .action-list {
+        height: 50px;
+        box-shadow: none;
+        border-radius: 0;
+      }
+
+      .toc-list {
+        border-radius: 0;
+      }
+
+      .another-list {
+        border-radius: 0;
+        box-shadow: none;
+      }
+    }
+  }
+}
+
+.article-skeleton-wrap {
+  .content-wrap {
+    .content {
+      width: 77%;
+    }
+
+    .right {
+      width: 23%;
     }
   }
 }

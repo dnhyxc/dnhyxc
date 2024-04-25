@@ -7,7 +7,7 @@
 <template>
   <el-aside
     class="aside-wrap"
-    :width="`${checkOS() === 'mac' ? (toggleMenu ? '200px' : '62px') : toggleMenu ? '220px' : '60px'}`"
+    :width="`${checkOS() === 'mac' ? (toggleMenu ? '220px' : '62px') : toggleMenu ? '220px' : '60px'}`"
   >
     <div
       id="__LEFT_MENU__"
@@ -182,7 +182,7 @@ onUnmounted(() => {
 
 // 计算菜单
 const menuList = computed(() => {
-  const { token, menus } = loginStore;
+  const {token, menus} = loginStore;
   const list = token ? MENULIST : MENULIST.filter((i) => i.show && !i.authorWiew);
   // 判断是否是博主，否则无法访问图片集
   const removeMenu = authRoutes.filter((i) => menus.some((j) => j !== i.name));
@@ -535,7 +535,7 @@ const onQuit = () => {
     }
 
     .toggle {
-      margin-left: -2px;
+      margin-left: -1px;
       margin-bottom: 5px;
     }
   }
@@ -549,7 +549,7 @@ const onQuit = () => {
       cursor: pointer;
 
       &:hover {
-        color: var(--primary);
+        color: var(--hover-text-color);
       }
     }
   }

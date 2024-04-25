@@ -302,7 +302,7 @@ const onScrollTo = (height?: number) => {
           font-size: 18px;
           font-weight: 700;
           color: var(--font-color);
-          .headerTextLg();
+          .menuLg();
         }
       }
 
@@ -324,7 +324,7 @@ const onScrollTo = (height?: number) => {
             margin-top: 2px;
             color: var(--font-color);
             font-weight: var(--font-weight);
-            .headerTextLg();
+            .menuLg();
           }
 
           .active {
@@ -344,7 +344,7 @@ const onScrollTo = (height?: number) => {
           cursor: pointer;
           color: var(--font-color);
           font-weight: var(--font-weight);
-          .headerTextLg();
+          .menuLg();
 
           .icon-text {
             margin-left: 15px;
@@ -388,12 +388,12 @@ const onScrollTo = (height?: number) => {
 
       .content {
         position: relative;
-        flex: 1;
         display: flex;
         justify-content: center;
         box-sizing: border-box;
         margin-right: 10px;
         height: calc(100vh - 72px);
+        width: 77%;
         border-radius: 5px;
         box-shadow: 0 0 5px 0 var(--shadow-mack);
         background-color: var(--pre-hover-bg);
@@ -428,8 +428,9 @@ const onScrollTo = (height?: number) => {
         display: flex;
         flex-direction: column;
         justify-content: flex-start;
+        width: 23%;
         max-width: 260px;
-        width: 30%;
+        min-width: 195px;
         box-sizing: border-box;
         border-radius: 5px;
         max-height: calc(100vh - 72px);
@@ -514,7 +515,7 @@ const onScrollTo = (height?: number) => {
           line-height: 25px;
           margin-left: 19px;
           color: var(--font-color);
-          .headerTextLg();
+          .menuLg();
         }
       }
     }
