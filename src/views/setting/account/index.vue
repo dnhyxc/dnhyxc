@@ -74,9 +74,10 @@
 <script setup lang="ts">
 import { reactive, ref, Ref, Directive, nextTick } from 'vue';
 import { useRouter } from 'vue-router';
-import { FormInstance, ElMessage } from 'element-plus';
+import { FormInstance } from 'element-plus';
 import { SETTING_TYPE } from '@/constant';
 import { loginStore } from '@/store';
+import { message } from '@/utils';
 import { FormData, ResetFormParams } from '@/typings/common';
 import ResetForm from '@/components/ResetForm/index.vue';
 
@@ -93,7 +94,7 @@ const vFocus: Directive = (el) => {
   });
 };
 
-const { juejin = '', zhihu = '', github = '', blog = '' } = loginStore.userInfo;
+const {juejin = '', zhihu = '', github = '', blog = ''} = loginStore.userInfo;
 
 const accountForm = reactive<{
   juejin: string;
@@ -169,29 +170,29 @@ const onResetPwd = (Form: FormData<FormInstance>) => {
   if (!Form.formRef) return;
   Form.formRef.validate(async (valid) => {
     if (valid) {
-      const { username, confirmPwd, phone } = Form.resetForm;
+      const {username, confirmPwd, phone} = Form.resetForm;
       if (resetType.value === 'password') {
         // 重置密码
-        const res = await loginStore.onResetPwd({ username, password: confirmPwd!, phone });
+        const res = await loginStore.onResetPwd({username, password: confirmPwd!, phone});
         if (res) {
           Form.formRef.resetFields();
-          Form.resetForm = { username: '', confirmPwd: '', newPwd: '', phone: '' };
+          Form.resetForm = {username: '', confirmPwd: '', newPwd: '', phone: ''};
           // 成功时关闭弹窗
           visible.value = false;
           router.push('/login');
         }
       } else {
         if (username !== loginStore.userInfo?.username) {
-          ElMessage({
-            message: '您要注销的用户名不是当前登录人的用户名',
+          message({
+            title: '注销用户',
+            message: '您要注销的用户名不是当前登录人的用户名！',
             type: 'warning',
-            offset: 80,
           });
           return;
         }
         await loginStore.onLogout(router);
         Form.formRef.resetFields();
-        Form.resetForm = { username: '', confirmPwd: '', newPwd: '', phone: '' };
+        Form.resetForm = {username: '', confirmPwd: '', newPwd: '', phone: ''};
         // 成功时关闭弹窗
         visible.value = false;
       }
@@ -203,15 +204,15 @@ const onResetPwd = (Form: FormData<FormInstance>) => {
 
 // 重置密码、注销回车事件
 const onResetEnter = async (formRef: Ref<FormInstance>, resetForm: ResetFormParams) => {
-  const { username, confirmPwd } = resetForm;
+  const {username, confirmPwd} = resetForm;
   if (resetType.value === 'password') {
-    await loginStore.onResetPwd({ username, password: confirmPwd! });
+    await loginStore.onResetPwd({username, password: confirmPwd!});
   } else {
     if (username !== loginStore.userInfo?.username) {
-      ElMessage({
-        message: '您要注销的用户名不是当前登录人的用户名',
+      message({
+        title: '注销用户',
+        message: '您要注销的用户名不是当前登录人的用户名！',
         type: 'warning',
-        offset: 80,
       });
       return;
     }
@@ -219,7 +220,7 @@ const onResetEnter = async (formRef: Ref<FormInstance>, resetForm: ResetFormPara
   }
   // 重置密码，成功时关闭弹窗
   formRef.value.resetFields();
-  resetForm = { username: '', confirmPwd: '', newPwd: '', phone: '' };
+  resetForm = {username: '', confirmPwd: '', newPwd: '', phone: ''};
   setTimeout(() => {
     visible.value = false;
   }, 50);
@@ -228,7 +229,7 @@ const onResetEnter = async (formRef: Ref<FormInstance>, resetForm: ResetFormPara
 // 取消重置密码
 const onCancelResetPwd = (Form: FormData<FormInstance>) => {
   Form.formRef.resetFields();
-  Form.resetForm = { username: '', confirmPwd: '', newPwd: '', phone: '' };
+  Form.resetForm = {username: '', confirmPwd: '', newPwd: '', phone: ''};
   visible.value = false;
 };
 </script>
@@ -301,6 +302,7 @@ const onCancelResetPwd = (Form: FormData<FormInstance>) => {
           color: var(--font-1);
           background-color: var(--input-bg-color);
         }
+
         .el-input__inner {
           color: var(--font-1);
           background-color: transparent;

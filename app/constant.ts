@@ -4,7 +4,7 @@
  * @since: 2023-06-21
  * index.vue
  */
-import {Tray, BrowserWindow} from 'electron';
+import { Tray, BrowserWindow } from 'electron';
 
 export const DOMAIN_URL = 'http://101.43.50.15';
 
@@ -19,7 +19,7 @@ export const globalInfo: {
     width: number;
     height: number;
   };
-  store: any
+  store: any;
 } = {
   tray: null,
   win: null,
@@ -32,7 +32,7 @@ export const globalInfo: {
     width: 0,
     height: 0,
   },
-  store: null
+  store: null,
 };
 
 export const clearGlobalInfo = () => {
@@ -52,16 +52,16 @@ export const globalChildWins = {
   newWins: new Map(),
 };
 
-export const CATCHS = [
-  'appcache',
-  'filesystem',
-  'indexdb',
-  'localstorage',
-  'shadercache',
-  'websql',
-  'serviceworkers',
-  'cachestorage',
-];
+export const CATCHS: (
+  | 'cachestorage'
+  | 'localstorage'
+  | 'cookies'
+  | 'filesystem'
+  | 'indexdb'
+  | 'shadercache'
+  | 'websql'
+  | 'serviceworkers'
+)[] = ['cachestorage', 'localstorage', 'cookies', 'filesystem', 'indexdb', 'shadercache', 'websql', 'serviceworkers'];
 
 // 工具子窗口
 export const TOOLS_KEYS = [

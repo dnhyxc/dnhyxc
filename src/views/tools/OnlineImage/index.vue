@@ -21,8 +21,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import { ElMessage } from 'element-plus';
-import { checkImage } from '@/utils';
+import { checkImage, message } from '@/utils';
 
 const onlineUrl = ref<string>('');
 
@@ -38,10 +37,10 @@ const onUseOnlineUrl = async () => {
   if (status) {
     props?.onUseOnlineUrl?.(onlineUrl.value);
   } else {
-    ElMessage({
-      message: '链接无效，请重新输入',
-      type: 'error',
-      offset: 80,
+    message({
+      title: '链接无效',
+      message: '当前链接无效，请重新输入！',
+      type: 'success',
     });
   }
 };
@@ -60,6 +59,7 @@ const onUseOnlineUrl = async () => {
   border-bottom-left-radius: 5px;
   padding: 10px;
   flex: 1;
+
   .href-inp {
     flex: 1;
 

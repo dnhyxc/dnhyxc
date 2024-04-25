@@ -13,14 +13,14 @@
       default-show-toc
       @copy-code-success="onCopyCodeSuccess"
     />
-    <ImagePreview v-model:previewVisible="previewVisible" :select-image="{ url: imageUrl }" close-on-click-modal/>
+    <ImagePreview v-model:previewVisible="previewVisible" :select-image="{ url: imageUrl }" close-on-click-modal />
   </div>
 </template>
 
 <script setup lang="ts">
-import {shell} from 'electron';
-import {ref, onMounted, onUnmounted} from 'vue';
-import {commonStore} from '@/store';
+import { shell } from 'electron';
+import { ref, onMounted, onUnmounted } from 'vue';
+import { commonStore } from '@/store';
 
 interface IProps {
   markdown: string;
@@ -28,11 +28,7 @@ interface IProps {
   onScroll?: Function | null | undefined;
 }
 
-const props = withDefaults(defineProps<IProps>(), {
-  markdown: '',
-  copyCodeSuccess: () => {
-  }
-});
+const props = defineProps<IProps>();
 
 const previewRef = ref<any>(null);
 // 图片预览状态
@@ -54,7 +50,7 @@ onMounted(() => {
       imgTotal.value = images.length;
 
       if (images.length) {
-        images?.forEach(image => {
+        images?.forEach((image) => {
           image.addEventListener('load', onImageLoaded);
         });
       } else {
@@ -104,15 +100,15 @@ onUnmounted(() => {
 });
 
 const onImageLoaded = () => {
-  imgCount.value++
+  imgCount.value++;
   if (imgCount.value === imgTotal.value) {
-    props?.onScroll?.()
+    props?.onScroll?.();
   }
-}
+};
 
 // 复制成功回调
 const onCopyCodeSuccess = (value: string) => {
-  props.copyCodeSuccess?.(value);
+  props?.copyCodeSuccess?.(value);
 };
 </script>
 
@@ -121,6 +117,7 @@ const onCopyCodeSuccess = (value: string) => {
 
 .preview-wrap {
   width: 100%;
+  box-sizing: border-box;
 
   :deep {
     .v-md-pre-wrapper {
@@ -163,7 +160,8 @@ const onCopyCodeSuccess = (value: string) => {
       }
 
       pre {
-        max-width: calc(100vw - 450px);
+        //max-width: calc(100vw - var(--pre-width));
+        //border: 1px solid red;
       }
 
       table {

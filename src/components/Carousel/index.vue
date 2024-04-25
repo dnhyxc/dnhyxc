@@ -9,6 +9,7 @@
     <el-carousel
       v-if="data?.length > 0"
       :interval="5000"
+      motion-blur
       trigger="click"
       height="200px"
       indicator-position="none"
@@ -37,7 +38,9 @@
         </ContextMenu>
       </el-carousel-item>
     </el-carousel>
-    <el-carousel v-else :interval="5000" trigger="click" height="200px" indicator-position="none" class="carousel">
+    <el-carousel
+v-else motion-blur :interval="5000" trigger="click" height="200px" indicator-position="none"
+                 class="carousel">
       <el-carousel-item v-for="item in 5" :key="item">
         <div class="carousel-item">
           <Image :url="IMG1" :transition-img="IMG1" class="img" />
@@ -142,32 +145,32 @@ const onSelectMenu = (menu: { label: string; value: number }, item: ArticleItem)
 };
 
 const onOpenNewWindow = async (data: ArticleItem) => {
-  const { userInfo, token } = loginStore;
+  const {userInfo, token} = loginStore;
   ipcRenderers.sendNewWin({
-    path: `article/${data.id}?from=${route.name as string}`,
+    path: `article/${ data.id }?from=${ route.name as string }`,
     id: data.id, // articleId
-    userInfo: JSON.stringify({ userInfo, token }),
+    userInfo: JSON.stringify({userInfo, token}),
   });
 };
 
 // 去详情页
 const toDetail = (id: string) => {
-  router.push(`/detail/${id}`);
+  router.push(`/detail/${ id }`);
 };
 
 // 去我的主页
 const toPersonal = (id: string) => {
-  router.push(`/personal?authorId=${id}`);
+  router.push(`/personal?authorId=${ id }`);
 };
 
 // 去分类
 const toClassify = (name: string) => {
-  router.push(`/classify?classify=${name}`);
+  router.push(`/classify?classify=${ name }`);
 };
 
 // 去标签列表
 const toTag = (name: string) => {
-  router.push(`/tag/list?tag=${name}`);
+  router.push(`/tag/list?tag=${ name }`);
 };
 </script>
 
@@ -189,6 +192,7 @@ const toTag = (name: string) => {
   justify-content: space-between;
   border-radius: 5px;
   box-sizing: border-box;
+  .clickNoSelectText();
 
   .carousel {
     flex: 1;
@@ -204,7 +208,7 @@ const toTag = (name: string) => {
 
     &:hover {
       .title-text {
-        color: var(--active) !important;
+        color: var(--hover-text-color) !important;
       }
     }
 
@@ -226,8 +230,8 @@ const toTag = (name: string) => {
         position: relative;
         z-index: 88;
         box-sizing: border-box;
-        width: fit-content;
-        mix-blend-mode: difference;
+        width: 100%;
+        // mix-blend-mode: difference;
 
         .header {
           display: flex;
@@ -243,6 +247,7 @@ const toTag = (name: string) => {
             margin: 5px 0 0 5px;
             border-radius: 5px;
             color: @fff;
+            text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
             .ellipsisMore(1);
           }
         }
@@ -256,6 +261,7 @@ const toTag = (name: string) => {
             color: @fff;
             padding: 0 5px 2px 5px;
             border-radius: 5px;
+            text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
           }
 
           .author {
@@ -263,11 +269,10 @@ const toTag = (name: string) => {
             padding: 0 5px 2px 5px;
             margin: 0 10px 0 5px;
             cursor: pointer;
+            color: var(--el-color-primary);
 
             &:hover {
-              color: var(--theme-blue);
-              backdrop-filter: blur(10px);
-              background-color: var(--card-btn-mark);
+              color: var(--hover-text-color);
             }
           }
         }
@@ -278,21 +283,21 @@ const toTag = (name: string) => {
         z-index: 88;
         box-sizing: border-box;
         text-align: right;
-        mix-blend-mode: difference;
+        width: 100%;
+        //mix-blend-mode: difference;
 
         .classify,
         .tag {
           display: inline-block;
-          color: @fff;
+          color: var(--el-color-primary);
           padding: 0 5px 2px 5px;
           margin: 0 5px 5px 0;
           border-radius: 5px;
           cursor: pointer;
+          text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
 
           &:hover {
-            color: var(--theme-blue);
-            backdrop-filter: blur(10px);
-            background-color: var(--card-btn-mark);
+            color: var(--hover-text-color);
           }
         }
 
@@ -326,6 +331,12 @@ const toTag = (name: string) => {
           border-radius: 5px;
         }
       }
+    }
+  }
+
+  .new-article, .hot-article {
+    .top {
+      width: fit-content;
     }
   }
 

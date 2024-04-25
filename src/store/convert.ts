@@ -1,8 +1,7 @@
 import { defineStore } from 'pinia';
-import { ElMessage } from 'element-plus';
 import { ConvertParams } from '@/typings/common';
 import * as Service from '@/server';
-import { normalizeResult } from '@/utils';
+import { message, normalizeResult } from '@/utils';
 import { useCheckUserId } from '@/hooks';
 import { loginStore } from '.';
 
@@ -24,9 +23,12 @@ export const useConvertStore = defineStore('convert', {
         if (!useCheckUserId()) return;
         const findOne = this.convertList.some((i) => i.keyword === keyword);
         if (findOne) return;
-        const res = normalizeResult<string>(await Service.createConvert({ keyword }));
+        const res = normalizeResult<string>(await Service.createConvert({keyword}));
         if (!res.success) {
-          ElMessage.error(res.message);
+          message({
+            title: res.message,
+            type: 'error',
+          });
         } else {
           // 如果列表长度大于五，则删除最后一条
           if (this.convertList.length >= 10) {
@@ -54,7 +56,10 @@ export const useConvertStore = defineStore('convert', {
         if (res.success) {
           this.convertList = res.data;
         } else {
-          ElMessage.error(res.message);
+          message({
+            title: res.message,
+            type: 'error',
+          });
         }
       } catch (error) {
         throw error;
@@ -66,9 +71,12 @@ export const useConvertStore = defineStore('convert', {
       try {
         if (!useCheckUserId()) return;
         const ids = this.convertList.map((i) => i.id);
-        const res = normalizeResult<{ id: string }>(await Service.deleteConvert({ id: id || ids }));
+        const res = normalizeResult<{ id: string }>(await Service.deleteConvert({id: id || ids}));
         if (!res.success) {
-          ElMessage.error(res.message);
+          message({
+            title: res.message,
+            type: 'error',
+          });
         } else {
           this.convertList = id ? this.convertList.filter((i) => i.id !== id) : [];
         }

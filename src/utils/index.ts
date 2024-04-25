@@ -1,6 +1,6 @@
-import {ipcRenderer} from 'electron';
-import {ElMessageBox, ElMessage} from 'element-plus';
-import type {ElMessageBoxOptions} from 'element-plus';
+import { ipcRenderer } from 'electron';
+import { ElMessageBox, ElNotification } from 'element-plus';
+import type { ElMessageBoxOptions } from 'element-plus';
 import moment from 'moment';
 import SparkMD5 from 'spark-md5';
 import ColorThief from 'colorthief';
@@ -12,20 +12,20 @@ import {
   EMOJI_NAME,
   EMOJI_HOST
 } from '@/constant';
-import {usePlugins} from './plugins';
-import {normalizeResult} from './result';
-import {decrypt, encrypt} from './crypto';
+import { usePlugins } from './plugins';
+import { normalizeResult } from './result';
+import { decrypt, encrypt } from './crypto';
 import request from './request';
-import {shareQQ, shareQZon, shareSinaWeiBo} from './share';
-import {mountDirectives} from './directive';
+import { shareQQ, shareQZon, shareSinaWeiBo } from './share';
+import { mountDirectives } from './directive';
 import EventBus from './eventBus';
-import {locSetItem, locGetItem, locRemoveItem, ssnGetItem, ssnSetItem, ssnRemoveItem} from './storage';
+import { locSetItem, locGetItem, locRemoveItem, ssnGetItem, ssnSetItem, ssnRemoveItem } from './storage';
 import * as ipcRenderers from './ipcRenderer';
-import {modifyTheme} from './theme';
-import {eStore, setTheme, getTheme, removeTheme, getMsgStatus} from './store';
-import {compressImage} from './compress';
+import { modifyTheme } from './theme';
+import { compressImage } from './compress';
 
-export {Verify, checkNumber, checkMin, checkMax, verifyEmpty, verifyLength, verfiySpecialCharacters} from './verify';
+export { Verify, checkNumber, checkMin, checkMax, verifyEmpty, verifyLength, verfiySpecialCharacters } from './verify';
+export * from './store';
 export * from './speak';
 export * from './codeTemplate';
 
@@ -48,12 +48,7 @@ export {
   shareSinaWeiBo,
   EventBus,
   modifyTheme,
-  eStore,
-  setTheme,
-  getTheme,
-  removeTheme,
   compressImage,
-  getMsgStatus,
 };
 
 // 判断系统类型
@@ -82,6 +77,34 @@ export const Message = (title: string = '确定下架该文章吗？', content: 
   return ElMessageBox.confirm(title, content, MSG_CONFIG(type) as ElMessageBoxOptions);
 };
 
+export const message = (
+  {
+    title,
+    message,
+    type = 'success',
+    duration = 1600,
+    offset = 55,
+    onClose
+  }: {
+    title: string;
+    type: 'success' | 'warning' | 'info' | 'error';
+    message?: string;
+    duration?: number;
+    offset?: number;
+    onClose?: () => void;
+  }) => {
+  ElNotification({
+    dangerouslyUseHTMLString: true,
+    title,
+    message,
+    type,
+    duration,
+    offset,
+    onClose
+  });
+};
+
+
 // 格式化时间
 export const formatDate = (date: number, format = 'YYYY/MM/DD HH:mm:ss') => {
   if (!date) return;
@@ -103,15 +126,15 @@ export const formatGapTime = (date: number) => {
     case seconds < 60:
       return '刚刚';
     case minutes < 60:
-      return `${minutes} 分钟前`;
+      return `${ minutes } 分钟前`;
     case hours < 24:
-      return `${hours} 小时前`;
+      return `${ hours } 小时前`;
     case days < 30:
-      return `${days} 天前`;
+      return `${ days } 天前`;
     case months < 12:
-      return `${months} 月前`;
+      return `${ months } 月前`;
     default:
-      return `${years} 年前`;
+      return `${ years } 年前`;
   }
 };
 
@@ -127,7 +150,7 @@ export const formatTimestamp = (timestamp: number) => {
   if (minutesDiff < 1) {
     return '刚刚';
   } else if (minutesDiff < 60) {
-    return `${minutesDiff}分钟前`;
+    return `${ minutesDiff }分钟前`;
   } else if (
     date.getDate() === now.getDate() &&
     date.getMonth() === now.getMonth() &&
@@ -135,7 +158,7 @@ export const formatTimestamp = (timestamp: number) => {
   ) {
     const hours = String(date.getHours()).padStart(2, '0');
     const minutes = String(date.getMinutes()).padStart(2, '0');
-    return `今天 ${hours}:${minutes}`;
+    return `今天 ${ hours }:${ minutes }`;
   } else if (
     date.getDate() === now.getDate() - 1 &&
     date.getMonth() === now.getMonth() &&
@@ -143,13 +166,13 @@ export const formatTimestamp = (timestamp: number) => {
   ) {
     const hours = String(date.getHours()).padStart(2, '0');
     const minutes = String(date.getMinutes()).padStart(2, '0');
-    return `昨天 ${hours}:${minutes}`;
+    return `昨天 ${ hours }:${ minutes }`;
   } else if (date.getFullYear() === now.getFullYear() && date.getTime() > now.getTime() - 6 * 24 * 60 * 60 * 1000) {
     const weekday = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
     const dayOfWeek = weekday[date.getDay()];
     const hours = String(date.getHours()).padStart(2, '0');
     const minutes = String(date.getMinutes()).padStart(2, '0');
-    return `${dayOfWeek} ${hours}:${minutes}`;
+    return `${ dayOfWeek } ${ hours }:${ minutes }`;
   } else {
     // 如果不是今天、昨天或最近一周，则返回完整的日期和时间
     const year = String(date.getFullYear());
@@ -157,7 +180,7 @@ export const formatTimestamp = (timestamp: number) => {
     const day = String(date.getDate()).padStart(2, '0');
     const hours = String(date.getHours()).padStart(2, '0');
     const minutes = String(date.getMinutes()).padStart(2, '0');
-    return `${year}年${month}月${day}日 ${hours}:${minutes}`;
+    return `${ year }年${ month }月${ day }日 ${ hours }:${ minutes }`;
   }
 };
 
@@ -166,7 +189,7 @@ export const formatDuration = (duration: number) => {
   const seconds = duration % 60;
   const formattedMinutes = String(minutes).padStart(2, '0');
   const formattedSeconds = String(seconds).padStart(2, '0');
-  return `${formattedMinutes}:${formattedSeconds}`;
+  return `${ formattedMinutes }:${ formattedSeconds }`;
 };
 
 // 滚动到某位置
@@ -303,19 +326,6 @@ export const image2Base64 = (image: any, type?: string) => {
   ctx?.drawImage(image, 0, 0, image.width, image.height);
   // 可选其他值 image/jpeg
   return canvas.toDataURL(type || 'image/png');
-};
-
-// 展示message
-export const showMessage = (
-  type: 'error' | 'info' | 'success' | 'warning' = 'warning',
-  message: string = '文章已下架，无法操作',
-  offset: number = 80,
-) => {
-  ElMessage({
-    message,
-    type,
-    offset,
-  });
 };
 
 // 校验是否是正常的url
@@ -494,7 +504,7 @@ export const getImgMainColor = (img: HTMLImageElement) => {
   let arr = [];
   for (const key in colorList) {
     arr.push({
-      rgba: `rgba(${key})`,
+      rgba: `rgba(${ key })`,
       num: colorList[key],
     });
   }
@@ -530,7 +540,7 @@ export const replaceEmojis = (content: string) => {
     if (index > -1) {
       return `<img style="vertical-align: middle;width: 32px;height: 32px" src="${
         EMOJI_HOST + EMOJI_MAP[word]
-      }" alt="" title="${word}"/>`;
+      }" alt="" title="${ word }"/>`;
     } else {
       return word;
     }
@@ -556,8 +566,8 @@ export const replacePictures = (content: string) => {
           cursor: pointer;
           -webkit-user-drag: none;
           user-select: none;"
-          src="${arr[1]}"
-          title="${arr[0]}"
+          src="${ arr[1] }"
+          title="${ arr[0] }"
           alt=""
         />
       `;
@@ -570,30 +580,30 @@ export const replacePictures = (content: string) => {
 
 // 向光标所在位置插入内容
 export const insertContent = ({
-                                keyword,
-                                node,
-                                username,
-                                url,
-                                emoji,
-                              }: {
+  keyword,
+  node,
+  username,
+  url,
+  emoji,
+}: {
   keyword: string; // textarea输入内容
   node?: HTMLTextAreaElement; // textarea输入框元素
   username?: string; // 用户名称
   url?: string; // 图片地址
   emoji?: string; // 表情内容
 }) => {
-  const content = emoji || `<${username},${url}>`;
+  const content = emoji || `<${ username },${ url }>`;
   if (keyword.substring(0, node?.selectionStart)) {
-    return `${keyword.substring(0, node?.selectionStart)}${content}${keyword.substring(
+    return `${ keyword.substring(0, node?.selectionStart) }${ content }${ keyword.substring(
       node?.selectionEnd!,
       node?.textLength,
-    )}`;
+    ) }`;
   } else {
     // selectionStart 为0时，默认向最后面插入
-    return `${keyword.substring(node?.selectionEnd!, node?.textLength)}${content}${keyword.substring(
+    return `${ keyword.substring(node?.selectionEnd!, node?.textLength) }${ content }${ keyword.substring(
       0,
       node?.selectionStart,
-    )}`;
+    ) }`;
   }
 };
 
@@ -604,11 +614,11 @@ export const insertContent = ({
  * @param {水印文字} watermarkText
  */
 export const addWatermark = async ({
-                                     url,
-                                     width,
-                                     height,
-                                     markText = 'dnhyxc',
-                                   }: {
+  url,
+  width,
+  height,
+  markText = 'dnhyxc',
+}: {
   url: string;
   markText: string;
   width?: number;
@@ -699,7 +709,7 @@ export const getUniqueFileName = async (file: File, mark?: string): Promise<{ fi
       const findIndex = file?.name?.lastIndexOf('.');
       const ext = file.name.slice(findIndex + 1);
       // 修改文件名称，__FILE__ 用户区分是否是上传的图片集图片
-      const newFile = new File([file], `${mark || '__FILE__'}${md5}.${ext}`, {
+      const newFile = new File([file], `${ mark || '__FILE__' }${ md5 }.${ ext }`, {
         type: file.type,
       });
       resolve({
@@ -734,11 +744,11 @@ const randomNum = (min: number, max: number) => {
 
 // canvas 绘制验证码
 export const drawCharater = ({
-                               canvasElement,
-                               width,
-                               height,
-                               code,
-                             }: {
+  canvasElement,
+  width,
+  height,
+  code,
+}: {
   canvasElement: HTMLCanvasElement;
   width: number;
   height: number;
@@ -815,11 +825,9 @@ export const onDownloadFile = async ({url, type = 'png', fileName = 'file.png'}:
   // 设置一次性监听，防止重复触发
   ipcRenderer.once('download-file', (e, res: string) => {
     if (res) {
-      ElMessage({
-        message: '下载成功',
+      message({
+        title: '下载成功！',
         type: 'success',
-        offset: 80,
-        duration: 2000,
       });
     }
   });
@@ -892,7 +900,7 @@ export const convas2ImgAddWatermark = async (
     markOffsetTop,
   });
   // 指定格式 PNG
-  return canvas.toDataURL(`image/${type}`);
+  return canvas.toDataURL(`image/${ type }`);
 };
 
 // 图片路径转成canvas
@@ -945,7 +953,7 @@ export const addImgWatermark = (params: {
   } = params;
   const ctx = canvas.getContext('2d')!;
   ctx.fillStyle = color;
-  ctx.font = `${(canvas.width / width) * size}px sans-serif`; // 设置字体样式
+  ctx.font = `${ (canvas.width / width) * size }px sans-serif`; // 设置字体样式
   // 设置多行水印
   const setMoreLineWatermark = () => {
     const textMetrics = ctx.measureText(text);
@@ -1015,12 +1023,12 @@ export const diffType = (value: string | number | string | boolean | Function | 
 
 // 设置盲水印
 export const createWaterMark = ({
-                                  url,
-                                  text,
-                                  fontSize,
-                                  fontFamily,
-                                  spacing,
-                                }: {
+  url,
+  text,
+  fontSize,
+  fontFamily,
+  spacing,
+}: {
   url: string;
   text: string;
   fontSize: string;
@@ -1040,7 +1048,7 @@ export const createWaterMark = ({
       canvas.width = img.width;
       canvas.height = img.height;
       // 设置水印字体
-      ctx.font = `${fontSize} ${fontFamily}`;
+      ctx.font = `${ fontSize } ${ fontFamily }`;
       const textMetrics = ctx.measureText(text);
       // 水印文本宽度
       const textWidth = textMetrics.width;
@@ -1073,11 +1081,11 @@ export const createWaterMark = ({
 
   // 盲水印加密算法
   function mergeData({
-                       ctx,
-                       textData,
-                       color,
-                       originalData,
-                     }: {
+    ctx,
+    textData,
+    color,
+    originalData,
+  }: {
     ctx: CanvasRenderingContext2D;
     textData: any;
     color: string;
@@ -1199,12 +1207,12 @@ export const checkImage = (link: string) => {
 export const hlightKeyword = (keyword: string, list: Array<any>) => {
   const reg = new RegExp(keyword, 'gi');
   return list.map((i) => {
-    i.abstract = i.abstract?.replace(reg, (key: string) => `<span style="color: #ff9900">${key}</span>`);
-    i.title = i.title?.replace(reg, (key: string) => `<span style="color: #ff9900">${key}</span>`);
-    i.authorName = i.authorName?.replace(reg, (key: string) => `<span style="color: #ff9900">${key}</span>`);
-    i.classify = i.classify?.replace(reg, (key: string) => `<span style="color: #ff9900">${key}</span>`);
-    i.tag = i.tag?.replace(reg, (key: string) => `<span style="color: #ff9900">${key}</span>`);
-    i.username = i.username?.replace(reg, (key: string) => `<span style="color: #ff9900">${key}</span>`);
+    i.abstract = i.abstract?.replace(reg, (key: string) => `<span style="color: #ff9900">${ key }</span>`);
+    i.title = i.title?.replace(reg, (key: string) => `<span style="color: #ff9900">${ key }</span>`);
+    i.authorName = i.authorName?.replace(reg, (key: string) => `<span style="color: #ff9900">${ key }</span>`);
+    i.classify = i.classify?.replace(reg, (key: string) => `<span style="color: #ff9900">${ key }</span>`);
+    i.tag = i.tag?.replace(reg, (key: string) => `<span style="color: #ff9900">${ key }</span>`);
+    i.username = i.username?.replace(reg, (key: string) => `<span style="color: #ff9900">${ key }</span>`);
     return i;
   });
 };
@@ -1219,12 +1227,12 @@ export const checkWithLink = (content: string, check?: boolean) => {
 
 // 计算资源加载的进度
 export const calculateLoadProgress = ({
-                                        url,
-                                        getProgress,
-                                        needFileType = 'arrayBuffer',
-                                        previousReader,
-                                        addPreviousReader,
-                                      }: {
+  url,
+  getProgress,
+  needFileType = 'arrayBuffer',
+  previousReader,
+  addPreviousReader,
+}: {
   url: string;
   getProgress: (progress: number) => void;
   previousReader: any;
@@ -1236,7 +1244,7 @@ export const calculateLoadProgress = ({
   return fetch(url)
     .then((response) => {
       if (!response.ok) {
-        throw new Error(`资源加载失败: ${response.status} ${response.statusText}`);
+        throw new Error(`资源加载失败: ${ response.status } ${ response.statusText }`);
       }
       contentLength = response.headers.get('content-length') as string;
       totalBytes = parseInt(contentLength, 10);
@@ -1300,21 +1308,21 @@ export const calculateLoadProgress = ({
 export const getGradient = (gradient?: number[][], deg: number = 192) => {
   return gradient?.length
     ? `linear-gradient(
-          ${deg}deg,
+          ${ deg }deg,
           rgba(
-            ${gradient[2]?.[0]},
-            ${gradient[2]?.[1]},
-            ${gradient[2]?.[2]}, 0.2
+            ${ gradient[2]?.[0] },
+            ${ gradient[2]?.[1] },
+            ${ gradient[2]?.[2] }, 0.2
           ) 0%,
           rgba(
-            ${gradient[0]?.[0]},
-            ${gradient[0]?.[1]},
-            ${gradient[0]?.[2]}, 0.25
+            ${ gradient[0]?.[0] },
+            ${ gradient[0]?.[1] },
+            ${ gradient[0]?.[2] }, 0.25
           ) 100%,
           rgba(
-            ${gradient[1]?.[0]},
-            ${gradient[1]?.[1]},
-            ${gradient[1]?.[2]}, 0.3
+            ${ gradient[1]?.[0] },
+            ${ gradient[1]?.[1] },
+            ${ gradient[1]?.[2] }, 0.3
           ) 100%
         )`
     : 'linear-gradient(to bottom, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%)';

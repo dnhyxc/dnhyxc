@@ -1,8 +1,7 @@
 import { defineStore } from 'pinia';
 import { Classifys, ArticleItem, ArticleListResult } from '@/typings/common';
-import { ElMessage } from 'element-plus';
 import * as Service from '@/server';
-import { normalizeResult, hlightKeyword } from '@/utils';
+import { normalizeResult, hlightKeyword, message } from '@/utils';
 import { commonStore } from '@/store';
 import { PAGESIZE } from '@/constant';
 
@@ -35,10 +34,9 @@ export const useClassifyStore = defineStore('classify', {
       if (res.success) {
         this.classifys = res.data;
       } else {
-        ElMessage({
-          message: res.message,
+        message({
+          title: res.message,
           type: 'error',
-          offset: 80,
         });
       }
     },
@@ -63,10 +61,9 @@ export const useClassifyStore = defineStore('classify', {
         this.articleList = commonStore.keyword ? hlightKeyword(commonStore.keyword, list) : list;
         this.total = res.data.total;
       } else {
-        ElMessage({
-          message: res.message,
+        message({
+          title: res.message,
           type: 'error',
-          offset: 80,
         });
       }
     },

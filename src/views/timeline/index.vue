@@ -24,7 +24,7 @@ import { ipcRenderer } from 'electron';
 import { onMounted, computed, inject } from 'vue';
 import { useRoute } from 'vue-router';
 import { useScroller } from '@/hooks';
-import { scrollTo, showMessage } from '@/utils';
+import { message, scrollTo } from '@/utils';
 import { timelineStore, articleStore } from '@/store';
 import ToTopIcon from '@/components/ToTopIcon/index.vue';
 import Loading from '@/components/Loading/index.vue';
@@ -57,7 +57,11 @@ onMounted(async () => {
 // 删除
 const deleteTimeLineArticle = async (data: ArticleItem | TimelineArticles) => {
   if ((data as ArticleItem)?.isDelete) {
-    return showMessage();
+    message({
+      title: '文章已下架，无法操作',
+      type: 'warning',
+    });
+    return;
   }
   await timelineStore.deleteTimelineArticle(data.id!);
 };
@@ -78,7 +82,7 @@ const onScrollTo = () => {
 
 .timeline-wrap {
   border-radius: 5px;
-  box-shadow: 0 0 8px 0 var(--shadow-mack);
+  box-shadow: 0 0 5px 0 var(--card-shadow);
   background-color: var(--pre-hover-bg);
   box-sizing: border-box;
   height: calc(100% - 8px);
@@ -95,7 +99,7 @@ const onScrollTo = () => {
     position: relative;
     display: flex;
     justify-content: space-between;
-    box-shadow: 0 0 8px 0 var(--shadow-mack);
+    box-shadow: 0 0 5px 0 var(--card-shadow);
     background-color: var(--pre-hover-bg);
     padding: 15px;
     box-sizing: border-box;
@@ -150,6 +154,7 @@ const onScrollTo = () => {
         .edit,
         .del {
           font-weight: normal;
+
           &:hover {
             color: var(--active-color);
           }
@@ -165,6 +170,7 @@ const onScrollTo = () => {
           font-size: 16px;
           .ellipsisMore(1);
           cursor: pointer;
+
           &:hover {
             color: @sub-2-blue;
           }
@@ -251,6 +257,7 @@ const onScrollTo = () => {
         .comment,
         .read-count {
           cursor: pointer;
+
           &:hover {
             color: @sub-2-blue;
           }

@@ -34,13 +34,14 @@ import { scrollTo } from '@/utils';
 import { useChildScroller } from '@/hooks';
 import { tagStore } from '@/store';
 import AsyncLoading from '@/components/AsyncLoading/index.vue';
+
 const WordCloud = defineAsyncComponent({
   loader: () => import('@/components/WordCloud/index.vue'),
   loadingComponent: AsyncLoading,
 });
 
 const router = useRouter();
-const { scrollChildRef, scrollChildTop } = useChildScroller();
+const {scrollChildRef, scrollChildTop} = useChildScroller();
 
 onMounted(() => {
   // 获取标签信息
@@ -61,7 +62,7 @@ const onScrollTo = () => {
 const onCheckTag = (tag: string) => {
   // 保存当前选中标签
   tagStore.currentTag = tag;
-  router.push(`/tag/list?tag=${tag}`);
+  router.push(`/tag/list?tag=${ tag }`);
 };
 </script>
 
@@ -74,11 +75,10 @@ const onCheckTag = (tag: string) => {
   box-sizing: border-box;
   margin: 0 5px;
   height: 100%;
-  // height: calc(100% - 4px);
   border-radius: 5px;
 
   .cloud-content {
-    flex: 1;
+    width: calc(100% - 230px);
     border-radius: 5px;
 
     .word-cloud-wrap {
@@ -86,7 +86,7 @@ const onCheckTag = (tag: string) => {
       height: calc(100% - 8px);
       box-sizing: border-box;
       margin-top: 8px;
-      box-shadow: 0 0 8px 0 var(--shadow-mack);
+      box-shadow: 0 0 5px 0 var(--card-shadow);
       border-radius: 5px;
       background-color: var(--pre-hover-bg);
     }
@@ -100,8 +100,9 @@ const onCheckTag = (tag: string) => {
     padding: 8px 0 10px;
     margin-top: 8px;
     width: 220px;
+    min-width: 220px;
     height: calc(100% - 8px);
-    box-shadow: 0 0 8px 0 var(--shadow-mack);
+    box-shadow: 0 0 5px 0 var(--card-shadow);
     border-radius: 5px;
     background-color: var(--pre-hover-bg);
 
@@ -116,7 +117,6 @@ const onCheckTag = (tag: string) => {
       justify-content: space-between;
       align-items: center;
       font-size: 18px;
-      color: var(--active-color);
       border-bottom: 1px solid var(--card-border);
       margin-bottom: 6px;
       padding: 0 13px 9px;
@@ -144,6 +144,7 @@ const onCheckTag = (tag: string) => {
 
       &:hover {
         color: var(--active-color);
+
         &::before {
           position: absolute;
           top: 50%;
@@ -156,6 +157,7 @@ const onCheckTag = (tag: string) => {
           border-bottom-right-radius: 5px;
           background-color: var(--active-color);
         }
+
         .count {
           color: var(--active-color);
         }

@@ -86,9 +86,8 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { ElMessage } from 'element-plus';
 import { HEAD_IMG } from '@/constant';
-import { shareQQ, shareSinaWeiBo, getStoreUserInfo } from '@/utils';
+import { shareQQ, shareSinaWeiBo, getStoreUserInfo, message } from '@/utils';
 import { articleStore, collectStore, loginStore } from '@/store';
 import { useCommentCount } from '@/hooks';
 import Qrcode from '@/components/Qrcode/index.vue';
@@ -137,11 +136,12 @@ const onCollect = () => {
   // 获取存储在硬盘store中的登录信息
   const { userInfo } = getStoreUserInfo();
   if (!loginStore?.userInfo?.userId && !userInfo?.userId) {
-    return ElMessage({
+    message({
+      title: '无权操作！',
       message: '请先登录后再操作哦！',
-      type: 'warning',
-      offset: 80,
+      type: 'success',
     });
+    return;
   }
   // 如果当前文章收藏状态为true，则取消收藏，否则就唤起收藏弹窗
   if (collectStore?.collectStatus) {
@@ -159,6 +159,7 @@ const onCollect = () => {
   display: flex;
   justify-content: space-between;
   margin-bottom: 10px;
+
   .action {
     position: relative;
     flex: 1;
@@ -168,7 +169,7 @@ const onCollect = () => {
     height: 50px;
     border-radius: 5px;
     margin-right: 10px;
-    box-shadow: 0 0 8px 0 var(--shadow-mack);
+    box-shadow: 0 0 5px 0 var(--card-shadow);
     color: var(--font-3);
     cursor: pointer;
     background-color: var(--pre-hover-bg);

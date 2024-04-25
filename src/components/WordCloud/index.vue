@@ -5,7 +5,7 @@
  * index.vue
 -->
 <template>
-  <div class="word-cloud">
+  <div ref="wordCloudRef" class="word-cloud">
     <div ref="charts" :style="{ ...styles }" />
     <div v-if="loading !== null && !loading && !data?.length" class="empty-wrap">
       <img :src="EMPTY" />
@@ -15,7 +15,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, nextTick, onUnmounted, watch, computed } from 'vue';
+import { ref, onMounted, nextTick, watch, computed } from 'vue';
+import { onBeforeRouteLeave } from 'vue-router';
 import * as echarts from 'echarts';
 import 'echarts-wordcloud';
 import { SEA_BASE64, EMPTY } from '@/constant';
@@ -41,8 +42,15 @@ const props = withDefaults(defineProps<IProps>(), {
 
 // 图表元素
 const charts = ref<HTMLElement | null>(null);
+const wordCloudRef = ref<HTMLElement | null>(null);
 // 图表实例
 let myChart: any = null;
+
+const observer = new ResizeObserver((entries) => {
+  nextTick(() => {
+    myChart.resize();
+  });
+});
 
 onMounted(() => {
   // 初始化词云
@@ -52,17 +60,16 @@ onMounted(() => {
     drawChart();
     // 点击某个字
     myChart.on('click', (params: { data: { name: string; value: number } }) => {
-      const { name } = params.data;
+      const {name} = params.data;
       props.callback && props.callback(name);
     });
-    // 设备视口大小改变时，重置 echarts
-    window.addEventListener('resize', resize);
   }
+  // 设备视口大小改变时，重置 echarts
+  observer.observe(wordCloudRef.value!);
 });
 
-onUnmounted(() => {
-  // 移除监听事件
-  window.removeEventListener('resize', resize);
+onBeforeRouteLeave(() => {
+  observer.unobserve(wordCloudRef.value!);
 });
 
 const styles = computed(() => props.styles);
@@ -146,13 +153,6 @@ const drawChart = () => {
 
   // 放在 public 的img资源使用绝对路径引入有效，或先 import 引入图片资源，再赋值也有效。
   maskImage.src = SEA_BASE64; // 海岛
-};
-
-// 重新设置图表的尺寸
-const resize = () => {
-  nextTick(() => {
-    myChart.resize();
-  });
 };
 </script>
 

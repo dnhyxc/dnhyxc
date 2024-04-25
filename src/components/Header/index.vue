@@ -7,9 +7,6 @@
 <template>
   <div id="__HEADER__" :class="`${checkOS() === 'mac' && 'mac-header-wrap'} header-wrap`">
     <div class="left">
-      <div class="icon-wrap" @click="goHome">
-        <i class="page-icon iconfont icon-haidao_" />
-      </div>
       <el-tooltip effect="light" content="后退" placement="bottom" popper-class="custom-dropdown-styles">
         <i class="font iconfont icon-arrow-left-bold" @click="goBack" />
       </el-tooltip>
@@ -239,11 +236,6 @@ const onReload = () => {
   location.reload();
 };
 
-// 返回首页
-const goHome = () => {
-  router.push('/home');
-};
-
 // 点击右侧窗口控制按钮
 const onClick = (item: { title: string; svg: string }) => {
   if (item.title === '最大化') {
@@ -349,49 +341,24 @@ const onScrollTo = () => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 38px;
-  padding: 10px 15px 7px 12px;
+  height: 60px;
+  padding: 15px 15px 7px 0;
+  box-sizing: border-box;
   -webkit-app-region: drag;
+  .clickNoSelectText();
 
   .left {
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    padding-left: 41px;
     color: var(--font-1);
     font-weight: var(--font-weight);
-
-    .icon-wrap {
-      position: absolute;
-      top: 15px;
-      left: 13px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      .page-icon {
-        display: inline-block;
-        min-height: 40px;
-        line-height: 40px;
-        font-size: 35px;
-        margin-bottom: 2px;
-        color: var(--theme-blue);
-        cursor: pointer;
-        -webkit-app-region: no-drag;
-        transition: all 0.3s;
-        font-weight: 500;
-        .menuLg();
-        &:hover {
-          transform: scale(1.15);
-        }
-      }
-    }
 
     .font {
       cursor: pointer;
       -webkit-app-region: no-drag;
       color: var(--font-color);
-      .headerTextLg();
+      .menuLg();
       height: 30px;
       width: 30px;
       line-height: 30px;
@@ -411,7 +378,7 @@ const onScrollTo = () => {
       font-size: 18px;
       color: var(--font-color);
       font-weight: 700;
-      .headerTextLg();
+      .menuLg();
     }
   }
 
@@ -434,7 +401,7 @@ const onScrollTo = () => {
         cursor: pointer;
         -webkit-app-region: no-drag;
         color: var(--font-color);
-        .headerTextLg();
+        .menuLg();
 
         &:hover {
           color: var(--active-color);
@@ -447,7 +414,7 @@ const onScrollTo = () => {
 
       .icon-qiehuan {
         color: var(--font-color);
-        .headerTextLg();
+        .menuLg();
         font-size: 20px;
         cursor: pointer;
 
@@ -474,6 +441,7 @@ const onScrollTo = () => {
             border-radius: 30px;
             box-shadow: 0 0 0 1px var(--search-border-color) inset;
           }
+
           .el-input__inner {
             color: var(--font-color);
 
@@ -512,7 +480,7 @@ const onScrollTo = () => {
         font-size: 17px;
         cursor: pointer;
         color: var(--font-color);
-        .headerTextLg();
+        .menuLg();
 
         &:hover {
           color: var(--active-color);
@@ -534,7 +502,7 @@ const onScrollTo = () => {
         margin-left: 15px;
         margin-top: 1px;
         color: var(--font-color);
-        .headerTextLg();
+        .menuLg();
       }
 
       &:hover {
@@ -561,7 +529,7 @@ const onScrollTo = () => {
         cursor: pointer;
         margin-left: 15px;
         color: var(--font-color);
-        .headerTextLg();
+        .menuLg();
       }
 
       &:hover {
@@ -584,7 +552,7 @@ const onScrollTo = () => {
       color: var(--font-color);
       height: 30px;
       line-height: 30px;
-      .headerTextLg();
+      .menuLg();
 
       .icon-text {
         margin-left: 15px;
@@ -608,6 +576,7 @@ const onScrollTo = () => {
       align-items: flex-start;
       padding-left: 20px;
     }
+
     .radio-close {
       padding: 0;
       margin-left: 0;
@@ -643,18 +612,24 @@ const onScrollTo = () => {
 }
 
 .mac-header-wrap {
-  padding: 28px 22px 0 10px;
+  padding: 0 2px 0 0;
+  margin-left: -5px;
 
   .left {
-    padding-left: 45px;
+    margin-top: 8px;
 
     .icon-wrap {
       top: 30px;
       left: 11px;
+
       .page-icon {
         font-size: 40px;
       }
     }
+  }
+
+  .right {
+    margin-top: 8px;
   }
 }
 
@@ -670,7 +645,7 @@ const onScrollTo = () => {
 
   .title-text {
     color: var(--font-color);
-    .headerTextLg();
+    .menuLg();
   }
 
   .del-action {

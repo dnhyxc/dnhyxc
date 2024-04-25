@@ -199,11 +199,10 @@
 <script setup lang="ts">
 import { onMounted, ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
-import { ElMessage } from 'element-plus';
 import { CommentParams } from '@/typings/common';
 import { HEAD_IMG } from '@/constant';
 import { loginStore, articleStore, followStore } from '@/store';
-import { formatGapTime, getStoreUserInfo, replaceCommentContent } from '@/utils';
+import { formatGapTime, getStoreUserInfo, message, replaceCommentContent } from '@/utils';
 import Image from '@/components/Image/index.vue';
 import DraftInput from '@/components/DraftInput/index.vue';
 import UserPopContent from '@/components/UserPopContent/index.vue';
@@ -240,7 +239,13 @@ onMounted(() => {
 
 // 初始化获取评论
 const getCommentList = () => {
-  if (!props.id) return ElMessage.error('文章不翼而飞了，评论也随之不知所踪');
+  if (!props.id) {
+    message({
+      title: '文章不翼而飞了，评论也随之不知所踪！',
+      type: 'error',
+    });
+    return;
+  }
   articleStore.getCommentList(props.id);
 };
 
@@ -261,7 +266,7 @@ const getCommentCount = computed(() => {
 
 // 去个人主页
 const toPersonal = (authorId: string) => {
-  router.push(`/personal?authorId=${authorId}`);
+  router.push(`/personal?authorId=${ authorId }`);
 };
 
 // 点击回复按钮事件
@@ -286,7 +291,7 @@ const onGiveLike = (comment: CommentParams, isThreeTier?: boolean) => {
 
 // 删除评论
 const onDeleteComment = (comment: CommentParams, isThreeTier?: boolean) => {
-  articleStore?.deleteComment({ comment, articleId: props?.id, isThreeTier, getCommentList });
+  articleStore?.deleteComment({comment, articleId: props?.id, isThreeTier, getCommentList});
 };
 
 // 隐藏回复输入框
@@ -336,6 +341,7 @@ const showPop = async (item: CommentParams) => {
       height: auto;
       overflow-y: hidden;
     }
+
     .el-dialog__body {
       padding: 10px;
     }
@@ -411,6 +417,7 @@ const showPop = async (item: CommentParams) => {
       &:hover {
         color: var(--theme-blue);
       }
+
       cursor: pointer;
       .clickNoSelectText();
 

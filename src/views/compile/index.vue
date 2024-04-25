@@ -126,7 +126,7 @@ const onSticky = () => {
 
 // 双击放大窗口
 const onDblclick = () => {
-  const { id } = route.params;
+  const {id} = route.params;
   toggle.value = !toggle.value;
   ipcRenderers.sendNewWinMax(id as string);
 };
@@ -152,7 +152,7 @@ const onClick = async (item: { title: string; svg: string }) => {
         ipcRenderers.sendNewWinOut(route.query?.from as string);
       });
     } else if (route.query?.from === 'tools_pdf') {
-      const { loading, iframeUrl, onAbort } = bookStore.pdfInfo;
+      const {loading, iframeUrl, onAbort} = bookStore.pdfInfo;
 
       if (iframeUrl && !loading) {
         try {
@@ -205,6 +205,7 @@ const onClick = async (item: { title: string; svg: string }) => {
       height: 55px;
       padding: 0 16px 0 16px;
       -webkit-app-region: drag;
+      .clickNoSelectText;
 
       .left {
         display: flex;
@@ -235,7 +236,7 @@ const onClick = async (item: { title: string; svg: string }) => {
           font-size: 18px;
           font-weight: 700;
           color: var(--font-color);
-          .headerTextLg();
+          .menuLg();
         }
       }
 
@@ -257,7 +258,7 @@ const onClick = async (item: { title: string; svg: string }) => {
             margin-top: 2px;
             color: var(--font-color);
             font-weight: var(--font-weight);
-            .headerTextLg();
+            .menuLg();
           }
 
           .active {
@@ -272,7 +273,7 @@ const onClick = async (item: { title: string; svg: string }) => {
           line-height: 32px;
           margin-left: 19px;
           color: var(--font-color);
-          .headerTextLg();
+          .menuLg();
         }
 
         .page-actions {
@@ -287,7 +288,7 @@ const onClick = async (item: { title: string; svg: string }) => {
           cursor: pointer;
           color: var(--font-color);
           font-weight: var(--font-weight);
-          .headerTextLg();
+          .menuLg();
 
           .icon-text {
             margin-left: 15px;
@@ -385,7 +386,7 @@ const onClick = async (item: { title: string; svg: string }) => {
         margin-right: 10px;
         height: calc(100vh - 76px);
         border-radius: 5px;
-        box-shadow: 0 0 8px 0 var(--shadow-mack);
+        box-shadow: 0 0 5px 0 var(--card-shadow);
         background-color: var(--pre-hover-bg);
 
         :deep {

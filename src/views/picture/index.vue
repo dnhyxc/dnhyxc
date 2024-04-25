@@ -238,7 +238,7 @@ const onScrollTo = () => {
     height: 45px;
     margin: 5px auto 10px;
     padding: 0 10px;
-    box-shadow: 0 0 8px 0 var(--shadow-mack);
+    box-shadow: 0 0 5px 0 var(--card-shadow);
     border-radius: 5px;
 
     .upload-btn {
@@ -277,7 +277,7 @@ const onScrollTo = () => {
   }
 
   .scrollbar-wrapper {
-    box-shadow: 0 0 8px 0 var(--shadow-mack);
+    box-shadow: 0 0 5px 0 var(--card-shadow);
     background-color: var(--pre-hover-bg);
   }
 

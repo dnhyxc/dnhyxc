@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia';
-import { ElMessage } from 'element-plus';
 import * as Service from '@/server';
-import { normalizeResult, hlightKeyword } from '@/utils';
+import { normalizeResult, hlightKeyword, message } from '@/utils';
 import { useCheckUserId } from '@/hooks';
 import { createWebSocket, sendMessage } from '@/socket';
 import { loginStore } from '@/store';
@@ -66,8 +65,8 @@ export const useChatStore = defineStore('chat', {
     },
 
     // 发送消息
-    sendChatMessage({ to, content, replyInfo }: { to: string; content: string; replyInfo?: ReplyInfo }) {
-      const { userId } = loginStore.userInfo;
+    sendChatMessage({to, content, replyInfo}: { to: string; content: string; replyInfo?: ReplyInfo }) {
+      const {userId} = loginStore.userInfo;
       if (userId === to) return;
       const chatId = [userId, to].sort().join('_');
       sendMessage(
@@ -101,7 +100,7 @@ export const useChatStore = defineStore('chat', {
       // this.loading = true;
       const chatId = [loginStore.userInfo.userId, userId].sort().join('_');
       const res = normalizeResult<ChatList>(
-        await Service.getChatList({ pageNo: this.pageNo, pageSize: this.pageSize, chatId }),
+        await Service.getChatList({pageNo: this.pageNo, pageSize: this.pageSize, chatId}),
       );
       this.loading = false;
       if (res.success) {
@@ -115,7 +114,7 @@ export const useChatStore = defineStore('chat', {
       // 检验是否有userId，如果没有禁止发送请求
       if (!useCheckUserId() || !to) return;
       this.loading = true;
-      const { userId } = loginStore.userInfo;
+      const {userId} = loginStore.userInfo;
       const chatId = [userId, to].sort().join('_');
       const res = normalizeResult<{ noReadCount: number }>(await Service.mergeChats(chatId));
       if (res.success) {
@@ -135,7 +134,7 @@ export const useChatStore = defineStore('chat', {
       // 检验是否有userId，如果没有禁止发送请求
       if (!useCheckUserId() || !to) return;
       this.loading = true;
-      const { userId } = loginStore.userInfo;
+      const {userId} = loginStore.userInfo;
       const chatId = [userId, to].sort().join('_');
       const res = normalizeResult<ChatItem[]>(await Service.getCacheChats(chatId));
       if (res.success) {
@@ -146,7 +145,7 @@ export const useChatStore = defineStore('chat', {
     // 添加聊天消息
     async addChat(params: ChatInfo) {
       if (params.from === params.to) return;
-      const chatInfo = { userId: params.from, chat: params, id: params.id };
+      const chatInfo = {userId: params.from, chat: params, id: params.id};
       if (params.from === this.chatUserId || params.to === this.chatUserId) {
         this.addChatList = [...this.addChatList, chatInfo];
         if (this.timer) {
@@ -231,13 +230,12 @@ export const useChatStore = defineStore('chat', {
     async addContacts(userId: string) {
       if (!useCheckUserId()) return;
       const res = normalizeResult<ContactItem>(
-        await Service.addContacts({ contactId: userId, createTime: new Date().valueOf() }),
+        await Service.addContacts({contactId: userId, createTime: new Date().valueOf()}),
       );
       if (!res.success) {
-        ElMessage({
-          message: res.message,
+        message({
+          title: res.message,
           type: 'error',
-          offset: 80,
         });
       }
     },
@@ -277,7 +275,7 @@ export const useChatStore = defineStore('chat', {
 
     // 获取用户信息
     async getUserInfo(userId: string) {
-      const res = normalizeResult<UserInfoParams>(await Service.getUserInfo({ userId }));
+      const res = normalizeResult<UserInfoParams>(await Service.getUserInfo({userId}));
       if (res.success) {
         return res;
       }
@@ -290,7 +288,7 @@ export const useChatStore = defineStore('chat', {
       if (this.contactList.length !== 0 && this.contactList.length >= this.contactTotal) return;
       this.contactPageNo = this.contactPageNo + 1;
       const res = normalizeResult<ContactList>(
-        await Service.getContactList({ pageNo: this.contactPageNo, pageSize: this.contactPageSize }),
+        await Service.getContactList({pageNo: this.contactPageNo, pageSize: this.contactPageSize}),
       );
       if (res.success) {
         this.contactList = [...this.contactList, ...res.data.list];
@@ -323,7 +321,7 @@ export const useChatStore = defineStore('chat', {
       this.searchPageNo = this.searchPageNo + 1;
       this.searchLoading = true;
       const res = normalizeResult<ContactList>(
-        await Service.searchContacts({ pageNo: this.searchPageNo, pageSize: this.searchPageSize, keyword }),
+        await Service.searchContacts({pageNo: this.searchPageNo, pageSize: this.searchPageSize, keyword}),
       );
       this.searchLoading = false;
       if (res.success) {
@@ -349,7 +347,7 @@ export const useChatStore = defineStore('chat', {
     }) {
       if (!useCheckUserId()) return;
       const res = normalizeResult<{ userId: string }>(
-        await Service.uppdateContact({ contactId, createTime, isUnDisturb, isTop }),
+        await Service.uppdateContact({contactId, createTime, isUnDisturb, isTop}),
       );
       if (res.success) {
         if (createTime && setTop) {
@@ -386,7 +384,7 @@ export const useChatStore = defineStore('chat', {
     async addAbsentContact(params: ContactItem & ChatItem) {
       const res = await this.getUserInfo(params.chat.from);
       if (res?.success) {
-        const { headUrl, username, job, userId } = res.data;
+        const {headUrl, username, job, userId} = res.data;
         // @ts-ignore
         const topIndex = this.contactList.findLastIndex((i) => i.isTop);
         const contact = {

@@ -1,15 +1,15 @@
 import fetch from 'isomorphic-fetch';
-import { ElMessage } from 'element-plus';
 import { stringify } from 'query-string';
 import { addGatewayPattern } from './urlTool';
 import { ssnSetItem, locGetItem } from './storage';
-import { EventBus } from '@/utils';
+import { EventBus, message } from '@/utils';
 
 export interface ICheckStatusProps {
   response: Response;
   options?: any;
   url?: string;
 }
+
 interface ErrorWithResponse extends Error {
   response?: Response;
 }
@@ -29,7 +29,10 @@ function checkRedirection(response: Response): boolean {
       return true;
     }
   } catch (err) {
-    ElMessage.error('redirect url error');
+    message({
+      title: 'redirect url error',
+      type: 'error',
+    });
   }
 
   return false;
@@ -42,7 +45,7 @@ function getErrorWithResponse(response: Response): ErrorWithResponse {
   return error;
 }
 
-function checkStatus({ response }: ICheckStatusProps): Response {
+function checkStatus({response}: ICheckStatusProps): Response {
   if (checkRedirection(response)) {
     throw getErrorWithResponse(response);
   } else if (response.status >= 200 && response.status < 300) {
@@ -57,7 +60,7 @@ function checkStatus({ response }: ICheckStatusProps): Response {
  * @param {string} url 完整 url 或者 path
  */
 function addTimestamp(url: string): string {
-  const t = `_t=${Date.now()}`;
+  const t = `_t=${ Date.now() }`;
   const sep = url.includes('?') ? '&' : '?';
   return url + sep + t;
 }
@@ -85,14 +88,14 @@ export default function request(_url: string, options?: any): FetchResult {
   const defaultOptions = {
     credentials: 'include',
   };
-  const newOptions = { ...defaultOptions, ...options };
+  const newOptions = {...defaultOptions, ...options};
 
   if (newOptions.method === 'POST' || newOptions.method === 'PUT' || newOptions.method === 'GET') {
     if (!(newOptions.body instanceof FormData)) {
       newOptions.headers = {
         Accept: 'application/json',
         'Content-Type': 'application/json; charset=utf-8',
-        Authorization: `Bearer ${locGetItem('token') || options?.body?.token}`,
+        Authorization: `Bearer ${ locGetItem('token') || options?.body?.token }`,
         ...newOptions.headers,
       };
       // 判断是否传了token，如果传了，则删除
@@ -104,7 +107,7 @@ export default function request(_url: string, options?: any): FetchResult {
       // NewOptions.body is FormData
       newOptions.headers = {
         Accept: 'application/json',
-        Authorization: `Bearer ${locGetItem('token')}`,
+        Authorization: `Bearer ${ locGetItem('token') }`,
         ...newOptions.headers,
       };
     }
@@ -119,7 +122,7 @@ export default function request(_url: string, options?: any): FetchResult {
     )
     .then(parseJSON)
     .then((data: any) => {
-      const { code } = data;
+      const {code} = data;
       if (code === 201) {
         // setRedirectPath({ hasAuth: true, noLogin: false });
       }
@@ -130,11 +133,11 @@ export default function request(_url: string, options?: any): FetchResult {
     })
     .catch((err: any) => {
       if (err && err.response) {
-        const { pathname, search } = window.location;
+        const {pathname, search} = window.location;
 
         return err.response.json().then((data: any) => {
           if (err.response.status === 401 || err.response.status === 403) {
-            setRedirectPath(`${pathname}${search}`);
+            setRedirectPath(`${ pathname }${ search }`);
             onRedirect(pathname, search);
             return {
               err: new Error(data.message || '系统异常'),
@@ -143,13 +146,7 @@ export default function request(_url: string, options?: any): FetchResult {
           }
           if (err.response.status === 409) {
             EventBus.emit('quit');
-            setRedirectPath(`${pathname}${search}`);
-            // ElMessage({
-            //   message: data.message,
-            //   type: 'warning',
-            //   offset: 80,
-            //   duration: 2000,
-            // });
+            setRedirectPath(`${ pathname }${ search }`);
             return {
               err: new Error(data.message || '系统异常'),
               code: err.response.status,
@@ -176,10 +173,10 @@ export default function request(_url: string, options?: any): FetchResult {
 }
 
 export function get(url: string, params: any = {}) {
-  const newUrl = `${url}?${stringify(params, {
+  const newUrl = `${ url }?${ stringify(params, {
     arrayFormat: 'comma',
     skipEmptyString: true,
-  })}`;
+  }) }`;
   return request(newUrl, {
     method: 'GET',
   });
@@ -208,7 +205,7 @@ export function put(url: string, params: any = {}) {
 }
 
 export function del(url: string, params: any = {}) {
-  const newUrl = `${url}?${stringify(params, { arrayFormat: 'comma' })}`;
+  const newUrl = `${ url }?${ stringify(params, {arrayFormat: 'comma'}) }`;
 
   return request(newUrl, {
     method: 'DELETE',

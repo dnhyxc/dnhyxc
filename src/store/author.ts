@@ -1,9 +1,8 @@
 import { defineStore } from 'pinia';
-import { ElMessage } from 'element-plus';
 import { UserInfoParams, ArticleListResult, ArticleItem, TimelineResult } from '@/typings/common';
 import * as Service from '@/server';
 import { useCheckUserId } from '@/hooks';
-import { normalizeResult, Message, ipcRenderers } from '@/utils';
+import { normalizeResult, Message, ipcRenderers, message } from '@/utils';
 import { loginStore } from '@/store';
 import { AUTHOR_API_PATH, PAGESIZE } from '@/constant';
 
@@ -48,14 +47,13 @@ export const useAuthorStore = defineStore('author', {
     // 获取用户信息
     async getUserInfo() {
       try {
-        const res = normalizeResult<UserInfoParams>(await Service.getUserInfo({ auth: 1 }));
+        const res = normalizeResult<UserInfoParams>(await Service.getUserInfo({auth: 1}));
         if (res.success) {
           this.userInfo = res.data;
         } else {
-          ElMessage({
-            message: res.message,
+          message({
+            title: res.message,
             type: 'error',
-            offset: 80,
           });
         }
       } catch (error) {
@@ -79,14 +77,13 @@ export const useAuthorStore = defineStore('author', {
       );
       this.loading = false;
       if (res.success) {
-        const { total, list } = res.data;
+        const {total, list} = res.data;
         this.articleList = [...this.articleList, ...list];
         this.total = total;
       } else {
-        ElMessage({
-          message: res.message,
+        message({
+          title: res.message,
           type: 'error',
-          offset: 80,
         });
       }
     },
@@ -95,16 +92,15 @@ export const useAuthorStore = defineStore('author', {
     async getAuthorTimeline() {
       this.loading = true;
       const res = normalizeResult<TimelineResult[]>(
-        await Service.getAuthorTimeline({ accessUserId: loginStore.userInfo?.userId }),
+        await Service.getAuthorTimeline({accessUserId: loginStore.userInfo?.userId}),
       );
       this.loading = false;
       if (res.success) {
         this.timelineList = res.data;
       } else {
-        ElMessage({
-          message: res.message,
+        message({
+          title: res.message,
           type: 'error',
-          offset: 80,
         });
       }
     },
@@ -113,7 +109,7 @@ export const useAuthorStore = defineStore('author', {
     async deleteTimelineArticle(articleId: string) {
       if (!useCheckUserId(false)) return;
       Message('', '确定删除该文章吗？').then(async () => {
-        const res = normalizeResult<{ id: string }>(await Service.deleteArticle({ articleId, type: 'timeline' }));
+        const res = normalizeResult<{ id: string }>(await Service.deleteArticle({articleId, type: 'timeline'}));
         if (res.success) {
           // 发送删除的文章的消息给主进程，通知主进程及时关闭对应子窗口
           ipcRenderers.sendRemove(articleId);
@@ -126,14 +122,13 @@ export const useAuthorStore = defineStore('author', {
                 articles: filterList,
               };
             }
-            return { ...i };
+            return {...i};
           });
           this.timelineList = list;
         } else {
-          ElMessage({
-            message: res.message,
+          message({
+            title: res.message,
             type: 'error',
-            offset: 80,
           });
         }
       });

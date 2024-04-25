@@ -19,8 +19,8 @@
 
 <script setup lang="ts">
 import { reactive, computed } from 'vue';
-import { ElMessage } from 'element-plus';
 import { createStore, uploadStore } from '@/store';
+import { message } from '@/utils';
 
 interface ToolbarItem {
   action?: (editor: any) => void;
@@ -119,10 +119,10 @@ const toolbar = reactive<Toolbar>({
     title: '发布文章',
     action(editor) {
       if (!createStore?.createInfo?.content?.trim()) {
-        ElMessage({
-          message: '嘿！一个字都没写休想发布',
+        message({
+          title: '嘿！一个字都没写休想发布',
+          message: '请先编写文章内容后再尝试发布！',
           type: 'warning',
-          offset: 80,
         });
         return;
       }
@@ -141,10 +141,10 @@ const toolbar = reactive<Toolbar>({
     title: '保存草稿',
     action(editor) {
       if (!createStore?.createInfo?.content?.trim()) {
-        ElMessage({
-          message: '嘿！一个字都没写休想发布',
+        message({
+          title: '嘿！一个字都没写休想发布',
+          message: '请先编写文章内容后再尝试发布！',
           type: 'warning',
-          offset: 80,
         });
         return;
       }
@@ -226,6 +226,7 @@ const onCopyCodeSuccess = (value: string) => {
 
     .v-md-editor__left-area-title {
       color: var(--font-1);
+
       &::after {
         border-bottom: 1px solid var(--card-border);
       }
@@ -280,6 +281,7 @@ const onCopyCodeSuccess = (value: string) => {
       border-bottom: 1px solid var(--card-border);
       -webkit-app-region: no-drag;
     }
+
     .v-md-editor__editor-wrapper {
       border-right: none;
     }
@@ -297,6 +299,7 @@ const onCopyCodeSuccess = (value: string) => {
     .v-md-editor__toolbar-item--active {
       background-color: var(--bg-lg-color1);
       color: var(--font-4);
+
       &:hover {
         background-color: var(--bg-lg-color1);
       }
@@ -304,8 +307,9 @@ const onCopyCodeSuccess = (value: string) => {
 
     .v-md-editor {
       border-radius: 5px;
-      box-shadow: 0 0 8px 0 var(--shadow-mack);
+      box-shadow: 0 0 5px 0 var(--card-shadow);
     }
+
     .v-md-textarea-editor pre,
     .v-md-textarea-editor textarea {
       background-color: transparent;
@@ -316,20 +320,25 @@ const onCopyCodeSuccess = (value: string) => {
         color: var(--placeholder-color);
       }
     }
+
     .vuepress-markdown-body:not(.custom) {
       padding: 16px 20px;
     }
+
     .v-md-editor__toolbar-left {
       min-width: 200px;
     }
+
     .v-md-editor__toolbar-right {
       min-width: 125px;
     }
+
     .v-md-editor__toolbar-item-clear {
       color: @font-warning;
       font-size: 14px;
       line-height: 30px;
     }
+
     .v-md-editor__toolbar-item-create,
     .v-md-editor__toolbar-item-save,
     .v-md-editor__toolbar-item-draft,
@@ -342,6 +351,7 @@ const onCopyCodeSuccess = (value: string) => {
 
     .v-md-editor__toolbar-item-save {
       position: relative;
+
       &::before {
         position: absolute;
         right: 0px;

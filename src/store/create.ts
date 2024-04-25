@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia';
 import { Router } from 'vue-router';
-import { ElMessage } from 'element-plus';
 import {
   ArticleItem,
   CreateArticleParams,
@@ -10,7 +9,7 @@ import {
   ClassifyList,
 } from '@/typings/common';
 import * as Service from '@/server';
-import { normalizeResult } from '@/utils';
+import { message, normalizeResult } from '@/utils';
 import { useCheckUserId } from '@/hooks';
 import { loginStore } from '@/store';
 import { PAGESIZE, ARTICLE_DRAFT } from '@/constant';
@@ -67,7 +66,7 @@ export const useCreateStore = defineStore('create', {
 
     // 创建文章
     async createArticle(params: CreateArticleParams, needMsg = true, router?: Router) {
-      const { userInfo } = loginStore;
+      const {userInfo} = loginStore;
       try {
         // 检验是否有userId，如果没有禁止发送请求
         if (!useCheckUserId()) return;
@@ -80,20 +79,15 @@ export const useCreateStore = defineStore('create', {
         if (res.success) {
           // 如果使用的是草稿发布的文章，则发布成功之后，需要删除当前草稿
           this.deleteDraft('', true);
-          needMsg &&
-            ElMessage({
-              message: res.message,
-              type: 'success',
-              offset: 80,
-              duration: 2000,
-            });
+          needMsg && message({
+            title: res.message,
+            type: 'success',
+          });
           return res.success;
         } else {
-          ElMessage({
-            message: res.message,
+          message({
+            title: res.message,
             type: 'error',
-            offset: 80,
-            duration: 2000,
           });
         }
       } catch (error) {
@@ -124,18 +118,14 @@ export const useCreateStore = defineStore('create', {
         this.draftArticleId = res.data.id;
         // 保存、编辑成功后，清除存储的draftId
         // this.clearCreateDraftInfo();
-        ElMessage({
-          message: res.message,
+        message({
+          title: res.message,
           type: 'success',
-          offset: 80,
-          duration: 2000,
         });
       } else {
-        ElMessage({
-          message: res.message,
+        message({
+          title: res.message,
           type: 'error',
-          offset: 80,
-          duration: 2000,
         });
       }
     },
@@ -153,14 +143,13 @@ export const useCreateStore = defineStore('create', {
       );
       this.loading = false;
       if (res.success) {
-        const { total, list } = res.data;
+        const {total, list} = res.data;
         this.draftList = [...this.draftList, ...list];
         this.total = total;
       } else {
-        ElMessage({
-          message: res.message,
+        message({
+          title: res.message,
           type: 'error',
-          offset: 80,
         });
       }
     },
@@ -170,7 +159,7 @@ export const useCreateStore = defineStore('create', {
       if (!draftId && !this.draftArticleId) return;
       this.loadDraft = true;
       const res = normalizeResult<ArticleDetailParams>(
-        await Service.getDraftInfoById({ id: draftId! || this.draftArticleId }),
+        await Service.getDraftInfoById({id: draftId! || this.draftArticleId}),
       );
       this.loadDraft = false;
       if (res.success) {
@@ -185,10 +174,9 @@ export const useCreateStore = defineStore('create', {
         }
         this.draftDetail = res.data;
       } else {
-        ElMessage({
-          message: res.message,
+        message({
+          title: res.message,
           type: 'error',
-          offset: 80,
         });
       }
     },
@@ -196,7 +184,7 @@ export const useCreateStore = defineStore('create', {
     // 删除草稿
     async deleteDraft(draftId?: string, noMsg?: boolean) {
       if (!draftId && !this.draftArticleId) return;
-      const res = normalizeResult<string>(await Service.deleteDraft({ id: draftId || this.draftArticleId }));
+      const res = normalizeResult<string>(await Service.deleteDraft({id: draftId || this.draftArticleId}));
       if (res.success) {
         // 如果是使用草稿创建文章，则不需要提示
         if (noMsg) return;
@@ -206,16 +194,14 @@ export const useCreateStore = defineStore('create', {
         this.clearDraftListInfo();
         this.pageSize = total;
         this.getDraftList();
-        ElMessage({
-          message: res.message,
+        message({
+          title: res.message,
           type: 'success',
-          offset: 80,
         });
       } else {
-        ElMessage({
-          message: res.message,
+        message({
+          title: res.message,
           type: 'error',
-          offset: 80,
         });
       }
     },

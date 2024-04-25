@@ -122,7 +122,8 @@
     <el-dialog v-model="previewVisible" draggable align-center title="图片预览" width="90%" @close="onClosePreview">
       <div class="preview-dialog">
         <el-scrollbar class="scroll-wrap" max-height="75vh">
-          <Contrast :before-img="previewUrls?.[0] as string"
+          <Contrast
+:before-img="previewUrls?.[0] as string"
                     :after-img="previewUrls?.[1] as string || previewUrls?.[0] as string"
                     :show-drag="!!previewUrls?.[1]"/>
         </el-scrollbar>

@@ -68,12 +68,12 @@ const reload = inject<Function>('reload');
 const route = useRoute();
 const router = useRouter();
 
-const { scrollRef, scrollTop } = useScroller();
-const { deleteArticle } = useDeleteArticle({ pageType: 'classify', classify: route.query?.classify as string, router });
+const {scrollRef, scrollTop} = useScroller();
+const {deleteArticle} = useDeleteArticle({pageType: 'classify', classify: route.query?.classify as string, router});
 
 const isMounted = ref<boolean>(false);
 const noMore = computed(() => {
-  const { articleList, total } = classifyStore;
+  const {articleList, total} = classifyStore;
   return articleList.length >= total && articleList.length;
 });
 const disabled = computed(() => classifyStore.loading || noMore.value);
@@ -86,7 +86,7 @@ const reelGradient = ref<string>('');
 onMounted(async () => {
   // 监听详情点赞状态，实时更改列表对应文章的点赞状态
   ipcRenderer.on('refresh', (_, params: WinRefreshParams) => {
-    const { pageType, isLike = true } = params;
+    const {pageType, isLike = true} = params;
     // 需要判断是否是属于当前活动页面，并且只是点击点赞而不是收藏或评论防止重复触发
     if (route.name === 'classify' && pageType !== 'list' && isLike) {
       reload && reload();
@@ -114,7 +114,7 @@ watch(
     nextTick(() => {
       const width = lineRef.value.offsetWidth * newVal!;
       // 判断是否到顶，如果到顶需要减去滑块的宽度，防止滑块画出父元素
-      scrollLeft.value = width >= lineRef.value.offsetWidth ? `${width - dotRef.value.offsetWidth}px` : `${width}px`;
+      scrollLeft.value = width >= lineRef.value.offsetWidth ? `${ width - dotRef.value.offsetWidth }px` : `${ width }px`;
     });
   },
 );
@@ -166,7 +166,7 @@ const onCheckClassify = (name: string) => {
 
 // 文章点赞
 const likeListArticle = (id: string, data?: ArticleItem) => {
-  articleStore.likeListArticle({ id, pageType: 'classify', data });
+  articleStore.likeListArticle({id, pageType: 'classify', data});
 };
 </script>
 
@@ -176,14 +176,15 @@ const likeListArticle = (id: string, data?: ArticleItem) => {
 .classify-wrap {
   display: flex;
   flex-direction: column;
-  height: calc(100% - 8px) !important;
   border-radius: 5px;
   margin: 8px 5px 0;
   box-shadow: 0 0 5px var(--card-shadow);
-  padding-bottom: 7px;
+  height: calc(100% - 8px) !important;
+  overflow: hidden;
 
   .content {
-    height: calc(100% - 150px);
+    // height: calc(100% - 200px);
+    height: calc(100% - 157px);
 
     .line-wrap {
       display: flex;
@@ -267,6 +268,6 @@ const likeListArticle = (id: string, data?: ArticleItem) => {
 }
 
 .mac-classify-wrap {
-  // width: calc(100% - 2px);
+  height: calc(100% - 8px);
 }
 </style>

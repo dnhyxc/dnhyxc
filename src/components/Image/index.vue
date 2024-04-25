@@ -8,7 +8,7 @@
   <div class="image-wrap-style" @click="onClickImg">
     <img v-if="url" ref="imgRef" :src="loaded ? loadUrl : transitionImg" alt="" class="image-item" @error="onError" />
     <div v-if="!url" class="loading-img">
-      <img v-if="transitionImg" :src="transitionImg" alt="" class="image-item" />
+      <img v-if="transitionImg" :src="transitionImg" alt="" :class="className" />
       <div v-else class="loading">loading...</div>
     </div>
     <img v-for="i in urls" v-show="urls?.length! > 0" :key="i" :src="i" alt="" class="image-item" />
@@ -16,7 +16,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watchEffect, onUnmounted } from 'vue';
+import { ref, onMounted, watchEffect, onUnmounted, computed } from 'vue';
 
 const loadUrl = ref<string | undefined>('');
 const loaded = ref<boolean>(false);
@@ -24,22 +24,30 @@ const imgRef = ref<HTMLImageElement | null>(null);
 let timer: ReturnType<typeof setTimeout> | null = null;
 
 interface IProps {
-  url?: string;
+  url: string;
+  height?: string;
   urls?: string[];
   onClick?: Function;
   transitionImg?: string;
   needColor?: boolean;
   position?: string;
+  radius?: string;
+  className?: string;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
-  url: '',
   urls: () => [],
-  onClick: () => {},
+  height: 'auto',
+  onClick: () => {
+  },
   transitionImg: '',
   needColor: false,
   position: 'top left',
+  radius: '',
+  className: ''
 });
+
+const className = computed(() => props.className + 'image-item');
 
 onMounted(() => {
   watchEffect(() => {
@@ -90,14 +98,13 @@ const onClickImg = () => {
 .image-wrap-style {
   box-sizing: border-box;
   width: 100%;
-  height: auto;
+  height: v-bind(height);
 
   .image-item {
     display: block;
     height: 100%;
     width: 100%;
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
+    border-radius: v-bind(radius);
     -webkit-user-drag: none;
     .imgStyle(0.3s, v-bind(position));
   }

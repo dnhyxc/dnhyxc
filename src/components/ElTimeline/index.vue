@@ -77,7 +77,7 @@
 <script setup lang="ts">
 import { inject, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { formatDate, showMessage, ipcRenderers } from '@/utils';
+import { formatDate, message, ipcRenderers } from '@/utils';
 import { loginStore } from '@/store';
 import { IMG1 } from '@/constant';
 import { ArticleItem, TimelineArticles, TimelineResult } from '@/typings/common';
@@ -100,7 +100,11 @@ const isLike = ref<boolean>(false);
 // 编辑
 const toEdit = async (data: ArticleItem | TimelineArticles) => {
   if ((data as ArticleItem)?.isDelete) {
-    return showMessage();
+    message({
+      title: '文章已下架，无法操作',
+      type: 'warning',
+    });
+    return;
   }
   router.push(`/create?id=${data.id}`);
 };
@@ -108,7 +112,11 @@ const toEdit = async (data: ArticleItem | TimelineArticles) => {
 // 删除
 const onReomve = async (data: ArticleItem | TimelineArticles) => {
   if ((data as ArticleItem)?.isDelete) {
-    return showMessage();
+    message({
+      title: '文章已下架，无法操作',
+      type: 'warning',
+    });
+    return;
   }
   props?.deleteTimeLineArticle?.(data as ArticleItem);
 };
@@ -152,7 +160,11 @@ const toTag = (tag: string) => {
 // 前往详情/编辑
 const toDetail = (data: ArticleItem | TimelineArticles) => {
   if ((data as ArticleItem)?.isDelete) {
-    return showMessage();
+    message({
+      title: '文章已下架，无法操作',
+      type: 'warning',
+    });
+    return;
   }
   router.push(`/detail/${data?.id}`);
 };
@@ -160,7 +172,11 @@ const toDetail = (data: ArticleItem | TimelineArticles) => {
 // 评论
 const onComment = (data: ArticleItem | TimelineArticles) => {
   if ((data as ArticleItem)?.isDelete) {
-    return showMessage();
+    message({
+      title: '文章已下架，无法操作',
+      type: 'warning',
+    });
+    return;
   }
   router.push(`/detail/${data?.id}?scrollTo=1`);
 };
@@ -168,7 +184,11 @@ const onComment = (data: ArticleItem | TimelineArticles) => {
 // 新窗口打开
 const onOpenNewWindow = (data: ArticleItem) => {
   if ((data as ArticleItem)?.isDelete) {
-    return showMessage();
+    message({
+      title: '文章已下架，无法操作',
+      type: 'warning',
+    });
+    return;
   }
   const { userInfo, token } = loginStore;
   ipcRenderers.sendNewWin({
@@ -197,11 +217,12 @@ const onSelectMenu = (menu: { label: string; value: number }, data: TimelineArti
       padding-bottom: 0;
     }
   }
+
   .timeline-card {
     position: relative;
     display: flex;
     justify-content: space-between;
-    box-shadow: 0 0 8px 0 var(--shadow-mack);
+    box-shadow: 0 0 5px 0 var(--card-shadow);
     background-color: var(--pre-hover-bg);
     padding: 15px;
     box-sizing: border-box;
@@ -252,6 +273,7 @@ const onSelectMenu = (menu: { label: string; value: number }, data: TimelineArti
         .edit,
         .del {
           font-weight: normal;
+
           &:hover {
             color: var(--active-color);
           }
@@ -267,6 +289,7 @@ const onSelectMenu = (menu: { label: string; value: number }, data: TimelineArti
           font-size: 16px;
           .ellipsisMore(1);
           cursor: pointer;
+
           &:hover {
             color: var(--theme-blue);
           }
@@ -353,6 +376,7 @@ const onSelectMenu = (menu: { label: string; value: number }, data: TimelineArti
         .comment,
         .read-count {
           cursor: pointer;
+
           &:hover {
             color: var(--theme-blue);
           }

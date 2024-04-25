@@ -30,13 +30,13 @@
 </template>
 
 <script setup lang="ts">
-import {onMounted, ref, nextTick, watchEffect, onUnmounted} from 'vue';
-import {scrollTo} from '@/utils';
-import {useChildScroller} from '@/hooks';
-import {commonStore} from '@/store';
-import {TocTitlesParams} from '@/typings/common';
+import { onMounted, ref, nextTick, watchEffect, onUnmounted } from 'vue';
+import { scrollTo } from '@/utils';
+import { useChildScroller } from '@/hooks';
+import { commonStore } from '@/store';
+import { TocTitlesParams } from '@/typings/common';
 
-const {scrollChildRef, scrollChildTop} = useChildScroller();
+const { scrollChildRef, scrollChildTop } = useChildScroller();
 
 const checkTocTitle = ref<string>('');
 
@@ -68,7 +68,7 @@ const onDetailScroll = (e: any) => {
 
 // 选中某标题
 const handleAnchorClick = (anchor: TocTitlesParams, index: number) => {
-  const {lineIndex, title} = anchor;
+  const { lineIndex, title } = anchor;
   checkTocTitle.value = title + index;
   nextTick(() => {
     const heading = (commonStore.previewRef as any).$el?.querySelector(`[data-v-md-line="${lineIndex}"]`);
@@ -99,7 +99,7 @@ const onScrollTo = () => {
   box-sizing: border-box;
   border-radius: 5px;
   overflow: hidden;
-  box-shadow: 0 0 8px 0 var(--shadow-mack);
+  box-shadow: 0 0 5px 0 var(--card-shadow);
   padding-bottom: 10px;
   margin-bottom: 10px;
   color: var(--font-2);

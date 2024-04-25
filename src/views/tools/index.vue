@@ -197,7 +197,7 @@ const onClickNavIcon = (item: ToolsItem) => {
 .tools-wrap {
   display: flex;
   flex-direction: column;
-  height: calc(100% - 8px);
+  height: calc(100% - 2px);
   margin-top: 2px;
   border-radius: 5px;
   overflow: hidden;
@@ -304,7 +304,7 @@ const onClickNavIcon = (item: ToolsItem) => {
 
 .board-wrap {
   margin: 8px 5px 0;
-  box-shadow: 0 0 8px 0 var(--shadow-mack);
+  box-shadow: 0 0 5px 0 var(--card-shadow);
   background-color: var(--pre-hover-bg);
 }
 </style>

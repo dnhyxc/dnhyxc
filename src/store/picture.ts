@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia';
-import { ElMessage } from 'element-plus';
 import * as Service from '@/server';
-import { normalizeResult } from '@/utils';
+import { message, normalizeResult } from '@/utils';
 import { useCheckUserId } from '@/hooks';
 import { AtlasList, AtlasItemParams } from '@/typings/common';
 
@@ -31,7 +30,7 @@ export const usePictureStore = defineStore('picture', {
       this.pageNo = this.pageNo + 1;
       this.loading = true;
       const res = normalizeResult<AtlasList>(
-        await Service.getAtlasList({ pageNo: this.pageNo, pageSize: this.pageSize }),
+        await Service.getAtlasList({pageNo: this.pageNo, pageSize: this.pageSize}),
       );
       this.loading = false;
       if (res.success) {
@@ -55,25 +54,23 @@ export const usePictureStore = defineStore('picture', {
         if (res.code === 201) return;
         this.atlasList = [res.data, ...this.atlasList];
       } else {
-        ElMessage({
-          message: res.message,
+        message({
+          title: res.message,
           type: 'error',
-          offset: 80,
         });
       }
     },
 
     // 删除图片集列表
-    async deleteAtlasImages({ id, url }: { id: string | string[]; url?: string }) {
-      const res = normalizeResult<{ url: string }>(await Service.deleteAtlasImages({ id, url }));
+    async deleteAtlasImages({id, url}: { id: string | string[]; url?: string }) {
+      const res = normalizeResult<{ url: string }>(await Service.deleteAtlasImages({id, url}));
       if (res.success) {
         this.clearAtlasInfo();
         this.getAtlasList();
       } else {
-        ElMessage({
-          message: res.message,
+        message({
+          title: res.message,
           type: 'error',
-          offset: 80,
         });
       }
     },
@@ -89,10 +86,9 @@ export const usePictureStore = defineStore('picture', {
           return i;
         });
       } else {
-        ElMessage({
-          message: res.message,
+        message({
+          title: res.message,
           type: 'error',
-          offset: 80,
         });
       }
     },

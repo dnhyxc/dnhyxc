@@ -187,7 +187,7 @@ const onScrollTo = (to?: number, isDelete: boolean = false) => {
     box-sizing: border-box;
     border-radius: 5px;
     padding: 18px 10px 10px;
-    box-shadow: 0 0 8px 0 var(--shadow-mack);
+    box-shadow: 0 0 5px 0 var(--card-shadow);
     background-color: var(--pre-hover-bg);
     margin-top: 8px;
   }
@@ -197,7 +197,7 @@ const onScrollTo = (to?: number, isDelete: boolean = false) => {
     flex-direction: column;
     max-width: 260px;
     width: 30%;
-    box-shadow: 0 0 8px 0 var(--shadow-mack);
+    box-shadow: 0 0 5px 0 var(--card-shadow);
     background-color: var(--pre-hover-bg);
     margin-left: 10px;
     margin-top: 8px;

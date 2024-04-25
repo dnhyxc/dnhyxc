@@ -193,10 +193,9 @@
 import { shell, ipcRenderer } from 'electron';
 import { ref, computed, onMounted, onUnmounted, watchEffect, inject } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { ElMessage } from 'element-plus';
 import { useDeleteArticle, useScroller } from '@/hooks';
 import { articleStore, loginStore, personalStore, followStore, chatStore } from '@/store';
-import { formatDate, scrollTo, checkUrl } from '@/utils';
+import { formatDate, scrollTo, checkUrl, message } from '@/utils';
 import { ArticleItem, CollectParams, FollowItem, WinRefreshParams } from '@/typings/common';
 import { HEAD_IMG, ICONLINKS, ABOUT_ME_TABS, ABOUT_TABS } from '@/constant';
 import AddCollectModel from '@/components/AddCollectModel/index.vue';
@@ -388,10 +387,10 @@ const onClickLink = (href: string, name: string) => {
     // 使用浏览器打开链接
     shell.openExternal(href);
   } else {
-    ElMessage({
+    message({
+      title: '链接无效',
       message: `${name} 链接无法使用`,
-      type: 'warning',
-      offset: 80,
+      type: 'success',
     });
   }
 };
@@ -419,8 +418,8 @@ const onScrollTo = (to?: number) => {
 .personal-wrap {
   display: flex;
   flex-direction: column;
-  height: calc(100% - 4px);
-  margin: 6px 4px 0;
+  height: calc(100% - 5px);
+  margin: 8px 4px 0;
 
   .header {
     display: flex;
@@ -429,7 +428,8 @@ const onScrollTo = (to?: number) => {
     background-image: linear-gradient(225deg, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%);
     border-radius: 5px;
     margin-bottom: 10px;
-    border: 1px solid var(--card-border);
+    // border: 1px solid var(--card-border);
+    box-shadow: 0 0 5px 0 var(--card-shadow);
     box-sizing: border-box;
 
     .left {
@@ -546,7 +546,8 @@ const onScrollTo = (to?: number) => {
 
   .bottom-content {
     position: relative;
-    border: 1px solid var(--card-border);
+    // border: 1px solid var(--card-border);
+    box-shadow: 0 0 5px 0 var(--card-shadow);
     height: calc(100% - 163px);
     border-radius: 5px;
     padding-bottom: 10px;

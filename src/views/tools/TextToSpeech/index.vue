@@ -74,7 +74,8 @@
         :type="speech ? 'warning' : 'primary'"
         :disabled="!keyword.trim() && !selectKeyword"
         @click="onConvert"
-        >{{ speech ? '重置' : '播放' }}</el-button
+      >{{ speech ? '重置' : '播放' }}
+      </el-button
       >
       <el-button type="info" :disabled="(!keyword.trim() && !selectKeyword) || !speech" @click="onPause">
         暂停
@@ -98,7 +99,8 @@
         </div>
         <template #reference>
           <el-button :type="speech ? 'info' : 'primary'" class="spend-btn" :disabled="!!speech"
-            >倍速 {{ speed }}</el-button
+          >倍速 {{ speed }}
+          </el-button
           >
         </template>
       </el-popover>
@@ -108,8 +110,7 @@
 
 <script setup lang="ts">
 import { onUnmounted, ref, watch, onMounted } from 'vue';
-import { ElMessage } from 'element-plus';
-import { SpeechPlayer, checkOS } from '@/utils';
+import { SpeechPlayer, checkOS, message } from '@/utils';
 import { convertStore } from '@/store';
 import { ConvertParams } from '@/typings/common';
 
@@ -186,10 +187,9 @@ const onKeywordChange = () => {
 // 转换
 const onConvert = () => {
   if (!keyword.value.trim() && !selectKeyword.value) {
-    ElMessage({
-      message: '请先输入需要转换的文本',
+    message({
+      title: '请先输入需要转换的文本！',
       type: 'warning',
-      offset: 80,
     });
     return;
   }

@@ -1,9 +1,8 @@
 import { defineStore } from 'pinia';
-import { ElMessage } from 'element-plus';
 import { UserInfoParams, ArticleListResult, ArticleItem, TimelineResult, PerGetArticlesParams } from '@/typings/common';
 import * as Service from '@/server';
 import { useCheckUserId } from '@/hooks';
-import { normalizeResult, uniqueFunc, Message } from '@/utils';
+import { normalizeResult, uniqueFunc, Message, message } from '@/utils';
 import { loginStore } from '@/store';
 import { PAGESIZE, ABOUT_ME_API_PATH } from '@/constant';
 
@@ -62,14 +61,13 @@ export const usePersonalStore = defineStore('personal', {
   actions: {
     // 获取用户信息
     async getUserInfo(userId: string) {
-      const res = normalizeResult<UserInfoParams>(await Service.getUserInfo({ userId }));
+      const res = normalizeResult<UserInfoParams>(await Service.getUserInfo({userId}));
       if (res.success) {
         this.userInfo = res.data;
       } else {
-        ElMessage({
-          message: res.message,
+        message({
+          title: res.message,
           type: 'error',
-          offset: 80,
         });
       }
     },
@@ -97,7 +95,7 @@ export const usePersonalStore = defineStore('personal', {
       );
       this.loading = false;
       if (res.success) {
-        const { total, list } = res.data;
+        const {total, list} = res.data;
         // 当是我的收藏时，再增加收藏集时，需要去除重复的收藏集
         if (this.currentTabKey === '1' && this.pageNo > 1) {
           this.articleList = uniqueFunc([...this.articleList, ...list], 'id');
@@ -107,11 +105,9 @@ export const usePersonalStore = defineStore('personal', {
           this.total = total;
         }
       } else {
-        ElMessage({
-          message: res.message,
+        message({
+          title: res.message,
           type: 'error',
-          offset: 80,
-          duration: 2000,
         });
       }
     },

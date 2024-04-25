@@ -90,9 +90,8 @@ import { ipcRenderer } from 'electron';
 import Store from 'electron-store';
 import { ref, Directive, DirectiveBinding, nextTick, onMounted, watch } from 'vue';
 import { STSTEM_CONFIG, SHORTCUT_KEYS, CLOSE_CONFIG, OPEN_CONFIG, INIT_SHOTCUT_KEYS, MSG_STATUS } from '@/constant';
-import { setShortcutKey, ipcRenderers, checkOS } from '@/utils';
+import { setShortcutKey, ipcRenderers, checkOS, message } from '@/utils';
 import { messageStore } from '@/store';
-import { ElMessage } from 'element-plus';
 
 const store = new Store();
 
@@ -198,7 +197,7 @@ watch(msgStatus, (newVal, oldVal) => {
   }
 
   // 发送消息闪烁状态控制
-  ipcRenderers.sendMessageFlashInfo({ messageStore, msgStatus: newVal });
+  ipcRenderers.sendMessageFlashInfo({messageStore, msgStatus: newVal});
 });
 
 // 点击编辑显示弹窗
@@ -252,7 +251,11 @@ const handleKeydown = (e: KeyboardEvent) => {
     // 通知主进程重新注册快捷键
     ipcRenderers.restoreRegisterShortCut();
     visible.value = false;
-    ElMessage.success('快捷键设置成功');
+    message({
+      title: '快捷键设置',
+      message: '快捷键设置成功',
+      type: 'success',
+    });
   }
   if (e.key === 'Backspace' && shortcut.value) {
     shortcut.value = '';
@@ -295,6 +298,7 @@ const handleKeydown = (e: KeyboardEvent) => {
     .label-shortcut {
       display: flex;
       align-items: center;
+
       .restore-btn {
         margin-left: 10px;
         font-size: 14px;

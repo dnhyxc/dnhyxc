@@ -40,7 +40,7 @@
           </div>
           <Preview
             v-if="!createStore.loadDraft"
-            :mackdown="createStore.draftDetail.content"
+            :markdown="createStore.draftDetail.content || ''"
             :copy-code-success="onCopyCodeSuccess"
           />
           <div class="classifys">
@@ -70,13 +70,13 @@
 <script setup lang="ts">
 import { onMounted, defineAsyncComponent, onUnmounted, nextTick } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { ElMessage } from 'element-plus';
 import { useScroller } from '@/hooks';
-import { scrollTo, checkOS, formatDate } from '@/utils';
-import {createStore, commonStore, loginStore} from '@/store';
+import { scrollTo, checkOS, formatDate, message } from '@/utils';
+import { createStore, commonStore, loginStore } from '@/store';
 import { HEAD_IMG } from '@/constant';
 import Toc from '@/components/Toc/index.vue';
 import ToTopIcon from '@/components/ToTopIcon/index.vue';
+
 const Preview = defineAsyncComponent(() => import('@/components/Preview/index.vue'));
 
 const route = useRoute();
@@ -97,10 +97,9 @@ onUnmounted(() => {
 
 // 复制成功回调
 const onCopyCodeSuccess = (value?: string) => {
-  ElMessage({
-    message: '复制成功',
+  message({
+    title: '复制成功！',
     type: 'success',
-    offset: 80,
   });
 };
 
@@ -146,7 +145,7 @@ const onScrollTo = (height?: number) => {
     box-sizing: border-box;
     margin-right: 10px;
     border-radius: 5px;
-    box-shadow: 0 0 8px 0 var(--shadow-mack);
+    box-shadow: 0 0 5px 0 var(--card-shadow);
     background-color: var(--pre-hover-bg);
 
     :deep {
@@ -154,6 +153,7 @@ const onScrollTo = (height?: number) => {
         border-radius: 5px;
         width: 100%;
       }
+
       .scrollbar-wrapper {
         box-sizing: border-box;
         height: 100%;

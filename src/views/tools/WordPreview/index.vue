@@ -57,11 +57,10 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue';
-import { ElMessage } from 'element-plus';
 import type { UploadProps } from 'element-plus';
 import { renderAsync } from 'docx-preview';
 import { WORD_TYPES } from '@/constant';
-import { calculateLoadProgress } from '@/utils';
+import { calculateLoadProgress, message } from '@/utils';
 import { uploadStore, bookStore } from '@/store';
 import { AtlasItemParams } from '@/typings/common';
 import BookList from '../BookList/index.vue';
@@ -111,13 +110,16 @@ const isSaved = computed(() => {
 const beforeUpload: UploadProps['beforeUpload'] = async (file) => {
   loadType.value = 'upload';
   if (!WORD_TYPES.includes(file.type)) {
-    ElMessage.error('只允许上传 doc, docx 格式的文件');
+    message({
+      title: '只允许上传 doc, docx 格式的文件！',
+      type: 'error',
+    });
     return false;
   }
   return true;
 };
 
-const onUpload = async ({ file }: { file: File }) => {
+const onUpload = async ({file}: { file: File }) => {
   // 每次上传重置currentWordId
   currentWordId.value = '';
   saveStatus.value = false;
@@ -197,7 +199,7 @@ const loadWordBlob = async (id: string, url: string) => {
   if (blob) {
     renderWord(blob);
     // 保存书籍blob
-    bookStore.saveBlob({ id, blob });
+    bookStore.saveBlob({id, blob});
   } else {
     loading.value = false;
   }

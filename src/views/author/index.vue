@@ -130,11 +130,10 @@
 import { ipcRenderer, shell } from 'electron';
 import { ref, onMounted, computed, inject, onUnmounted } from 'vue';
 import { useRoute } from 'vue-router';
-import { ElMessage } from 'element-plus';
 import { HEAD_IMG, AUTHOR_TABS, IMG1 } from '@/constant';
 import { authorStore, articleStore, followStore } from '@/store';
 import { useDeleteArticle, useScroller } from '@/hooks';
-import { scrollTo, checkUrl } from '@/utils';
+import { scrollTo, checkUrl, message } from '@/utils';
 import LineCard from '@/components/LineCard/index.vue';
 import Image from '@/components/Image/index.vue';
 import Loading from '@/components/Loading/index.vue';
@@ -262,10 +261,10 @@ const onJump = (url: string, name: string) => {
     // 使用浏览器打开链接
     shell.openExternal(url);
   } else {
-    ElMessage({
+    message({
+      title: '链接无效',
       message: `${name} 链接无法使用`,
       type: 'warning',
-      offset: 80,
     });
   }
 };
@@ -281,9 +280,10 @@ const onScrollTo = (to?: number) => {
 
 .author-wrap {
   margin: 8px 4px 0;
-  height: calc(100% - 9px);
+  height: calc(100% - 8px);
   border-radius: 5px;
-  border: 1px solid var(--card-border);
+  // border: 1px solid var(--card-border);
+  box-shadow: 0 0 5px 0 var(--card-shadow);
 
   :deep {
     .scrollbar-wrapper {

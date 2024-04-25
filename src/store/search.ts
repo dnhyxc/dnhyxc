@@ -1,8 +1,7 @@
 import { defineStore } from 'pinia';
 import { ArticleItem, ArticleListResult } from '@/typings/common';
-import { ElMessage } from 'element-plus';
 import * as Service from '@/server';
-import { normalizeResult, hlightKeyword } from '@/utils';
+import { normalizeResult, hlightKeyword, message } from '@/utils';
 import { PAGESIZE } from '@/constant';
 
 interface IProps {
@@ -49,10 +48,9 @@ export const useSearchStore = defineStore('search', {
         this.articleList = hlightKeyword(this.keyword, dataList);
         this.total = total;
       } else {
-        ElMessage({
-          message: res.message,
+        message({
+          title: res.message,
           type: 'error',
-          offset: 80,
         });
       }
     },

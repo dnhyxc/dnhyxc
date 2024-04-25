@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia';
-import { ElMessage } from 'element-plus';
 import * as Service from '@/server';
-import { normalizeResult, Message, ipcRenderers } from '@/utils';
+import { normalizeResult, Message, ipcRenderers, message } from '@/utils';
 import { useCheckUserId } from '@/hooks';
 import { TimelineResult } from '@/typings/common';
 
@@ -27,10 +26,9 @@ export const useTimelineStore = defineStore('timeline', {
       if (res.success) {
         this.timelineList = res.data;
       } else {
-        ElMessage({
-          message: res.message,
+        message({
+          title: res.message,
           type: 'error',
-          offset: 80,
         });
       }
     },
@@ -55,10 +53,9 @@ export const useTimelineStore = defineStore('timeline', {
           });
           this.timelineList = list;
         } else {
-          ElMessage({
-            message: res.message,
+          message({
+            title: res.message,
             type: 'error',
-            offset: 80,
           });
         }
       });

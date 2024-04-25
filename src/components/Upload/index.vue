@@ -69,13 +69,12 @@
 <script setup lang="ts">
 import { ipcRenderer } from 'electron';
 import { ref, reactive, onDeactivated, nextTick, onUnmounted, computed } from 'vue';
-import { ElMessage } from 'element-plus';
 import { Plus } from '@element-plus/icons-vue';
 import type { UploadProps } from 'element-plus';
 import { VueCropper } from 'vue-cropper';
 import { uploadStore, pictureStore } from '@/store';
 import { FILE_TYPE, FILE_UPLOAD_MSG } from '@/constant';
-import { getImgInfo, url2Base64, ipcRenderers } from '@/utils';
+import { getImgInfo, url2Base64, ipcRenderers, message } from '@/utils';
 
 import 'vue-cropper/dist/index.css';
 
@@ -98,7 +97,8 @@ const props = withDefaults(defineProps<IProps>(), {
   preview: true,
   showImg: true,
   fixedNumber: () => [600, 338],
-  getUploadUrl: () => {},
+  getUploadUrl: () => {
+  },
   needCropper: true,
   delete: false,
   isAtlas: false,
@@ -167,10 +167,16 @@ const filePath = computed({
 // 上传校验
 const beforeUpload: UploadProps['beforeUpload'] = (rawFile) => {
   if (!FILE_TYPE.includes(rawFile.type)) {
-    ElMessage.error(FILE_UPLOAD_MSG);
+    message({
+      title: FILE_UPLOAD_MSG,
+      type: 'error',
+    });
     return false;
   } else if (rawFile.size / 1024 / 1024 > 20) {
-    ElMessage.error('图片不能超过20M');
+    message({
+      title: '图片不能超过20M',
+      type: 'error',
+    });
     return false;
   }
   return true;
@@ -205,7 +211,7 @@ const onUpload = async (event: { file: Blob }) => {
       // 计算截图弹窗的高度
       const height = (cropperContent.value?.offsetWidth! * imgInfo!.height) / imgInfo!.width;
       // 存储截图弹窗的高度
-      cropperHeight.value = `${height}px`;
+      cropperHeight.value = `${ height }px`;
       // 动态计算截图框的宽度
       const cropWidth = (props.fixedNumber[0] / props.fixedNumber[1]) * height;
       option.autoCropWidth = cropWidth;
@@ -256,11 +262,9 @@ const onDownload = async (e: Event, loadUrl?: string) => {
   ipcRenderer.once('download-file', (e, res: string) => {
     if (res) {
       window.URL.revokeObjectURL(createdUrl.value);
-      ElMessage({
-        message: '保存成功',
+      message({
+        title: '保存成功！',
         type: 'success',
-        offset: 80,
-        duration: 2000,
       });
     }
   });
@@ -283,7 +287,7 @@ const onFinish = () => {
     };
     reader.readAsDataURL(blob);
     // 将 Blob 转成 File
-    const file = new File([blob], fileInfo.value?.name || '', { type: fileInfo.value?.type }) as File;
+    const file = new File([blob], fileInfo.value?.name || '', {type: fileInfo.value?.type}) as File;
     const res = await uploadStore.uploadFile(file, false, props.quality);
     if (res) {
       props.getUploadUrl?.(res.filePath);

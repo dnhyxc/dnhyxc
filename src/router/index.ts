@@ -1,16 +1,15 @@
 import { defineAsyncComponent } from 'vue';
 import { createRouter, RouteRecordRaw, createWebHistory } from 'vue-router';
-import { ElMessage } from 'element-plus';
 import { loginStore } from '@/store';
 import { useCommonStore } from '@/store/common';
-import { locGetItem } from '@/utils';
+import { locGetItem, message } from '@/utils';
 import { WITH_AUTH_ROUTES } from '@/constant';
 import eventBus from '@/utils/eventBus';
 import AsyncLoading from '@/components/AsyncLoading/index.vue';
 
 const importComponent = (path: string) =>
   defineAsyncComponent({
-    loader: () => import(`@/views/${path}/index.vue`),
+    loader: () => import(`@/views/${ path }/index.vue`),
     loadingComponent: AsyncLoading,
   });
 
@@ -51,7 +50,7 @@ export const routes: Array<RouteRecordRaw> = [
         name: 'home',
         meta: {
           title: '墨客首页',
-          info: '欢迎来到墨客',
+          info: 'WELCOME TO 墨客',
         },
         component: () => import('@/views/home/index.vue'),
       },
@@ -178,7 +177,7 @@ export const routes: Array<RouteRecordRaw> = [
             component: () => import('@/views/setting/system/index.vue'),
           },
         ],
-        redirect: { name: 'profile' },
+        redirect: {name: 'profile'},
       },
       {
         path: '/detail/:id',
@@ -205,7 +204,7 @@ export const routes: Array<RouteRecordRaw> = [
         component: () => import('@/views/chat/index.vue'),
       },
     ],
-    redirect: { name: 'home' },
+    redirect: {name: 'home'},
   },
   {
     path: '/login',
@@ -252,7 +251,7 @@ const router = createRouter({
     if (savePosition) {
       return savePosition;
     } else {
-      return { top: 0 };
+      return {top: 0};
     }
   },
   routes,
@@ -287,11 +286,10 @@ router.beforeEach(async (to, from, next) => {
     router.push(from.path);
   }
   if (WITH_AUTH_ROUTES.includes(to.path) && !locGetItem('token')) {
-    ElMessage({
+    message({
+      title: '暂无权限',
       message: '请先登录后再访问哦！',
       type: 'warning',
-      offset: 80,
-      duration: 2000,
     });
     router.push(from.path);
   }

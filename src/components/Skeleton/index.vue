@@ -5,41 +5,41 @@
  * index.vue
 -->
 <template>
-  <div :class="`${checkOS() === 'mac' && 'mac-skeleton-wrap'} skeleton-wrap`">
+  <div :class="`${checkOS() === 'mac' && 'mac-skeleton-wrap'} ${showType && 'article-skeleton-wrap'} skeleton-wrap`">
     <div :class="`${showType && 'article-header'} header`">
       <div class="title">
-        <div class="page-icon"/>
-        <div class="page-name"/>
+        <div class="page-icon" />
+        <div class="page-name" />
       </div>
       <div class="header-action">
-        <div class="actions"/>
+        <div class="actions" />
       </div>
     </div>
     <div v-if="showType" class="content-wrap">
-      <div class="content"/>
+      <div class="content" />
       <div v-if="!isCompile" class="right">
-        <div class="action-list"/>
-        <div class="toc-list"/>
-        <div class="another-list"/>
-        <div class="another-list"/>
+        <div class="action-list" />
+        <div class="toc-list" />
+        <div class="another-list" />
+        <div class="another-list" />
       </div>
     </div>
     <div v-else class="content">
       <div class="left-menu">
         <div class="menus">
-          <div v-for="n in 4" :key="n" class="icon"/>
+          <div v-for="n in 4" :key="n" class="icon" />
         </div>
         <div class="avatar-wrap">
-          <div class="avatar"/>
+          <div class="avatar" />
         </div>
       </div>
       <div class="right">
         <div class="carousel">
-          <div class="carousel-item"/>
+          <div class="carousel-item" />
         </div>
         <div class="card-list">
           <div v-for="i in 8" :key="i" class="card">
-            <div class="card-item"/>
+            <div class="card-item" />
           </div>
         </div>
       </div>
@@ -48,8 +48,8 @@
 </template>
 
 <script setup lang="ts">
-import {checkOS} from '@/utils';
-import {computed} from 'vue';
+import { checkOS } from '@/utils';
+import { computed } from 'vue';
 
 const showType = computed(() => {
   return location.pathname.includes('/article') || location.pathname.includes('/compile');
@@ -69,6 +69,8 @@ const isCompile = computed(() => {
   height: 100vh;
   box-sizing: border-box;
   background-color: var(--background);
+
+  --article-header-height: 79px;
 
   .header {
     display: flex;
@@ -232,14 +234,14 @@ const isCompile = computed(() => {
 
     .content {
       position: relative;
-      flex: 1;
       display: flex;
       justify-content: center;
       box-sizing: border-box;
-      height: calc(100vh - 79px);
+      width: 75%;
+      height: calc(100vh - var(--article-header-height));
       //height: calc(100vh - 75px);
       border-radius: 5px;
-      box-shadow: 0 0 8px 0 var(--shadow-mack);
+      box-shadow: 0 0 5px 0 var(--card-shadow);
       .bgMoveColor(135deg);
     }
 
@@ -248,16 +250,16 @@ const isCompile = computed(() => {
       flex-direction: column;
       justify-content: flex-start;
       max-width: 260px;
-      width: 30%;
+      width: 25%;
       margin-left: 10px;
       box-sizing: border-box;
       border-radius: 5px;
-      max-height: calc(100vh - 79px);
+      max-height: calc(100vh - var(--article-header-height));
       //max-height: calc(100vh - 75px);
 
       .action-list {
         height: 50px;
-        box-shadow: 0 0 8px 0 var(--shadow-mack);
+        box-shadow: 0 0 5px 0 var(--card-shadow);
         margin-bottom: 10px;
         border-radius: 5px;
         .bgMoveColor(135deg);
@@ -267,14 +269,14 @@ const isCompile = computed(() => {
         box-sizing: border-box;
         flex: 1;
         background-color: var(--pre-hover-bg);
-        box-shadow: 0 0 8px 0 var(--shadow-mack);
+        box-shadow: 0 0 5px 0 var(--card-shadow);
         border-radius: 5px;
         .bgMoveColor(135deg);
       }
 
       .another-list {
         height: 95px;
-        box-shadow: 0 0 8px 0 var(--shadow-mack);
+        box-shadow: 0 0 5px 0 var(--card-shadow);
         margin-top: 10px;
         border-radius: 5px;
         .bgMoveColor(135deg);
@@ -288,6 +290,8 @@ const isCompile = computed(() => {
 }
 
 .mac-skeleton-wrap {
+  --article-header-height: 36px;
+
   .header {
     padding: 30px 27px 0 12px;
     margin-bottom: 15px;
@@ -314,21 +318,48 @@ const isCompile = computed(() => {
     }
   }
 
-  .content {
-    .right {
-      padding-right: 22px;
-    }
-  }
-
   .content-wrap {
     margin-top: 0;
+    padding: 0;
 
     .content {
-      height: calc(100vh - 98px);
+      height: calc(100vh - var(--article-header-height));
+      border-radius: 0;
+      box-shadow: none;
+      border-right: 1px solid var(--border-color);
     }
 
     .right {
-      max-height: calc(100vh - 98px);
+      max-height: calc(100vh - var(--article-header-height));
+      border-radius: 0;
+      margin-left: 0;
+
+      .action-list {
+        height: 50px;
+        box-shadow: none;
+        border-radius: 0;
+      }
+
+      .toc-list {
+        border-radius: 0;
+      }
+
+      .another-list {
+        border-radius: 0;
+        box-shadow: none;
+      }
+    }
+  }
+}
+
+.article-skeleton-wrap {
+  .content-wrap {
+    .content {
+      width: 77%;
+    }
+
+    .right {
+      width: 23%;
     }
   }
 }

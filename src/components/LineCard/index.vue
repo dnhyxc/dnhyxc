@@ -72,7 +72,7 @@
 import { inject, ref, onUnmounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { IMG1, CARD_CONTEXT_MENU } from '@/constant';
-import { showMessage, ipcRenderers } from '@/utils';
+import { message, ipcRenderers } from '@/utils';
 import { loginStore } from '@/store';
 import { TimelineArticles, ArticleItem } from '@/typings/common';
 import Image from '@/components/Image/index.vue';
@@ -94,8 +94,10 @@ interface IProps {
 }
 
 const props = withDefaults(defineProps<IProps>(), {
-  likeListArticle: () => {},
-  deleteArticle: () => {},
+  likeListArticle: () => {
+  },
+  deleteArticle: () => {
+  },
   toEdit: undefined,
   toCollect: undefined,
   isCollect: false,
@@ -117,22 +119,30 @@ onUnmounted(() => {
 // 编辑
 const toEdit = async (data: ArticleItem | TimelineArticles) => {
   if ((data as ArticleItem)?.isDelete) {
-    return showMessage();
+    message({
+      title: '文章已下架，无法操作',
+      type: 'warning'
+    });
+    return;
   }
-  router.push(`/create?id=${data.id}`);
+  router.push(`/create?id=${ data.id }`);
 };
 
 // 删除
 const onReomve = async (data: ArticleItem | TimelineArticles) => {
   if ((data as ArticleItem)?.isDelete) {
-    return showMessage();
+    message({
+      title: '文章已下架，无法操作',
+      type: 'warning'
+    });
+    return;
   }
   props?.deleteArticle?.(data?.id!);
 };
 
 // 去作者主页
 const toPersonal = (id: string) => {
-  router.push(`/personal?authorId=${id}`);
+  router.push(`/personal?authorId=${ id }`);
   if (route.path === '/personal') {
     if (timer) {
       clearTimeout(timer);
@@ -146,13 +156,13 @@ const toPersonal = (id: string) => {
 
 // 去分类页
 const toClassify = (classify: string) => {
-  router.push(`/classify?classify=${classify}`);
+  router.push(`/classify?classify=${ classify }`);
 };
 
 // 去标签
 const toTag = (tag: string) => {
   if (route.path !== '/tag/list') {
-    router.push(`/tag/list?tag=${tag}`);
+    router.push(`/tag/list?tag=${ tag }`);
   }
 };
 
@@ -161,7 +171,11 @@ const onLike = async (data: ArticleItem | TimelineArticles) => {
   if (isLike.value) return;
   isLike.value = true;
   if ((data as ArticleItem)?.isDelete) {
-    return showMessage();
+    message({
+      title: '文章已下架，无法操作',
+      type: 'warning'
+    });
+    return;
   }
   await props?.likeListArticle?.(data?.id!, data as ArticleItem);
   isLike.value = false;
@@ -180,29 +194,41 @@ const toDetail = async (data: ArticleItem | TimelineArticles) => {
     return;
   }
   if ((data as ArticleItem)?.isDelete) {
-    return showMessage();
+    message({
+      title: '文章已下架，无法操作',
+      type: 'warning'
+    });
+    return;
   }
-  router.push(`/detail/${data?.id}`);
+  router.push(`/detail/${ data?.id }`);
 };
 
 // 评论
 const onComment = async (data: ArticleItem | TimelineArticles) => {
   if ((data as ArticleItem)?.isDelete) {
-    return showMessage();
+    message({
+      title: '文章已下架，无法操作',
+      type: 'warning'
+    });
+    return;
   }
-  router.push(`/detail/${data?.id}?scrollTo=1`);
+  router.push(`/detail/${ data?.id }?scrollTo=1`);
 };
 
 // 新窗口打开
 const onOpenNewWindow = async (data: ArticleItem) => {
   if ((data as ArticleItem)?.isDelete) {
-    return showMessage();
+    message({
+      title: '文章已下架，无法操作',
+      type: 'warning'
+    });
+    return;
   }
-  const { userInfo, token } = loginStore;
+  const {userInfo, token} = loginStore;
   ipcRenderers.sendNewWin({
-    path: `article/${data.id}?from=${route.name as string}`,
+    path: `article/${ data.id }?from=${ route.name as string }`,
     id: data.id,
-    userInfo: JSON.stringify({ userInfo, token }),
+    userInfo: JSON.stringify({userInfo, token}),
   });
 };
 
@@ -299,6 +325,7 @@ const onSelectMenu = (menu: { label: string; value: number }) => {
     .art-info {
       flex: 1;
       margin-right: 10px;
+
       .desc {
         .ellipsisMore(1);
         margin-bottom: 10px;
@@ -318,6 +345,7 @@ const onSelectMenu = (menu: { label: string; value: number }) => {
           margin-right: 15px;
           min-width: 100px;
           cursor: pointer;
+
           &:hover {
             color: var(--theme-blue);
           }
@@ -393,6 +421,7 @@ const onSelectMenu = (menu: { label: string; value: number }) => {
         .comment,
         .read-count {
           cursor: pointer;
+
           &:hover {
             color: var(--theme-blue);
           }
@@ -404,6 +433,7 @@ const onSelectMenu = (menu: { label: string; value: number }) => {
       box-sizing: border-box;
       display: flex;
       flex: 0.6;
+
       .img {
         display: block;
         width: 100%;
