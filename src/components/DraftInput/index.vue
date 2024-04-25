@@ -34,7 +34,9 @@
                   </Upload>
                 </span>
               </div>
-              <Emoji v-show="showEmoji" v-model:showEmoji="showEmoji" class="emojis" :add-emoji="addEmoji" />
+              <Emoji
+                v-show="showEmoji" v-model:showEmoji="showEmoji" class="emojis"
+                :add-emoji="addEmoji" />
             </div>
           </div>
           <div class="emoji-image-wrap">
@@ -121,6 +123,7 @@ interface IProps {
   placeholder?: string;
   minRows?: number;
   emojiImageWrapHeight?: string;
+  onScrollTo?: (height: number, fromEmoji: boolean) => void;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
@@ -128,9 +131,14 @@ const props = withDefaults(defineProps<IProps>(), {
   articleId: '',
   getCommentList: () => ({}),
   selectComment: () => ({}),
-  onReplay: () => {},
-  onJump: () => {},
-  onHideInput: () => {},
+  onReplay: () => {
+  },
+  onJump: () => {
+  },
+  onHideInput: () => {
+  },
+  onScrollTo: () => {
+  },
   sendMessage: null,
   placeholder: '',
   minRows: 4,
@@ -142,6 +150,7 @@ const keyword = ref<string>('');
 const showIcon = ref<boolean>(false);
 const showEmoji = ref<boolean>(false);
 const picture = ref<string>('');
+const isScrolled = ref<boolean>(false);
 
 onMounted(() => {
   nextTick(() => {
@@ -218,11 +227,16 @@ const onKeyChange = (e: KeyboardEvent) => {
 // 显示表情
 const onShowEmoji = () => {
   showEmoji.value = !showEmoji.value;
+  nextTick(() => {
+    if (isScrolled.value) return;
+    props.onScrollTo?.(100, true);
+    isScrolled.value = true;
+  });
 };
 
 // 获取上传成功后的文件url
 const getUploadUrl = (url: string, name: string) => {
-  const { username } = loginStore?.userInfo;
+  const {username} = loginStore?.userInfo;
   const value = insertContent({
     keyword: props?.sendMessage ? '' : keyword.value,
     node: (inputRef?.value as any)?.textarea,
@@ -240,7 +254,7 @@ const getUploadUrl = (url: string, name: string) => {
 
 // 添加表情
 const addEmoji = (key: string) => {
-  keyword.value = insertContent({ keyword: keyword.value, node: (inputRef?.value as any)?.textarea, emoji: key });
+  keyword.value = insertContent({keyword: keyword.value, node: (inputRef?.value as any)?.textarea, emoji: key});
   inputRef.value?.focus();
 };
 

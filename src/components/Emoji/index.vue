@@ -6,7 +6,7 @@
 -->
 <template>
   <div id="EMOJI" class="emoji-wrap">
-    <div v-show="visible">
+    <div v-if="visible" id="_EMOJI_">
       <div
         v-for="value in EMOJI_NAME"
         id="EMOJI_ITEM"
@@ -14,15 +14,15 @@
         class="emoji-item"
         @click="addEmoji(value)"
       >
-        <img :src="EMOJI_HOST + EMOJI_MAP[value]" class="emoji" alt=""/>
+        <img :id="value" :src="EMOJI_HOST + EMOJI_MAP[value]" class="emoji" alt="" />
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import {computed} from 'vue';
-import {EMOJI_HOST, EMOJI_MAP, EMOJI_NAME} from '@/constant';
+import { computed } from 'vue';
+import { EMOJI_HOST, EMOJI_MAP, EMOJI_NAME } from '@/constant';
 
 interface IProps {
   showEmoji: boolean;

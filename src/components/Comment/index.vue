@@ -8,7 +8,9 @@
   <div ref="commentsRef" class="Comments">
     <ImagePreview v-model:previewVisible="previewVisible" :select-image="{ url: filePath }" close-on-click-modal />
     <div class="draftInputWrap">
-      <DraftInput :get-comment-list="getCommentList" :focus="focus" :article-id="id" :on-hide-input="onHideInput" />
+      <DraftInput
+:get-comment-list="getCommentList" :focus="focus" :article-id="id" :on-hide-input="onHideInput"
+                  :on-scroll-to="onScrollTo" />
     </div>
     <div v-if="articleStore?.commentList?.length > 0" class="title">
       全部评论
@@ -88,6 +90,7 @@
               :get-comment-list="getCommentList"
               :on-hide-input="onHideInput"
               :article-id="id"
+              :on-scroll-to="onScrollTo"
             />
           </div>
         </div>
@@ -178,6 +181,7 @@
                   :get-comment-list="getCommentList"
                   :on-hide-input="onHideInput"
                   :article-id="id"
+                  :on-scroll-to="onScrollTo"
                 />
               </div>
             </div>
@@ -214,6 +218,7 @@ interface IProps {
   authorId: string;
   getCommentLength?: Function;
   focus?: boolean;
+  onScrollTo?: (height: number, fromEmoji: boolean) => void;
 }
 
 const props = defineProps<IProps>();

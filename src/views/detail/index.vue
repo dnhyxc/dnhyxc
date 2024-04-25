@@ -36,6 +36,7 @@
           :id="(route.params.id as string)"
           :author-id="articleStore.articleDetail.authorId!"
           :focus="focus"
+          :on-scroll-to="onScrollTo"
           @update-focus="updateFocus"
         />
       </el-scrollbar>
@@ -144,12 +145,12 @@ const toTag = (tag: string) => {
 };
 
 // 置顶
-const onScrollTo = (height?: number) => {
+const onScrollTo = (height?: number, fromEmoji?: boolean) => {
   // height 有值说明是点击评论滑动到评论区域，默认使最外层输入框获取焦点
   if (height) {
     focus.value = true;
   }
-  scrollTo(scrollRef, height || 0);
+  scrollTo(scrollRef, fromEmoji ? scrollTop.value + height! : height || 0);
 };
 </script>
 
