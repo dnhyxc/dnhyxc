@@ -23,8 +23,7 @@ export const createWindow = () => {
     minWidth: 1080,
     minHeight: 750,
     titleBarStyle: 'hidden',
-    // backgroundColor: '#d7fffe',
-    backgroundColor: '#111',
+    backgroundColor: '#000000',
     webPreferences: {
       contextIsolation: false,
       nodeIntegration: true,
@@ -46,7 +45,6 @@ export const createWindow = () => {
   }
 
   if (!isDev) {
-    // win?.loadFile(path.join(__dirname, '../dist/index.html'));
     globalInfo.win?.loadURL(DOMAIN_URL);
   } else {
     globalInfo.win?.webContents.openDevTools();
