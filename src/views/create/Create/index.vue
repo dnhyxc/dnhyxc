@@ -6,7 +6,7 @@
 -->
 <template>
   <div class="drawer-wrap">
-    <el-drawer v-model="visible" size="350" :show-close="false">
+    <el-drawer v-model="visible" size="350" :show-close="false" :before-close="onCancel">
       <template #header="{ titleId, titleClass }">
         <h3 :id="titleId" :class="titleClass">
           {{
@@ -164,8 +164,8 @@ import { ref, computed, onDeactivated } from 'vue';
 import { useRouter } from 'vue-router';
 import type { FormInstance } from 'element-plus';
 import { ARTICLE_TAG, IMG_ACCEPT } from '@/constant';
-import { createStore } from '@/store';
-import { checkImgUrlType, getImageColor } from '@/utils';
+import { createStore, uploadStore } from '@/store';
+import { getImageColor } from '@/utils';
 import Upload from '@/components/Upload/index.vue';
 
 const router = useRouter();
@@ -200,11 +200,8 @@ const visible = computed({
 
 // 获取上传的封面图url
 const getUploadUrl = async (url: string) => {
+  // 根据图片获取图片过度背景颜色
   createStore.createInfo.gradient = await getImageColor(url);
-  if (url && checkImgUrlType(url) === 'URL' && props.articleId) {
-    const oldUrl = createStore.oldCoverImage;
-    url !== oldUrl && (createStore.oldCoverImage = url);
-  }
 };
 
 // 组件弃用时，如果有文章 id，则清除 createStore 中的 createInfo 属性，并且重置表单数据
@@ -225,10 +222,20 @@ const onTagCommand = (item: { label: string; key: string }) => {
   createStore.createInfo.tag = item.label;
 };
 
+// 删除旧封面图
+const deleteOldCoverImage = () => {
+  if (createStore.createInfo.coverImage && createStore.createInfo.coverImage !== createStore.createInfo.oldCoverImage) {
+    // 如果还没有掉文章更新接口更新过封面图，则删除当前上传的封面图
+    uploadStore.removeFile(createStore.createInfo.coverImage);
+    createStore.createInfo.coverImage = '';
+  }
+};
+
 // 取消
 const onCancel = () => {
   emit('update:modelValue', false);
   emit('update:isPublish', false);
+  deleteOldCoverImage();
 };
 
 // 新建/更新文章
@@ -274,7 +281,7 @@ const onSaveDraft = () => {
       await createStore.articleDraft();
       emit('update:modelValue', false);
       emit('update:isPublish', false);
-      const { createInfo } = createStore;
+      const {createInfo} = createStore;
       emit('update:prevContent', createInfo.content!);
     } else {
       return false;
