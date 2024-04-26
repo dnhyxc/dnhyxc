@@ -100,6 +100,7 @@
 <script setup lang="ts">
 import { ref, onMounted, nextTick, onDeactivated, computed, watchEffect, watch } from 'vue';
 import * as monaco from 'monaco-editor';
+// import * as monaco from 'monaco-editor/esm/vs/editor/editor.api.js';
 import jsonWorker from 'monaco-editor/esm/vs/language/json/json.worker?worker';
 import cssWorker from 'monaco-editor/esm/vs/language/css/css.worker?worker';
 import htmlWorker from 'monaco-editor/esm/vs/language/html/html.worker?worker';

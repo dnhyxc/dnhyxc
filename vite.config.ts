@@ -79,18 +79,7 @@ export default defineConfig({
       output: {
         chunkFileNames: 'assets/js/[name]-[hash].js',
         entryFileNames: 'assets/js/[name]-[hash].js',
-        assetFileNames: 'assets/[ext]/[name]-[hash].[ext]',
-        manualChunks: {
-          echarts: ['echarts'],
-          epubjs: ['epubjs'],
-          vuedraggable: ['vuedraggable'],
-          'v-md-editor': ['@kangc/v-md-editor'],
-          'echarts-wordcloud': ['echarts-wordcloud'],
-          'monaco-editor': ['monaco-editor'],
-          'vue-cropper': ['vue-cropper'],
-          'vue3-danmaku': ['vue3-danmaku'],
-          'docx-preview': ['docx-preview'],
-        },
+        assetFileNames: 'assets/[ext]/[name]-[hash].[ext]'
       },
     },
   },
