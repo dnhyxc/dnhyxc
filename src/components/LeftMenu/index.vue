@@ -152,7 +152,8 @@
             <i class="login iconfont icon-gerenzhongxin" />
             前往登录
           </div>
-          <i :class="`toggle-icon iconfont ${toggleMenu ? 'icon-caidanshouqi' : 'icon-caidantanchu'}`"
+          <i
+:class="`toggle-icon iconfont ${toggleMenu ? 'icon-caidanshouqi' : 'icon-caidantanchu'}`"
              @click.stop="onToggleMenu" />
         </div>
       </div>
@@ -168,7 +169,7 @@ import { MenuListParams } from '@/typings/common';
 import { loginStore } from '@/store';
 import { checkOS, setMenuType, getMenuType, checkUrl, message } from '@/utils';
 import { authRoutes } from '@/router';
-import { shell } from "electron";
+import { shell } from 'electron';
 
 const reload = inject<Function>('reload');
 
@@ -588,13 +589,13 @@ const onQuit = () => {
       align-items: center;
       padding: 10px;
       font-size: 18px;
-      .menuLg;
 
       .login-btn-large {
         display: flex;
         align-items: center;
         font-size: 16px;
         cursor: pointer;
+        .menuLg;
 
         &:hover {
           color: var(--hover-text-color);
@@ -617,6 +618,7 @@ const onQuit = () => {
         margin-left: 1px;
         font-size: 18px;
         cursor: pointer;
+        .menuLg;
 
         &:hover {
           color: var(--hover-text-color);
