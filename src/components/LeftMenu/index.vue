@@ -105,7 +105,7 @@
             </div>
           </div>
         </div>
-        <div class="user-info">
+        <div v-if="loginStore.userInfo.userId" class="user-info">
           <div class="toggle"><i class="icon iconfont icon-caidanshouqi" @click="onToggleMenu" /></div>
           <el-popover
             v-if="loginStore?.userInfo?.userId"
@@ -136,19 +136,24 @@
               </div>
             </div>
           </el-popover>
-          <div v-else class="login-btn" @click.stop="onLogin">
-            <div class="login">登录</div>
-          </div>
           <div class="username">dnhyxc</div>
           <div class="motto">
             <span>答案交给时光寻觅</span>
             <span>未来不是时光锁期</span>
           </div>
           <div class="links">
-            <span v-for="icon in ICONLINKS" :key="icon.name" class="link-icon">
-              <i :class="`${icon.className} icon iconfont ${icon.name}`" />
+            <span v-for="i in links" :key="i.icon" class="link-icon" @click.stop="onClickLink(i.url, i.name)">
+              <i :class="`icon iconfont ${i.icon}`" />
             </span>
           </div>
+        </div>
+        <div v-else class="to-login" @click.stop="onLogin">
+          <div class="login-btn-large">
+            <i class="login iconfont icon-gerenzhongxin" />
+            前往登录
+          </div>
+          <i :class="`toggle-icon iconfont ${toggleMenu ? 'icon-caidanshouqi' : 'icon-caidantanchu'}`"
+             @click.stop="onToggleMenu" />
         </div>
       </div>
     </div>
@@ -161,8 +166,9 @@ import { useRouter, useRoute } from 'vue-router';
 import { MENULIST, HEAD_IMG, ICONLINKS } from '@/constant';
 import { MenuListParams } from '@/typings/common';
 import { loginStore } from '@/store';
-import { checkOS, setMenuType, getMenuType } from '@/utils';
+import { checkOS, setMenuType, getMenuType, checkUrl, message } from '@/utils';
 import { authRoutes } from '@/router';
+import { shell } from "electron";
 
 const reload = inject<Function>('reload');
 
@@ -202,6 +208,20 @@ watchEffect(() => {
   }
 });
 
+const links = computed(() => {
+  const linkList = [];
+  const {github, juejin, zhihu, blog} = loginStore.userInfo;
+  if (github) linkList.push({key: 'github', url: github});
+  if (juejin) linkList.push({key: 'juejin', url: juejin});
+  if (zhihu) linkList.push({key: 'zhihu', url: zhihu});
+  if (blog) linkList.push({key: 'blog', url: blog});
+  return linkList.map(i => ({
+    name: i.key,
+    url: i.url,
+    icon: ICONLINKS.find(j => j.label === i.key)?.name,
+  }));
+});
+
 const onToggleMenu = () => {
   toggleMenu.value = !toggleMenu.value;
   setMenuType(toggleMenu.value);
@@ -230,6 +250,19 @@ const toPersonal = () => {
       reload?.();
       timer = null;
     }, 100);
+  }
+};
+
+const onClickLink = (href: string, name: string) => {
+  if (checkUrl(href)) {
+    // 使用浏览器打开链接
+    shell.openExternal(href);
+  } else {
+    message({
+      title: '链接无效',
+      message: `${ name } 链接无法使用`,
+      type: 'success',
+    });
   }
 };
 
@@ -470,6 +503,12 @@ const onQuit = () => {
             .menuLg;
           }
 
+          .author {
+            font-size: 19px;
+            margin-left: 1px;
+            margin-right: 2px;
+          }
+
           .menu-name {
             margin-left: 10px;
             .menuLg;
@@ -529,6 +568,10 @@ const onQuit = () => {
                 color: var(--hover-text-color);
               }
             }
+
+            .icon-wangzhi {
+              font-size: 20px;
+            }
           }
         }
       }
@@ -537,6 +580,48 @@ const onQuit = () => {
     .toggle {
       margin-left: -1px;
       margin-bottom: 5px;
+    }
+
+    .to-login {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      font-size: 18px;
+      .menuLg;
+
+      .login-btn-large {
+        display: flex;
+        align-items: center;
+        font-size: 16px;
+        cursor: pointer;
+
+        &:hover {
+          color: var(--hover-text-color);
+
+          .login {
+            color: var(--hover-text-color)
+          }
+        }
+
+        .login {
+          font-size: 22px;
+          .menuLg;
+          margin-right: 10px;
+        }
+      }
+
+      .toggle-icon {
+        display: flex;
+        align-items: center;
+        margin-left: 1px;
+        font-size: 18px;
+        cursor: pointer;
+
+        &:hover {
+          color: var(--hover-text-color);
+        }
+      }
     }
   }
 
