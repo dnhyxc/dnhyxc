@@ -118,6 +118,7 @@
                 :delete="!articleId"
                 :get-upload-url="getUploadUrl"
                 :accept="IMG_ACCEPT"
+                :delete-old-cover-image="firstUpdateCoverImage ? deleteOldCoverImage : null"
               >
                 <template #preview>
                   <img :src="uploadPath || createStore.createInfo?.coverImage!" class="cover-img" alt="文章封面" />
@@ -187,6 +188,7 @@ const emit = defineEmits(['update:modelValue', 'update:isPublish', 'update:prevC
 
 const uploadPath = ref<string>('');
 const formRef = ref<FormInstance>();
+const firstUpdateCoverImage = ref<string>('');
 
 // 计算v-model传过来的参数，防止出现值是可读的，无法修改的警告
 const visible = computed({
@@ -200,6 +202,7 @@ const visible = computed({
 
 // 获取上传的封面图url
 const getUploadUrl = async (url: string) => {
+  firstUpdateCoverImage.value = url;
   // 根据图片获取图片过度背景颜色
   createStore.createInfo.gradient = await getImageColor(url);
 };
@@ -281,7 +284,7 @@ const onSaveDraft = () => {
       await createStore.articleDraft();
       emit('update:modelValue', false);
       emit('update:isPublish', false);
-      const {createInfo} = createStore;
+      const { createInfo } = createStore;
       emit('update:prevContent', createInfo.content!);
     } else {
       return false;

@@ -84,6 +84,7 @@ interface IProps {
   showImg?: boolean;
   fixedNumber?: number[];
   getUploadUrl?: (url: string, name?: string) => void;
+  deleteOldCoverImage?: (() => void) | null;
   needCropper?: boolean;
   delete?: boolean; // 控制点击删除图标时，是否删除数据库中的图片
   isAtlas?: boolean; // 是否是图片集上传
@@ -97,8 +98,8 @@ const props = withDefaults(defineProps<IProps>(), {
   preview: true,
   showImg: true,
   fixedNumber: () => [600, 338],
-  getUploadUrl: () => {
-  },
+  getUploadUrl: () => {},
+  deleteOldCoverImage: null,
   needCropper: true,
   delete: false,
   isAtlas: false,
@@ -211,7 +212,7 @@ const onUpload = async (event: { file: Blob }) => {
       // 计算截图弹窗的高度
       const height = (cropperContent.value?.offsetWidth! * imgInfo!.height) / imgInfo!.width;
       // 存储截图弹窗的高度
-      cropperHeight.value = `${ height }px`;
+      cropperHeight.value = `${height}px`;
       // 动态计算截图框的宽度
       const cropWidth = (props.fixedNumber[0] / props.fixedNumber[1]) * height;
       option.autoCropWidth = cropWidth;
@@ -287,7 +288,7 @@ const onFinish = () => {
     };
     reader.readAsDataURL(blob);
     // 将 Blob 转成 File
-    const file = new File([blob], fileInfo.value?.name || '', {type: fileInfo.value?.type}) as File;
+    const file = new File([blob], fileInfo.value?.name || '', { type: fileInfo.value?.type }) as File;
     const res = await uploadStore.uploadFile(file, false, props.quality);
     if (res) {
       props.getUploadUrl?.(res.filePath);
@@ -316,6 +317,7 @@ const onPreview = () => {
 
 // 清除图片
 const onDelImage = () => {
+  props?.deleteOldCoverImage?.();
   // 清空父组件传递过来的filePath
   emit('update:filePath', '');
   // 删除上传的原图片
