@@ -226,11 +226,15 @@ const onTagCommand = (item: { label: string; key: string }) => {
 
 // 删除旧封面图
 const deleteOldCoverImage = () => {
-  if (createStore.createInfo.coverImage && createStore.createInfo.coverImage !== createStore.createInfo.oldCoverImage) {
+  if (
+    firstUpdateCoverImage.value &&
+    createStore.createInfo.coverImage &&
+    createStore.createInfo.coverImage !== createStore.oldCoverImage
+  ) {
     // 如果还没有掉文章更新接口更新过封面图，则删除当前上传的封面图
     uploadStore.removeFile(createStore.createInfo.coverImage);
-    createStore.createInfo.coverImage = '';
   }
+  createStore.createInfo.coverImage = createStore.oldCoverImage;
 };
 
 // 取消
