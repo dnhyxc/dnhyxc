@@ -115,7 +115,6 @@
             <div class="cover-wrap">
               <Upload
                 v-model:file-path="createStore.createInfo.coverImage"
-                :delete="!articleId"
                 :get-upload-url="getUploadUrl"
                 :accept="IMG_ACCEPT"
                 :delete-old-cover-image="firstUpdateCoverImage ? deleteOldCoverImage : null"
