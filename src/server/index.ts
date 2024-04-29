@@ -88,6 +88,11 @@ export const getArticleDetail = async (id: string, isEdit?: boolean) => {
   return await post(API.ARTICLE_DETAIL, { id, isEdit });
 };
 
+// 获取文章根据封面图
+export const findArticleByCoverImage = async (coverImage: string, authorId: string) => {
+  return await post(API.FIND_ARTICLE_BY_COVER_IMAGE, { coverImage, authorId });
+};
+
 // 获取相似的文章
 export const getLikenessArticles = async (params: { classify: string; tag: string; id: string }) => {
   return await post(API.GET_LIKENESS_ARTICLES, copeParams(params));

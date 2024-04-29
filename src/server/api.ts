@@ -28,6 +28,8 @@ export const UPDATE_ARTICLE = '/api/updateArticle';
 export const ARTICLE_LIST = '/api/articleList';
 // 获取文章详情
 export const ARTICLE_DETAIL = '/api/articleDetail';
+// 根据封面图获取文章
+export const FIND_ARTICLE_BY_COVER_IMAGE = '/api/findArticleByCoverImage';
 // 删除文章
 export const DELETE_ARTICLE = '/api/deleteArticle';
 // 文章搜索

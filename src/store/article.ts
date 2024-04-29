@@ -23,6 +23,7 @@ import {
   searchStore,
   tagStore,
   timelineStore,
+  uploadStore,
 } from '@/store';
 import { sendMessage } from '@/socket';
 import { PAGESIZE } from '@/constant';
@@ -138,7 +139,7 @@ export const useArticleStore = defineStore('article', {
           };
           createStore.oldCoverImage = res.data.coverImage as string;
           // 如果是创建页调用获取详情的接口，则需要清除文章详情的缓存。防止再次进入详情时文章目录出现错乱
-          this.articleDetail = {id: ''};
+          this.articleDetail = { id: '' };
           this.detailArtLikeCount = 0;
         }
         return res.data;
@@ -317,11 +318,11 @@ export const useArticleStore = defineStore('article', {
       // 检验是否有userId，如果没有禁止发送请求
       if (!useCheckUserId()) return;
       const res = normalizeResult<{ id: string; isLike: boolean; nextPageOne: ArticleItem[]; total: number }>(
-        await Service.likeArticle({id}),
+        await Service.likeArticle({ id }),
       );
       if (res.success) {
-        const {id, isLike} = res.data;
-        const {userId, username} = loginStore.userInfo;
+        const { id, isLike } = res.data;
+        const { userId, username } = loginStore.userInfo;
         // 给别人点赞或取消点赞之后推送websocket消息
         if (data?.authorId !== userId) {
           sendMessage(
@@ -438,7 +439,7 @@ export const useArticleStore = defineStore('article', {
           }
         }
         // 列表点赞之后推送刷新消息给主进程，让主进程推送消息给article页面，刷新页面
-        ipcRenderers.sendRefresh({articleId: id});
+        ipcRenderers.sendRefresh({ articleId: id });
       } else {
         message({
           title: res.message,
@@ -474,7 +475,7 @@ export const useArticleStore = defineStore('article', {
       // 检验是否有userId，如果没有禁止发送请求
       if (!useCheckUserId()) return;
 
-      const {userInfo} = getStoreUserInfo();
+      const { userInfo } = getStoreUserInfo();
 
       const params = {
         userId: loginStore?.userInfo?.userId || userInfo?.userId,
@@ -501,8 +502,8 @@ export const useArticleStore = defineStore('article', {
 
       if (res?.success) {
         // 只在评论别人的文章时推送消息，回复评论不推送
-        const {authorId} = this.articleDetail;
-        const {username, userId} = loginStore.userInfo;
+        const { authorId } = this.articleDetail;
+        const { username, userId } = loginStore.userInfo;
         if (
           !data?.isThreeTier &&
           !data?.selectComment?.commentId &&
@@ -525,10 +526,10 @@ export const useArticleStore = defineStore('article', {
           );
         }
 
-        const {pathname} = window.location;
+        const { pathname } = window.location;
 
         // 判断是article还是detail、分别推送刷新消息给主进程，用于通知子窗口或者详情页更新评论列表
-        ipcRenderers.sendRefresh({articleId: data?.articleId, pathname});
+        ipcRenderers.sendRefresh({ articleId: data?.articleId, pathname });
 
         message({
           title: res.message,
@@ -552,7 +553,7 @@ export const useArticleStore = defineStore('article', {
     }) {
       // 检验是否有userId，如果没有禁止发送请求
       if (!useCheckUserId()) return;
-      const {userInfo} = getStoreUserInfo();
+      const { userInfo } = getStoreUserInfo();
       const params = data.isThreeTier
         ? {
             commentId: data.commentId!,
@@ -570,8 +571,8 @@ export const useArticleStore = defineStore('article', {
         data.getCommentList && data.getCommentList();
 
         // 判断是article还是detail、分别推送刷新消息给主进程，用于通知子窗口或者详情页更新评论列表
-        const {pathname} = window.location;
-        ipcRenderers.sendRefresh({articleId: data?.articleId!, pathname, isLike: false});
+        const { pathname } = window.location;
+        ipcRenderers.sendRefresh({ articleId: data?.articleId!, pathname, isLike: false });
       } else {
         message({
           title: res.message,
@@ -616,8 +617,8 @@ export const useArticleStore = defineStore('article', {
           });
           getCommentList && getCommentList();
           // 判断是article还是detail、分别推送刷新消息给主进程，用于通知子窗口或者详情页更新评论列表
-          const {pathname} = window.location;
-          ipcRenderers.sendRefresh({articleId: articleId!, pathname});
+          const { pathname } = window.location;
+          ipcRenderers.sendRefresh({ articleId: articleId!, pathname });
         } else {
           message({
             title: res.message,
@@ -628,23 +629,23 @@ export const useArticleStore = defineStore('article', {
     },
 
     // 文章点赞
-    async likeArticle({id, authorId}: { id: string; authorId?: string }) {
+    async likeArticle({ id, authorId }: { id: string; authorId?: string }) {
       // 检验是否有userId，如果没有禁止发送请求
       if (!useCheckUserId()) return;
-      const res = normalizeResult<{ id: string; isLike: boolean }>(await Service.likeArticle({id, authorId}));
+      const res = normalizeResult<{ id: string; isLike: boolean }>(await Service.likeArticle({ id, authorId }));
       if (!res.success) {
         message({
           title: res.message,
           type: 'error',
         });
       } else {
-        const {userInfo} = getStoreUserInfo();
-        const {username, userId} = loginStore.userInfo;
-        const {authorId} = this.articleDetail;
-        const {pathname} = window.location;
+        const { userInfo } = getStoreUserInfo();
+        const { username, userId } = loginStore.userInfo;
+        const { authorId } = this.articleDetail;
+        const { pathname } = window.location;
 
         // 判断是article还是detail、分别推送刷新消息给主进程，使主进程推送消息给个文章列表页面更新列表点赞状态
-        ipcRenderers.sendRefresh({articleId: id, pathname});
+        ipcRenderers.sendRefresh({ articleId: id, pathname });
 
         // 给别人文章点赞时推送消息
         if (authorId !== userId && authorId !== userInfo?.userId) {
@@ -695,6 +696,18 @@ export const useArticleStore = defineStore('article', {
       }
     },
 
+    // 校验文章点赞状态
+    async findArticleByCoverImage(coverImage: string, authorId: string) {
+      const res = normalizeResult<{ id: string; title: string; coverImage: string }>(
+        await Service.findArticleByCoverImage(coverImage, authorId),
+      );
+      // 如果其他文章没有使用该封面图，则点击删除时删除该图片
+      if (res.success && !res.data && createStore.createInfo.coverImage) {
+        // 如果还没有掉文章更新接口更新过封面图，则删除当前上传的封面图
+        await uploadStore.removeFile(createStore.createInfo.coverImage);
+      }
+    },
+
     // 更改详情点赞状态
     updateDetailLikeStatus() {
       this.articleDetail.isLike = !this.articleDetail.isLike;
@@ -714,7 +727,7 @@ export const useArticleStore = defineStore('article', {
 
     // 清除详情缓存
     onClearList() {
-      this.articleDetail = {id: ''};
+      this.articleDetail = { id: '' };
       this.commentList = [];
       this.anotherArticleList = [];
       this.detailArtLikeCount = 0;
