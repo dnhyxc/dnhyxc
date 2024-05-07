@@ -7,8 +7,8 @@
 <template>
   <div class="compile-wrap">
     <div class="container">
-      <div :class="`${checkOS() === 'mac' && 'mac-header-wrap'} header-wrap`" @dblclick="onDblclick">
-        <div :class="`left ${checkOS() === 'mac' && 'mac-left'}`">
+      <div class="header-wrap" @dblclick="onDblclick">
+        <div class="left">
           <div class="icon-wrap">
             <i class="page-icon iconfont icon-haidao_" />
           </div>
@@ -18,15 +18,13 @@
           <div class="sticky">
             <el-tooltip effect="light" content="置顶" placement="bottom" popper-class="custom-dropdown-styles">
               <i
-                :class="`${articleStore.stickyStatus && 'active'} font iconfont ${
-                  checkOS() === 'mac' ? 'icon-pin-full' : 'icon-pin1'
-                }`"
+                :class="`${articleStore.stickyStatus && 'active'} font iconfont icon-pin1`"
                 @click="onSticky"
               />
             </el-tooltip>
           </div>
-          <span v-if="checkOS() === 'mac'" class="mac-tool-title">{{ title }}</span>
-          <div v-if="checkOS() !== 'mac'" class="page-actions">
+<!--          <span v-if="checkOS() === 'mac'" class="mac-tool-title">{{ title }}</span>-->
+          <div class="page-actions">
             <div v-for="svg in ACTION_SVGS" :key="svg.title" class="icon" @click="onClick(svg)">
               <el-tooltip
                 effect="light"

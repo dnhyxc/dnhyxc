@@ -8,7 +8,7 @@
   <Loading :loading="articleStore.loading" :class="`detail-wrap ${checkOS() === 'mac' && 'mac-detail-wrap'}`">
     <div class="container">
       <div class="header-wrap" @dblclick="onDblclick">
-        <div :class="`left ${checkOS() === 'mac' && 'mac-left'}`">
+        <div class="left">
           <div class="icon-wrap">
             <i class="page-icon iconfont icon-haidao_" />
           </div>
@@ -18,15 +18,12 @@
           <div class="sticky">
             <el-tooltip effect="light" content="置顶" placement="bottom" popper-class="custom-dropdown-styles">
               <i
-                :class="`${articleStore.stickyStatus && 'active'} font iconfont ${
-                  checkOS() === 'mac' ? 'icon-pin-full' : 'icon-pin1'
-                }`"
+                :class="`${articleStore.stickyStatus && 'active'} font iconfont icon-pin1`"
                 @click="onSticky"
               />
             </el-tooltip>
           </div>
-          <span v-if="checkOS() === 'mac'" class="mac-tool-title">文章详情</span>
-          <div v-if="checkOS() !== 'mac'" class="page-actions">
+          <div class="page-actions">
             <div v-for="svg in ACTION_SVGS" :key="svg.title" class="icon" @click="onClick(svg)">
               <el-tooltip
                 effect="light"
@@ -73,7 +70,7 @@
             :scroll-height="articleInfoRef?.offsetHeight"
             :on-scroll-to="() => onScrollTo(articleInfoRef?.offsetHeight)"
           />
-          <Toc class="toc-list" />
+          <Toc :class="`${!getStoreUserInfo()?.userInfo?.userId && 'hide-toc-list-border'} toc-list`" />
           <AnotherArticle
             v-if="articleStore.articleDetail.content"
             :id="(route.params.id as string)"
@@ -121,7 +118,7 @@ const toggle = ref<boolean>(false);
 // 指定控制状态
 
 // scrollRef：el-scrollbar ref，scrollTop：滚动距离
-const {scrollRef, scrollTop} = useScroller();
+const { scrollRef, scrollTop } = useScroller();
 
 onMounted(async () => {
   // 监听更换主题
@@ -149,7 +146,7 @@ onMounted(async () => {
     commonStore.updatePageLoadStatus();
   });
 
-  await articleStore.getArticleDetail({id: route.params.id as string, router});
+  await articleStore.getArticleDetail({ id: route.params.id as string, router });
   // 在详情获取成功后，如果路由路径中携带了scrollTo参数，则说明是从列表中点击评论进来的，需要跳转到评论
   if (route.query?.scrollTo) {
     onScrollTo(articleInfoRef.value?.offsetHeight);
@@ -162,7 +159,7 @@ onMounted(async () => {
 
   // 监听主进程发布的刷新页面的消息
   ipcRenderer.on('refresh', (_, params: WinRefreshParams) => {
-    const {id, pageType, isTop} = params;
+    const { id, pageType, isTop } = params;
     articleStore.stickyStatus = isTop;
     if (pageType !== 'article' && id === route.params.id) {
       reload && reload();
@@ -184,7 +181,7 @@ onMounted(async () => {
   });
 
   watchEffect(() => {
-    const {userInfo} = getStoreUserInfo();
+    const { userInfo } = getStoreUserInfo();
     if (userInfo?.userId) {
       createWebSocket();
     }
@@ -193,7 +190,7 @@ onMounted(async () => {
 
 // 组件卸载前，清楚store中的详情信息
 onUnmounted(() => {
-  articleStore.articleDetail = {id: ''};
+  articleStore.articleDetail = { id: '' };
   articleStore.commentList = [];
   articleStore.anotherArticleList = [];
 });
@@ -205,23 +202,32 @@ const updateFocus = (value: boolean) => {
 
 // 置顶
 const onSticky = () => {
-  const {id} = route.params;
+  const { id } = route.params;
   articleStore.stickyStatus = !articleStore.stickyStatus;
   ipcRenderers.sendNewWinSticky(articleStore.stickyStatus, id as string);
 };
 
 // 双击放大窗口
 const onDblclick = () => {
-  const {id} = route.params;
+  const { id } = route.params;
   toggle.value = !toggle.value;
   ipcRenderers.sendNewWinMax(id as string);
 };
 
 // 点击右侧窗口控制按钮
 const onClick = (item: { title: string; svg: string }) => {
-  const {id} = route.params;
+  const { id } = route.params;
+  if (item.title === '最大化' && checkOS() === 'mac') {
+    if (!toggle.value) {
+      toggle.value = true;
+      ipcRenderers.sendNewWinMax(id as string);
+    } else {
+      toggle.value = false;
+      ipcRenderers.sendNewWinRestore(id as string);
+    }
+  }
 
-  if (item.title === '最大化') {
+  if (item.title === '最大化' && checkOS() !== 'mac') {
     toggle.value = !toggle.value;
     ipcRenderers.sendNewWinMax(id as string);
   }
@@ -438,72 +444,21 @@ const onScrollTo = (height?: number) => {
 }
 
 .mac-detail-wrap {
-  --header-height: 35px;
+  --header-height: 45px;
 
   .container {
     .header-wrap {
-      display: flex;
-      justify-content: start;
-      align-items: flex-start;
-      height: 35px;
-      padding: 5px 5px 0 51px;
+      height: var(--header-height);
       box-sizing: border-box;
       border-bottom: 1px solid var(--card-border);
       .clickNoSelectText;
 
       .left {
-        display: none;
-
         .icon-wrap {
           .page-icon {
+            font-size: 30px;
             cursor: default;
           }
-        }
-      }
-
-      .right {
-        position: relative;
-        height: 32px;
-        margin-left: 18px;
-
-        .sticky {
-          position: absolute;
-          top: 3px;
-          left: 0;
-          width: 12px;
-          height: 12px;
-          border-radius: 12px;
-          background-color: @yellow-1;
-
-          &:hover {
-            .font {
-              display: inline-block;
-            }
-          }
-
-          .font {
-            font-size: 10px;
-            margin: auto;
-            display: none;
-
-            &:hover {
-              color: var(--active);
-            }
-          }
-
-          .active {
-            display: inline-block;
-          }
-        }
-
-        .mac-tool-title {
-          font-size: 16px;
-          font-weight: 700;
-          height: var(--header-height);
-          line-height: 25px;
-          margin-left: 19px;
-          color: var(--font-color);
-          .menuLg();
         }
       }
     }
@@ -566,6 +521,10 @@ const onScrollTo = (height?: number) => {
               padding: 8px 10px;
             }
           }
+        }
+
+        .hide-toc-list-border {
+          border-top: none;
         }
 
         .another-list {

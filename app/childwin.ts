@@ -8,7 +8,7 @@
 import path from 'path';
 import { BrowserWindow, ipcMain } from 'electron';
 import { getIconPath } from './tray';
-import { DOMAIN_URL, globalInfo, globalChildWins, TOOLS_KEYS } from './constant';
+import { DOMAIN_URL, globalInfo, globalChildWins, TOOLS_KEYS, isMac } from './constant';
 
 let newWin: BrowserWindow | null = null;
 
@@ -22,7 +22,8 @@ export const createChildWin = (pathname: string, id: string) => {
     height: 700,
     minWidth: 1028,
     minHeight: 700,
-    titleBarStyle: 'hidden',
+    // titleBarStyle: 'hidden',
+    frame: false,
     // backgroundColor: '#d7fffe',
     backgroundColor: '#111',
     autoHideMenuBar: true,
@@ -39,10 +40,10 @@ export const createChildWin = (pathname: string, id: string) => {
   globalChildWins['independentWindow-' + newWin.webContents.id] = newWin;
 
   if (!isDev) {
-    newWin.loadURL(`${DOMAIN_URL}/${pathname}`);
+    newWin.loadURL(`${ DOMAIN_URL }/${ pathname }`);
   } else {
     newWin.webContents.openDevTools();
-    newWin.loadURL(`${process.env.VITE_DEV_SERVER_URL!}${pathname}`);
+    newWin.loadURL(`${ process.env.VITE_DEV_SERVER_URL! }${ pathname }`);
   }
 
   // 根据渲染进程传递的文章id获取对应子串口的id
@@ -109,11 +110,20 @@ ipcMain.on('new-win-out', (event, id: string) => {
 ipcMain.on('new-win-max', (event, id: string) => {
   const winId = globalChildWins.newWins.get(id);
   const findWin = globalChildWins['independentWindow-' + winId];
-  if (findWin?.isMaximized()) {
+  if (isMac) {
+    findWin?.setFullScreen(true);
+  } else if (findWin?.isMaximized()) {
     findWin?.restore();
   } else {
     findWin?.maximize();
   }
+});
+
+// 监听mac子窗口最大/最小化
+ipcMain.on('new-win-restore', (event, id: string) => {
+  const winId = globalChildWins.newWins.get(id);
+  const findWin = globalChildWins['independentWindow-' + winId];
+  findWin?.setFullScreen(false);
 });
 
 // 监听子窗口最小化
