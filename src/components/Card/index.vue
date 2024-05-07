@@ -8,6 +8,9 @@
   <ContextMenu class="block" :menu="CARD_CONTEXT_MENU" @select="onSelectMenu">
     <div class="card-wrap" @click.stop="toDetail(data)" @mouseenter.stop="onMouseEnter" @mouseleave.stop="onMouseLeave">
       <div ref="topRef" class="top">
+        <div v-if="data?.isDelete" class="mask">
+          <span class="mask-text">已下架</span>
+        </div>
         <div v-for="i in ['markTop', 'markRight', 'markBottom', 'markLeft']" :key="i" :class="`${i} mark`">
           <div class="action">
             <span v-if="loginStore?.userInfo?.userId === data.authorId" @click.stop="toEdit(data)">编辑</span>
@@ -21,6 +24,7 @@
             </div>
           </div>
         </div>
+        <i v-if="data.isTop" class="font iconfont icon-zhiding" />
         <Image :url="data.coverImage || IMG1" :transition-img="IMG1" class="card-img" radius="5px 5px 0 0" />
       </div>
       <div
@@ -143,7 +147,7 @@ const onComment = (data: ArticleItem) => {
     });
     return;
   }
-  router.push(`/detail/${data.id}?scrollTo=1&from=${route.name as string}`);
+  router.push(`/detail/${ data.id }?scrollTo=1&from=${ route.name as string }`);
 };
 
 // 编辑
@@ -155,7 +159,7 @@ const toEdit = async (data: ArticleItem) => {
     });
     return;
   }
-  router.push(`/create?id=${data.id}`);
+  router.push(`/create?id=${ data.id }`);
 };
 
 // 下架
@@ -196,7 +200,7 @@ const toDetail = async (data: ArticleItem) => {
     });
     return;
   }
-  router.push(`/detail/${data.id}?from=${route.name as string}`);
+  router.push(`/detail/${ data.id }?from=${ route.name as string }`);
 };
 
 // 新窗口打开
@@ -208,25 +212,25 @@ const onOpenNewWindow = async (data: ArticleItem) => {
     });
     return;
   }
-  const { userInfo, token } = loginStore;
+  const {userInfo, token} = loginStore;
   ipcRenderers.sendNewWin({
-    path: `article/${data.id}?from=${route.name as string}`,
+    path: `article/${ data.id }?from=${ route.name as string }`,
     id: data.id, // articleId
-    userInfo: JSON.stringify({ userInfo, token }),
+    userInfo: JSON.stringify({userInfo, token}),
   });
 };
 
 // 去我的主页
 const toPersonal = (id: string) => {
-  router.push(`/personal?authorId=${id}`);
+  router.push(`/personal?authorId=${ id }`);
 };
 
 const toClassify = (classify: string) => {
-  router.push(`/classify?classify=${classify}`);
+  router.push(`/classify?classify=${ classify }`);
 };
 
 const toTag = (tag: string) => {
-  router.push(`/tag/list?tag=${tag}`);
+  router.push(`/tag/list?tag=${ tag }`);
 };
 </script>
 
@@ -253,17 +257,50 @@ const toTag = (tag: string) => {
 .card-wrap {
   width: 100%;
   height: auto;
-  box-shadow: 0 0 1px #ccc inset;
   box-sizing: border-box;
   border-radius: v-bind(radius);
   transition: all 0.3s ease;
-  background: rgba(255, 255, 255, 0.3);
   text-shadow: @text-shadow;
   .clickNoSelectText();
 
   .top {
     position: relative;
     overflow: hidden;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+
+    .icon-zhiding {
+      position: absolute;
+      top: -2px;
+      left: 0;
+      font-size: 35px;
+      text-shadow: none;
+      .textLg();
+    }
+
+    .mask {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: @font-warning;
+      z-index: 9;
+
+      .mask-text {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        backdrop-filter: blur(2px);
+        padding: 0 5px 2px 5px;
+      }
+    }
 
     .mark {
       position: absolute;
@@ -362,6 +399,9 @@ const toTag = (tag: string) => {
     padding: 5px;
     box-sizing: border-box;
     color: var(--font-1);
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+
 
     .title {
       font-size: 15px;

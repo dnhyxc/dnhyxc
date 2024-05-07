@@ -6,6 +6,8 @@ import { locGetItem, message } from '@/utils';
 import { WITH_AUTH_ROUTES } from '@/constant';
 import eventBus from '@/utils/eventBus';
 import AsyncLoading from '@/components/AsyncLoading/index.vue';
+import Layout from '@/layout/index.vue';
+import Home from '@/views/home/index.vue';
 
 const importComponent = (path: string) =>
   defineAsyncComponent({
@@ -43,7 +45,7 @@ export const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
     name: 'main',
-    component: () => import('@/layout/index.vue'),
+    component: Layout,
     children: [
       {
         path: '/home',
@@ -52,7 +54,7 @@ export const routes: Array<RouteRecordRaw> = [
           title: '墨客首页',
           info: 'WELCOME TO 墨客',
         },
-        component: () => import('@/views/home/index.vue'),
+        component: Home,
       },
       {
         path: '/classify',

@@ -154,7 +154,7 @@ const isCompile = computed(() => {
       flex-direction: column;
       align-items: center;
       justify-content: space-between;
-      width: 60px;
+      width: 68px;
       padding-top: 40px;
       padding-bottom: 25px;
 
@@ -293,8 +293,8 @@ const isCompile = computed(() => {
   --article-header-height: 36px;
 
   .header {
-    padding: 30px 27px 0 12px;
-    margin-bottom: 15px;
+    padding: 7px 27px 0 12px;
+    margin-bottom: 8px;
   }
 
   .article-header {

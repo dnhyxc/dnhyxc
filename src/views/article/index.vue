@@ -47,7 +47,7 @@
       <div class="content-wrap">
         <div class="content">
           <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
-            <div ref="articleInfoRef" class="articleInfo">
+            <div ref="articleInfoRef">
               <PageHeader v-if="articleStore.articleDetail.authorId" />
               <Preview
                 v-if="articleStore.articleDetail.content"
@@ -410,18 +410,6 @@ const onScrollTo = (height?: number) => {
             border-radius: 5px;
           }
         }
-
-        .preview-content {
-          :deep {
-            .vuepress-markdown-body {
-              max-width: calc(100vw - 260px);
-
-              pre {
-                max-width: calc(100vw - 350px);
-              }
-            }
-          }
-        }
       }
 
       .right {
@@ -537,13 +525,22 @@ const onScrollTo = (height?: number) => {
         border-radius: 0;
 
         .action-list {
+          border-bottom: 1px solid var(--card-border);
 
           :deep {
             .action {
               box-shadow: none;
               background-color: transparent;
-            }
+              border-radius: 0;
 
+              &:not(:nth-child(1)) {
+                border-left: 1px solid var(--card-border);
+              }
+
+              &:not(:nth-child(4)) {
+                border-right: 1px solid var(--card-border);
+              }
+            }
 
             .like-wrap {
               border-top-left-radius: 0;
@@ -561,6 +558,33 @@ const onScrollTo = (height?: number) => {
           border-radius: 0;
           box-shadow: none;
           background-color: transparent;
+          border-top: 1px solid var(--card-border);
+          padding-bottom: 3px;
+
+          :deep {
+            .title {
+              padding: 8px 10px;
+            }
+          }
+        }
+
+        .another-list {
+          box-sizing: border-box;
+
+          :deep {
+            .list {
+
+              .article {
+                box-shadow: none;
+                border-radius: 0;
+                border-top: 1px solid var(--card-border);
+
+                &:first-child {
+                  border-bottom: 1px solid var(--card-border);
+                }
+              }
+            }
+          }
         }
       }
     }
