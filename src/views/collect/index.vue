@@ -382,7 +382,7 @@ const onScrollTo = () => {
     .move,
     .remove {
       &:hover {
-        color: var(--active-color);
+        color: var(--hover-text-color);
       }
     }
   }

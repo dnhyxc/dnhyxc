@@ -312,7 +312,7 @@ const onForgetPwd = () => {
       color: var(--theme-blue);
 
       &:hover {
-        color: var(--active-color);
+        color: var(--hover-text-color);
       }
     }
   }

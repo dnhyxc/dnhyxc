@@ -211,7 +211,7 @@ const onScrollTo = (height?: number, fromEmoji?: boolean) => {
             cursor: pointer;
 
             &:hover {
-              color: var(--active-color);
+              color: var(--hover-text-color);
             }
           }
         }

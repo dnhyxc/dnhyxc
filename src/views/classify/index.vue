@@ -208,7 +208,7 @@ const likeListArticle = (id: string, data?: ArticleItem) => {
         align-items: center;
         font-size: 18px;
         font-weight: 700;
-        color: var(--active-color);
+        color: var(--hover-text-color);
         padding-right: 10px;
 
         .label {

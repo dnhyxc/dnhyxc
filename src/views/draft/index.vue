@@ -250,7 +250,7 @@ const onScrollTo = (height?: number) => {
             cursor: pointer;
 
             &:hover {
-              color: var(--active-color);
+              color: var(--hover-text-color);
             }
           }
         }

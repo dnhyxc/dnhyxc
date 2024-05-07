@@ -334,7 +334,7 @@ const onCancelResetPwd = (Form: FormData<FormInstance>) => {
         margin-left: -2px;
 
         &:hover {
-          color: var(--active-color);
+          color: var(--hover-text-color);
         }
       }
 
@@ -366,7 +366,7 @@ const onCancelResetPwd = (Form: FormData<FormInstance>) => {
         cursor: pointer;
 
         &:hover {
-          color: var(--active-color);
+          color: var(--hover-text-color);
         }
       }
 

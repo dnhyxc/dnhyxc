@@ -275,7 +275,7 @@ const onSelectMenu = (menu: { label: string; value: number }, data: TimelineArti
           font-weight: normal;
 
           &:hover {
-            color: var(--active-color);
+            color: var(--hover-text-color);
           }
         }
       }

@@ -352,7 +352,7 @@ const onQuit = () => {
       }
 
       .active {
-        color: var(--active-color);
+        color: var(--hover-text-color);
         .textLgActive();
       }
 
@@ -519,7 +519,7 @@ const onQuit = () => {
         .active {
           .font,
           .menu-name {
-            color: var(--active-color);
+            color: var(--hover-text-color);
             .textLgActive;
           }
         }

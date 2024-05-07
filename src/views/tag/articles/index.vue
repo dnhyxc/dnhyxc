@@ -216,7 +216,7 @@ const likeListArticle = async (id: string, data?: ArticleItem) => {
         cursor: pointer;
 
         &:hover {
-          color: var(--active-color);
+          color: var(--hover-text-color);
         }
       }
     }
@@ -247,7 +247,7 @@ const likeListArticle = async (id: string, data?: ArticleItem) => {
       }
 
       &:hover {
-        color: var(--active-color);
+        color: var(--hover-text-color);
       }
 
       .tag {

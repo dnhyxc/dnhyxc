@@ -311,7 +311,7 @@ const onSelectMenu = (menu: { label: string; value: number }) => {
         background-color: var(--hover-bg-color);
 
         &:hover {
-          color: var(--active-color);
+          color: var(--hover-text-color);
         }
       }
     }

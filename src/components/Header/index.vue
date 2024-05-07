@@ -365,7 +365,7 @@ const onScrollTo = () => {
       text-align: center;
 
       &:hover {
-        color: var(--active-color);
+        color: var(--hover-text-color);
         font-weight: 700;
       }
     }
@@ -404,7 +404,7 @@ const onScrollTo = () => {
         .menuLg();
 
         &:hover {
-          color: var(--active-color);
+          color: var(--hover-text-color);
         }
       }
 
@@ -419,7 +419,7 @@ const onScrollTo = () => {
         cursor: pointer;
 
         &:hover {
-          color: var(--active-color);
+          color: var(--hover-text-color);
         }
       }
 
@@ -483,7 +483,7 @@ const onScrollTo = () => {
         .menuLg();
 
         &:hover {
-          color: var(--active-color);
+          color: var(--hover-text-color);
         }
       }
     }
@@ -507,7 +507,7 @@ const onScrollTo = () => {
 
       &:hover {
         .font {
-          color: var(--active-color);
+          color: var(--hover-text-color);
         }
       }
 
@@ -534,7 +534,7 @@ const onScrollTo = () => {
 
       &:hover {
         .font {
-          color: var(--active-color);
+          color: var(--hover-text-color);
         }
       }
     }
@@ -564,7 +564,7 @@ const onScrollTo = () => {
       }
 
       &:hover {
-        color: var(--active-color);
+        color: var(--hover-text-color);
       }
     }
   }
@@ -660,7 +660,7 @@ const onScrollTo = () => {
     color: var(--theme-blue);
 
     &:hover {
-      color: var(--active-color);
+      color: var(--hover-text-color);
     }
   }
 
@@ -672,7 +672,7 @@ const onScrollTo = () => {
     z-index: 99;
 
     &:hover {
-      color: var(--active-color);
+      color: var(--hover-text-color);
     }
   }
 }
@@ -689,7 +689,7 @@ const onScrollTo = () => {
     color: var(--font-color);
 
     &:hover {
-      color: var(--active-color);
+      color: var(--hover-text-color);
     }
   }
 }

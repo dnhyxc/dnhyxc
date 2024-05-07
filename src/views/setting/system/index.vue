@@ -308,7 +308,7 @@ const handleKeydown = (e: KeyboardEvent) => {
         .clickNoSelectText();
 
         &:hover {
-          color: var(--active-color);
+          color: var(--hover-text-color);
         }
       }
     }
@@ -356,7 +356,7 @@ const handleKeydown = (e: KeyboardEvent) => {
         cursor: pointer;
 
         &:hover {
-          color: var(--active-color);
+          color: var(--hover-text-color);
         }
       }
 
@@ -366,7 +366,7 @@ const handleKeydown = (e: KeyboardEvent) => {
         .clickNoSelectText();
 
         &:hover {
-          color: var(--active-color);
+          color: var(--hover-text-color);
         }
       }
     }

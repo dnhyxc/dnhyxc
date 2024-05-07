@@ -23,7 +23,6 @@
               />
             </el-tooltip>
           </div>
-<!--          <span v-if="checkOS() === 'mac'" class="mac-tool-title">{{ title }}</span>-->
           <div class="page-actions">
             <div v-for="svg in ACTION_SVGS" :key="svg.title" class="icon" @click="onClick(svg)">
               <el-tooltip
@@ -42,7 +41,7 @@
           </div>
         </div>
       </div>
-      <div :class="`${checkOS() === 'mac' && 'mac-content-wrap'} content-wrap`">
+      <div class="content-wrap">
         <Compress v-if="route.query?.from === 'tools_compress' && userId" hide-header />
         <Cropper v-if="route.query?.from === 'tools_cropper' && userId" hide-header />
         <CodeRun v-if="route.query?.from === 'tools_codeRun' && userId" hide-header />
@@ -63,7 +62,7 @@ import { ipcRenderer } from 'electron';
 import { onMounted, nextTick, ref, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { articleStore, bookStore, commonStore } from '@/store';
-import { checkOS, locSetItem, ipcRenderers, Message, modifyTheme } from '@/utils';
+import { locSetItem, ipcRenderers, Message, modifyTheme, checkOS } from '@/utils';
 import { ACTION_SVGS, TOOL_LIST } from '@/constant';
 import Compress from '@/views/tools/Compress/index.vue';
 import Cropper from '@/views/tools/Cropper/index.vue';
@@ -124,14 +123,24 @@ const onSticky = () => {
 
 // 双击放大窗口
 const onDblclick = () => {
-  const {id} = route.params;
+  const { id } = route.params;
   toggle.value = !toggle.value;
   ipcRenderers.sendNewWinMax(id as string);
 };
 
 // 点击右侧窗口控制按钮
 const onClick = async (item: { title: string; svg: string }) => {
-  if (item.title === '最大化') {
+  if (item.title === '最大化' && checkOS() === 'mac') {
+    if (!toggle.value) {
+      toggle.value = true;
+      ipcRenderers.sendNewWinMax(route.query?.from as string);
+    } else {
+      toggle.value = false;
+      ipcRenderers.sendNewWinRestore(route.query?.from as string);
+    }
+  }
+
+  if (item.title === '最大化' && checkOS() !== 'mac') {
     toggle.value = !toggle.value;
     ipcRenderers.sendNewWinMax(route.query?.from as string);
   }
@@ -150,7 +159,7 @@ const onClick = async (item: { title: string; svg: string }) => {
         ipcRenderers.sendNewWinOut(route.query?.from as string);
       });
     } else if (route.query?.from === 'tools_pdf') {
-      const {loading, iframeUrl, onAbort} = bookStore.pdfInfo;
+      const { loading, iframeUrl, onAbort } = bookStore.pdfInfo;
 
       if (iframeUrl && !loading) {
         try {
@@ -201,7 +210,7 @@ const onClick = async (item: { title: string; svg: string }) => {
       align-items: center;
       justify-content: space-between;
       height: 55px;
-      padding: 0 16px 0 16px;
+      padding: 0 6px 0 16px;
       -webkit-app-region: drag;
       .clickNoSelectText;
 
@@ -224,7 +233,6 @@ const onClick = async (item: { title: string; svg: string }) => {
             margin-bottom: 2px;
             margin-right: 20px;
             color: var(--theme-blue);
-            cursor: pointer;
             -webkit-app-region: no-drag;
             .textLg();
           }
@@ -251,27 +259,22 @@ const onClick = async (item: { title: string; svg: string }) => {
 
           .font {
             font-size: 16px;
-            cursor: pointer;
-            margin-left: 15px;
-            margin-top: 2px;
+            padding: 5px;
+            margin: 2px 5px 0;
             color: var(--font-color);
             font-weight: var(--font-weight);
             .menuLg();
           }
 
+          &:hover {
+            .font {
+              color: var(--hover-text-color);
+            }
+          }
+
           .active {
             color: var(--theme-blue);
           }
-        }
-
-        .mac-tool-title {
-          font-size: 16px;
-          font-weight: 700;
-          height: 35px;
-          line-height: 32px;
-          margin-left: 19px;
-          color: var(--font-color);
-          .menuLg();
         }
 
         .page-actions {
@@ -283,13 +286,17 @@ const onClick = async (item: { title: string; svg: string }) => {
 
         .icon {
           -webkit-app-region: no-drag;
-          cursor: pointer;
           color: var(--font-color);
           font-weight: var(--font-weight);
+          padding: 5px;
+          margin: 0 5px;
           .menuLg();
 
+          &:hover {
+            color: var(--hover-text-color);
+          }
+
           .icon-text {
-            margin-left: 15px;
             font-size: 16px;
           }
         }
@@ -316,54 +323,6 @@ const onClick = async (item: { title: string; svg: string }) => {
 
           .out-icon {
             color: @font-warning;
-          }
-        }
-      }
-    }
-
-    .mac-header-wrap {
-      position: relative;
-      display: flex;
-      justify-content: start;
-      align-items: flex-start;
-      height: 35px;
-      padding: 0 5px 0 68px;
-      box-sizing: border-box;
-
-      .mac-left {
-        display: none;
-      }
-
-      .right {
-        position: relative;
-
-        .sticky {
-          position: absolute;
-          top: 8px;
-          left: 0;
-          width: 12px;
-          height: 12px;
-          border-radius: 12px;
-          background-color: @yellow-1;
-
-          &:hover {
-            .font {
-              display: inline-block;
-            }
-          }
-
-          .font {
-            font-size: 10px;
-            margin: auto;
-            display: none;
-
-            &:hover {
-              color: var(--active);
-            }
-          }
-
-          .active {
-            display: inline-block;
           }
         }
       }
@@ -409,10 +368,6 @@ const onClick = async (item: { title: string; svg: string }) => {
         }
       }
 
-      .mac-content {
-        height: calc(100vh - 98px);
-      }
-
       .right {
         display: flex;
         flex-direction: column;
@@ -431,21 +386,6 @@ const onClick = async (item: { title: string; svg: string }) => {
 
         & > :last-child {
           margin-bottom: 0;
-        }
-      }
-
-      .mac-right {
-        max-height: calc(100vh - 93px);
-      }
-    }
-
-    .mac-content-wrap {
-      height: calc(100% - 34px);
-      // height: calc(100% - 95px);
-
-      :deep {
-        .drag-upload-mac {
-          height: calc(100vh - 86px);
         }
       }
     }

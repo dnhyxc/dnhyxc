@@ -127,7 +127,7 @@ const onCheckTag = (tag: string) => {
         cursor: pointer;
 
         &:hover {
-          color: var(--active-color);
+          color: var(--hover-text-color);
         }
       }
     }
@@ -143,7 +143,7 @@ const onCheckTag = (tag: string) => {
       .ellipsisMore(1);
 
       &:hover {
-        color: var(--active-color);
+        color: var(--hover-text-color);
 
         &::before {
           position: absolute;
@@ -155,11 +155,11 @@ const onCheckTag = (tag: string) => {
           height: 50%;
           border-top-right-radius: 5px;
           border-bottom-right-radius: 5px;
-          background-color: var(--active-color);
+          background-color: var(--hover-text-color);
         }
 
         .count {
-          color: var(--active-color);
+          color: var(--hover-text-color);
         }
       }
     }

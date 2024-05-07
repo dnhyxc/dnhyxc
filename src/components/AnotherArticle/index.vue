@@ -186,7 +186,7 @@ const onJump = (name: string, type: string) => {
             .ellipsisMore(1);
 
             &:hover {
-              color: var(--active-color);
+              color: var(--hover-text-color);
             }
           }
 
