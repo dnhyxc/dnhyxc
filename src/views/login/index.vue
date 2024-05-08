@@ -68,7 +68,6 @@ const switchDom = (type: string) => {
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
-    content-visibility: auto;
   }
 
   .header {
