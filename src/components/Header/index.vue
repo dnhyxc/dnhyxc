@@ -294,7 +294,7 @@ const onScrollTo = () => {
   align-items: center;
   justify-content: space-between;
   height: 60px;
-  padding: 15px 15px 7px 0;
+  padding: 15px 0 7px 0;
   box-sizing: border-box;
   -webkit-app-region: drag;
   .clickNoSelectText();
@@ -372,35 +372,6 @@ const onScrollTo = () => {
 
         &:hover {
           color: var(--hover-text-color);
-        }
-      }
-
-      .search-inp {
-        width: 180px;
-        margin-left: 15px;
-        -webkit-app-region: no-drag;
-
-        .clear-search-icon {
-          color: var(--placeholder-color);
-          margin-bottom: 1px;
-          cursor: pointer;
-        }
-
-        :deep {
-          .el-input__wrapper {
-            height: 30px;
-            background-color: var(--input-bg-color);
-            border-radius: 30px;
-            box-shadow: 0 0 0 1px var(--search-border-color) inset;
-          }
-
-          .el-input__inner {
-            color: var(--font-color);
-
-            &::-webkit-input-placeholder {
-              color: var(--placeholder-color);
-            }
-          }
         }
       }
     }
@@ -495,7 +466,6 @@ const onScrollTo = () => {
       display: flex;
       justify-content: flex-start;
       align-items: center;
-      width: 100%;
     }
 
     .icon {
