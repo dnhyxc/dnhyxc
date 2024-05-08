@@ -165,6 +165,5 @@ defineProps<IProps>();
 
 .hide-header {
   border-top: 1px solid var(--card-border);
-  border-bottom: none;
 }
 </style>

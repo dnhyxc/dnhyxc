@@ -300,7 +300,7 @@ const onScrollTo = (height?: number) => {
             color: var(--theme-blue);
             cursor: pointer;
             -webkit-app-region: no-drag;
-            .textLg();
+            .menuLg();
           }
         }
 
@@ -444,7 +444,7 @@ const onScrollTo = (height?: number) => {
 }
 
 .mac-detail-wrap {
-  --header-height: 45px;
+  --header-height: 55px;
 
   .container {
     .header-wrap {
@@ -452,15 +452,6 @@ const onScrollTo = (height?: number) => {
       box-sizing: border-box;
       border-bottom: 1px solid var(--card-border);
       .clickNoSelectText;
-
-      .left {
-        .icon-wrap {
-          .page-icon {
-            font-size: 30px;
-            cursor: default;
-          }
-        }
-      }
     }
 
     .content-wrap {

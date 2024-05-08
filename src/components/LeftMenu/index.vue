@@ -390,7 +390,7 @@ const onQuit = () => {
 
   .mac-left-menu-wrap {
     width: v-bind("`${toggleMenu ? '220px' : '62px'}`");
-    padding: 22px 0 5px;
+    padding: 24px 0 5px;
 
     .icon-wrap {
       .page-icon {
@@ -452,7 +452,7 @@ const onQuit = () => {
 
     .mac-icon-wrap {
       align-items: flex-end;
-      padding-top: 20px;
+      padding-top: 25px;
       margin-bottom: 0;
 
       .title-name {

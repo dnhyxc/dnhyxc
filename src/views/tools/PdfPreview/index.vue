@@ -5,7 +5,7 @@
  * index.vue
 -->
 <template>
-  <div class="pdf-preview-wrap">
+  <div :class="`pdf-preview-wrap ${hideHeader && 'hide-pdf-preview-wrap'}`">
     <PreviewHeader
       title="PDF 预览"
       load-line-text="在线 PDF"
@@ -211,7 +211,7 @@ const onUploadFile = async () => {
   fileName.value = rawFile.value.name;
   const fileURL = URL.createObjectURL(rawFile.value);
   // getUniqueFileName 获取唯一文件信息
-  const {newFile} = await getUniqueFileName(rawFile.value);
+  const { newFile } = await getUniqueFileName(rawFile.value);
   const filePath = getFilePath(newFile.name);
   // 根据url及userId查找书籍信息，获取书籍 ID，便于查找当前书籍的阅读记录
   await bookStore.findBook(filePath);
@@ -257,7 +257,7 @@ const beforeUpload: UploadProps['beforeUpload'] = async (file) => {
 };
 
 // 自定义上传
-const onUpload = async ({file}: { file: File }) => {
+const onUpload = async ({ file }: { file: File }) => {
   rawFile.value = file;
   if (!bookStore.pdfInfo.iframeUrl || !tagForm.bookId) {
     onUploadFile();
@@ -323,7 +323,7 @@ const loadBookBlob = async (id: string, url: string) => {
     const fileURL = URL.createObjectURL(blob);
     getReadBookRecords(fileURL, id);
     // 保存书籍blob
-    bookStore.saveBlob({id, blob});
+    bookStore.saveBlob({ id, blob });
   } else {
     bookStore.pdfInfo.loading = false;
   }
@@ -335,7 +335,7 @@ const loadPdf = () => {
   visible.value = false;
   bookStore.pdfInfo.loading = true;
   loadType.value = 'line';
-  const {url, size, fileName: name, id} = activePdf.value;
+  const { url, size, fileName: name, id } = activePdf.value;
   tagForm.bookId = id;
   pdfSize.value = size / 1024 / 1024;
   fileName.value = name;
@@ -370,7 +370,7 @@ const getReadBookRecords = async (fileURL: string, curBookId: string) => {
   if (!tagForm.bookId || !['/tools', '/compile'].includes(location.pathname) || !fileURL) return;
   await bookStore.getReadBookRecords(tagForm.bookId);
   if (bookStore.bookRecordInfo) {
-    const {tocName, tocId, tocHref, bookId} = bookStore.bookRecordInfo;
+    const { tocName, tocId, tocHref, bookId } = bookStore.bookRecordInfo;
     tagForm.tocHref = tocHref!;
     tagForm.tocId = tocId!;
     tagForm.tocName = tocName!;
@@ -527,14 +527,10 @@ bookStore.pdfInfo.onClose = onClose;
 
     :deep {
       .async-loading {
-        border-radius: 0;
-        border-bottom-left-radius: 5px;
-        border-bottom-right-radius: 5px;
+        border-radius: 0 0 5px 5px;
 
         .loader-wrapper {
-          border-radius: 0;
-          border-bottom-left-radius: 5px;
-          border-bottom-right-radius: 5px;
+          border-radius: 0 0 5px 5px;
         }
       }
 
@@ -652,6 +648,14 @@ bookStore.pdfInfo.onClose = onClose;
       .el-dialog__body {
         padding: 20px 20px 0 20px !important;
       }
+    }
+  }
+}
+
+.hide-pdf-preview-wrap {
+  .content {
+    .preview-wrap {
+      padding: 1px;
     }
   }
 }

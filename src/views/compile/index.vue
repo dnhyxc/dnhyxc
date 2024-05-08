@@ -234,7 +234,7 @@ const onClick = async (item: { title: string; svg: string }) => {
             margin-right: 20px;
             color: var(--theme-blue);
             -webkit-app-region: no-drag;
-            .textLg();
+            .menuLg();
           }
         }
 

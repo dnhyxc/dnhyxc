@@ -239,7 +239,7 @@ const toTag = (tag: string) => {
 
 .textStyle {
   mix-blend-mode: difference; /* 使用差值混合模式 */
-  text-shadow: @text-shadow; /* 水平偏移、垂直偏移、模糊半径和阴影颜色 */
+  text-shadow: @text-shadow;
   .ellipsis();
   color: var(--el-color-primary);
   cursor: pointer;

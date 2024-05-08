@@ -33,6 +33,14 @@ export const useCommonStore = defineStore('common', {
   }),
 
   actions: {
+    setKeyword(keyword: string) {
+      this.keyword = keyword;
+    },
+
+    clearKeyword() {
+      this.keyword = '';
+    },
+
     // 设置登录返回的路径
     setBackPath(path: string) {
       this.backPath = path;

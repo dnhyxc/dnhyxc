@@ -119,7 +119,7 @@ const beforeUpload: UploadProps['beforeUpload'] = async (file) => {
   return true;
 };
 
-const onUpload = async ({file}: { file: File }) => {
+const onUpload = async ({ file }: { file: File }) => {
   // 每次上传重置currentWordId
   currentWordId.value = '';
   saveStatus.value = false;
@@ -199,7 +199,7 @@ const loadWordBlob = async (id: string, url: string) => {
   if (blob) {
     renderWord(blob);
     // 保存书籍blob
-    bookStore.saveBlob({id, blob});
+    bookStore.saveBlob({ id, blob });
   } else {
     loading.value = false;
   }
@@ -335,6 +335,8 @@ const onClose = () => {
 .hide-translate-wrap {
   .wrap {
     .content {
+      padding: 1px;
+
       :deep {
         .docx-wrapper {
           height: calc(100vh - 110px);

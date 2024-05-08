@@ -615,8 +615,10 @@ const onScrollTo = () => {
   padding: 0 2px 0 0;
   margin-left: -5px;
 
+  --mt: 10px;
+
   .left {
-    margin-top: 8px;
+    margin-top: var(--mt);
 
     .icon-wrap {
       top: 30px;
@@ -629,7 +631,7 @@ const onScrollTo = () => {
   }
 
   .right {
-    margin-top: 8px;
+    margin-top: var(--mt);
   }
 }
 

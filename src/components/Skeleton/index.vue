@@ -76,7 +76,7 @@ const isCompile = computed(() => {
     display: flex;
     justify-content: space-between;
     padding: 0 27px 0 10px;
-    height: 60px;
+    height: 65px;
     box-sizing: border-box;
     -webkit-app-region: drag;
     cursor: pointer;
@@ -239,7 +239,6 @@ const isCompile = computed(() => {
       box-sizing: border-box;
       width: 75%;
       height: calc(100vh - var(--article-header-height));
-      //height: calc(100vh - 75px);
       border-radius: 5px;
       box-shadow: 0 0 5px 0 var(--card-shadow);
       .bgMoveColor(135deg);
@@ -255,7 +254,6 @@ const isCompile = computed(() => {
       box-sizing: border-box;
       border-radius: 5px;
       max-height: calc(100vh - var(--article-header-height));
-      //max-height: calc(100vh - 75px);
 
       .action-list {
         height: 50px;
@@ -290,32 +288,11 @@ const isCompile = computed(() => {
 }
 
 .mac-skeleton-wrap {
-  --article-header-height: 36px;
-
-  .header {
-    padding: 7px 27px 0 12px;
-    margin-bottom: 8px;
-  }
+  --article-header-height: 55px;
 
   .article-header {
-    height: 40px;
-    margin-bottom: 0;
-
-    .title {
-      .page-icon {
-        display: none;
-      }
-
-      .page-name {
-        margin-top: -2px;
-        margin-left: 51px;
-        height: 18px;
-      }
-    }
-
-    .header-action {
-      display: none;
-    }
+    height: 45px;
+    margin-bottom: 10px;
   }
 
   .content-wrap {

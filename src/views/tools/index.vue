@@ -197,7 +197,7 @@ const onClickNavIcon = (item: ToolsItem) => {
 .tools-wrap {
   display: flex;
   flex-direction: column;
-  height: calc(100% - 2px);
+  height: calc(100% - 8px);
   margin-top: 2px;
   border-radius: 5px;
   overflow: hidden;

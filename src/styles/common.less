@@ -20,9 +20,9 @@
   }
 }
 
-.menuLg() {
+.menuLg(@color: var(--lg-colors)) {
   @supports (-webkit-background-clip: text) or (background-clip: text) {
-    background-image: var(--lg-colors);
+    background-image: @color;
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;

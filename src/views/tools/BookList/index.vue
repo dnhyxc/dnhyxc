@@ -30,7 +30,7 @@
                 @click="() => onRead(data)"
               >
                 <div class="cover">
-                  <Image :url="data?.coverImg" :transition-img="COVER" class="img" />
+                  <Image :url="data?.coverImg || COVER" :transition-img="COVER" class="img" />
                 </div>
                 <div class="book-info">
                   <div class="title">

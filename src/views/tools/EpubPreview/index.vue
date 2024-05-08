@@ -213,7 +213,7 @@ let timer: ReturnType<typeof setTimeout> | null = null;
 // 用于存储上一个 ReadableStreamDefaultReader 对象
 let previousReader: any = null;
 
-const {scrollChildRef, scrollChildTop} = useChildScroller();
+const { scrollChildRef, scrollChildTop } = useChildScroller();
 
 defineProps<IProps>();
 
@@ -249,7 +249,7 @@ onUnmounted(() => {
 });
 
 onBeforeRouteLeave(async (to, from, next) => {
-  const {bookId, tocId, tocName, tocHref} = currentTocInfo;
+  const { bookId, tocId, tocName, tocHref } = currentTocInfo;
   // 是否是加载线上的资源
   const isLoadLine = progress.value < 100 && loadType.value === 'line' && !isSaved.value;
   // 页面离开时时，保存上一次阅读书籍的位置
@@ -313,7 +313,7 @@ const resetRendition = () => {
 
 // 保存读书记录
 const createRecord = (top?: boolean) => {
-  const {bookId, tocId, tocName, tocHref} = currentTocInfo;
+  const { bookId, tocId, tocName, tocHref } = currentTocInfo;
   // 是否是加载线上的资源
   const isLoadLine = progress.value < 100 && loadType.value === 'line' && !isSaved.value;
   if (!bookId || !tocId || !tocName || !tocHref || isLoadLine) return;
@@ -346,7 +346,7 @@ const beforeUpload: UploadProps['beforeUpload'] = (rawFile) => {
 };
 
 // 自定义上传
-const onUpload = ({file}: { file: File }) => {
+const onUpload = ({ file }: { file: File }) => {
   bookFile.value = file;
   // 选择其它书籍时，保存上一次阅读书籍的位置
   createRecord(true);
@@ -357,7 +357,7 @@ const onUpload = ({file}: { file: File }) => {
   reader.onload = async (e: Event) => {
     const buffer = (e.target as FileReader).result as ArrayBuffer;
     // getUniqueFileName 获取唯一文件信息
-    const {newFile} = await getUniqueFileName(file);
+    const { newFile } = await getUniqueFileName(file);
     const filePath = getFilePath(newFile.name);
     // 根据url及userId查找书籍信息，获取书籍 ID，便于查找当前书籍的阅读记录
     await bookStore.findBook(filePath);
@@ -428,7 +428,7 @@ const getReadBookRecords = async () => {
   if (!currentTocInfo.bookId) return;
   await bookStore.getReadBookRecords(currentTocInfo.bookId);
   if (bookStore.bookRecordInfo) {
-    const {tocName, tocId, tocHref, position, bookId} = bookStore.bookRecordInfo;
+    const { tocName, tocId, tocHref, position, bookId } = bookStore.bookRecordInfo;
     currentTocInfo.tocHref = tocHref!;
     currentTocInfo.tocId = tocId!;
     currentTocInfo.tocName = tocName!;
@@ -502,7 +502,7 @@ const readBook = async (data: AtlasItemParams) => {
   // 选择其它书籍时，保存上一次阅读书籍的位置
   createRecord(true);
   resetRendition();
-  const {url, size, fileName, id} = data;
+  const { url, size, fileName, id } = data;
   currentTocInfo.bookId = id;
   bookSize.value = size / 1024 / 1024;
   loadType.value = 'line';
@@ -540,7 +540,7 @@ const setLineHeight = (height: string) => {
 
 // 设置主题
 const onThemeChange = (body: { background: string; color: string }) => {
-  const {background, color} = body;
+  const { background, color } = body;
   themeColor.value = background;
   fontColor.value = color;
   rendition?.themes.override('color', color);
@@ -582,7 +582,7 @@ const onNext = () => {
 
 // 选择菜单
 const onSelected = (node: BookTocItem) => {
-  const {id, href, label} = node;
+  const { id, href, label } = node;
   setActiveToc(id);
   currentTocInfo.tocHref = href;
   currentTocInfo.tocId = id;
@@ -727,7 +727,6 @@ defineExpose({
         flex: 1;
         box-sizing: border-box;
         border-right: 1px solid var(--card-border);
-        box-sizing: border-box;
         height: calc(100vh - 172px);
 
         #preview {
@@ -884,6 +883,8 @@ defineExpose({
 .hide-epub-wrap {
   .loading {
     .content {
+      padding: 1px;
+
       .preview-wrap,
       .toc-list-wrap {
         height: calc(100vh - 145px);
