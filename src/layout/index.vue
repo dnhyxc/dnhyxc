@@ -69,6 +69,7 @@ provide('reload', reload);
   background-repeat: var(--bg-repeat);
   background-size: var(--bg-img-size);
   animation: var(--bg-animation);
+  content-visibility: auto;
   .bgKeyframes(bgmove);
 
   .el-container-wrap {
