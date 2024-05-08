@@ -40,11 +40,11 @@ const onScroll = () => {
 
   .to-icon {
     font-size: 30px;
-    color: var(--active-color);
+    color: var(--hover-text-color);
     .textLg();
 
     &:hover {
-      color: var(--active-color);
+      color: var(--hover-text-color);
     }
   }
 }

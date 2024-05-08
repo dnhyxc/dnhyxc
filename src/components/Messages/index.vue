@@ -206,7 +206,7 @@ defineExpose({
 
       .del {
         &:hover {
-          color: var(--active-color);
+          color: var(--hover-text-color);
         }
       }
     }
@@ -249,7 +249,7 @@ defineExpose({
               cursor: pointer;
 
               &:hover {
-                color: var(--active-color);
+                color: var(--hover-text-color);
               }
             }
           }

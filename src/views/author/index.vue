@@ -391,7 +391,7 @@ const onScrollTo = (to?: number) => {
           }
 
           &:hover {
-            color: var(--active-color);
+            color: var(--hover-text-color);
           }
         }
 

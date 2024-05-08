@@ -14,7 +14,7 @@
         <div v-for="i in ['markTop', 'markRight', 'markBottom', 'markLeft']" :key="i" :class="`${i} mark`">
           <div class="action">
             <span v-if="loginStore?.userInfo?.userId === data.authorId" @click.stop="toEdit(data)">编辑</span>
-            <span v-if="loginStore?.userInfo?.userId === data.authorId" @click.stop="onReomve(data)">删除</span>
+            <span v-if="loginStore?.userInfo?.userId === data.authorId" id="__DELETE__" @click.stop="onRemove(data)">删除</span>
           </div>
           <div>
             <div class="desc" :title="data.abstract" v-html="data.abstract" />
@@ -163,7 +163,7 @@ const toEdit = async (data: ArticleItem) => {
 };
 
 // 下架
-const onReomve = async (data: ArticleItem) => {
+const onRemove = async (data: ArticleItem) => {
   if (data?.isDelete) {
     message({
       title: '文章已下架，无法操作',

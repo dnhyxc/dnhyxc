@@ -11,7 +11,7 @@
         <el-input ref="searchInp" v-model="searchForm.keyword" placeholder="搜索文章" />
       </el-form-item>
     </el-form>
-    <Icon class-name="icon-shibai clear" background="" @click="onClear" />
+    <i class="iconfont icon-shibai clear" background="" @click="onClear" />
     <el-button type="primary" class="search-btn" @click="toSearch">高级搜索</el-button>
   </div>
 </template>
@@ -21,7 +21,6 @@ import { nextTick, onMounted, onUnmounted, reactive, ref, watchEffect } from 'vu
 import { useRouter } from 'vue-router';
 import { commonStore } from '@/store';
 import { message } from '@/utils';
-import Icon from './Icon.vue';
 
 const router = useRouter();
 
@@ -60,8 +59,11 @@ watchEffect(() => {
 
 const onClick = (e: Event) => {
   const isClickSearchInp = (e.target as HTMLDivElement).closest('#__SEARCH_CONTAINER__');
-  if (!isClickSearchInp) {
+  const isClickDelete = (e.target as HTMLDivElement).closest('#__DELETE__');
+  const hasMsgClass = document.getElementsByClassName('MSG_CONFIG');
+  if (!isClickSearchInp && !isClickDelete && !hasMsgClass.length) {
     emit('update:showSearch', false);
+    commonStore.showSearch = false;
     commonStore.clearKeyword();
   }
 };
@@ -69,6 +71,7 @@ const onClick = (e: Event) => {
 const toSearch = () => {
   commonStore.setKeyword(searchForm.keyword);
   emit('update:showSearch', false);
+  commonStore.showSearch = false;
   router.push('/search');
 };
 
@@ -102,10 +105,11 @@ const onSubmit = () => {
 
   .clear {
     position: absolute;
-    right: 70px;
+    right: 80px;
     top: 50%;
     transform: translateY(-50%);
     color: var(--search-border-color);
+    cursor: pointer;
     display: v-bind('searchForm.keyword ? "inline" : "none"');
 
     &:hover {

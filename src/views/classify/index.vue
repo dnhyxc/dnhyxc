@@ -68,12 +68,12 @@ const reload = inject<Function>('reload');
 const route = useRoute();
 const router = useRouter();
 
-const {scrollRef, scrollTop} = useScroller();
-const {deleteArticle} = useDeleteArticle({pageType: 'classify', classify: route.query?.classify as string, router});
+const { scrollRef, scrollTop } = useScroller();
+const { deleteArticle } = useDeleteArticle({ pageType: 'classify', classify: route.query?.classify as string, router });
 
 const isMounted = ref<boolean>(false);
 const noMore = computed(() => {
-  const {articleList, total} = classifyStore;
+  const { articleList, total } = classifyStore;
   return articleList.length >= total && articleList.length;
 });
 const disabled = computed(() => classifyStore.loading || noMore.value);
@@ -83,10 +83,12 @@ const dotRef = ref<any>(null);
 const scrollLeft = ref<string>('');
 const reelGradient = ref<string>('');
 
+let timer: ReturnType<typeof setTimeout> | null = null;
+
 onMounted(async () => {
   // 监听详情点赞状态，实时更改列表对应文章的点赞状态
   ipcRenderer.on('refresh', (_, params: WinRefreshParams) => {
-    const {pageType, isLike = true} = params;
+    const { pageType, isLike = true } = params;
     // 需要判断是否是属于当前活动页面，并且只是点击点赞而不是收藏或评论防止重复触发
     if (route.name === 'classify' && pageType !== 'list' && isLike) {
       reload && reload();
@@ -96,7 +98,7 @@ onMounted(async () => {
   isMounted.value = true;
   // 获取分类信息
   await classifyStore.getClassifys();
-  onFetchData();
+  await onFetchData();
 });
 
 onUnmounted(() => {
@@ -105,6 +107,8 @@ onUnmounted(() => {
   commonStore.keyword = '';
   classifyStore.currentClassify = '';
   classifyStore.classifys = [];
+  timer && clearTimeout(timer);
+  timer = null;
 });
 
 // 计算lineRef的左边偏移量
@@ -122,17 +126,6 @@ watch(
 // 监听页面搜索关键词，请求列表数据
 watch(
   () => commonStore.keyword,
-  (newVal, oldVal) => {
-    if (newVal !== oldVal) {
-      classifyStore.clearArticleList();
-      onFetchData();
-    }
-  },
-);
-
-// 监听页面搜索关键词，请求列表数据
-watch(
-  () => classifyStore.currentClassify,
   (newVal, oldVal) => {
     if (newVal !== oldVal) {
       classifyStore.clearArticleList();
@@ -162,11 +155,24 @@ const onScrollTo = () => {
 // 点击卡片事件
 const onCheckClassify = (name: string) => {
   classifyStore.currentClassify = name;
+  if (!commonStore.keyword) {
+    if (timer) {
+      clearTimeout(timer);
+      timer = null;
+    }
+    timer = setTimeout(() => {
+      classifyStore.clearArticleList();
+      onFetchData();
+    }, 50);
+  } else {
+    classifyStore.clearArticleList();
+    onFetchData();
+  }
 };
 
 // 文章点赞
 const likeListArticle = (id: string, data?: ArticleItem) => {
-  articleStore.likeListArticle({id, pageType: 'classify', data});
+  articleStore.likeListArticle({ id, pageType: 'classify', data });
 };
 </script>
 

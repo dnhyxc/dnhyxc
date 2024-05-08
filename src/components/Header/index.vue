@@ -20,21 +20,16 @@
     </div>
     <div class="right">
       <div class="search-wrap">
-        <el-popover
+        <Search v-if="commonStore.showSearch" v-model:showSearch="showSearch" margin="0 12px 0 0" />
+        <el-tooltip
           v-if="!commonStore.showSearch && NEED_HEAD_SEARCH.includes(route.path)"
+          effect="light"
+          content="文章搜索"
           placement="bottom"
-          popper-class="header-search-popover"
-          :show-arrow="false"
-          trigger="hover"
+          popper-class="custom-dropdown-styles"
         >
-          <template #reference>
-            <i id="__SEARCH_ICON__" class="font iconfont icon-sousuo2 search-icon" @click="onClickSearch" />
-          </template>
-          <div class="search-list">
-            <div id="__SEARCH_ITEM1__" class="search-item" @click="onCheckSearchType(1)">普通搜索</div>
-            <div id="__SEARCH_ITEM2__" class="search-item" @click="onCheckSearchType(2)">高级搜索</div>
-          </div>
-        </el-popover>
+          <i id="__SEARCH_ICON__" class="font iconfont icon-sousuo2 search-icon" @click="onClickSearch" />
+        </el-tooltip>
         <el-tooltip
           v-if="!commonStore.showSearch && !NEED_HEAD_SEARCH.includes(route.path) && route.path !== '/search'"
           effect="light"
@@ -44,27 +39,6 @@
         >
           <i class="font iconfont icon-sousuo2 senior-search" @click="onClickSearch" />
         </el-tooltip>
-        <el-tooltip
-          v-if="commonStore.showSearch"
-          effect="light"
-          content="高级搜索"
-          placement="bottom"
-          popper-class="custom-dropdown-styles"
-        >
-          <i class="iconfont icon-qiehuan" @click="onCheckSearchType(2)" />
-        </el-tooltip>
-        <el-input
-          v-if="commonStore.showSearch"
-          ref="searchRef"
-          v-model.trim="search"
-          class="search-inp"
-          placeholder="请输入搜索内容"
-          @keyup.enter="onEnter"
-        >
-          <template #suffix>
-            <i class="iconfont icon-shibai clear-search-icon" @click="onEnter" />
-          </template>
-        </el-input>
       </div>
       <el-popover
         v-if="loginStore.userInfo?.userId"
@@ -152,7 +126,7 @@
 
 <script setup lang="ts">
 import Store from 'electron-store';
-import { ref, watchEffect, nextTick, onUnmounted, onMounted, watch } from 'vue';
+import { ref, watchEffect, nextTick, onUnmounted, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { ipcRenderer } from 'electron';
 import { ACTION_SVGS, CLOSE_CONFIG, CLOSE_PROMPT, NEED_HEAD_SEARCH } from '@/constant';
@@ -166,7 +140,6 @@ const store = new Store();
 
 const toggle = ref<boolean>(false);
 const showSearch = ref<boolean>(false);
-const search = ref<string>('');
 const searchRef = ref<HTMLInputElement | null>(null);
 const stickyStatus = ref<boolean>(false);
 const closeVisible = ref<boolean>(false);
@@ -189,18 +162,18 @@ onMounted(() => {
   ipcRenderer.on('mainWin-max', (_, status) => {
     toggle.value = status;
   });
-  window.addEventListener('click', onClickPage, true);
+  // window.addEventListener('click', onClickPage, true);
 });
 
-const onClickPage = (e: Event) => {
-  const ICON_IDS = ['__SEARCH_ICON__', '__SEARCH_ITEM1__', '__SEARCH_ITEM2__'];
-  const clickedElement = e.target as HTMLElement;
-  // 判断点击的元素是否为 search-wrap 或者其后代元素
-  const isSearchWrap = clickedElement.classList.contains('search-inp') || clickedElement.closest('.search-inp');
-  if (!isSearchWrap && !ICON_IDS.includes(clickedElement.id)) {
-    commonStore.showSearch = false;
-  }
-};
+// const onClickPage = (e: Event) => {
+//   const ICON_IDS = ['__SEARCH_ICON__', '__SEARCH_ITEM1__', '__SEARCH_ITEM2__'];
+//   const clickedElement = e.target as HTMLElement;
+//   // 判断点击的元素是否为 search-wrap 或者其后代元素
+//   const isSearchWrap = clickedElement.classList.contains('search-inp') || clickedElement.closest('.search-inp');
+//   if (!isSearchWrap && !ICON_IDS.includes(clickedElement.id)) {
+//     commonStore.showSearch = false;
+//   }
+// };
 
 // 清除副作用
 onUnmounted(() => {
@@ -208,18 +181,18 @@ onUnmounted(() => {
     clearTimeout(timerRef.value);
   }
   messageStore.visible = false;
-  window.removeEventListener('click', onClickPage, true);
+  // window.removeEventListener('click', onClickPage, true);
 });
 
 // 监听页面搜索关键词，如果articleStore.keyword为空，则清除输入框内容
-watch(
-  () => commonStore.keyword,
-  (newVal) => {
-    if (!newVal) {
-      search.value = '';
-    }
-  },
-);
+// watch(
+//   () => commonStore.keyword,
+//   (newVal) => {
+//     if (!newVal) {
+//       search.value = '';
+//     }
+//   },
+// );
 
 // 后退
 const goBack = () => {
@@ -298,27 +271,6 @@ const onClickSearch = () => {
     });
   } else {
     router.push('/search');
-  }
-};
-
-// 选择搜索类型
-const onCheckSearchType = (value: number) => {
-  if (value === 1 && NEED_HEAD_SEARCH.includes(route.path)) {
-    showSearch.value = true;
-    commonStore.showSearch = true;
-    nextTick(() => {
-      searchRef.value?.focus();
-    });
-  } else {
-    router.push('/search');
-  }
-};
-
-// 输入框回车
-const onEnter = async (e: Event) => {
-  const value = (e.target as HTMLInputElement).value;
-  if (commonStore.keyword !== value) {
-    commonStore.keyword = value;
   }
 };
 

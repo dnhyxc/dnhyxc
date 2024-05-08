@@ -186,11 +186,11 @@ const onCollect = () => {
     }
 
     &:hover {
-      color: var(--active-color);
+      color: var(--hover-text-color);
 
       .is-like,
       .active-collect {
-        color: var(--active-color);
+        color: var(--hover-text-color);
       }
     }
 

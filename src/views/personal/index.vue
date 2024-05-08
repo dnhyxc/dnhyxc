@@ -521,7 +521,7 @@ const onScrollTo = (to?: number) => {
             border-radius: 50px;
 
             &:hover {
-              color: var(--active-color);
+              color: var(--hover-text-color);
             }
           }
 

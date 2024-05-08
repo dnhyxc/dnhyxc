@@ -156,7 +156,7 @@ const onScrollTo = () => {
           font-weight: normal;
 
           &:hover {
-            color: var(--active-color);
+            color: var(--hover-text-color);
           }
         }
       }
