@@ -581,15 +581,15 @@ export const replacePictures = (content: string) => {
 
 export const wordToLink = (content: string) => {
   if (checkHref(content)) {
-    return `<a style="color: #2b7de7; cursor: pointer;">${ content }</a>`;
+    return `<a style="color: #2b7de7; cursor: pointer; word-break: break-all;">${ content }</a>`;
   }
   return content;
 };
 
-// 校验是否是正常的链接
+// 校验是否是有效的链接
 export const checkHref = (url: string) => {
   const Expression =
-    /(https?:\/\/)?(([0-9a-z.]+\.[a-z]+)|(([0-9]{1,3}\.){3}[0-9]{1,3}))(:[0-9]+)?(\/[0-9a-z%/.\-_]*)?(\?[0-9a-z=&%_-]*)?(#[0-9a-z=&%_-]*)?/gi;
+    /^(https?:\/\/)?(([0-9a-z.]+\.[a-z]+)|(([0-9]{1,3}\.){3}[0-9]{1,3}))(:[0-9]+)?(\/[0-9a-z%/.\-_]*)?(\?[0-9a-z=&%_-]*)?(#[0-9a-z=&%_-]*)?/gi;
   const objExp = new RegExp(Expression);
   return objExp.test(url);
 };
@@ -864,6 +864,23 @@ export const onDownloadFile = async ({ url, type = 'png', fileName = 'file.png' 
  * @param {markOffsetTop} 多行水印垂直位置调整值
  * @return {canvas} HTMLCanvasElement
  */
+interface Params {
+  imgUrl: string;
+  top: number;
+  left: number;
+  width: number;
+  height: number;
+  size: number;
+  color: string;
+  text: string;
+  markTextWidth: number;
+  markTextHeight: number;
+  spacing?: number;
+  markType?: string;
+  type?: string;
+  markOffsetTop?: number;
+}
+
 export const convas2ImgAddWatermark = async (
   {
     imgUrl,
@@ -880,22 +897,7 @@ export const convas2ImgAddWatermark = async (
     spacing = 100,
     markType = 'line',
     markOffsetTop,
-  }: {
-    imgUrl: string;
-    top: number;
-    left: number;
-    width: number;
-    height: number;
-    size: number;
-    color: string;
-    text: string;
-    markTextWidth: number;
-    markTextHeight: number;
-    spacing?: number;
-    markType?: string;
-    type?: string;
-    markOffsetTop?: number;
-  }) => {
+  }: Params) => {
   // 1.图片路径转成canvas
   const tempCanvas = await imgToCanvas(imgUrl);
   // 2.canvas添加水印

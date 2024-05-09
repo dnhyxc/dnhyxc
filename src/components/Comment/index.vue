@@ -9,8 +9,8 @@
     <ImagePreview v-model:previewVisible="previewVisible" :select-image="{ url: filePath }" close-on-click-modal />
     <div class="draftInputWrap">
       <DraftInput
-:get-comment-list="getCommentList" :focus="focus" :article-id="id" :on-hide-input="onHideInput"
-                  :on-scroll-to="onScrollTo" />
+        :get-comment-list="getCommentList" :focus="focus" :article-id="id" :on-hide-input="onHideInput"
+        :on-scroll-to="onScrollTo" />
     </div>
     <div v-if="articleStore?.commentList?.length > 0" class="title">
       全部评论
@@ -201,12 +201,13 @@
 </template>
 
 <script setup lang="ts">
+import { shell } from "electron";
 import { onMounted, ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { CommentParams } from '@/typings/common';
 import { HEAD_IMG } from '@/constant';
 import { loginStore, articleStore, followStore } from '@/store';
-import { formatGapTime, getStoreUserInfo, message, replaceCommentContent } from '@/utils';
+import { checkHref, formatGapTime, getStoreUserInfo, message, replaceCommentContent } from '@/utils';
 import Image from '@/components/Image/index.vue';
 import DraftInput from '@/components/DraftInput/index.vue';
 import UserPopContent from '@/components/UserPopContent/index.vue';
@@ -296,7 +297,7 @@ const onGiveLike = (comment: CommentParams, isThreeTier?: boolean) => {
 
 // 删除评论
 const onDeleteComment = (comment: CommentParams, isThreeTier?: boolean) => {
-  articleStore?.deleteComment({comment, articleId: props?.id, isThreeTier, getCommentList});
+  articleStore?.deleteComment({ comment, articleId: props?.id, isThreeTier, getCommentList });
 };
 
 // 隐藏回复输入框
@@ -320,6 +321,12 @@ const onViewMoreReply = (commentId: string) => {
 
 const onPreviewImage = (e: Event) => {
   const target = e.target as HTMLImageElement;
+
+  if (target?.innerText && checkHref(target.innerText)) {
+    shell.openExternal(target.innerText);
+    return;
+  }
+
   if (target.id === '__COMMENT_IMG__') {
     previewVisible.value = true;
     filePath.value = target.src;
