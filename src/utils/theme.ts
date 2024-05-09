@@ -619,7 +619,7 @@ const themeTypes = {
     '--card-btn-mark': 'rgba(0, 0, 0, 0.5)',
     // 主题色
     ...themeColors,
-    '--lg-colors': 'linear-gradient(-45deg, #3d8a98 0%, #66d1f5 100%)',
+    '--lg-colors': 'linear-gradient(-45deg, #45909f 0%, #9ce6ff 100%)',
   },
   ShaoSiming: {
     ...imageStyles,

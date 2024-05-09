@@ -47,7 +47,7 @@ export const createWindow = () => {
   if (!isDev) {
     globalInfo.win?.loadURL(DOMAIN_URL);
   } else {
-    // globalInfo.win?.webContents.openDevTools();
+    globalInfo.win?.webContents.openDevTools();
     globalInfo.win?.loadURL(process.env.VITE_DEV_SERVER_URL!);
   }
 
