@@ -361,7 +361,7 @@ const onScrollTo = () => {
 
 .mac-search-wrap {
   .search-inp-wrap {
-    top: 20px;
+    top: 14px;
   }
 
   .search-tag-list {

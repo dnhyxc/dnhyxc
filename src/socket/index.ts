@@ -35,7 +35,8 @@ export function createWebSocket() {
 
   if (!userInfo?.userId) return;
 
-  const wsUrl = `ws://${location.hostname === DOMAIN_URL ? DOMAIN_URL : '127.0.0.1'}:9002/ws?id=${userInfo?.userId}`;
+  // mac 本地需要使用 localhost，使用 127.0.0.1 会导致 ws 无法连接
+  const wsUrl = `ws://${location.hostname === DOMAIN_URL ? DOMAIN_URL : 'localhost'}:9002/ws?id=${userInfo?.userId}`;
 
   try {
     // 创建前先关闭创建好的ws

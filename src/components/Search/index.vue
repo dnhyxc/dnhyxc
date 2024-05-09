@@ -58,10 +58,26 @@ watchEffect(() => {
 });
 
 const onClick = (e: Event) => {
-  const isClickSearchInp = (e.target as HTMLDivElement).closest('#__SEARCH_CONTAINER__');
-  const isClickDelete = (e.target as HTMLDivElement).closest('#__DELETE__');
+  const target = e.target as HTMLDivElement;
+  const isClickSearchInp = target.closest('#__SEARCH_CONTAINER__');
+  const isClickDelete = target.closest('#__DELETE__');
+  const isNewType = target.closest('#NEW_TYPE');
+  const isHotType = target.closest('#HOT_TYPE');
+  const isClassifyType = target.id.startsWith("CLASSIFY_TYPE_");
+  const isTagType = target.id.startsWith("TAG_TYPE_") || (target.parentNode as HTMLDivElement)?.id?.startsWith("TAG_TYPE_");
+  const isActiveTagType = target.id.startsWith("ACTIVE_TAG") || (target.parentNode as HTMLDivElement)?.id?.startsWith("ACTIVE_TAG");
   const hasMsgClass = document.getElementsByClassName('MSG_CONFIG');
-  if (!isClickSearchInp && !isClickDelete && !hasMsgClass.length) {
+
+  if (
+    !isClickSearchInp &&
+    !isClickDelete &&
+    !hasMsgClass.length &&
+    !isClassifyType &&
+    !isTagType &&
+    !isActiveTagType &&
+    !isNewType &&
+    !isHotType
+  ) {
     emit('update:showSearch', false);
     commonStore.showSearch = false;
     commonStore.clearKeyword();

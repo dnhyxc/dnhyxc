@@ -14,11 +14,11 @@
     </div>
     <div class="article-type">
       <div class="search-btns">
-        <div type="primary" :class="`${searchType === 1 && 'active'} type-btn`" @click="searchNewArticles">
+        <div id="NEW_TYPE" :class="`${searchType === 1 && 'active'} type-btn`" @click="searchNewArticles">
           推荐文章
           <span v-if="searchType === 1">({{ articleStore.total }} 篇)</span>
         </div>
-        <div type="primary" :class="`${searchType === 2 && 'active'} type-btn`" @click="searchHotArticles">
+        <div id="HOT_TYPE" :class="`${searchType === 2 && 'active'} type-btn`" @click="searchHotArticles">
           最热文章
           <span v-if="searchType === 2">({{ articleStore.total }} 篇)</span>
         </div>

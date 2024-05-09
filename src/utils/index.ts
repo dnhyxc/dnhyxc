@@ -244,13 +244,13 @@ export const scrollTo = (ref: any, position: number, time = 20) => {
 
 // 处理键盘快捷键输入
 export const setShortcutKey = (e: KeyboardEvent, addHotkey: Function) => {
-  const {altKey, ctrlKey, shiftKey, key, code} = e;
+  const { altKey, ctrlKey, shiftKey, key, code } = e;
   if (!CODE_CONTROL.includes(key)) {
     let controlKey = '';
     [
-      {key: shiftKey, text: 'Shift'},
-      {key: ctrlKey, text: 'Ctrl'},
-      {key: altKey, text: 'Alt'},
+      { key: shiftKey, text: 'Shift' },
+      { key: ctrlKey, text: 'Ctrl' },
+      { key: altKey, text: 'Alt' },
     ].forEach((curKey) => {
       if (curKey.key) {
         if (controlKey) controlKey += ' + ';
@@ -264,7 +264,7 @@ export const setShortcutKey = (e: KeyboardEvent, addHotkey: Function) => {
 
     addHotkey({
       text: controlKey,
-      controlKey: {altKey, ctrlKey, shiftKey, key, code},
+      controlKey: { altKey, ctrlKey, shiftKey, key, code },
     });
   }
 };
@@ -575,23 +575,40 @@ export const replacePictures = (content: string) => {
       return word;
     }
   });
+  return wordToLink(content);
+  // return content;
+};
+
+export const wordToLink = (content: string) => {
+  if (checkHref(content)) {
+    return `<a style="color: #2b7de7; cursor: pointer;">${ content }</a>`;
+  }
   return content;
 };
 
+// 校验是否是正常的链接
+export const checkHref = (url: string) => {
+  const Expression =
+    /(https?:\/\/)?(([0-9a-z.]+\.[a-z]+)|(([0-9]{1,3}\.){3}[0-9]{1,3}))(:[0-9]+)?(\/[0-9a-z%/.\-_]*)?(\?[0-9a-z=&%_-]*)?(#[0-9a-z=&%_-]*)?/gi;
+  const objExp = new RegExp(Expression);
+  return objExp.test(url);
+};
+
 // 向光标所在位置插入内容
-export const insertContent = ({
-  keyword,
-  node,
-  username,
-  url,
-  emoji,
-}: {
-  keyword: string; // textarea输入内容
-  node?: HTMLTextAreaElement; // textarea输入框元素
-  username?: string; // 用户名称
-  url?: string; // 图片地址
-  emoji?: string; // 表情内容
-}) => {
+export const insertContent = (
+  {
+    keyword,
+    node,
+    username,
+    url,
+    emoji,
+  }: {
+    keyword: string; // textarea输入内容
+    node?: HTMLTextAreaElement; // textarea输入框元素
+    username?: string; // 用户名称
+    url?: string; // 图片地址
+    emoji?: string; // 表情内容
+  }) => {
   const content = emoji || `<${ username },${ url }>`;
   if (keyword.substring(0, node?.selectionStart)) {
     return `${ keyword.substring(0, node?.selectionStart) }${ content }${ keyword.substring(
@@ -613,17 +630,18 @@ export const insertContent = ({
  * @param {图片高度} height
  * @param {水印文字} watermarkText
  */
-export const addWatermark = async ({
-  url,
-  width,
-  height,
-  markText = 'dnhyxc',
-}: {
-  url: string;
-  markText: string;
-  width?: number;
-  height?: number;
-}) => {
+export const addWatermark = async (
+  {
+    url,
+    width,
+    height,
+    markText = 'dnhyxc',
+  }: {
+    url: string;
+    markText: string;
+    width?: number;
+    height?: number;
+  }) => {
   // 1. 根据图片路径获取图片数据，转成blob类型
   const fileBlob = await fetch(url)
     .then((r) => r.blob())
@@ -743,21 +761,18 @@ const randomNum = (min: number, max: number) => {
 };
 
 // canvas 绘制验证码
-export const drawCharater = ({
-  canvasElement,
-  width,
-  height,
-  code,
-}: {
-  canvasElement: HTMLCanvasElement;
-  width: number;
-  height: number;
-  code: string;
-}) => {
-  // let txt = '';
-  // for (let i = 0; i < CODE_LENGTH; i++) {
-  //   txt += CHARACTERS[randomNum(0, CHARACTERS.length)];
-  // }
+export const drawCharater = (
+  {
+    canvasElement,
+    width,
+    height,
+    code,
+  }: {
+    canvasElement: HTMLCanvasElement;
+    width: number;
+    height: number;
+    code: string;
+  }) => {
   const ctx = canvasElement?.getContext('2d') as CanvasRenderingContext2D;
   ctx.fillStyle = randomColor(180, 255);
   ctx.fillRect(0, 0, width, height);
@@ -807,7 +822,7 @@ export const debounce = (fn: Function, delay = 1000, immediate = false) => {
   };
 };
 
-export const onDownloadFile = async ({url, type = 'png', fileName = 'file.png'}: {
+export const onDownloadFile = async ({ url, type = 'png', fileName = 'file.png' }: {
   url: string;
   type?: string,
   fileName?: string
@@ -1022,21 +1037,22 @@ export const diffType = (value: string | number | string | boolean | Function | 
 };
 
 // 设置盲水印
-export const createWaterMark = ({
-  url,
-  text,
-  fontSize,
-  fontFamily,
-  spacing,
-}: {
-  url: string;
-  text: string;
-  fontSize: string;
-  fontFamily: string;
-  spacing: number; // 水印上下间距
-}): Promise<string> => {
+export const createWaterMark = (
+  {
+    url,
+    text,
+    fontSize,
+    fontFamily,
+    spacing,
+  }: {
+    url: string;
+    text: string;
+    fontSize: string;
+    fontFamily: string;
+    spacing: number; // 水印上下间距
+  }): Promise<string> => {
   const canvas = document.createElement('canvas');
-  const ctx = canvas.getContext('2d', {willReadFrequently: true})!;
+  const ctx = canvas.getContext('2d', { willReadFrequently: true })!;
   const img = new Image();
   img.crossOrigin = '';
   let textData, originalData;
@@ -1073,24 +1089,25 @@ export const createWaterMark = ({
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
       originalData = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height);
       // 调用盲水印算法
-      mergeData({ctx, textData, color: 'R', originalData});
+      mergeData({ ctx, textData, color: 'R', originalData });
       const url = canvas.toDataURL('image/png');
       resolve(url);
     };
   });
 
   // 盲水印加密算法
-  function mergeData({
-    ctx,
-    textData,
-    color,
-    originalData,
-  }: {
-    ctx: CanvasRenderingContext2D;
-    textData: any;
-    color: string;
-    originalData: any;
-  }) {
+  function mergeData(
+    {
+      ctx,
+      textData,
+      color,
+      originalData,
+    }: {
+      ctx: CanvasRenderingContext2D;
+      textData: any;
+      color: string;
+      originalData: any;
+    }) {
     const oData = originalData.data;
     const newData = textData.data;
     // offset的作用是找到结合bit找到对应的A值，即透明度
@@ -1137,7 +1154,7 @@ export const createWaterMark = ({
 // 解密盲水印
 export const processWaterMark = (url: string): Promise<string> => {
   const canvas = document.createElement('canvas');
-  const ctx = canvas.getContext('2d', {willReadFrequently: true})!;
+  const ctx = canvas.getContext('2d', { willReadFrequently: true })!;
   const img = new Image();
   let originalData = null;
   img.src = url;
@@ -1185,7 +1202,7 @@ export const processWaterMark = (url: string): Promise<string> => {
 // 在线图片转为File
 export const onlineImgToFile = async (url: string): Promise<File> => {
   const blob = await fetch(url).then((response) => response.blob());
-  const file = new File([blob], 'image.jpg', {type: 'image/jpeg'});
+  const file = new File([blob], 'image.jpg', { type: 'image/jpeg' });
   return file;
 };
 
@@ -1226,19 +1243,20 @@ export const checkWithLink = (content: string, check?: boolean) => {
 };
 
 // 计算资源加载的进度
-export const calculateLoadProgress = ({
-  url,
-  getProgress,
-  needFileType = 'arrayBuffer',
-  previousReader,
-  addPreviousReader,
-}: {
-  url: string;
-  getProgress: (progress: number) => void;
-  previousReader: any;
-  addPreviousReader: (previousReader: any) => void;
-  needFileType?: string;
-}): Promise<ArrayBuffer | any> => {
+export const calculateLoadProgress = (
+  {
+    url,
+    getProgress,
+    needFileType = 'arrayBuffer',
+    previousReader,
+    addPreviousReader,
+  }: {
+    url: string;
+    getProgress: (progress: number) => void;
+    previousReader: any;
+    addPreviousReader: (previousReader: any) => void;
+    needFileType?: string;
+  }): Promise<ArrayBuffer | any> => {
   let contentLength = '';
   let totalBytes = 0;
   return fetch(url)
@@ -1259,7 +1277,7 @@ export const calculateLoadProgress = ({
       addPreviousReader && addPreviousReader(reader);
       const chunks = [] as Uint8Array[];
       const readChunk = (): any => {
-        return reader!.read().then(({done, value}) => {
+        return reader!.read().then(({ done, value }) => {
           if (done) {
             return chunks;
           }
@@ -1274,7 +1292,7 @@ export const calculateLoadProgress = ({
     })
     .then((_chunks) => {
       if (needFileType === 'blob') {
-        const blob = new Blob(_chunks, {type: 'application/pdf'});
+        const blob = new Blob(_chunks, { type: 'application/pdf' });
         if (blob?.size < totalBytes) {
           return new Promise((resolve) => {
             resolve(null);
@@ -1326,4 +1344,15 @@ export const getGradient = (gradient?: number[][], deg: number = 192) => {
           ) 100%
         )`
     : 'linear-gradient(to bottom, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%)';
+};
+
+// 判断两个时间戳是否相差一天
+export const isDifferentDay = (timestamp1: number, timestamp2: number) => {
+  const date1 = new Date(timestamp1);
+  const date2 = new Date(timestamp2);
+  return (
+    date1.getFullYear() !== date2.getFullYear() ||
+    date1.getMonth() !== date2.getMonth() ||
+    date1.getDate() !== date2.getDate()
+  );
 };

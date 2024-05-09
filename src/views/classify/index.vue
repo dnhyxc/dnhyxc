@@ -155,19 +155,8 @@ const onScrollTo = () => {
 // 点击卡片事件
 const onCheckClassify = (name: string) => {
   classifyStore.currentClassify = name;
-  if (!commonStore.keyword) {
-    if (timer) {
-      clearTimeout(timer);
-      timer = null;
-    }
-    timer = setTimeout(() => {
-      classifyStore.clearArticleList();
-      onFetchData();
-    }, 50);
-  } else {
-    classifyStore.clearArticleList();
-    onFetchData();
-  }
+  classifyStore.clearArticleList();
+  onFetchData();
 };
 
 // 文章点赞

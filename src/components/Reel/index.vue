@@ -15,7 +15,7 @@
             :class="`${currentClassify === i.name && 'active'} card`"
             @click="onClick(i.name!)"
           >
-            <div class="content">
+            <div :id="`CLASSIFY_TYPE_${index}`" class="content">
               <span class="name">{{ i.name || '-' }}</span>
               <div class="count"><span class="text text-left">共</span>{{ i.value }}<span class="text">篇</span></div>
             </div>
@@ -42,7 +42,8 @@ interface IProps {
 
 const props = withDefaults(defineProps<IProps>(), {
   dataSource: () => [],
-  onCheckClassify: () => {},
+  onCheckClassify: () => {
+  },
   width: 'calc(100vw - 80px)',
   currentClassify: '',
 });

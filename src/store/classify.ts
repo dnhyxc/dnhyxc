@@ -46,14 +46,14 @@ export const useClassifyStore = defineStore('classify', {
       if (!this.currentClassify && !classify && !this.classifys[0]?.name!) return;
       if (this.articleList.length !== 0 && this.articleList.length >= this.total) return;
       this.pageNo = this.pageNo + 1;
-      this.loading = true;
+      const _classify = this.currentClassify || classify || this.classifys[0]?.name!;
+      this.loading = !!(_classify || commonStore.keyword);
       const params = {
         pageNo: this.pageNo,
         pageSize: this.pageSize,
-        classify: this.currentClassify || classify || this.classifys[0]?.name!,
+        classify: _classify,
         filter: commonStore.keyword, // 头部搜索关键词
       };
-
       const res = normalizeResult<ArticleListResult>(await Service.getClassifyList(params));
       this.loading = false;
       if (res.success) {
@@ -67,7 +67,6 @@ export const useClassifyStore = defineStore('classify', {
         });
       }
     },
-
     // 清除文章列表数据
     clearArticleList() {
       this.articleList = [];

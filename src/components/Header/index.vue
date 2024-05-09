@@ -20,7 +20,7 @@
     </div>
     <div class="right">
       <div class="search-wrap">
-        <Search v-if="commonStore.showSearch" v-model:showSearch="showSearch" margin="0 12px 0 0" />
+        <Search v-if="commonStore.showSearch" v-model:showSearch="showSearch" />
         <el-tooltip
           v-if="!commonStore.showSearch && NEED_HEAD_SEARCH.includes(route.path)"
           effect="light"
@@ -162,18 +162,7 @@ onMounted(() => {
   ipcRenderer.on('mainWin-max', (_, status) => {
     toggle.value = status;
   });
-  // window.addEventListener('click', onClickPage, true);
 });
-
-// const onClickPage = (e: Event) => {
-//   const ICON_IDS = ['__SEARCH_ICON__', '__SEARCH_ITEM1__', '__SEARCH_ITEM2__'];
-//   const clickedElement = e.target as HTMLElement;
-//   // 判断点击的元素是否为 search-wrap 或者其后代元素
-//   const isSearchWrap = clickedElement.classList.contains('search-inp') || clickedElement.closest('.search-inp');
-//   if (!isSearchWrap && !ICON_IDS.includes(clickedElement.id)) {
-//     commonStore.showSearch = false;
-//   }
-// };
 
 // 清除副作用
 onUnmounted(() => {
@@ -181,18 +170,7 @@ onUnmounted(() => {
     clearTimeout(timerRef.value);
   }
   messageStore.visible = false;
-  // window.removeEventListener('click', onClickPage, true);
 });
-
-// 监听页面搜索关键词，如果articleStore.keyword为空，则清除输入框内容
-// watch(
-//   () => commonStore.keyword,
-//   (newVal) => {
-//     if (!newVal) {
-//       search.value = '';
-//     }
-//   },
-// );
 
 // 后退
 const goBack = () => {

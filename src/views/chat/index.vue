@@ -33,7 +33,7 @@
                   }`"
                 >
                   <div v-if="item.noReadCount" class="no-read-count">
-                    {{ item.noReadCount > 99 ? `${item.noReadCount}+` : item.noReadCount }}
+                    {{ item.noReadCount > 99 ? `${ item.noReadCount }+` : item.noReadCount }}
                   </div>
                   <span v-if="item.isTop" class="is-top" />
                   <Image :url="item.headUrl || HEAD_IMG" :transition-img="HEAD_IMG" class="head-img" />
@@ -122,7 +122,11 @@
               <!-- <div v-if="chatList.length === 1" class="info">
                 由于对方并未关注你，在收到对方回复之前，你最多只能发送1条文字消息
               </div> -->
-              <div v-if="index % 20 === 0" class="time">
+              <div v-if="index === 0 || isDifferentDay(msg.chat.createTime, chatList[index - 1].chat.createTime)"
+                   class="time">
+                {{ formatTimestamp(msg.chat.createTime) }}
+              </div>
+              <div v-if="index % 20 === 0 && index !== 0" class="time">
                 {{ formatTimestamp(msg.chat.createTime) }}
               </div>
               <div
@@ -265,7 +269,7 @@
 </template>
 
 <script setup lang="ts">
-import { clipboard } from 'electron';
+import { clipboard, shell } from 'electron';
 import { onMounted, ref, computed, nextTick, onUnmounted, onBeforeUnmount, Ref, reactive, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { HEAD_IMG, CONTACT_MENU, CHAT_MENU, NO_DATA_SVG } from '@/constant';
@@ -280,6 +284,8 @@ import {
   onDownloadFile,
   fileToBase64,
   insertContent,
+  checkHref,
+  isDifferentDay,
 } from '@/utils';
 import Image from '@/components/Image/index.vue';
 import ContextMenu from '@/components/ContextMenu/index.vue';
@@ -637,7 +643,14 @@ const scrollToBottom = () => {
 const onPreview = (data: ChatItem, type?: string) => {
   prevType.value = type || 'img';
   const { content, createTime } = data.chat;
+  const isHref = checkHref(content);
   const links = checkWithLink(content);
+
+  if (!links && isHref) {
+    shell.openExternal(content);
+    return;
+  }
+
   if (links?.[0]) {
     prevImg.value = {
       id: createTime,
@@ -743,7 +756,7 @@ const onDeleteContact = (data: ContactItem) => {
 
 // 去联系人主页
 const toPersonal = (data: ContactItem) => {
-  router.push(`/personal?authorId=${data.contactId}`);
+  router.push(`/personal?authorId=${ data.contactId }`);
 };
 
 // 选中联系人菜单
@@ -815,6 +828,8 @@ const onDrop = async (event: DragEvent) => {
     const base64 = await fileToBase64(fileList?.[0]!);
     dragImgInfo.url = base64 as string;
     sendVisible.value = true;
+  } else {
+    isDropOn.value = false;
   }
 };
 
@@ -876,6 +891,7 @@ const onPreviewDragImg = () => {
     .search {
       position: relative;
       padding: 10px;
+
       .clear {
         position: absolute;
         top: 21px;
@@ -919,6 +935,7 @@ const onPreviewDragImg = () => {
           justify-content: center;
           padding-bottom: 45px;
           color: var(--font-3);
+
           .no-data {
             width: 60px;
             height: 60px;
@@ -938,6 +955,7 @@ const onPreviewDragImg = () => {
 
           &:hover {
             background-color: @hover-bg-color;
+
             .user-info {
               .title {
                 color: @font-1;
@@ -1050,6 +1068,7 @@ const onPreviewDragImg = () => {
               .username {
                 color: @font-1;
               }
+
               .time {
                 color: @font-3;
               }
@@ -1199,6 +1218,7 @@ const onPreviewDragImg = () => {
           .chat-item {
             display: flex;
             flex-direction: column;
+
             .reply-content {
               padding: 5px 8px;
               color: @font-3;
@@ -1215,6 +1235,7 @@ const onPreviewDragImg = () => {
                 .reply-title {
                   .username {
                     margin-left: 5px;
+
                     :deep {
                       span {
                         color: @font-3 !important;
@@ -1282,6 +1303,7 @@ const onPreviewDragImg = () => {
 
             &:hover {
               background-color: @hover-chart-send-bg;
+
               .send-date {
                 display: block;
               }
@@ -1326,6 +1348,7 @@ const onPreviewDragImg = () => {
 
     .on-drop {
       position: relative;
+
       &::before {
         content: '';
         position: absolute;
@@ -1337,6 +1360,7 @@ const onPreviewDragImg = () => {
         border: 3px dashed var(--theme-blue);
         background-color: var(--pre-hover-bg);
       }
+
       transition: all 0.3s ease-in-out;
     }
 
@@ -1362,6 +1386,7 @@ const onPreviewDragImg = () => {
 
           .reply-user-time {
             position: relative;
+
             .clear-reply {
               position: absolute;
               right: 0;
@@ -1411,6 +1436,7 @@ const onPreviewDragImg = () => {
           .emoji-item {
             text-align: center;
           }
+
           .emoji:nth-child(5n) {
             margin-right: 0;
           }
@@ -1424,6 +1450,7 @@ const onPreviewDragImg = () => {
           height: 31px;
           line-height: 31px;
         }
+
         .textAreaWrap {
           height: 100%;
         }
@@ -1517,6 +1544,7 @@ const onPreviewDragImg = () => {
 
     .send-info {
       color: var(--font-1);
+
       .title {
         font-size: 16px;
         margin-bottom: 10px;
@@ -1524,6 +1552,7 @@ const onPreviewDragImg = () => {
 
       .send-user-info {
         margin-bottom: 35px;
+
         .username {
           margin-left: 10px;
           font-size: 16px;

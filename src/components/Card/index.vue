@@ -14,7 +14,8 @@
         <div v-for="i in ['markTop', 'markRight', 'markBottom', 'markLeft']" :key="i" :class="`${i} mark`">
           <div class="action">
             <span v-if="loginStore?.userInfo?.userId === data.authorId" @click.stop="toEdit(data)">编辑</span>
-            <span v-if="loginStore?.userInfo?.userId === data.authorId" id="__DELETE__" @click.stop="onRemove(data)">删除</span>
+            <span v-if="loginStore?.userInfo?.userId === data.authorId" id="__DELETE__"
+                  @click.stop="onRemove(data)">删除</span>
           </div>
           <div>
             <div class="desc" :title="data.abstract" v-html="data.abstract" />
@@ -29,9 +30,7 @@
       </div>
       <div
         class="bottom"
-        :style="{
-          backgroundImage: gradients,
-        }"
+        :style="{ backgroundImage: gradients }"
       >
         <div class="title" v-html="data.title" />
         <div class="author">
@@ -212,11 +211,11 @@ const onOpenNewWindow = async (data: ArticleItem) => {
     });
     return;
   }
-  const {userInfo, token} = loginStore;
+  const { userInfo, token } = loginStore;
   ipcRenderers.sendNewWin({
     path: `article/${ data.id }?from=${ route.name as string }`,
     id: data.id, // articleId
-    userInfo: JSON.stringify({userInfo, token}),
+    userInfo: JSON.stringify({ userInfo, token }),
   });
 };
 

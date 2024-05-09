@@ -15,9 +15,9 @@
         />
       </span>
       <el-scrollbar v-if="tagStore.tags.length > 0" ref="scrollChildRef" wrap-class="scrollbar-wrapper">
-        <div v-for="i in tagStore.tags" :key="i.name" class="tag-wrap">
+        <div v-for="(i, index) in tagStore.tags" :key="i.name" class="tag-wrap">
           <div
-            :id="(tagStore.currentTag || route.query?.tag || tagStore.tags[0]?.name) === i.name ? 'ACTIVE_TAG' : ''"
+            :id="(tagStore.currentTag || route.query?.tag || tagStore.tags[0]?.name) === i.name ? 'ACTIVE_TAG' : `TAG_TYPE_${index}`"
             :class="`${(tagStore.currentTag || route.query?.tag || tagStore.tags[0]?.name) === i.name && 'active'} tag`"
             @click="onCheckTag(i.name)"
           >
@@ -275,6 +275,7 @@ const likeListArticle = async (id: string, data?: ArticleItem) => {
 
       .active {
         color: var(--theme-blue);
+
         &::before {
           position: absolute;
           top: 50%;
