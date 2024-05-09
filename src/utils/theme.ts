@@ -51,7 +51,7 @@ const commonStyle = {
   '--markdown-strong-color': '#ff9900',
   '--markdown-function-color': '#ff7f28',
   '--lg-colors': 'linear-gradient(-45deg, #68a235 0%, #377500 100%)',
-  '--lg-active-colors': 'linear-gradient(-45deg, #30cfd0 0%, #330867 100%)',
+  '--lg-active-colors': 'linear-gradient(-45deg, #00fdff 0%, #6303d6 100%)',
   '--card-btn-mark': 'rgba(255, 255, 255, 0.5)',
   '--font-weight': 'normal',
   '--search-border-color': '#fff',
