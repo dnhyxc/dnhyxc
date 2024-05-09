@@ -116,6 +116,7 @@ const removeStyle = {
   '--icon-bg-color': 'rgba(0, 0, 0, 0.1)',
   '--green-1': 'rgb(225, 252, 201, 0.85)',
   '--hover-text-color': '#28bd27',
+  '--card-bt-bg': 'transparent',
 };
 
 // 背景图片公共配置
@@ -202,6 +203,7 @@ const imageStyles = {
   '--markdown-return-color': '#93e86a',
   '--scroll-color': 'rgba(255, 255, 255, 0.25)',
   '--el-color-primary-dark-2': '#00dcff',
+  '--card-bt-bg': 'rgba(255, 255, 255, 0.1)',
 };
 
 // 炫彩背景公共配置

@@ -15,8 +15,8 @@
           <div class="action">
             <span v-if="loginStore?.userInfo?.userId === data.authorId" @click.stop="toEdit(data)">编辑</span>
             <span
-v-if="loginStore?.userInfo?.userId === data.authorId" id="__DELETE__"
-                  @click.stop="onRemove(data)">删除</span>
+              v-if="loginStore?.userInfo?.userId === data.authorId" id="__DELETE__"
+              @click.stop="onRemove(data)">删除</span>
           </div>
           <div>
             <div class="desc" :title="data.abstract" v-html="data.abstract" />
@@ -401,8 +401,8 @@ const toTag = (tag: string) => {
     color: var(--font-1);
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
-
-
+    background-color: var(--card-bt-bg);
+    
     .title {
       font-size: 15px;
       font-weight: 700;
