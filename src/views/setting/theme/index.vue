@@ -201,11 +201,12 @@ const changeTheme = (key: string) => {
           color: @font-1;
         }
 
-        .snow {
-          background-image: url('@/assets/images/snow.jpg');
+        .night {
+          background-image: url('@/assets/images/night.png');
           .bgStyles;
           color: @font-1;
         }
+        
         .cloud {
           background-image: url('@/assets/images/cloud.jpeg');
           .bgStyles;

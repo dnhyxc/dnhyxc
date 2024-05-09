@@ -153,8 +153,8 @@
             前往登录
           </div>
           <i
-:class="`toggle-icon iconfont ${toggleMenu ? 'icon-caidanshouqi' : 'icon-caidantanchu'}`"
-             @click.stop="onToggleMenu" />
+            :class="`toggle-icon iconfont ${toggleMenu ? 'icon-caidanshouqi' : 'icon-caidantanchu'}`"
+            @click.stop="onToggleMenu" />
         </div>
       </div>
     </div>
@@ -189,7 +189,7 @@ onUnmounted(() => {
 
 // 计算菜单
 const menuList = computed(() => {
-  const {token, menus} = loginStore;
+  const { token, menus } = loginStore;
   const list = token ? MENULIST : MENULIST.filter((i) => i.show && !i.authorWiew);
   // 判断是否是博主，否则无法访问图片集
   const removeMenu = authRoutes.filter((i) => menus.some((j) => j !== i.name));
@@ -211,11 +211,11 @@ watchEffect(() => {
 
 const links = computed(() => {
   const linkList = [];
-  const {github, juejin, zhihu, blog} = loginStore.userInfo;
-  if (github) linkList.push({key: 'github', url: github});
-  if (juejin) linkList.push({key: 'juejin', url: juejin});
-  if (zhihu) linkList.push({key: 'zhihu', url: zhihu});
-  if (blog) linkList.push({key: 'blog', url: blog});
+  const { github, juejin, zhihu, blog } = loginStore.userInfo;
+  if (github) linkList.push({ key: 'github', url: github });
+  if (juejin) linkList.push({ key: 'juejin', url: juejin });
+  if (zhihu) linkList.push({ key: 'zhihu', url: zhihu });
+  if (blog) linkList.push({ key: 'blog', url: blog });
   return linkList.map(i => ({
     name: i.key,
     url: i.url,
@@ -284,6 +284,7 @@ const onQuit = () => {
 
 .aside-wrap {
   overflow-x: hidden;
+  -webkit-app-region: drag;
 
   .left-menu-wrap {
     display: flex;
@@ -343,6 +344,7 @@ const onQuit = () => {
         color: @sub-2-blue;
         cursor: pointer;
         transition: all 0.3s;
+        -webkit-app-region: no-drag;
         .menuLg();
 
         &:hover {
@@ -383,6 +385,7 @@ const onQuit = () => {
 
       .avatar {
         cursor: pointer;
+        -webkit-app-region: no-drag;
         .clickNoSelectText();
       }
     }
@@ -438,6 +441,7 @@ const onQuit = () => {
       .page-icon {
         margin-bottom: 9px;
         margin-left: -3px;
+        -webkit-app-region: no-drag;
       }
 
       .title-name {
@@ -446,6 +450,7 @@ const onQuit = () => {
         font-size: 22px;
         margin-left: 5px;
         margin-top: 3px;
+        -webkit-app-region: no-drag;
         .menuLg();
       }
     }
@@ -458,6 +463,7 @@ const onQuit = () => {
       .title-name {
         margin-top: 3px;
         margin-bottom: 5px;
+        -webkit-app-region: no-drag;
       }
     }
 
@@ -486,6 +492,7 @@ const onQuit = () => {
           cursor: pointer;
           padding: 3px 10px;
           border-radius: 5px;
+          -webkit-app-region: no-drag;
 
           &:hover {
             background: var(--green-1);
@@ -534,6 +541,12 @@ const onQuit = () => {
         padding: 0 10px 10px;
         .menuLg;
 
+        .avatar {
+          cursor: pointer;
+          -webkit-app-region: no-drag;
+          .clickNoSelectText();
+        }
+
         .username {
           font-size: 20px;
           font-weight: 700;
@@ -560,6 +573,7 @@ const onQuit = () => {
             height: 33px;
             width: 33px;
             cursor: pointer;
+            -webkit-app-region: no-drag;
 
             .icon {
               font-size: 22px;
@@ -595,6 +609,7 @@ const onQuit = () => {
         align-items: center;
         font-size: 16px;
         cursor: pointer;
+        -webkit-app-region: no-drag;
         .menuLg;
 
         &:hover {
@@ -618,6 +633,7 @@ const onQuit = () => {
         margin-left: 1px;
         font-size: 18px;
         cursor: pointer;
+
         .menuLg;
 
         &:hover {
@@ -634,6 +650,7 @@ const onQuit = () => {
     .icon {
       font-size: 20px;
       cursor: pointer;
+      -webkit-app-region: no-drag;
 
       &:hover {
         color: var(--hover-text-color);
@@ -653,6 +670,7 @@ const onQuit = () => {
     font-size: 14px;
     cursor: pointer;
     color: var(--active);
+    -webkit-app-region: no-drag;
     box-shadow: 0 0 2px var(--shadow-color) inset;
   }
 }

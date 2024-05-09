@@ -333,12 +333,12 @@ export const useChatStore = defineStore('chat', {
 
     // 置顶联系人/消息免打扰
     async onUppdateContact({
-                             contactId,
-                             createTime,
-                             isTop,
-                             isUnDisturb,
-                             setTop,
-                           }: {
+      contactId,
+      createTime,
+      isTop,
+      isUnDisturb,
+      setTop,
+    }: {
       contactId: string;
       createTime?: number;
       isTop?: boolean;

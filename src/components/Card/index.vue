@@ -14,7 +14,8 @@
         <div v-for="i in ['markTop', 'markRight', 'markBottom', 'markLeft']" :key="i" :class="`${i} mark`">
           <div class="action">
             <span v-if="loginStore?.userInfo?.userId === data.authorId" @click.stop="toEdit(data)">编辑</span>
-            <span v-if="loginStore?.userInfo?.userId === data.authorId" id="__DELETE__"
+            <span
+v-if="loginStore?.userInfo?.userId === data.authorId" id="__DELETE__"
                   @click.stop="onRemove(data)">删除</span>
           </div>
           <div>

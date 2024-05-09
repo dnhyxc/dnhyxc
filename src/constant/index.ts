@@ -13,9 +13,9 @@ import SEA from '@/assets/images/sea.jpg';
 import CLOUD from '@/assets/images/cloud.jpeg';
 import FRESH from '@/assets/images/fresh.jpeg';
 import SUN from '@/assets/images/sun.jpg';
-import SNOW from '@/assets/images/snow.jpg';
 import BEAUTY from '@/assets/images/beauty.jpg';
 import COVER from '@/assets/images/cover.jpg';
+import NIGHT from '@/assets/images/night.png';
 import * as API from '@/server/api';
 import GITHUB_SVG from '@/assets/svg/github.svg';
 import COMPRESS_SVG from '@/assets/svg/compress.svg';
@@ -45,7 +45,6 @@ export {
   SEA,
   FRESH,
   SUN,
-  SNOW,
   BEAUTY,
   IMG4,
   CLOUD,
@@ -59,6 +58,7 @@ export {
   NO_DATA_SVG,
   BOOK_SVG,
   COVER,
+  NIGHT,
 };
 
 // 工具列表
@@ -500,8 +500,8 @@ export const IMG_THEME_TYPES = [
     name: '日出',
   },
   {
-    key: 'snow',
-    name: '雪山',
+    key: 'night',
+    name: '蓝色星空',
   },
   {
     key: 'ShaoSiming',
@@ -1415,7 +1415,7 @@ export const BOOK_THEME = {
   electrum: 'beige',
   skygray: 'gray',
   cloud: 'tb',
-  snow: 'tw',
+  night: 'tw',
   lateralFace: 'tw',
   ShaoSiming: 'tw',
   beauty: 'tw',

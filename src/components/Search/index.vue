@@ -63,9 +63,9 @@ const onClick = (e: Event) => {
   const isClickDelete = target.closest('#__DELETE__');
   const isNewType = target.closest('#NEW_TYPE');
   const isHotType = target.closest('#HOT_TYPE');
-  const isClassifyType = target.id.startsWith("CLASSIFY_TYPE_");
-  const isTagType = target.id.startsWith("TAG_TYPE_") || (target.parentNode as HTMLDivElement)?.id?.startsWith("TAG_TYPE_");
-  const isActiveTagType = target.id.startsWith("ACTIVE_TAG") || (target.parentNode as HTMLDivElement)?.id?.startsWith("ACTIVE_TAG");
+  const isClassifyType = target.id.startsWith('CLASSIFY_TYPE_');
+  const isTagType = target.id.startsWith('TAG_TYPE_') || (target.parentNode as HTMLDivElement)?.id?.startsWith('TAG_TYPE_');
+  const isActiveTagType = target.id.startsWith('ACTIVE_TAG') || (target.parentNode as HTMLDivElement)?.id?.startsWith('ACTIVE_TAG');
   const hasMsgClass = document.getElementsByClassName('MSG_CONFIG');
 
   if (

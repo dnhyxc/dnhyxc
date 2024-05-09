@@ -122,7 +122,8 @@
               <!-- <div v-if="chatList.length === 1" class="info">
                 由于对方并未关注你，在收到对方回复之前，你最多只能发送1条文字消息
               </div> -->
-              <div v-if="index === 0 || isDifferentDay(msg.chat.createTime, chatList[index - 1].chat.createTime)"
+              <div
+v-if="index === 0 || isDifferentDay(msg.chat.createTime, chatList[index - 1].chat.createTime)"
                    class="time">
                 {{ formatTimestamp(msg.chat.createTime) }}
               </div>

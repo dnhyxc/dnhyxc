@@ -27,7 +27,7 @@
             @click.stop="toDetail(data)"
           >
             <template #title>
-              <div class="left">{{ data.title || FOLLOWED_INFO[data.action!] }}</div>
+              <div class="left" v-html="data.title || FOLLOWED_INFO[data.action!]" />
               <div class="right">
                 <span class="del" @click.stop="onDelete(data.id!)">删除</span>
               </div>
@@ -44,8 +44,8 @@
                 </div>
                 <div class="desc">
                   <span v-if="data?.action !== 'CHAT'" class="username" @click.stop="toPersonal(data?.fromUserId!)">{{
-                    data?.fromUsername
-                  }}</span>
+                      data?.fromUsername
+                    }}</span>
                   <span v-if="data?.action !== 'CHAT'" class="action-type">{{ MESSAGE_ACTIONS[data?.action!] }}</span>
                   <span v-if="data?.action === 'CHAT'" class="action-type">{{ data.content }}</span>
                 </div>
@@ -116,7 +116,7 @@ const onDelete = async (id: string) => {
 
 // 前往操作人主页
 const toPersonal = (userId: string) => {
-  router.push(`/personal?authorId=${userId}`);
+  router.push(`/personal?authorId=${ userId }`);
   if (route.path === '/personal' && loginStore?.userInfo.userId !== userId) {
     if (personalStore.currentTabKey === '1' && route.query.authorId === userId) return;
     if (timer) {
@@ -132,7 +132,7 @@ const toPersonal = (userId: string) => {
 // 去详情页
 const toDetail = (data: ArticleItem) => {
   if (data?.articleId) {
-    router.push(`/detail/${data.articleId}`);
+    router.push(`/detail/${ data.articleId }`);
     timer = setTimeout(() => {
       if (timer) {
         clearTimeout(timer);
@@ -143,7 +143,7 @@ const toDetail = (data: ArticleItem) => {
   }
 
   if (data.action === 'CHAT' && route.path !== '/chat') {
-    router.push(`/chat?userId=${(data as unknown as ContactItem).from}`);
+    router.push(`/chat?userId=${ (data as unknown as ContactItem).from }`);
   }
 };
 
@@ -180,6 +180,7 @@ defineExpose({
 
     .push-card {
       cursor: pointer;
+
       &:hover {
         box-shadow: 0 0 5px var(--theme-blue);
       }

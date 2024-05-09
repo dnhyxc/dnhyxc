@@ -47,7 +47,7 @@ export const createWindow = () => {
   if (!isDev) {
     globalInfo.win?.loadURL(DOMAIN_URL);
   } else {
-    globalInfo.win?.webContents.openDevTools();
+    // globalInfo.win?.webContents.openDevTools();
     globalInfo.win?.loadURL(process.env.VITE_DEV_SERVER_URL!);
   }
 
@@ -161,7 +161,7 @@ ipcMain.on('download', (event, { url, fileName }) => {
   const fileStorePath = globalInfo.store?.get('FILE_STORE_PATH') || app.getAppPath();
   dialog
     .showSaveDialog(globalInfo.win!, {
-      defaultPath: `${fileStorePath}/${fileName}`, // 设置默认的文件路径
+      defaultPath: `${ fileStorePath }/${ fileName }`, // 设置默认的文件路径
     })
     .then((result) => {
       if (!result.canceled) {

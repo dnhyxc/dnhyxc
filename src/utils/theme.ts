@@ -1,4 +1,4 @@
-import { IMG1, BEAUTY, IMG3, IMG4, HEAD_IMG, SNOW, CLOUD, SEA, FRESH, SUN } from '@/constant';
+import { IMG1, BEAUTY, IMG3, IMG4, HEAD_IMG, CLOUD, SEA, FRESH, SUN, NIGHT } from '@/constant';
 
 // 菜单图标样式
 export const MENU_LG_DEFAULT_COLORS = `
@@ -423,8 +423,8 @@ const themeTypes = {
   colorful: {
     // 主题背景颜色
     '--background': '#f9fff9',
-    // 弹窗背景颜色
     '--modal-bg-color': '#f9fff9',
+    // 弹窗背景颜色
     // 输入框背景颜色
     '--input-bg-color': '#fff',
     // 文章各种卡片渐变颜色
@@ -601,11 +601,11 @@ const themeTypes = {
     ...themeColors,
     '--lg-colors': 'linear-gradient(-45deg, #ffffff 0%, #8bd1ff 100%)',
   },
-  snow: {
+  night: {
     ...imageStyles,
-    '--bg-image-url': `url(${ SNOW })`,
+    '--bg-image-url': `url(${ NIGHT })`,
     '--backdrop-filter': 'blur(1px)',
-    '--login-bg-img': `url(${ SNOW })`,
+    '--login-bg-img': `url(${ NIGHT })`,
     // 文章各种卡片渐变颜色
     '--bg-lg-color1': 'rgba(0, 0, 0, 0.25)',
     '--bg-lg-color2': 'rgba(0, 0, 0, 0.15)',
@@ -619,7 +619,7 @@ const themeTypes = {
     '--card-btn-mark': 'rgba(0, 0, 0, 0.5)',
     // 主题色
     ...themeColors,
-    '--lg-colors': 'linear-gradient(-45deg, #000 0%, #0057cd 100%)',
+    '--lg-colors': 'linear-gradient(-45deg, #3d8a98 0%, #66d1f5 100%)',
   },
   ShaoSiming: {
     ...imageStyles,
