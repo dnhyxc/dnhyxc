@@ -528,6 +528,7 @@ const onScrollTo = (height?: number) => {
                 box-shadow: none;
                 border-radius: 0;
                 border-top: 1px solid var(--card-border);
+                background-color: transparent;
 
                 &:first-child {
                   border-bottom: 1px solid var(--card-border);
