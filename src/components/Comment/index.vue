@@ -201,7 +201,7 @@
 </template>
 
 <script setup lang="ts">
-import { shell } from "electron";
+import { shell } from 'electron';
 import { onMounted, ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { CommentParams } from '@/typings/common';
