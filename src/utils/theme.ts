@@ -57,6 +57,7 @@ const commonStyle = {
   '--search-border-color': '#fff',
   '--card-shadow': 'rgba(255, 255, 255, 0.85)',
   '--scroll-color': '#e4e6eb',
+  '--text-shadow': '1px 1px 1px rgba(0, 0, 0, 0.5)',
 };
 
 // 主题相关颜色
@@ -487,7 +488,8 @@ const themeTypes = {
     '--scroll-color': 'rgba(255, 255, 255, 0.69)',
     '--lg-colors': 'linear-gradient(-45deg, #7ab6de 0%, #6e5ef2 100%)',
     '--search-border-color': '#7ab6de',
-    '--hover-text-color': '#28bd27'
+    '--hover-text-color': '#28bd27',
+    '--text-shadow': '1px 1px 1px rgba(255, 255, 255, 0.5)',
   },
   beauty: {
     ...imageStyles,
@@ -598,7 +600,7 @@ const themeTypes = {
     '--bg-lg-color1': 'rgba(0, 0, 0, 0.25)',
     '--bg-lg-color2': 'rgba(0, 0, 0, 0.15)',
     // loading 背景颜色
-    '--loading-color': 'rgba(255, 255, 255, 0.3)',
+    '--loading-color': 'rgba(0, 0, 0, 0.3)',
     '--loading-text-color': '#2aff00',
     // 文章预览背景图片
     '--pre-hover-bg': 'rgba(0, 0, 0, 0.3)',

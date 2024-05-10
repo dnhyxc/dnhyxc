@@ -439,6 +439,11 @@ const onQuit = () => {
       padding-left: 4px;
 
       .page-icon {
+        width: 35px;
+        height: 35px;
+        min-height: 35px;
+        line-height: 35px;
+        font-size: 35px;
         margin-bottom: 9px;
         margin-left: -3px;
         -webkit-app-region: no-drag;
@@ -457,7 +462,7 @@ const onQuit = () => {
 
     .mac-icon-wrap {
       align-items: flex-end;
-      padding-top: 25px;
+      padding-top: 24px;
       margin-bottom: 0;
 
       .title-name {
@@ -473,6 +478,7 @@ const onQuit = () => {
       justify-content: space-between;
       height: 100%;
       box-shadow: 0 0 5px 0 var(--card-shadow);
+      padding: 3px 5px 5px;
       border-radius: 5px;
       overflow: hidden;
 

@@ -260,7 +260,7 @@ const toTag = (tag: string) => {
   box-sizing: border-box;
   border-radius: v-bind(radius);
   transition: all 0.3s ease;
-  text-shadow: @text-shadow;
+  text-shadow: var(--text-shadow);
   .clickNoSelectText();
 
   .top {
@@ -402,7 +402,7 @@ const toTag = (tag: string) => {
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
     background-color: var(--card-bt-bg);
-    
+
     .title {
       font-size: 15px;
       font-weight: 700;
