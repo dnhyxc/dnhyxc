@@ -17,6 +17,7 @@
       :on-change-editor="onChangeEditor"
       :copy-code-success="onCopyCodeSuccess"
       :on-show-code-run="onShowCodeRun"
+      :to-preview="toPreview"
       :show-dot="prevContent.trim() !== createStore.createInfo.content?.trim() ? 1 : 0"
       class="create-editor"
     />

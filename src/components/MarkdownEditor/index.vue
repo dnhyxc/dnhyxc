@@ -59,6 +59,13 @@ interface Toolbar {
     action?: (editor?: any) => void;
     menus?: ToolbarItem[];
   };
+  draftPreview?: {
+    title?: string;
+    text?: string;
+    icon?: string;
+    action?: (editor?: any) => void;
+    menus?: ToolbarItem[];
+  };
   monaco?: {
     title?: string;
     text?: string;
@@ -85,6 +92,7 @@ interface IProps {
   onChangeEditor?: () => void;
   copyCodeSuccess?: (value?: string) => void;
   onShowCodeRun?: () => void;
+  toPreview?: (id: string) => void;
   showVscode?: boolean;
   showDot?: number;
 }
@@ -99,16 +107,25 @@ const props = withDefaults(defineProps<IProps>(), {
   onChangeEditor: () => {},
   copyCodeSuccess: () => {},
   onShowCodeRun: () => {},
+  toPreview: () => {},
   showDot: 0,
 });
 
 // tool menu
 const toolMenu = computed(() => {
-  const menu =
-    'undo redo | h bold italic | quote code | strikethrough hr | emoji link image | ul ol table | clear draft save create debug';
-  if (props.showVscode) {
-    return `${menu} | monaco`;
+  let menu =
+    'undo redo | h bold italic | quote code | strikethrough hr | emoji link image | ul ol table';
+
+  if (createStore.draftArticleId) {
+    menu = `${ menu } | clear draft draftPreview save create debug`;
+  } else {
+    menu = `${ menu } | clear draft save create debug`;
   }
+
+  if (props.showVscode) {
+    menu = `${ menu } | monaco`;
+  }
+
   return menu;
 });
 
@@ -156,6 +173,14 @@ const toolbar = reactive<Toolbar>({
     title: '草稿列表',
     action(editor) {
       props?.onShowDraft?.();
+    },
+  },
+  draftPreview: {
+    text: '览',
+    title: '草稿预览',
+    action(editor) {
+      if (!createStore?.draftArticleId) return;
+      props?.toPreview?.(createStore?.draftArticleId);
     },
   },
   monaco: {
@@ -343,7 +368,8 @@ const onCopyCodeSuccess = (value: string) => {
     .v-md-editor__toolbar-item-save,
     .v-md-editor__toolbar-item-draft,
     .v-md-editor__toolbar-item-monaco,
-    .v-md-editor__toolbar-item-debug {
+    .v-md-editor__toolbar-item-debug,
+    .v-md-editor__toolbar-item-draftPreview {
       color: var(--theme-blue);
       font-size: 14px;
       line-height: 30px;
