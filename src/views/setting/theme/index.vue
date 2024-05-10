@@ -161,7 +161,7 @@ const changeTheme = (key: string) => {
           color: @font-1;
         }
 
-        .danQingZi {
+        .danQingBai {
           background: linear-gradient(to top, #fffeff 0%, #d7fffe 100%);
           color: @font-1;
         }

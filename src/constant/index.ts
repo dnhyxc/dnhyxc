@@ -468,7 +468,7 @@ export const THEME_TYPES = [
     name: '天空灰',
   },
   {
-    key: 'danQingZi',
+    key: 'danQingBai',
     name: '丹青白',
   },
   {

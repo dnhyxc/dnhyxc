@@ -118,6 +118,7 @@ const removeStyle = {
   '--green-1': 'rgb(225, 252, 201, 0.85)',
   '--hover-text-color': '#28bd27',
   '--card-bt-bg': 'transparent',
+  '--text-shadow': '1px 1px 1px rgba(255, 255, 255, 0.5)',
 };
 
 // 背景图片公共配置
@@ -345,7 +346,8 @@ const themeTypes = {
     '--code-pre-bg': '#282828',
     '--pop-menu-color': '#333',
     '--icon-bg-color': 'rgba(245, 250, 247, 0.2)',
-    '--green-1': 'rgb(225, 252, 201, 0.5)'
+    '--green-1': 'rgb(225, 252, 201, 0.5)',
+    '--text-shadow': '1px 1px 1px rgba(0, 0, 0, 0.5)',
   },
   freshGreen,
   emeraldGreen: {
@@ -392,6 +394,14 @@ const themeTypes = {
     '--layer-2-2': 'rgba(240, 255, 255, 0.6)',
     ...removeStyle,
   },
+  danQingHuang: {
+    // 字体颜色
+    ...fontStyle,
+    ...removeStyle,
+    ...colorfulStyles,
+    // 动态背景颜色
+    '--bg-image-url': 'linear-gradient(126deg, #e0c3fc, #d7fffe, #f9fff9, #f8fded, #f9fff9, #d7fffe, #f5ccec)',
+  },
   electrum: {
     ...freshGreen,
     // 主题背景颜色
@@ -416,7 +426,7 @@ const themeTypes = {
     '--timeline-lg-color2': '#d5e7f3',
     '--loading-color': 'rgba(216, 225, 230, 0.35)',
   },
-  danQingZi: {
+  danQingBai: {
     // 字体颜色
     ...fontStyle,
     ...removeStyle,
