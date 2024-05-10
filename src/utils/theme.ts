@@ -474,6 +474,7 @@ const themeTypes = {
     '--p-code-bg-color': 'rgba(255, 255, 242, 0.5)',
     // loading 背景颜色
     '--loading-color': 'rgba(255, 255, 255, 0.5)',
+    '--background': '#d6dfdf',
     '--bg-image-url': `url(${ CLOUD })`,
     '--login-bg-img': `url(${ CLOUD })`,
     '--login-bg': 'rgba(255, 255, 255, 0.1)',
@@ -510,6 +511,7 @@ const themeTypes = {
     // loading 背景颜色
     '--loading-color': 'rgba(0, 0, 0, 0.69)',
     '--loading-text-color': '#2aff00',
+    '--background': '#050505',
     '--bg-image-url': `url(${ BEAUTY })`,
     '--login-bg-img': `url(${ BEAUTY })`,
     '--layer-2-2': 'rgb(255, 255, 255, 0.06)',
@@ -525,6 +527,7 @@ const themeTypes = {
   },
   fresh: {
     ...imageStyles,
+    '--background': '#9ba25a',
     '--bg-image-url': `url(${ FRESH })`,
     '--login-bg-img': `url(${ FRESH })`,
     '--backdrop-filter': 'blur(0px)',
@@ -552,6 +555,7 @@ const themeTypes = {
   lateralFace: {
     ...imageStyles,
     '--card-border': 'rgba(245, 250, 248, 0.2)',
+    '--background': '#507090',
     // 字体颜色
     '--bg-image-url': `url(${ HEAD_IMG })`,
     // 图片背景兼容字体颜色
@@ -573,6 +577,7 @@ const themeTypes = {
   },
   sun: {
     ...imageStyles,
+    '--background': '#6c99ba',
     '--bg-image-url': `url(${ SUN })`,
     '--h-color': '#a2ff00',
     '--backdrop-filter': 'blur(0)',
@@ -585,6 +590,7 @@ const themeTypes = {
   },
   night: {
     ...imageStyles,
+    '--background': '#001850',
     '--bg-image-url': `url(${ NIGHT })`,
     '--backdrop-filter': 'blur(1px)',
     '--login-bg-img': `url(${ NIGHT })`,
@@ -605,6 +611,7 @@ const themeTypes = {
   },
   ShaoSiming: {
     ...imageStyles,
+    '--background': '#d1e6f9',
     '--bg-image-url': `url(${ IMG1 })`,
     '--h-color': '#a2ff00',
     '--login-bg-img': `url(${ IMG1 })`,
@@ -616,6 +623,7 @@ const themeTypes = {
     '--backdrop-filter': 'blur(1.5px)',
     '--font-color': '#fff',
     '--lg-colors': 'linear-gradient(-45deg, #7e7474 0%, #252f36 100%)',
+    '--background': '#b0aea1',
     '--bg-image-url': `url(${ IMG3 })`,
     '--login-bg-img': `url(${ IMG3 })`,
     '--loading-text-color': '#2aff00',
@@ -625,6 +633,7 @@ const themeTypes = {
   },
   island: {
     ...imageStyles,
+    '--background': '#f8e8db',
     '--bg-image-url': `url(${ IMG4 })`,
     '--backdrop-filter': 'blur(3px)',
     '--h-color': '#a2ff00',
@@ -636,6 +645,7 @@ const themeTypes = {
   sea: {
     ...imageStyles,
     '--card-border': 'rgba(245, 250, 248, 0.2)',
+    '--background': '#5e88a0',
     // 字体颜色
     '--bg-image-url': `url(${ SEA })`,
     // 图片背景兼容字体颜色

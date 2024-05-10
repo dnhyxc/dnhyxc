@@ -5,7 +5,6 @@
  * index.vue
 -->
 <template>
-  <!-- <Loading :loading="authorStore.loading" :class="`${checkOS() === 'mac' && 'mac-author-wrap'} author-wrap`"> -->
   <Loading :loading="authorStore.loading" class="author-wrap">
     <template #default>
       <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
@@ -47,26 +46,26 @@
                   <div class="github">
                     github：
                     <span class="link" @click.stop="onJump(authorStore.userInfo?.github!, 'github')">{{
-                      authorStore.userInfo?.github
-                    }}</span>
+                        authorStore.userInfo?.github
+                      }}</span>
                   </div>
                   <div class="juejin">
                     掘金：
                     <span class="link" @click.stop="onJump(authorStore.userInfo?.juejin!, '掘金')">{{
-                      authorStore.userInfo?.juejin
-                    }}</span>
+                        authorStore.userInfo?.juejin
+                      }}</span>
                   </div>
                   <div class="zhihu">
                     知乎：
                     <span class="link" @click.stop="onJump(authorStore.userInfo?.zhihu!, '知乎')">{{
-                      authorStore.userInfo?.zhihu
-                    }}</span>
+                        authorStore.userInfo?.zhihu
+                      }}</span>
                   </div>
                   <div class="blog">
                     博客：
                     <span class="link" @click.stop="onJump(authorStore.userInfo?.blog!, '博客')">{{
-                      authorStore.userInfo?.blog
-                    }}</span>
+                        authorStore.userInfo?.blog
+                      }}</span>
                   </div>
                 </div>
                 <div class="view-more" @click="onShowMore">
@@ -263,7 +262,7 @@ const onJump = (url: string, name: string) => {
   } else {
     message({
       title: '链接无效',
-      message: `${name} 链接无法使用`,
+      message: `${ name } 链接无法使用`,
       type: 'warning',
     });
   }

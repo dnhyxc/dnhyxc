@@ -35,7 +35,7 @@ defineProps<IProps>();
     position: absolute;
     backdrop-filter: blur(5px);
     background-color: var(--loading-color);
-    z-index: 99;
+    z-index: 9999;
 
     .load-text {
       margin-top: 20px;
