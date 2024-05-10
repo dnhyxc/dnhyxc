@@ -111,7 +111,7 @@
               class="el-date-picker"
             />
           </el-form-item>
-          <el-form-item prop="cover" label="封面" class="form-item-cover">
+          <el-form-item v-if="!isSaveDraft" prop="cover" label="封面" class="form-item-cover">
             <div class="cover-wrap">
               <Upload
                 v-model:file-path="createStore.createInfo.coverImage"

@@ -47,6 +47,7 @@
           placement="right-end"
           popper-class="login-popover"
           :width="180"
+          :offset="15"
           :show-arrow="false"
           trigger="hover"
         >
@@ -109,7 +110,7 @@
           <div class="toggle"><i class="icon iconfont icon-caidanshouqi" @click="onToggleMenu" /></div>
           <el-popover
             v-if="loginStore?.userInfo?.userId"
-            placement="bottom-start"
+            placement="right-end"
             popper-class="login-popover"
             :width="180"
             :show-arrow="false"
