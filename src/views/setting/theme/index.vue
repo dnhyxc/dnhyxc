@@ -204,9 +204,9 @@ const changeTheme = (key: string) => {
         .night {
           background-image: url('@/assets/images/night.png');
           .bgStyles;
-          color: @font-1;
+          color: @fff;
         }
-        
+
         .cloud {
           background-image: url('@/assets/images/cloud.jpeg');
           .bgStyles;
