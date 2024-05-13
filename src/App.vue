@@ -108,8 +108,6 @@ watch(
   () => messageStore.visible,
   (newVal) => {
     if (newVal) {
-      // 消息弹出框显示的时候，清除消息数据
-      // messageStore.msgCount = 0;
       messageStore.getMessageList();
     } else {
       messageStore.clearMessageInfo();
