@@ -507,6 +507,7 @@ const onScrollTo = (height?: number) => {
           :deep {
             .title {
               padding: 8px 10px;
+              border-bottom: 1px solid var(--chat-border-color);
             }
           }
         }
