@@ -346,11 +346,11 @@ defineExpose({
 
     .textAreaWrap {
       width: 100%;
+      background-color: var(--chat-text-area-bg);
 
       .textArea {
         border: none;
         border-radius: 5px;
-        background-color: var(--background);
 
         &:focus {
           background-color: var(--fff);

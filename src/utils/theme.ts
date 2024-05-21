@@ -58,6 +58,8 @@ const commonStyle = {
   '--card-shadow': 'rgba(255, 255, 255, 0.85)',
   '--scroll-color': '#e4e6eb',
   '--text-shadow': '1px 1px 1px rgba(0, 0, 0, 0.5)',
+  '--chat-text-area-bg': 'transparent',
+  '--chat-border-color': '#ffffff52',
 };
 
 // 主题相关颜色
@@ -116,14 +118,18 @@ const removeStyle = {
   '--card-shadow': 'rgba(129, 129, 129, 0.25)',
   '--icon-bg-color': 'rgba(0, 0, 0, 0.1)',
   '--green-1': 'rgb(225, 252, 201, 0.85)',
+  '--green-2': 'rgb(225, 252, 201, 0.9)',
   '--hover-text-color': '#28bd27',
   '--card-bt-bg': 'transparent',
   '--text-shadow': '1px 1px 1px rgba(255, 255, 255, 0.5)',
+  '--chat-border-color': 'rgb(86, 86, 86, 0.12)',
+  '--chat-text-area-bg': 'transparent',
 };
 
 // 背景图片公共配置
 const imageStyles = {
   '--green-1': 'rgb(225, 252, 201, 0.3)',
+  '--green-2': 'rgb(225, 252, 201, 0.35)',
   '--hover-text-color': '#c5ff95',
   // 主题背景颜色
   '--background': 'transparent',
@@ -231,6 +237,7 @@ const colorfulStyles = {
   '--fff': '#fff',
   // 各组件外阴影
   '--shadow-mack': 'rgb(0 0 0 / 10%)',
+  '--chat-border-color': 'rgb(0 0 0 / 10%)',
   // 系统设置快捷键显示背景颜色
   '--tab-color': '#f9fff9',
   // 滚动到顶部组件背景颜色
@@ -341,12 +348,14 @@ const themeTypes = {
     // 子级评论背景颜色
     '--layer-2-2': 'rgba(38, 42, 51, 0.98)',
     ...removeStyle,
+    '--chat-border-color': 'rgb(225, 225, 225, 0.12)',
     '--pre-bg-color': '#282828',
     // editor 代码块颜色
     '--code-pre-bg': '#282828',
     '--pop-menu-color': '#333',
     '--icon-bg-color': 'rgba(245, 250, 247, 0.2)',
     '--green-1': 'rgb(225, 252, 201, 0.5)',
+    '--green-2': 'rgb(225, 252, 201, 0.55)',
     '--text-shadow': '1px 1px 1px rgba(0, 0, 0, 0.5)',
   },
   freshGreen,
@@ -393,6 +402,7 @@ const themeTypes = {
     // 子级评论背景颜色
     '--layer-2-2': 'rgba(240, 255, 255, 0.6)',
     ...removeStyle,
+    '--chat-text-area-bg': 'rgb(225, 225, 225, 0.58)',
   },
   danQingHuang: {
     // 字体颜色
@@ -465,6 +475,7 @@ const themeTypes = {
     // 各组件阴影颜色
     '--shadow-color': 'rgba(255, 255, 242, 0.5)',
     '--shadow-mack': 'rgba(205, 205, 205, 0.5)',
+    '--chat-border-color': '#ffffffba',
     '--fff': 'rgba(255, 255, 255, 0.3)',
     '--e-edit-color': '#000',
     '--layer-2-2': 'rgba(255, 255, 255, 0.3)',
@@ -486,8 +497,9 @@ const themeTypes = {
     // loading 背景颜色
     '--loading-color': 'rgba(255, 255, 255, 0.5)',
     '--background': '#d6dfdf',
-    '--bg-image-url': `url(${ CLOUD })`,
-    '--login-bg-img': `url(${ CLOUD })`,
+    '--chat-text-area-bg': 'rgba(255, 255, 255, 0.15)',
+    '--bg-image-url': `url(${CLOUD})`,
+    '--login-bg-img': `url(${CLOUD})`,
     '--login-bg': 'rgba(255, 255, 255, 0.1)',
     // border 颜色
     '--border-color': '#ffffffa1',
@@ -508,7 +520,7 @@ const themeTypes = {
     '--backdrop-filter': 'blur(0)',
     // 图片背景兼容字体颜色
     '--font-color': '#fff',
-    '--lg-colors': `${ MENU_LG_DEFAULT_COLORS }`,
+    '--lg-colors': `${MENU_LG_DEFAULT_COLORS}`,
     '--search-border-color': '#a86aa5',
     '--font-weight': '700',
     '--h-color': '#61dc00',
@@ -524,8 +536,8 @@ const themeTypes = {
     '--loading-color': 'rgba(0, 0, 0, 0.69)',
     '--loading-text-color': '#2aff00',
     '--background': '#050505',
-    '--bg-image-url': `url(${ BEAUTY })`,
-    '--login-bg-img': `url(${ BEAUTY })`,
+    '--bg-image-url': `url(${BEAUTY})`,
+    '--login-bg-img': `url(${BEAUTY})`,
     '--layer-2-2': 'rgb(255, 255, 255, 0.06)',
     '--card-border': 'rgba(182, 182, 182, 0.5)',
     '--card-btn-mark': 'rgba(0, 0, 0, 0.5)',
@@ -536,12 +548,14 @@ const themeTypes = {
     '--scroll-color': 'rgba(209, 209, 209, 0.15)',
     '--icon-bg-color': 'rgba(245, 250, 247, 0.15)',
     '--green-1': 'rgb(225, 252, 201, 0.1)',
+    '--green-2': 'rgb(225, 252, 201, 0.15)',
+    '--chat-border-color': '#ffffff30',
   },
   fresh: {
     ...imageStyles,
     '--background': '#9ba25a',
-    '--bg-image-url': `url(${ FRESH })`,
-    '--login-bg-img': `url(${ FRESH })`,
+    '--bg-image-url': `url(${FRESH})`,
+    '--login-bg-img': `url(${FRESH})`,
     '--backdrop-filter': 'blur(0px)',
     // 文章各种卡片渐变颜色
     '--bg-lg-color1': 'rgba(0, 0, 0, 0.25)',
@@ -556,11 +570,12 @@ const themeTypes = {
     '--loading-color': 'rgba(102, 151, 9, 0.2)',
     '--loading-text-color': '#2aff00',
     // 菜单字体渐变
-    '--lg-colors': `${ MENU_LG_COLORS }`,
+    '--lg-colors': `${MENU_LG_COLORS}`,
     '--search-border-color': '#fabd00',
-    '--lg-active-colors': `${ MENU_ACTIVE_LG_COLORS }`,
+    '--lg-active-colors': `${MENU_ACTIVE_LG_COLORS}`,
     '--card-btn-mark': 'rgba(0, 0, 0, 0.5)',
     '--markdown-return-color': '#fbff00',
+    '--chat-border-color': '#ffffff52',
     // 主题色
     ...themeColors,
   },
@@ -569,7 +584,7 @@ const themeTypes = {
     '--card-border': 'rgba(245, 250, 248, 0.2)',
     '--background': '#507090',
     // 字体颜色
-    '--bg-image-url': `url(${ HEAD_IMG })`,
+    '--bg-image-url': `url(${HEAD_IMG})`,
     // 图片背景兼容字体颜色
     '--font-color': '#fff',
     '--pre-bg-color': 'rgba(0, 0, 0, 0.3)',
@@ -579,7 +594,8 @@ const themeTypes = {
     '--pre-hover-bg': 'rgba(0, 0, 0, 0.3)',
     // table 偶数项背景颜色
     '--table-even-bg': 'rgba(0, 0, 0, 0.3)',
-    '--login-bg-img': `url(${ HEAD_IMG })`,
+    '--login-bg-img': `url(${HEAD_IMG})`,
+    '--chat-border-color': '#ffffff52',
     '--theme-blue': '#00d625',
     '--el-color-primary': '#00d625',
     '--card-btn-mark': 'rgba(0, 0, 0, 0.45)',
@@ -590,10 +606,10 @@ const themeTypes = {
   sun: {
     ...imageStyles,
     '--background': '#6c99ba',
-    '--bg-image-url': `url(${ SUN })`,
+    '--bg-image-url': `url(${SUN})`,
     '--h-color': '#a2ff00',
     '--backdrop-filter': 'blur(0)',
-    '--login-bg-img': `url(${ SUN })`,
+    '--login-bg-img': `url(${SUN})`,
     '--font-color': '#fff',
     '--card-btn-mark': 'rgba(0, 0, 0, 0.5)',
     // 主题色
@@ -602,10 +618,10 @@ const themeTypes = {
   },
   night: {
     ...imageStyles,
-    '--background': '#001850',
-    '--bg-image-url': `url(${ NIGHT })`,
+    '--background': 'rgba(0, 24, 80, 0.25)',
+    '--bg-image-url': `url(${NIGHT})`,
     '--backdrop-filter': 'blur(1px)',
-    '--login-bg-img': `url(${ NIGHT })`,
+    '--login-bg-img': `url(${NIGHT})`,
     // 文章各种卡片渐变颜色
     '--bg-lg-color1': 'rgba(0, 0, 0, 0.25)',
     '--bg-lg-color2': 'rgba(0, 0, 0, 0.15)',
@@ -624,9 +640,9 @@ const themeTypes = {
   ShaoSiming: {
     ...imageStyles,
     '--background': '#d1e6f9',
-    '--bg-image-url': `url(${ IMG1 })`,
+    '--bg-image-url': `url(${IMG1})`,
     '--h-color': '#a2ff00',
-    '--login-bg-img': `url(${ IMG1 })`,
+    '--login-bg-img': `url(${IMG1})`,
     '--lg-colors': 'linear-gradient(-45deg, #2f6600 0%, #000000 100%)',
     '--hover-text-color': '#28bd27',
   },
@@ -636,8 +652,8 @@ const themeTypes = {
     '--font-color': '#fff',
     '--lg-colors': 'linear-gradient(-45deg, #7e7474 0%, #252f36 100%)',
     '--background': '#b0aea1',
-    '--bg-image-url': `url(${ IMG3 })`,
-    '--login-bg-img': `url(${ IMG3 })`,
+    '--bg-image-url': `url(${IMG3})`,
+    '--login-bg-img': `url(${IMG3})`,
     '--loading-text-color': '#2aff00',
     '--card-btn-mark': 'rgba(0, 0, 0, 0.5)',
     // 主题色
@@ -646,10 +662,10 @@ const themeTypes = {
   island: {
     ...imageStyles,
     '--background': '#f8e8db',
-    '--bg-image-url': `url(${ IMG4 })`,
+    '--bg-image-url': `url(${IMG4})`,
     '--backdrop-filter': 'blur(3px)',
     '--h-color': '#a2ff00',
-    '--login-bg-img': `url(${ IMG4 })`,
+    '--login-bg-img': `url(${IMG4})`,
     '--card-btn-mark': 'rgba(255, 255, 255, 0.65)',
     '--hover-text-color': '#28bd27',
     '--lg-colors': 'linear-gradient(-45deg, #1a2534 0%, #7aaaac 100%)',
@@ -659,7 +675,7 @@ const themeTypes = {
     '--card-border': 'rgba(245, 250, 248, 0.2)',
     '--background': '#5e88a0',
     // 字体颜色
-    '--bg-image-url': `url(${ SEA })`,
+    '--bg-image-url': `url(${SEA})`,
     // 图片背景兼容字体颜色
     '--font-color': '#fff',
     '--pre-bg-color': 'rgba(0, 0, 0, 0.3)',
@@ -667,10 +683,10 @@ const themeTypes = {
     '--code-pre-bg': 'rgba(0, 0, 0, 0.3)',
     // 文章预览背景图片
     '--pre-hover-bg': 'rgba(0, 0, 0, 0.3)',
-    '--login-bg-img': `url(${ SEA })`,
+    '--login-bg-img': `url(${SEA})`,
     '--backdrop-filter': 'blur(1px)',
     '--lg-colors': 'linear-gradient(-45deg, #ff6a00 0%, #ffc983 100%)',
-  }
+  },
 };
 
 // 设置背景颜色

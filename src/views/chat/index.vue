@@ -33,7 +33,7 @@
                   }`"
                 >
                   <div v-if="item.noReadCount" class="no-read-count">
-                    {{ item.noReadCount > 99 ? `${ item.noReadCount }+` : item.noReadCount }}
+                    {{ item.noReadCount > 99 ? `${item.noReadCount}+` : item.noReadCount }}
                   </div>
                   <span v-if="item.isTop" class="is-top" />
                   <Image :url="item.headUrl || HEAD_IMG" :transition-img="HEAD_IMG" class="head-img" />
@@ -123,8 +123,9 @@
                 由于对方并未关注你，在收到对方回复之前，你最多只能发送1条文字消息
               </div> -->
               <div
-v-if="index === 0 || isDifferentDay(msg.chat.createTime, chatList[index - 1].chat.createTime)"
-                   class="time">
+                v-if="index === 0 || isDifferentDay(msg.chat.createTime, chatList[index - 1].chat.createTime)"
+                class="time"
+              >
                 {{ formatTimestamp(msg.chat.createTime) }}
               </div>
               <div v-if="index % 20 === 0 && index !== 0" class="time">
@@ -757,7 +758,7 @@ const onDeleteContact = (data: ContactItem) => {
 
 // 去联系人主页
 const toPersonal = (data: ContactItem) => {
-  router.push(`/personal?authorId=${ data.contactId }`);
+  router.push(`/personal?authorId=${data.contactId}`);
 };
 
 // 选中联系人菜单
@@ -885,7 +886,7 @@ const onPreviewDragImg = () => {
     display: flex;
     flex-direction: column;
     width: 260px;
-    border-right: 1px solid var(--shadow-mack);
+    border-right: 1px solid var(--chat-border-color);
     box-sizing: border-box;
     .clickNoSelectText();
 
@@ -955,25 +956,25 @@ const onPreviewDragImg = () => {
           box-sizing: border-box;
 
           &:hover {
-            background-color: @hover-bg-color;
+            background-color: var(--green-1);
 
             .user-info {
               .title {
-                color: @font-1;
+                color: var(--hover-text-color);
 
                 .time {
                   font-size: 12px;
-                  color: @font-3;
+                  color: var(--hover-text-color);
                 }
               }
 
               .message {
                 .message-text {
-                  color: @font-3;
+                  color: var(--hover-text-color);
                 }
 
                 .is-undisturb {
-                  color: @font-5;
+                  color: var(--hover-text-color);
                 }
               }
             }
@@ -1063,25 +1064,26 @@ const onPreviewDragImg = () => {
 
         .active {
           background-color: @bg-color;
+          background-color: var(--green-2);
 
           .user-info {
             .title {
               .username {
-                color: @font-1;
+                color: var(--hover-text-color);
               }
 
               .time {
-                color: @font-3;
+                color: var(--hover-text-color);
               }
             }
 
             .message {
               .message-text {
-                color: @font-3;
+                color: var(--hover-text-color);
               }
 
               .is-undisturb {
-                color: @font-5;
+                color: var(--hover-text-color);
               }
             }
           }
@@ -1138,7 +1140,7 @@ const onPreviewDragImg = () => {
       height: 55px;
       padding: 10px;
       box-sizing: border-box;
-      border-bottom: 1px solid var(--shadow-mack);
+      border-bottom: 1px solid var(--chat-border-color);
       font-size: 18px;
       .clickNoSelectText();
 
@@ -1372,7 +1374,7 @@ const onPreviewDragImg = () => {
       height: 160px;
       box-sizing: border-box;
       background-color: transparent;
-      border-top: 1px solid var(--shadow-mack);
+      border-top: 1px solid var(--chat-border-color);
 
       .reply-info {
         padding: 5px;
@@ -1430,7 +1432,7 @@ const onPreviewDragImg = () => {
           padding: 10px 5px 5px 10px;
           background-color: transparent;
           border-radius: 5px;
-          border: 1px solid var(--shadow-mack);
+          border: 1px solid var(--chat-border-color);
           backdrop-filter: blur(5px);
           .clickNoSelectText();
 
