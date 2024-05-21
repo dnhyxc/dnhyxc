@@ -17,10 +17,7 @@
         <div class="right">
           <div class="sticky">
             <el-tooltip effect="light" content="置顶" placement="bottom" popper-class="custom-dropdown-styles">
-              <i
-                :class="`${articleStore.stickyStatus && 'active'} font iconfont icon-pin1`"
-                @click="onSticky"
-              />
+              <i :class="`${articleStore.stickyStatus && 'active'} font iconfont icon-pin1`" @click="onSticky" />
             </el-tooltip>
           </div>
           <div class="page-actions">
@@ -450,7 +447,7 @@ const onScrollTo = (height?: number) => {
     .header-wrap {
       height: var(--header-height);
       box-sizing: border-box;
-      border-bottom: 1px solid var(--card-border);
+      border-bottom: 1px solid var(--chat-border-color);
       .clickNoSelectText;
     }
 
@@ -462,7 +459,7 @@ const onScrollTo = (height?: number) => {
         margin-right: 0;
         border-radius: 0;
         box-shadow: none;
-        border-right: 1px solid var(--card-border);
+        border-right: 1px solid var(--chat-border-color);
       }
 
       .right {
@@ -471,7 +468,7 @@ const onScrollTo = (height?: number) => {
         border-radius: 0;
 
         .action-list {
-          border-bottom: 1px solid var(--card-border);
+          border-bottom: 1px solid var(--chat-border-color);
 
           :deep {
             .action {
@@ -480,11 +477,11 @@ const onScrollTo = (height?: number) => {
               border-radius: 0;
 
               &:not(:nth-child(1)) {
-                border-left: 1px solid var(--card-border);
+                border-left: 1px solid var(--chat-border-color);
               }
 
               &:not(:nth-child(4)) {
-                border-right: 1px solid var(--card-border);
+                border-right: 1px solid var(--chat-border-color);
               }
             }
 
@@ -504,7 +501,7 @@ const onScrollTo = (height?: number) => {
           border-radius: 0;
           box-shadow: none;
           background-color: transparent;
-          border-top: 1px solid var(--card-border);
+          border-top: 1px solid var(--chat-border-color);
           padding-bottom: 3px;
 
           :deep {
@@ -523,15 +520,14 @@ const onScrollTo = (height?: number) => {
 
           :deep {
             .list {
-
               .article {
                 box-shadow: none;
                 border-radius: 0;
-                border-top: 1px solid var(--card-border);
+                border-top: 1px solid var(--chat-border-color);
                 background-color: transparent;
 
                 &:first-child {
-                  border-bottom: 1px solid var(--card-border);
+                  border-bottom: 1px solid var(--chat-border-color);
                 }
               }
             }
