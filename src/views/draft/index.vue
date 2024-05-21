@@ -47,14 +47,14 @@
             <div v-if="createStore.draftDetail.classify" class="classify">
               <span class="label">分类：</span>
               <span class="tag_item" @click.stop="toClassify(createStore.draftDetail.classify!)">{{
-                  createStore.draftDetail.classify
-                }}</span>
+                createStore.draftDetail.classify
+              }}</span>
             </div>
             <div v-if="createStore.draftDetail.tag" class="classify tag">
               <span class="label">标签：</span>
               <span class="tag_item" @click.stop="toTag(createStore.draftDetail.tag!)">{{
-                  createStore.draftDetail.tag
-                }}</span>
+                createStore.draftDetail.tag
+              }}</span>
             </div>
           </div>
         </div>
@@ -106,18 +106,18 @@ const onCopyCodeSuccess = (value?: string) => {
 // 去我的主页
 const toPersonal = (authorId: string | undefined) => {
   if (route.path.includes('/article')) return;
-  router.push(`/personal?authorId=${ authorId }`);
+  router.push(`/personal?authorId=${authorId}`);
 };
 
 // 去分类页
 const toClassify = (classify: string) => {
-  router.push(`/classify?classify=${ classify }`);
+  router.push(`/classify?classify=${classify}`);
 };
 
 // 去标签
 const toTag = (tag: string) => {
   if (route.path !== '/tag/list') {
-    router.push(`/tag/list?tag=${ tag }`);
+    router.push(`/tag/list?tag=${tag}`);
   }
 };
 
@@ -285,19 +285,6 @@ const onScrollTo = (height?: number) => {
     & > :last-child {
       margin-bottom: 0;
     }
-  }
-}
-
-.mac-draft-detail-wrap {
-  --height: calc(100vh - 88px);
-
-  .content {
-    height: var(--height);
-  }
-
-  .right {
-    margin-right: 3px;
-    max-height: var(--height);
   }
 }
 </style>
