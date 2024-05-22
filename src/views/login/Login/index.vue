@@ -211,6 +211,7 @@ const onForgetPwd = () => {
 @import '@/styles/index.less';
 
 .login-content {
+  position: relative;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -218,8 +219,6 @@ const onForgetPwd = () => {
   height: 520px;
   padding: 10px 20px 20px;
   border-radius: 5px;
-  background: var(--login-bg);
-  box-shadow: 0 0 2px @page-color inset;
 
   :deep {
     .el-input__wrapper {
@@ -237,6 +236,7 @@ const onForgetPwd = () => {
       }
     }
   }
+
   .title {
     height: 50px;
     line-height: 50px;
@@ -244,6 +244,7 @@ const onForgetPwd = () => {
     margin-bottom: 30px;
     font-size: 20px;
     font-weight: 700;
+    color: var(--font-1);
   }
 
   .form-wrap {
@@ -301,12 +302,10 @@ const onForgetPwd = () => {
   }
 
   .reset-wrap {
-    position: relative;
     display: flex;
     justify-content: flex-end;
     padding: 0 50px;
     margin-top: 10px;
-    z-index: 99;
 
     .action {
       color: var(--theme-blue);

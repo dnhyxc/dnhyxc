@@ -75,6 +75,7 @@ const toLogin = () => {
 @import '@/styles/index.less';
 
 .reset-content {
+  position: relative;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -82,8 +83,6 @@ const toLogin = () => {
   height: 520px;
   padding: 20px 20px 38px 20px;
   border-radius: 5px;
-  background: var(--login-bg);
-  box-shadow: 0 0 2px @page-color inset;
 
   .title {
     height: 50px;
