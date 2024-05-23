@@ -149,12 +149,8 @@ const observer = new ResizeObserver(() => {
 });
 
 onMounted(() => {
+  createCanvas();
   observer?.observe(boardWrapRef.value!);
-  nextTick(() => {
-    createCanvas();
-    initCanvasSize();
-    setCanvasBg();
-  });
   document.addEventListener('keydown', onKeydown);
 });
 
@@ -168,9 +164,8 @@ onBeforeRouteLeave(() => {
 
 const init = () => {
   nextTick(() => {
-    createCanvas();
     initCanvasSize();
-    setCanvasBg();
+    setCanvasBg(drawBgColor.value);
   });
 };
 
@@ -222,7 +217,7 @@ const initCanvasSize = () => {
   const pageHead = document.querySelector('#__HEADER__') as HTMLDivElement;
 
   if (!props?.hideHeader) {
-    pageSizeInfo.top = pageHead?.offsetHeight + titleRef.value?.offsetHeight!;
+    pageSizeInfo.top = pageHead?.offsetHeight + titleRef.value?.offsetHeight! + 8;
   } else {
     pageSizeInfo.top = 100;
   }
@@ -276,6 +271,7 @@ const onMouseup = () => {
   painting.value = false;
 };
 
+// 画线
 const drawLine = (x1: number, y1: number, x2: number, y2: number) => {
   ctx.value!.lineWidth = lineWidth.value;
   ctx.value!.lineCap = 'round';
@@ -292,6 +288,7 @@ const drawLine = (x1: number, y1: number, x2: number, y2: number) => {
   ctx.value?.closePath();
 };
 
+// 画圆，用于橡皮擦
 const drawCircle = (x: number, y: number, radius: number) => {
   ctx.value?.save();
   ctx.value?.beginPath();
