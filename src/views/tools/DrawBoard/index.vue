@@ -94,6 +94,7 @@
 
 <script setup lang="ts">
 import { onMounted, ref, nextTick, reactive, onUnmounted } from 'vue';
+import { onBeforeRouteLeave } from 'vue-router';
 import { onDownloadFile, checkOS } from '@/utils';
 import { BOARD_ACTIONS, BOARD_COLORS } from '@/constant';
 
@@ -106,7 +107,7 @@ interface Emits {
   (e: 'update:boardVisible', visible: boolean): void;
 }
 
-defineProps<IProps>();
+const props = defineProps<IProps>();
 
 const emit = defineEmits<Emits>();
 
@@ -142,7 +143,13 @@ const currentTool = ref<string>('brush');
 // 标识背景颜色设置还是画笔颜色设置
 const colorType = ref<boolean>(false);
 
+// 监听画板大小变化
+const observer = new ResizeObserver(() => {
+  init();
+});
+
 onMounted(() => {
+  observer?.observe(boardWrapRef.value!);
   nextTick(() => {
     createCanvas();
     initCanvasSize();
@@ -154,6 +161,18 @@ onMounted(() => {
 onUnmounted(() => {
   document.removeEventListener('keydown', onKeydown);
 });
+
+onBeforeRouteLeave(() => {
+  observer.unobserve(boardWrapRef.value!);
+});
+
+const init = () => {
+  nextTick(() => {
+    createCanvas();
+    initCanvasSize();
+    setCanvasBg();
+  });
+};
 
 // 监听快捷键操作
 const onKeydown = (event: KeyboardEvent) => {
@@ -201,8 +220,14 @@ const initCanvasSize = () => {
   const pageMenu = document.querySelector('#__LEFT_MENU__') as HTMLDivElement;
   // 获取页面头部
   const pageHead = document.querySelector('#__HEADER__') as HTMLDivElement;
-  pageSizeInfo.top = pageHead?.offsetHeight + titleRef.value?.offsetHeight! || checkOS() === 'mac' ? 80 : 100;
-  pageSizeInfo.left = pageMenu?.offsetWidth || 0;
+
+  if (!props?.hideHeader) {
+    pageSizeInfo.top = pageHead?.offsetHeight + titleRef.value?.offsetHeight!;
+  } else {
+    pageSizeInfo.top = checkOS() === 'mac' ? 100 : 100;
+  }
+
+  pageSizeInfo.left = !props?.hideHeader ? pageMenu?.offsetWidth + 10 : 0;
   const pageWidth = boardWrapRef.value?.offsetWidth!;
   const pageHeight = boardWrapRef.value?.offsetHeight!;
   canvas.value!.width = pageWidth!;
@@ -346,11 +371,14 @@ const onClickTools = (key: string) => {
   overflow: auto;
   border-radius: 5px;
 
+  --title-h: 45px;
+  --color-action-size: 30px;
+
   .title {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    height: 45px;
+    height: var(--title-h);
     font-size: 16px;
     box-sizing: border-box;
     border-bottom: 1px solid var(--card-border);
@@ -410,7 +438,7 @@ const onClickTools = (key: string) => {
   }
 
   .board-wrap {
-    flex: 1;
+    height: calc(100% - var(--title-h));
     position: relative;
     box-sizing: border-box;
     cursor: crosshair;
@@ -431,10 +459,10 @@ const onClickTools = (key: string) => {
     transform: translateY(-50%);
 
     .change {
-      width: 30px;
-      height: 30px;
+      width: var(--color-action-size);
+      height: var(--color-action-size);
       margin-bottom: 15px;
-      border-radius: 30px;
+      border-radius: var(--color-action-size);
       box-sizing: border-box;
       background-image: url('@/assets/svg/change.svg');
       background-size: 85% 85%;
@@ -447,10 +475,10 @@ const onClickTools = (key: string) => {
     }
 
     .paint-color {
-      width: 30px;
-      height: 30px;
+      width: var(--color-action-size);
+      height: var(--color-action-size);
       margin-bottom: 15px;
-      border-radius: 30px;
+      border-radius: var(--color-action-size);
       cursor: pointer;
       box-shadow: 0 0 5px 0 @font-5, 0 0 2px 0 @font-6 inset;
       border: 2px solid @fff;
@@ -475,23 +503,23 @@ const onClickTools = (key: string) => {
 
   :deep {
     .el-color-picker__trigger {
-      width: 30px;
-      height: 30px;
-      border-radius: 30px;
+      width: var(--color-action-size);
+      height: var(--color-action-size);
+      border-radius: var(--color-action-size);
       padding: 0;
     }
 
     .el-color-picker__color {
-      width: 30px;
-      height: 30px;
-      border-radius: 30px;
+      width: var(--color-action-size);
+      height: var(--color-action-size);
+      border-radius: var(--color-action-size);
       border: none;
     }
 
     .el-color-picker__color-inner {
       border-radius: 30px !important;
-      width: 30px;
-      height: 30px;
+      width: var(--color-action-size);
+      height: var(--color-action-size);
       box-shadow: 0 0 5px #999;
       border: 2px solid @fff;
       box-sizing: border-box;

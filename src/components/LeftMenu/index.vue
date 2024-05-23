@@ -6,13 +6,11 @@
 -->
 <template>
   <el-aside
+    id="__LEFT_MENU__"
     class="aside-wrap"
     :width="`${checkOS() === 'mac' ? (toggleMenu ? '220px' : '62px') : toggleMenu ? '220px' : '60px'}`"
   >
-    <div
-      id="__LEFT_MENU__"
-      :class="`${checkOS() === 'mac' && 'mac-left-menu-wrap'} left-menu-wrap ${toggleMenu && 'menu-list-large'}`"
-    >
+    <div :class="`${checkOS() === 'mac' && 'mac-left-menu-wrap'} left-menu-wrap ${toggleMenu && 'menu-list-large'}`">
       <div :class="`icon-wrap ${checkOS() === 'mac' && 'mac-icon-wrap'}`" @click="goHome">
         <i class="page-icon iconfont icon-haidao_" />
         <span class="title-name">墨客</span>
@@ -155,7 +153,8 @@
           </div>
           <i
             :class="`toggle-icon iconfont ${toggleMenu ? 'icon-caidanshouqi' : 'icon-caidantanchu'}`"
-            @click.stop="onToggleMenu" />
+            @click.stop="onToggleMenu"
+          />
         </div>
       </div>
     </div>
@@ -217,10 +216,10 @@ const links = computed(() => {
   if (juejin) linkList.push({ key: 'juejin', url: juejin });
   if (zhihu) linkList.push({ key: 'zhihu', url: zhihu });
   if (blog) linkList.push({ key: 'blog', url: blog });
-  return linkList.map(i => ({
+  return linkList.map((i) => ({
     name: i.key,
     url: i.url,
-    icon: ICONLINKS.find(j => j.label === i.key)?.name,
+    icon: ICONLINKS.find((j) => j.label === i.key)?.name,
   }));
 });
 
@@ -262,7 +261,7 @@ const onClickLink = (href: string, name: string) => {
   } else {
     message({
       title: '链接无效',
-      message: `${ name } 链接无法使用`,
+      message: `${name} 链接无法使用`,
       type: 'success',
     });
   }
@@ -623,7 +622,7 @@ const onQuit = () => {
           color: var(--hover-text-color);
 
           .login {
-            color: var(--hover-text-color)
+            color: var(--hover-text-color);
           }
         }
 
