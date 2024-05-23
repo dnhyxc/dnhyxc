@@ -95,7 +95,7 @@
 <script setup lang="ts">
 import { onMounted, ref, nextTick, reactive, onUnmounted } from 'vue';
 import { onBeforeRouteLeave } from 'vue-router';
-import { onDownloadFile, checkOS } from '@/utils';
+import { onDownloadFile } from '@/utils';
 import { BOARD_ACTIONS, BOARD_COLORS } from '@/constant';
 
 interface IProps {
@@ -224,7 +224,7 @@ const initCanvasSize = () => {
   if (!props?.hideHeader) {
     pageSizeInfo.top = pageHead?.offsetHeight + titleRef.value?.offsetHeight!;
   } else {
-    pageSizeInfo.top = checkOS() === 'mac' ? 100 : 100;
+    pageSizeInfo.top = 100;
   }
 
   pageSizeInfo.left = !props?.hideHeader ? pageMenu?.offsetWidth + 10 : 0;
