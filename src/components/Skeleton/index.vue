@@ -75,7 +75,7 @@ const isCompile = computed(() => {
   .header {
     display: flex;
     justify-content: space-between;
-    padding: 0 27px 0 10px;
+    padding: 0 25px 0 10px;
     height: 65px;
     box-sizing: border-box;
     -webkit-app-region: drag;
@@ -91,13 +91,13 @@ const isCompile = computed(() => {
         .bgMoveColor(135deg);
         border-radius: 5px;
         margin-top: 15px;
-        margin-left: 3px;
+        margin-left: 6px;
       }
 
       .page-name {
         height: 25px;
         width: 200px;
-        margin-left: 12px;
+        margin-left: 17px;
         border-radius: 5px;
         .bgMoveColor(135deg);
       }

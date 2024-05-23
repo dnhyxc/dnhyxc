@@ -276,9 +276,11 @@ const onScrollTo = () => {
   align-items: center;
   justify-content: space-between;
   height: 60px;
-  padding: 15px 0 7px 0;
+  padding: 15px 1px 7px 0;
+  margin-left: -7px;
   box-sizing: border-box;
   -webkit-app-region: drag;
+  
   .clickNoSelectText();
 
   .left {

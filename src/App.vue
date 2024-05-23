@@ -1,17 +1,17 @@
 <template>
-  <Skeleton v-if="!commonStore.pageLoadStatus"/>
+  <Skeleton v-if="!commonStore.pageLoadStatus" />
   <RouterView v-if="isRouterAlive" v-slot="{ Component }">
-    <component :is="Component"/>
+    <component :is="Component" />
   </RouterView>
 </template>
 
 <script setup lang="ts">
-import {ipcRenderer} from 'electron';
-import {ref, nextTick, provide, onMounted, onBeforeMount, watchEffect, watch, onUnmounted} from 'vue';
-import {useRouter, useRoute} from 'vue-router';
-import {commonStore, messageStore, personalStore, loginStore} from '@/store';
-import {AUTHOR_ROUTES} from '@/constant';
-import {modifyTheme, getTheme, ipcRenderers, getMsgStatus, checkOS, EventBus} from '@/utils';
+import { ipcRenderer } from 'electron';
+import { ref, nextTick, provide, onMounted, onBeforeMount, watchEffect, watch, onUnmounted } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
+import { commonStore, messageStore, personalStore, loginStore } from '@/store';
+import { AUTHOR_ROUTES } from '@/constant';
+import { modifyTheme, getTheme, ipcRenderers, getMsgStatus, checkOS, EventBus } from '@/utils';
 
 const route = useRoute();
 
@@ -35,7 +35,7 @@ watchEffect(async () => {
     // 每次刷新重新加载未读消息列表
     await messageStore.getNoReadMsgCount();
     // 发送消息闪烁状态控制
-    ipcRenderers.sendMessageFlashInfo({messageStore, msgStatus: getMsgStatus() as number});
+    ipcRenderers.sendMessageFlashInfo({ messageStore, msgStatus: getMsgStatus() as number });
   }
 });
 
@@ -44,7 +44,7 @@ watch(
   () => messageStore.msgCount,
   (newVal, oldVal) => {
     if (newVal !== oldVal && checkOS() === 'mac' && !messageStore.visible) {
-      ipcRenderers.sendMessageFlashInfo({messageStore, msgStatus: getMsgStatus() as number});
+      ipcRenderers.sendMessageFlashInfo({ messageStore, msgStatus: getMsgStatus() as number });
     }
   },
 );

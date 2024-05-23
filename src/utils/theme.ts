@@ -601,7 +601,7 @@ const themeTypes = {
     '--card-btn-mark': 'rgba(0, 0, 0, 0.45)',
     '--card-shadow': 'rgba(255, 255, 255, 0.35)',
     '--lg-colors': 'linear-gradient(-45deg, #00d5ff 0%, #ffffff 100%)',
-    '--search-border-color': '#fabd00',
+    '--search-border-color': '#91d1e7',
   },
   sun: {
     ...imageStyles,
@@ -615,6 +615,7 @@ const themeTypes = {
     // 主题色
     ...themeColors,
     '--lg-colors': 'linear-gradient(-45deg, #ffffff 0%, #8bd1ff 100%)',
+    '--search-border-color': '#aed8f0',
   },
   night: {
     ...imageStyles,
@@ -636,6 +637,7 @@ const themeTypes = {
     // 主题色
     ...themeColors,
     '--lg-colors': 'linear-gradient(-45deg, #45909f 0%, #9ce6ff 100%)',
+    '--search-border-color': '#5cabd7',
   },
   ShaoSiming: {
     ...imageStyles,
@@ -645,6 +647,7 @@ const themeTypes = {
     '--login-bg-img': `url(${IMG1})`,
     '--lg-colors': 'linear-gradient(-45deg, #2f6600 0%, #000000 100%)',
     '--hover-text-color': '#28bd27',
+    '--search-border-color': '#10421f',
   },
   locomotive: {
     ...imageStyles,
@@ -658,6 +661,7 @@ const themeTypes = {
     '--card-btn-mark': 'rgba(0, 0, 0, 0.5)',
     // 主题色
     ...themeColors,
+    '--search-border-color': '#767676',
   },
   island: {
     ...imageStyles,
@@ -669,6 +673,7 @@ const themeTypes = {
     '--card-btn-mark': 'rgba(255, 255, 255, 0.65)',
     '--hover-text-color': '#28bd27',
     '--lg-colors': 'linear-gradient(-45deg, #1a2534 0%, #7aaaac 100%)',
+    '--search-border-color': '#627171',
   },
   sea: {
     ...imageStyles,
@@ -686,6 +691,7 @@ const themeTypes = {
     '--login-bg-img': `url(${SEA})`,
     '--backdrop-filter': 'blur(1px)',
     '--lg-colors': 'linear-gradient(-45deg, #ff6a00 0%, #ffc983 100%)',
+    '--search-border-color': '#ffb158',
   },
 };
 
