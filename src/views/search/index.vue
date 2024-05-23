@@ -76,14 +76,14 @@ import Empty from '@/components/Empty/index.vue';
 const reload = inject<Function>('reload');
 
 const route = useRoute();
-const {scrollRef, scrollTop} = useScroller();
-const {deleteArticle} = useDeleteArticle({pageType: 'search'});
+const { scrollRef, scrollTop } = useScroller();
+const { deleteArticle } = useDeleteArticle({ pageType: 'search' });
 
 const showMore = ref<boolean>(false);
 const isMounted = ref<boolean>(false);
 
 const noMore = computed(() => {
-  const {articleList, total} = searchStore;
+  const { articleList, total } = searchStore;
   return articleList.length >= total && articleList.length;
 });
 const disabled = computed(() => searchStore.loading || noMore.value);
@@ -100,7 +100,7 @@ const conditions = computed(() => {
 onMounted(() => {
   // 监听详情点赞状态，实时更改列表对应文章的点赞状态
   ipcRenderer.on('refresh', (_, params: WinRefreshParams) => {
-    const {pageType, isLike = true} = params;
+    const { pageType, isLike = true } = params;
     // 需要判断是否是属于当前活动页面，并且只是点击点赞而不是收藏或评论防止重复触发
     if (route.name === 'search' && pageType !== 'list' && isLike) {
       reload && reload();
@@ -191,7 +191,7 @@ const onSelectChange = (value: string) => {
 
 // 文章点赞
 const likeListArticle = async (id: string, data?: ArticleItem) => {
-  await articleStore.likeListArticle({id, pageType: 'search', data});
+  await articleStore.likeListArticle({ id, pageType: 'search', data });
 };
 
 // 置顶
@@ -210,7 +210,7 @@ const onScrollTo = () => {
 
   .search-inp-wrap {
     position: fixed;
-    top: 8px;
+    top: 14px;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
@@ -360,10 +360,6 @@ const onScrollTo = () => {
 }
 
 .mac-search-wrap {
-  .search-inp-wrap {
-    top: 14px;
-  }
-
   .search-tag-list {
     width: calc(100% - 8px);
     padding-left: 3px;
