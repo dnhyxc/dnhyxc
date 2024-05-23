@@ -320,7 +320,7 @@ const onEraser = () => {
 // 清空
 const onClear = () => {
   ctx.value?.clearRect(0, 0, canvas.value!.width, canvas.value!.height);
-  setCanvasBg();
+  setCanvasBg(drawBgColor.value);
 };
 
 // 撤销
