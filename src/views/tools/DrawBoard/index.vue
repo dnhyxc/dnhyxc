@@ -336,7 +336,7 @@ const onUndo = () => {
 // 保存
 const onSave = () => {
   const imgUrl = canvas.value!.toDataURL('image/png');
-  onDownloadFile({ url: imgUrl });
+  onDownloadFile({ url: imgUrl, fileName: 'drawing.png' });
 };
 
 // 点击工具
