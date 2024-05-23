@@ -207,8 +207,18 @@ const onSticky = () => {
 // 双击放大窗口
 const onDblclick = () => {
   const { id } = route.params;
-  toggle.value = !toggle.value;
-  ipcRenderers.sendNewWinMax(id as string);
+  if (checkOS() === 'mac') {
+    if (!toggle.value) {
+      toggle.value = true;
+      ipcRenderers.sendNewWinMax(id as string);
+    } else {
+      toggle.value = false;
+      ipcRenderers.sendNewWinRestore(id as string);
+    }
+  } else {
+    toggle.value = !toggle.value;
+    ipcRenderers.sendNewWinMax(id as string);
+  }
 };
 
 // 点击右侧窗口控制按钮

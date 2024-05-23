@@ -5,6 +5,10 @@ export const sendWindowMax = () => {
   ipcRenderer.send('window-max');
 };
 
+export const sendMacWindowMax = () => {
+  ipcRenderer.send('mac-window-max');
+};
+
 // 窗口最小化
 export const sendWindowMin = () => {
   ipcRenderer.send('window-min');
@@ -36,7 +40,7 @@ export const sendNewWin = (params: { path: string; id: string; userInfo: string;
 
 // 下载
 export const sendDownload = (url: string, fileName = 'file.png') => {
-  ipcRenderer.send('download', {url, fileName});
+  ipcRenderer.send('download', { url, fileName });
 };
 
 // 发送删除的文章的消息给主进程，通知主进程及时关闭对应子窗口
@@ -109,7 +113,7 @@ export const sendRefresh = (params: { articleId: string; pathname?: string; isLi
       isLike: params?.isLike,
     });
   } else {
-    ipcRenderer.send('refresh', {id: params?.articleId, pageType: 'list'});
+    ipcRenderer.send('refresh', { id: params?.articleId, pageType: 'list' });
   }
 };
 
@@ -130,7 +134,7 @@ export const sendStopFlashMsg = (data: any) => {
 
 // 发送托盘闪烁消息
 export const sendMessageFlashInfo = (params: { messageStore: any; msgStatus: number }) => {
-  const {messageStore, msgStatus} = params;
+  const { messageStore, msgStatus } = params;
   if (messageStore.msgCount && msgStatus === 1) {
     sendFlashMsg(
       JSON.stringify({

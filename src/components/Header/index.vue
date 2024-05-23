@@ -5,7 +5,7 @@
  * index.vue
 -->
 <template>
-  <div id="__HEADER__" :class="`${checkOS() === 'mac' && 'mac-header-wrap'} header-wrap`">
+  <div id="__HEADER__" :class="`${checkOS() === 'mac' && 'mac-header-wrap'} header-wrap`" @dblclick="onDoubleClick">
     <div class="left">
       <el-tooltip effect="light" content="后退" placement="bottom" popper-class="custom-dropdown-styles">
         <i class="font iconfont icon-arrow-left-bold" @click="goBack" />
@@ -185,6 +185,10 @@ const goForward = () => {
 // 刷新
 const onReload = () => {
   location.reload();
+};
+
+const onDoubleClick = () => {
+  ipcRenderers.sendMacWindowMax();
 };
 
 // 点击右侧窗口控制按钮

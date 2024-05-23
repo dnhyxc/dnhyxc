@@ -117,6 +117,16 @@ ipcMain.on('window-max', () => {
   }
 });
 
+// 监听mac双击窗口最大化
+ipcMain.on('mac-window-max', () => {
+  if (!isMac) return;
+  if (!globalInfo.win?.isMaximized()) {
+    globalInfo.win?.setFullScreen(true);
+  } else {
+    globalInfo.win?.setFullScreen(false);
+  }
+});
+
 // 关闭窗口
 ipcMain.on('window-close', () => {
   globalInfo.win?.hide();
@@ -161,7 +171,7 @@ ipcMain.on('download', (event, { url, fileName }) => {
   const fileStorePath = globalInfo.store?.get('FILE_STORE_PATH') || app.getAppPath();
   dialog
     .showSaveDialog(globalInfo.win!, {
-      defaultPath: `${ fileStorePath }/${ fileName }`, // 设置默认的文件路径
+      defaultPath: `${fileStorePath}/${fileName}`, // 设置默认的文件路径
     })
     .then((result) => {
       if (!result.canceled) {
