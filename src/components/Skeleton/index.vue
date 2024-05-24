@@ -71,12 +71,13 @@ const isCompile = computed(() => {
   background-color: var(--background);
 
   --article-header-height: 79px;
+  --size: 68px;
 
   .header {
     display: flex;
     justify-content: space-between;
     padding: 0 25px 0 10px;
-    height: 65px;
+    height: var(--size);
     box-sizing: border-box;
     -webkit-app-region: drag;
     cursor: pointer;
@@ -154,7 +155,7 @@ const isCompile = computed(() => {
       flex-direction: column;
       align-items: center;
       justify-content: space-between;
-      width: 68px;
+      width: var(--size);
       padding-top: 40px;
       padding-bottom: 25px;
 

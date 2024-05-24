@@ -509,7 +509,7 @@ const themeTypes = {
     '--font-weight': '700',
     '--scroll-color': 'rgba(255, 255, 255, 0.69)',
     '--lg-colors': 'linear-gradient(-45deg, #7ab6de 0%, #6e5ef2 100%)',
-    '--search-border-color': '#7ab6de',
+    '--search-border-color': '#757de5',
     '--hover-text-color': '#28bd27',
     '--text-shadow': '1px 1px 1px rgba(255, 255, 255, 0.5)',
   },
