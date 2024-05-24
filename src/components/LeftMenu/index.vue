@@ -5,7 +5,8 @@
  * index.vue
 -->
 <template>
-  <el-aside id="__LEFT_MENU__" class="aside-wrap"
+  <el-aside
+id="__LEFT_MENU__" class="aside-wrap"
     :width="`${checkOS() === 'mac' ? (toggleMenu ? '220px' : '62px') : toggleMenu ? '220px' : '60px'}`">
     <div :class="`${checkOS() === 'mac' && 'mac-left-menu-wrap'} left-menu-wrap ${toggleMenu && 'menu-list-large'}`">
       <div :class="`icon-wrap ${checkOS() === 'mac' && 'mac-icon-wrap'}`" @click="goHome">
@@ -13,11 +14,14 @@
         <span class="title-name">墨客</span>
       </div>
       <el-scrollbar v-show="!toggleMenu" ref="scrollRef">
-        <div v-for="menu in menuList" :key="menu.key" class="menu-list"
+        <div
+v-for="menu in menuList" :key="menu.key" class="menu-list"
           @click.stop="(e: Event) => onSelectMenu(e, menu as MenuListParams)">
-          <el-tooltip class="box-item" effect="light" :content="menu.name" placement="right"
+          <el-tooltip
+class="box-item" effect="light" :content="menu.name" placement="right"
             popper-class="custom-dropdown-styles">
-            <i :class="`${((activeMenu.path === menu.path && route.path.includes(menu.path)) || route.path === menu.path) &&
+            <i
+:class="`${((activeMenu.path === menu.path && route.path.includes(menu.path)) || route.path === menu.path) &&
               'active'
               } ${menu.key} font iconfont ${menu.fillIcon}`" />
           </el-tooltip>
@@ -25,15 +29,18 @@
       </el-scrollbar>
       <div v-show="!toggleMenu" class="setting">
         <div class="toggle"><i class="icon iconfont icon-caidantanchu" @click="onToggleMenu" /></div>
-        <el-popover v-if="loginStore?.userInfo?.userId" placement="right-end" popper-class="login-popover" :width="180"
+        <el-popover
+v-if="loginStore?.userInfo?.userId" placement="right-end" popper-class="login-popover" :width="180"
           :offset="15" :show-arrow="false" trigger="hover">
           <template #reference>
-            <el-avatar shape="square" :size="checkOS() === 'mac' ? 40 : 38" fit="cover"
+            <el-avatar
+shape="square" :size="checkOS() === 'mac' ? 40 : 38" fit="cover"
               :src="loginStore.userInfo?.headUrl || HEAD_IMG" class="avatar" @click.stop="toPersonal" />
           </template>
           <div class="drop-user-info-list">
             <div class="user-info">
-              <el-avatar shape="square" :size="checkOS() === 'mac' ? 40 : 38" fit="cover"
+              <el-avatar
+shape="square" :size="checkOS() === 'mac' ? 40 : 38" fit="cover"
                 :src="loginStore.userInfo?.headUrl || HEAD_IMG" class="avatar" @click.stop="toPersonal" />
               <div class="username">{{ loginStore.userInfo?.username }}</div>
             </div>
@@ -53,9 +60,11 @@
       </div>
       <div v-show="toggleMenu" :class="`${checkOS() !== 'mac' && 'win-menu-wrap'} menu-wrap`">
         <div>
-          <div v-for="menu in menuList" :key="menu.key" class="menu-list"
+          <div
+v-for="menu in menuList" :key="menu.key" class="menu-list"
             @click.stop="(e: Event) => onSelectMenu(e, menu as MenuListParams)">
-            <div :class="`${((activeMenu.path === menu.path && route.path.includes(menu.path)) || route.path === menu.path) &&
+            <div
+:class="`${((activeMenu.path === menu.path && route.path.includes(menu.path)) || route.path === menu.path) &&
               'active'
               } menu-item`">
               <i :class="`${menu.key} font iconfont ${menu.fillIcon}`" />
@@ -65,10 +74,12 @@
         </div>
         <div v-if="loginStore.userInfo.userId" class="user-info">
           <div class="toggle"><i class="icon iconfont icon-caidanshouqi" @click="onToggleMenu" /></div>
-          <el-popover v-if="loginStore?.userInfo?.userId" placement="right-end" popper-class="login-popover"
+          <el-popover
+v-if="loginStore?.userInfo?.userId" placement="right-end" popper-class="login-popover"
             :width="180" :show-arrow="false" trigger="hover">
             <template #reference>
-              <el-avatar shape="square" :size="checkOS() === 'mac' ? 40 : 38" fit="cover"
+              <el-avatar
+shape="square" :size="checkOS() === 'mac' ? 40 : 38" fit="cover"
                 :src="loginStore.userInfo?.headUrl || HEAD_IMG" class="avatar" @click.stop="toPersonal" />
             </template>
             <div class="drop-user-info-list">
@@ -98,7 +109,8 @@
             <i class="login iconfont icon-gerenzhongxin" />
             前往登录
           </div>
-          <i :class="`toggle-icon iconfont ${toggleMenu ? 'icon-caidanshouqi' : 'icon-caidantanchu'}`"
+          <i
+:class="`toggle-icon iconfont ${toggleMenu ? 'icon-caidanshouqi' : 'icon-caidantanchu'}`"
             @click.stop="onToggleMenu" />
         </div>
       </div>
