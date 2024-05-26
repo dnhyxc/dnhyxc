@@ -40,7 +40,8 @@
       <span v-if="!hideHeader" class="right" @click="onClose">关闭</span>
     </div>
     <div ref="boardWrapRef" class="board-wrap">
-      <canvas ref="canvas" class="draw-board" @mousedown="onMousedown" />
+      <canvas ref="canvas" class="draw-board" @mousedown="onMousedown" @mousemove="onMousemove"
+        @mouseleave="onMouseleave" @mouseup="onMouseup" />
       <div class="color-group">
         <el-tooltip placement="top" popper-class="custom-dropdown-styles">
           <template #content>
@@ -73,11 +74,11 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, nextTick, onUnmounted } from 'vue';
+import { onMounted, ref, nextTick, reactive, onUnmounted } from 'vue';
 import { onBeforeRouteLeave } from 'vue-router';
 import { onDownloadFile } from '@/utils';
 import { BOARD_ACTIONS, BOARD_COLORS, ACTIVE_DRAW_ACTIONS } from '@/constant';
-import { DrawLine, DrawRect, DrawEraser, DrawCircle } from './drawTypes'
+import { Rectangle } from './draw'
 
 interface IProps {
   boardVisible?: boolean;
@@ -88,7 +89,7 @@ interface Emits {
   (e: 'update:boardVisible', visible: boolean): void;
 }
 
-defineProps<IProps>();
+const props = defineProps<IProps>();
 
 const emit = defineEmits<Emits>();
 
@@ -98,23 +99,33 @@ const titleRef = ref<HTMLDivElement | null>(null);
 // canvas 容器
 const canvas = ref<HTMLCanvasElement | null>(null);
 const ctx = ref<CanvasRenderingContext2D | null>(null);
+// 第一个点
+const firstDot = ref<ImageData>();
+// 标识是否正在绘制
+const painting = ref<boolean>(false);
+// 最后一个点
+const lastPoint = ref();
+const clear = ref<boolean>(false);
 // 历史操作步骤
-const drawHistory = ref<ImageData[]>([]);
+const historyData = ref<ImageData[]>([]);
 // 画笔及橡皮差大小
 const lineWidth = ref<number>(1);
 // 画笔颜色
 const activeColor = ref<string>('#000');
 // 画布颜色
 const drawBgColor = ref<string>('#fff');
+// 画图时需要减去的宽高
+const pageSizeInfo = reactive({
+  left: 0,
+  top: 0,
+});
 const markColor = ref<string>('');
 // 当前选中的工具
 const currentTool = ref<string>('brush');
 // 标识背景颜色设置还是画笔颜色设置
 const colorType = ref<boolean>(false);
-// 当前绘制的画布
-const drawLayer = ref<ImageData | null>(null);
-// 绘制的元素
-const drawNodes = ref<any[]>([]);
+const drawedRects = ref<any[]>([])
+const rect = ref();
 
 // 监听画板大小变化
 const observer = new ResizeObserver(() => {
@@ -141,140 +152,6 @@ const init = () => {
     setCanvasBg(drawBgColor.value);
   });
 };
-
-// 创建 ctx 对象
-const createCanvas = () => {
-  ctx.value = canvas.value?.getContext('2d', { willReadFrequently: true })!;
-  ctx.value!.fillStyle = activeColor.value;
-  ctx.value!.strokeStyle = activeColor.value;
-};
-
-const initCanvasSize = () => {
-  const { width, height } = boardWrapRef.value?.getBoundingClientRect()!;
-  canvas.value!.width = width * devicePixelRatio;
-  canvas.value!.height = height * devicePixelRatio;
-};
-
-const onMousedown = (e: MouseEvent) => {
-  const { offsetX, offsetY } = e;
-  const shape = getShape(e);
-  console.log(shape, 'shape');
-  /**
-   * 开始绘制新的形状或路径时，在每次绘制之前调用 beginPath() 方法，
-   * 以确保您绘制的是一个新的、独立的路径。防止在撤销或者清空之后，
-   * 再次绘制时，之前绘制的内容重新出现在画布上。
-   */
-  ctx.value?.save();
-  ctx.value?.beginPath();
-
-  const drawImg = ctx.value?.getImageData(0, 0, canvas.value?.width!, canvas.value?.height!); // 在这里储存绘图表面
-  drawLayer.value = drawImg!;
-  if (drawImg) {
-    drawHistory.value.length === 100 && drawHistory.value.shift();
-    drawHistory.value.push(drawImg);
-  }
-
-  let drawer: DrawCircle | DrawRect | DrawCircle | DrawEraser | null = null
-
-  const initDraw = {
-    brush: {
-      init: () => {
-        // 初始化线
-        drawer = new DrawLine({ ctx: ctx.value!, color: activeColor.value, startX: offsetX, startY: offsetY, lineSize: 2 });
-      },
-      draw: onDrawLine
-    },
-    rect: {
-      init: () => {
-        // 初始化矩形
-        drawer = new DrawRect({ ctx: ctx.value!, color: activeColor.value, startX: offsetX, startY: offsetY });
-        drawNodes.value.push(drawer)
-      },
-      draw: onDrawRect
-    },
-    circle: {
-      init: () => {
-        // 初始化圆形
-        drawer = new DrawCircle({ ctx: ctx.value!, color: activeColor.value, startX: offsetX, startY: offsetY, radius: 10 });
-        drawNodes.value.push(drawer)
-      },
-      draw: onDrawCircle
-    },
-    eraser: {
-      init: () => {
-        // 初始化橡皮檫
-        drawer = new DrawEraser({ ctx: ctx.value!, color: drawBgColor.value, startX: offsetX, startY: offsetY, radius: 10 });
-      },
-      draw: onDrawEraser
-    }
-  }
-
-  initDraw[currentTool.value].init()
-
-  window.onmousemove = (e) => {
-    const { clientX, clientY } = e;
-    const canvasInfo = canvas.value?.getBoundingClientRect()!;
-    // 判断画布边界，除了边界不再绘制
-    if (clientX >= canvasInfo.right || clientY >= canvasInfo.bottom || clientX < canvasInfo.left || clientY < canvasInfo.top) return;
-    initDraw[currentTool.value].draw(drawer, clientX, clientY, canvasInfo)
-  }
-
-  window.onmouseup = () => {
-    window.onmousemove = null;
-    window.onmouseup = null;
-  }
-}
-
-// 判断区域内是否有图形
-const getShape = (e: MouseEvent) => {
-  const { offsetX, offsetY, clientX, clientY } = e;
-  const { left, top } = canvas.value?.getBoundingClientRect()!;
-  return drawNodes.value.find(node => offsetX > node.startX && clientX - left <= node.endX && offsetY > node.startY && clientY - top <= node.endY);
-}
-
-// 设置画板背景颜色
-const setCanvasBg = (color = '#fff') => {
-  ctx.value!.fillStyle = color;
-  ctx.value!.fillRect(0, 0, canvas.value?.width!, canvas.value?.height!);
-  ctx.value!.fillStyle = 'black';
-};
-
-// 画线
-const onDrawLine = (line: DrawLine, clientX: number, clientY: number, canvasInfo: DOMRect) => {
-  line.startX = line.endX;
-  line.startY = line.endY;
-  line.endX = clientX - canvasInfo.left;
-  line.endY = clientY - canvasInfo.top;
-  line.draw()
-}
-
-// 绘制矩形
-const onDrawRect = (rect: DrawRect, clientX: number, clientY: number, canvasInfo: DOMRect) => {
-  rect.endX = clientX - canvasInfo.left;
-  rect.endY = clientY - canvasInfo.top;
-  ctx.value!.fillRect(0, 0, canvas.value?.width!, canvas.value?.height!);
-  // 防止画矩形时，清空了之前的画线，重新将之前绘制的线绘制到画布上
-  drawLayer.value && ctx.value?.putImageData(drawLayer.value, 0, 0);
-  rect.draw()
-}
-
-const onDrawCircle = (circle: DrawCircle, clientX: number, clientY: number, canvasInfo: DOMRect) => {
-  circle.endX = clientX - canvasInfo.left;
-  circle.endY = clientY - canvasInfo.top;
-  ctx.value!.fillRect(0, 0, canvas.value?.width!, canvas.value?.height!);
-  // 防止画矩形时，清空了之前的画线，重新将之前绘制的线绘制到画布上
-  drawLayer.value && ctx.value?.putImageData(drawLayer.value, 0, 0);
-  circle.draw()
-}
-
-// 橡皮檫
-const onDrawEraser = (eraser: DrawEraser, clientX: number, clientY: number, canvasInfo: DOMRect) => {
-  eraser.startX = eraser.endX;
-  eraser.startY = eraser.endY;
-  eraser.endX = clientX - canvasInfo.left;
-  eraser.endY = clientY - canvasInfo.top;
-  eraser.draw()
-}
 
 // 监听快捷键操作
 const onKeydown = (event: KeyboardEvent) => {
@@ -304,17 +181,162 @@ const onColorChange = (color: string, isCustom: boolean) => {
   if (colorType.value) {
     drawBgColor.value = color;
     setCanvasBg(color);
-    onClear();
   } else {
     activeColor.value = color;
     setLineColor(color);
   }
 };
 
+// 创建 ctx 对象
+const createCanvas = () => {
+  ctx.value = canvas.value?.getContext('2d', { willReadFrequently: true })!;
+  ctx.value!.fillStyle = activeColor.value;
+  ctx.value!.strokeStyle = activeColor.value;
+};
+
+const initCanvasSize = () => {
+  // 获取左侧页面左侧菜单
+  const pageMenu = document.querySelector('#__LEFT_MENU__') as HTMLDivElement;
+  // 获取页面头部
+  const pageHead = document.querySelector('#__HEADER__') as HTMLDivElement;
+
+  if (!props?.hideHeader) {
+    pageSizeInfo.top = pageHead?.offsetHeight + titleRef.value?.offsetHeight! + 8;
+  } else {
+    pageSizeInfo.top = 100;
+  }
+
+  pageSizeInfo.left = !props?.hideHeader ? pageMenu?.offsetWidth + 10 : 0;
+  const pageWidth = boardWrapRef.value?.offsetWidth!;
+  const pageHeight = boardWrapRef.value?.offsetHeight!;
+  canvas.value!.width = pageWidth!;
+  canvas.value!.height = pageHeight!;
+};
+
+// 设置画板背景颜色
+const setCanvasBg = (color = '#fff') => {
+  ctx.value!.fillStyle = color;
+  ctx.value!.fillRect(0, 0, canvas.value?.width!, canvas.value?.height!);
+  ctx.value!.fillStyle = 'black';
+};
+
 // 设置画笔颜色
 const setLineColor = (color: string) => {
   ctx.value!.fillStyle = color;
   ctx.value!.strokeStyle = color;
+};
+
+const onMousedown = (e: MouseEvent) => {
+  const { clientX, clientY, offsetX, offsetY } = e
+  firstDot.value = ctx.value?.getImageData(0, 0, canvas.value?.width!, canvas.value?.height!); // 在这里储存绘图表面
+  firstDot.value && saveActions(firstDot.value);
+  painting.value = true;
+  const x = clientX - pageSizeInfo.left; // 需要减去左侧菜单的宽度
+  const y = clientY - pageSizeInfo.top; // 需要减去头部高度度及画板标题的高度
+  lastPoint.value = { x, y };
+  ctx.value?.save();
+  drawCircle(x, y, 0);
+
+  // 初始化绘制矩形
+  rect.value = new Rectangle('pink', offsetX, offsetY, ctx.value!);
+  drawedRects.value = [...drawedRects.value, rect.value];
+};
+
+const onMousemove = (e: MouseEvent) => {
+  const { clientX, clientY } = e;
+
+  const drawTypes = {
+    brush: drawLine,
+    eraser: drawLine,
+    rect: drawRect,
+  }
+  if (painting.value) {
+    const x = clientX - pageSizeInfo.left; // 需要减去左侧菜单的宽度
+    const y = clientY - pageSizeInfo.top; // 需要减去头部高度度及画板标题的高度
+    const newPoint = { x, y };
+    drawTypes[currentTool.value](lastPoint.value.x, lastPoint.value.y, newPoint.x, newPoint.y, e)
+    // drawLine(lastPoint.value.x, lastPoint.value.y, newPoint.x, newPoint.y);
+    lastPoint.value = newPoint;
+  }
+};
+
+const onMouseleave = () => {
+  painting.value = false;
+};
+
+const onMouseup = () => {
+  painting.value = false;
+};
+
+// 画线
+const drawLine = (x1: number, y1: number, x2: number, y2: number) => {
+  ctx.value!.lineWidth = lineWidth.value;
+  ctx.value!.lineCap = 'round';
+  ctx.value!.lineJoin = 'round';
+  if (clear.value) {
+    // 当是橡皮檫时，将画笔颜色改成画布颜色，以达到擦除笔迹的效果
+    setLineColor(drawBgColor.value);
+  } else {
+    setLineColor(activeColor.value);
+  }
+  ctx.value?.moveTo(x1, y1);
+  ctx.value?.lineTo(x2, y2);
+  ctx.value?.stroke();
+  ctx.value?.closePath();
+};
+
+// 画矩形 https://juejin.cn/post/7198159400007860280
+const drawRect = (x1: number, y1: number, x2: number, y2: number, e: MouseEvent) => {
+  const { clientX, clientY } = e;
+  const bouding = (e.target as HTMLCanvasElement).getBoundingClientRect();
+
+  console.log(bouding, 'bouding', rect.value);
+
+  rect.value.endX = clientX - bouding.left;
+  rect.value.endY = clientY - bouding.top;
+}
+
+const draw = () => {
+  requestAnimationFrame(draw);
+  drawedRects.value.forEach(i => {
+    i.draw();
+  })
+}
+
+draw();
+
+// 画圆，用于橡皮擦
+const drawCircle = (x: number, y: number, radius: number) => {
+  ctx.value?.save();
+  ctx.value?.beginPath();
+  ctx.value?.arc(x, y, radius, 0, Math.PI * 2);
+  ctx.value?.fill();
+  if (clear.value) {
+    ctx.value?.clip();
+    ctx.value?.clearRect(0, 0, canvas.value!.width, canvas.value!.height);
+    ctx.value?.restore();
+  }
+};
+
+// 保存操作步骤
+const saveActions = (data: ImageData) => {
+  historyData.value.length === 100 && historyData.value.shift();
+  historyData.value.push(data);
+};
+
+// 画笔
+const onBrush = () => {
+  clear.value = false;
+};
+
+// 画笔
+const onRect = () => {
+  clear.value = false;
+};
+
+// 橡皮擦
+const onEraser = () => {
+  clear.value = true;
 };
 
 // 清空
@@ -325,9 +347,9 @@ const onClear = () => {
 
 // 撤销
 const onUndo = () => {
-  if (drawHistory.value.length < 1) return false;
-  ctx.value?.putImageData(drawHistory.value[drawHistory.value.length - 1], 0, 0);
-  drawHistory.value.pop();
+  if (historyData.value.length < 1) return false;
+  ctx.value?.putImageData(historyData.value[historyData.value.length - 1], 0, 0);
+  historyData.value.pop();
 };
 
 // 保存
@@ -340,14 +362,17 @@ const onSave = () => {
 const onClickTools = (key: string) => {
   if (ACTIVE_DRAW_ACTIONS.includes(key)) {
     currentTool.value = key;
-  } else {
-    const actions = {
-      clear: onClear,
-      undo: onUndo,
-      save: onSave,
-    };
-    actions[key]();
   }
+
+  const actions = {
+    brush: onBrush,
+    rect: onRect,
+    eraser: onEraser,
+    clear: onClear,
+    undo: onUndo,
+    save: onSave,
+  };
+  actions[key]();
 };
 </script>
 

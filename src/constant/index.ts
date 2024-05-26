@@ -106,6 +106,16 @@ export const BOARD_ACTIONS = [
     name: '画笔',
   },
   {
+    key: 'rect',
+    icon: 'icon-huabi',
+    name: '矩形',
+  },
+  {
+    key: 'circle',
+    icon: 'icon-huabi',
+    name: '圆形',
+  },
+  {
     key: 'eraser',
     icon: 'icon-a-xiangpicachuxiangpica',
     name: '橡皮',
@@ -127,6 +137,8 @@ export const BOARD_ACTIONS = [
   },
 ];
 
+export const ACTIVE_DRAW_ACTIONS = ['brush', 'rect', 'circle', 'eraser']
+
 export const BOARD_COLORS = [
   '#000',
   '#fff',
@@ -146,7 +158,7 @@ export const DOMAIN_URL = '101.43.50.15';
 export const WEB_DOMAIN_URL = 'http://101.43.50.15:9216';
 
 // 表情资源路径域名
-export const EMOJI_HOST = `http://${ location.hostname === DOMAIN_URL ? DOMAIN_URL : '127.0.0.1:9112' }/image/`;
+export const EMOJI_HOST = `http://${location.hostname === DOMAIN_URL ? DOMAIN_URL : '127.0.0.1:9112'}/image/`;
 
 export const EMOJI_MAP = {
   '[NO]': 'emoji_0@2x.png',
@@ -955,7 +967,7 @@ export const FILE_TYPE = [
 // 允许选择的图片类型
 export const IMG_ACCEPT = FILE_TYPE.map((type) => {
   const parts = type.split('/');
-  return `.${ parts[1] }`;
+  return `.${parts[1]}`;
 }).join(', ');
 
 // 上传文件提示
