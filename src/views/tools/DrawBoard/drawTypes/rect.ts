@@ -14,7 +14,7 @@ export class DrawRect {
   public endY: number;
   public ctx: any;
   public lineSize?: number;
-
+  public type: string = 'rect';
 
   constructor({ ctx, color, startX, startY, lineSize }: Params) {
     this.ctx = ctx;
@@ -24,6 +24,7 @@ export class DrawRect {
     this.endX = startX;
     this.endY = startY;
     this.lineSize = lineSize || 2;
+    this.type = 'rect';
   }
 
   draw() {
@@ -33,7 +34,12 @@ export class DrawRect {
     // 绘制虚线
     // this.ctx.setLineDash([5, 3]);
     this.ctx.beginPath();
-    this.ctx.rect(this.startX * devicePixelRatio, this.startY * devicePixelRatio, (this.endX - this.startX) * devicePixelRatio, (this.endY - this.startY) * devicePixelRatio);
+    this.ctx.rect(
+      this.startX * devicePixelRatio,
+      this.startY * devicePixelRatio,
+      (this.endX - this.startX) * devicePixelRatio,
+      (this.endY - this.startY) * devicePixelRatio,
+    );
     // this.ctx.fill();
     this.ctx.stroke();
     this.ctx.closePath();

@@ -9,12 +9,12 @@ interface Params {
 
 export class DrawLine {
   public color: string;
-  public lineSize?: number;
   public startX: number;
   public startY: number;
   public endX: number;
   public endY: number;
   public ctx: any;
+  public lineSize?: number;
 
   constructor({ ctx, color, startX, startY, lineSize }: Params) {
     this.ctx = ctx;

@@ -10,32 +10,75 @@
       <div class="left">
         <div class="tools">
           <div
-v-for="btn in BOARD_ACTIONS" :key="btn.key"
+            v-for="btn in BOARD_ACTIONS"
+            :key="btn.key"
             :class="`tool ${currentTool === btn.key && ACTIVE_DRAW_ACTIONS.includes(btn.key) && 'active-tool'}`"
-            @click="onClickTools(btn.key)">
+            @click="onClickTools(btn.key)"
+          >
             <div v-if="currentTool === btn.key">
-              <el-popover placement="top" effect="dark" popper-class="draw-pop" trigger="hover">
+              <el-popover
+                v-if="btn.key === 'brush'"
+                placement="top"
+                effect="dark"
+                popper-class="draw-pop"
+                trigger="hover"
+              >
                 <div class="tools-content">
                   <el-slider
-v-model="lineWidth" class="slider" vertical height="100px" :step="1" :min="1" :max="50"
-                    :show-tooltip="false" />
+                    v-model="lineWidth"
+                    class="slider"
+                    vertical
+                    height="100px"
+                    :step="1"
+                    :min="1"
+                    :max="50"
+                    :show-tooltip="false"
+                  />
                   <span class="line-width">{{ lineWidth }}</span>
                 </div>
                 <template #reference>
                   <span class="btn-text">
-                    <i v-if="btn.key === 'brush' || btn.key === 'eraser'" :class="`iconfont ${btn.icon}`"></i>
-                    <span v-if="btn.key === 'brush' || btn.key === 'eraser'" class="name">{{ btn.name }}</span>
+                    <i :class="`iconfont ${btn.icon}`"></i>
+                    <span class="name">{{ btn.name }}</span>
+                  </span>
+                </template>
+              </el-popover>
+              <el-popover
+                v-if="btn.key === 'eraser'"
+                placement="top"
+                effect="dark"
+                popper-class="draw-pop"
+                trigger="hover"
+              >
+                <div class="tools-content">
+                  <el-slider
+                    v-model="eraserWidth"
+                    class="slider"
+                    vertical
+                    height="100px"
+                    :step="1"
+                    :min="1"
+                    :max="50"
+                    :show-tooltip="false"
+                  />
+                  <span class="line-width">{{ eraserWidth }}</span>
+                </div>
+                <template #reference>
+                  <span class="btn-text">
+                    <i :class="`iconfont ${btn.icon}`"></i>
+                    <span class="name">{{ btn.name }}</span>
                   </span>
                 </template>
               </el-popover>
             </div>
             <span class="btn-text">
               <i
-v-if="(btn.key !== 'brush' && btn.key !== 'eraser') || currentTool !== btn.key"
-                :class="`iconfont ${btn.icon}`" />
-              <span v-if="(btn.key !== 'brush' && btn.key !== 'eraser') || currentTool !== btn.key" class="name">{{
-                btn.name
-              }}</span>
+                v-if="(btn.key !== 'brush' && btn.key !== 'eraser') || currentTool !== btn.key"
+                :class="`iconfont ${btn.icon}`"
+              />
+              <span v-if="(btn.key !== 'brush' && btn.key !== 'eraser') || currentTool !== btn.key" class="name">
+                {{ btn.name }}
+              </span>
             </span>
           </div>
         </div>
@@ -76,11 +119,11 @@ v-if="(btn.key !== 'brush' && btn.key !== 'eraser') || currentTool !== btn.key"
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, nextTick, onUnmounted } from 'vue';
+import { onMounted, ref, nextTick, onUnmounted, watch } from 'vue';
 import { onBeforeRouteLeave } from 'vue-router';
 import { onDownloadFile } from '@/utils';
 import { BOARD_ACTIONS, BOARD_COLORS, ACTIVE_DRAW_ACTIONS } from '@/constant';
-import { DrawLine, DrawRect, DrawEraser, DrawCircle } from './drawTypes'
+import { DrawLine, DrawRect, DrawEraser, DrawCircle, DrawEllipse } from './drawTypes';
 
 interface IProps {
   boardVisible?: boolean;
@@ -104,7 +147,8 @@ const ctx = ref<CanvasRenderingContext2D | null>(null);
 // 历史操作步骤
 const drawHistory = ref<ImageData[]>([]);
 // 画笔及橡皮差大小
-const lineWidth = ref<number>(1);
+const lineWidth = ref<number>(2);
+const eraserWidth = ref<number>(2);
 // 画笔颜色
 const activeColor = ref<string>('#000');
 // 画布颜色
@@ -116,8 +160,10 @@ const currentTool = ref<string>('brush');
 const colorType = ref<boolean>(false);
 // 当前绘制的画布
 const drawLayer = ref<ImageData | null>(null);
-// 绘制的元素
-const drawNodes = ref<any[]>([]);
+// 是否按下shift键
+const isPressShift = ref<boolean>(false);
+
+let drawer: DrawLine | DrawCircle | DrawRect | DrawCircle | DrawEllipse | DrawEraser | null = null;
 
 // 监听画板大小变化
 const observer = new ResizeObserver(() => {
@@ -128,14 +174,33 @@ onMounted(() => {
   createCanvas();
   observer?.observe(boardWrapRef.value!);
   document.addEventListener('keydown', onKeydown);
+  document.addEventListener('keyup', onKeyUp);
 });
 
 onUnmounted(() => {
   document.removeEventListener('keydown', onKeydown);
+  document.removeEventListener('keyup', onKeyUp);
 });
 
 onBeforeRouteLeave(() => {
   observer.unobserve(boardWrapRef.value!);
+});
+
+// 监听是否按下shift键，切换绘制圆形或椭圆
+watch(isPressShift, () => {
+  if (currentTool.value === 'circle') {
+    const params = {
+      ctx: ctx.value!,
+      color: activeColor.value,
+      startX: drawer?.startX!,
+      startY: drawer?.startY!,
+      isPressShift: isPressShift.value,
+    };
+    const circle = new DrawCircle(params);
+    const ellipse = new DrawEllipse(params);
+    // 初始化圆形
+    drawer = isPressShift.value ? circle : ellipse;
+  }
 });
 
 const init = () => {
@@ -160,8 +225,6 @@ const initCanvasSize = () => {
 
 const onMousedown = (e: MouseEvent) => {
   const { offsetX, offsetY } = e;
-  const shape = getShape(e);
-  console.log(shape, 'shape');
   /**
    * 开始绘制新的形状或路径时，在每次绘制之前调用 beginPath() 方法，
    * 以确保您绘制的是一个新的、独立的路径。防止在撤销或者清空之后，
@@ -177,63 +240,97 @@ const onMousedown = (e: MouseEvent) => {
     drawHistory.value.push(drawImg);
   }
 
-  let drawer: DrawCircle | DrawRect | DrawCircle | DrawEraser | null = null
-
   const initDraw = {
     brush: {
       init: () => {
         // 初始化线
-        drawer = new DrawLine({ ctx: ctx.value!, color: activeColor.value, startX: offsetX, startY: offsetY, lineSize: 2 });
+        drawer = new DrawLine({
+          ctx: ctx.value!,
+          color: activeColor.value,
+          startX: offsetX,
+          startY: offsetY,
+          lineSize: lineWidth.value,
+        });
       },
-      draw: onDrawLine
+      draw: onDrawLine,
     },
     rect: {
       init: () => {
         // 初始化矩形
-        drawer = new DrawRect({ ctx: ctx.value!, color: activeColor.value, startX: offsetX, startY: offsetY });
-        drawNodes.value.push(drawer)
+        drawer = new DrawRect({
+          ctx: ctx.value!,
+          color: activeColor.value,
+          startX: offsetX,
+          startY: offsetY,
+          lineSize: lineWidth.value,
+        });
       },
-      draw: onDrawRect
+      draw: onDrawRect,
     },
     circle: {
+      radius: 0,
       init: () => {
+        const params = {
+          ctx: ctx.value!,
+          color: activeColor.value,
+          startX: offsetX,
+          startY: offsetY,
+          isPressShift: isPressShift.value,
+          lineSize: lineWidth.value,
+        };
+        const circle = new DrawCircle(params);
+        const ellipse = new DrawEllipse(params);
         // 初始化圆形
-        drawer = new DrawCircle({ ctx: ctx.value!, color: activeColor.value, startX: offsetX, startY: offsetY, radius: 10 });
-        drawNodes.value.push(drawer)
+        drawer = isPressShift.value ? circle : ellipse;
       },
-      draw: onDrawCircle
+      draw: onDrawCircle,
     },
     eraser: {
       init: () => {
         // 初始化橡皮檫
-        drawer = new DrawEraser({ ctx: ctx.value!, color: drawBgColor.value, startX: offsetX, startY: offsetY, radius: 10 });
+        drawer = new DrawEraser({
+          ctx: ctx.value!,
+          color: drawBgColor.value,
+          startX: offsetX,
+          startY: offsetY,
+          lineSize: eraserWidth.value,
+        });
       },
-      draw: onDrawEraser
-    }
-  }
+      draw: onDrawEraser,
+    },
+  };
 
-  initDraw[currentTool.value].init()
+  initDraw[currentTool.value].init();
 
   window.onmousemove = (e) => {
     const { clientX, clientY } = e;
     const canvasInfo = canvas.value?.getBoundingClientRect()!;
     // 判断画布边界，除了边界不再绘制
-    if (clientX >= canvasInfo.right || clientY >= canvasInfo.bottom || clientX < canvasInfo.left || clientY < canvasInfo.top) return;
-    initDraw[currentTool.value].draw(drawer, clientX, clientY, canvasInfo)
-  }
+    if (
+      clientX >= canvasInfo.right ||
+      clientY >= canvasInfo.bottom ||
+      clientX < canvasInfo.left ||
+      clientY < canvasInfo.top
+    )
+      return;
+    initDraw[currentTool.value].draw(drawer, clientX, clientY, canvasInfo);
+  };
 
   window.onmouseup = () => {
     window.onmousemove = null;
     window.onmouseup = null;
-  }
-}
+  };
+};
 
 // 判断区域内是否有图形
-const getShape = (e: MouseEvent) => {
-  const { offsetX, offsetY, clientX, clientY } = e;
-  const { left, top } = canvas.value?.getBoundingClientRect()!;
-  return drawNodes.value.find(node => offsetX > node.startX && clientX - left <= node.endX && offsetY > node.startY && clientY - top <= node.endY);
-}
+// const getShape = (e: MouseEvent) => {
+//   const { offsetX, offsetY, clientX, clientY } = e;
+//   const { left, top } = canvas.value?.getBoundingClientRect()!;
+//   return drawNodes.value.find(
+//     (node) =>
+//       offsetX > node.startX && clientX - left <= node.endX && offsetY > node.startY && clientY - top <= node.endY,
+//   );
+// };
 
 // 设置画板背景颜色
 const setCanvasBg = (color = '#fff') => {
@@ -248,8 +345,8 @@ const onDrawLine = (line: DrawLine, clientX: number, clientY: number, canvasInfo
   line.startY = line.endY;
   line.endX = clientX - canvasInfo.left;
   line.endY = clientY - canvasInfo.top;
-  line.draw()
-}
+  line.draw();
+};
 
 // 绘制矩形
 const onDrawRect = (rect: DrawRect, clientX: number, clientY: number, canvasInfo: DOMRect) => {
@@ -258,8 +355,8 @@ const onDrawRect = (rect: DrawRect, clientX: number, clientY: number, canvasInfo
   ctx.value!.fillRect(0, 0, canvas.value?.width!, canvas.value?.height!);
   // 防止画矩形时，清空了之前的画线，重新将之前绘制的线绘制到画布上
   drawLayer.value && ctx.value?.putImageData(drawLayer.value, 0, 0);
-  rect.draw()
-}
+  rect.draw();
+};
 
 const onDrawCircle = (circle: DrawCircle, clientX: number, clientY: number, canvasInfo: DOMRect) => {
   circle.endX = clientX - canvasInfo.left;
@@ -267,8 +364,8 @@ const onDrawCircle = (circle: DrawCircle, clientX: number, clientY: number, canv
   ctx.value!.fillRect(0, 0, canvas.value?.width!, canvas.value?.height!);
   // 防止画矩形时，清空了之前的画线，重新将之前绘制的线绘制到画布上
   drawLayer.value && ctx.value?.putImageData(drawLayer.value, 0, 0);
-  circle.draw()
-}
+  circle.draw();
+};
 
 // 橡皮檫
 const onDrawEraser = (eraser: DrawEraser, clientX: number, clientY: number, canvasInfo: DOMRect) => {
@@ -276,8 +373,8 @@ const onDrawEraser = (eraser: DrawEraser, clientX: number, clientY: number, canv
   eraser.startY = eraser.endY;
   eraser.endX = clientX - canvasInfo.left;
   eraser.endY = clientY - canvasInfo.top;
-  eraser.draw()
-}
+  eraser.draw();
+};
 
 // 监听快捷键操作
 const onKeydown = (event: KeyboardEvent) => {
@@ -287,6 +384,17 @@ const onKeydown = (event: KeyboardEvent) => {
 
   if ((event.ctrlKey || event.metaKey) && event.key === 's') {
     onSave();
+  }
+
+  if (event.shiftKey) {
+    isPressShift.value = true;
+  }
+};
+
+// 监听鼠标按下事件
+const onKeyUp = (event: KeyboardEvent) => {
+  if (!event.shiftKey && event.key === 'Shift') {
+    isPressShift.value = false;
   }
 };
 
@@ -584,6 +692,12 @@ const onClickTools = (key: string) => {
 
   .name {
     font-size: 12px;
+  }
+
+  .icon-huajuxingdeqiang,
+  .icon-a-huayuanCopy {
+    font-size: 14px;
+    margin-bottom: 2px;
   }
 }
 </style>

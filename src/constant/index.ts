@@ -107,12 +107,12 @@ export const BOARD_ACTIONS = [
   },
   {
     key: 'rect',
-    icon: 'icon-huabi',
+    icon: 'icon-huajuxingdeqiang',
     name: '矩形',
   },
   {
     key: 'circle',
-    icon: 'icon-huabi',
+    icon: 'icon-a-huayuanCopy',
     name: '圆形',
   },
   {
@@ -137,7 +137,7 @@ export const BOARD_ACTIONS = [
   },
 ];
 
-export const ACTIVE_DRAW_ACTIONS = ['brush', 'rect', 'circle', 'eraser']
+export const ACTIVE_DRAW_ACTIONS = ['brush', 'rect', 'circle', 'eraser'];
 
 export const BOARD_COLORS = [
   '#000',
