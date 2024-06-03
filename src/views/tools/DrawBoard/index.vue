@@ -163,11 +163,13 @@ const drawLayer = ref<ImageData | null>(null);
 // 是否按下shift键
 const isPressShift = ref<boolean>(false);
 const isDragging = ref<boolean>(false);
+const isScaling = ref<boolean>(false);
 
 let previousSelectedCircle: any = null;
 
 // 绘制的所有图形
 let drawShapes: any[] = [];
+let selectedCornerShapes: any[] = [];
 
 let drawer: DrawLine | DrawCircle | DrawRect | DrawCircle | DrawEllipse | DrawEraser | null = null;
 
@@ -248,15 +250,43 @@ const getSize = (node: any) => {
 };
 
 // 判断区域内是否有图形
+const getSelectedCornerShape = (e: MouseEvent) => {
+  const { offsetX, offsetY, clientX, clientY } = e;
+  const { left, top } = canvas.value?.getBoundingClientRect()!;
+  const outSize = 10; // 鼠标点击范围
+  const shape = selectedCornerShapes.find((node) => {
+    const { minX, maxX, minY, maxY } = getSize(node);
+
+    console.log(clientX - left - outSize <= maxX, 'clientX - left - 5 <= maxX', clientX - left - outSize, maxX);
+    console.log(clientY - top - outSize <= maxY, 'clientY - top - 5 <= maxY', clientY - top - outSize, maxY);
+
+    const inRectOrEllipse =
+      offsetX > minX - outSize / 2 &&
+      clientX - left <= maxX + outSize &&
+      offsetY > minY - outSize / 2 &&
+      clientY - top <= maxY + outSize;
+
+    return inRectOrEllipse;
+  });
+
+  return shape;
+};
+
+// 判断区域内是否有图形
 const getShape = (e: MouseEvent) => {
   const { offsetX, offsetY, clientX, clientY } = e;
   const { left, top } = canvas.value?.getBoundingClientRect()!;
+  const outSize = 10; // 鼠标点击范围
   const shape = drawShapes.find((node) => {
     const { minX, maxX, minY, maxY } = getSize(node);
-    const inRectOrEllipse = offsetX > minX && clientX - left <= maxX && offsetY > minY && clientY - top <= maxY;
+    const inRectOrEllipse =
+      offsetX > minX - outSize &&
+      clientX - left <= maxX + outSize &&
+      offsetY > minY - outSize &&
+      clientY - top <= maxY + outSize;
     // 计算鼠标与圆心的距离
     const distance = Math.sqrt((offsetX - minX) ** 2 + (offsetY - minY) ** 2);
-    return inRectOrEllipse || distance <= node?._radius;
+    return inRectOrEllipse || distance <= node?._radius + (node?._radius - node?._radius / 3 + outSize);
   });
 
   if (shape) {
@@ -282,6 +312,15 @@ const onMouseclick = (e: MouseEvent) => {
   } else {
     onRedraw();
   }
+
+  // 查找鼠标点击区域内是否有角标志
+  const findCornerNode = getSelectedCornerShape(e);
+
+  if (findCornerNode) {
+    isScaling.value = true;
+  } else {
+    isScaling.value = false;
+  }
 };
 
 const onDocMousedown = (e: MouseEvent) => {
@@ -305,12 +344,19 @@ const onDocMousedown = (e: MouseEvent) => {
         const disX = clientX - left - offsetX;
         const disY = clientY - top - offsetY;
 
-        previousSelectedCircle.startX = startX + disX;
-        previousSelectedCircle.startY = startY + disY;
-        previousSelectedCircle.endX = endX + disX;
-        previousSelectedCircle.endY = endY + disY;
-
-        onRedraw(false);
+        if (isScaling.value) {
+          console.log(isScaling.value, '图形缩放----图形缩放');
+          previousSelectedCircle.endX = endX + disX;
+          previousSelectedCircle.endY = endY + disY;
+          onRedraw(false);
+        } else {
+          console.log(isScaling.value, '图形移动---图形移动');
+          previousSelectedCircle.startX = startX + disX;
+          previousSelectedCircle.startY = startY + disY;
+          previousSelectedCircle.endX = endX + disX;
+          previousSelectedCircle.endY = endY + disY;
+          onRedraw(false);
+        }
       }
     }
   };
@@ -448,20 +494,24 @@ const onDrawSelectRect = (findNode: any) => {
 
   if (findNode.type !== 'circle') {
     onDrawHelperRect(minX - outSize / 2, minY - outSize / 2, width + outSize, height + outSize, false, true);
-    onDrawHelperRect(minX - outSize, minY - outSize, outSize, outSize, true, false);
-    onDrawHelperRect(minX + width, minY - outSize, outSize, outSize, true, false);
-    onDrawHelperRect(minX - outSize, minY + height, outSize, outSize, true, false);
-    onDrawHelperRect(minX + width, minY + height, outSize, outSize, true, false);
+    const leftTop = onDrawHelperRect(minX - outSize, minY - outSize, outSize, outSize, true, false);
+    const rightTop = onDrawHelperRect(minX + width, minY - outSize, outSize, outSize, true, false);
+    const leftBottom = onDrawHelperRect(minX - outSize, minY + height, outSize, outSize, true, false);
+    const rightBottom = onDrawHelperRect(minX + width, minY + height, outSize, outSize, true, false);
+    // 保存选中框的四个角标志
+    selectedCornerShapes = [leftTop, rightTop, leftBottom, rightBottom];
   }
 
   if (findNode.type === 'circle') {
     const x = minX - _radius;
     const y = minY - _radius;
     onDrawHelperRect(x - outSize / 2, y - outSize / 2, _radius * 2 + outSize, _radius * 2 + outSize, false, true);
-    onDrawHelperRect(x - outSize, y - outSize, outSize, outSize, true, false);
-    onDrawHelperRect(x + _radius * 2, y - outSize, outSize, outSize, true, false);
-    onDrawHelperRect(x - outSize, y + _radius * 2, outSize, outSize, true, false);
-    onDrawHelperRect(x + _radius * 2, y + _radius * 2, outSize, outSize, true, false);
+    const leftTop = onDrawHelperRect(x - outSize, y - outSize, outSize, outSize, true, false);
+    const rightTop = onDrawHelperRect(x + _radius * 2, y - outSize, outSize, outSize, true, false);
+    const leftBottom = onDrawHelperRect(x - outSize, y + _radius * 2, outSize, outSize, true, false);
+    const rightBottom = onDrawHelperRect(x + _radius * 2, y + _radius * 2, outSize, outSize, true, false);
+    // 保存选中框的四个角标志
+    selectedCornerShapes = [leftTop, rightTop, leftBottom, rightBottom];
   }
 };
 
