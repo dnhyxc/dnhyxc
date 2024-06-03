@@ -434,20 +434,73 @@ const setCanvasBg = (color = '#fff') => {
   ctx.value!.fillStyle = 'black';
 };
 
+const onDrawSelectRect = (findNode: any) => {
+  const outSize = 10;
+  const { startX, startY, endX, endY, _radius } = findNode!;
+
+  const minX = Math.min(startX, endX);
+  const maxX = Math.max(startX, endX);
+  const minY = Math.min(startY, endY);
+  const maxY = Math.max(startY, endY);
+
+  const width = Math.abs(maxX - minX);
+  const height = Math.abs(maxY - minY);
+
+  if (findNode.type !== 'circle') {
+    onDrawHelperRect(minX - outSize / 2, minY - outSize / 2, width + outSize, height + outSize, false, true);
+    onDrawHelperRect(minX - outSize, minY - outSize, outSize, outSize, true, false);
+    onDrawHelperRect(minX + width, minY - outSize, outSize, outSize, true, false);
+    onDrawHelperRect(minX - outSize, minY + height, outSize, outSize, true, false);
+    onDrawHelperRect(minX + width, minY + height, outSize, outSize, true, false);
+  }
+
+  if (findNode.type === 'circle') {
+    const x = minX - _radius;
+    const y = minY - _radius;
+    onDrawHelperRect(x - outSize / 2, y - outSize / 2, _radius * 2 + outSize, _radius * 2 + outSize, false, true);
+    onDrawHelperRect(x - outSize, y - outSize, outSize, outSize, true, false);
+    onDrawHelperRect(x + _radius * 2, y - outSize, outSize, outSize, true, false);
+    onDrawHelperRect(x - outSize, y + _radius * 2, outSize, outSize, true, false);
+    onDrawHelperRect(x + _radius * 2, y + _radius * 2, outSize, outSize, true, false);
+  }
+};
+
+// 绘制选中框
+const onDrawHelperRect = (
+  startX: number,
+  startY: number,
+  width: number,
+  height: number,
+  fill: boolean = true,
+  dash: boolean = false,
+  color: string = activeColor.value,
+  fillStyle: string = activeColor.value,
+) => {
+  const rect = new DrawRect({
+    ctx: ctx.value!,
+    color,
+    startX,
+    startY,
+    width,
+    height,
+    lineSize: 2,
+    fill,
+    dash,
+    fillStyle,
+  });
+  rect.draw();
+  return rect;
+};
+
 // 重新绘制
 const onRedraw = (init: boolean = true) => {
   setCanvasBg(drawBgColor.value);
   drawShapes.forEach((shape) => {
     if (!init) {
       if (shape.isSelected && currentTool.value === 'select') {
-        shape.lineSize = 5;
-      } else {
-        shape.lineSize = 2;
+        onDrawSelectRect(shape);
       }
-    } else {
-      shape.lineSize = 2;
     }
-
     if (shape.type === 'line') {
       drawLayer.value && ctx.value?.putImageData(drawLayer.value, 0, 0);
     }

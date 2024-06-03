@@ -125,6 +125,137 @@ import { onDownloadFile } from '@/utils';
 import { BOARD_ACTIONS, BOARD_COLORS, ACTIVE_DRAW_ACTIONS } from '@/constant';
 import { DrawLine, DrawRect, DrawEraser, DrawCircle, DrawEllipse } from './drawTypes';
 
+// const onDrawSelectRect = (findNode: any) => {
+//   console.log(findNode, findNode, 'findNoe');
+//   const outSize = 10;
+//   const { startX, startY, endX, endY, _radius } = findNode!;
+
+//   const minX = Math.min(startX, endX);
+//   const maxX = Math.max(startX, endX);
+//   const minY = Math.min(startY, endY);
+//   const maxY = Math.max(startY, endY);
+
+//   const width = Math.abs(maxX - minX);
+//   const height = Math.abs(maxY - minY);
+
+//   if (findNode.type !== 'circle') {
+//     onDrawHelperRect({
+//       startX: minX - outSize / 2,
+//       startY: minY - outSize / 2,
+//       width: width + outSize,
+//       height: height + outSize,
+//       fill: false,
+//       dash: true,
+//     });
+//     onDrawHelperRect({
+//       startX: minX - outSize,
+//       startY: minY - outSize,
+//       width: outSize,
+//       height: outSize,
+//       fill: true,
+//       dash: false,
+//     });
+//     onDrawHelperRect({
+//       startX: minX + width,
+//       startY: minY - outSize,
+//       width: outSize,
+//       height: outSize,
+//       fill: true,
+//       dash: false,
+//     });
+//     onDrawHelperRect({
+//       startX: minX - outSize,
+//       startY: minY + height,
+//       width: outSize,
+//       height: outSize,
+//       fill: true,
+//       dash: false,
+//     });
+//     onDrawHelperRect({
+//       startX: minX + width,
+//       startY: minY + height,
+//       width: outSize,
+//       height: outSize,
+//       fill: true,
+//       dash: false,
+//     });
+//   }
+
+//   if (findNode.type === 'circle') {
+//     const x = startX - _radius;
+//     const y = startY - _radius;
+//     onDrawHelperRect({
+//       startX: x - outSize / 2,
+//       startY: y - outSize / 2,
+//       width: _radius * 2 + outSize,
+//       height: _radius * 2 + outSize,
+//       fill: false,
+//       dash: true,
+//     });
+//     onDrawHelperRect({
+//       startX: x - outSize,
+//       startY: y - outSize,
+//       width: outSize,
+//       height: outSize,
+//       fill: true,
+//       dash: false,
+//     });
+//     onDrawHelperRect({
+//       startX: x + _radius * 2,
+//       startY: y - outSize,
+//       width: outSize,
+//       height: outSize,
+//       fill: true,
+//       dash: false,
+//     });
+//     onDrawHelperRect({
+//       startX: x - outSize,
+//       startY: y + _radius * 2,
+//       width: outSize,
+//       height: outSize,
+//       fill: true,
+//       dash: false,
+//     });
+//     onDrawHelperRect({
+//       startX: x + _radius * 2,
+//       startY: y + _radius * 2,
+//       width: outSize,
+//       height: outSize,
+//       fill: true,
+//       dash: false,
+//     });
+//   }
+// };
+
+// interface IRectParams {
+//   startX: number;
+//   startY: number;
+//   width: number;
+//   height: number;
+//   fill: boolean;
+//   dash: boolean;
+//   color?: string;
+//   fillStyle?: string;
+// }
+
+// // 绘制选中框
+// const onDrawHelperRect = ({ startX, startY, width, height, fill, dash, color, fillStyle }: IRectParams) => {
+//   const rect = new DrawRect({
+//     ctx: ctx.value!,
+//     startX,
+//     startY,
+//     width,
+//     height,
+//     lineSize: 2,
+//     fill: fill || true,
+//     dash: dash || false,
+//     color: color || activeColor.value,
+//     fillStyle: fillStyle || activeColor.value,
+//   });
+//   rect.draw();
+// };
+
+
 interface IProps {
   boardVisible?: boolean;
   hideHeader?: boolean;
