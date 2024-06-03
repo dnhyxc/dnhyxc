@@ -86,7 +86,7 @@
       <span v-if="!hideHeader" class="right" @click="onClose">关闭</span>
     </div>
     <div ref="boardWrapRef" class="board-wrap">
-      <canvas ref="canvas" class="draw-board" @mousedown="onMousedown" @click="onMouseclick" />
+      <canvas ref="canvas" class="draw-board" @mousedown="onMousedown" />
       <div class="color-group">
         <el-tooltip placement="top" popper-class="custom-dropdown-styles">
           <template #content>
@@ -138,6 +138,8 @@ defineProps<IProps>();
 
 const emit = defineEmits<Emits>();
 
+let drawer: DrawLine | DrawCircle | DrawRect | DrawCircle | DrawEllipse | DrawEraser | null = null;
+
 // 容器
 const boardWrapRef = ref<HTMLDivElement | null>(null);
 const titleRef = ref<HTMLDivElement | null>(null);
@@ -162,14 +164,11 @@ const colorType = ref<boolean>(false);
 const drawLayer = ref<ImageData | null>(null);
 // 是否按下shift键
 const isPressShift = ref<boolean>(false);
-const isDragging = ref<boolean>(false);
-
-let previousSelectedCircle: any = null;
-
-// 绘制的所有图形
-let drawShapes: any[] = [];
-
-let drawer: DrawLine | DrawCircle | DrawRect | DrawCircle | DrawEllipse | DrawEraser | null = null;
+const drawedNodes = ref<any[]>([]);
+const drawSnapshot = ref<ImageData | null>(null);
+// 选中元素
+const selectedDrawNode = ref<any>(null);
+const isDraging = ref<boolean>(false);
 
 // 监听画板大小变化
 const observer = new ResizeObserver(() => {
@@ -181,12 +180,14 @@ onMounted(() => {
   observer?.observe(boardWrapRef.value!);
   document.addEventListener('keydown', onKeydown);
   document.addEventListener('keyup', onKeyUp);
+  document.addEventListener('click', onClickDocument);
   document.addEventListener('mousedown', onDocMousedown);
 });
 
 onUnmounted(() => {
   document.removeEventListener('keydown', onKeydown);
   document.removeEventListener('keyup', onKeyUp);
+  document.removeEventListener('click', onClickDocument);
   document.removeEventListener('mousedown', onDocMousedown);
 });
 
@@ -195,7 +196,7 @@ onBeforeRouteLeave(() => {
 });
 
 // 监听是否按下shift键，切换绘制圆形或椭圆
-watch(isPressShift, () => {
+watch(isPressShift, (newVal) => {
   if (currentTool.value === 'circle') {
     const params = {
       ctx: ctx.value!,
@@ -207,10 +208,164 @@ watch(isPressShift, () => {
     const circle = new DrawCircle(params);
     const ellipse = new DrawEllipse(params);
     // 初始化圆形
-    drawer = isPressShift.value ? circle : ellipse;
-    drawShapes.push(drawer);
+    drawer = newVal ? circle : ellipse;
+    drawedNodes.value.push(drawer);
   }
 });
+
+// 绘制选中框
+const onDrawSelectRect = (
+  startX: number,
+  startY: number,
+  width: number,
+  height: number,
+  fill: boolean = true,
+  dash: boolean = false,
+  color: string = activeColor.value,
+) => {
+  const rect = new DrawRect({
+    ctx: ctx.value!,
+    color,
+    startX,
+    startY,
+    width,
+    height,
+    lineSize: 2,
+    fill,
+    dash,
+  });
+  rect.draw();
+  return rect;
+};
+
+// 判断是否选中矩形
+const isPointOnRect = (drawer: any, e: MouseEvent) => {
+  const { offsetX, offsetY } = e;
+  const { startX, startY, endX, endY } = drawer!;
+  const width = Math.abs(endX - startX);
+  const height = Math.abs(endY - startY);
+  const tolerance = 2;
+  const inSide =
+    (offsetX >= startX - tolerance &&
+      offsetX <= startX + width + tolerance &&
+      Math.abs(offsetY - startY) <= tolerance) ||
+    (offsetX >= startX - tolerance &&
+      offsetX <= startX + width + tolerance &&
+      Math.abs(offsetY - (startY + height)) <= tolerance) ||
+    (offsetY >= startY - tolerance &&
+      offsetY <= startY + height + tolerance &&
+      Math.abs(offsetX - startX) <= tolerance) ||
+    (offsetY >= startY - tolerance &&
+      offsetY <= startY + height + tolerance &&
+      Math.abs(offsetX - (startX + width)) <= tolerance);
+
+  drawSnapshot.value && ctx.value?.putImageData(drawSnapshot.value!, 0, 0);
+
+  if (inSide) return drawer;
+};
+
+// 判断是否选中画布上的某个圆
+const isPointOnCircle = (drawer: any, e: MouseEvent) => {
+  const { offsetX, offsetY } = e;
+  const { startX, startY, _radius } = drawer!;
+  const inCircle = Math.sqrt((offsetX - startX) ** 2 + (offsetY - startY) ** 2);
+
+  drawSnapshot.value && ctx.value?.putImageData(drawSnapshot.value!, 0, 0);
+
+  if (Math.abs(inCircle - _radius) <= 2) return drawer;
+};
+
+// 判断是否选中画布上的某个椭圆
+const isPointOnEllipse = (drawer: any, e: MouseEvent) => {
+  const { offsetX, offsetY } = e;
+  const { centerX, centerY, radiusX, radiusY } = drawer!;
+  const normalizedX = (offsetX - centerX) / radiusX;
+  const normalizedY = (offsetY - centerY) / radiusY;
+
+  drawSnapshot.value && ctx.value?.putImageData(drawSnapshot.value!, 0, 0);
+
+  if (Math.abs(normalizedX ** 2 + normalizedY ** 2 - 1) <= 0.1) return drawer;
+};
+
+// 鼠标按下查找选中元素，并为选中元素绘制选中边框
+const onClickDocument = (e: MouseEvent) => {
+  const checkActions = {
+    rect: isPointOnRect,
+    circle: isPointOnCircle,
+    ellipse: isPointOnEllipse,
+  };
+  if (currentTool.value !== 'select' || isDraging.value) return;
+
+  const findNode = drawedNodes.value.find((node) => checkActions[node.type](node, e));
+
+  console.log(findNode, 'findNode', drawedNodes.value);
+
+  if (!findNode) return;
+
+  selectedDrawNode.value = findNode;
+
+  const outSize = 10;
+  const { startX, startY, endX, endY, _radius } = findNode!;
+
+  const minX = Math.min(startX, endX);
+  const maxX = Math.max(startX, endX);
+  const minY = Math.min(startY, endY);
+  const maxY = Math.max(startY, endY);
+
+  const width = Math.abs(maxX - minX);
+  const height = Math.abs(maxY - minY);
+
+  if (findNode.type !== 'circle') {
+    onDrawSelectRect(minX - outSize / 2, minY - outSize / 2, width + outSize, height + outSize, false, false);
+    onDrawSelectRect(minX - outSize, minY - outSize, outSize, outSize, true, false);
+    onDrawSelectRect(minX + width, minY - outSize, outSize, outSize, true, false);
+    onDrawSelectRect(minX - outSize, minY + height, outSize, outSize, true, false);
+    onDrawSelectRect(minX + width, minY + height, outSize, outSize, true, false);
+  }
+
+  if (findNode.type === 'circle') {
+    const x = startX - _radius;
+    const y = startY - _radius;
+    onDrawSelectRect(x - outSize / 2, y - outSize / 2, _radius * 2 + outSize, _radius * 2 + outSize, false, false);
+    onDrawSelectRect(x - outSize, y - outSize, outSize, outSize, true, false);
+    onDrawSelectRect(x + _radius * 2, y - outSize, outSize, outSize, true, false);
+    onDrawSelectRect(x - outSize, y + _radius * 2, outSize, outSize, true, false);
+    onDrawSelectRect(x + _radius * 2, y + _radius * 2, outSize, outSize, true, false);
+  }
+};
+
+const onDocMousedown = (e: MouseEvent) => {
+  const { offsetX, offsetY } = e;
+  if (!selectedDrawNode.value) return;
+  isDraging.value = true;
+
+  const { startX, startY, endX, endY } = selectedDrawNode.value!;
+  const canvasInfo = canvas.value?.getBoundingClientRect()!;
+  const drawImg = ctx.value?.getImageData(0, 0, canvas.value?.width!, canvas.value?.height!); // 在这里储存绘图表面
+  drawLayer.value = drawImg!;
+
+  window.onmousemove = (e) => {
+    if (isDraging.value) {
+      const { clientX, clientY } = e;
+      const disX = clientX - canvasInfo.left - offsetX;
+      const disY = clientY - canvasInfo.top - offsetY;
+      drawer!.startX = startX + disX;
+      drawer!.startY = startY + disY;
+      drawer!.endX = endX + disX;
+      drawer!.endY = endY + disY;
+      ctx.value!.fillRect(0, 0, canvas.value?.width!, canvas.value?.height!);
+      // 防止画矩形时，清空了之前的画线，重新将之前绘制的线绘制到画布上
+      drawLayer.value && ctx.value?.putImageData(drawLayer.value!, 0, 0);
+      drawer!.draw();
+    }
+  };
+
+  window.onmouseup = () => {
+    window.onmousemove = null;
+    window.onmouseup = null;
+    isDraging.value = false;
+  };
+};
 
 const init = () => {
   nextTick(() => {
@@ -232,126 +387,6 @@ const initCanvasSize = () => {
   canvas.value!.height = height * devicePixelRatio;
 };
 
-const getSize = (node: any) => {
-  const { startX, startY, endX, endY } = node;
-  const minX = Math.min(startX, endX);
-  const maxX = Math.max(startX, endX);
-  const minY = Math.min(startY, endY);
-  const maxY = Math.max(startY, endY);
-
-  return {
-    minX,
-    minY,
-    maxX,
-    maxY,
-  };
-};
-
-// 判断区域内是否有图形
-const getShape = (e: MouseEvent) => {
-  const { offsetX, offsetY, clientX, clientY } = e;
-  const { left, top } = canvas.value?.getBoundingClientRect()!;
-  const shape = drawShapes.find((node) => {
-    const { minX, maxX, minY, maxY } = getSize(node);
-    const inRectOrEllipse = offsetX > minX && clientX - left <= maxX && offsetY > minY && clientY - top <= maxY;
-    // 计算鼠标与圆心的距离
-    const distance = Math.sqrt((offsetX - minX) ** 2 + (offsetY - minY) ** 2);
-    return inRectOrEllipse || distance <= node?._radius;
-  });
-
-  if (shape) {
-    // 清除之前的选择
-    if (previousSelectedCircle) {
-      previousSelectedCircle.isSelected = false;
-    }
-    previousSelectedCircle = shape;
-    shape.isSelected = true;
-  }
-
-  return shape;
-};
-
-const onMouseclick = (e: MouseEvent) => {
-  if (currentTool.value !== 'select') return;
-
-  const findNode = getShape(e);
-
-  if (findNode) {
-    isDragging.value = true;
-
-    setCanvasBg(drawBgColor.value);
-
-    drawShapes.forEach((shape) => {
-      if (shape.isSelected) {
-        shape.lineSize = 5;
-      } else {
-        shape.lineSize = 2;
-      }
-      if (shape.type === 'line') {
-        drawLayer.value && ctx.value?.putImageData(drawLayer.value, 0, 0);
-      }
-      shape.draw();
-    });
-  } else {
-    setCanvasBg(drawBgColor.value);
-    drawShapes.forEach((shape) => {
-      shape.lineSize = 2;
-      if (shape.type === 'line') {
-        drawLayer.value && ctx.value?.putImageData(drawLayer.value, 0, 0);
-      }
-      shape.draw();
-    });
-  }
-};
-
-const onDocMousedown = (e: MouseEvent) => {
-  if (currentTool.value !== 'select') return;
-
-  const { offsetX, offsetY } = e;
-
-  const startX = previousSelectedCircle?.startX;
-  const startY = previousSelectedCircle?.startY;
-  const endX = previousSelectedCircle?.endX;
-  const endY = previousSelectedCircle?.endY;
-
-  window.onmousemove = (e) => {
-    // 判断圆圈是否开始拖拽
-    if (isDragging.value) {
-      // 判断拖拽对象是否存在
-      if (previousSelectedCircle) {
-        const { left, top } = canvas.value?.getBoundingClientRect()!;
-        const { clientX, clientY } = e;
-
-        const disX = clientX - left - offsetX;
-        const disY = clientY - top - offsetY;
-
-        previousSelectedCircle.startX = startX + disX;
-        previousSelectedCircle.startY = startY + disY;
-        previousSelectedCircle.endX = endX + disX;
-        previousSelectedCircle.endY = endY + disY;
-
-        setCanvasBg(drawBgColor.value);
-
-        drawShapes.forEach((shape) => {
-          if (shape.isSelected) {
-            shape.lineSize = 5;
-          }
-          if (shape.type === 'line') {
-            drawLayer.value && ctx.value?.putImageData(drawLayer.value, 0, 0);
-          }
-          shape.draw();
-        });
-      }
-    }
-  };
-
-  window.onmouseup = () => {
-    window.onmousemove = null;
-    window.onmouseup = null;
-    isDragging.value = false;
-  };
-};
-
 const onMousedown = (e: MouseEvent) => {
   if (currentTool.value === 'select') return;
 
@@ -361,11 +396,11 @@ const onMousedown = (e: MouseEvent) => {
    * 以确保您绘制的是一个新的、独立的路径。防止在撤销或者清空之后，
    * 再次绘制时，之前绘制的内容重新出现在画布上。
    */
-  ctx.value?.save();
-  ctx.value?.beginPath();
+  // ctx.value?.save();
+  // ctx.value?.beginPath();
 
   const drawImg = ctx.value?.getImageData(0, 0, canvas.value?.width!, canvas.value?.height!); // 在这里储存绘图表面
-  // drawLayer.value = drawImg!;
+  drawLayer.value = drawImg!;
   if (drawImg) {
     drawHistory.value.length === 100 && drawHistory.value.shift();
     drawHistory.value.push(drawImg);
@@ -382,9 +417,8 @@ const onMousedown = (e: MouseEvent) => {
           startY: offsetY,
           lineSize: lineWidth.value,
         });
-        drawShapes.push(drawer);
+        drawedNodes.value.push(drawer);
       },
-      // draw: onDrawLineSegment,
       draw: onDrawLine,
     },
     rect: {
@@ -397,7 +431,7 @@ const onMousedown = (e: MouseEvent) => {
           startY: offsetY,
           lineSize: lineWidth.value,
         });
-        drawShapes.push(drawer);
+        drawedNodes.value.push(drawer);
       },
       draw: onDrawRect,
     },
@@ -416,7 +450,7 @@ const onMousedown = (e: MouseEvent) => {
         const ellipse = new DrawEllipse(params);
         // 初始化圆形
         drawer = isPressShift.value ? circle : ellipse;
-        drawShapes.push(drawer);
+        drawedNodes.value.push(drawer);
       },
       draw: onDrawCircle,
     },
@@ -430,6 +464,7 @@ const onMousedown = (e: MouseEvent) => {
           startY: offsetY,
           lineSize: eraserWidth.value,
         });
+        drawedNodes.value.push(drawer);
       },
       draw: onDrawEraser,
     },
@@ -445,7 +480,8 @@ const onMousedown = (e: MouseEvent) => {
       clientX >= canvasInfo.right ||
       clientY >= canvasInfo.bottom ||
       clientX < canvasInfo.left ||
-      clientY < canvasInfo.top
+      clientY < canvasInfo.top ||
+      currentTool.value === 'select'
     )
       return;
     initDraw[currentTool.value].draw(drawer, clientX, clientY, canvasInfo);
@@ -457,23 +493,22 @@ const onMousedown = (e: MouseEvent) => {
   };
 };
 
+// 判断区域内是否有图形
+// const getShape = (e: MouseEvent) => {
+//   const { offsetX, offsetY, clientX, clientY } = e;
+//   const { left, top } = canvas.value?.getBoundingClientRect()!;
+//   return drawNodes.value.find(
+//     (node) =>
+//       offsetX > node.startX && clientX - left <= node.endX && offsetY > node.startY && clientY - top <= node.endY,
+//   );
+// };
+
 // 设置画板背景颜色
 const setCanvasBg = (color = '#fff') => {
   ctx.value!.fillStyle = color;
   ctx.value!.fillRect(0, 0, canvas.value?.width!, canvas.value?.height!);
   ctx.value!.fillStyle = 'black';
 };
-
-// 这种方式用于绘制指向性的线段
-// const onDrawLineSegment = (line: DrawLine, clientX: number, clientY: number, canvasInfo: DOMRect) => {
-//   line.endX = clientX - canvasInfo.left;
-//   line.endY = clientY - canvasInfo.top;
-//   setCanvasBg(drawBgColor.value);
-//   drawShapes.forEach((shape) => {
-//     // console.log(shape, 'shape');
-//     shape.draw();
-//   });
-// };
 
 // 画线
 const onDrawLine = (line: DrawLine, clientX: number, clientY: number, canvasInfo: DOMRect) => {
@@ -482,35 +517,26 @@ const onDrawLine = (line: DrawLine, clientX: number, clientY: number, canvasInfo
   line.endX = clientX - canvasInfo.left;
   line.endY = clientY - canvasInfo.top;
   line.draw();
-  const drawImg = ctx.value?.getImageData(0, 0, canvas.value?.width!, canvas.value?.height!); // 在这里储存绘图表面
-  drawLayer.value = drawImg!;
 };
 
 // 绘制矩形
 const onDrawRect = (rect: DrawRect, clientX: number, clientY: number, canvasInfo: DOMRect) => {
   rect.endX = clientX - canvasInfo.left;
   rect.endY = clientY - canvasInfo.top;
-
-  setCanvasBg(drawBgColor.value);
-
-  drawShapes.forEach((shape) => {
-    if (shape.type === 'line') {
-      drawLayer.value && ctx.value?.putImageData(drawLayer.value, 0, 0);
-    }
-    shape.draw();
-  });
+  ctx.value!.fillRect(0, 0, canvas.value?.width!, canvas.value?.height!);
+  // 防止画矩形时，清空了之前的画线，重新将之前绘制的线绘制到画布上
+  drawLayer.value && ctx.value?.putImageData(drawLayer.value, 0, 0);
+  rect.draw();
 };
 
+// 绘制圆形
 const onDrawCircle = (circle: DrawCircle, clientX: number, clientY: number, canvasInfo: DOMRect) => {
   circle.endX = clientX - canvasInfo.left;
   circle.endY = clientY - canvasInfo.top;
-  setCanvasBg(drawBgColor.value);
-  drawShapes.forEach((shape) => {
-    if (shape.type === 'line') {
-      drawLayer.value && ctx.value?.putImageData(drawLayer.value, 0, 0);
-    }
-    shape.draw();
-  });
+  ctx.value!.fillRect(0, 0, canvas.value?.width!, canvas.value?.height!);
+  // 防止画矩形时，清空了之前的画线，重新将之前绘制的线绘制到画布上
+  drawLayer.value && ctx.value?.putImageData(drawLayer.value, 0, 0);
+  circle.draw();
 };
 
 // 橡皮檫
@@ -520,8 +546,6 @@ const onDrawEraser = (eraser: DrawEraser, clientX: number, clientY: number, canv
   eraser.endX = clientX - canvasInfo.left;
   eraser.endY = clientY - canvasInfo.top;
   eraser.draw();
-  const drawImg = ctx.value?.getImageData(0, 0, canvas.value?.width!, canvas.value?.height!); // 在这里储存绘图表面
-  drawLayer.value = drawImg!;
 };
 
 // 监听快捷键操作
@@ -580,7 +604,7 @@ const setLineColor = (color: string) => {
 const onClear = () => {
   ctx.value?.clearRect(0, 0, canvas.value!.width, canvas.value!.height);
   setCanvasBg(drawBgColor.value);
-  drawShapes = [];
+  drawedNodes.value = [];
 };
 
 // 撤销
@@ -588,7 +612,7 @@ const onUndo = () => {
   if (drawHistory.value.length < 1) return false;
   ctx.value?.putImageData(drawHistory.value[drawHistory.value.length - 1], 0, 0);
   drawHistory.value.pop();
-  drawShapes.pop();
+  drawedNodes.value.pop();
 };
 
 // 保存
@@ -599,6 +623,9 @@ const onSave = () => {
 
 // 点击工具
 const onClickTools = (key: string) => {
+  if (key === 'select') {
+    drawSnapshot.value = ctx.value?.getImageData(0, 0, canvas.value?.width!, canvas.value?.height!)!;
+  }
   if (ACTIVE_DRAW_ACTIONS.includes(key)) {
     currentTool.value = key;
   } else {

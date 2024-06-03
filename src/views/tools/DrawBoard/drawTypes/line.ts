@@ -4,8 +4,9 @@ interface Params {
   startX: number;
   startY: number;
   lineSize?: number;
+  type?: string;
+  isSelected?: boolean;
 }
-
 
 export class DrawLine {
   public color: string;
@@ -15,8 +16,10 @@ export class DrawLine {
   public endY: number;
   public ctx: any;
   public lineSize?: number;
+  public type?: string;
+  public isSelected?: boolean;
 
-  constructor({ ctx, color, startX, startY, lineSize }: Params) {
+  constructor({ ctx, color, startX, startY, lineSize, type = 'line', isSelected = false }: Params) {
     this.ctx = ctx;
     this.color = color || '#000';
     this.startX = startX;
@@ -24,6 +27,8 @@ export class DrawLine {
     this.endX = startX;
     this.endY = startY;
     this.lineSize = lineSize || 2;
+    this.type = type;
+    this.isSelected = isSelected;
   }
 
   draw() {

@@ -5,6 +5,8 @@ interface Params {
   startY: number;
   radius?: number;
   lineSize?: number;
+  type?: string;
+  isSelected?: boolean;
 }
 
 export class DrawCircle {
@@ -16,9 +18,10 @@ export class DrawCircle {
   public lineSize: number;
   public ctx: any;
   public radius?: number;
-  public type: string = 'circle';
+  public type?: string;
+  public isSelected?: boolean;
 
-  constructor({ ctx, color, startX, startY, radius, lineSize }: Params) {
+  constructor({ ctx, color, startX, startY, radius, lineSize, type = 'circle', isSelected = false }: Params) {
     this.ctx = ctx;
     this.color = color || '#000';
     this.startX = startX;
@@ -27,11 +30,28 @@ export class DrawCircle {
     this.endY = startY;
     this.radius = radius || 1;
     this.lineSize = lineSize || 2;
-    this.type = 'circle';
+    this.type = type;
+    this.isSelected = isSelected;
   }
 
   get _radius() {
     return Math.sqrt(Math.pow(this.endX - this.startX, 2) + Math.pow(this.endY - this.startY, 2));
+  }
+
+  get minX() {
+    return Math.min(this.startX, this.endX);
+  }
+
+  get minY() {
+    return Math.min(this.startY, this.endY);
+  }
+
+  get maxX() {
+    return Math.max(this.startX, this.endX);
+  }
+
+  get maxY() {
+    return Math.max(this.startY, this.endY);
   }
 
   draw() {
@@ -41,8 +61,8 @@ export class DrawCircle {
     this.ctx?.save();
     this.ctx?.beginPath();
     this.ctx?.arc(
-      this.startX * devicePixelRatio,
-      this.startY * devicePixelRatio,
+      this.minX * devicePixelRatio,
+      this.minY * devicePixelRatio,
       this._radius * devicePixelRatio,
       0,
       Math.PI * 2,
