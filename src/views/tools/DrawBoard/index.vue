@@ -278,29 +278,9 @@ const onMouseclick = (e: MouseEvent) => {
 
   if (findNode) {
     isDragging.value = true;
-
-    setCanvasBg(drawBgColor.value);
-
-    drawShapes.forEach((shape) => {
-      if (shape.isSelected) {
-        shape.lineSize = 5;
-      } else {
-        shape.lineSize = 2;
-      }
-      if (shape.type === 'line') {
-        drawLayer.value && ctx.value?.putImageData(drawLayer.value, 0, 0);
-      }
-      shape.draw();
-    });
+    onRedraw(false);
   } else {
-    setCanvasBg(drawBgColor.value);
-    drawShapes.forEach((shape) => {
-      shape.lineSize = 2;
-      if (shape.type === 'line') {
-        drawLayer.value && ctx.value?.putImageData(drawLayer.value, 0, 0);
-      }
-      shape.draw();
-    });
+    onRedraw();
   }
 };
 
@@ -330,17 +310,7 @@ const onDocMousedown = (e: MouseEvent) => {
         previousSelectedCircle.endX = endX + disX;
         previousSelectedCircle.endY = endY + disY;
 
-        setCanvasBg(drawBgColor.value);
-
-        drawShapes.forEach((shape) => {
-          if (shape.isSelected) {
-            shape.lineSize = 5;
-          }
-          if (shape.type === 'line') {
-            drawLayer.value && ctx.value?.putImageData(drawLayer.value, 0, 0);
-          }
-          shape.draw();
-        });
+        onRedraw(false);
       }
     }
   };
@@ -464,6 +434,27 @@ const setCanvasBg = (color = '#fff') => {
   ctx.value!.fillStyle = 'black';
 };
 
+// 重新绘制
+const onRedraw = (init: boolean = true) => {
+  setCanvasBg(drawBgColor.value);
+  drawShapes.forEach((shape) => {
+    if (!init) {
+      if (shape.isSelected && currentTool.value === 'select') {
+        shape.lineSize = 5;
+      } else {
+        shape.lineSize = 2;
+      }
+    } else {
+      shape.lineSize = 2;
+    }
+
+    if (shape.type === 'line') {
+      drawLayer.value && ctx.value?.putImageData(drawLayer.value, 0, 0);
+    }
+    shape.draw();
+  });
+};
+
 // 这种方式用于绘制指向性的线段
 // const onDrawLineSegment = (line: DrawLine, clientX: number, clientY: number, canvasInfo: DOMRect) => {
 //   line.endX = clientX - canvasInfo.left;
@@ -490,27 +481,13 @@ const onDrawLine = (line: DrawLine, clientX: number, clientY: number, canvasInfo
 const onDrawRect = (rect: DrawRect, clientX: number, clientY: number, canvasInfo: DOMRect) => {
   rect.endX = clientX - canvasInfo.left;
   rect.endY = clientY - canvasInfo.top;
-
-  setCanvasBg(drawBgColor.value);
-
-  drawShapes.forEach((shape) => {
-    if (shape.type === 'line') {
-      drawLayer.value && ctx.value?.putImageData(drawLayer.value, 0, 0);
-    }
-    shape.draw();
-  });
+  onRedraw();
 };
 
 const onDrawCircle = (circle: DrawCircle, clientX: number, clientY: number, canvasInfo: DOMRect) => {
   circle.endX = clientX - canvasInfo.left;
   circle.endY = clientY - canvasInfo.top;
-  setCanvasBg(drawBgColor.value);
-  drawShapes.forEach((shape) => {
-    if (shape.type === 'line') {
-      drawLayer.value && ctx.value?.putImageData(drawLayer.value, 0, 0);
-    }
-    shape.draw();
-  });
+  onRedraw();
 };
 
 // 橡皮檫
