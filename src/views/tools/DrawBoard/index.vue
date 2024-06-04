@@ -86,7 +86,7 @@
       <span v-if="!hideHeader" class="right" @click="onClose">关闭</span>
     </div>
     <div ref="boardWrapRef" class="board-wrap">
-      <canvas ref="canvas" class="draw-board" @mousedown="onMousedown" @click="onMouseclick" />
+      <canvas ref="canvas" class="draw-board" @mousedown="onMousedown" />
       <div class="color-group">
         <el-tooltip placement="top" popper-class="custom-dropdown-styles">
           <template #content>
@@ -301,28 +301,7 @@ const getShape = (e: MouseEvent) => {
   return shape;
 };
 
-const onMouseclick = (e: MouseEvent) => {
-  if (currentTool.value !== 'select') return;
-
-  const findNode = getShape(e);
-
-  if (findNode) {
-    isDragging.value = true;
-    onRedraw(false);
-  } else {
-    onRedraw();
-  }
-
-  // 查找鼠标点击区域内是否有角标志
-  const findCornerNode = getSelectedCornerShape(e);
-
-  if (findCornerNode) {
-    isScaling.value = true;
-  } else {
-    isScaling.value = false;
-  }
-};
-
+// document 鼠标按下事件
 const onDocMousedown = (e: MouseEvent) => {
   if (currentTool.value !== 'select') return;
 
@@ -368,8 +347,29 @@ const onDocMousedown = (e: MouseEvent) => {
   };
 };
 
+// canvas 鼠标按下事件
 const onMousedown = (e: MouseEvent) => {
-  if (currentTool.value === 'select') return;
+  if (currentTool.value === 'select') {
+    const findNode = getShape(e);
+
+    if (findNode) {
+      isDragging.value = true;
+      onRedraw(false);
+    } else {
+      onRedraw();
+    }
+
+    // 查找鼠标点击区域内是否有角标志
+    const findCornerNode = getSelectedCornerShape(e);
+
+    if (findCornerNode) {
+      isScaling.value = true;
+    } else {
+      isScaling.value = false;
+    }
+
+    return;
+  }
 
   const { offsetX, offsetY } = e;
   /**
@@ -480,42 +480,7 @@ const setCanvasBg = (color = '#fff') => {
   ctx.value!.fillStyle = 'black';
 };
 
-const onDrawSelectRect = (findNode: any) => {
-  const outSize = 10;
-  const { startX, startY, endX, endY, _radius } = findNode!;
-
-  const minX = Math.min(startX, endX);
-  const maxX = Math.max(startX, endX);
-  const minY = Math.min(startY, endY);
-  const maxY = Math.max(startY, endY);
-
-  const width = Math.abs(maxX - minX);
-  const height = Math.abs(maxY - minY);
-
-  if (findNode.type !== 'circle') {
-    onDrawHelperRect(minX - outSize / 2, minY - outSize / 2, width + outSize, height + outSize, false, true);
-    const leftTop = onDrawHelperRect(minX - outSize, minY - outSize, outSize, outSize, true, false);
-    const rightTop = onDrawHelperRect(minX + width, minY - outSize, outSize, outSize, true, false);
-    const leftBottom = onDrawHelperRect(minX - outSize, minY + height, outSize, outSize, true, false);
-    const rightBottom = onDrawHelperRect(minX + width, minY + height, outSize, outSize, true, false);
-    // 保存选中框的四个角标志
-    selectedCornerShapes = [leftTop, rightTop, leftBottom, rightBottom];
-  }
-
-  if (findNode.type === 'circle') {
-    const x = minX - _radius;
-    const y = minY - _radius;
-    onDrawHelperRect(x - outSize / 2, y - outSize / 2, _radius * 2 + outSize, _radius * 2 + outSize, false, true);
-    const leftTop = onDrawHelperRect(x - outSize, y - outSize, outSize, outSize, true, false);
-    const rightTop = onDrawHelperRect(x + _radius * 2, y - outSize, outSize, outSize, true, false);
-    const leftBottom = onDrawHelperRect(x - outSize, y + _radius * 2, outSize, outSize, true, false);
-    const rightBottom = onDrawHelperRect(x + _radius * 2, y + _radius * 2, outSize, outSize, true, false);
-    // 保存选中框的四个角标志
-    selectedCornerShapes = [leftTop, rightTop, leftBottom, rightBottom];
-  }
-};
-
-// 绘制选中框
+// 选中框绘制辅助工具
 const onDrawHelperRect = (
   startX: number,
   startY: number,
@@ -540,6 +505,50 @@ const onDrawHelperRect = (
   });
   rect.draw();
   return rect;
+};
+
+// 绘制选中框
+const onDrawSelectRect = (findNode: any) => {
+  const outSize = 10;
+  const { startX, startY, endX, endY, _radius } = findNode!;
+
+  const minX = Math.min(startX, endX);
+  const maxX = Math.max(startX, endX);
+  const minY = Math.min(startY, endY);
+  const maxY = Math.max(startY, endY);
+
+  const width = Math.abs(maxX - minX);
+  const height = Math.abs(maxY - minY);
+
+  let leftTop: DrawRect | null = null;
+  let rightTop: DrawRect | null = null;
+  let leftBottom: DrawRect | null = null;
+  let rightBottom: DrawRect | null = null;
+
+  if (findNode.type !== 'circle') {
+    onDrawHelperRect(minX - outSize / 2, minY - outSize / 2, width + outSize, height + outSize, false, true);
+    leftTop = onDrawHelperRect(minX - outSize, minY - outSize, outSize, outSize, true, false);
+    rightTop = onDrawHelperRect(minX + width, minY - outSize, outSize, outSize, true, false);
+    leftBottom = onDrawHelperRect(minX - outSize, minY + height, outSize, outSize, true, false);
+    rightBottom = onDrawHelperRect(minX + width, minY + height, outSize, outSize, true, false);
+  }
+
+  if (findNode.type === 'circle') {
+    const x = minX - _radius;
+    const y = minY - _radius;
+    onDrawHelperRect(x - outSize / 2, y - outSize / 2, _radius * 2 + outSize, _radius * 2 + outSize, false, true);
+    leftTop = onDrawHelperRect(x - outSize, y - outSize, outSize, outSize, true, false);
+    rightTop = onDrawHelperRect(x + _radius * 2, y - outSize, outSize, outSize, true, false);
+    leftBottom = onDrawHelperRect(x - outSize, y + _radius * 2, outSize, outSize, true, false);
+    rightBottom = onDrawHelperRect(x + _radius * 2, y + _radius * 2, outSize, outSize, true, false);
+  }
+
+  leftTop!.position = 'leftTop';
+  rightTop!.position = 'rightTop';
+  leftBottom!.position = 'leftBottom';
+  rightBottom!.position = 'rightBottom';
+  // 保存选中框的四个角标志
+  selectedCornerShapes = [leftTop, rightTop, leftBottom, rightBottom];
 };
 
 // 重新绘制

@@ -11,6 +11,7 @@ interface Params {
   height?: number;
   fill?: boolean;
   dash?: boolean;
+  position?: string;
 }
 
 export class DrawRect {
@@ -28,6 +29,7 @@ export class DrawRect {
   public height?: number;
   public fill?: boolean;
   public dash?: boolean;
+  public position?: string;
 
   constructor({
     ctx,
@@ -42,6 +44,7 @@ export class DrawRect {
     height,
     fill,
     dash,
+    position,
   }: Params) {
     this.ctx = ctx;
     this.color = color || '#000';
@@ -58,6 +61,7 @@ export class DrawRect {
     this.fill = fill;
     this.fillStyle = fillStyle;
     this.dash = dash;
+    this.position = position;
   }
 
   get minX() {
