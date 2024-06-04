@@ -330,7 +330,9 @@ const onDocMousedown = (e: MouseEvent) => {
 
   const { offsetX, offsetY } = e;
 
-  const { minX: startX, maxX: endX, minY: startY, maxY: endY } = getSize(previousSelectedCircle);
+  const { minX, maxX, minY, maxY } = getSize(previousSelectedCircle);
+
+  const { startX, startY, endX, endY } = previousSelectedCircle;
 
   window.onmousemove = (e) => {
     // 判断圆圈是否开始拖拽
@@ -346,20 +348,20 @@ const onDocMousedown = (e: MouseEvent) => {
         // 缩放策略
         const scaleTypes = {
           leftTop: () => {
-            previousSelectedCircle.startX = startX + disX;
-            previousSelectedCircle.startY = startY + disY;
+            previousSelectedCircle.startX = minX + disX;
+            previousSelectedCircle.startY = minY + disY;
           },
           rightTop: () => {
-            previousSelectedCircle.endX = endX + disX;
-            previousSelectedCircle.startY = startY + disY;
+            previousSelectedCircle.endX = maxX + disX;
+            previousSelectedCircle.startY = minY + disY;
           },
           leftBottom: () => {
-            previousSelectedCircle.startX = startX + disX;
-            previousSelectedCircle.endY = endY + disY;
+            previousSelectedCircle.startX = minX + disX;
+            previousSelectedCircle.endY = maxY + disY;
           },
           rightBottom: () => {
-            previousSelectedCircle.endX = endX + disX;
-            previousSelectedCircle.endY = endY + disY;
+            previousSelectedCircle.endX = maxX + disX;
+            previousSelectedCircle.endY = maxY + disY;
           },
         };
 

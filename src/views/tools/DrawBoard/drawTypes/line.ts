@@ -63,7 +63,6 @@ export class DrawLine {
     if (this.needsArrow) {
       const headlen = 10; // 自定义箭头线的长度
       const theta = 25; // 自定义箭头线与直线的夹角，个人觉得45°刚刚好
-      let arrowX, arrowY; // 箭头线终点坐标
       // 计算各角度和对应的箭头终点坐标
       const angle = (Math.atan2(this.startY - this.endY, this.startX - this.endX) * 180) / Math.PI;
       const angle1 = ((angle + theta) * Math.PI) / 180;
@@ -72,15 +71,15 @@ export class DrawLine {
       const topY = headlen * Math.sin(angle1);
       const botX = headlen * Math.cos(angle2);
       const botY = headlen * Math.sin(angle2);
-      arrowX = this.endX + topX;
-      arrowY = this.endY + topY;
+      const topArrowX = this.endX + topX;
+      const topArrowY = this.endY + topY;
       // 画上边箭头线
-      this.ctx.moveTo(arrowX * devicePixelRatio, arrowY * devicePixelRatio);
+      this.ctx.moveTo(topArrowX * devicePixelRatio, topArrowY * devicePixelRatio);
       this.ctx.lineTo(this.endX * devicePixelRatio, this.endY * devicePixelRatio);
-      arrowX = this.endX + botX;
-      arrowY = this.endY + botY;
+      const bottomArrowX = this.endX + botX;
+      const bottomArrowY = this.endY + botY;
       // 画下边箭头线
-      this.ctx.lineTo(arrowX * devicePixelRatio, arrowY * devicePixelRatio);
+      this.ctx.lineTo(bottomArrowX * devicePixelRatio, bottomArrowY * devicePixelRatio);
     }
 
     this.ctx.stroke();
