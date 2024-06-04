@@ -164,6 +164,7 @@ const drawLayer = ref<ImageData | null>(null);
 const isPressShift = ref<boolean>(false);
 const isDragging = ref<boolean>(false);
 const isScaling = ref<boolean>(false);
+const scalePos = ref<string>('');
 
 let previousSelectedCircle: any = null;
 
@@ -229,6 +230,7 @@ const createCanvas = () => {
 };
 
 const initCanvasSize = () => {
+  if (!boardWrapRef.value) return;
   const { width, height } = boardWrapRef.value?.getBoundingClientRect()!;
   canvas.value!.width = width * devicePixelRatio;
   canvas.value!.height = height * devicePixelRatio;
@@ -249,16 +251,13 @@ const getSize = (node: any) => {
   };
 };
 
-// 判断区域内是否有图形
+// 判断区域内是否有选中的角标
 const getSelectedCornerShape = (e: MouseEvent) => {
   const { offsetX, offsetY, clientX, clientY } = e;
   const { left, top } = canvas.value?.getBoundingClientRect()!;
   const outSize = 10; // 鼠标点击范围
   const shape = selectedCornerShapes.find((node) => {
     const { minX, maxX, minY, maxY } = getSize(node);
-
-    console.log(clientX - left - outSize <= maxX, 'clientX - left - 5 <= maxX', clientX - left - outSize, maxX);
-    console.log(clientY - top - outSize <= maxY, 'clientY - top - 5 <= maxY', clientY - top - outSize, maxY);
 
     const inRectOrEllipse =
       offsetX > minX - outSize / 2 &&
@@ -303,14 +302,16 @@ const getShape = (e: MouseEvent) => {
 
 // document 鼠标按下事件
 const onDocMousedown = (e: MouseEvent) => {
-  if (currentTool.value !== 'select') return;
+  if (currentTool.value !== 'select' || !previousSelectedCircle) return;
 
   const { offsetX, offsetY } = e;
 
-  const startX = previousSelectedCircle?.startX;
-  const startY = previousSelectedCircle?.startY;
-  const endX = previousSelectedCircle?.endX;
-  const endY = previousSelectedCircle?.endY;
+  const { minX: startX, maxX: endX, minY: startY, maxY: endY } = getSize(previousSelectedCircle);
+
+  // const startX = Math.min(previousSelectedCircle?.startX, previousSelectedCircle?.endX);
+  // const startY = Math.min(previousSelectedCircle?.startY, previousSelectedCircle?.endY);
+  // const endX = Math.max(previousSelectedCircle?.startX, previousSelectedCircle?.endX);
+  // const endY = Math.max(previousSelectedCircle?.startY, previousSelectedCircle?.endY);
 
   window.onmousemove = (e) => {
     // 判断圆圈是否开始拖拽
@@ -323,13 +324,30 @@ const onDocMousedown = (e: MouseEvent) => {
         const disX = clientX - left - offsetX;
         const disY = clientY - top - offsetY;
 
+        // 缩放策略
+        const scaleTypes = {
+          leftTop: () => {
+            previousSelectedCircle.startX = startX + disX;
+            previousSelectedCircle.startY = startY + disY;
+          },
+          rightTop: () => {
+            previousSelectedCircle.endX = endX + disX;
+            previousSelectedCircle.startY = startY + disY;
+          },
+          leftBottom: () => {
+            previousSelectedCircle.startX = startX + disX;
+            previousSelectedCircle.endY = endY + disY;
+          },
+          rightBottom: () => {
+            previousSelectedCircle.endX = endX + disX;
+            previousSelectedCircle.endY = endY + disY;
+          },
+        };
+
         if (isScaling.value) {
-          console.log(isScaling.value, '图形缩放----图形缩放');
-          previousSelectedCircle.endX = endX + disX;
-          previousSelectedCircle.endY = endY + disY;
+          scaleTypes[scalePos.value]();
           onRedraw(false);
         } else {
-          console.log(isScaling.value, '图形移动---图形移动');
           previousSelectedCircle.startX = startX + disX;
           previousSelectedCircle.startY = startY + disY;
           previousSelectedCircle.endX = endX + disX;
@@ -349,6 +367,7 @@ const onDocMousedown = (e: MouseEvent) => {
 
 // canvas 鼠标按下事件
 const onMousedown = (e: MouseEvent) => {
+  // 如果是选择工具，则不绘制，按下为选中图形进行拖拽
   if (currentTool.value === 'select') {
     const findNode = getShape(e);
 
@@ -364,13 +383,16 @@ const onMousedown = (e: MouseEvent) => {
 
     if (findCornerNode) {
       isScaling.value = true;
+      scalePos.value = findCornerNode.position;
     } else {
       isScaling.value = false;
+      scalePos.value = '';
     }
 
     return;
   }
 
+  // 不是选中状态时则为绘制工具
   const { offsetX, offsetY } = e;
   /**
    * 开始绘制新的形状或路径时，在每次绘制之前调用 beginPath() 方法，
