@@ -17,7 +17,7 @@
           >
             <div v-if="currentTool === btn.key">
               <el-popover
-                v-if="btn.key === 'brush'"
+                v-if="btn.key === 'arrowLine'"
                 placement="top"
                 effect="dark"
                 popper-class="draw-pop"
@@ -73,10 +73,10 @@
             </div>
             <span class="btn-text">
               <i
-                v-if="(btn.key !== 'brush' && btn.key !== 'eraser') || currentTool !== btn.key"
+                v-if="(btn.key !== 'arrowLine' && btn.key !== 'eraser') || currentTool !== btn.key"
                 :class="`iconfont ${btn.icon}`"
               />
-              <span v-if="(btn.key !== 'brush' && btn.key !== 'eraser') || currentTool !== btn.key" class="name">
+              <span v-if="(btn.key !== 'arrowLine' && btn.key !== 'eraser') || currentTool !== btn.key" class="name">
                 {{ btn.name }}
               </span>
             </span>
@@ -119,10 +119,10 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, nextTick, onUnmounted, watch } from 'vue';
+import { onMounted, ref, nextTick, onUnmounted, watch, computed } from 'vue';
 import { onBeforeRouteLeave } from 'vue-router';
 import { onDownloadFile } from '@/utils';
-import { BOARD_ACTIONS, BOARD_COLORS, ACTIVE_DRAW_ACTIONS } from '@/constant';
+import { BOARD_ACTIONS, BOARD_COLORS, ACTIVE_DRAW_ACTIONS, ERASER_SVG } from '@/constant';
 import { DrawLine, DrawRect, DrawEraser, DrawCircle, DrawEllipse } from './drawTypes';
 
 interface IProps {
@@ -155,7 +155,7 @@ const activeColor = ref<string>('#000');
 const drawBgColor = ref<string>('#fff');
 const markColor = ref<string>('');
 // 当前选中的工具
-const currentTool = ref<string>('brush');
+const currentTool = ref<string>('arrowLine');
 // 标识背景颜色设置还是画笔颜色设置
 const colorType = ref<boolean>(false);
 // 当前绘制的画布
@@ -195,6 +195,16 @@ onUnmounted(() => {
 
 onBeforeRouteLeave(() => {
   observer.unobserve(boardWrapRef.value!);
+});
+
+const cursor = computed(() => {
+  if (currentTool.value === 'eraser') {
+    return 'url(' + ERASER_SVG + '), auto';
+  } else if (currentTool.value === 'select') {
+    return 'pointer';
+  } else {
+    return 'crosshair';
+  }
 });
 
 // 监听是否按下shift键，切换绘制圆形或椭圆
@@ -300,6 +310,20 @@ const getShape = (e: MouseEvent) => {
   return shape;
 };
 
+// 橡皮擦工具擦除效果
+const delSelectedShape = (e: MouseEvent) => {
+  const { clientX, clientY, offsetX, offsetY } = e;
+  const { left, top } = canvas.value?.getBoundingClientRect()!;
+  drawShapes = drawShapes.filter((node) => {
+    const { minX, maxX, minY, maxY } = getSize(node);
+    const inRectOrEllipse = offsetX > minX && clientX - left <= maxX && offsetY > minY && clientY - top <= maxY;
+    // 计算鼠标与圆心的距离
+    const distance = Math.sqrt((offsetX - minX) ** 2 + (offsetY - minY) ** 2);
+    return !inRectOrEllipse || distance > node?._radius;
+  });
+  onRedraw();
+};
+
 // document 鼠标按下事件
 const onDocMousedown = (e: MouseEvent) => {
   if (currentTool.value !== 'select' || !previousSelectedCircle) return;
@@ -307,11 +331,6 @@ const onDocMousedown = (e: MouseEvent) => {
   const { offsetX, offsetY } = e;
 
   const { minX: startX, maxX: endX, minY: startY, maxY: endY } = getSize(previousSelectedCircle);
-
-  // const startX = Math.min(previousSelectedCircle?.startX, previousSelectedCircle?.endX);
-  // const startY = Math.min(previousSelectedCircle?.startY, previousSelectedCircle?.endY);
-  // const endX = Math.max(previousSelectedCircle?.startX, previousSelectedCircle?.endX);
-  // const endY = Math.max(previousSelectedCircle?.startY, previousSelectedCircle?.endY);
 
   window.onmousemove = (e) => {
     // 判断圆圈是否开始拖拽
@@ -399,8 +418,8 @@ const onMousedown = (e: MouseEvent) => {
    * 以确保您绘制的是一个新的、独立的路径。防止在撤销或者清空之后，
    * 再次绘制时，之前绘制的内容重新出现在画布上。
    */
-  ctx.value?.save();
-  ctx.value?.beginPath();
+  // ctx.value?.save();
+  // ctx.value?.beginPath();
 
   const drawImg = ctx.value?.getImageData(0, 0, canvas.value?.width!, canvas.value?.height!); // 在这里储存绘图表面
   // drawLayer.value = drawImg!;
@@ -410,7 +429,23 @@ const onMousedown = (e: MouseEvent) => {
   }
 
   const initDraw = {
-    brush: {
+    arrowLine: {
+      init: () => {
+        // 初始化线
+        drawer = new DrawLine({
+          ctx: ctx.value!,
+          color: activeColor.value,
+          startX: offsetX,
+          startY: offsetY,
+          lineSize: lineWidth.value,
+          needsArrow: true,
+        });
+        drawShapes.push(drawer);
+      },
+      draw: onDrawArrowLineSegment,
+      // draw: onDrawLine,
+    },
+    line: {
       init: () => {
         // 初始化线
         drawer = new DrawLine({
@@ -422,8 +457,7 @@ const onMousedown = (e: MouseEvent) => {
         });
         drawShapes.push(drawer);
       },
-      // draw: onDrawLineSegment,
-      draw: onDrawLine,
+      draw: onDrawLineSegment,
     },
     rect: {
       init: () => {
@@ -486,7 +520,7 @@ const onMousedown = (e: MouseEvent) => {
       clientY < canvasInfo.top
     )
       return;
-    initDraw[currentTool.value].draw(drawer, clientX, clientY, canvasInfo);
+    initDraw[currentTool.value].draw(drawer, e, canvasInfo);
   };
 
   window.onmouseup = () => {
@@ -589,50 +623,60 @@ const onRedraw = (init: boolean = true) => {
   });
 };
 
-// 这种方式用于绘制指向性的线段
-// const onDrawLineSegment = (line: DrawLine, clientX: number, clientY: number, canvasInfo: DOMRect) => {
-//   line.endX = clientX - canvasInfo.left;
-//   line.endY = clientY - canvasInfo.top;
-//   setCanvasBg(drawBgColor.value);
-//   drawShapes.forEach((shape) => {
-//     // console.log(shape, 'shape');
-//     shape.draw();
-//   });
-// };
-
-// 画线
-const onDrawLine = (line: DrawLine, clientX: number, clientY: number, canvasInfo: DOMRect) => {
-  line.startX = line.endX;
-  line.startY = line.endY;
-  line.endX = clientX - canvasInfo.left;
-  line.endY = clientY - canvasInfo.top;
-  line.draw();
-  const drawImg = ctx.value?.getImageData(0, 0, canvas.value?.width!, canvas.value?.height!); // 在这里储存绘图表面
-  drawLayer.value = drawImg!;
+// 这种方式用于绘制带箭头指向性的线段
+const onDrawArrowLineSegment = (line: DrawLine, e: MouseEvent, canvasInfo: DOMRect) => {
+  line.endX = e.clientX - canvasInfo.left;
+  line.endY = e.clientY - canvasInfo.top;
+  setCanvasBg(drawBgColor.value);
+  drawShapes.forEach((shape) => {
+    shape.draw();
+  });
 };
 
+// 这种方式用于绘制指向性的线段
+const onDrawLineSegment = (line: DrawLine, e: MouseEvent, canvasInfo: DOMRect) => {
+  line.endX = e.clientX - canvasInfo.left;
+  line.endY = e.clientY - canvasInfo.top;
+  setCanvasBg(drawBgColor.value);
+  drawShapes.forEach((shape) => {
+    shape.draw();
+  });
+};
+
+// 画线
+// const onDrawLine = (line: DrawLine, e: MouseEvent, canvasInfo: DOMRect) => {
+//   line.startX = line.endX;
+//   line.startY = line.endY;
+//   line.endX = e.clientX - canvasInfo.left;
+//   line.endY = e.clientY - canvasInfo.top;
+//   line.draw();
+//   // const drawImg = ctx.value?.getImageData(0, 0, canvas.value?.width!, canvas.value?.height!); // 在这里储存绘图表面
+//   // drawLayer.value = drawImg!;
+// };
+
 // 绘制矩形
-const onDrawRect = (rect: DrawRect, clientX: number, clientY: number, canvasInfo: DOMRect) => {
-  rect.endX = clientX - canvasInfo.left;
-  rect.endY = clientY - canvasInfo.top;
+const onDrawRect = (rect: DrawRect, e: MouseEvent, canvasInfo: DOMRect) => {
+  rect.endX = e.clientX - canvasInfo.left;
+  rect.endY = e.clientY - canvasInfo.top;
   onRedraw();
 };
 
-const onDrawCircle = (circle: DrawCircle, clientX: number, clientY: number, canvasInfo: DOMRect) => {
-  circle.endX = clientX - canvasInfo.left;
-  circle.endY = clientY - canvasInfo.top;
+const onDrawCircle = (circle: DrawCircle, e: MouseEvent, canvasInfo: DOMRect) => {
+  circle.endX = e.clientX - canvasInfo.left;
+  circle.endY = e.clientY - canvasInfo.top;
   onRedraw();
 };
 
 // 橡皮檫
-const onDrawEraser = (eraser: DrawEraser, clientX: number, clientY: number, canvasInfo: DOMRect) => {
-  eraser.startX = eraser.endX;
-  eraser.startY = eraser.endY;
-  eraser.endX = clientX - canvasInfo.left;
-  eraser.endY = clientY - canvasInfo.top;
-  eraser.draw();
-  const drawImg = ctx.value?.getImageData(0, 0, canvas.value?.width!, canvas.value?.height!); // 在这里储存绘图表面
-  drawLayer.value = drawImg!;
+const onDrawEraser = (eraser: DrawEraser, e: MouseEvent, canvasInfo: DOMRect) => {
+  // eraser.startX = eraser.endX;
+  // eraser.startY = eraser.endY;
+  // eraser.endX = e.clientX - canvasInfo.left;
+  // eraser.endY = e.clientY - canvasInfo.top;
+  // eraser.draw();
+  // const drawImg = ctx.value?.getImageData(0, 0, canvas.value?.width!, canvas.value?.height!); // 在这里储存绘图表面
+  // drawLayer.value = drawImg!;
+  delSelectedShape(e);
 };
 
 // 监听快捷键操作
@@ -647,6 +691,11 @@ const onKeydown = (event: KeyboardEvent) => {
 
   if (event.shiftKey) {
     isPressShift.value = true;
+  }
+
+  if (event.key === 'Backspace') {
+    drawShapes = drawShapes.filter((node) => !node.isSelected);
+    onRedraw(false);
   }
 };
 
@@ -678,6 +727,15 @@ const onColorChange = (color: string, isCustom: boolean) => {
   } else {
     activeColor.value = color;
     setLineColor(color);
+    updateShapeColor(color);
+  }
+};
+
+// 更新图形线条颜色
+const updateShapeColor = (color: string) => {
+  if (previousSelectedCircle) {
+    previousSelectedCircle.color = color;
+    onRedraw(false);
   }
 };
 
@@ -807,7 +865,7 @@ const onClickTools = (key: string) => {
     height: calc(100% - var(--title-h));
     position: relative;
     box-sizing: border-box;
-    cursor: crosshair;
+    cursor: v-bind(cursor);
 
     .draw-board {
       width: 100%;

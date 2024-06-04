@@ -6,7 +6,7 @@ interface Params {
   radius?: number;
   lineSize?: number;
   type?: string;
-  isSelected?: boolean;
+  isSelect?: boolean;
 }
 
 export class DrawEllipse {
@@ -19,9 +19,9 @@ export class DrawEllipse {
   public ctx: any;
   public radius?: number;
   public type?: string;
-  public isSelected?: boolean;
+  public isSelect?: boolean;
 
-  constructor({ ctx, color, startX, startY, radius, lineSize, type = 'ellipse', isSelected = false }: Params) {
+  constructor({ ctx, color, startX, startY, radius, lineSize, type = 'ellipse', isSelect = false }: Params) {
     this.ctx = ctx;
     this.color = color || '#000';
     this.startX = startX;
@@ -31,7 +31,7 @@ export class DrawEllipse {
     this.radius = radius || 1;
     this.lineSize = lineSize || 2;
     this.type = type;
-    this.isSelected = isSelected;
+    this.isSelect = isSelect;
   }
 
   get centerX() {
@@ -64,6 +64,7 @@ export class DrawEllipse {
     this.ctx.fillStyle = this.color;
     this.ctx.strokeStyle = this.color;
     this.ctx.lineWidth = this.lineSize * devicePixelRatio;
+    this.ctx?.save();
     this.ctx.beginPath();
     this.ctx.ellipse(
       this.centerX * devicePixelRatio,

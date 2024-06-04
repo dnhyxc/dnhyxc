@@ -84,13 +84,14 @@ export class DrawRect {
     this.ctx.fillStyle = this.fillStyle;
     this.ctx.strokeStyle = this.color;
     this.ctx.lineWidth = this.lineSize! * devicePixelRatio;
-
+    this.ctx.lineCap = 'butt';
     // 绘制虚线
     if (this.dash) {
       this.ctx.setLineDash([5, 3]);
     } else {
       this.ctx.setLineDash([]);
     }
+    this.ctx?.save();
     this.ctx.beginPath();
     this.ctx.rect(
       this.minX * devicePixelRatio,

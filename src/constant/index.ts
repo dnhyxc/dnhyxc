@@ -30,6 +30,7 @@ import BOOK_SVG from '@/assets/svg/book.svg';
 import PDF_SVG from '@/assets/svg/pdf.svg';
 import TRANSCRIBE_SVG from '@/assets/svg/transcribe.svg';
 import WORD_SVG from '@/assets/svg/word.svg';
+import ERASER_SVG from '@/assets/svg/eraser.svg';
 
 export {
   EMPTY,
@@ -59,6 +60,7 @@ export {
   BOOK_SVG,
   COVER,
   NIGHT,
+  ERASER_SVG,
 };
 
 // 工具列表
@@ -106,9 +108,14 @@ export const BOARD_ACTIONS = [
     name: '选择',
   },
   {
-    key: 'brush',
+    key: 'arrowLine',
     icon: 'icon-huabi',
-    name: '画笔',
+    name: '箭头',
+  },
+  {
+    key: 'line',
+    icon: 'icon-huabi',
+    name: '线段',
   },
   {
     key: 'rect',
@@ -142,7 +149,7 @@ export const BOARD_ACTIONS = [
   },
 ];
 
-export const ACTIVE_DRAW_ACTIONS = ['select', 'brush', 'rect', 'circle', 'eraser'];
+export const ACTIVE_DRAW_ACTIONS = ['select', 'arrowLine', 'line', 'rect', 'circle', 'eraser'];
 
 export const BOARD_COLORS = [
   '#000',

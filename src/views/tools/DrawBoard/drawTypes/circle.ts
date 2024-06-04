@@ -7,6 +7,8 @@ interface Params {
   lineSize?: number;
   type?: string;
   isSelected?: boolean;
+  fill?: boolean;
+  fillStyle?: string;
 }
 
 export class DrawCircle {
@@ -20,8 +22,21 @@ export class DrawCircle {
   public radius?: number;
   public type?: string;
   public isSelected?: boolean;
+  public fill?: boolean;
+  public fillStyle?: string;
 
-  constructor({ ctx, color, startX, startY, radius, lineSize, type = 'circle', isSelected = false }: Params) {
+  constructor({
+    ctx,
+    color,
+    startX,
+    startY,
+    radius,
+    lineSize,
+    type = 'circle',
+    isSelected = false,
+    fill = false,
+    fillStyle = '#ccc',
+  }: Params) {
     this.ctx = ctx;
     this.color = color || '#000';
     this.startX = startX;
@@ -32,6 +47,8 @@ export class DrawCircle {
     this.lineSize = lineSize || 2;
     this.type = type;
     this.isSelected = isSelected;
+    this.fill = fill;
+    this.fillStyle = fillStyle;
   }
 
   get _radius() {
