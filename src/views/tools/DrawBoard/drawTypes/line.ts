@@ -59,10 +59,17 @@ export class DrawLine {
     this.ctx.lineJoin = 'round';
     this.ctx.moveTo(this.startX * devicePixelRatio, this.startY * devicePixelRatio);
     this.ctx.lineTo(this.endX * devicePixelRatio, this.endY * devicePixelRatio);
+    this.ctx.stroke();
+
+    // this.ctx.moveTo((this.startX + 2) * devicePixelRatio, this.startY * devicePixelRatio);
+    // this.ctx.lineTo((this.endX + 2) * devicePixelRatio, this.endY * devicePixelRatio);
+
     // 判断是否需要绘制箭头
     if (this.needsArrow) {
+      this.ctx?.save();
+      this.ctx.beginPath();
       const headlen = 10; // 自定义箭头线的长度
-      const theta = 25; // 自定义箭头线与直线的夹角，个人觉得45°刚刚好
+      const theta = 25; // 自定义箭头线与直线的夹角度数
       // 计算各角度和对应的箭头终点坐标
       const angle = (Math.atan2(this.startY - this.endY, this.startX - this.endX) * 180) / Math.PI;
       const angle1 = ((angle + theta) * Math.PI) / 180;
@@ -80,9 +87,9 @@ export class DrawLine {
       const bottomArrowY = this.endY + botY;
       // 画下边箭头线
       this.ctx.lineTo(bottomArrowX * devicePixelRatio, bottomArrowY * devicePixelRatio);
+      this.ctx.stroke();
     }
 
-    this.ctx.stroke();
     this.ctx.closePath();
   }
 }

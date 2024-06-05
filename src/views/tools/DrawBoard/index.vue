@@ -737,6 +737,8 @@ const onColorChange = (color: string, isCustom: boolean) => {
 const updateShapeColor = (color: string) => {
   if (previousSelectedCircle) {
     previousSelectedCircle.color = color;
+    // previousSelectedCircle.fill = true;
+    // previousSelectedCircle.fillStyle = color;
     onRedraw(false);
   }
 };
