@@ -119,11 +119,11 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, nextTick, onUnmounted, watch } from 'vue';
+import { onMounted, ref, nextTick, onUnmounted } from 'vue';
 import { onBeforeRouteLeave } from 'vue-router';
 import { onDownloadFile } from '@/utils';
 import { BOARD_ACTIONS, BOARD_COLORS, ACTIVE_DRAW_ACTIONS } from '@/constant';
-import { DrawLine, DrawRect, DrawEraser, DrawCircle, DrawEllipse } from './drawTypes';
+import { DrawLine, DrawEraser } from './drawTypes';
 
 interface IProps {
   boardVisible?: boolean;
@@ -163,7 +163,7 @@ const drawLayer = ref<ImageData | null>(null);
 // 是否按下shift键
 const isPressShift = ref<boolean>(false);
 
-let drawer: DrawLine | DrawCircle | DrawRect | DrawCircle | DrawEllipse | DrawEraser | null = null;
+let drawer: DrawLine | DrawEraser | null = null;
 
 // 监听画板大小变化
 const observer = new ResizeObserver(() => {
@@ -184,23 +184,6 @@ onUnmounted(() => {
 
 onBeforeRouteLeave(() => {
   observer.unobserve(boardWrapRef.value!);
-});
-
-// 监听是否按下shift键，切换绘制圆形或椭圆
-watch(isPressShift, () => {
-  if (currentTool.value === 'circle') {
-    const params = {
-      ctx: ctx.value!,
-      color: activeColor.value,
-      startX: drawer?.startX!,
-      startY: drawer?.startY!,
-      isPressShift: isPressShift.value,
-    };
-    const circle = new DrawCircle(params);
-    const ellipse = new DrawEllipse(params);
-    // 初始化圆形
-    drawer = isPressShift.value ? circle : ellipse;
-  }
 });
 
 const init = () => {
@@ -254,37 +237,6 @@ const onMousedown = (e: MouseEvent) => {
       },
       draw: onDrawLine,
     },
-    rect: {
-      init: () => {
-        // 初始化矩形
-        drawer = new DrawRect({
-          ctx: ctx.value!,
-          color: activeColor.value,
-          startX: offsetX,
-          startY: offsetY,
-          lineSize: lineWidth.value,
-        });
-      },
-      draw: onDrawRect,
-    },
-    circle: {
-      radius: 0,
-      init: () => {
-        const params = {
-          ctx: ctx.value!,
-          color: activeColor.value,
-          startX: offsetX,
-          startY: offsetY,
-          isPressShift: isPressShift.value,
-          lineSize: lineWidth.value,
-        };
-        const circle = new DrawCircle(params);
-        const ellipse = new DrawEllipse(params);
-        // 初始化圆形
-        drawer = isPressShift.value ? circle : ellipse;
-      },
-      draw: onDrawCircle,
-    },
     eraser: {
       init: () => {
         // 初始化橡皮檫
@@ -322,16 +274,6 @@ const onMousedown = (e: MouseEvent) => {
   };
 };
 
-// 判断区域内是否有图形
-// const getShape = (e: MouseEvent) => {
-//   const { offsetX, offsetY, clientX, clientY } = e;
-//   const { left, top } = canvas.value?.getBoundingClientRect()!;
-//   return drawNodes.value.find(
-//     (node) =>
-//       offsetX > node.startX && clientX - left <= node.endX && offsetY > node.startY && clientY - top <= node.endY,
-//   );
-// };
-
 // 设置画板背景颜色
 const setCanvasBg = (color = '#fff') => {
   ctx.value!.fillStyle = color;
@@ -346,25 +288,6 @@ const onDrawLine = (line: DrawLine, clientX: number, clientY: number, canvasInfo
   line.endX = clientX - canvasInfo.left;
   line.endY = clientY - canvasInfo.top;
   line.draw();
-};
-
-// 绘制矩形
-const onDrawRect = (rect: DrawRect, clientX: number, clientY: number, canvasInfo: DOMRect) => {
-  rect.endX = clientX - canvasInfo.left;
-  rect.endY = clientY - canvasInfo.top;
-  ctx.value!.fillRect(0, 0, canvas.value?.width!, canvas.value?.height!);
-  // 防止画矩形时，清空了之前的画线，重新将之前绘制的线绘制到画布上
-  drawLayer.value && ctx.value?.putImageData(drawLayer.value, 0, 0);
-  rect.draw();
-};
-
-const onDrawCircle = (circle: DrawCircle, clientX: number, clientY: number, canvasInfo: DOMRect) => {
-  circle.endX = clientX - canvasInfo.left;
-  circle.endY = clientY - canvasInfo.top;
-  ctx.value!.fillRect(0, 0, canvas.value?.width!, canvas.value?.height!);
-  // 防止画矩形时，清空了之前的画线，重新将之前绘制的线绘制到画布上
-  drawLayer.value && ctx.value?.putImageData(drawLayer.value, 0, 0);
-  circle.draw();
 };
 
 // 橡皮檫

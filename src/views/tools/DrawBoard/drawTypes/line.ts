@@ -6,7 +6,6 @@ interface Params {
   lineSize?: number;
 }
 
-
 export class DrawLine {
   public color: string;
   public startX: number;

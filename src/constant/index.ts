@@ -106,16 +106,6 @@ export const BOARD_ACTIONS = [
     name: '画笔',
   },
   {
-    key: 'rect',
-    icon: 'icon-huajuxingdeqiang',
-    name: '矩形',
-  },
-  {
-    key: 'circle',
-    icon: 'icon-a-huayuanCopy',
-    name: '圆形',
-  },
-  {
     key: 'eraser',
     icon: 'icon-a-xiangpicachuxiangpica',
     name: '橡皮',
@@ -137,7 +127,7 @@ export const BOARD_ACTIONS = [
   },
 ];
 
-export const ACTIVE_DRAW_ACTIONS = ['brush', 'rect', 'circle', 'eraser'];
+export const ACTIVE_DRAW_ACTIONS = ['brush', 'eraser'];
 
 export const BOARD_COLORS = [
   '#000',
