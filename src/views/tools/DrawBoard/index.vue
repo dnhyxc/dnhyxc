@@ -148,7 +148,7 @@ const ctx = ref<CanvasRenderingContext2D | null>(null);
 const drawHistory = ref<ImageData[]>([]);
 // 画笔及橡皮差大小
 const lineWidth = ref<number>(2);
-const eraserWidth = ref<number>(2);
+const eraserWidth = ref<number>(5);
 // 画笔颜色
 const activeColor = ref<string>('#000');
 // 画布颜色
