@@ -119,10 +119,10 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, nextTick, onUnmounted } from 'vue';
+import { onMounted, ref, nextTick, onUnmounted, computed } from 'vue';
 import { onBeforeRouteLeave } from 'vue-router';
 import { onDownloadFile } from '@/utils';
-import { BOARD_ACTIONS, BOARD_COLORS, ACTIVE_DRAW_ACTIONS } from '@/constant';
+import { BOARD_ACTIONS, BOARD_COLORS, ACTIVE_DRAW_ACTIONS, ERASER_SVG } from '@/constant';
 import { DrawLine, DrawEraser } from './drawTypes';
 
 interface IProps {
@@ -168,6 +168,14 @@ let drawer: DrawLine | DrawEraser | null = null;
 // 监听画板大小变化
 const observer = new ResizeObserver(() => {
   init();
+});
+
+const cursor = computed(() => {
+  if (currentTool.value === 'eraser') {
+    return 'url(' + ERASER_SVG + ') 0 8, auto';
+  } else {
+    return 'crosshair';
+  }
 });
 
 onMounted(() => {
@@ -469,7 +477,7 @@ const onClickTools = (key: string) => {
     height: calc(100% - var(--title-h));
     position: relative;
     box-sizing: border-box;
-    cursor: crosshair;
+    cursor: v-bind(cursor);
 
     .draw-board {
       width: 100%;
