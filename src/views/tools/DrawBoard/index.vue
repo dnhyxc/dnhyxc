@@ -163,6 +163,8 @@ const drawLayer = ref<ImageData | null>(null);
 // 是否按下shift键
 const isPressShift = ref<boolean>(false);
 
+let points: any[] = [];
+
 let drawer: DrawLine | DrawEraser | null = null;
 
 // 监听画板大小变化
@@ -216,6 +218,10 @@ const initCanvasSize = () => {
 
 const onMousedown = (e: MouseEvent) => {
   const { offsetX, offsetY } = e;
+
+  let disX = 0;
+  let disY = 0;
+
   /**
    * 开始绘制新的形状或路径时，在每次绘制之前调用 beginPath() 方法，
    * 以确保您绘制的是一个新的、独立的路径。防止在撤销或者清空之后，
@@ -242,6 +248,7 @@ const onMousedown = (e: MouseEvent) => {
           startY: offsetY,
           lineSize: lineWidth.value,
         });
+        points.push({ moveToPoints: { x: offsetX, y: offsetY }, lineToPoints: [] });
       },
       draw: onDrawLine,
     },
@@ -260,26 +267,53 @@ const onMousedown = (e: MouseEvent) => {
     },
   };
 
-  initDraw[currentTool.value].init();
+  currentTool.value !== 'select' && initDraw[currentTool.value].init();
 
   window.onmousemove = (e) => {
     const { clientX, clientY } = e;
     const canvasInfo = canvas.value?.getBoundingClientRect()!;
-    // 判断画布边界，除了边界不再绘制
-    if (
-      clientX >= canvasInfo.right ||
-      clientY >= canvasInfo.bottom ||
-      clientX < canvasInfo.left ||
-      clientY < canvasInfo.top
-    )
-      return;
-    initDraw[currentTool.value].draw(drawer, clientX, clientY, canvasInfo);
+
+    disX = clientX - canvasInfo.left - offsetX;
+    disY = clientY - canvasInfo.top - offsetY;
+    console.log(disX, disY, 'dis');
+
+    if (currentTool.value === 'select') {
+      console.log('select');
+      ctx.value!.translate(disX, disY);
+      ctx.value?.clearRect(0, 0, canvas.value!.width, canvas.value!.height);
+      setCanvasBg(drawBgColor.value);
+      onRedraw();
+    } else {
+      // 判断画布边界，除了边界不再绘制
+      // if (
+      //   clientX >= canvasInfo.right ||
+      //   clientY >= canvasInfo.bottom ||
+      //   clientX < canvasInfo.left ||
+      //   clientY < canvasInfo.top
+      // )
+      //   return;
+      initDraw[currentTool.value].draw(drawer, clientX, clientY, canvasInfo);
+    }
   };
 
   window.onmouseup = () => {
     window.onmousemove = null;
     window.onmouseup = null;
   };
+};
+
+// 重新绘制所有路径
+const onRedraw = () => {
+  ctx.value!.beginPath();
+  points.forEach((path) => {
+    const { moveToPoints, lineToPoints } = path;
+    ctx.value!.moveTo(moveToPoints.x * devicePixelRatio, moveToPoints.y * devicePixelRatio);
+    lineToPoints.forEach((point: any) => {
+      ctx.value!.lineTo(point.x * devicePixelRatio, point.y * devicePixelRatio);
+    });
+  });
+  ctx.value!.stroke();
+  ctx.value!.closePath();
 };
 
 // 设置画板背景颜色
@@ -295,6 +329,8 @@ const onDrawLine = (line: DrawLine, clientX: number, clientY: number, canvasInfo
   line.startY = line.endY;
   line.endX = clientX - canvasInfo.left;
   line.endY = clientY - canvasInfo.top;
+  const lineToPoints = points[points.length - 1].lineToPoints;
+  lineToPoints.push({ x: line.endX, y: line.endY });
   line.draw();
 };
 
@@ -338,6 +374,7 @@ const onSetColorType = () => {
 // 关闭画板
 const onClose = () => {
   emit('update:boardVisible', false);
+  points = [];
 };
 
 // 画板颜色变化
@@ -363,6 +400,7 @@ const setLineColor = (color: string) => {
 const onClear = () => {
   ctx.value?.clearRect(0, 0, canvas.value!.width, canvas.value!.height);
   setCanvasBg(drawBgColor.value);
+  points = [];
 };
 
 // 撤销
@@ -370,6 +408,7 @@ const onUndo = () => {
   if (drawHistory.value.length < 1) return false;
   ctx.value?.putImageData(drawHistory.value[drawHistory.value.length - 1], 0, 0);
   drawHistory.value.pop();
+  points = [];
 };
 
 // 保存
@@ -474,12 +513,18 @@ const onClickTools = (key: string) => {
   }
 
   .board-wrap {
+    position: relative;
+    top: 0;
+    left: 0;
     height: calc(100% - var(--title-h));
     position: relative;
     box-sizing: border-box;
     cursor: v-bind(cursor);
 
     .draw-board {
+      position: absolute;
+      top: 0;
+      left: 0;
       width: 100%;
       height: 100%;
       border-bottom-left-radius: 5px;
