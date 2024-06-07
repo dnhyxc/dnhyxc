@@ -30,7 +30,6 @@ import BOOK_SVG from '@/assets/svg/book.svg';
 import PDF_SVG from '@/assets/svg/pdf.svg';
 import TRANSCRIBE_SVG from '@/assets/svg/transcribe.svg';
 import WORD_SVG from '@/assets/svg/word.svg';
-import ERASER_SVG from '@/assets/svg/eraser.svg';
 
 export {
   EMPTY,
@@ -60,7 +59,6 @@ export {
   BOOK_SVG,
   COVER,
   NIGHT,
-  ERASER_SVG,
 };
 
 // 工具列表
