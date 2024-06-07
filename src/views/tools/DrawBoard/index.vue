@@ -145,7 +145,7 @@ const titleRef = ref<HTMLDivElement | null>(null);
 const canvas = ref<HTMLCanvasElement | null>(null);
 const ctx = ref<CanvasRenderingContext2D | null>(null);
 // 历史操作步骤
-const drawHistory = ref<ImageData[]>([]);
+// const drawHistory = ref<ImageData[]>([]);
 // 画笔及橡皮差大小
 const lineWidth = ref<number>(2);
 const eraserWidth = ref<number>(5);
@@ -158,14 +158,16 @@ const markColor = ref<string>('');
 const currentTool = ref<string>('brush');
 // 标识背景颜色设置还是画笔颜色设置
 const colorType = ref<boolean>(false);
-// 当前绘制的画布
-// const drawLayer = ref<ImageData | null>(null);
 // 是否按下shift键
 const isPressShift = ref<boolean>(false);
 
 let points: any[] = [];
 
 let drawer: DrawLine | DrawEraser | null = null;
+
+let disX = 0;
+let disY = 0;
+const speed = 15;
 
 // 监听画板大小变化
 const observer = new ResizeObserver(() => {
@@ -227,21 +229,6 @@ const initCanvasSize = () => {
 const onMousedown = (e: MouseEvent) => {
   const { offsetX, offsetY } = e;
 
-  /**
-   * 开始绘制新的形状或路径时，在每次绘制之前调用 beginPath() 方法，
-   * 以确保您绘制的是一个新的、独立的路径。防止在撤销或者清空之后，
-   * 再次绘制时，之前绘制的内容重新出现在画布上。
-   */
-  // ctx.value?.save();
-  // ctx.value?.beginPath();
-
-  const drawImg = ctx.value?.getImageData(0, 0, canvas.value?.width!, canvas.value?.height!); // 在这里储存绘图表面
-  //  drawLayer.value = drawImg!;
-  if (drawImg) {
-    drawHistory.value.length === 100 && drawHistory.value.shift();
-    drawHistory.value.push(drawImg);
-  }
-
   const initDraw = {
     brush: {
       init: () => {
@@ -272,32 +259,34 @@ const onMousedown = (e: MouseEvent) => {
           startY: offsetY,
           lineSize: eraserWidth.value,
         });
+        points.push({
+          moveToPoints: { x: offsetX, y: offsetY },
+          lineToPoints: [],
+          color: drawBgColor.value,
+          lineSize: eraserWidth.value,
+        });
       },
       draw: onDrawEraser,
     },
   };
 
-  currentTool.value !== 'select' && initDraw[currentTool.value].init();
+  if (currentTool.value !== 'select') {
+    initDraw[currentTool.value].init();
+    // const drawImg = ctx.value?.getImageData(0, 0, canvas.value?.width!, canvas.value?.height!); // 在这里储存绘图表面
+    // drawHistory.value.length === 100 && drawHistory.value.shift();
+    // drawImg && drawHistory.value.push(drawImg);
+  }
 
   window.onmousemove = (e) => {
     const { clientX, clientY } = e;
     const canvasInfo = canvas.value?.getBoundingClientRect()!;
-    const speed = 15;
     if (currentTool.value === 'select') {
-      const disX = Math.floor((clientX - canvasInfo.left - offsetX) / speed);
-      const disY = Math.floor((clientY - canvasInfo.top - offsetY) / speed);
+      disX = Math.floor((clientX - canvasInfo.left - offsetX) / speed);
+      disY = Math.floor((clientY - canvasInfo.top - offsetY) / speed);
       ctx.value?.clearRect(0, 0, canvas.value!.width, canvas.value!.height);
       setCanvasBg(drawBgColor.value);
       onRedraw(disX, disY);
     } else {
-      // 判断画布边界，除了边界不再绘制
-      // if (
-      //   clientX >= canvasInfo.right ||
-      //   clientY >= canvasInfo.bottom ||
-      //   clientX < canvasInfo.left ||
-      //   clientY < canvasInfo.top
-      // )
-      //   return;
       initDraw[currentTool.value].draw(drawer, clientX, clientY, canvasInfo);
     }
   };
@@ -354,6 +343,8 @@ const onDrawEraser = (eraser: DrawEraser, clientX: number, clientY: number, canv
   eraser.startY = eraser.endY;
   eraser.endX = clientX - canvasInfo.left;
   eraser.endY = clientY - canvasInfo.top;
+  const lineToPoints = points[points.length - 1].lineToPoints;
+  lineToPoints.push({ x: eraser.endX, y: eraser.endY });
   eraser.draw();
 };
 
@@ -419,10 +410,15 @@ const onClear = () => {
 
 // 撤销
 const onUndo = () => {
-  if (drawHistory.value.length < 1) return false;
-  ctx.value?.putImageData(drawHistory.value[drawHistory.value.length - 1], 0, 0);
-  drawHistory.value.pop();
-  points = [];
+  // if (drawHistory.value.length < 1) return false;
+  // ctx.value?.putImageData(drawHistory.value[drawHistory.value.length - 1], 0, 0);
+  // drawHistory.value.pop();
+  if (points.length > 0) {
+    points.pop();
+    ctx.value?.clearRect(0, 0, canvas.value!.width, canvas.value!.height);
+    setCanvasBg(drawBgColor.value);
+    onRedraw(disX, disY);
+  }
 };
 
 // 保存
