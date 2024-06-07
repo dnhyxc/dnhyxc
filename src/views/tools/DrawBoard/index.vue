@@ -159,7 +159,7 @@ const currentTool = ref<string>('brush');
 // 标识背景颜色设置还是画笔颜色设置
 const colorType = ref<boolean>(false);
 // 当前绘制的画布
-const drawLayer = ref<ImageData | null>(null);
+// const drawLayer = ref<ImageData | null>(null);
 // 是否按下shift键
 const isPressShift = ref<boolean>(false);
 
@@ -236,7 +236,7 @@ const onMousedown = (e: MouseEvent) => {
   // ctx.value?.beginPath();
 
   const drawImg = ctx.value?.getImageData(0, 0, canvas.value?.width!, canvas.value?.height!); // 在这里储存绘图表面
-  drawLayer.value = drawImg!;
+  //  drawLayer.value = drawImg!;
   if (drawImg) {
     drawHistory.value.length === 100 && drawHistory.value.shift();
     drawHistory.value.push(drawImg);
@@ -253,7 +253,12 @@ const onMousedown = (e: MouseEvent) => {
           startY: offsetY,
           lineSize: lineWidth.value,
         });
-        points.push({ moveToPoints: { x: offsetX, y: offsetY }, lineToPoints: [] });
+        points.push({
+          moveToPoints: { x: offsetX, y: offsetY },
+          lineToPoints: [],
+          color: activeColor.value,
+          lineSize: lineWidth.value,
+        });
       },
       draw: onDrawLine,
     },
@@ -305,10 +310,12 @@ const onMousedown = (e: MouseEvent) => {
 
 // 重新绘制所有路径
 const onRedraw = (disX: number, disY: number) => {
-  ctx.value?.save();
-  ctx.value!.beginPath();
-  ctx.value!.translate(disX, disY);
   points.forEach((path) => {
+    ctx.value?.save();
+    ctx.value!.beginPath();
+    ctx.value!.fillStyle = path.color;
+    ctx.value!.strokeStyle = path.color;
+    ctx.value!.lineWidth = path.lineSize * devicePixelRatio;
     const { moveToPoints, lineToPoints } = path;
     moveToPoints.x = moveToPoints.x + disX;
     moveToPoints.y = moveToPoints.y + disY;
@@ -318,10 +325,9 @@ const onRedraw = (disX: number, disY: number) => {
       point.y = point.y + disY;
       ctx.value!.lineTo(point.x * devicePixelRatio, point.y * devicePixelRatio);
     });
+    ctx.value!.stroke();
+    ctx.value!.closePath();
   });
-  ctx.value!.restore();
-  ctx.value!.stroke();
-  ctx.value!.closePath();
 };
 
 // 设置画板背景颜色
