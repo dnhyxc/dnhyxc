@@ -103,6 +103,11 @@ export const IMG_ROPORTIONS = [
 
 export const BOARD_ACTIONS = [
   {
+    key: 'select',
+    icon: 'icon-pointer',
+    name: '选择',
+  },
+  {
     key: 'brush',
     icon: 'icon-huabi',
     name: '画笔',
@@ -129,7 +134,7 @@ export const BOARD_ACTIONS = [
   },
 ];
 
-export const ACTIVE_DRAW_ACTIONS = ['brush', 'eraser'];
+export const ACTIVE_DRAW_ACTIONS = ['select', 'brush', 'eraser'];
 
 export const BOARD_COLORS = [
   '#000',

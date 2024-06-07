@@ -4,14 +4,7 @@ import type { ElMessageBoxOptions } from 'element-plus';
 import moment from 'moment';
 import SparkMD5 from 'spark-md5';
 import ColorThief from 'colorthief';
-import {
-  MSG_CONFIG,
-  CODE_CONTROL,
-  CODE_LENGTH,
-  EMOJI_MAP,
-  EMOJI_NAME,
-  EMOJI_HOST
-} from '@/constant';
+import { MSG_CONFIG, CODE_CONTROL, CODE_LENGTH, EMOJI_MAP, EMOJI_NAME, EMOJI_HOST } from '@/constant';
 import { usePlugins } from './plugins';
 import { normalizeResult } from './result';
 import { decrypt, encrypt } from './crypto';
@@ -77,22 +70,21 @@ export const Message = (title: string = '确定下架该文章吗？', content: 
   return ElMessageBox.confirm(title, content, MSG_CONFIG(type) as ElMessageBoxOptions);
 };
 
-export const message = (
-  {
-    title,
-    message,
-    type = 'success',
-    duration = 1600,
-    offset = 55,
-    onClose
-  }: {
-    title: string;
-    type: 'success' | 'warning' | 'info' | 'error';
-    message?: string;
-    duration?: number;
-    offset?: number;
-    onClose?: () => void;
-  }) => {
+export const message = ({
+  title,
+  message,
+  type = 'success',
+  duration = 1600,
+  offset = 55,
+  onClose,
+}: {
+  title: string;
+  type: 'success' | 'warning' | 'info' | 'error';
+  message?: string;
+  duration?: number;
+  offset?: number;
+  onClose?: () => void;
+}) => {
   ElNotification({
     dangerouslyUseHTMLString: true,
     title,
@@ -100,10 +92,9 @@ export const message = (
     type,
     duration,
     offset,
-    onClose
+    onClose,
   });
 };
-
 
 // 格式化时间
 export const formatDate = (date: number, format = 'YYYY/MM/DD HH:mm:ss') => {
@@ -126,15 +117,15 @@ export const formatGapTime = (date: number) => {
     case seconds < 60:
       return '刚刚';
     case minutes < 60:
-      return `${ minutes } 分钟前`;
+      return `${minutes} 分钟前`;
     case hours < 24:
-      return `${ hours } 小时前`;
+      return `${hours} 小时前`;
     case days < 30:
-      return `${ days } 天前`;
+      return `${days} 天前`;
     case months < 12:
-      return `${ months } 月前`;
+      return `${months} 月前`;
     default:
-      return `${ years } 年前`;
+      return `${years} 年前`;
   }
 };
 
@@ -150,7 +141,7 @@ export const formatTimestamp = (timestamp: number) => {
   if (minutesDiff < 1) {
     return '刚刚';
   } else if (minutesDiff < 60) {
-    return `${ minutesDiff }分钟前`;
+    return `${minutesDiff}分钟前`;
   } else if (
     date.getDate() === now.getDate() &&
     date.getMonth() === now.getMonth() &&
@@ -158,7 +149,7 @@ export const formatTimestamp = (timestamp: number) => {
   ) {
     const hours = String(date.getHours()).padStart(2, '0');
     const minutes = String(date.getMinutes()).padStart(2, '0');
-    return `今天 ${ hours }:${ minutes }`;
+    return `今天 ${hours}:${minutes}`;
   } else if (
     date.getDate() === now.getDate() - 1 &&
     date.getMonth() === now.getMonth() &&
@@ -166,13 +157,13 @@ export const formatTimestamp = (timestamp: number) => {
   ) {
     const hours = String(date.getHours()).padStart(2, '0');
     const minutes = String(date.getMinutes()).padStart(2, '0');
-    return `昨天 ${ hours }:${ minutes }`;
+    return `昨天 ${hours}:${minutes}`;
   } else if (date.getFullYear() === now.getFullYear() && date.getTime() > now.getTime() - 6 * 24 * 60 * 60 * 1000) {
     const weekday = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
     const dayOfWeek = weekday[date.getDay()];
     const hours = String(date.getHours()).padStart(2, '0');
     const minutes = String(date.getMinutes()).padStart(2, '0');
-    return `${ dayOfWeek } ${ hours }:${ minutes }`;
+    return `${dayOfWeek} ${hours}:${minutes}`;
   } else {
     // 如果不是今天、昨天或最近一周，则返回完整的日期和时间
     const year = String(date.getFullYear());
@@ -180,7 +171,7 @@ export const formatTimestamp = (timestamp: number) => {
     const day = String(date.getDate()).padStart(2, '0');
     const hours = String(date.getHours()).padStart(2, '0');
     const minutes = String(date.getMinutes()).padStart(2, '0');
-    return `${ year }年${ month }月${ day }日 ${ hours }:${ minutes }`;
+    return `${year}年${month}月${day}日 ${hours}:${minutes}`;
   }
 };
 
@@ -189,7 +180,7 @@ export const formatDuration = (duration: number) => {
   const seconds = duration % 60;
   const formattedMinutes = String(minutes).padStart(2, '0');
   const formattedSeconds = String(seconds).padStart(2, '0');
-  return `${ formattedMinutes }:${ formattedSeconds }`;
+  return `${formattedMinutes}:${formattedSeconds}`;
 };
 
 // 滚动到某位置
@@ -504,7 +495,7 @@ export const getImgMainColor = (img: HTMLImageElement) => {
   let arr = [];
   for (const key in colorList) {
     arr.push({
-      rgba: `rgba(${ key })`,
+      rgba: `rgba(${key})`,
       num: colorList[key],
     });
   }
@@ -540,7 +531,7 @@ export const replaceEmojis = (content: string) => {
     if (index > -1) {
       return `<img style="vertical-align: middle;width: 32px;height: 32px" src="${
         EMOJI_HOST + EMOJI_MAP[word]
-      }" alt="" title="${ word }"/>`;
+      }" alt="" title="${word}"/>`;
     } else {
       return word;
     }
@@ -566,8 +557,8 @@ export const replacePictures = (content: string) => {
           cursor: pointer;
           -webkit-user-drag: none;
           user-select: none;"
-          src="${ arr[1] }"
-          title="${ arr[0] }"
+          src="${arr[1]}"
+          title="${arr[0]}"
           alt=""
         />
       `;
@@ -581,7 +572,7 @@ export const replacePictures = (content: string) => {
 
 export const wordToLink = (content: string) => {
   if (checkHref(content)) {
-    return `<a style="color: #2b7de7; cursor: pointer; word-break: break-all;">${ content }</a>`;
+    return `<a style="color: #2b7de7; cursor: pointer; word-break: break-all;">${content}</a>`;
   }
   return content;
 };
@@ -595,32 +586,31 @@ export const checkHref = (url: string) => {
 };
 
 // 向光标所在位置插入内容
-export const insertContent = (
-  {
-    keyword,
-    node,
-    username,
-    url,
-    emoji,
-  }: {
-    keyword: string; // textarea输入内容
-    node?: HTMLTextAreaElement; // textarea输入框元素
-    username?: string; // 用户名称
-    url?: string; // 图片地址
-    emoji?: string; // 表情内容
-  }) => {
-  const content = emoji || `<${ username },${ url }>`;
+export const insertContent = ({
+  keyword,
+  node,
+  username,
+  url,
+  emoji,
+}: {
+  keyword: string; // textarea输入内容
+  node?: HTMLTextAreaElement; // textarea输入框元素
+  username?: string; // 用户名称
+  url?: string; // 图片地址
+  emoji?: string; // 表情内容
+}) => {
+  const content = emoji || `<${username},${url}>`;
   if (keyword.substring(0, node?.selectionStart)) {
-    return `${ keyword.substring(0, node?.selectionStart) }${ content }${ keyword.substring(
+    return `${keyword.substring(0, node?.selectionStart)}${content}${keyword.substring(
       node?.selectionEnd!,
       node?.textLength,
-    ) }`;
+    )}`;
   } else {
     // selectionStart 为0时，默认向最后面插入
-    return `${ keyword.substring(node?.selectionEnd!, node?.textLength) }${ content }${ keyword.substring(
+    return `${keyword.substring(node?.selectionEnd!, node?.textLength)}${content}${keyword.substring(
       0,
       node?.selectionStart,
-    ) }`;
+    )}`;
   }
 };
 
@@ -630,18 +620,17 @@ export const insertContent = (
  * @param {图片高度} height
  * @param {水印文字} watermarkText
  */
-export const addWatermark = async (
-  {
-    url,
-    width,
-    height,
-    markText = 'dnhyxc',
-  }: {
-    url: string;
-    markText: string;
-    width?: number;
-    height?: number;
-  }) => {
+export const addWatermark = async ({
+  url,
+  width,
+  height,
+  markText = 'dnhyxc',
+}: {
+  url: string;
+  markText: string;
+  width?: number;
+  height?: number;
+}) => {
   // 1. 根据图片路径获取图片数据，转成blob类型
   const fileBlob = await fetch(url)
     .then((r) => r.blob())
@@ -727,7 +716,7 @@ export const getUniqueFileName = async (file: File, mark?: string): Promise<{ fi
       const findIndex = file?.name?.lastIndexOf('.');
       const ext = file.name.slice(findIndex + 1);
       // 修改文件名称，__FILE__ 用户区分是否是上传的图片集图片
-      const newFile = new File([file], `${ mark || '__FILE__' }${ md5 }.${ ext }`, {
+      const newFile = new File([file], `${mark || '__FILE__'}${md5}.${ext}`, {
         type: file.type,
       });
       resolve({
@@ -761,18 +750,17 @@ const randomNum = (min: number, max: number) => {
 };
 
 // canvas 绘制验证码
-export const drawCharater = (
-  {
-    canvasElement,
-    width,
-    height,
-    code,
-  }: {
-    canvasElement: HTMLCanvasElement;
-    width: number;
-    height: number;
-    code: string;
-  }) => {
+export const drawCharater = ({
+  canvasElement,
+  width,
+  height,
+  code,
+}: {
+  canvasElement: HTMLCanvasElement;
+  width: number;
+  height: number;
+  code: string;
+}) => {
   const ctx = canvasElement?.getContext('2d') as CanvasRenderingContext2D;
   ctx.fillStyle = randomColor(180, 255);
   ctx.fillRect(0, 0, width, height);
@@ -822,10 +810,14 @@ export const debounce = (fn: Function, delay = 1000, immediate = false) => {
   };
 };
 
-export const onDownloadFile = async ({ url, type = 'png', fileName = 'file.png' }: {
+export const onDownloadFile = async ({
+  url,
+  type = 'png',
+  fileName = 'file.png',
+}: {
   url: string;
-  type?: string,
-  fileName?: string
+  type?: string;
+  fileName?: string;
 }) => {
   if (url.includes('data:image') || type === 'blob') {
     ipcRenderers.sendDownload(url as string, fileName);
@@ -881,23 +873,22 @@ interface Params {
   markOffsetTop?: number;
 }
 
-export const convas2ImgAddWatermark = async (
-  {
-    imgUrl,
-    width,
-    height,
-    type = 'png',
-    top,
-    left,
-    size,
-    color,
-    text,
-    markTextWidth,
-    markTextHeight,
-    spacing = 100,
-    markType = 'line',
-    markOffsetTop,
-  }: Params) => {
+export const convas2ImgAddWatermark = async ({
+  imgUrl,
+  width,
+  height,
+  type = 'png',
+  top,
+  left,
+  size,
+  color,
+  text,
+  markTextWidth,
+  markTextHeight,
+  spacing = 100,
+  markType = 'line',
+  markOffsetTop,
+}: Params) => {
   // 1.图片路径转成canvas
   const tempCanvas = await imgToCanvas(imgUrl);
   // 2.canvas添加水印
@@ -917,7 +908,7 @@ export const convas2ImgAddWatermark = async (
     markOffsetTop,
   });
   // 指定格式 PNG
-  return canvas.toDataURL(`image/${ type }`);
+  return canvas.toDataURL(`image/${type}`);
 };
 
 // 图片路径转成canvas
@@ -970,7 +961,7 @@ export const addImgWatermark = (params: {
   } = params;
   const ctx = canvas.getContext('2d')!;
   ctx.fillStyle = color;
-  ctx.font = `${ (canvas.width / width) * size }px sans-serif`; // 设置字体样式
+  ctx.font = `${(canvas.width / width) * size}px sans-serif`; // 设置字体样式
   // 设置多行水印
   const setMoreLineWatermark = () => {
     const textMetrics = ctx.measureText(text);
@@ -1039,20 +1030,19 @@ export const diffType = (value: string | number | string | boolean | Function | 
 };
 
 // 设置盲水印
-export const createWaterMark = (
-  {
-    url,
-    text,
-    fontSize,
-    fontFamily,
-    spacing,
-  }: {
-    url: string;
-    text: string;
-    fontSize: string;
-    fontFamily: string;
-    spacing: number; // 水印上下间距
-  }): Promise<string> => {
+export const createWaterMark = ({
+  url,
+  text,
+  fontSize,
+  fontFamily,
+  spacing,
+}: {
+  url: string;
+  text: string;
+  fontSize: string;
+  fontFamily: string;
+  spacing: number; // 水印上下间距
+}): Promise<string> => {
   const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d', { willReadFrequently: true })!;
   const img = new Image();
@@ -1066,7 +1056,7 @@ export const createWaterMark = (
       canvas.width = img.width;
       canvas.height = img.height;
       // 设置水印字体
-      ctx.font = `${ fontSize } ${ fontFamily }`;
+      ctx.font = `${fontSize} ${fontFamily}`;
       const textMetrics = ctx.measureText(text);
       // 水印文本宽度
       const textWidth = textMetrics.width;
@@ -1098,18 +1088,17 @@ export const createWaterMark = (
   });
 
   // 盲水印加密算法
-  function mergeData(
-    {
-      ctx,
-      textData,
-      color,
-      originalData,
-    }: {
-      ctx: CanvasRenderingContext2D;
-      textData: any;
-      color: string;
-      originalData: any;
-    }) {
+  function mergeData({
+    ctx,
+    textData,
+    color,
+    originalData,
+  }: {
+    ctx: CanvasRenderingContext2D;
+    textData: any;
+    color: string;
+    originalData: any;
+  }) {
     const oData = originalData.data;
     const newData = textData.data;
     // offset的作用是找到结合bit找到对应的A值，即透明度
@@ -1226,12 +1215,12 @@ export const checkImage = (link: string) => {
 export const hlightKeyword = (keyword: string, list: Array<any>) => {
   const reg = new RegExp(keyword, 'gi');
   return list.map((i) => {
-    i.abstract = i.abstract?.replace(reg, (key: string) => `<span style="color: #ff9900">${ key }</span>`);
-    i.title = i.title?.replace(reg, (key: string) => `<span style="color: #ff9900">${ key }</span>`);
-    i.authorName = i.authorName?.replace(reg, (key: string) => `<span style="color: #ff9900">${ key }</span>`);
-    i.classify = i.classify?.replace(reg, (key: string) => `<span style="color: #ff9900">${ key }</span>`);
-    i.tag = i.tag?.replace(reg, (key: string) => `<span style="color: #ff9900">${ key }</span>`);
-    i.username = i.username?.replace(reg, (key: string) => `<span style="color: #ff9900">${ key }</span>`);
+    i.abstract = i.abstract?.replace(reg, (key: string) => `<span style="color: #ff9900">${key}</span>`);
+    i.title = i.title?.replace(reg, (key: string) => `<span style="color: #ff9900">${key}</span>`);
+    i.authorName = i.authorName?.replace(reg, (key: string) => `<span style="color: #ff9900">${key}</span>`);
+    i.classify = i.classify?.replace(reg, (key: string) => `<span style="color: #ff9900">${key}</span>`);
+    i.tag = i.tag?.replace(reg, (key: string) => `<span style="color: #ff9900">${key}</span>`);
+    i.username = i.username?.replace(reg, (key: string) => `<span style="color: #ff9900">${key}</span>`);
     return i;
   });
 };
@@ -1245,26 +1234,25 @@ export const checkWithLink = (content: string, check?: boolean) => {
 };
 
 // 计算资源加载的进度
-export const calculateLoadProgress = (
-  {
-    url,
-    getProgress,
-    needFileType = 'arrayBuffer',
-    previousReader,
-    addPreviousReader,
-  }: {
-    url: string;
-    getProgress: (progress: number) => void;
-    previousReader: any;
-    addPreviousReader: (previousReader: any) => void;
-    needFileType?: string;
-  }): Promise<ArrayBuffer | any> => {
+export const calculateLoadProgress = ({
+  url,
+  getProgress,
+  needFileType = 'arrayBuffer',
+  previousReader,
+  addPreviousReader,
+}: {
+  url: string;
+  getProgress: (progress: number) => void;
+  previousReader: any;
+  addPreviousReader: (previousReader: any) => void;
+  needFileType?: string;
+}): Promise<ArrayBuffer | any> => {
   let contentLength = '';
   let totalBytes = 0;
   return fetch(url)
     .then((response) => {
       if (!response.ok) {
-        throw new Error(`资源加载失败: ${ response.status } ${ response.statusText }`);
+        throw new Error(`资源加载失败: ${response.status} ${response.statusText}`);
       }
       contentLength = response.headers.get('content-length') as string;
       totalBytes = parseInt(contentLength, 10);
@@ -1328,21 +1316,21 @@ export const calculateLoadProgress = (
 export const getGradient = (gradient?: number[][], deg: number = 192) => {
   return gradient?.length
     ? `linear-gradient(
-          ${ deg }deg,
+          ${deg}deg,
           rgba(
-            ${ gradient[2]?.[0] },
-            ${ gradient[2]?.[1] },
-            ${ gradient[2]?.[2] }, 0.2
+            ${gradient[2]?.[0]},
+            ${gradient[2]?.[1]},
+            ${gradient[2]?.[2]}, 0.2
           ) 0%,
           rgba(
-            ${ gradient[0]?.[0] },
-            ${ gradient[0]?.[1] },
-            ${ gradient[0]?.[2] }, 0.25
+            ${gradient[0]?.[0]},
+            ${gradient[0]?.[1]},
+            ${gradient[0]?.[2]}, 0.25
           ) 100%,
           rgba(
-            ${ gradient[1]?.[0] },
-            ${ gradient[1]?.[1] },
-            ${ gradient[1]?.[2] }, 0.3
+            ${gradient[1]?.[0]},
+            ${gradient[1]?.[1]},
+            ${gradient[1]?.[2]}, 0.3
           ) 100%
         )`
     : 'linear-gradient(to bottom, var(--bg-lg-color1) 0%, var(--bg-lg-color2) 100%)';
@@ -1357,4 +1345,33 @@ export const isDifferentDay = (timestamp1: number, timestamp2: number) => {
     date1.getMonth() !== date2.getMonth() ||
     date1.getDate() !== date2.getDate()
   );
+};
+
+// 动态更改橡皮擦svg尺寸
+export const getEraserSvg = (width: number, fill: string = '#2c2c2c') => {
+  const _width = width < 16 ? 16 : width;
+  const svgStr = `
+    <svg
+      t="1717493777770"
+      class="icon"
+      viewBox="0 0 1024 1024"
+      version="1.1"
+      xmlns="http://www.w3.org/2000/svg"
+      p-id="7840"
+      data-spm-anchor-id="a313x.search_index.0.i3.26b43a81PLYw3T"
+      width="${_width}"
+      height="${_width}"
+    >
+      <path
+        d="M980.9 424.1c12.5-12.5 12.5-32.8 0-45.3L636.7 34.6c-12.5-12.5-32.8-12.5-45.3 0L90.5 535.5c-50 50-50 131 0 181l272 270.3c24 23.8 56.4 37.2 90.2 37.2H864c17.7 0 32-14.3 32-32 0-8.8-3.6-16.8-9.4-22.6-5.8-5.8-13.8-9.4-22.6-9.4H599.5c-57 0-85.6-68.9-45.3-109.3l426.7-426.6zM434.8 879.7c-25 25-65.5 25-90.5 0L135.8 671.3c-25-25-25-65.5 0-90.5l127.9-127.9 299 299-127.9 127.8z"
+        p-id="7841"
+        data-spm-anchor-id="a313x.search_index.0.i2.26b43a81PLYw3T"
+        class=""
+        fill="${fill}"
+      ></path>
+    </svg>
+  `;
+  const blob = new Blob([svgStr], { type: 'image/svg+xml' });
+  const svgUrl = URL.createObjectURL(blob);
+  return svgUrl;
 };

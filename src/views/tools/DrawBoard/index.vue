@@ -121,8 +121,8 @@
 <script setup lang="ts">
 import { onMounted, ref, nextTick, onUnmounted, computed } from 'vue';
 import { onBeforeRouteLeave } from 'vue-router';
-import { onDownloadFile } from '@/utils';
-import { BOARD_ACTIONS, BOARD_COLORS, ACTIVE_DRAW_ACTIONS, ERASER_SVG } from '@/constant';
+import { onDownloadFile, getEraserSvg } from '@/utils';
+import { BOARD_ACTIONS, BOARD_COLORS, ACTIVE_DRAW_ACTIONS } from '@/constant';
 import { DrawLine, DrawEraser } from './drawTypes';
 
 interface IProps {
@@ -174,7 +174,13 @@ const observer = new ResizeObserver(() => {
 
 const cursor = computed(() => {
   if (currentTool.value === 'eraser') {
-    return 'url(' + ERASER_SVG + ') 0 8, auto';
+    const url = `url(${getEraserSvg(eraserWidth.value)}) ${eraserWidth.value < 16 ? 8 : eraserWidth.value / 2} ${
+      eraserWidth.value < 16 ? 16 : eraserWidth.value
+    }, auto`;
+    URL.revokeObjectURL(getEraserSvg(eraserWidth.value));
+    return url;
+  } else if (currentTool.value === 'select') {
+    return 'grab';
   } else {
     return 'crosshair';
   }
@@ -198,8 +204,10 @@ onBeforeRouteLeave(() => {
 
 const init = () => {
   nextTick(() => {
+    onClear();
     initCanvasSize();
     setCanvasBg(drawBgColor.value);
+    points = [];
   });
 };
 
@@ -219,16 +227,13 @@ const initCanvasSize = () => {
 const onMousedown = (e: MouseEvent) => {
   const { offsetX, offsetY } = e;
 
-  let disX = 0;
-  let disY = 0;
-
   /**
    * 开始绘制新的形状或路径时，在每次绘制之前调用 beginPath() 方法，
    * 以确保您绘制的是一个新的、独立的路径。防止在撤销或者清空之后，
    * 再次绘制时，之前绘制的内容重新出现在画布上。
    */
-  ctx.value?.save();
-  ctx.value?.beginPath();
+  // ctx.value?.save();
+  // ctx.value?.beginPath();
 
   const drawImg = ctx.value?.getImageData(0, 0, canvas.value?.width!, canvas.value?.height!); // 在这里储存绘图表面
   drawLayer.value = drawImg!;
@@ -272,17 +277,13 @@ const onMousedown = (e: MouseEvent) => {
   window.onmousemove = (e) => {
     const { clientX, clientY } = e;
     const canvasInfo = canvas.value?.getBoundingClientRect()!;
-
-    disX = clientX - canvasInfo.left - offsetX;
-    disY = clientY - canvasInfo.top - offsetY;
-    console.log(disX, disY, 'dis');
-
+    const speed = 15;
     if (currentTool.value === 'select') {
-      console.log('select');
-      ctx.value!.translate(disX, disY);
+      const disX = Math.floor((clientX - canvasInfo.left - offsetX) / speed);
+      const disY = Math.floor((clientY - canvasInfo.top - offsetY) / speed);
       ctx.value?.clearRect(0, 0, canvas.value!.width, canvas.value!.height);
       setCanvasBg(drawBgColor.value);
-      onRedraw();
+      onRedraw(disX, disY);
     } else {
       // 判断画布边界，除了边界不再绘制
       // if (
@@ -303,15 +304,22 @@ const onMousedown = (e: MouseEvent) => {
 };
 
 // 重新绘制所有路径
-const onRedraw = () => {
+const onRedraw = (disX: number, disY: number) => {
+  ctx.value?.save();
   ctx.value!.beginPath();
+  ctx.value!.translate(disX, disY);
   points.forEach((path) => {
     const { moveToPoints, lineToPoints } = path;
+    moveToPoints.x = moveToPoints.x + disX;
+    moveToPoints.y = moveToPoints.y + disY;
     ctx.value!.moveTo(moveToPoints.x * devicePixelRatio, moveToPoints.y * devicePixelRatio);
     lineToPoints.forEach((point: any) => {
+      point.x = point.x + disX;
+      point.y = point.y + disY;
       ctx.value!.lineTo(point.x * devicePixelRatio, point.y * devicePixelRatio);
     });
   });
+  ctx.value!.restore();
   ctx.value!.stroke();
   ctx.value!.closePath();
 };
@@ -493,6 +501,10 @@ const onClickTools = (key: string) => {
           &:hover {
             color: var(--theme-blue);
           }
+        }
+
+        .icon-zhizhen {
+          font-size: 16px;
         }
 
         .active-tool {
