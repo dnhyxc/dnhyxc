@@ -9,14 +9,17 @@
     <div ref="titleRef" class="title">
       <div class="left">
         <div class="tools">
-          <div v-for="btn in BOARD_ACTIONS" :key="btn.key"
+          <div
+v-for="btn in BOARD_ACTIONS" :key="btn.key"
             :class="`tool ${currentTool === btn.key && ACTIVE_DRAW_ACTIONS.includes(btn.key) && 'active-tool'}`"
             @click="onClickTools(btn.key)">
             <div v-if="currentTool === btn.key">
-              <el-popover v-if="btn.key === 'brush'" placement="top" effect="dark" popper-class="draw-pop"
+              <el-popover
+v-if="btn.key === 'brush'" placement="top" effect="dark" popper-class="draw-pop"
                 trigger="hover">
                 <div class="tools-content">
-                  <el-slider v-model="lineWidth" class="slider" vertical height="100px" :step="1" :min="1" :max="50"
+                  <el-slider
+v-model="lineWidth" class="slider" vertical height="100px" :step="1" :min="1" :max="50"
                     :show-tooltip="false" />
                   <span class="line-width">{{ lineWidth }}</span>
                 </div>
@@ -27,10 +30,12 @@
                   </span>
                 </template>
               </el-popover>
-              <el-popover v-if="btn.key === 'eraser'" placement="top" effect="dark" popper-class="draw-pop"
+              <el-popover
+v-if="btn.key === 'eraser'" placement="top" effect="dark" popper-class="draw-pop"
                 trigger="hover">
                 <div class="tools-content">
-                  <el-slider v-model="eraserWidth" class="slider" vertical height="100px" :step="1" :min="1" :max="50"
+                  <el-slider
+v-model="eraserWidth" class="slider" vertical height="100px" :step="1" :min="1" :max="50"
                     :show-tooltip="false" />
                   <span class="line-width">{{ eraserWidth }}</span>
                 </div>
@@ -43,7 +48,8 @@
               </el-popover>
             </div>
             <span class="btn-text">
-              <i v-if="(btn.key !== 'brush' && btn.key !== 'eraser') || currentTool !== btn.key"
+              <i
+v-if="(btn.key !== 'brush' && btn.key !== 'eraser') || currentTool !== btn.key"
                 :class="`iconfont ${btn.icon}`" />
               <span v-if="(btn.key !== 'brush' && btn.key !== 'eraser') || currentTool !== btn.key" class="name">
                 {{ btn.name }}
