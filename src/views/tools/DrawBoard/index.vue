@@ -9,31 +9,15 @@
     <div ref="titleRef" class="title">
       <div class="left">
         <div class="tools">
-          <div
-            v-for="btn in BOARD_ACTIONS"
-            :key="btn.key"
+          <div v-for="btn in BOARD_ACTIONS" :key="btn.key"
             :class="`tool ${currentTool === btn.key && ACTIVE_DRAW_ACTIONS.includes(btn.key) && 'active-tool'}`"
-            @click="onClickTools(btn.key)"
-          >
+            @click="onClickTools(btn.key)">
             <div v-if="currentTool === btn.key">
-              <el-popover
-                v-if="btn.key === 'brush'"
-                placement="top"
-                effect="dark"
-                popper-class="draw-pop"
-                trigger="hover"
-              >
+              <el-popover v-if="btn.key === 'brush'" placement="top" effect="dark" popper-class="draw-pop"
+                trigger="hover">
                 <div class="tools-content">
-                  <el-slider
-                    v-model="lineWidth"
-                    class="slider"
-                    vertical
-                    height="100px"
-                    :step="1"
-                    :min="1"
-                    :max="50"
-                    :show-tooltip="false"
-                  />
+                  <el-slider v-model="lineWidth" class="slider" vertical height="100px" :step="1" :min="1" :max="50"
+                    :show-tooltip="false" />
                   <span class="line-width">{{ lineWidth }}</span>
                 </div>
                 <template #reference>
@@ -43,24 +27,11 @@
                   </span>
                 </template>
               </el-popover>
-              <el-popover
-                v-if="btn.key === 'eraser'"
-                placement="top"
-                effect="dark"
-                popper-class="draw-pop"
-                trigger="hover"
-              >
+              <el-popover v-if="btn.key === 'eraser'" placement="top" effect="dark" popper-class="draw-pop"
+                trigger="hover">
                 <div class="tools-content">
-                  <el-slider
-                    v-model="eraserWidth"
-                    class="slider"
-                    vertical
-                    height="100px"
-                    :step="1"
-                    :min="1"
-                    :max="50"
-                    :show-tooltip="false"
-                  />
+                  <el-slider v-model="eraserWidth" class="slider" vertical height="100px" :step="1" :min="1" :max="50"
+                    :show-tooltip="false" />
                   <span class="line-width">{{ eraserWidth }}</span>
                 </div>
                 <template #reference>
@@ -72,10 +43,8 @@
               </el-popover>
             </div>
             <span class="btn-text">
-              <i
-                v-if="(btn.key !== 'brush' && btn.key !== 'eraser') || currentTool !== btn.key"
-                :class="`iconfont ${btn.icon}`"
-              />
+              <i v-if="(btn.key !== 'brush' && btn.key !== 'eraser') || currentTool !== btn.key"
+                :class="`iconfont ${btn.icon}`" />
               <span v-if="(btn.key !== 'brush' && btn.key !== 'eraser') || currentTool !== btn.key" class="name">
                 {{ btn.name }}
               </span>
@@ -176,9 +145,8 @@ const observer = new ResizeObserver(() => {
 
 const cursor = computed(() => {
   if (currentTool.value === 'eraser') {
-    const url = `url(${getEraserSvg(eraserWidth.value)}) ${eraserWidth.value < 16 ? 8 : eraserWidth.value / 2} ${
-      eraserWidth.value < 16 ? 16 : eraserWidth.value
-    }, auto`;
+    const url = `url(${getEraserSvg(eraserWidth.value)}) ${eraserWidth.value < 16 ? 8 : eraserWidth.value / 2} ${eraserWidth.value < 16 ? 16 : eraserWidth.value
+      }, auto`;
     URL.revokeObjectURL(getEraserSvg(eraserWidth.value));
     return url;
   } else if (currentTool.value === 'select') {
@@ -221,6 +189,7 @@ const createCanvas = () => {
 };
 
 const initCanvasSize = () => {
+  if (!boardWrapRef.value) return;
   const { width, height } = boardWrapRef.value?.getBoundingClientRect()!;
   canvas.value!.width = width * devicePixelRatio;
   canvas.value!.height = height * devicePixelRatio;
@@ -403,9 +372,11 @@ const setLineColor = (color: string) => {
 
 // 清空
 const onClear = () => {
-  ctx.value?.clearRect(0, 0, canvas.value!.width, canvas.value!.height);
-  setCanvasBg(drawBgColor.value);
-  points = [];
+  if (canvas.value) {
+    ctx.value?.clearRect(0, 0, canvas.value!.width, canvas.value!.height);
+    setCanvasBg(drawBgColor.value);
+    points = [];
+  }
 };
 
 // 撤销
