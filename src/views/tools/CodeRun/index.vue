@@ -14,8 +14,7 @@
     </div>
     <div class="content">
       <div class="code-edit-wrap">
-        <MonacoEditor
-v-model:theme="theme" toggle-language-lneed-clear-content is-code-edit :get-language="getLanguage"
+        <MonacoEditor v-model:theme="theme" toggle-language-lneed-clear-content is-code-edit :get-language="getLanguage"
           :language="codeStore.codeDetail.language" :get-code-content="getCodeContent"
           :code="prevCode || codeStore.codeDetail.content || ''" :on-enter="onEnter" class="code-edit">
           <template #save="monacoData">
@@ -23,8 +22,7 @@ v-model:theme="theme" toggle-language-lneed-clear-content is-code-edit :get-lang
               <el-button type="primary" link class="save-code" title="示例列表" @click="showDemoList">
                 示例列表
               </el-button>
-              <el-tooltip
-v-if="language === 'javascript'" :offset="0" placement="top"
+              <el-tooltip v-if="language === 'javascript'" :offset="0" placement="top"
                 popper-class="custom-dropdown-styles">
                 <template #content>
                   <span class="info-text">手动运行模式：</span>可以点击<span class="info-text"> 手动运行模式 </span>按钮运行或 <span
@@ -35,8 +33,7 @@ v-if="language === 'javascript'" :offset="0" placement="top"
                 </template>
                 <i class="iconfont icon-info-circle-color info" />
               </el-tooltip>
-              <el-button
-:disabled="!codeContent || (runMode === 1 && language === 'javascript')" type="primary" link
+              <el-button :disabled="!codeContent || (runMode === 1 && language === 'javascript')" type="primary" link
                 :class="`${language === 'javascript' ? 'js-run-code' : 'save-code'}`" @click="run(monacoData)">
                 {{
                   language === 'javascript'
@@ -57,13 +54,11 @@ v-if="language === 'javascript'" :offset="0" placement="top"
                   </el-dropdown-menu>
                 </template>
               </el-dropdown>
-              <el-button
-:disabled="!codeContent" type="primary" link class="save-code"
+              <el-button :disabled="!codeContent" type="primary" link class="save-code"
                 :title="codeStore.currentCodeId && codeContent ? '更新' : '保存'" @click="showCodeForm">
                 {{ codeStore.currentCodeId && codeContent ? '更新' : '保存' }}
               </el-button>
-              <el-button
-:disabled="!codeContent" type="warning" link class="save-code" title="重置"
+              <el-button :disabled="!codeContent" type="warning" link class="save-code" title="重置"
                 @click="onReset(monacoData)">
                 重置
               </el-button>
@@ -73,13 +68,11 @@ v-if="language === 'javascript'" :offset="0" placement="top"
       </div>
       <div class="preview">
         <div v-drag class="line" />
-        <MonacoEditor
-v-if="language !== 'html'" v-model:theme="theme" language="javascript" :code="codeResults"
+        <MonacoEditor v-if="language !== 'html'" v-model:theme="theme" language="javascript" :code="codeResults"
           :is-code-edit="true" readonly class="code-result">
           <template #save="monacoData">
             <div class="action-list">
-              <el-button
-:disabled="!codeResults || codeStore.compileLoading" type="warning" link class="save-code"
+              <el-button :disabled="!codeResults || codeStore.compileLoading" type="warning" link class="save-code"
                 title="重置" @click="onClear(monacoData)">
                 {{ codeStore.compileLoading ? '正在运行中...' : codeResults ? '清空' : '' }}
               </el-button>
@@ -100,13 +93,11 @@ v-if="language !== 'html'" v-model:theme="theme" language="javascript" :code="co
         </div>
       </div>
     </div>
-    <el-dialog
-v-model="visible" :close-on-click-modal="false"
+    <el-dialog v-model="visible" :close-on-click-modal="false"
       :title="`${codeStore.currentCodeId && codeContent ? '更新' : '保存'}代码示例`" width="500px" draggable>
       <div class="dialog-content">
         <el-form ref="formRef" label-position="top" :model="codeStore.codeInfo" @submit.native.prevent>
-          <el-form-item
-prop="title" label="示例名称" :rules="[
+          <el-form-item prop="title" label="示例名称" :rules="[
             {
               required: true,
               message: '请输入示例名称',
@@ -116,8 +107,7 @@ prop="title" label="示例名称" :rules="[
             <el-input v-model="codeStore.codeInfo.title" maxlength="50" show-word-limit placeholder="请输入示例名称" />
           </el-form-item>
           <el-form-item prop="abstract" label="示例描述">
-            <el-input
-v-model="codeStore.codeInfo.abstract" :autosize="{ minRows: 4, maxRows: 6 }" type="textarea"
+            <el-input v-model="codeStore.codeInfo.abstract" :autosize="{ minRows: 4, maxRows: 6 }" type="textarea"
               maxlength="500" show-word-limit resize="none" placeholder="请输入示例描述" />
           </el-form-item>
         </el-form>
@@ -186,7 +176,10 @@ onUnmounted(() => {
   // 页面销毁时清空创建的代码示例信息
   codeStore.clearCodeId();
   window.removeEventListener('keydown', onKeydown);
-  timer = null;
+  if (timer) {
+    clearTimeout(timer);
+    timer = null;
+  }
 });
 
 // 监听快捷键操作
@@ -588,7 +581,7 @@ const onClear = (monacoData?: any) => {
           padding: 0 10px;
           box-sizing: border-box;
           background-color: v-bind(background);
-          border-bottom: 1px solid var(--border-color);
+          border-bottom: 1px solid var(--card-border);
           border-top-left-radius: 5px;
           border-top-right-radius: 5px;
 
