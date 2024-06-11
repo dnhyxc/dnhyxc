@@ -2,6 +2,11 @@ import type { Ref } from 'vue';
 import { defineStore } from 'pinia';
 import { TocTitlesParams } from '@/typings/common';
 
+interface ITocTopsProps {
+  top: number;
+  title: string;
+}
+
 interface IProps {
   backPath: string; // 路由返回路径
   tocTitles: TocTitlesParams[]; // 文章目录
@@ -14,6 +19,7 @@ interface IProps {
   pageLoadStatus: boolean; // 判断页面是否加载完成
   winStatus: boolean; // 窗口显示状态
   networkStatus: boolean; // 网络状态
+  tocTops: ITocTopsProps[]; // 文章目录顶部距离
 }
 
 // 公共store
@@ -30,6 +36,7 @@ export const useCommonStore = defineStore('common', {
     pageLoadStatus: false,
     winStatus: true,
     networkStatus: window.navigator.onLine,
+    tocTops: [],
   }),
 
   actions: {
@@ -59,6 +66,14 @@ export const useCommonStore = defineStore('common', {
     // 更改窗口显示状态
     updateWinStatus(status: boolean) {
       this.winStatus = status;
+    },
+
+    setTocTops(info: ITocTopsProps) {
+      this.tocTops.push(info);
+    },
+
+    clearTocTops() {
+      this.tocTops = [];
     },
   },
 });

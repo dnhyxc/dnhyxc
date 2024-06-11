@@ -20,6 +20,7 @@
 <script setup lang="ts">
 import { shell } from 'electron';
 import { ref, onMounted, onUnmounted } from 'vue';
+import { onBeforeRouteLeave } from 'vue-router';
 import { commonStore } from '@/store';
 
 interface IProps {
@@ -62,42 +63,56 @@ onMounted(() => {
     if (titles.length) {
       const hTags = Array.from(new Set(titles.map((title) => title.tagName))).sort();
       // 存储所有的标题标签
-      commonStore.tocTitles = titles.map((el) => ({
-        title: el.innerText,
-        lineIndex: el.getAttribute('data-v-md-line'),
-        indent: hTags.indexOf(el.tagName),
-      }));
+      commonStore.tocTitles = titles.map((el, index) => {
+        commonStore.setTocTops({
+          top: el.offsetTop,
+          title: el.innerText + index,
+        });
+
+        return {
+          title: el.innerText,
+          lineIndex: el.getAttribute('data-v-md-line'),
+          indent: hTags.indexOf(el.tagName),
+        };
+      });
     }
 
-    previewRef.value.$el.addEventListener('click', (e: Event) => {
-      e.preventDefault();
-      const anchor = e.target as HTMLAnchorElement;
-      // 判断是否是 a 标签，使用默认浏览器打开链接
-      if (anchor.tagName === 'A') {
-        shell.openExternal(anchor.href);
-        return;
-      }
-      // 判断是否 a 标签的子元素
-      if (anchor.closest('a')) {
-        const parentAnchor = anchor.parentNode as HTMLAnchorElement;
-        shell.openExternal(parentAnchor?.href);
-        return;
-      }
-      const image = e.target as HTMLImageElement;
-      // 预览文章中的图片
-      if (image.tagName === 'IMG') {
-        imageUrl.value = image.src;
-        previewVisible.value = true;
-      }
-    });
+    previewRef.value.$el.addEventListener('click', onImageClick);
   }
+});
+
+onBeforeRouteLeave(() => {
+  previewRef.value?.$el?.removeEventListener('click', onImageClick);
 });
 
 // 组件卸载时，清除tocTitles，以防存在下次进入详情页时，目录存在缓存
 onUnmounted(() => {
   previewRef.value = null;
   commonStore.tocTitles = [];
+  commonStore.tocTops = [];
 });
+
+const onImageClick = (e: Event) => {
+  e.preventDefault();
+  const anchor = e.target as HTMLAnchorElement;
+  // 判断是否是 a 标签，使用默认浏览器打开链接
+  if (anchor.tagName === 'A') {
+    shell.openExternal(anchor.href);
+    return;
+  }
+  // 判断是否 a 标签的子元素
+  if (anchor.closest('a')) {
+    const parentAnchor = anchor.parentNode as HTMLAnchorElement;
+    shell.openExternal(parentAnchor?.href);
+    return;
+  }
+  const image = e.target as HTMLImageElement;
+  // 预览文章中的图片
+  if (image.tagName === 'IMG') {
+    imageUrl.value = image.src;
+    previewVisible.value = true;
+  }
+};
 
 const onImageLoaded = () => {
   imgCount.value++;

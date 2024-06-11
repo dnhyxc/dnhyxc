@@ -58,8 +58,24 @@ onUnmounted(() => {
 });
 
 // 监听详情md预览组件滚动事件
-const onDetailScroll = (e: any) => {
-  const scale = e.target.scrollTop / commonStore.detailScrollRef?.wrapRef?.scrollHeight;
+const onDetailScroll = (e: Event) => {
+  const element = e.target as HTMLDivElement;
+  const { scrollTop } = element;
+  let closestSection = null;
+  for (let i = 0; i < commonStore.tocTops.length - 1; i++) {
+    if (scrollTop >= commonStore.tocTops[i].top && scrollTop < commonStore.tocTops[i + 1].top) {
+      closestSection = commonStore.tocTops[i];
+      break;
+    }
+  }
+  if (!closestSection && scrollTop >= commonStore.tocTops[commonStore.tocTops.length - 1].top) {
+    closestSection = commonStore.tocTops[commonStore.tocTops.length - 1];
+  }
+  if (closestSection) {
+    checkTocTitle.value = closestSection.title;
+  }
+
+  const scale = (e.target as HTMLDivElement).scrollTop / commonStore.detailScrollRef?.wrapRef?.scrollHeight;
   const el = scrollChildRef.value?.wrapRef as HTMLDivElement;
   if (el) {
     el.scrollTop = (scale * scrollChildRef.value?.wrapRef?.scrollHeight) as number;
