@@ -29,6 +29,8 @@ export class DrawLine {
     this.ctx.beginPath();
     this.ctx.fillStyle = this.color;
     this.ctx.strokeStyle = this.color;
+    // this.ctx.shadowColor = this.color;
+    // this.ctx.shadowBlur = (this.lineSize! * 0.6) * devicePixelRatio;
     this.ctx.lineWidth = this.lineSize! * devicePixelRatio;
     this.ctx.lineCap = 'round';
     this.ctx.lineJoin = 'round';
