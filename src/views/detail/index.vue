@@ -6,16 +6,12 @@
 -->
 <template>
   <Loading :loading="articleStore.loading" :class="`${checkOS() === 'mac' && 'mac-detail-wrap'} detail-wrap`">
-    <div class="content">
+    <div class="content" @mouseenter="onMouseenter" @mouseleave="onMouseleave">
       <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
         <div ref="articleInfoRef" class="article-info">
           <PageHeader v-if="articleStore.articleDetail?.authorId" />
-          <Preview
-            v-if="articleStore.articleDetail.content"
-            :markdown="articleStore.articleDetail.content"
-            :copy-code-success="onCopyCodeSuccess"
-            :on-scroll="route.query?.scrollTo ? onScroll : undefined"
-          />
+          <Preview v-if="articleStore.articleDetail.content" :markdown="articleStore.articleDetail.content"
+            :copy-code-success="onCopyCodeSuccess" :on-scroll="route.query?.scrollTo ? onScroll : undefined" />
           <div v-if="articleStore.articleDetail.content" class="classifys">
             <div class="classify">
               <span class="label">分类：</span>
@@ -31,31 +27,19 @@
             </div>
           </div>
         </div>
-        <Comment
-          v-if="articleStore.articleDetail.authorId"
-          :id="(route.params.id as string)"
-          :author-id="articleStore.articleDetail.authorId!"
-          :focus="focus"
-          :on-scroll-to="onScrollTo"
-          @update-focus="updateFocus"
-        />
+        <Comment v-if="articleStore.articleDetail.authorId" :id="(route.params.id as string)"
+          :author-id="articleStore.articleDetail.authorId!" :focus="focus" :on-scroll-to="onScrollTo"
+          @update-focus="updateFocus" />
       </el-scrollbar>
       <ToTopIcon v-if="scrollTop >= 500" :on-scroll-to="onScrollTo" />
     </div>
     <div class="right">
-      <Multibar
-        :id="(route.params.id as string)"
-        :scroll-height="articleInfoRef?.offsetHeight"
-        :on-scroll-to="() => onScrollTo(articleInfoRef?.offsetHeight)"
-      />
-      <Toc class="toc-list" />
-      <AnotherArticle
-        v-if="articleStore.articleDetail.content"
-        :id="(route.params.id as string)"
-        :classify="articleStore.articleDetail?.classify!"
-        :tag="articleStore.articleDetail?.tag!"
-        class="another-list"
-      />
+      <Multibar :id="(route.params.id as string)" :scroll-height="articleInfoRef?.offsetHeight"
+        :on-scroll-to="() => onScrollTo(articleInfoRef?.offsetHeight)" />
+      <Toc class="toc-list" :is-enter="isEnter" />
+      <AnotherArticle v-if="articleStore.articleDetail.content" :id="(route.params.id as string)"
+        :classify="articleStore.articleDetail?.classify!" :tag="articleStore.articleDetail?.tag!"
+        class="another-list" />
     </div>
   </Loading>
 </template>
@@ -84,6 +68,7 @@ const router = useRouter();
 const route = useRoute();
 
 const articleInfoRef = ref<HTMLDivElement | null>(null);
+const isEnter = ref<boolean>(false)
 
 // 评论输入框焦点控制变量
 const focus = ref<boolean>(false);
@@ -131,6 +116,14 @@ const onCopyCodeSuccess = (value?: string) => {
     type: 'success',
   });
 };
+
+const onMouseenter = (e: MouseEvent) => {
+  isEnter.value = true;
+}
+
+const onMouseleave = (e: MouseEvent) => {
+  isEnter.value = false;
+}
 
 // 去分类页
 const toClassify = (classify: string) => {
@@ -240,7 +233,7 @@ const onScrollTo = (height?: number, fromEmoji?: boolean) => {
       background-color: var(--pre-hover-bg);
     }
 
-    & > :last-child {
+    &> :last-child {
       margin-bottom: 0;
     }
   }

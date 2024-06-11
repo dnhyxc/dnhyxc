@@ -8,20 +8,15 @@
   <div v-if="commonStore?.tocTitles?.length > 0" ref="tocRef" class="toc-wrap">
     <div class="title">
       <span>目录</span>
-      <i
-        :class="`font iconfont ${scrollChildTop > 0 ? 'icon-shuangjiantou-shang' : 'icon-shuangjiantou-xia'}`"
-        @click="onScrollTo"
-      />
+      <i :class="`font iconfont ${scrollChildTop > 0 ? 'icon-shuangjiantou-shang' : 'icon-shuangjiantou-xia'}`"
+        @click="onScrollTo" />
     </div>
     <el-scrollbar ref="scrollChildRef" wrap-class="scrollbar-wrapper">
       <div class="item-wrap">
-        <div
-          v-for="(anchor, index) in commonStore.tocTitles"
-          :key="index"
+        <div v-for="(anchor, index) in commonStore.tocTitles" :key="index"
           :style="{ padding: `2px 10px 2px ${anchor.indent * 20 + 15}px`, margin: '5px 0' }"
           :class="`${checkTocTitle === anchor.title + index && 'toc-item'} item`"
-          @click="handleAnchorClick(anchor, index)"
-        >
+          @click="handleAnchorClick(anchor, index)">
           <a style="cursor: pointer" :class="checkTocTitle === anchor.title + index && 'active'">{{ anchor.title }}</a>
         </div>
       </div>
@@ -36,9 +31,15 @@ import { useChildScroller } from '@/hooks';
 import { commonStore } from '@/store';
 import { TocTitlesParams } from '@/typings/common';
 
+interface IProps {
+  isEnter: boolean;
+}
+
 const { scrollChildRef, scrollChildTop } = useChildScroller();
 
 const checkTocTitle = ref<string>('');
+
+const props = defineProps<IProps>()
 
 onMounted(() => {
   watchEffect(() => {
@@ -59,20 +60,22 @@ onUnmounted(() => {
 
 // 监听详情md预览组件滚动事件
 const onDetailScroll = (e: Event) => {
-  const element = e.target as HTMLDivElement;
-  const { scrollTop } = element;
-  let closestSection = null;
-  for (let i = 0; i < commonStore.tocTops.length - 1; i++) {
-    if (scrollTop >= commonStore.tocTops[i].top && scrollTop < commonStore.tocTops[i + 1].top) {
-      closestSection = commonStore.tocTops[i];
-      break;
+  if (props.isEnter) {
+    const element = e.target as HTMLDivElement;
+    const { scrollTop } = element;
+    let closestSection = null;
+    for (let i = 0; i < commonStore.tocTops.length - 1; i++) {
+      if (scrollTop >= commonStore.tocTops[i].top && scrollTop < commonStore.tocTops[i + 1].top) {
+        closestSection = commonStore.tocTops[i];
+        break;
+      }
     }
-  }
-  if (!closestSection && scrollTop >= commonStore.tocTops[commonStore.tocTops.length - 1].top) {
-    closestSection = commonStore.tocTops[commonStore.tocTops.length - 1];
-  }
-  if (closestSection) {
-    checkTocTitle.value = closestSection.title;
+    if (!closestSection && scrollTop >= commonStore.tocTops[commonStore.tocTops.length - 1].top) {
+      closestSection = commonStore.tocTops[commonStore.tocTops.length - 1];
+    }
+    if (closestSection) {
+      checkTocTitle.value = closestSection.title;
+    }
   }
 
   const scale = (e.target as HTMLDivElement).scrollTop / commonStore.detailScrollRef?.wrapRef?.scrollHeight;
@@ -86,14 +89,13 @@ const onDetailScroll = (e: Event) => {
 const handleAnchorClick = (anchor: TocTitlesParams, index: number) => {
   const { lineIndex, title } = anchor;
   checkTocTitle.value = title + index;
-  nextTick(() => {
+  nextTick(async () => {
     const heading = (commonStore.previewRef as any).$el?.querySelector(`[data-v-md-line="${lineIndex}"]`);
     if (heading) {
       heading.classList.add('header-active');
       (commonStore.previewRef as any).scrollToTarget({
         target: heading,
         scrollContainer: commonStore.detailScrollRef?.wrapRef, // 需要滚动组件容器（el-scrollbar）
-        top: 15,
       });
     }
   });
