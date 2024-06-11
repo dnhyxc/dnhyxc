@@ -10,7 +10,8 @@
       <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
         <div ref="articleInfoRef" class="article-info">
           <PageHeader v-if="articleStore.articleDetail?.authorId" />
-          <Preview v-if="articleStore.articleDetail.content" :markdown="articleStore.articleDetail.content"
+          <Preview
+v-if="articleStore.articleDetail.content" :markdown="articleStore.articleDetail.content"
             :copy-code-success="onCopyCodeSuccess" :on-scroll="route.query?.scrollTo ? onScroll : undefined" />
           <div v-if="articleStore.articleDetail.content" class="classifys">
             <div class="classify">
@@ -27,17 +28,20 @@
             </div>
           </div>
         </div>
-        <Comment v-if="articleStore.articleDetail.authorId" :id="(route.params.id as string)"
+        <Comment
+v-if="articleStore.articleDetail.authorId" :id="(route.params.id as string)"
           :author-id="articleStore.articleDetail.authorId!" :focus="focus" :on-scroll-to="onScrollTo"
           @update-focus="updateFocus" />
       </el-scrollbar>
       <ToTopIcon v-if="scrollTop >= 500" :on-scroll-to="onScrollTo" />
     </div>
     <div class="right">
-      <Multibar :id="(route.params.id as string)" :scroll-height="articleInfoRef?.offsetHeight"
+      <Multibar
+:id="(route.params.id as string)" :scroll-height="articleInfoRef?.offsetHeight"
         :on-scroll-to="() => onScrollTo(articleInfoRef?.offsetHeight)" />
       <Toc class="toc-list" :is-enter="isEnter" />
-      <AnotherArticle v-if="articleStore.articleDetail.content" :id="(route.params.id as string)"
+      <AnotherArticle
+v-if="articleStore.articleDetail.content" :id="(route.params.id as string)"
         :classify="articleStore.articleDetail?.classify!" :tag="articleStore.articleDetail?.tag!"
         class="another-list" />
     </div>

@@ -8,12 +8,14 @@
   <div v-if="commonStore?.tocTitles?.length > 0" ref="tocRef" class="toc-wrap">
     <div class="title">
       <span>目录</span>
-      <i :class="`font iconfont ${scrollChildTop > 0 ? 'icon-shuangjiantou-shang' : 'icon-shuangjiantou-xia'}`"
+      <i
+:class="`font iconfont ${scrollChildTop > 0 ? 'icon-shuangjiantou-shang' : 'icon-shuangjiantou-xia'}`"
         @click="onScrollTo" />
     </div>
     <el-scrollbar ref="scrollChildRef" wrap-class="scrollbar-wrapper">
       <div class="item-wrap">
-        <div v-for="(anchor, index) in commonStore.tocTitles" :key="index"
+        <div
+v-for="(anchor, index) in commonStore.tocTitles" :key="index"
           :style="{ padding: `2px 10px 2px ${anchor.indent * 20 + 15}px`, margin: '5px 0' }"
           :class="`${checkTocTitle === anchor.title + index && 'toc-item'} item`"
           @click="handleAnchorClick(anchor, index)">
