@@ -795,17 +795,17 @@ export const drawCharater = ({
 // 防抖函数
 export const debounce = (fn: Function, delay = 1000, immediate = false) => {
   let timer: ReturnType<typeof setTimeout> | null = null;
-  return function () {
+  return function (this: any, ...args: any[]) {
     if (timer) {
       clearTimeout(timer);
     }
     if (immediate && !timer) {
       // @ts-ignore
-      fn.apply(this, arguments);
+      fn.apply(this, args);
     }
     timer = setTimeout(() => {
       // @ts-ignore
-      fn.apply(this);
+      fn.apply(this, args);
     }, delay);
   };
 };

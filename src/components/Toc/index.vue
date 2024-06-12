@@ -9,16 +9,19 @@
     <div class="title">
       <span>目录</span>
       <i
-:class="`font iconfont ${scrollChildTop > 0 ? 'icon-shuangjiantou-shang' : 'icon-shuangjiantou-xia'}`"
-        @click="onScrollTo" />
+        :class="`font iconfont ${scrollChildTop > 0 ? 'icon-shuangjiantou-shang' : 'icon-shuangjiantou-xia'}`"
+        @click="onScrollTo"
+      />
     </div>
     <el-scrollbar ref="scrollChildRef" wrap-class="scrollbar-wrapper">
       <div class="item-wrap">
         <div
-v-for="(anchor, index) in commonStore.tocTitles" :key="index"
+          v-for="(anchor, index) in commonStore.tocTitles"
+          :key="index"
           :style="{ padding: `2px 10px 2px ${anchor.indent * 20 + 15}px`, margin: '5px 0' }"
           :class="`${checkTocTitle === anchor.title + index && 'toc-item'} item`"
-          @click="handleAnchorClick(anchor, index)">
+          @click="handleAnchorClick(anchor, index)"
+        >
           <a style="cursor: pointer" :class="checkTocTitle === anchor.title + index && 'active'">{{ anchor.title }}</a>
         </div>
       </div>
@@ -28,7 +31,7 @@ v-for="(anchor, index) in commonStore.tocTitles" :key="index"
 
 <script setup lang="ts">
 import { onMounted, ref, nextTick, watchEffect, onUnmounted } from 'vue';
-import { scrollTo } from '@/utils';
+import { scrollTo, debounce } from '@/utils';
 import { useChildScroller } from '@/hooks';
 import { commonStore } from '@/store';
 import { TocTitlesParams } from '@/typings/common';
@@ -41,7 +44,7 @@ const { scrollChildRef, scrollChildTop } = useChildScroller();
 
 const checkTocTitle = ref<string>('');
 
-const props = defineProps<IProps>()
+const props = defineProps<IProps>();
 
 onMounted(() => {
   watchEffect(() => {
@@ -49,8 +52,8 @@ onMounted(() => {
       checkTocTitle.value = commonStore.tocTitles[0]?.title + 0;
     }
     nextTick(() => {
-      // 监听滚动条滚动事件
-      commonStore.detailScrollRef?.wrapRef?.addEventListener('scroll', onDetailScroll);
+      // 监听滚动条滚动事件debounce(onResize, 100)
+      commonStore.detailScrollRef?.wrapRef?.addEventListener('scroll', debounce(onDetailScroll, 100));
     });
   });
 });
@@ -91,7 +94,7 @@ const onDetailScroll = (e: Event) => {
 const handleAnchorClick = (anchor: TocTitlesParams, index: number) => {
   const { lineIndex, title } = anchor;
   checkTocTitle.value = title + index;
-  nextTick(async () => {
+  nextTick(() => {
     const heading = (commonStore.previewRef as any).$el?.querySelector(`[data-v-md-line="${lineIndex}"]`);
     if (heading) {
       heading.classList.add('header-active');
