@@ -65,8 +65,9 @@ onMounted(() => {
       // 存储所有的标题标签
       commonStore.tocTitles = titles.map((el, index) => {
         commonStore.setTocTops({
-          top: el.offsetTop,
+          top: el.offsetTop - 15,
           title: el.innerText + index,
+          lineIndex: el.getAttribute('data-v-md-line') || '',
         });
 
         return {

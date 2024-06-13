@@ -5,6 +5,7 @@ import { TocTitlesParams } from '@/typings/common';
 interface ITocTopsProps {
   top: number;
   title: string;
+  lineIndex: string;
 }
 
 interface IProps {

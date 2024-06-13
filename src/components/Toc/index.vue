@@ -14,12 +14,12 @@
       />
     </div>
     <el-scrollbar ref="scrollChildRef" wrap-class="scrollbar-wrapper">
-      <div class="item-wrap">
+      <div id="item-wrap" class="item-wrap">
         <div
           v-for="(anchor, index) in commonStore.tocTitles"
           :key="index"
           :style="{ padding: `2px 10px 2px ${anchor.indent * 20 + 15}px`, margin: '5px 0' }"
-          :class="`${checkTocTitle === anchor.title + index && 'toc-item'} item`"
+          :class="`${checkTocTitle === anchor.title + index && 'toc-item'} item item-${anchor.lineIndex!}`"
           @click="handleAnchorClick(anchor, index)"
         >
           <a style="cursor: pointer" :class="checkTocTitle === anchor.title + index && 'active'">{{ anchor.title }}</a>
@@ -80,13 +80,16 @@ const onDetailScroll = (e: Event) => {
     }
     if (closestSection) {
       checkTocTitle.value = closestSection.title;
+      const tocEl = scrollChildRef.value?.wrapRef as any;
+      const heading = tocEl.querySelector(`.item-${closestSection.lineIndex}`) as HTMLElement;
+      if (heading) {
+        heading.classList.add('header-active');
+        tocEl.scrollTo({
+          top: heading.offsetTop,
+          behavior: 'smooth',
+        });
+      }
     }
-  }
-
-  const scale = (e.target as HTMLDivElement).scrollTop / commonStore.detailScrollRef?.wrapRef?.scrollHeight;
-  const el = scrollChildRef.value?.wrapRef as HTMLDivElement;
-  if (el) {
-    el.scrollTop = (scale * scrollChildRef.value?.wrapRef?.scrollHeight) as number;
   }
 };
 
