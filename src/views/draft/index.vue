@@ -9,7 +9,11 @@
     :loading="createStore.loadDraft"
     :class="`${checkOS() === 'mac' && 'mac-draft-detail-wrap'} draft-detail-wrap`"
   >
-    <div :class="`${commonStore?.tocTitles?.length === 0 && 'no-rm-content'} content`">
+    <div
+      :class="`${commonStore?.tocTitles?.length === 0 && 'no-rm-content'} content`"
+      @mouseenter="onMouseenter"
+      @mouseleave="onMouseleave"
+    >
       <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
         <div ref="articleInfoRef" class="article-info">
           <div class="title-wrap">
@@ -62,13 +66,13 @@
       <ToTopIcon v-if="scrollTop >= 500" :on-scroll-to="onScrollTo" />
     </div>
     <div v-if="commonStore?.tocTitles?.length > 0 && !createStore.loadDraft" class="right">
-      <Toc class="toc-list" />
+      <Toc class="toc-list" :is-enter="isEnter" />
     </div>
   </Loading>
 </template>
 
 <script setup lang="ts">
-import { onMounted, defineAsyncComponent, onUnmounted, nextTick } from 'vue';
+import { onMounted, defineAsyncComponent, onUnmounted, nextTick, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useScroller } from '@/hooks';
 import { scrollTo, checkOS, formatDate, message } from '@/utils';
@@ -84,6 +88,8 @@ const router = useRouter();
 
 const { scrollRef, scrollTop } = useScroller();
 
+const isEnter = ref<boolean>(false);
+
 onMounted(() => {
   nextTick(() => {
     commonStore.detailScrollRef = scrollRef.value;
@@ -94,6 +100,14 @@ onMounted(() => {
 onUnmounted(() => {
   createStore.clearDraftDetail();
 });
+
+const onMouseenter = (e: MouseEvent) => {
+  isEnter.value = true;
+};
+
+const onMouseleave = (e: MouseEvent) => {
+  isEnter.value = false;
+};
 
 // 复制成功回调
 const onCopyCodeSuccess = (value?: string) => {

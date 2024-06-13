@@ -39,7 +39,7 @@
         </div>
       </div>
       <div class="content-wrap">
-        <div class="content">
+        <div class="content" @mouseenter="onMouseenter" @mouseleave="onMouseleave">
           <el-scrollbar ref="scrollRef" wrap-class="scrollbar-wrapper">
             <div ref="articleInfoRef">
               <PageHeader v-if="articleStore.articleDetail.authorId" />
@@ -67,7 +67,10 @@
             :scroll-height="articleInfoRef?.offsetHeight"
             :on-scroll-to="() => onScrollTo(articleInfoRef?.offsetHeight)"
           />
-          <Toc :class="`${!getStoreUserInfo()?.userInfo?.userId && 'hide-toc-list-border'} toc-list`" />
+          <Toc
+            :class="`${!getStoreUserInfo()?.userInfo?.userId && 'hide-toc-list-border'} toc-list`"
+            :is-enter="isEnter"
+          />
           <AnotherArticle
             v-if="articleStore.articleDetail.content"
             :id="(route.params.id as string)"
@@ -112,7 +115,7 @@ const articleInfoRef = ref<HTMLDivElement | null>(null);
 const focus = ref<boolean>(false);
 // 窗口大小控制状态
 const toggle = ref<boolean>(false);
-// 指定控制状态
+const isEnter = ref<boolean>(false);
 
 // scrollRef：el-scrollbar ref，scrollTop：滚动距离
 const { scrollRef, scrollTop } = useScroller();
@@ -191,6 +194,14 @@ onUnmounted(() => {
   articleStore.commentList = [];
   articleStore.anotherArticleList = [];
 });
+
+const onMouseenter = (e: MouseEvent) => {
+  isEnter.value = true;
+};
+
+const onMouseleave = (e: MouseEvent) => {
+  isEnter.value = false;
+};
 
 // 更改输入框焦点状态
 const updateFocus = (value: boolean) => {
