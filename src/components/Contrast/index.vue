@@ -7,28 +7,34 @@
 <template>
   <div class="contrast-wrap">
     <div class="title">
-      <span class="title-text">左侧处理前图片</span>
-      <span>右侧处理后图片</span>
+      <span v-if="beforeSize">
+        处理前图片 <span class="size">{{ beforeSize ? (beforeSize! / 1024).toFixed(2) : '-' }}</span> KB
+      </span>
+      <span v-if="afterSize" class="title-text">
+        处理后图片 <span class="after-size">{{ afterSize ? (afterSize! / 1024).toFixed(2) : '-' }}</span> KB
+      </span>
     </div>
     <div ref="sliderRef" class="slider-wrap">
       <div ref="beforeImgRef" class="before-img">
-        <img :src="beforeImg" alt=""/>
+        <img :src="beforeImg" alt="" />
       </div>
-      <img :src="afterImg" alt=""/>
-      <span v-if="showDrag" ref="handlerRef" class="handler" @mousedown="onMousedown"/>
+      <img :src="afterImg" alt="" />
+      <span v-if="showDrag" ref="handlerRef" class="handler" @mousedown="onMousedown" />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import {ref} from 'vue';
-import {nextTick} from 'process';
+import { ref } from 'vue';
+import { nextTick } from 'process';
 
 interface IProps {
   imgHeight?: string;
   beforeImg: string;
   afterImg: string;
   showDrag: boolean;
+  beforeSize?: number;
+  afterSize?: number;
 }
 
 defineProps<IProps>();
@@ -78,12 +84,20 @@ const onMove = (e: MouseEvent) => {
     margin-bottom: 10px;
 
     .title-text {
-      padding-right: 30px;
-      border-right: 2px solid var(--font-5);
+      padding-left: 30px;
+      border-left: 2px solid var(--font-5);
     }
 
-    & > :last-child {
-      padding-left: 30px;
+    & > :first-child {
+      padding-right: 30px;
+    }
+
+    .size {
+      color: var(--active-color);
+    }
+
+    .after-size {
+      color: var(--theme-blue);
     }
   }
 

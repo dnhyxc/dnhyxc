@@ -16,8 +16,8 @@
         :max-height="`${!hideHeader ? 'calc(100vh - 192px)' : 'calc(100vh - 106px)'}`"
         wrap-class="scrollbar-wrapper"
       >
-        <DragUpload v-if="!imgFrom" class="compress-upload" :on-upload="onUpload"/>
-        <OnlineImage v-else :on-use-online-url="onUseOnlineUrl" class="compress-online-image"/>
+        <DragUpload v-if="!imgFrom" class="compress-upload" :on-upload="onUpload" />
+        <OnlineImage v-else :on-use-online-url="onUseOnlineUrl" class="compress-online-image" />
         <div v-if="sourceUrl" class="image-container">
           <div class="contrast">
             <span class="title">
@@ -29,38 +29,56 @@
           <div class="img-list">
             <div v-if="sourceUrl" class="before">
               <span class="info">
-                压缩前：{{ selectFile?.size ? (selectFile?.size! / 1024).toFixed(2) : '-' }} KB
+                压缩前：<span class="img-info">
+                  {{ selectFile?.size ? (selectFile?.size! / 1024).toFixed(2) : '-' }} KB
+                </span>
               </span>
-              <img :src="sourceUrl" alt="" class="compress-image" @click="onPreview"/>
+              <img :src="sourceUrl" alt="" class="compress-image" @click="onPreview" />
             </div>
             <div v-if="base64Url" ref="imageRef" class="after">
               <span class="info">
-                压缩后：{{ compressFile?.size ? (compressFile?.size! / 1024).toFixed(2) : '-' }} KB
+                压缩后：<span class="img-info">
+                  {{ compressFile?.size ? (compressFile?.size! / 1024).toFixed(2) : '-' }} KB
+                </span>
               </span>
-              <img :src="base64Url" alt="" class="compress-image" @click="onPreview"/>
+              <img :src="base64Url" alt="" class="compress-image" @click="onPreview" />
             </div>
           </div>
           <div v-if="base64Url" class="compress-info">
-            <span class="title">压缩比例：{{ sliderValue }}%</span>
-            <span class="size-info">
-              压缩后文件大小相差：{{
-                selectFile?.size && compressFile?.size
-                  ? (selectFile?.size / 1024 - compressFile?.size / 1024).toFixed(2)
-                  : '-'
-              }}
-              KB
+            <span class="ratio-size-info">
+              压缩比例：<span class="img-info">{{ sliderValue }}%</span>
             </span>
-            <span class="size-info">宽度相差：{{ sourceFileInfo.width - (compressWidth as number) }}</span>
-            <span class="size-info"> 高度相差：{{ sourceFileInfo.height - (compressHeight as number) }} </span>
+            <span class="size-info">
+              压缩后文件大小相差：<span class="img-info">
+                {{
+                  selectFile?.size && compressFile?.size
+                    ? (selectFile?.size / 1024 - compressFile?.size / 1024).toFixed(2)
+                    : '-'
+                }}
+                KB
+              </span>
+            </span>
+            <span class="size-info">
+              宽度相差：<span class="img-info">{{ sourceFileInfo.width - (compressWidth as number) }}</span>
+            </span>
+            <span class="size-info">
+              高度相差：<span class="img-info">{{ sourceFileInfo.height - (compressHeight as number) }}</span>
+            </span>
             <div class="compress-size">
               <div class="size-item">
-                <span class="comp-width">原始宽度：{{ sourceFileInfo.width }}</span>
-                <span class="comp-height">原始高度：{{ sourceFileInfo.height }}</span>
-                <span class="comp-width comp-info">压缩宽度：{{ compressWidth }}</span>
+                <span class="comp-width">
+                  原始宽度：<span class="img-info">{{ sourceFileInfo.width }}</span>
+                </span>
                 <span class="comp-height">
-                  压缩高度：{{
+                  原始高度：<span class="img-info">{{ sourceFileInfo.height }}</span>
+                </span>
+                <span class="comp-width comp-info">
+                  压缩宽度：<span class="img-info">{{ compressWidth }}</span>
+                </span>
+                <span class="comp-height">
+                  压缩高度：<span class="img-info">{{
                     Number(compressHeight) > Number(sourceFileInfo.height) ? sourceFileInfo.height : compressHeight
-                  }}
+                  }}</span>
                 </span>
               </div>
             </div>
@@ -74,7 +92,7 @@
             <span class="right">品质最高(文件越大)</span>
           </div>
           <div class="slide-line">
-            <el-slider v-model="sliderValue" :marks="marks"/>
+            <el-slider v-model="sliderValue" :marks="marks" />
           </div>
         </div>
         <div class="image-size">
@@ -123,9 +141,12 @@
       <div class="preview-dialog">
         <el-scrollbar class="scroll-wrap" max-height="75vh">
           <Contrast
-:before-img="previewUrls?.[0] as string"
-                    :after-img="previewUrls?.[1] as string || previewUrls?.[0] as string"
-                    :show-drag="!!previewUrls?.[1]"/>
+            :before-img="previewUrls?.[0] as string"
+            :after-img="previewUrls?.[1] as string || previewUrls?.[0] as string"
+            :show-drag="!!previewUrls?.[1]"
+            :before-size="selectFile?.size"
+            :after-size="compressFile?.size"
+          />
         </el-scrollbar>
       </div>
     </el-dialog>
@@ -133,9 +154,9 @@
 </template>
 
 <script setup lang="ts">
-import {computed, ref, reactive, onUnmounted, watch} from 'vue';
-import type {CSSProperties} from 'vue';
-import type {FormInstance, FormRules} from 'element-plus';
+import { computed, ref, reactive, onUnmounted, watch } from 'vue';
+import type { CSSProperties } from 'vue';
+import type { FormInstance, FormRules } from 'element-plus';
 import {
   compressImage,
   getImgInfo,
@@ -202,7 +223,7 @@ const sourceUrl = ref<string>('');
 const base64Url = ref<string>('');
 // 压缩后的文件
 const compressFile = ref<File | null>(null);
-const sourceFileInfo = reactive<{ width: number; height: number }>({width: 0, height: 0});
+const sourceFileInfo = reactive<{ width: number; height: number }>({ width: 0, height: 0 });
 // 校验规则实例
 const verifys = ref<{ addRule: Function; end: Function; check: Function }>();
 // 图片比例
@@ -259,8 +280,8 @@ const validateSize = (rule: any, value: any, callback: any) => {
 };
 
 const rules = reactive<FormRules>({
-  imgWidth: [{validator: validateSize}],
-  imgHeight: [{validator: validateSize}],
+  imgWidth: [{ validator: validateSize }],
+  imgHeight: [{ validator: validateSize }],
 });
 
 // 自定义上传
@@ -311,7 +332,7 @@ const onCompress = async () => {
   if (!formRef.value || !selectFile.value) return;
   formRef.value.validate(async (valid) => {
     if (valid) {
-      const {file, base64Url: url} = await compressImage({
+      const { file, base64Url: url } = await compressImage({
         file: selectFile.value!,
         quality: sliderValue.value / 100,
         maxWidth: imgSize.imgWidth!,
@@ -346,9 +367,9 @@ const onRefresh = () => {
 // 下载
 const onDownload = () => {
   if (!compressFile.value) return;
-  const blob = new Blob([compressFile.value], {type: compressFile.value?.type});
+  const blob = new Blob([compressFile.value], { type: compressFile.value?.type });
   const url = window.URL.createObjectURL(blob);
-  onDownloadFile({url, type: 'blob'});
+  onDownloadFile({ url, type: 'blob' });
 };
 
 // 关闭图片压缩
@@ -395,6 +416,10 @@ const onClosePreview = () => {
 
   .content {
     flex: 1;
+
+    .img-info {
+      color: var(--active-color);
+    }
 
     .header {
       display: flex;
@@ -462,12 +487,20 @@ const onClosePreview = () => {
       font-weight: 700;
       margin-bottom: 10px;
       color: var(--font-1);
+      &::before {
+        content: '';
+        width: 0;
+        height: auto;
+        border-left: 5px solid var(--theme-blue);
+        border-radius: 2px 5px 5px 2px;
+        margin-right: 5px;
+      }
     }
 
     .center {
       font-size: 13px;
       margin-left: 10px;
-      color: var(--font-1);
+      color: var(--font-6);
     }
 
     .image-size {
@@ -559,15 +592,15 @@ const onClosePreview = () => {
       margin-top: 20px;
       padding: 0 10px;
 
-      .title,
+      .ratio-size-info {
+        color: var(--font-1);
+      }
+
       .size-info {
         display: inline-block;
         margin-bottom: 10px;
         font-weight: initial;
         color: var(--font-1);
-      }
-
-      .size-info {
         margin-left: 20px;
       }
 
