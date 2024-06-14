@@ -46,6 +46,10 @@ const checkTocTitle = ref<string>('');
 
 const props = defineProps<IProps>();
 
+// top 冗余
+const TOP_REDUNDANCY = 15;
+const OFFSET_REDUNDANCY = 30;
+
 onMounted(() => {
   watchEffect(() => {
     if (commonStore.tocTitles[0]) {
@@ -69,17 +73,25 @@ const onDetailScroll = (e: Event) => {
     const element = e.target as HTMLDivElement;
     const { scrollTop } = element;
     let closestSection = null;
-    for (let i = 0; i < commonStore.tocTops.length - 1; i++) {
-      if (scrollTop >= commonStore.tocTops[i].top && scrollTop < commonStore.tocTops[i + 1].top) {
-        closestSection = commonStore.tocTops[i];
+    for (let i = 0; i < commonStore.tocTitles.length - 1; i++) {
+      if (
+        scrollTop >= commonStore.tocTitles[i].el.offsetTop &&
+        scrollTop < commonStore.tocTitles[i + 1].el.offsetTop - OFFSET_REDUNDANCY
+      ) {
+        closestSection = commonStore.tocTitles[i];
         break;
       }
     }
-    if (!closestSection && scrollTop >= commonStore.tocTops[commonStore.tocTops.length - 1].top) {
-      closestSection = commonStore.tocTops[commonStore.tocTops.length - 1];
+    if (
+      !closestSection &&
+      scrollTop >= commonStore.tocTitles[commonStore.tocTitles.length - 1].el.offsetTop - OFFSET_REDUNDANCY
+    ) {
+      closestSection = commonStore.tocTitles[commonStore.tocTitles.length - 1];
+    }
+    if (!closestSection && scrollTop <= commonStore.tocTitles[0].el.offsetTop - OFFSET_REDUNDANCY) {
+      closestSection = commonStore.tocTitles[0];
     }
     if (closestSection) {
-      checkTocTitle.value = closestSection.title;
       const tocEl = scrollChildRef.value?.wrapRef as any;
       const heading = tocEl.querySelector(`.item-${closestSection.lineIndex}`) as HTMLElement;
       if (heading) {
@@ -88,6 +100,7 @@ const onDetailScroll = (e: Event) => {
           top: heading.offsetTop,
           behavior: 'smooth',
         });
+        checkTocTitle.value = closestSection.activeTitle;
       }
     }
   }
@@ -104,6 +117,7 @@ const handleAnchorClick = (anchor: TocTitlesParams, index: number) => {
       (commonStore.previewRef as any).scrollToTarget({
         target: heading,
         scrollContainer: commonStore.detailScrollRef?.wrapRef, // 需要滚动组件容器（el-scrollbar）
+        top: TOP_REDUNDANCY,
       });
     }
   });

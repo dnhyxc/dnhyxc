@@ -64,14 +64,10 @@ onMounted(() => {
       const hTags = Array.from(new Set(titles.map((title) => title.tagName))).sort();
       // 存储所有的标题标签
       commonStore.tocTitles = titles.map((el, index) => {
-        commonStore.setTocTops({
-          top: el.offsetTop - 15,
-          title: el.innerText + index,
-          lineIndex: el.getAttribute('data-v-md-line') || '',
-        });
-
         return {
+          el,
           title: el.innerText,
+          activeTitle: el.innerText + index,
           lineIndex: el.getAttribute('data-v-md-line'),
           indent: hTags.indexOf(el.tagName),
         };

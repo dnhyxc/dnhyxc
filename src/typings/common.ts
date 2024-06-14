@@ -216,7 +216,9 @@ export interface CrumbsInfo {
 
 // 文章目录
 export interface TocTitlesParams {
+  el: HTMLElement;
   title: string;
+  activeTitle: string;
   lineIndex: string | null;
   indent: number;
 }
