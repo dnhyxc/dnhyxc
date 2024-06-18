@@ -58,6 +58,11 @@ export const createWindow = () => {
   });
 
   globalInfo.win?.on('close', (event) => {
+    const CLOSE_CONFIG = globalInfo.store.get('CLOSE_CONFIG');
+    if (isMac && CLOSE_CONFIG === 2) {
+      app.quit();
+      return;
+    }
     if (!willQuitApp) {
       event.preventDefault();
       globalInfo.win?.hide();
