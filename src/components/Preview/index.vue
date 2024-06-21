@@ -185,6 +185,23 @@ const onCopyCodeSuccess = (value: string) => {
       & tr:nth-child(2n) {
         background-color: var(--table-even-bg);
       }
+
+      h2 {
+        position: relative;
+        padding-bottom: 10px;
+        border-bottom: 1px solid var(--h-color);
+        &::after {
+          content: '';
+          position: absolute;
+          bottom: 0;
+          right: 0;
+          width: 100%;
+          height: 8px;
+          border-top-right-radius: 25px;
+          background: linear-gradient(90deg, transparent, var(--h-color));
+          max-width: 50vw;
+        }
+      }
     }
   }
 }
