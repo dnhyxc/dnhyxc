@@ -21,6 +21,7 @@ export { Verify, checkNumber, checkMin, checkMax, verifyEmpty, verifyLength, ver
 export * from './store';
 export * from './speak';
 export * from './codeTemplate';
+export * from './ffmpeg';
 
 export {
   ipcRenderers,

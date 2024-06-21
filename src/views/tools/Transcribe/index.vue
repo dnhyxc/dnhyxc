@@ -15,8 +15,8 @@
     <Loading :loading="loading" load-text="正在准备中，请稍等..." class="content">
       <Empty v-if="!screenStream && !blobUrl" text="暂无录制" />
       <div class="video-preview">
-        <video v-if="!blobUrl" ref="videoPreviewRef" :srcObject="screenStream" autoplay muted></video>
-        <video v-if="blobUrl" ref="videoRef" :src="blobUrl" autoplay controls></video>
+        <video v-if="!blobUrl" ref="videoPreviewRef" :srcObject="screenStream" autoplay muted />
+        <video v-if="blobUrl" ref="videoRef" :src="blobUrl" autoplay controls />
       </div>
     </Loading>
     <div class="footer">
@@ -27,7 +27,12 @@
         </el-radio-group>
       </div>
       <div class="right">
-        <el-button v-if="blobUrl" type="primary" link @click="onDownload">下载 {{ videoSize }}</el-button>
+        <el-button v-if="blobUrl" type="primary" link :loadding="loading" @click="onDownload">
+          下载 {{ videoSize }}
+        </el-button>
+        <el-button v-if="blobUrl" type="primary" link :loadding="loading" @click="onDownloadForMp4">
+          下载为MP4 {{ videoSize }}
+        </el-button>
         <el-button
           link
           :type="transcribeStatus ? 'warning' : blobUrl ? 'info' : 'primary'"
@@ -53,7 +58,7 @@
           :disabled="transcribeStatus || disabled"
           popper-class="custom-dropdown-styles"
         >
-          <i :class="`iconfont icon-mulu ${(transcribeStatus || disabled) && 'disabled-menu'}`"></i>
+          <i :class="`iconfont icon-mulu ${(transcribeStatus || disabled) && 'disabled-menu'}`" />
           <template #dropdown>
             <el-dropdown-menu>
               <el-dropdown-item v-for="source in mediaSources" :key="source.id" @click="createMedia(source.id, source)">
@@ -71,7 +76,7 @@
 <script setup lang="ts">
 import { DesktopCapturerSource, ipcRenderer } from 'electron';
 import { nextTick, onMounted, onUnmounted, reactive, ref } from 'vue';
-import { formatDuration, onDownloadFile } from '@/utils';
+import { formatDuration, onDownloadFile, translateWebmToMp4 } from '@/utils';
 
 interface IProps {
   hideHeader?: boolean;
@@ -246,6 +251,13 @@ const onRestore = () => {
 
 const onDownload = () => {
   onDownloadFile({ url: blobUrl.value, type: 'blob', fileName: 'download.webm' });
+};
+
+const onDownloadForMp4 = async () => {
+  loading.value = true;
+  const url = await translateWebmToMp4(blobUrl.value);
+  loading.value = false;
+  onDownloadFile({ url, type: 'blob', fileName: 'video.mp4' });
 };
 
 // 关闭屏幕录制页面

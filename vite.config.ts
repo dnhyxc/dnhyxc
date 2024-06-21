@@ -42,6 +42,11 @@ export default defineConfig({
     extensions: ['.js', '.ts', '.json', '.vue'],
   },
   server: {
+    headers: {
+      // 如果需要用到 ffmpeg 合并视频，需要将 COEP 和 COOP 打开，来确保 ShareArrayBuffer 能够正常使用
+      'Cross-Origin-Embedder-Policy': 'require-corp',
+      'Cross-Origin-Opener-Policy': 'same-origin',
+    },
     port: 9216, // 启动端口
     hmr: {
       host: 'localhost',
@@ -79,7 +84,7 @@ export default defineConfig({
       output: {
         chunkFileNames: 'assets/js/[name]-[hash].js',
         entryFileNames: 'assets/js/[name]-[hash].js',
-        assetFileNames: 'assets/[ext]/[name]-[hash].[ext]'
+        assetFileNames: 'assets/[ext]/[name]-[hash].[ext]',
       },
     },
   },
