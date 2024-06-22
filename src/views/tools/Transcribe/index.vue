@@ -16,7 +16,7 @@
       <Empty v-if="!screenStream && !blobUrl" text="暂无录制" />
       <div class="video-preview">
         <video v-if="!blobUrl" ref="videoPreviewRef" :srcObject="screenStream" autoplay muted />
-        <video v-if="blobUrl" ref="videoRef" :src="blobUrl" autoplay controls />
+        <video v-if="blobUrl" ref="videoRef" :src="mp4VideoInfo.url || blobUrl" autoplay controls />
       </div>
     </Loading>
     <div class="footer">
@@ -27,12 +27,31 @@
         </el-radio-group>
       </div>
       <div class="right">
-        <el-button v-if="blobUrl" type="primary" link :loadding="loading" @click="onDownload">
-          下载 {{ videoSize }}
-        </el-button>
-        <el-button v-if="blobUrl" type="primary" link :loadding="loading" @click="onDownloadForMp4">
-          下载为MP4 {{ videoSize }}
-        </el-button>
+        <el-button v-if="blobUrl" type="primary" link @click="onDownload"> WEBM 下载 {{ videoSize }}</el-button>
+        <el-popover placement="top-start" :width="312" trigger="hover">
+          <div class="mp4-popover">
+            <div class="slider">
+              <span>CRF 质量：</span>
+              <el-slider v-model="translateInfo.crf" :step="1" :min="18" :max="28" show-stops />
+            </div>
+          </div>
+          <template #reference>
+            <el-button
+              v-if="blobUrl"
+              type="primary"
+              link
+              :loading="downloadLoading"
+              class="mp4-btn"
+              @click="onDownloadForMp4"
+            >
+              {{
+                mp4VideoInfo.url
+                  ? `MP4 下载 ${mp4VideoInfo.size}`
+                  : `${downloadLoading ? 'MP4 转换中...' : '转为 MP4 下载'}`
+              }}
+            </el-button>
+          </template>
+        </el-popover>
         <el-button
           link
           :type="transcribeStatus ? 'warning' : blobUrl ? 'info' : 'primary'"
@@ -91,6 +110,7 @@ const props = defineProps<IProps>();
 const emit = defineEmits<Emits>();
 
 const loading = ref<boolean>(false);
+const downloadLoading = ref<boolean>(false);
 const mediaSources = ref<DesktopCapturerSource[]>([]);
 const activeSource = reactive<{
   id: string;
@@ -111,6 +131,11 @@ const needAudio = ref<string>('仅录制屏幕');
 const startTime = ref<number>(0);
 const elapsedTime = ref<number>(0);
 const videoSize = ref<string>('');
+const mp4VideoInfo = reactive<{ url: string; size: string }>({ url: '', size: '' });
+const translateInfo = reactive({
+  crf: 20,
+  threads: navigator.hardwareConcurrency || 2,
+});
 
 let timer: ReturnType<typeof setTimeout> | null = null;
 
@@ -128,9 +153,12 @@ const getSources = async (e: any, sources: DesktopCapturerSource[]) => {
   mediaSources.value = sources;
 };
 
+// 创建媒体流
 const createMedia = async (id: string, source?: DesktopCapturerSource) => {
+  // 设置活动源的ID和名称
   activeSource.id = id;
   activeSource.name = source?.name || activeSource.name;
+  // 获取用户媒体流
   const stream = await navigator.mediaDevices.getUserMedia({
     // 这里设置 audio: true 录制声音会崩溃
     audio: false,
@@ -139,6 +167,9 @@ const createMedia = async (id: string, source?: DesktopCapturerSource) => {
       mandatory: {
         chromeMediaSource: 'desktop',
         chromeMediaSourceId: id, // 如果id为空，如果有分屏，会把主屏和分屏录制在同一个画面
+        maxFrameRate: 30, // 设置最大帧率为 30 帧/秒
+        minWidth: 1920, // 设置视频宽度为 1920 像素（4K: 3840 像素）
+        minHeight: 1080, // 设置视频高度为 1080 像素（4K: 2160 像素）
       },
     },
   });
@@ -178,7 +209,7 @@ const createMedia = async (id: string, source?: DesktopCapturerSource) => {
     const completeBlob = new Blob(chunks.value, {
       type: 'video/webm',
     });
-    videoSize.value = `${(completeBlob.size / 1024 / 1024).toFixed(2)} M`;
+    videoSize.value = `${(completeBlob.size / 1024 / 1024).toFixed(2)} MB`;
     blobUrl.value = URL.createObjectURL(completeBlob);
     // 停止录制中的视频预览播放
     videoPreviewRef.value?.pause();
@@ -243,6 +274,8 @@ const onRestore = () => {
   videoSize.value = '';
   activeSource.id = 'screen:0:0';
   activeSource.name = '屏幕 1';
+  mp4VideoInfo.url = '';
+  mp4VideoInfo.size = '';
   if (timer) {
     clearInterval(timer);
     timer = null;
@@ -254,10 +287,19 @@ const onDownload = () => {
 };
 
 const onDownloadForMp4 = async () => {
-  loading.value = true;
-  const url = await translateWebmToMp4(blobUrl.value);
-  loading.value = false;
-  onDownloadFile({ url, type: 'blob', fileName: 'video.mp4' });
+  if (mp4VideoInfo.url) {
+    onDownloadFile({ url: mp4VideoInfo.url, type: 'blob', fileName: 'video.mp4' });
+  } else {
+    downloadLoading.value = true;
+    const { url, size } = await translateWebmToMp4({
+      blobUrl: blobUrl.value,
+      crf: String(translateInfo.crf),
+    });
+    mp4VideoInfo.url = url;
+    mp4VideoInfo.size = size;
+    downloadLoading.value = false;
+    onDownloadFile({ url, type: 'blob', fileName: 'video.mp4' });
+  }
 };
 
 // 关闭屏幕录制页面
@@ -397,6 +439,14 @@ const onClose = () => {
         cursor: not-allowed;
       }
     }
+  }
+}
+
+.mp4-popover {
+  .slider {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
   }
 }
 </style>
