@@ -28,7 +28,7 @@
       </div>
       <div class="right">
         <el-button v-if="blobUrl" type="primary" link @click="onDownload"> WEBM 下载 {{ videoSize }}</el-button>
-        <el-popover placement="top-start" :width="312" trigger="hover">
+        <el-popover v-if="blobUrl" placement="top-start" :width="312" trigger="hover">
           <div class="mp4-popover">
             <div class="slider">
               <span>CRF 质量：</span>
@@ -36,14 +36,7 @@
             </div>
           </div>
           <template #reference>
-            <el-button
-              v-if="blobUrl"
-              type="primary"
-              link
-              :loading="downloadLoading"
-              class="mp4-btn"
-              @click="onDownloadForMp4"
-            >
+            <el-button type="primary" link :loading="downloadLoading" class="mp4-btn" @click="onTranslateForMp4">
               {{
                 mp4VideoInfo.url
                   ? `MP4 下载 ${mp4VideoInfo.size}`
@@ -52,31 +45,22 @@
             </el-button>
           </template>
         </el-popover>
-        <el-button
-          link
-          :type="transcribeStatus ? 'warning' : blobUrl ? 'info' : 'primary'"
-          class="start-btn"
-          :disabled="!!blobUrl"
-          @click="onTranscribe"
-        >
+        <el-button link :type="transcribeStatus ? 'warning' : blobUrl ? 'info' : 'primary'" class="start-btn"
+          :disabled="!!blobUrl" @click="onTranscribe">
           <span class="text" :title="activeSource.name">
             {{
               transcribeStatus
                 ? `停止录制 ${formatDuration(elapsedTime)}`
                 : blobUrl
-                ? `录制完毕 ${formatDuration(elapsedTime)}`
-                : '开始录制'
+                  ? `录制完毕 ${formatDuration(elapsedTime)}`
+                  : '开始录制'
             }}
             -
             {{ activeSource.name }}
           </span>
         </el-button>
-        <el-dropdown
-          type="primary"
-          class="select-btn"
-          :disabled="transcribeStatus || disabled"
-          popper-class="custom-dropdown-styles"
-        >
+        <el-dropdown type="primary" class="select-btn" :disabled="transcribeStatus || disabled"
+          popper-class="custom-dropdown-styles">
           <i :class="`iconfont icon-mulu ${(transcribeStatus || disabled) && 'disabled-menu'}`" />
           <template #dropdown>
             <el-dropdown-menu>
@@ -286,7 +270,8 @@ const onDownload = () => {
   onDownloadFile({ url: blobUrl.value, type: 'blob', fileName: 'download.webm' });
 };
 
-const onDownloadForMp4 = async () => {
+// 将视频转为MP4
+const onTranslateForMp4 = async () => {
   if (mp4VideoInfo.url) {
     onDownloadFile({ url: mp4VideoInfo.url, type: 'blob', fileName: 'video.mp4' });
   } else {
@@ -294,13 +279,13 @@ const onDownloadForMp4 = async () => {
     const { url, size } = await translateWebmToMp4({
       blobUrl: blobUrl.value,
       crf: String(translateInfo.crf),
+      threads: String(translateInfo.threads)
     });
     mp4VideoInfo.url = url;
     mp4VideoInfo.size = size;
     downloadLoading.value = false;
-    onDownloadFile({ url, type: 'blob', fileName: 'video.mp4' });
   }
-};
+}
 
 // 关闭屏幕录制页面
 const onClose = () => {

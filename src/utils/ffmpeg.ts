@@ -4,11 +4,11 @@ import { fetchFile, toBlobURL } from '@ffmpeg/util';
 interface TranslateWebmToMp4Options {
   blobUrl: string;
   crf?: string;
+  threads?: string;
 }
 
-export const translateWebmToMp4 = async ({ blobUrl, crf = '18' }: TranslateWebmToMp4Options) => {
+export const translateWebmToMp4 = async ({ blobUrl, threads = '2', crf = '18' }: TranslateWebmToMp4Options) => {
   const ffmpeg = new FFmpeg();
-  // const isDev = import.meta.env.DEV;
   /**
    * frame=2292：表明已经处理了 2292 帧视频。
    * fps=9.4：当前处理速度为每秒 9.4 帧（frames per second）。这个数值表示 FFmpeg 当前的处理效率。
@@ -28,10 +28,11 @@ export const translateWebmToMp4 = async ({ blobUrl, crf = '18' }: TranslateWebmT
     coreURL: await toBlobURL('./ffmpeg-core.js', 'text/javascript'),
     wasmURL: await toBlobURL('./ffmpeg-core.wasm', 'application/wasm'),
   });
+
   await ffmpeg.writeFile('input.webm', await fetchFile(blobUrl));
   await ffmpeg.exec([
     '-threads',
-    '4', // 设置并行处理线程数为 4
+    threads, // 设置并行处理线程数为 4
     '-i',
     'input.webm',
     '-c:v',
