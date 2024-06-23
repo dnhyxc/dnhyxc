@@ -45,7 +45,8 @@
             </el-button>
           </template>
         </el-popover>
-        <el-button link :type="transcribeStatus ? 'warning' : blobUrl ? 'info' : 'primary'" class="start-btn"
+        <el-button
+link :type="transcribeStatus ? 'warning' : blobUrl ? 'info' : 'primary'" class="start-btn"
           :disabled="!!blobUrl" @click="onTranscribe">
           <span class="text" :title="activeSource.name">
             {{
@@ -59,7 +60,8 @@
             {{ activeSource.name }}
           </span>
         </el-button>
-        <el-dropdown type="primary" class="select-btn" :disabled="transcribeStatus || disabled"
+        <el-dropdown
+type="primary" class="select-btn" :disabled="transcribeStatus || disabled"
           popper-class="custom-dropdown-styles">
           <i :class="`iconfont icon-mulu ${(transcribeStatus || disabled) && 'disabled-menu'}`" />
           <template #dropdown>
