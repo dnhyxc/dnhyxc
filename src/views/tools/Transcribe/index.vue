@@ -67,7 +67,7 @@
             </span>
           </span>
           <template #reference>
-            <i :class="`iconfont icon-mulu translate-icon`" />
+            <i :class="`iconfont icon-log`" />
           </template>
         </el-popover>
         <el-button v-if="downloadLoading && loadedFFmpegStatus" type="primary" link @click="onCancelTranslate"
@@ -378,6 +378,7 @@ const onTranslateForMp4 = async () => {
     mp4VideoInfo.url = url;
     mp4VideoInfo.size = size;
     downloadLoading.value = false;
+    loadedFFmpegStatus.value = false;
   }
 };
 
@@ -396,6 +397,7 @@ const onCancelTranslate = () => {
   translateData.dup = '';
   translateData.drop = '';
   translateData.speed = '';
+  loadedFFmpegStatus.value = false;
 };
 
 // 关闭屏幕录制页面
@@ -556,9 +558,10 @@ const onClose = () => {
 }
 
 :deep {
-  .translate-icon {
-    margin-left: 3px;
-    margin-right: 10px;
+  .icon-log {
+    margin: 1px 10px 0 3px;
+    font-size: 15px;
+    color: var(--theme-blue);
   }
 }
 </style>

@@ -14,11 +14,15 @@ const ffmpeg = new FFmpeg();
 let currentConversion: Promise<number> | null | undefined = null;
 
 export const loadFFmpeg = async (updateLoadedFFmpegStatus?: (status: boolean) => void) => {
-  const res = await ffmpeg.load({
-    coreURL: await toBlobURL('./ffmpeg-core.js', 'text/javascript'),
-    wasmURL: await toBlobURL('./ffmpeg-core.wasm', 'application/wasm'),
-  });
-  updateLoadedFFmpegStatus?.(res);
+  try {
+    await ffmpeg.load({
+      coreURL: await toBlobURL('./ffmpeg-core.js', 'text/javascript'),
+      wasmURL: await toBlobURL('./ffmpeg-core.wasm', 'application/wasm'),
+    });
+    updateLoadedFFmpegStatus?.(true);
+  } catch (error) {
+    updateLoadedFFmpegStatus?.(false);
+  }
 };
 
 export const translateWebmToMp4 = async ({
