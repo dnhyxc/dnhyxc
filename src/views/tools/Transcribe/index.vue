@@ -28,41 +28,76 @@
       </div>
       <div class="right">
         <el-button v-if="blobUrl" type="primary" link @click="onDownload"> WEBM 下载 {{ videoSize }}</el-button>
-        <el-popover v-if="blobUrl" placement="top-start" :width="312" trigger="hover">
-          <div class="mp4-popover">
-            <div class="slider">
-              <span>CRF 质量：</span>
-              <el-slider v-model="translateInfo.crf" :step="1" :min="18" :max="28" show-stops />
-            </div>
-          </div>
+        <el-button v-if="blobUrl" type="primary" link :loading="downloadLoading" @click="onTranslateForMp4">
+          <span v-if="mp4VideoInfo.url">MP4 下载 {{ mp4VideoInfo.size }}</span>
+          <span v-else-if="downloadLoading">{{ loadedFFmpegStatus ? 'MP4 转换中' : '资源加载中' }}</span>
+          <span v-else>转为 MP4 下载</span>
+        </el-button>
+        <el-popover
+          v-if="downloadLoading && translateData.speed"
+          placement="top-start"
+          :width="312"
+          trigger="hover"
+          class="select-btn"
+          popper-class="translate-popover"
+        >
+          <span class="mp4-translate-content">
+            <span class="info">
+              视频处理完成大约需要
+              <span class="info-res">{{ Math.round(elapsedTime / Number(translateData.speed)) }} 秒</span>
+            </span>
+            <span class="info">
+              当前已处理 <span class="info-res">{{ translateData.frame }} 帧</span>
+            </span>
+            <span class="info">
+              前处理速度为每秒 <span class="info-res">{{ translateData.fps }} 帧</span>
+            </span>
+
+            <span class="info">
+              已处理输出的文件大小为 <span class="info-res">{{ translateData.size }} KB</span>
+            </span>
+            <span class="info">
+              已处理的视频时长为 <span class="info-res">{{ translateData.time }}</span>
+            </span>
+            <span class="info">
+              前处理的质量因子为 <span class="info-res">{{ translateData.q }}</span>
+            </span>
+            <span class="info">
+              当前处理视频的比特率为 <span class="info-res">{{ translateData.bitrate }} kbits/s</span>
+            </span>
+          </span>
           <template #reference>
-            <el-button type="primary" link :loading="downloadLoading" class="mp4-btn" @click="onTranslateForMp4">
-              {{
-                mp4VideoInfo.url
-                  ? `MP4 下载 ${mp4VideoInfo.size}`
-                  : `${downloadLoading ? 'MP4 转换中...' : '转为 MP4 下载'}`
-              }}
-            </el-button>
+            <i :class="`iconfont icon-mulu translate-icon`" />
           </template>
         </el-popover>
+        <el-button v-if="downloadLoading && loadedFFmpegStatus" type="primary" link @click="onCancelTranslate"
+          >取消转换</el-button
+        >
         <el-button
-link :type="transcribeStatus ? 'warning' : blobUrl ? 'info' : 'primary'" class="start-btn"
-          :disabled="!!blobUrl" @click="onTranscribe">
+          link
+          :type="transcribeStatus ? 'warning' : blobUrl ? 'info' : 'primary'"
+          class="start-btn"
+          :disabled="!!blobUrl"
+          @click="onTranscribe"
+        >
           <span class="text" :title="activeSource.name">
             {{
               transcribeStatus
                 ? `停止录制 ${formatDuration(elapsedTime)}`
                 : blobUrl
-                  ? `录制完毕 ${formatDuration(elapsedTime)}`
-                  : '开始录制'
+                ? `录制完毕 ${formatDuration(elapsedTime)}`
+                : '开始录制'
             }}
             -
             {{ activeSource.name }}
           </span>
         </el-button>
         <el-dropdown
-type="primary" class="select-btn" :disabled="transcribeStatus || disabled"
-          popper-class="custom-dropdown-styles">
+          type="primary"
+          class="select-btn"
+          :disabled="transcribeStatus || disabled"
+          popper-class="custom-dropdown-styles"
+        >
           <i :class="`iconfont icon-mulu ${(transcribeStatus || disabled) && 'disabled-menu'}`" />
           <template #dropdown>
             <el-dropdown-menu>
@@ -81,7 +116,7 @@ type="primary" class="select-btn" :disabled="transcribeStatus || disabled"
 <script setup lang="ts">
 import { DesktopCapturerSource, ipcRenderer } from 'electron';
 import { nextTick, onMounted, onUnmounted, reactive, ref } from 'vue';
-import { formatDuration, onDownloadFile, translateWebmToMp4 } from '@/utils';
+import { formatDuration, onDownloadFile, loadFFmpeg, translateWebmToMp4, terminateConversion } from '@/utils';
 
 interface IProps {
   hideHeader?: boolean;
@@ -119,15 +154,39 @@ const elapsedTime = ref<number>(0);
 const videoSize = ref<string>('');
 const mp4VideoInfo = reactive<{ url: string; size: string }>({ url: '', size: '' });
 const translateInfo = reactive({
-  crf: 20,
+  crf: 18,
   threads: navigator.hardwareConcurrency || 2,
 });
+const translateData = reactive<{
+  frame: string;
+  fps: string;
+  q: string;
+  size: string;
+  time: string;
+  bitrate: string;
+  dup: string;
+  drop: string;
+  speed: string;
+}>({
+  frame: '',
+  fps: '',
+  q: '',
+  size: '',
+  time: '',
+  bitrate: '',
+  dup: '',
+  drop: '',
+  speed: '',
+});
+const loadedFFmpegStatus = ref<boolean>(false);
 
 let timer: ReturnType<typeof setTimeout> | null = null;
 
 onMounted(() => {
   ipcRenderer.send('load-transcribe', props.hideHeader ? 'tools_transcribe' : '');
   ipcRenderer.on('share-screen-sources', getSources);
+  // 加载ffmpeg资源
+  loadFFmpeg(updateLoadedFFmpegStatus);
 });
 
 onUnmounted(() => {
@@ -260,8 +319,7 @@ const onRestore = () => {
   videoSize.value = '';
   activeSource.id = 'screen:0:0';
   activeSource.name = '屏幕 1';
-  mp4VideoInfo.url = '';
-  mp4VideoInfo.size = '';
+  onCancelTranslate();
   if (timer) {
     clearInterval(timer);
     timer = null;
@@ -272,22 +330,73 @@ const onDownload = () => {
   onDownloadFile({ url: blobUrl.value, type: 'blob', fileName: 'download.webm' });
 };
 
+// 获取ffmpeg转换信息
+const getTranslatedInfo = (data: any) => {
+  const info = {
+    frame: data.match(/frame=(\s*\d+)/)?.[1]?.trim(),
+    fps: data.match(/fps=(\s*\d+\.?\d*)/)?.[1]?.trim(),
+    q: data.match(/q=(\s*\d+\.?\d*)/)?.[1]?.trim(),
+    size: data.match(/size=(\s*\d+\.?\d*)/)?.[1]?.trim(),
+    time: data.match(/time=(\s*\d+:\d+:\d+\.\d+)/)?.[1]?.trim(),
+    bitrate: data.match(/bitrate=(\s*\d+\.?\d*)kbits\/s/)?.[1]?.trim(),
+    dup: data.match(/dup=(\s*\d+)/)?.[1]?.trim(),
+    drop: data.match(/drop=(\s*\d+)/)?.[1]?.trim(),
+    speed: data.match(/speed=(\s*\d+\.?\d*)x/)?.[1]?.trim(),
+  };
+  if (info.frame) info.frame && (translateData.frame = info.frame);
+  if (info.fps) translateData.fps = info.fps;
+  if (info.q) translateData.q = info.q;
+  if (info.size) translateData.size = info.size;
+  if (info.time) translateData.time = info.time;
+  if (info.bitrate) translateData.bitrate = info.bitrate;
+  if (info.dup) translateData.dup = info.dup;
+  if (info.drop) translateData.drop = info.drop;
+  if (info.speed) translateData.speed = info.speed;
+};
+
+// 获取ffmpeg资源加载状态
+const updateLoadedFFmpegStatus = (status: boolean) => {
+  loadedFFmpegStatus.value = status;
+};
+
 // 将视频转为MP4
 const onTranslateForMp4 = async () => {
   if (mp4VideoInfo.url) {
     onDownloadFile({ url: mp4VideoInfo.url, type: 'blob', fileName: 'video.mp4' });
   } else {
+    console.clear();
     downloadLoading.value = true;
+    // 加载ffmpeg资源
+    await loadFFmpeg(updateLoadedFFmpegStatus);
+    // 开始转换
     const { url, size } = await translateWebmToMp4({
       blobUrl: blobUrl.value,
       crf: String(translateInfo.crf),
-      threads: String(translateInfo.threads)
+      threads: String(translateInfo.threads),
+      callback: getTranslatedInfo,
     });
     mp4VideoInfo.url = url;
     mp4VideoInfo.size = size;
     downloadLoading.value = false;
   }
-}
+};
+
+// 取消转换
+const onCancelTranslate = () => {
+  terminateConversion();
+  downloadLoading.value = false;
+  mp4VideoInfo.url = '';
+  mp4VideoInfo.size = '';
+  translateData.frame = '';
+  translateData.fps = '';
+  translateData.q = '';
+  translateData.size = '';
+  translateData.time = '';
+  translateData.bitrate = '';
+  translateData.dup = '';
+  translateData.drop = '';
+  translateData.speed = '';
+};
 
 // 关闭屏幕录制页面
 const onClose = () => {
@@ -405,6 +514,8 @@ const onClose = () => {
       justify-content: flex-end;
 
       .select-btn {
+        display: flex;
+        align-items: center;
         margin: 0 10px 0 2px;
       }
 
@@ -429,11 +540,25 @@ const onClose = () => {
   }
 }
 
-.mp4-popover {
-  .slider {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
+.mp4-translate-content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 0 15px 7px 15px;
+
+  .info {
+    padding: 2px 0;
+
+    .info-res {
+      color: var(--theme-blue);
+    }
+  }
+}
+
+:deep {
+  .translate-icon {
+    margin-left: 3px;
+    margin-right: 10px;
   }
 }
 </style>

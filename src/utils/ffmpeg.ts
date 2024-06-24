@@ -5,10 +5,28 @@ interface TranslateWebmToMp4Options {
   blobUrl: string;
   crf?: string;
   threads?: string;
+  callback?: (data: any) => void;
 }
 
-export const translateWebmToMp4 = async ({ blobUrl, threads = '2', crf = '18' }: TranslateWebmToMp4Options) => {
-  const ffmpeg = new FFmpeg();
+const ffmpeg = new FFmpeg();
+
+// 定义一个全局变量来存储当前的转换任务
+let currentConversion: Promise<number> | null | undefined = null;
+
+export const loadFFmpeg = async (updateLoadedFFmpegStatus?: (status: boolean) => void) => {
+  const res = await ffmpeg.load({
+    coreURL: await toBlobURL('./ffmpeg-core.js', 'text/javascript'),
+    wasmURL: await toBlobURL('./ffmpeg-core.wasm', 'application/wasm'),
+  });
+  updateLoadedFFmpegStatus?.(res);
+};
+
+export const translateWebmToMp4 = async ({
+  blobUrl,
+  threads = '2',
+  crf = '18',
+  callback,
+}: TranslateWebmToMp4Options) => {
   /**
    * frame=2292：表明已经处理了 2292 帧视频。
    * fps=9.4：当前处理速度为每秒 9.4 帧（frames per second）。这个数值表示 FFmpeg 当前的处理效率。
@@ -20,17 +38,17 @@ export const translateWebmToMp4 = async ({ blobUrl, threads = '2', crf = '18' }:
    * drop=0：表示到目前为止没有丢弃任何帧。
    * speed=0.318x：FFmpeg 的处理速度相对于实时的比率。0.318x 意味着当前处理速度为实时处理速度的 31.8%。换句话说，处理 1 秒的视频需要大约 3.14 秒的实际时间。
    */
-  ffmpeg.on('log', (e) => {
+  ffmpeg?.on('log', (e) => {
     console.log(e.message);
+    if (e.message && callback) {
+      callback(e.message);
+    }
   });
 
-  await ffmpeg.load({
-    coreURL: await toBlobURL('./ffmpeg-core.js', 'text/javascript'),
-    wasmURL: await toBlobURL('./ffmpeg-core.wasm', 'application/wasm'),
-  });
+  await ffmpeg?.writeFile('input.webm', await fetchFile(blobUrl));
 
-  await ffmpeg.writeFile('input.webm', await fetchFile(blobUrl));
-  await ffmpeg.exec([
+  // 执行转换
+  currentConversion = ffmpeg?.exec([
     '-threads',
     threads, // 设置并行处理线程数为 4
     '-i',
@@ -44,20 +62,28 @@ export const translateWebmToMp4 = async ({ blobUrl, threads = '2', crf = '18' }:
     'output.mp4',
   ]);
 
-  // await ffmpeg.exec([
-  //   '-i',
-  //   'input.webm',
-  //   '-c:v',
-  //   'libx264', // 指定视频编码器为 libx264
-  //   '-crf', // crf 参数设置为 22，这是一个常用的质量控制参数。较低的 crf 值会产生更高质量的视频，但文件大小也会相应增加。推荐的范围一般是 18 到 28
-  //   '26', // 设置 CRF （Constant Rate Factor）为 22，调整质量和文件大小的平衡
-  //   'output.mp4',
-  // ]);
-  const data = await ffmpeg.readFile('output.mp4');
-  // 将字节转换为兆字节
-  const exportPath = URL.createObjectURL(new Blob([(data as Uint8Array).buffer], { type: 'video/mp4' }));
-  return {
-    size: ((data as Uint8Array).byteLength / 1024 / 1024).toFixed(2) + ' MB',
-    url: exportPath,
-  };
+  try {
+    // 等待转换完成
+    await currentConversion;
+    // 读取输出文件并处理
+    const data = await ffmpeg?.readFile('output.mp4');
+    // 将字节转换为兆字节
+    const exportPath = URL.createObjectURL(new Blob([(data as Uint8Array).buffer], { type: 'video/mp4' }));
+    return {
+      size: ((data as Uint8Array).byteLength / 1024 / 1024).toFixed(2) + ' MB',
+      url: exportPath,
+    };
+  } catch (error) {
+    // 处理转换失败或终止时的逻辑
+    console.error('Conversion failed or was terminated:', error);
+    throw error; // 可以选择抛出错误或者返回适当的错误信息
+  }
+};
+
+// 添加一个方法来终止当前的转换任务
+export const terminateConversion = () => {
+  if (ffmpeg?.loaded && currentConversion) {
+    ffmpeg?.terminate(); // 停止 ffmpeg 进程
+    currentConversion = null; // 清除当前转换任务
+  }
 };
