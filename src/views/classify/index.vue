@@ -19,8 +19,8 @@
         <div v-if="classifyStore.articleList?.length" class="line-wrap">
           <i class="left-line iconfont icon-fenlei2" />
           <span class="current-classify">
-            <span class="label">当前分类：</span>
-            <span>
+            <span class="label">当前分类</span>
+            <span class="classify-name">
               {{ classifyStore.currentClassify || route.query?.classify || classifyStore.classifys[0]?.name }}
             </span>
           </span>
@@ -116,9 +116,10 @@ watch(
   () => commonStore.reelScrollScale,
   (newVal) => {
     nextTick(() => {
-      const width = lineRef.value.offsetWidth * newVal!;
+      const scale = newVal! > 1 ? 1 : newVal;
+      const width = lineRef.value.offsetWidth * scale!;
       // 判断是否到顶，如果到顶需要减去滑块的宽度，防止滑块画出父元素
-      scrollLeft.value = width >= lineRef.value.offsetWidth ? `${ width - dotRef.value.offsetWidth }px` : `${ width }px`;
+      scrollLeft.value = width >= lineRef.value.offsetWidth ? `${width - dotRef.value.offsetWidth}px` : `${width}px`;
     });
   },
 );
@@ -210,6 +211,11 @@ const likeListArticle = (id: string, data?: ArticleItem) => {
           font-size: 13px;
           font-weight: 300;
           color: var(--font-3);
+          margin-right: 5px;
+        }
+
+        .classify-name {
+          padding-bottom: 3px;
         }
       }
 
@@ -218,7 +224,7 @@ const likeListArticle = (id: string, data?: ArticleItem) => {
         display: inline-block;
         flex: 1;
         border-radius: 3px;
-        height: 6px;
+        height: 3px;
         .clickNoSelectText();
         .bgLgColor(126deg);
         box-shadow: 0 0 3px var(--shadow-color);
@@ -228,11 +234,11 @@ const likeListArticle = (id: string, data?: ArticleItem) => {
           position: absolute;
           left: v-bind(scrollLeft);
           bottom: -4px;
-          width: 15px;
-          height: 15px;
+          width: 11px;
+          height: 11px;
           .clickNoSelectText();
           .bgLgColor();
-          border-radius: 10px;
+          border-radius: 11px;
           border: 1px solid var(--shadow-color);
         }
       }

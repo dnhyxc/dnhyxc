@@ -11,9 +11,10 @@
         <slot name="card">
           <div
             v-for="(i, index) in classifys"
+            :id="String(index + 1)"
             :key="index"
             :class="`${currentClassify === i.name && 'active'} card`"
-            @click="onClick(i.name!)"
+            @click="onClick(i.name!, String(index + 1))"
           >
             <div :id="`CLASSIFY_TYPE_${index}`" class="content">
               <span class="name">{{ i.name || '-' }}</span>
@@ -42,8 +43,7 @@ interface IProps {
 
 const props = withDefaults(defineProps<IProps>(), {
   dataSource: () => [],
-  onCheckClassify: () => {
-  },
+  onCheckClassify: () => {},
   width: 'calc(100vw - 80px)',
   currentClassify: '',
 });
@@ -81,9 +81,7 @@ const wheelEvent = (e: WheelEvent) => {
   // 如果滚动距离小于0，则将值赋值成0
   moveInfo.scrollWidth = startLeft + Math.ceil(e.deltaY) < 0 ? 0 : startLeft + Math.ceil(e.deltaY);
   // 计算滚动比例
-  commonStore.reelScrollScale = Number(
-    ((startLeft * 1.0) / (scrollRef.value?.wrapRef?.scrollWidth - scrollRef.value?.wrapRef?.offsetWidth)).toFixed(2),
-  );
+  commonStore.reelScrollScale = getScale(startLeft);
   scrollRef.value?.setScrollLeft(moveInfo.scrollWidth);
 };
 
@@ -95,6 +93,14 @@ const onMouseDown = () => {
     moveInfo.x = clientX;
     scrollWrap.value?.addEventListener('mousemove', onMouseMove);
   });
+};
+
+const getScale = (startLeft: number) => {
+  return (
+    Math.ceil(
+      ((startLeft * 1.0) / (scrollRef.value?.wrapRef?.scrollWidth - scrollRef.value?.wrapRef?.offsetWidth)) * 100,
+    ) / 100
+  );
 };
 
 // 监听鼠标滑动事件
@@ -109,18 +115,14 @@ const onMouseMove = (e: MouseEvent) => {
     if (startLeft + scrollWrapWidth >= cardListWidth) return;
     moveInfo.scrollWidth = startLeft + (moveInfo.x - clientX);
     // 计算滚动比例
-    commonStore.reelScrollScale = Number(
-      ((startLeft * 1.0) / (scrollRef.value?.wrapRef?.scrollWidth - scrollRef.value?.wrapRef?.offsetWidth)).toFixed(2),
-    );
+    commonStore.reelScrollScale = getScale(startLeft);
     scrollRef.value?.setScrollLeft(moveInfo.scrollWidth);
   } else {
     if (startLeft <= 0) return;
     // 如果滚动距离小于0，则将值赋值成0
     moveInfo.scrollWidth = startLeft - (clientX - moveInfo.x) < 0 ? 0 : startLeft - (clientX - moveInfo.x);
     // 计算滚动比例
-    commonStore.reelScrollScale = Number(
-      ((startLeft * 1.0) / (scrollRef.value?.wrapRef?.scrollWidth - scrollRef.value?.wrapRef?.offsetWidth)).toFixed(2),
-    );
+    commonStore.reelScrollScale = getScale(startLeft);
     scrollRef.value?.setScrollLeft(moveInfo.scrollWidth);
   }
 };
@@ -143,7 +145,9 @@ const onMouseLeave = () => {
 };
 
 // 点击卡片事件
-const onClick = (name: string) => {
+const onClick = (name: string, id: string) => {
+  const card = document.getElementById(id) as HTMLDivElement;
+  commonStore.reelScrollScale = getScale(card.offsetLeft);
   const { onCheckClassify } = props;
   onCheckClassify && onCheckClassify(name);
 };
@@ -156,6 +160,7 @@ const onClick = (name: string) => {
   width: calc(100vw - 95px);
   box-sizing: border-box;
   border-radius: 5px;
+  padding-right: 2px;
   -webkit-user-drag: none;
 
   .card-list {
