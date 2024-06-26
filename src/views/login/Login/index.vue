@@ -189,7 +189,14 @@ const onEnter = () => {
   if (!formRef.value) return;
   formRef.value.validate(async (valid) => {
     if (valid) {
-      await loginStore.onLogin(loginForm, router, onResetCode);
+      if (!isRegister.value) {
+        await loginStore.onLogin(loginForm, router, onResetCode);
+      } else {
+        const res = await loginStore.onRegister(loginForm);
+        if (res) {
+          isRegister.value = false;
+        }
+      }
     } else {
       return false;
     }
