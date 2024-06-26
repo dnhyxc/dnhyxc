@@ -6,7 +6,7 @@
  */
 import { Tray, BrowserWindow } from 'electron';
 
-export const DOMAIN_URL = 'http://101.43.50.15';
+export const DOMAIN_URL = 'http://101.43.50.15:9216';
 
 // 全局状态
 export const globalInfo: {
