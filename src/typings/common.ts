@@ -147,6 +147,7 @@ export interface ArticleItem extends AddCollectionRes {
   readCount?: number;
   tag?: string;
   title?: string;
+  _title?: string;
   commentCount?: number;
   isDelete?: boolean;
   collectCount?: number;

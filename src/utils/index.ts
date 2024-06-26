@@ -1215,8 +1215,9 @@ export const checkImage = (link: string) => {
 // 搜索关键词高亮
 export const hlightKeyword = (keyword: string, list: Array<any>) => {
   const reg = new RegExp(keyword, 'gi');
-  return list.map((i) => {
+  const res = list.map((i) => {
     i.abstract = i.abstract?.replace(reg, (key: string) => `<span style="color: #ff9900">${key}</span>`);
+    i._title = i.title;
     i.title = i.title?.replace(reg, (key: string) => `<span style="color: #ff9900">${key}</span>`);
     i.authorName = i.authorName?.replace(reg, (key: string) => `<span style="color: #ff9900">${key}</span>`);
     i.classify = i.classify?.replace(reg, (key: string) => `<span style="color: #ff9900">${key}</span>`);
@@ -1224,6 +1225,8 @@ export const hlightKeyword = (keyword: string, list: Array<any>) => {
     i.username = i.username?.replace(reg, (key: string) => `<span style="color: #ff9900">${key}</span>`);
     return i;
   });
+  console.log(res, 'res');
+  return res;
 };
 
 // 判断链接是否包含图片

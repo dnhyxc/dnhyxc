@@ -14,9 +14,9 @@
         <div v-for="i in ['markTop', 'markRight', 'markBottom', 'markLeft']" :key="i" :class="`${i} mark`">
           <div class="action">
             <span v-if="loginStore?.userInfo?.userId === data.authorId" @click.stop="toEdit(data)">编辑</span>
-            <span
-              v-if="loginStore?.userInfo?.userId === data.authorId" id="__DELETE__"
-              @click.stop="onRemove(data)">删除</span>
+            <span v-if="loginStore?.userInfo?.userId === data.authorId" id="__DELETE__" @click.stop="onRemove(data)"
+              >删除</span
+            >
           </div>
           <div>
             <div class="desc" :title="data.abstract" v-html="data.abstract" />
@@ -29,11 +29,8 @@
         <i v-if="data.isTop" class="font iconfont icon-zhiding" />
         <Image :url="data.coverImage || IMG1" :transition-img="IMG1" class="card-img" radius="5px 5px 0 0" />
       </div>
-      <div
-        class="bottom"
-        :style="{ backgroundImage: gradients }"
-      >
-        <div class="title" v-html="data.title" />
+      <div class="bottom" :style="{ backgroundImage: gradients }">
+        <div class="title" :title="data._title || data.title" v-html="data.title" />
         <div class="author">
           <span @click.stop="toPersonal(data.authorId!)" v-html="data.authorName" />
           <span>{{ data.createTime ? formatDate(data.createTime, 'YYYY/MM/DD') : '-' }}</span>
@@ -147,7 +144,7 @@ const onComment = (data: ArticleItem) => {
     });
     return;
   }
-  router.push(`/detail/${ data.id }?scrollTo=1&from=${ route.name as string }`);
+  router.push(`/detail/${data.id}?scrollTo=1&from=${route.name as string}`);
 };
 
 // 编辑
@@ -159,7 +156,7 @@ const toEdit = async (data: ArticleItem) => {
     });
     return;
   }
-  router.push(`/create?id=${ data.id }`);
+  router.push(`/create?id=${data.id}`);
 };
 
 // 下架
@@ -200,7 +197,7 @@ const toDetail = async (data: ArticleItem) => {
     });
     return;
   }
-  router.push(`/detail/${ data.id }?from=${ route.name as string }`);
+  router.push(`/detail/${data.id}?from=${route.name as string}`);
 };
 
 // 新窗口打开
@@ -214,7 +211,7 @@ const onOpenNewWindow = async (data: ArticleItem) => {
   }
   const { userInfo, token } = loginStore;
   ipcRenderers.sendNewWin({
-    path: `article/${ data.id }?from=${ route.name as string }`,
+    path: `article/${data.id}?from=${route.name as string}`,
     id: data.id, // articleId
     userInfo: JSON.stringify({ userInfo, token }),
   });
@@ -222,15 +219,15 @@ const onOpenNewWindow = async (data: ArticleItem) => {
 
 // 去我的主页
 const toPersonal = (id: string) => {
-  router.push(`/personal?authorId=${ id }`);
+  router.push(`/personal?authorId=${id}`);
 };
 
 const toClassify = (classify: string) => {
-  router.push(`/classify?classify=${ classify }`);
+  router.push(`/classify?classify=${classify}`);
 };
 
 const toTag = (tag: string) => {
-  router.push(`/tag/list?tag=${ tag }`);
+  router.push(`/tag/list?tag=${tag}`);
 };
 </script>
 

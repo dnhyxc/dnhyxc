@@ -27,7 +27,12 @@
               },
             ]"
           >
-            <el-input v-model="createStore.createInfo.title" placeholder="请输入文章标题" />
+            <el-input
+              v-model="createStore.createInfo.title"
+              placeholder="请输入文章标题"
+              maxlength="50"
+              show-word-limit
+            />
           </el-form-item>
           <el-form-item
             prop="classify"
@@ -308,6 +313,10 @@ const onSaveDraft = () => {
 
   .content {
     :deep {
+      .el-input__count-inner {
+        background-color: transparent;
+      }
+
       .el-drawer {
         min-width: 350px;
       }
