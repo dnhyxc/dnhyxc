@@ -330,7 +330,7 @@ const toTag = (tag: string) => {
       }
 
       .desc {
-        .ellipsisMore(2);
+        .ellipsisMore(3);
         font-size: 13px;
         mix-blend-mode: difference; /* 使用差值混合模式 */
         text-shadow: @text-shadow; /* 水平偏移、垂直偏移、模糊半径和阴影颜色 */
